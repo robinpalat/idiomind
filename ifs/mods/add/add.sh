@@ -258,7 +258,7 @@ function clean_2() {
 function clean_3() {
     echo "${1}" |cut -d "|" -f1 |sed 's/!//;s/&//;s/\://g' \
     |sed "s/^[ \t]*//;s/[ \t]*$//;s/‘/'/g" \
-    |sed 's/^\s*./\U&\E/g; s/-.\s*./\U&\E/g' \
+    |sed 's/^\s*./\U&\E/g' \
     |sed 's/\：//g;s/<[^>]*>//g' \
     |tr -d '?./*' |tr -s '&:|{}[]<>+' ' ' |sed 's/ \+/ /g'
 }  
@@ -572,7 +572,7 @@ function dlg_form_2() {
 
 function dlg_checklist_3() {
     fkey=$((RANDOM*$$))
-    awk '{print "FALSE\n"$0}' < "${1}" | \
+    awk '{print "TRUE\n"$0}' < "${1}" | \
     yad --list --checklist --tabnum=1 --plug="$fkey" \
     --dclick-action="$DS/add.sh 'list_words_dclik'" --multiple \
     --ellipsize=END --no-headers --text-align=right \

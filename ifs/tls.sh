@@ -23,7 +23,7 @@ function check_format_1() {
         val="$(cut -d ':' -f2 <<< "${line}")"
         if [[ ${n} = 0 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
-            [ "$(grep -o -E '\*|\/|\@|$|=|-' <<< "${val}")" ]; then invalid $n; fi
+            [ "$(grep -o -E '\*|\/|\@|$|=|' <<< "${val}")" ]; then invalid $n; fi
         elif [[ ${n} = 1 || ${n} = 2 ]]; then
             if ! grep -Fo "${val}" <<< "${!tlangs[@]}" >/dev/null 2>&1; then invalid $n; fi
         elif [[ ${n} = 3 || ${n} = 4 ]]; then
@@ -35,7 +35,7 @@ function check_format_1() {
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 36 ]; then invalid $n; fi
         elif [[ ${n} = 7 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
-            [ "$(grep -o -E '\*|\/|\@|$|=|-' <<< "${val}")" ]; then invalid $n; fi
+            [ "$(grep -o -E '\*|\/|\@|$|=|' <<< "${val}")" ]; then invalid $n; fi
         elif [[ ${n} = 8 || ${n} = 9 || ${n} = 10 ]]; then
             if [ -n "${val}" ]; then
             if ! [[ ${val} =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] \
@@ -375,7 +375,7 @@ first_run() {
     source /usr/share/idiomind/default/c.conf
     dlg() {
         sleep 3; mv -f "${file}" "${file}".p
-        yad --title="${title}" --text="${note}" \
+        yad --title=" " --text="${note}" \
         --name=Idiomind --class=Idiomind \
         --always-print-result --selectable-labels \
         --image=dialog-information --window-icon=idiomind \
@@ -383,7 +383,7 @@ first_run() {
         --width=500 --height=140 --borders=5 \
         --button="$(gettext "Do not show again")":1 \
         --button="$(gettext "OK")":0
-        if [ $? = 1 ]; then rm -f "${file}" "${file}".p; fi
+        [ $? = 1 ] && rm -f "${file}" "${file}".p
     }
     NOTE2="$(gettext "You can move any item by dragging and dropping or double click to edit it.\nIf you change the text of an item, its audio file can be overwritten by another new file, to avoid this you can edit it individually through its edit dialog.\nClose and reopen the main window to see any changes.")\n"
     NOTE3="$(gettext "To start adding notes you need to have a Topic.\nTo create one you can click on the New button...")"

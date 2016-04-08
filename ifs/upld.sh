@@ -269,8 +269,7 @@ function upld() {
         "$(gettext "This can take a while...")" -t 6000 ) &
         mkdir -p "$DT/upload/files/conf"
         DT_u="$DT/upload/"
-        orig="$(grep -o 'orig="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        [ -z "${orig}" ] && orig="${tpc}"
+        orig="${tpc}"
         pre=$(sed "s/ /_/g;s/'//g" <<< "${orig:0:15}" |iconv -c -f utf8 -t ascii)
         export autr="${autr_mod}"
         export pass="${pass_mod}"
