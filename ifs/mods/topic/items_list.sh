@@ -147,6 +147,7 @@ function notebook_1() {
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \
     --plug=$KEY \
+    --always-print-result \
     --filename="${nt}" --editable --wrap --back='#FFFDF7' --fore='gray30' \
     --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 \
@@ -170,7 +171,7 @@ function notebook_1() {
     --tab="  $(gettext "Edit")  " \
     --width=${sw} --height=${sh} --borders=0 --tab-borders=3 \
     --button="$(gettext "Play")":"$cmd_play" \
-    --button="$(gettext "Practice")":5 \
+    --button="$(gettext "Practice")":3 \
     --button="$(gettext "Close")"!'window-close':2
 } >/dev/null 2>&1
 

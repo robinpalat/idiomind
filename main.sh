@@ -131,7 +131,7 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     source "$DS/ifs/tls.sh"; check_format_1 "${1}"
     if [ $? != 18 ]; then
-        msg "$(gettext "File is corrupted.")\n" error "$(gettext "Information")" & exit 1
+        msg "$(gettext "File is corrupted.")\n" error "$(gettext "Information")" & return 1
     fi
     file="${1}"
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
@@ -223,10 +223,10 @@ fi
 function topic() {
     source "$DS/ifs/cmns.sh"
     [ -e "${DC_tlt}/8.cfg" ] && export mode=$(sed -n 1p "${DC_tlt}/8.cfg")
-    if ! [[ ${mode} =~ $numer ]]; then exit 1; fi
+    if ! [[ ${mode} =~ $numer ]]; then return 1; fi
 
     readd(){
-        [ -z "${tpc}" ] && exit 1
+        [ -z "${tpc}" ] && return 1
         source "$DS/ifs/mods/topic/items_list.sh"
         for n in {0..4}; do
             [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg"
@@ -252,6 +252,8 @@ function topic() {
         elif [ ! -z "$dtec" ]; then export infolbl="$(gettext "Review ")$repass. $(gettext "Created on") $dtec"; fi
         export lbl1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n$cfg4 $(gettext "Sentences") $cfg3 $(gettext "Words") \n$infolbl</small>"
     }
+    
+    oclean() { cleanups "$cnf1" "$cnf3" "$cnf4"; }
     
     apply() {
             note_mod="$(< "${cnf3}")"
@@ -288,8 +290,8 @@ function topic() {
             ntpc=$(cut -d '|' -f 1 < "${cnf4}")
             if [ "${tpc}" != "${ntpc}" -a -n "$ntpc" ]; then
             if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/4.cfg")" ]]; then
-            msg "$(gettext "Sorry, this topic is currently not active.")\n" dialog-information "$(gettext "Information")" & exit; fi
-            "$DS/mngr.sh" rename_topic "${ntpc}" & exit; fi
+            msg "$(gettext "Sorry, this topic is currently not active.")\n" dialog-information "$(gettext "Information")"
+            else "$DS/mngr.sh" rename_topic "${ntpc}"; fi; fi
         }
         
     if ((mode>=1 && mode<=10)); then
@@ -300,29 +302,21 @@ function topic() {
             
             notebook_1; ret=$?
                 
-                if [ $ret -eq 1 ]; then exit 1; fi
-                if [ ! -e "$DT/ps_lk" ]; then apply; fi
-                
-                if [ $ret -eq 5 ]; then
-                    "$DS/practice/strt.sh" &
-                fi
+            if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
 
-            cleanups "$cnf1" "$cnf3" "$cnf4"
+            if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
 
         elif [ ${cfg1} -ge 1 ] || [ ${cfg1} -ge 0 -a ${cfg0} -lt 15 ]; then
         
             if [ -e "${DC_tlt}/9.cfg" -a -e "${DC_tlt}/7.cfg" ]; then
             
-                calculate_review "${tpc}"
-                if [[ ${RM} -ge 100 ]]; then
-                
+                calculate_review "${tpc}"; if [[ ${RM} -ge 100 ]]; then
                     RM=100; dialog_1; ret=$?
-                    
                     if [ $ret -eq 2 ]; then
                         "$DS/mngr.sh" mark_to_learn "${tpc}" 0
-                        idiomind topic & exit 1
+                        idiomind topic & oclean; return 1
                     elif [ $ret -eq 3 ]; then
-                       exit 1
+                       oclean & return 1
                     fi
                 fi
 
@@ -332,14 +326,10 @@ function topic() {
                 notebook_1
             fi
                 ret=$?
-                if [ $ret -eq 1 ]; then exit 1; fi
-                if [ ! -e "$DT/ps_lk" ]; then apply; fi
+                
+                if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
 
-                if [ $ret -eq 5 ]; then
-                    "$DS/practice/strt.sh" &
-                fi
-
-                cleanups "$cnf1" "$cnf3" "$cnf4"
+                if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
 
         elif [ ${cfg1} -eq 0 -a ${cfg0} -ge 15 ]; then
         
@@ -347,28 +337,22 @@ function topic() {
                 "$DS/mngr.sh" mark_as_learned "${tpc}" 0
             fi
             
-            calculate_review "${tpc}"
-            if [[ ${RM} -ge 100 ]]; then
-
+            calculate_review "${tpc}"; if [[ ${RM} -ge 100 ]]; then
                 RM=100; dialog_1; ret=$?
-                    
                 if [ $ret -eq 2 ]; then
                     "$DS/mngr.sh" mark_to_learn "${tpc}" 0
-                    idiomind topic & exit 1
+                    idiomind topic & oclean; return 1
                 elif [ $ret -eq 3 ]; then
-                    exit 1
+                    oclean & return 1
                 fi 
             fi
             
             pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
             notebook_2; ret=$?
             
-            if [ $ret -eq 1 ]; then exit 1; fi
-            if [ ! -e "$DT/ps_lk" ]; then apply; fi
-          
-            cleanups "$cnf1" "$cnf3" "$cnf4" & exit
+            if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
+
         fi
-        cleanups "$cnf1" "$cnf3" "$cnf4"
 
     elif [[ ${mode} = 12 ]]; then
     
@@ -378,14 +362,9 @@ function topic() {
             
             notebook_1; ret=$?
                 
-                if [ $ret -eq 1 ]; then exit 1; fi
-                if [ ! -e "$DT/ps_lk" ]; then apply; fi
-                
-                if [ $ret -eq 5 ]; then
-                    "$DS/practice/strt.sh" &
-                fi
+            if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
 
-            cleanups "$cnf1" "$cnf3" "$cnf4"
+            if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
 
         elif [ ${cfg1} -ge 1 ]; then
         
@@ -394,15 +373,11 @@ function topic() {
             else
                 notebook_1
             fi
-                ret=$?
-                if [ $ret -eq 1 ]; then exit 1; fi
-                if [ ! -e "$DT/ps_lk" ]; then apply; fi
+            ret=$?
+            
+            if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
 
-                if [ $ret -eq 5 ]; then
-                    "$DS/practice/strt.sh" &
-                fi
-
-                cleanups "$cnf1" "$cnf3" "$cnf4"
+            if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
 
         elif [[ ${cfg1} -eq 0 ]]; then
 
@@ -410,21 +385,19 @@ function topic() {
             pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
             notebook_2; ret=$?
             
-            if [ $ret -eq 1 ]; then exit 1; fi
-          
-            cleanups "$cnf1" "$cnf3" "$cnf4" & exit
         fi
-        cleanups "$cnf1" "$cnf3" "$cnf4"
         
     elif [[ ${mode} = 14 ]]; then
     
-        echo 1 > "${DC_tlt}/8.cfg" & exit 1
+        echo 1 > "${DC_tlt}/8.cfg"
 
     else
         tpa="$(sed -n 1p "$DC_s/4.cfg")"
         source "$DS/ifs/mods/topic/${tpa}.sh"
-        ${tpa} & exit 1
+        ${tpa} &
     fi
+    
+    oclean & return 0
 }
 
 bground_session() {
@@ -457,6 +430,8 @@ ipanel() {
     if [ -n "$geometry" ]; then
     geometry="--geometry=$geometry"
     else geometry="--mouse"; fi
+    
+    export swind=$(grep -oP '(?<=swind=\").*(?=\")' "$DC_s/1.cfg")
 
     ( yad --fixed --form --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
@@ -495,9 +470,7 @@ idiomind_start() {
     fi
     ( if [[ "${cu}" = TRUE ]]; then
     "$DS/ifs/tls.sh" a_check_updates; fi ) &
-    
-    export swind=$(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg")
-    
+
     if [[ $(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && \
     [ ! -e $DT/clipw ]; then
         sed -i "s/clipw=.*/clipw=\"FALSE\"/g" "$DC_s/1.cfg"
