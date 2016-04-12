@@ -102,7 +102,7 @@ if [[ ${1} = 0 ]]; then
 
 elif [[ ${1} != 0 ]]; then
     source /usr/share/idiomind/default/c.conf
-    sw=620;sh=580; if [[ ${swind} = TRUE ]]; then sw=540;sh=480; fi
+    sw=620;sh=580; if [[ ${swind} = TRUE ]]; then sw=500;sh=440; fi
     if [ ! -d "$DT" ]; then
         ( "$DS/ifs/tls.sh" a_check_updates ) &
         idiomind -s; sleep 1

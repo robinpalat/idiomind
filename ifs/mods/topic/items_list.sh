@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-sw=600;sh=560; if [[ ${swind} = TRUE ]]; then sw=520;sh=460; fi
+sw=600;sh=560; if [[ ${swind} = TRUE ]]; then sw=500;sh=440; fi
 
 function vwr() {
     [ ${1} = 1 ] && index="${DC_tlt}/1.cfg" && item_name="$(sed 's/<[^>]*>//g' <<< "${3}")"

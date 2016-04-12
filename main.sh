@@ -476,6 +476,8 @@ idiomind_start() {
         sed -i "s/clipw=.*/clipw=\"FALSE\"/g" "$DC_s/1.cfg"
     fi
     
+    export swind=$(grep -oP '(?<=swind=\").*(?=\")' "$DC_s/1.cfg")
+    
     if [[ $(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && \
     ! pgrep -f "$DS/ifs/tls.sh itray"; then
         $DS/ifs/tls.sh itray &
