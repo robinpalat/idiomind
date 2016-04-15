@@ -106,7 +106,7 @@ config_dlg() {
     --field="$(gettext "Detect language of source text (slower)")":CHK "$ttrgt" \
     --field="$(gettext "Clipboard watcher")":CHK "$clipw" \
     --field="$(gettext "Show icon in the notification area")":CHK "$itray" \
-    --field="$(gettext "Make smaller windows")":CHK "$swind" \
+    --field="$(gettext "Adjust windows size to small screens")":CHK "$swind" \
     --field="$(gettext "Perform tasks at startup")":CHK "$stsks" \
     --field=" :LBL" " " \
     --field="$(gettext "Languages")\t":LBL " " \

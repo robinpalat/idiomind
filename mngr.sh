@@ -108,7 +108,6 @@ delete_item() {
         msg_2 "$(gettext "Are you sure you want to delete this item?")\n" \
         edit-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
         ret="$?"
-        
         if [ $ret -eq 0 ]; then
             (sleep 0.1 && kill -9 $(pgrep -f "yad --form "))
             cleanups "${DM_tlt}/$cdid.mp3" "${DM_tlt}/images/${trgt,,}.jpg"
@@ -143,7 +142,7 @@ delete_item() {
 }
 
 edit_item() {
-    [ -z ${2} -o -z ${3} ] && exit 1
+    [ -z ${2} -o -z ${3} ] && return 1
     temp="...."
     list="${2}"; item_pos=${3}; text_missing=${4}
     if [ ${list} = 1 ]; then
@@ -180,13 +179,14 @@ edit_item() {
     fi
     if [[ "${srce}" = "${temp}" ]]; then
         if [ -e "$DT/${trgt}.edit" ]; then
-            msg_4 "$(gettext "Wait till the process is completed.")\n" \
-            dialog-information OK "$(gettext "Stop")" "$(gettext " Translating")" "$DT/${trgt}.edit"
-            if [ $? -eq 1 ]; then
+            msg_4 "$(gettext "Wait till the process is completed.")\n" dialog-information OK "$(gettext "Stop")" " " "$DT/${trgt}.edit"
+           
+            if [ $? = 1 ]; then
                 srce=""; transl_mark=1; rm -f "$DT/${trgt}.edit"
             else 
-                "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} & exit 1
+                "$DS/mngr.sh" edit ${list} ${item_pos} & return 1
             fi
+            
         else
             srce=""; transl_mark=1
         fi
@@ -379,7 +379,7 @@ edit_item() {
 edit_list() {
     dlg_more() {
         file="$HOME/.idiomind/backup/${tpc}.bk"
-        cols1="$(gettext "Reverse items order")\n$(gettext "Sentences with less than 5 words, show on word's view")\n$(gettext "Translate source language")"
+        cols1="$(gettext "Reverse items order")\n$(gettext "Remove all items")\n$(gettext "Display sentences of less than 5 words in word's view")\n$(gettext "Translate source language")"
         dt1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
         dt2=$(grep '\----- oldest' "${file}" |cut -d' ' -f3)
         if [ -n "$dt2" ]; then
@@ -403,7 +403,9 @@ edit_list() {
         if [ $ret -eq 0 ]; then
             if grep "$(gettext "Reverse items order")" <<< "${more}"; then
                 return 2
-            elif grep "$(gettext "Sentences with less than 5 words, show on word's view")" <<< "${more}"; then
+            elif grep "$(gettext "Remove all items")" <<< "${more}"; then
+                return 7
+            elif grep "$(gettext "Display sentences of less than 5 words in word's view")" <<< "${more}"; then
                 return 4
             elif grep "$(gettext "Translate source language")" <<< "${more}"; then
                 return 5
@@ -480,6 +482,13 @@ edit_list() {
             msg_2 "$(gettext "Are you sure you want to do this?")\n" \
             dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
             [ $? = 0 ] && "$DS/ifs/tls.sh" restore "${tpc}" ${line}
+            ret=1
+        elif [ $ret = 7 ]; then
+            msg_2 "$(gettext "Are you sure you want to do this?")\n" \
+            dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
+            if [ $? = 0 ]; then cleanups "${direc}/0.cfg" "${direc}/1.cfg" "${direc}/2.cfg" \
+            "${direc}/3.cfg" "${direc}/4.cfg" "${direc}/5.cfg" "${direc}/6.cfg"
+            [ -n "${2}" ] && rm "$DM_tl/${2}"/*.mp3; fi
             ret=1
         fi
 

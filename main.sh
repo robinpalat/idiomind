@@ -384,7 +384,6 @@ function topic() {
             calculate_review "${tpc}"
             pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
             notebook_2; ret=$?
-            
         fi
         
     elif [[ ${mode} = 14 ]]; then

@@ -119,8 +119,8 @@ check_index() {
         export stts
 
         cnt0=$(wc -l < "${DC_tlt}/0.cfg" |sed '/^$/d')
-        cnt1=$(egrep -cv '#|^$' < "${DC_tlt}/1.cfg")
-        cnt2=$(egrep -cv '#|^$' < "${DC_tlt}/2.cfg")
+        cnt1=$(wc -l < "${DC_tlt}/1.cfg" |sed '/^$/d')
+        cnt2=$(wc -l < "${DC_tlt}/2.cfg" |sed '/^$/d')
         if [ $((cnt1+cnt2)) != ${cnt0} ]; then export f=1; fi
         
         if grep '},' "${DC_tlt}/0.cfg"; then export c=1; fi
