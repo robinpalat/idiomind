@@ -77,7 +77,7 @@ function word_view() {
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free 25'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>$link\n\n"
 
-    yad --form --title="$index_pos" \
+    yad --form --title="$(gettext "Note") $index_pos" \
     --selectable-labels --quoted-output \
     --text="${sentence}" \
     --window-icon=idiomind \
@@ -99,7 +99,7 @@ function sentence_view() {
     cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"""
     lwrds="$(tr '_' '\n' <<< "${wrds}")"
 
-    echo -e "${lwrds}" |yad --list --title="$index_pos" \
+    echo -e "${lwrds}" |yad --list --title="$(gettext "Note") $index_pos" \
     --text="${sentence}" \
     --selectable-labels --print-column=0 \
     --select-action="$DS/play.sh 'play_word'" \

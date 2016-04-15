@@ -13,16 +13,6 @@ function dwld() {
         msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" \
         dialog-information
     }
-    if [ -d "$DT/download" ]; then
-        msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
-        dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" "$(gettext "Downloading")..." "$DT/download"
-        ret=$?
-        if [ $ret -eq 1 ]; then
-            cleanups "$DT/download"; "$DS/stop.sh" 5
-        else
-            return 1
-        fi
-    fi
     sleep 0.5
     msg "$(gettext "When the download completes the files will be added to topic directory.")" \
     dialog-information "$(gettext "Downloading")"
@@ -96,6 +86,16 @@ function upld() {
             return 1
         fi
     fi
+    if [ -d "$DT/download" ]; then
+        msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
+        dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" "$(gettext "Downloading")..." "$DT/download"
+        ret=$?
+        if [ $ret -eq 1 ]; then
+            cleanups "$DT/download"; "$DS/stop.sh" 5
+        else
+            return 1
+        fi
+    fi
 
     conds_upload() {
         if [ $((cfg3+cfg4)) -lt 8 ]; then
@@ -128,7 +128,7 @@ function upld() {
         --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
-        --width=490 --height=450 --borders=15 \
+        --width=470 --height=450 --borders=15 \
         --field=" :LBL" "" \
         --field="$(gettext "Category"):CB" "" \
         --field="$(gettext "Skill Level"):CB" "" \
@@ -147,7 +147,7 @@ function upld() {
         --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
-        --width=490 --height=450 --borders=15 --field=" :LBL" "" \
+        --width=470 --height=450 --borders=15 --field=" :LBL" "" \
         --field="$(gettext "Category"):CBE" "$_Categories" \
         --field="$(gettext "Skill Level"):CB" "$_levels" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
@@ -172,7 +172,7 @@ function upld() {
         --image="dialog-information" \
         --window-icon=idiomind --buttons-layout=end \
         --align=left --center --on-top \
-        --width=480 --height=180 --borders=10 \
+        --width=470 --height=180 --borders=10 \
         --text="$info" \
         --field="$info2:lbl" " " \
         --button="$(gettext "Export")":2 \
@@ -186,7 +186,7 @@ function upld() {
         --name=Idiomind --class=Idiomind \
         --window-icon=idiomind --buttons-layout=end \
         --align=left --center --on-top \
-        --width=480 --height=180 --borders=10 \
+        --width=470 --height=180 --borders=10 \
         --field="<b>$(gettext "Downloaded files")</b>:lbl" " " \
         --field="$(< "${DC_tlt}/download"):lbl" " " \
         --field=" :lbl" " " \
