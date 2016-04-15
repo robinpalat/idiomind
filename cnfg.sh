@@ -103,10 +103,10 @@ config_dlg() {
     --field="$(gettext "List words after adding a sentence")":CHK "$wlist" \
     --field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
     --field="$(gettext "Download audio pronunciation")":CHK "$dlaud" \
-    --field="$(gettext "Detect language of source text (slower)")":CHK "$ttrgt" \
+    --field="$(gettext "Detect language of source text (Slower)")":CHK "$ttrgt" \
     --field="$(gettext "Clipboard watcher")":CHK "$clipw" \
-    --field="$(gettext "Show icon in the notification area")":CHK "$itray" \
-    --field="$(gettext "Adjust windows size to small screens")":CHK "$swind" \
+    --field="$(gettext "Show icon in the notification area (Need to restart)")":CHK "$itray" \
+    --field="$(gettext "Adjust windows size to small screens (Need to restart)")":CHK "$swind" \
     --field="$(gettext "Perform tasks at startup")":CHK "$stsks" \
     --field=" :LBL" " " \
     --field="$(gettext "Languages")\t":LBL " " \
