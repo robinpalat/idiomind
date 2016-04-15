@@ -13,7 +13,7 @@ function vwr() {
     fi
     _item="$(sed -n ${index_pos}p "${index}")"
     if [ -z "${_item}" ]; then
-        _item="$(sed -n 1p "${index}")"; index_pos=1
+        _item="$(sed -n 1p "${index}")"; export index_pos=1
     fi
     item="$(grep -F -m 1 "trgt{${_item}}" "$DC_tlt/0.cfg" |sed 's/}/}\n/g')"
     type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
@@ -77,7 +77,7 @@ function word_view() {
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free 25'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>$link\n\n"
 
-    yad --form --title=" " \
+    yad --form --title="$index_pos" \
     --selectable-labels --quoted-output \
     --text="${sentence}" \
     --window-icon=idiomind \
@@ -99,7 +99,7 @@ function sentence_view() {
     cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"""
     lwrds="$(tr '_' '\n' <<< "${wrds}")"
 
-    echo -e "${lwrds}" |yad --list --title=" " \
+    echo -e "${lwrds}" |yad --list --title="$index_pos" \
     --text="${sentence}" \
     --selectable-labels --print-column=0 \
     --select-action="$DS/play.sh 'play_word'" \
