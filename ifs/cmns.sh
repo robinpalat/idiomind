@@ -33,9 +33,9 @@ function msg_2() {
 
 function msg_4() {
 	[ -n "${5}" ] && title="${5}" || title=Idiomind
-	( echo "#"; while true; do
-	sleep 1; [ ! -e "${6}" ] && break
-	done )  |yad --progress --title="${title}" --text="${1}" \
+	( echo "# "; while true; do
+	sleep 1; echo "# "; [ ! -e "${6}" ] && break
+	done )  | yad --progress --title="${title}" --text="${1}" \
     --name=Idiomind --class=Idiomind \
     --image="${2}" \
     --pulsate --auto-close --always-print-result \

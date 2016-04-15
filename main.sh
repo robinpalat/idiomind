@@ -31,14 +31,12 @@ if [ -z "${tlng}" -o -z "${slng}" ]; then
     source "$DS/ifs/cmns.sh"
     msg_2 "$(gettext "Please check the language settings in the preferences dialog")\n" \
     error "$(gettext "Open")" "$(gettext "Cancel")"
-    [ $? = 0 ] && "$DS/cnfg.sh"
-    exit 1
+    [ $? = 0 ] && "$DS/cnfg.sh"; exit 1
 fi
 if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
-    sleep 5
-    [ -e "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
-    [ -e "$DT/el_lk" ] && rm -f "$DT/el_lk"
-    exit 1
+    source "$DS/ifs/cmns.sh"
+    msg "$(gettext "Wait until it finishes a previous process")\n" dialog-information
+    sleep 15; cleanups "$DT/ps_lk" "$DT/el_lk"; exit 1
 fi
 
 function new_session() {
@@ -50,7 +48,7 @@ function new_session() {
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     if [ $? -ne 0 ]; then
     msg "$(gettext "An error occurred while trying to write on '/tmp'")\n" \
-    error "$(gettext "Error")" & exit 1
+    error "$(gettext "Error")" & return 1
     fi
     
     f_lock "$DT/ps_lk"

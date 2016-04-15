@@ -426,8 +426,8 @@ set_image() {
 
     if [ -e "$DT/$trgt.img" ]; then
         msg_4 "$(gettext "Attempting download image")...\n" \
-        dialog-warning OK "$(gettext "Stop")" "$(gettext "Information")" "$DT/$trgt.img"
-        if [ $? -eq 1 ]; then rm -f "$DT/$trgt".img; else exit 1 ; fi
+        dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" " " "$DT/$trgt.img"
+        if [ $? -eq 1 ]; then rm -f "$DT/$trgt".img; else return 1 ; fi
     fi
 
     if [ -e "$ifile" ]; then

@@ -179,12 +179,13 @@ edit_item() {
     fi
     if [[ "${srce}" = "${temp}" ]]; then
         if [ -e "$DT/${trgt}.edit" ]; then
-            msg_4 "$(gettext "Wait till the process is completed.")\n" dialog-information OK "$(gettext "Stop")" " " "$DT/${trgt}.edit"
+            msg_4 "$(gettext "Wait till the process is completed.")\n" \
+            dialog-information "$(gettext "Cancel")" "$(gettext "Stop")" " " "$DT/${trgt}.edit"
            
             if [ $? = 1 ]; then
                 srce=""; transl_mark=1; rm -f "$DT/${trgt}.edit"
             else 
-                "$DS/mngr.sh" edit ${list} ${item_pos} & return 1
+                $DS/vwr.sh ${list} "${trgt}" ${item_pos} & return 1
             fi
             
         else
@@ -426,7 +427,7 @@ edit_list() {
 
     if [ -e "$DT/items_to_add" -o -e "$DT/el_lk" ]; then
         msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
-        dialog-warning OK "$(gettext "Stop")" "$(gettext "Information")" "$DT/el_lk"
+        dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" " " "$DT/el_lk"
         ret=$?
         if [ $ret -eq 1 ]; then
             cleanups "$DT/items_to_add" "$DT/el_lk"

@@ -13,6 +13,16 @@ function dwld() {
         msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" \
         dialog-information
     }
+    if [ -d "$DT/download" ]; then
+        msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
+        dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" "$(gettext "Downloading")..." "$DT/download"
+        ret=$?
+        if [ $ret -eq 1 ]; then
+            cleanups "$DT/download"; "$DS/stop.sh" 5
+        else
+            return 1
+        fi
+    fi
     sleep 0.5
     msg "$(gettext "When the download completes the files will be added to topic directory.")" \
     dialog-information "$(gettext "Downloading")"
@@ -76,18 +86,17 @@ function dwld() {
 }
 
 function upld() {
-    if [ -d "$DT/upload" -o -d "$DT/download" ]; then
-        [ -e "$DT/download" ] && t="$(gettext "Downloading")..." || t="$(gettext "Uploading")..."
+    if [ -d "$DT/upload" ]; then
         msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
-        dialog-warning OK "$(gettext "Stop")" "$t"
-        ret="$?"
+        dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" "$(gettext "Uploading")..." "$DT/upload"
+        ret=$?
         if [ $ret -eq 1 ]; then
-            cleanups "$DT/upload" "$DT/download"
-            "$DS/stop.sh" 5
+            cleanups "$DT/upload"; "$DS/stop.sh" 5
+        else
+            return 1
         fi
-        exit 1
     fi
-    
+
     conds_upload() {
         if [ $((cfg3+cfg4)) -lt 8 ]; then
             msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
@@ -119,7 +128,7 @@ function upld() {
         --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
-        --width=490 --height=450 --borders=12 \
+        --width=490 --height=450 --borders=15 \
         --field=" :LBL" "" \
         --field="$(gettext "Category"):CB" "" \
         --field="$(gettext "Skill Level"):CB" "" \
@@ -138,7 +147,7 @@ function upld() {
         --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
-        --width=490 --height=450 --borders=12 --field=" :LBL" "" \
+        --width=490 --height=450 --borders=15 --field=" :LBL" "" \
         --field="$(gettext "Category"):CBE" "$_Categories" \
         --field="$(gettext "Skill Level"):CB" "$_levels" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
@@ -252,7 +261,7 @@ function upld() {
         sv_data
         if [ -d "$DT/export" ]; then
             msg_4 "$(gettext "Wait until it finishes a previous process").\n" \
-            dialog-information OK "$(gettext "Stop")" "$(gettext "Information")"
+            dialog-information "$(gettext "Cancel")" "$(gettext "Stop")" " " "$DT/export"
             ret=$?
             if [ $ret -eq 1 ]; then
                 [ -d "$DT/export" ] && rm -fr "$DT/export"
