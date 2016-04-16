@@ -46,7 +46,7 @@ function msg_4() {
 
 function progress() {
     yad --progress \
-    --progress-text="$1" \
+    --progress-text="${1}" \
     --name=Idiomind --class=Idiomind \
     --undecorated \
     --pulsate --auto-close --on-top \

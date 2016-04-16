@@ -84,7 +84,7 @@ check_index() {
         if [ ! -e "${cfg}" -o ! -s "${cfg}" ]; then
             source "$DS/default/sets.cfg"; > "${cfg}"
             for n in ${psets[@]}; do
-                echo -e "${n}=\"\"" >> "${cfg}"
+                echo -e "${n}=\"FALSE\"" >> "${cfg}"
             done
             sed -i "s/acheck=.*/acheck=\"TRUE\"/g" "${cfg}"
             sed -i "s/repass=.*/repass=\"0\"/g" "${cfg}"
@@ -558,7 +558,7 @@ menu_addons() {
             /usr/share/idiomind/addons/menu_list
         else echo -e "/usr/share/idiomind/images/thumb.png\n${_set}" >> \
             /usr/share/idiomind/addons/menu_list; fi
-    done < <(cd "/usr/share/idiomind/addons/"; set -- */; printf "%s\n" "${@%/}")
+    done < <(cd "/usr/share/idiomind/addons/";set -- */; printf "%s\n" "${@%/}")
 }
 
 stats_dlg() {

@@ -103,46 +103,50 @@ if [[ ${1} = 0 ]]; then
 elif [[ ${1} != 0 ]]; then
     source /usr/share/idiomind/default/c.conf
     sw=620;sh=580; if [[ ${swind} = TRUE ]]; then sw=500;sh=440; fi
-    if [ ! -d "$DT" ]; then
-        ( "$DS/ifs/tls.sh" a_check_updates ) &
-        idiomind -s; sleep 1
-    fi
+
     linkc="http://idiomind.net/${tlng,,}"
     remove_d() {
-        ins="$(cd "/usr/share/idiomind/addons/"
-        set -- */; printf "%s\n" "${@%/}")"
-        old="$(cat "$DC_a/list")"
-        set -e
+        source "$DS/ifs/cmns.sh"
+        ins="$(cd "/usr/share/idiomind/addons/";set -- */; printf "%s\n" "${@%/}")"
+        old="$(cat "$DC_a/menu_list")"
         while read -r _rm; do
             if [ -n "${_rm}" ]; then
-                if [ -d "$DM_tl/${_rm}" ]; then
-                ( echo "5"; sleep 1; rm -fr "$DM_tl/${_rm}"; "$DS/mngr.sh" mkmn 0 ) \
-                | progress "$(gettext "Removing") ${_rm}"
+                if [ -d "$DM_tl/${_rm}"/ ]; then
+                    ( echo "# $(gettext "Removing") ${_rm}"; sleep 1
+                    rm -fr "$DM_tl/${_rm}"/
+                    "$DS/mngr.sh" mkmn 0 ) | \
+                    progress
                 fi
             fi
-        done < <(grep -Fvx "${ins}" <<<"${old}")
-        echo "$ins" > "$DC_a/list"
+        done < <(grep -Fvx "${ins}" <<< "${old}")
+        echo "${ins}" > "$DC_a/menu_list"
     }
-    [ ! -e "$DM_tl/.share/0.cfg" ] && > "$DM_tl/.share/0.cfg"
-    if [ ! -e "$DC_a/list" ]; then
-        echo "$(cd "/usr/share/idiomind/addons/"
-        set -- */; printf "%s\n" "${@%/}")" > "$DC_a/list"
+    
+    if [ ! -e "$DC_a/menu_list" ]; then
+        ins="$(cd "/usr/share/idiomind/addons/";set -- */; printf "%s\n" "${@%/}")"
+        echo "${ins}" > "$DC_a/menu_list"
     fi
+    
+    [ ! -e "$DM_tl/.share/0.cfg" ] && > "$DM_tl/.share/0.cfg"
+
     if [[ -n "$1" ]]; then
     var1="--text=$1\n"
     var2="--image=dialog-information"; else
     #var1="--text=<small><a href='$linkc'>$(gettext "Shared")</a> </small>"
     var1="--center"
     var2="--text-align=right"; fi
-    chk_list_addons1=`wc -l < "$DS_a/menu_list"`
-    chk_list_addons2=$((`wc -l < "$DC_a/list"`*2))
-    chk_list_topics1=`egrep -cv '#|^$' < "$DM_tl/.share/0.cfg"`
+    
+    chk_list_addons1=$(wc -l < "$DS_a/menu_list")
+    chk_list_addons2=$(($(wc -l < "$DC_a/menu_list")*2))
     if [[ ${chk_list_addons1} != ${chk_list_addons2} ]]; then remove_d; fi
-    if [ -e "$DC_s/topics_first_run" -a -z "${1}" ]; then exit 1; fi
+    
+    chk_list_topics1=$(wc -l < "$DM_tl/.share/0.cfg" |sed '/^$/d')
     if [[ $((chk_list_topics1%2)) != 0 ]]; then "$DS/mngr.sh" mkmn 0; fi
+    
+    if [ -e "$DC_s/topics_first_run" -a -z "${1}" ]; then exit 1; fi
 
     tpc=$(cat "$DM_tl/.share/0.cfg" | \
-    yad --list --title="$(gettext "Topics")" "$var1" \
+    yad --list --title="$(gettext "Topics")" "${var1}" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-column=2 --separator="" \
     --window-icon=idiomind \
