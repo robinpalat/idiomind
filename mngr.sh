@@ -143,7 +143,6 @@ delete_item() {
 
 edit_item() {
     [ -z ${2} -o -z ${3} ] && return 1
-    temp="...."
     list="${2}"; item_pos=${3}; text_missing=${4}
     if [ ${list} = 1 ]; then
         index_1="${DC_tlt}/1.cfg"
@@ -154,7 +153,7 @@ edit_item() {
         index_2="${DC_tlt}/1.cfg"
         [ ${item_pos} -lt 1 ] && item_pos=${cfg2}
     fi
-
+    
     item_trgt="$(sed -n ${item_pos}p "${index_1}")"
     edit_pos=$(grep -Fon -m 1 "trgt{${item_trgt}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
     if ! [[ ${edit_pos} =~ ${numer} ]]; then $DS/vwr.sh ${list} "${trgt}" 1 & return; fi
@@ -177,11 +176,11 @@ edit_item() {
     if [ ${text_missing} != 0 ]; then
         type=${text_missing}
     fi
+    temp="...."
     if [[ "${srce}" = "${temp}" ]]; then
         if [ -e "$DT/${trgt}.edit" ]; then
-            msg_4 "$(gettext "Wait till the process is completed.")\n" \
+            msg_4 "$(gettext "Wait till the process is completed...")\n" \
             dialog-information "$(gettext "Cancel")" "$(gettext "Stop")" " " "$DT/${trgt}.edit"
-           
             if [ $? = 1 ]; then
                 srce=""; transl_mark=1; rm -f "$DT/${trgt}.edit"
             else 
@@ -205,7 +204,8 @@ edit_item() {
     
     ret=$?
         if [ -z "${edit_dlg1}" -a -z "${edit_dlg2}" ]; then
-            item_pos=$((item_pos-1)); fi
+            item_pos=$((item_pos-1))
+        fi
         
         if [ ${ret} -eq 0 -o ${ret} -eq 2 ]; then
         
@@ -317,7 +317,7 @@ edit_item() {
 
                 elif [ "${tpc}" = "${tpc_mod}" ]; then
                     cfg0="${DC_tlt}/0.cfg"
-                    pos=${item_pos}
+                    pos=${edit_pos}
                     sed -i "${pos}s|type{$type}|type{$type_mod}|;
                     ${pos}s|srce{$srce}|srce{$srce_mod}|;
                     ${pos}s|exmp{$exmp}|exmp{$exmp_mod}|;
