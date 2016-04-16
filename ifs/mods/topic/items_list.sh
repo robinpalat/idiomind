@@ -1,8 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-sw=600;sh=560; if [[ ${swind} = TRUE ]]; then sw=500;sh=440; fi
-
+sz=(600 560); [[ ${swind} = TRUE ]] && sz=(480 440)
 function vwr() {
     [ ${1} = 1 ] && index="${DC_tlt}/1.cfg" && item_name="$(sed 's/<[^>]*>//g' <<< "${3}")"
     [ ${1} = 2 ] && index="${DC_tlt}/2.cfg" && item_name="$(sed 's/<[^>]*>//g' <<< "${2}")"
@@ -169,7 +168,7 @@ function notebook_1() {
     --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Edit")  " \
-    --width=${sw} --height=${sh} --borders=0 --tab-borders=3 \
+    --width=${sz[0]} --height=${sz[1]} --borders=0 --tab-borders=3 \
     --button="$(gettext "Play")":"$cmd_play" \
     --button="$(gettext "Practice")":3 \
     --button="$(gettext "Close")"!'window-close':2
@@ -216,7 +215,7 @@ function notebook_2() {
     --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Edit")  " \
-    --width=${sw} --height=${sh} --borders=0 --tab-borders=3 \
+    --width=${sz[0]} --height=${sz[1]} --borders=0 --tab-borders=3 \
     --button="$(gettext "Close")"!'window-close':2
 } >/dev/null 2>&1
 

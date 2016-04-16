@@ -65,6 +65,7 @@ set_lang() {
 }
 
 config_dlg() {
+    sz=(470 330); [[ ${swind} = TRUE ]] && sz=(450 310)
     if [ ${cfg} = 1 ]; then
         for get in ${csets[@]}; do
             val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
@@ -135,7 +136,7 @@ config_dlg() {
     --tab-borders=5 --sticky --center \
     --tab="$(gettext "Preferences")" \
     --tab="$(gettext "Extensions")" \
-    --width=470 --height=330 --borders=2 \
+    --width=${sz[0]} --height=${sz[1]} --borders=2 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0
     ret=$?

@@ -102,7 +102,7 @@ if [[ ${1} = 0 ]]; then
 
 elif [[ ${1} != 0 ]]; then
     source /usr/share/idiomind/default/c.conf
-    sw=620;sh=580; if [[ ${swind} = TRUE ]]; then sw=500;sh=440; fi
+    sz=(620 580); [[ ${swind} = TRUE ]] && sz=(450 420)
 
     linkc="http://idiomind.net/${tlng,,}"
     remove_d() {
@@ -153,7 +153,7 @@ elif [[ ${1} != 0 ]]; then
     --text-align=left $var2 --image-on-top \
     --no-headers --ellipsize=END --expand-column=2 \
     --search-column=2 --regex-search --center \
-    --width=${sw} --height=${sh} --borders=8 \
+    --width=${sz[0]} --height=${sz[1]} --borders=8 \
     --column=img:IMG \
     --column=File:TEXT \
     --button="$(gettext "Statistics")":"'$DS/ifs/tls.sh' _stats" \

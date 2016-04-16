@@ -143,7 +143,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
         cut -d ':' -f1 <<< "${line}" |sed 's/\"*//;s/\"$//'
         done < <(sed -n 2p "${file}"|sed 's/},/\n/g'|tr -d '\'|sed '/^$/d')
     }
-
+    sz=(600 560); [[ ${swind} = TRUE ]] && sz=(480 440)
     _lst | yad --list --title="Idiomind" \
     --text="${itxt}" \
     --name=Idiomind --class=Idiomind \
@@ -152,7 +152,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
     --window-icon=idiomind \
     --hide-column=2 --tooltip-column=2 \
     --no-headers --ellipsize=END --center \
-    --width=600 --height=560 --borders=8 \
+    --width=${sz[0]} --height=${sz[2]} --borders=8 \
     --column=" " \
     --button="$(gettext "Install")":0
     ret=$?

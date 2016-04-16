@@ -2,6 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/default/c.conf
+sz=(500 470); [[ ${swind} = TRUE ]] && sz=(420 410)
 source "$DS/ifs/cmns.sh"
 dir="${DC_tlt}/practice"
 dirs="$DS/practice"
@@ -758,7 +759,7 @@ function strt() {
     --window-icon=idiomind \
     --buttons-layout=edge --image-on-top --center --on-top --text-align=center \
     --ellipsize=NONE --no-headers --expand-column=2 --hide-column=1 \
-    --width=500 --height=470 --borders=10 \
+    --width=${sz[0]} --height=${sz[1]} --borders=10 \
     --column="Action" --column="Pick":IMG --column="Label" \
     "a" "$dirs/images/$(< ./.1).png" "   $info1  $(gettext "Flashcards")" \
     "b" "$dirs/images/$(< ./.2).png" "   $info2  $(gettext "Multiple Choice")" \
