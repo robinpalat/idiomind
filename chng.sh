@@ -107,7 +107,7 @@ elif [[ ${1} != 0 ]]; then
     linkc="http://idiomind.net/${tlng,,}"
     remove_d() {
         source "$DS/ifs/cmns.sh"
-        ins="$(cd "/usr/share/idiomind/addons/";set -- */; printf "%s\n" "${@%/}")"
+        ins="$(cd "/usr/share/idiomind/addons/"; set -- */; printf "%s\n" "${@%/}")"
         old="$(cat "$DC_a/menu_list")"
         while read -r _rm; do
             if [ -n "${_rm}" ]; then
@@ -123,7 +123,7 @@ elif [[ ${1} != 0 ]]; then
     }
     
     if [ ! -e "$DC_a/menu_list" ]; then
-        ins="$(cd "/usr/share/idiomind/addons/";set -- */; printf "%s\n" "${@%/}")"
+        ins="$(cd "/usr/share/idiomind/addons/"; set -- */; printf "%s\n" "${@%/}")"
         echo "${ins}" > "$DC_a/menu_list"
     fi
     
@@ -132,8 +132,8 @@ elif [[ ${1} != 0 ]]; then
     if [[ -n "$1" ]]; then
     var1="--text=$1\n"
     var2="--image=dialog-information"; else
-    #var1="--text=<small><a href='$linkc'>$(gettext "Shared")</a> </small>"
-    var1="--center"
+    var1="--text=<small><a href='$linkc'>$(gettext "Shared")</a> </small>"
+    #var1="--center"
     var2="--text-align=right"; fi
     
     chk_list_addons1=$(wc -l < "$DS_a/menu_list")

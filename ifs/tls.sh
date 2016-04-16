@@ -558,7 +558,7 @@ menu_addons() {
             /usr/share/idiomind/addons/menu_list
         else echo -e "/usr/share/idiomind/images/thumb.png\n${_set}" >> \
             /usr/share/idiomind/addons/menu_list; fi
-    done < <(cd "/usr/share/idiomind/addons/";set -- */; printf "%s\n" "${@%/}")
+    done < <(cd "/usr/share/idiomind/addons/"; set -- */; printf "%s\n" "${@%/}")
 }
 
 stats_dlg() {
