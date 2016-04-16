@@ -272,12 +272,15 @@ _restore_backup() {
         "${DM_tl}/${2}/.conf/0.cfg"
     fi
     
-    "$DS/ifs/tls.sh" check_index "${2}" 1
+    cleanups "${DM_tl}/${2}/.conf/1.cfg"
+    $DS/ifs/tls.sh check_index "${2}" 1
+    
     mode="$(< "$DM_tl/${2}/.conf/8.cfg")"
     if ! [[ ${mode} =~ $num ]]; then
         echo 13 > "$DM_tl/${2}/.conf/8.cfg"; mode=13
     fi
-    "$DS/default/tpc.sh" "${2}" ${mode} 1 &
+    
+    "$DS/default/tpc.sh" "${2}" ${mode} 0 &
 } >/dev/null 2>&1
 
 fback() {

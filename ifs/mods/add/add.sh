@@ -38,10 +38,11 @@ function index() {
     if [[ ${1} = edit ]]; then
         DC_tlt="$DM_tl/${2}/.conf"
         sust(){
-            if grep -Fxo "${trgt}" "${1}"; then
-            sed -i "s/${trgt}/${trgt_mod}/" "${1}"
+            if grep -Fxo "${trgt}" "${1}" 1> /dev/null 2>&1; then
+                sed -i "s/^${trgt}$/${trgt_mod}/" "${1}"
             fi
         }
+        
         s=1
         while [ ${s} -le 6 ]; do
             sust "${DC_tlt}/${s}.cfg"

@@ -290,7 +290,6 @@ edit_item() {
                 cdid_mod="$(set_name_file ${type_mod} "${trgt_mod}" "${srce_mod}" \
                 "${exmp_mod}" "${defn_mod}" "${note_mod}" "${wrds_mod}" "${grmr_mod}")"
 
-                [ ${mode} = 14 ] && tpc_mod="${tpc}"
                 if [ "${tpc}" != "${tpc_mod}" ]; then
                     if [ "${audf}" != "${audf_mod}" ]; then
                         if [ ${type_mod} = 1 ]; then
@@ -317,16 +316,17 @@ edit_item() {
 
                 elif [ "${tpc}" = "${tpc_mod}" ]; then
                     cfg0="${DC_tlt}/0.cfg"
-                    pos=${edit_pos}
-                    sed -i "${pos}s|type{$type}|type{$type_mod}|;
-                    ${pos}s|srce{$srce}|srce{$srce_mod}|;
-                    ${pos}s|exmp{$exmp}|exmp{$exmp_mod}|;
-                    ${pos}s|defn{$defn}|defn{$defn_mod}|;
-                    ${pos}s|note{$note}|note{$note_mod}|;
-                    ${pos}s|wrds{$wrds}|wrds{$wrds_mod}|;
-                    ${pos}s|grmr{$grmr}|grmr{$grmr_mod}|;
-                    ${pos}s|mark{$mark}|mark{$mark_mod}|;
-                    ${pos}s|cdid{$cdid}|cdid{$cdid_mod}|g" "${cfg0}"
+                    edit_pos=$(grep -Fon -m 1 "trgt{${trgt_mod}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
+                    if ! [[ ${edit_pos} =~ ${numer} ]]; then $DS/vwr.sh ${list} "${trgt}" 1 & return; fi
+                    sed -i "${edit_pos}s|type{$type}|type{$type_mod}|;
+                    ${edit_pos}s|srce{$srce}|srce{$srce_mod}|;
+                    ${edit_pos}s|exmp{$exmp}|exmp{$exmp_mod}|;
+                    ${edit_pos}s|defn{$defn}|defn{$defn_mod}|;
+                    ${edit_pos}s|note{$note}|note{$note_mod}|;
+                    ${edit_pos}s|wrds{$wrds}|wrds{$wrds_mod}|;
+                    ${edit_pos}s|grmr{$grmr}|grmr{$grmr_mod}|;
+                    ${edit_pos}s|mark{$mark}|mark{$mark_mod}|;
+                    ${edit_pos}s|cdid{$cdid}|cdid{$cdid_mod}|g" "${cfg0}"
                     
                     if [ "${audf}" != "${audf_mod}" ]; then
                         if [ ${type_mod} = 1 ]; then
@@ -367,10 +367,12 @@ edit_item() {
             fi
             [ ${type} != ${type_mod} -a ${type_mod} = 1 ] && ( img_word "${trgt}" "${srce}" ) &
             [ ${colorize_run} = 1 ] && "$DS/ifs/tls.sh" colorize 1 &
-            [ ${to_modify} = 1 -a $ret -eq 0 ] && sleep 0.2
-            
+
             if [ $ret -eq 2 ]; then $DS/mngr.sh edit ${list} $((item_pos+1)) &
-            elif [ $ret -eq 0 ]; then $DS/vwr.sh ${list} "${trgt}" ${item_pos} & fi
+            elif [ $ret -eq 0 ]; then 
+                [ ${to_modify} = 1 -a $ret -eq 0 ] && sleep 0.2
+                $DS/vwr.sh ${list} "${trgt}" ${item_pos} & 
+            fi
         else
             $DS/vwr.sh ${list} "${trgt}" $((item_pos+1)) &
         fi
