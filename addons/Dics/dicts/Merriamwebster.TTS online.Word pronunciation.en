@@ -1,9 +1,8 @@
 #!/bin/bash
 
 if [[ "$1" = dlgcnfg ]]; then
-source "$DS/ifs/cmns.sh"
-msg "$(gettext "Languages"): English
-\n$(gettext "Does not need configuration")\n" dialog-information "$4"
+    source "$DS/ifs/cmns.sh"
+    msg "$(gettext "Languages"): English\n$(gettext "Does not need configuration")\n" dialog-information "$4"
 else
     if [ ${#word} -lt 6 ]; then
         c=0000000

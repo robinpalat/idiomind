@@ -311,13 +311,14 @@ _translation() {
 } >/dev/null 2>&1
 
 _quick_help() {
+    sz=(620 520); [[ ${swind} = TRUE ]] && sz=(520 420)
     _url='http://idiomind.sourceforge.net/doc/help.html'
     yad --html --title="$(gettext "Reference")" \
     --name=Idiomind --class=Idiomind \
     --uri="${_url}" \
     --window-icon=idiomind \
     --fixed --on-top --mouse \
-    --width=620 --height=520 --borders=5 \
+    --width=${sz[0]} --height=${sz[1]} --borders=5 \
     --button="$(gettext "Close")":1 &
 } >/dev/null 2>&1
 

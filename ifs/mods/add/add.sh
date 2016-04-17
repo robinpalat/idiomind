@@ -428,7 +428,8 @@ function tts_word() {
 
 function fetch_audio() {
     if ! ls "$DC_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
-    "$DS_a/Dics/cnfg.sh" 0; fi
+        "$DS_a/Dics/cnfg.sh" 0
+    fi
     [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] \
     && words_list="${2}" || words_list="${1}"
     
@@ -503,11 +504,11 @@ function voice() {
 
 function list_words_2() {
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
-    echo "${1}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
-    |tr -d '*/“”"' |tr '_' '\n' |sed -n 1~2p |sed '/^$/d'
+        echo "${1}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
+        |tr -d '*/“”"' |tr '_' '\n' |sed -n 1~2p |sed '/^$/d'
     else
-    echo "${1}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
-    |tr -d '*/“”"' |tr '_' '\n' |sed -n 1~2p |sed '/^$/d'
+        echo "${1}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
+        |tr -d '*/“”"' |tr '_' '\n' |sed -n 1~2p |sed '/^$/d'
     fi
 }
 

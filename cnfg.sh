@@ -65,7 +65,7 @@ set_lang() {
 }
 
 config_dlg() {
-    sz=(470 330); [[ ${swind} = TRUE ]] && sz=(450 310)
+    sz=(470 330); [[ ${swind} = TRUE ]] && sz=(460 320)
     if [ ${cfg} = 1 ]; then
         for get in ${csets[@]}; do
             val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
@@ -106,8 +106,8 @@ config_dlg() {
     --field="$(gettext "Download audio pronunciation")":CHK "$dlaud" \
     --field="$(gettext "Detect language of source text (slower)")":CHK "$ttrgt" \
     --field="$(gettext "Clipboard watcher")":CHK "$clipw" \
-    --field="$(gettext "Show icon in the notification area (restart)")":CHK "$itray" \
-    --field="$(gettext "Adjust windows size to small screens (restart)")":CHK "$swind" \
+    --field="$(gettext "Show icon in the notification area")":CHK "$itray" \
+    --field="$(gettext "Adjust windows size to small screens")":CHK "$swind" \
     --field="$(gettext "Perform tasks at startup")":CHK "$stsks" \
     --field=" :LBL" " " \
     --field="$(gettext "Languages")\t":LBL " " \

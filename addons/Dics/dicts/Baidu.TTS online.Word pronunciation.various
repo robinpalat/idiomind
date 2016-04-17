@@ -1,9 +1,8 @@
 #!/bin/bash
 
 if [[ "$1" = dlgcnfg ]]; then
-source "$DS/ifs/cmns.sh"
-msg "$(gettext "Languages"): Chinese, English, Japanese, Portuguese, Spanish
-\n$(gettext "Does not need configuration")\n" dialog-information "$4"
+    source "$DS/ifs/cmns.sh"
+    msg "$(gettext "Languages"): Chinese, English, Japanese, Portuguese, Spanish\n$(gettext "Does not need configuration")\n" dialog-information "$4"
 else
     if [ "$lgt" = zh-cn ]; then t=zh
     elif [ "$lgt" = en ]; then t=en

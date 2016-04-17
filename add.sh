@@ -340,7 +340,7 @@ function list_words_dclik() {
 } >/dev/null 2>&1
 
 function process() {
-    echo "$tpe" > "$DT/n_s_pr"
+    echo "${tpe}" > "$DT/n_s_pr"
     export ns=$(wc -l < "${DC_tlt}/0.cfg")
     export db="$DS/default/dicts/$lgt"
     
