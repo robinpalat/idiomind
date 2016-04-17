@@ -16,7 +16,7 @@ function create_db() {
         (month TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT);" |sqlite3 "${db}"
         echo -n "create table if not exists ${wtable} \
         (week TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT, val5 TEXT);" |sqlite3 "${db}"
-        echo -n ${cdate} |tee "${tdate}" "${wdate}"
+        echo -n ${cdate} |tee "${tdate}" "${wdate}" "${no_data}"
     fi
     [ ! -e "${tdate}" ] && echo -n ${cdate} > "${tdate}"
     [ ! -e "${wdate}" ] && echo -n ${cdate} > "${wdate}"
@@ -67,6 +67,12 @@ function save_topic_stats() {
     f2=$(cut -d ',' -f 3 <<< "$rdata"); ! [[ ${f2} =~ $int ]] && f2=0
     f3=$(cut -d ',' -f 4 <<< "$rdata"); ! [[ ${f3} =~ $int ]] && f3=0
     f4=$(cut -d ',' -f 5 <<< "$rdata"); ! [[ ${f4} =~ $int ]] && f4=0
+
+    if [ -f "${no_data}" ] && [[ ${f0} -gt 10 ]]; then
+        rm -f "${no_data}"
+    elif [[ ${f0} -lt 10 ]]; then
+        touch "${no_data}"
+    fi
 
     if [[ "$1" = 1 ]]; then
         if [[ $(sqlite3 ${db} "select month from '${mtable}' where month is '${month}';") ]]; then :
@@ -237,6 +243,7 @@ pross="$DM_tls/data/pre_data"
 wdate="$DM_tls/data/wdate"
 tdate="$DM_tls/data/tdate"
 data="/tmp/.idiomind_stats"
+no_data="${DM_tls}/data/no_data"
 databk="$DM_tls/data/idiomind_stats"
 db="$DM_tls/data/log.db"
 int='^[0-9]+$'
@@ -288,14 +295,18 @@ function stats() {
         [ ! -e "${data}" ] && cp -f "${databk}" "${data}"
         [ ! -e "${pross}" ] && save_topic_stats 0
         mk_topic_stats
-        rm -f "$DT/p_stats"
+        [ -e "$DT/p_stats"  ] && rm "$DT/p_stats"
     fi
-    
-    yad --html --uri="$DS/default/pg1.html" \
-    --title="$(gettext "Stats (beta)")" \
-    --name=Idiomind --class=Idiomind \
-    --browser --encoding=UTF-8 \
-    --orient=vert --window-icon=idiomind --center --on-top \
-    --width=650 --height=410 --borders=0 \
-    --no-buttons
+    if [ -f "${no_data}" ]; then
+        source "$DS/ifs/cmns.sh"
+        msg "$(gettext "Insufficient data")\n" dialog-information " "
+    else
+        yad --html --uri="$DS/default/pg1.html" \
+        --title="$(gettext "Stats (beta)")" \
+        --name=Idiomind --class=Idiomind \
+        --browser --encoding=UTF-8 \
+        --orient=vert --window-icon=idiomind --center --on-top \
+        --width=650 --height=410 --borders=0 \
+        --no-buttons
+    fi
 } >/dev/null 2>&1
