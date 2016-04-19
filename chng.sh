@@ -104,7 +104,6 @@ elif [[ ${1} != 0 ]]; then
     source /usr/share/idiomind/default/c.conf
     sz=(620 580); [[ ${swind} = TRUE ]] && sz=(450 420)
 
-    linkc="http://idiomind.net/${tlng,,}"
     remove_d() {
         source "$DS/ifs/cmns.sh"
         ins="$(cd "/usr/share/idiomind/addons/"; set -- */; printf "%s\n" "${@%/}")"
@@ -132,8 +131,7 @@ elif [[ ${1} != 0 ]]; then
     if [[ -n "$1" ]]; then
     var1="--text=$1\n"
     var2="--image=dialog-information"; else
-    var1="--text=<small><a href='$linkc'>$(gettext "Shared")</a> </small>"
-    #var1="--center"
+    var1="--center"
     var2="--text-align=right"; fi
     
     chk_list_addons1=$(wc -l < "$DS_a/menu_list")
