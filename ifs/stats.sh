@@ -5,8 +5,7 @@ function f_lock() {
     brk=0
     while true; do
         if [ ! -e "${1}" -o ${brk} -gt 20 ]; then touch "${1}" & break
-        elif [ -e "${1}" ]; then sleep 1; fi
-        let brk++
+        elif [ -e "${1}" ]; then sleep 1; fi; let brk++
     done
 }
 
@@ -16,10 +15,10 @@ function create_db() {
         (month TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT);" |sqlite3 "${db}"
         echo -n "create table if not exists ${wtable} \
         (week TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT, val5 TEXT);" |sqlite3 "${db}"
-        echo -n ${cdate} |tee "${tdate}" "${wdate}" "${no_data}"
+        echo -n "create table if not exists 'expire_month' (date TEXT);" |sqlite3 "${db}"
+        echo -n "create table if not exists 'expire_week' (date TEXT);" |sqlite3 "${db}"
+        touch "${no_data}"
     fi
-    [ ! -e "${tdate}" ] && echo -n ${cdate} > "${tdate}"
-    [ ! -e "${wdate}" ] && echo -n ${cdate} > "${wdate}"
 }
 
 function save_topic_stats() {
@@ -77,9 +76,9 @@ function save_topic_stats() {
     if [[ "$1" = 1 ]]; then
         if [[ $(sqlite3 ${db} "select month from '${mtable}' where month is '${month}';") ]]; then :
         else
+            dte=$(sqlite3 ${db} "select date from 'expire_month';")
             sqlite3 ${db} "insert into ${mtable} (month,val0,val1,val2,val3,val4) \
             values ('${month}','${f0}','${f1}','${f2}','${f3}','${f4}');"
-            echo -n ${cdate} > "${tdate}"
         fi
     fi
     echo "${f0},${f1},${f2},${f3},${f4}" > "${pross}"
@@ -140,9 +139,10 @@ function save_word_stats() {
         D3=$(cut -d ',' -f 4 <<< "${rdata}"); ! [[ ${D3} =~ $int ]] && D3=0
         D4=$(cut -d ',' -f 5 <<< "${rdata}"); ! [[ ${D4} =~ $int ]] && D4=0
         D5=$(cut -d ',' -f 6 <<< "${rdata}"); ! [[ ${D5} =~ $int ]] && D5=0
+        
+        dte=$(sqlite3 ${db} "select date from 'expire_month';")
         sqlite3 "${db}" "insert into ${wtable} (week,val0,val1,val2,val3,val4,val5) \
         values ('${week^}','${D0}','${D1}','${D2}','${D3}','${D4}','${D5}');"
-        echo -n ${cdate} > "${wdate}"
     fi
 }
 
@@ -240,8 +240,6 @@ function mk_topic_stats() {
 }
 
 pross="$DM_tls/data/pre_data"
-wdate="$DM_tls/data/wdate"
-tdate="$DM_tls/data/tdate"
 data="/tmp/.idiomind_stats"
 no_data="${DM_tls}/data/no_data"
 databk="$DM_tls/data/idiomind_stats"
@@ -257,25 +255,29 @@ dmonth=$(date +%m)
 cdate=$(date +%m/%d/%Y)
 create_db
 
+function chktb() {
+    atable=$1; days=$2
+    dte=$(sqlite3 ${db} "select date from '${atable}';")>/dev/null 2>&1
+    if ! [[ ${dte} =~ ^[0-9]{2}/[0-9]{2}/[0-9]{4}$ ]]; then
+        if [ -z "${dte}" ]; then
+            sqlite3 "${db}" "insert into '${atable}' (date) values ('${cdate}');">/dev/null 2>&1
+        else
+            sqlite3 ${db} "update '${atable}' set date='${cdate}' where date='${dte}';">/dev/null 2>&1
+        fi
+        echo 1
+    else
+        if [ $((($(date +%s)-$(date -d ${dte} +%s))/(24*60*60))) -gt ${days} ]; then
+        sqlite3 ${db} "update '${atable}' set date='${cdate}' where date='${dte}';">/dev/null 2>&1; echo 0
+        else echo 1; fi
+    fi
+}
+
 function pre_comp() {
     f_lock "$DT/p_stats"
     val1=0; val2=0
     
-    if [ -e "${tdate}" ]; then
-        dte=$(< "${tdate}")
-        if [ $((($(date +%s)-$(date -d ${dte} +%s))/(24*60*60))) -gt 31 ]; then
-            rm -f "${tdate}"
-        fi
-    fi
-    if [ -e "${wdate}" ]; then
-        dte=$(< "${wdate}")
-        if [ $((($(date +%s)-$(date -d ${dte} +%s))/(24*60*60))) -gt 7 ]; then
-            rm -f "${wdate}"
-        fi
-    fi
-    
-    [ ${dtmnth} = 01 -o ! -e "${tdate}" ] && val1=1
-    [ ${dtweek} = 0 -o ! -e "${wdate}" ] && val2=1
+    [ ${dtmnth} = 01 -o $(chktb 'expire_month' 31) = 0 ] && val1=1
+    [ ${dtweek} = 0 -o $(chktb 'expire_week' 7) = 0 ] && val2=1
 
     if [ ${val1} = 1 -a ${val2} != 1 ]; then
         save_topic_stats 1
