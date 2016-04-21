@@ -14,9 +14,9 @@ while read -r _item; do
     fi
 done < "${DC_tlt}/0.cfg"
 if [ -e "$DT/export/txt" ]; then
-cat "$DT/export/txt" > "$file"
+    cat "$DT/export/txt" > "$file"
 else
-msg "$(gettext "Words not found in the topic.")\n" error "$(gettext "Information")"
+    msg "$(gettext "Not enough words")\n" dialog-warning "$(gettext "Information")"
 fi
 
 mv -f "$file" "${1}.csv"

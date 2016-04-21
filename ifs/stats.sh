@@ -275,6 +275,8 @@ function chktb() {
 function pre_comp() {
     f_lock "$DT/p_stats"
     val1=0; val2=0
+    echo -n "create table if not exists 'expire_month' (date TEXT);" |sqlite3 "${db}"
+    echo -n "create table if not exists 'expire_week' (date TEXT);" |sqlite3 "${db}"
     
     [ ${dtmnth} = 01 -o $(chktb 'expire_month' 31) = 0 ] && val1=1
     [ ${dtweek} = 0 -o $(chktb 'expire_week' 7) = 0 ] && val2=1

@@ -4,7 +4,7 @@ source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 
 if [[ $(wc -l < "$DC_tlt/3.cfg") -lt 2 ]]; then
-msg "$(gettext "Words not found in the topic.")\n" error "$(gettext "Information")" & exit 1
+    msg "$(gettext "Not enough words")\n" dialog-warning "$(gettext "Information")" & exit 1
 fi
 
 word_examen() {
