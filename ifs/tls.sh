@@ -310,7 +310,7 @@ _translation() {
     xdg-open "https://translate.google.com/#$lgt/$lgs/${2}"
 } >/dev/null 2>&1
 
-_quick_help() {
+_help() {
     sz=(620 520); [[ ${swind} = TRUE ]] && sz=(520 420)
     _url='http://idiomind.sourceforge.net/doc/help.html'
     yad --html --title="$(gettext "Reference")" \
@@ -575,6 +575,7 @@ colorize() {
     source "$DS/ifs/cmns.sh"
     f_lock "$DT/co_lk"
     rm "${DC_tlt}/5.cfg"
+    touch "${DM_tlt}"
     check_file "${DC_tlt}/1.cfg" "${DC_tlt}/6.cfg" "${DC_tlt}/9.cfg"
     if [[ $(egrep -cv '#|^$' < "${DC_tlt}/9.cfg") -ge 4 ]] \
     && [[ $(grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg") = TRUE ]] \
@@ -842,7 +843,7 @@ case "$1" in
     add_audio)
     add_audio "$@" ;;
     help)
-    _quick_help ;;
+    _help ;;
     check_updates)
     check_updates ;;
     a_check_updates)
