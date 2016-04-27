@@ -392,7 +392,7 @@ first_run() {
         --button="$(gettext "OK")":0
         [ $? = 1 ] && rm -f "${file}" "${file}".p
     }
-    NOTE2="$(gettext "You can move any item by dragging and dropping or double click to edit it.\nIf you change the text of an item, its audio file can be overwritten by another new file, to avoid this you can edit it individually through its edit dialog.\nClose and reopen the main window to see any changes.")\n"
+    NOTE2="$(gettext "If you change the text of an item, its audio file can be overwritten by another new file, to avoid this you can edit it individually through its edit dialog.\nClose and reopen the main window to see any changes.")\n"
     NOTE3="$(gettext "To start adding notes you need to have a Topic.\nTo create one you can click on the New button...")"
 
     if [[ ${2} = edit_list ]]; then

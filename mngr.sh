@@ -392,13 +392,12 @@ edit_list() {
         else
             cols2=""
         fi
-        more="$(echo -e "${cols1}${cols2}" |awk '{print "FALSE\n"$0}' \
-        |sed '/^$/d' |yad --list --radiolist --title="$(gettext "Tools")"\
+        more="$(echo -e "${cols1}${cols2}" |sed '/^$/d' \
+        |yad --list --title="$(gettext "Tools")"\
         --name=Idiomind --class=Idiomind \
         --expand-column=2 --no-click \
         --window-icon=idiomind --on-top --center \
         --width=470 --height=250 --borders=3 \
-        --column="":RD \
         --column="$(gettext "Options")":TXT \
         --button="$(gettext "Cancel")":1 \
         --button="$(gettext "OK")":0)"
