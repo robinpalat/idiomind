@@ -55,19 +55,19 @@ function comp() {
         > ./${practice}.2
         > ./${practice}.3
     fi
-    cat *.1 > ./log1
+    cat ./*.1 > ./log1
     if [ ${step} = 1 ]; then
-        cat *.2 > ./log2
+        cat ./*.2 > ./log2
     elif [ ${step} = 2 ]; then
-        cat *.2 > ./log2
-        cat *.3 > ./log3
+        cat ./*.2 > ./log2
+        cat ./*.3 > ./log3
     fi
 }
 
 function _log() { 
-    if [ ${mode} -le 1 -a ${1} != 'e' ]; then
+    if [[ ${mode} -le 1 ]] && [ ${1} != 'e' ]; then
         [ -e ./${1}.1 ] && echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1" |sed '/\.\./d' >> "$log"
-    elif [ ${mode} -gt 1 -a ${1} != 'e' ]; then
+    elif [[ ${mode} -gt 1 ]] && [ ${1} != 'e' ]; then
         [ -e ./${1}.2 ] && echo "w2.$(tr -s '\n' '|' < ./${1}.2).w2" |sed '/\.\./d' >> "$log"
         [ -e ./${1}.3 ] && echo "w3.$(tr -s '\n' '|' < ./${1}.3).w3" |sed '/\.\./d' >> "$log"
     elif [ ${1} = 'e' ]; then
@@ -349,7 +349,7 @@ function practice_d() {
         --image="$img" \
         --skip-taskbar --text-align=center --align=center --center --on-top \
         --image-on-top --undecorated --buttons-layout=spread \
-        --width=418 --height=370 --borders=5 \
+        --width=418 --height=360 --borders=5 \
         --field="$cuest":lbl "" \
         --button="$(gettext "Exit")":1 \
         --button="  $(gettext "Continue") >>  !$img_cont":0
@@ -361,7 +361,7 @@ function practice_d() {
         --selectable-labels \
         --skip-taskbar --text-align=center --align=center --center --on-top \
         --image-on-top --undecorated --buttons-layout=spread \
-        --width=418 --height=370 --borders=5 \
+        --width=418 --height=360 --borders=5 \
         --field="$aswer":lbl "" \
         --button="$(gettext "I did not know it")!$img_no":3 \
         --button="$(gettext "I Knew it")!$img_yes":2
@@ -698,6 +698,21 @@ function practices() {
     elif [ $practice = d ]; then icon=4
     elif [ $practice = e ]; then icon=5
     else exit; fi
+    
+    if [ -e ./"${VAR}.0" ]; then :
+        else
+        
+        yad --form --title="$(gettext "Practice")" \
+        --text="Comenzando\n" --fullscreen \
+        --skip-taskbar --center --on-top \
+        --width=400 --height=250 --borders=10 \
+        --field="Practicar todo (125 palabras)":CHK "$cmd_play" \
+        --field="Preguntas en español":CHK "$cmd_play" \
+        --field="Practicar aprendiendo":CHK "$cmd_play" \
+        --button="Cancelar":3 \
+        --button="Comenzar":2
+    fi
+    
     lock
     
     if [ -e "$dir/${practice}.0" -a -e "$dir/${practice}.1" ]; then
@@ -737,7 +752,7 @@ function strt() {
     [ ! -e ./.5 ] && echo 1 > .5
     [[ ${hard} -lt 0 ]] && hard=0
     if [[ ${step} -gt 1 && ${ling} -ge 1 && ${hard} = 0 ]]; then
-        echo -e "wait=\"`date +%d`\"" > ./${practice}.lock; fi
+        echo -e "wait=\"$(date +%d)\"" > ./${practice}.lock; fi
 
     if [ ${1} = 1 ]; then
         NUMBER="<span color='#6E6E6E'><b><big>$(wc -l < ${practice}.0)</big></b></span>"; declare info${icon}="<span font_desc='Arial Bold 12'>$(gettext "Test completed") </span> —"
@@ -784,7 +799,7 @@ function strt() {
         fi
     elif [ $ret -eq 3 ]; then
         if [ -d "${dir}" ]; then
-        cd "${dir}"; rm .*; rm *
+        cd "${dir}"/; rm ./.[^.]; rm ./*
         touch ./log1 ./log2 ./log3; fi
         strt 0
     else

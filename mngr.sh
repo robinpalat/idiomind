@@ -431,14 +431,16 @@ edit_list() {
     }
 
     if [ -e "$DT/items_to_add" -o -e "$DT/el_lk" ]; then
-        msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
-        dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" " " "$DT/el_lk"
-        ret=$?
-        if [ $ret -eq 1 ]; then
-            cleanups "$DT/items_to_add" "$DT/el_lk"
-        else
-            exit 1
+        if [ -e "$DT/items_to_add" ]; then
+            msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
+            dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" " " "$DT/items_to_add"
+            ret=$?
+        elif [ -e "$DT/el_lk" ]; then
+            msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
+            dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" " " "$DT/el_lk"
+            ret=$?
         fi
+        if [ $ret -eq 1 ]; then cleanups "$DT/items_to_add" "$DT/el_lk"; else exit 1; fi
     fi
     if [ -e "$DC_s/elist_first_run" ]; then 
         "$DS/ifs/tls.sh" first_run edit_list &
