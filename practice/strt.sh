@@ -776,6 +776,10 @@ function strt() {
         msg " $(gettext "You must choose a practice.")\n" dialog-information
         strt 0
         else
+            if [ -e ./"${VAR}.0" ]; then :
+            else
+                starting
+            fi
         practices ${VAR}
         fi
     elif [ $ret -eq 3 ]; then

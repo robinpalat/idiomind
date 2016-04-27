@@ -382,7 +382,7 @@ edit_item() {
 edit_list() {
     dlg_more() {
         file="$HOME/.idiomind/backup/${tpc}.bk"
-        cols1="$(gettext "Reverse items order")\n$(gettext "Remove all items")\n$(gettext "Display sentences of less than 5 words in word's view")\n$(gettext "Translate source language")"
+        cols1="$(gettext "Reverse items order")\n$(gettext "Remove all items")\n$(gettext "Restart topic's status")\n$(gettext "Add feed")\n$(gettext "Display sentences of less than 5 words in word's view")\n$(gettext "Translate source language")"
         dt1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
         dt2=$(grep '\----- oldest' "${file}" |cut -d' ' -f3)
         if [ -n "$dt2" ]; then
@@ -408,6 +408,10 @@ edit_list() {
                 return 2
             elif grep "$(gettext "Remove all items")" <<< "${more}"; then
                 return 7
+            elif grep "$(gettext "Restart topic's status")" <<< "${more}"; then
+                return 8
+            elif grep "$(gettext "Add feed")" <<< "${more}"; then
+                return 9
             elif grep "$(gettext "Display sentences of less than 5 words in word's view")" <<< "${more}"; then
                 return 4
             elif grep "$(gettext "Translate source language")" <<< "${more}"; then
@@ -492,6 +496,22 @@ edit_list() {
             if [ $? = 0 ]; then cleanups "${direc}/0.cfg" "${direc}/1.cfg" "${direc}/2.cfg" \
             "${direc}/3.cfg" "${direc}/4.cfg" "${direc}/5.cfg" "${direc}/6.cfg"
             [ -n "${2}" ] && rm "$DM_tl/${2}"/*.mp3; fi
+            ret=1
+        elif [ $ret = 8 ]; then
+            msg_2 "$(gettext "Are you sure you want to do this?")\n" \
+            dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
+            if [ $? = 0 ]; then cleanups "${direc}/1.cfg" "${direc}/2.cfg" "${direc}/7.cfg" 
+                echo 1 > "${direc}/8.cfg"; > "${direc}/9.cfg"
+                while read -r item_; do
+                    item="$(sed 's/}/}\n/g' <<< "${item_}")"
+                    trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
+                    [ -n "${trgt}" ] && echo "${trgt}" >> "${DC_tlt}/1.cfg"
+                done < "${DC_tlt}/0.cfg"
+                "$DS/mngr.sh" mkmn 1; "$DS/ifs/tls.sh" colorize 0
+            fi
+            ret=1
+        elif [ $ret = 9 ]; then
+            idiomind feeds
             ret=1
         fi
 
