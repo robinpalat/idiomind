@@ -59,7 +59,7 @@ function dlg_form_2() {
 
 function edit_list_list() {
     yad --list --title="$(gettext "Edit list")" \
-    --text="$(gettext "Double click to edit, drag and drop to move, right click to show menu.")" \
+    --text="$(gettext "Double click to edit, drag and drop to move, right-click to display menu.")" \
     --name=Idiomind --class=Idiomind \
     --editable --separator='' \
     --always-print-result --print-all \
@@ -79,7 +79,7 @@ function edit_feeds_list() {
     --editable --separator='\n' \
     --always-print-result --print-all \
     --window-icon=idiomind \
-    --no-headers --center \
+    --limit=3 --no-headers --center \
     --width=550 --height=160 --borders=3 \
     --column="" \
     --button="$(gettext "Cancel")":1 \
