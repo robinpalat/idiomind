@@ -4,7 +4,7 @@
 function dlg_form_1() {
     cmd_play="$DS/play.sh play_word "\"${trgt}\"" ${cdid}"
     [ -z "${trgt}" ] && trgt="${item_id}"
-    yad --form --title="$(gettext "Edit")" \
+    yad --form --title="$(gettext "Edit") - $(gettext "Note") ${edit_pos}" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all \
     --separator="|" --selectable-labels \
@@ -36,17 +36,18 @@ function dlg_form_2() {
     [ -z "${trgt}" ] && trgt="${item_id}"
     else t=LBL; fi
     cmd_play="$DS/play.sh play_sentence ${cdid}"
-    yad --form --title="$(gettext "Edit")" \
+    yad --form --title="$(gettext "Edit") - $(gettext "Note") ${edit_pos}" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all \
     --separator="|" --selectable-labels \
     --window-icon=idiomind \
     --buttons-layout=end --align=right --on-top --center \
-    --width=650 --height=420 --borders=10 \
+    --width=650 --height=480 --borders=10 \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field=" $lbl_2":${t} "$type" \
     --field="$tlng":TXT "${trgt}" \
     --field="$slng":TXT "${srce}" \
+    --field="$(gettext "Note")":TXT "${note}" \
     --field="$(gettext "Go to Google Translate")":FBTN "${cmd_trad}" \
     --field="\t\t\t$(gettext "Topic")":CB "${tpc_list}" \
     --field="$(gettext "Audio")":FL "${audf}" \
@@ -65,7 +66,7 @@ function edit_list_list() {
     --always-print-result --print-all \
     --window-icon=idiomind \
     --no-headers --center \
-    --width=560 --height=350 --borders=3 \
+    --width=580 --height=350 --borders=3 \
     --column="" \
     --button="$(gettext "More")":5 \
     --button="$(gettext "Save")!gtk-save":0 \

@@ -412,8 +412,7 @@ fdlg() {
 }
 
 _export() {
-    dlg="$(fdlg)"
-    ret=$?
+    dlg="$(fdlg)"; ret=$?
     if [ $ret -eq 0 ]; then
         "$DS/ifs/mods/export/$(head -n 1 <<< "$dlg").sh" \
         "$(tail -n 1 <<< "$dlg")" "${tpc}" & exit 0

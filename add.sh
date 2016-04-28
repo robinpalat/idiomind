@@ -218,7 +218,7 @@ function list_words_edit() {
     if [ $? -eq 0 ]; then
         while read -r chkst; do
             if [ -n "$chkst" ]; then
-            sed 's/TRUE//;s/<[^>]*>//g;s/|//g' <<< "${chkst}" >> "$DT_r/slts"
+            sed 's/TRUE//;s/<[^>]*>//g;s/|//g' <<< "${chkst}" >> "$DT_r/select_lines"
             fi
         done <<< "${slt}"
     fi
@@ -227,7 +227,7 @@ function list_words_edit() {
     while read -r trgt; do
         if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
             echo -e "\n\n$n) [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> "${DC_tlt}/err"
-        elif [ -z "$(< "$DT_r/slts")" ]; then
+        elif [ -z "$(< "$DT_r/select_lines")" ]; then
             cleanups "${DT_r}"; exit 0
         else
             export trgt="$(clean_1 "${trgt}")"
@@ -250,7 +250,7 @@ function list_words_edit() {
             fi
         fi
         let n++
-    done < <(head -200 < "$DT_r/slts")
+    done < <(head -200 < "$DT_r/select_lines")
 
     cleanups "${DT_r}"; exit 0
     
@@ -269,7 +269,7 @@ function list_words_sentence() {
         if [ $? -eq 0 ]; then
             while read -r chkst; do
                 if [ -n "$chkst" ]; then
-                sed 's/TRUE//;s/<[^>]*>//g;s/|//g' <<< "${chkst}" >> "$DT_r/slts"
+                sed 's/TRUE//;s/<[^>]*>//g;s/|//g' <<< "${chkst}" >> "$DT_r/select_lines"
                 fi
             done <<< "${slt}"
         elif [ $? -eq 1 ]; then
@@ -277,12 +277,12 @@ function list_words_sentence() {
             cleanups "$DT_r"
             exit 1
         fi
-    [ ! -e "$DT_r/slts" ] && return 1
+    [ ! -e "$DT_r/select_lines" ] && return 1
     n=1
     while read -r trgt; do
         if [ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]; then
             echo -e "\n$trgt" >> "${DC_tlt}/err"
-        elif [ -z "$(< "$DT_r/slts")" ]; then
+        elif [ -z "$(< "$DT_r/select_lines")" ]; then
             cleanups "${DT_r}"; exit 0
         else
             export trgt="$(clean_1 "${trgt}")"
@@ -304,7 +304,7 @@ function list_words_sentence() {
             fi
         fi
         let n++
-    done < <(head -200 < "$DT_r/slts")
+    done < <(head -200 < "$DT_r/select_lines")
 
     cleanups "$DT_r"; exit 0
 }
@@ -356,77 +356,86 @@ function process() {
     fi
     include "$DS/ifs/mods/add_process"
     
-    if [[ $1 = image ]]; then
-        pars=`mktemp`
-        trap rm "$pars*" EXIT
-        scrot -s "$DT_r/img_.png"
-        /usr/bin/convert "$DT_r/img_.png" -shave 1x1 "$pars.png"
-        ( echo "1"
-        echo "# $(gettext "Processing")..." ;
-        mogrify -modulate 100,0 -resize 400% "$pars.png"
-        tesseract "$pars.png" "$pars" -l ${tesseract_lngs[$tlng]} &> /dev/null
-        if [ $? != 0 ]; then
-        info="$(gettext "Failed loading language")\nPlease install <b>tesseract-ocr-${tesseract_lngs[$tlng]}</b> package"
-        msg "${info}" error Error; fi
-        clean_6 < "$pars.txt" > "$DT_r/sntsls_"
-        rm -f "$pars".png "$DT_r"/img_.png
-        ) | dlg_progress_1
-    else
-        if [[ ${#conten} = 1 ]]; then
-        cleanups "$DT_r" "$DT/n_s_pr"; exit 1; fi
-        ( echo "1"
-        echo "# $(gettext "Processing")..." ;
-        if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
-            echo "${conten}" |clean_7 > "$DT_r/sntsls_"; epa=0
+    if [[ $conten != '__edit__' ]]; then
+    
+        if [[ $1 = image ]]; then
+            pars=`mktemp`
+            trap rm "$pars*" EXIT
+            scrot -s "$DT_r/img_.png"
+            /usr/bin/convert "$DT_r/img_.png" -shave 1x1 "$pars.png"
+            ( echo "# $(gettext "Processing")..."
+            mogrify -modulate 100,0 -resize 400% "$pars.png"
+            tesseract "$pars.png" "$pars" -l ${tesseract_lngs[$tlng]} &> /dev/null
+            if [ $? != 0 ]; then
+                info="$(gettext "Failed loading language")\nPlease install <b>tesseract-ocr-${tesseract_lngs[$tlng]}</b> package"
+                msg "${info}" error Error
+            fi
+            clean_6 < "$pars.txt" > "$DT_r/xxlines"
+            rm -f "$pars".png "$DT_r"/img_.png
+            ) | dlg_progress_1
         else
-            echo "${conten}" |clean_8 > "$DT_r/sntsls_"; epa=1
+            if [[ ${#conten} = 1 ]]; then
+                cleanups "$DT_r" "$DT/n_s_pr"; return 1; 
+            fi
+
+            if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
+                echo "${conten}" |clean_7 > "$DT_r/xxlines"; epa=0
+            else
+                echo "${conten}" |clean_8 > "$DT_r/xxlines"; epa=1
+            fi
+            
         fi
-        ) | dlg_progress_1
-    fi
-    [ -e "$DT_r/sntsls" ] && rm -f "$DT_r/sntsls"
-    if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
-        lenght() {
-            if [ $(wc -c <<< "${1}") -le ${sentence_chars} ]; then
-                echo -e "${1}" >> "$DT_r/sntsls"
-            else
-                echo -e "[ ... ]  ${1}" >> "$DT_r/sntsls"
-            fi
-        }
-    else
-        lenght() {
-            if [ $(wc -c <<< "${1}") -le ${sentence_chars} ]; then
-                [ ${#1} -gt 1 ] && echo -e "${1}" >> "$DT_r/sntsls"
-            else
-                echo -e "[ ... ]  ${1}" >> "$DT_r/sntsls"
-            fi
-        }
-    fi
-    if [ ${#@} -lt 4 ]; then
-        while read l; do
-            if [ $(wc -c <<< "${l}") -gt 140 ]; then
-                if grep -o -E '\,|\;' <<< "${l}" >/dev/null 2>&1; then
-                    while read -r split; do
-                        if [ $(wc -c <<< "${split}") -le 140 ]; then
-                            lenght "${split}"
-                        else
-                            while read -r split2; do
-                                lenght "${split2}"
-                            done < <(sed 's/;/ \n/g' <<< "${split}") # TODO
-                        fi
-                    done < <(sed 's/,/ \n/g' <<< "${l}") # TODO
+        
+        [ -e "$DT_r/xlines" ] && rm -f "$DT_r/xlines"
+        if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
+            lenght() {
+                if [ $(wc -c <<< "${1}") -le ${sentence_chars} ]; then
+                    echo -e "${1}" >> "$DT_r/xlines"
+                else
+                    echo -e "[ ... ]  ${1}" >> "$DT_r/xlines"
+                fi
+            }
+        else
+            lenght() {
+                if [ $(wc -c <<< "${1}") -le ${sentence_chars} ]; then
+                    [ ${#1} -gt 1 ] && echo -e "${1}" >> "$DT_r/xlines"
+                else
+                    echo -e "[ ... ]  ${1}" >> "$DT_r/xlines"
+                fi
+            }
+        fi
+        
+        if [ ${#@} -lt 4 ]; then
+            while read l; do
+                if [ $(wc -c <<< "${l}") -gt 140 ]; then
+                    if grep -o -E '\,|\;' <<< "${l}" >/dev/null 2>&1; then
+                        while read -r split; do
+                            if [ $(wc -c <<< "${split}") -le 140 ]; then
+                                lenght "${split}"
+                            else
+                                while read -r split2; do
+                                    lenght "${split2}"
+                                done < <(sed 's/;/ \n/g' <<< "${split}") # TODO
+                            fi
+                        done < <(sed 's/,/ \n/g' <<< "${l}") # TODO
+                    else
+                        lenght "${l}"
+                    fi
                 else
                     lenght "${l}"
                 fi
-            else
-                lenght "${l}"
-            fi
-        done < "$DT_r/sntsls_"
+            done < "$DT_r/xxlines"
 
-    else mv "$DT_r/sntsls_" "$DT_r/sntsls"; fi
+        else 
+            mv "$DT_r/xxlines" "$DT_r/xlines"
+        fi
+    else 
+        echo "${2}" > "$DT_r/xlines"
+    fi
 
-    sed -i '/^$/d' "$DT_r/sntsls"
+    sed -i '/^$/d' "$DT_r/xlines"
 
-    if [ -z "$(< "$DT_r/sntsls")" ]; then
+    if [ -z "$(< "$DT_r/xlines")" ]; then
         msg "$(gettext "Failed to get text.")\n" \
         dialog-information "$(gettext "Information")"
         cleanups "$DT_r" "$DT/n_s_pr" "$slt" & exit 1
@@ -435,22 +444,22 @@ function process() {
         export slt=$(mktemp $DT/slt.XXXX.x)
         export tpcs="$(grep -vFx "${tpe}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
         [ -n "$tpcs" ] && export e='!'
-        tpe=`dlg_checklist_3 "$DT_r/sntsls" "${tpe}"`
+        tpe=`dlg_checklist_3 "$DT_r/xlines" "${tpe}"`
         ret="$?"
     fi
     if [ $ret -eq 2 ]; then
         cleanups "$slt"
-        txt="$(dlg_text_info_1 "$DT_r/sntsls")"
+        txt="$(dlg_text_info_1 "$DT_r/xlines")"
             ret=$?
             if [ $ret -eq 0 ]; then
-                unset trgt; process "${txt}"
+                unset trgt; process __edit__ "${txt}"
             else
-                unset trgt; process "$(< "$DT_r/sntsls")"
+                unset trgt; process "$(< "$DT_r/xlines")"
             fi
     
     elif [ $ret -eq 0 ]; then
         unset link
-        touch "$DT_r/slts"
+        touch "$DT_r/select_lines"
         if [ "${tpe}" = "$(gettext "New") *" ]; then
             "$DS/add.sh" new_topic
             source $DS/default/c.conf
@@ -464,17 +473,17 @@ function process() {
             cleanups "$DT_r" "$DT/n_s_pr" "$slt" & exit 1
         fi
         while read -r chkst; do
-            [ -n "$chkst" ] && sed 's/TRUE//g;s/|//g' <<< "${chkst}" >> "$DT_r/slts"
+            [ -n "$chkst" ] && sed 's/TRUE//g;s/|//g' <<< "${chkst}" >> "$DT_r/select_lines"
         done < "${slt}"
         cleanups "$slt"
 
         touch "$DT_r/wlog" "$DT_r/slog" "$DT_r/adds" \
         "$DT_r/addw" "$DT_r/wrds"
         
-        cnta=$(sed '/^$/d' "$DT_r/slts" |wc -l)
+        cnta=$(sed '/^$/d' "$DT_r/select_lines" |wc -l)
         cntb=$(sed '/^$/d' "$DT_r/wrds" |wc -l)
         
-        if [ -n "$(< "$DT_r/slts")" -o -n "$(< "$DT_r/wrds")" ]; then
+        if [ -n "$(< "$DT_r/select_lines")" -o -n "$(< "$DT_r/wrds")" ]; then
             number_items=$((cnta+cntb))
             ( sleep 1; notify-send -i idiomind \
             "$(gettext "Adding $number_items notes")" \
@@ -485,7 +494,7 @@ function process() {
         
         internet
         [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w
-        lns="$(cat "$DT_r/slts" "$DT_r/wrds" |sed '/^$/d' |wc -l)"
+        lns="$(cat "$DT_r/select_lines" "$DT_r/wrds" |sed '/^$/d' |wc -l)"
         
         n=1
         while read -r trgt; do
@@ -559,7 +568,7 @@ function process() {
             prg=$((100*n/lns-1))
             echo "$prg"; echo "# ${trgt:0:35}... " ;
             let n++
-        done < <(head -200 < "$DT_r/slts")
+        done < <(head -200 < "$DT_r/select_lines")
         
         if [ -s "$DT_r/wrds" ]; then
             n=1
@@ -586,7 +595,7 @@ function process() {
                         cleanups "${DM_tlt}/$cdid.mp3"
                     fi
                 fi
-                nn=$((n+$(wc -l < "$DT_r/slts")-1))
+                nn=$((n+$(wc -l < "$DT_r/select_lines")-1))
                 prg=$((100*nn/lns))
                 echo "$prg"
                 echo "# ${trgt:0:35}... " ;
@@ -708,7 +717,7 @@ new_items() {
     fi
 
     [ -z "${4}" ] && txt="$(xclip -selection primary -o)" || txt="${4}"
-    trgt="$(clean_4 "${txt}")"
+    export trgt="$(clean_4 "${txt}")"
     
     [ -d "${2}" ] && DT_r="${2}"
     [ -n "${5}" ] && srce="${5}" || srce=""

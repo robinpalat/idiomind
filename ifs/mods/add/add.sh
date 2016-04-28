@@ -241,13 +241,13 @@ function clean_1() {
 
 function clean_2() {
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
-    echo "${1}" |sed 's/\\n/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
+    echo "${1}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
     |sed "s/’/'/g" |sed 's/quot\;/"/g' \
     |tr -s '/' '-' |tr -d ':\*' |tr -s '*&|{}[]<>+' ' ' \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g;s/<[^>]*>//g;s/^\s*./\U&\E/g'
     else
-    echo "${1}" |sed 's/\\n/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
+    echo "${1}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
     |sed "s/’/'/g" |sed 's/quot\;/"/g' \
     |tr -s ':\*&|{}[]<>+' ' ' \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
@@ -267,15 +267,15 @@ function clean_3() {
 function clean_4() {
     if [ $(wc -c <<< "${1}") -le ${sentence_chars} ] && \
     [ $(echo -e "${1}" |wc -l) -gt ${sentence_lines} ]; then
-    echo "${1}" | tr -d '*/"' |tr -s '&:|{}[]<>+' ' ' \
-    |sed 's/ — / - /;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
+    echo "${1}" | tr -d '*/' |tr -s '&:|{}[]<>+' ' ' \
+    |sed 's/ — / - /;s/--/ /g; /^$/d;s/ \+/ /g;s/ʺͶ//;s/	/ /g'
     elif [ $(wc -c <<< "${1}") -le ${sentence_chars} ]; then
-    echo "${1}" |sed ':a;N;$!ba;s/\n/ /g' \
-    |tr -d '*/"' |tr -s '&:|{}[]<>+' ' ' \
+    echo "${1}" |sed ':a;N;$!ba;s/\n/ /;s/	/ /g' \
+    |tr -d '*/' |tr -s '&:|{}[]<>+' ' ' \
     |sed 's/ — / - /;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
     else
-    echo "${1}" |sed ':a;N;$!ba;s/\n/\__/g' \
-    |tr -d '*/"' |tr -s '&:|{}[]<>+' ' ' \
+    echo "${1}" |sed ':a;N;$!ba;s/\n/\__/;s/	/ /g' \
+    |tr -d '*/' |tr -s '&:|{}[]<>+' ' ' \
     |sed 's/ — /__/;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
     fi
 }
@@ -283,7 +283,7 @@ function clean_4() {
 function clean_5() {
     sed -n -e '1x;1!H;${x;s-\n- -gp}' \
     |sed 's/<[^>]*>//g' |sed 's/ \+/ /g' \
-    |sed '/^$/d' |sed 's/ \+/ /;s/\://;s/"//g' \
+    |sed '/^$/d' |sed 's/ \+/ /;s/\://g' \
     |sed 's/^[ \t]*//;s/[ \t]*$//;s/^ *//; s/ *$//g' \
     |sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' |grep -v '^..$' \
     |grep -v '^.$' |sed 's/<[^>]\+>//;s/\://g' \
@@ -311,18 +311,18 @@ function clean_6() {
 
 function clean_7() {
     sed 's/^ *//;s/ *$//g' |sed 's/^[ \t]*//;s/[ \t]*$//' \
-    |sed 's/ \+/ /;s/\://;s/"//g' \
+    |sed 's/ \+/ /;s/\://;s/	/ /g' \
     |sed '/^$/d' |sed 's/ — /\n/g' \
     |sed 's/\&quot;/\"/g' |sed "s/\&#039;/\'/g" \
     |sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
     |sed 's/ *<[^>]\+> */ /; s/[<>£§]//; s/\&amp;/\&/g' \
-    |sed 's/,/\n/g;s/。/\n/g;s/__/\n/g'
+    |sed 's/,/\n/g;s/。/\n/g;s/__/\n/g' |sed 's/ \+/ /g'
 }
 
 function clean_8() {
-    sed 's/\[ \.\.\. \]//g' \
+    sed 's/\[ \.\.\. \]//;s/	/ /g' \
     |sed 's/^ *//;s/ *$//g' |sed 's/^[ \t]*//;s/[ \t]*$//' \
-    |sed 's/ \+/ /;s/\://;s/"//g' \
+    |sed 's/ \+/ /;s/\://g' \
     |sed '/^$/d' |sed 's/ — /\n/g' \
     |sed 's/\&quot;/\"/g' |sed "s/\&#039;/\'/g" \
     |sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
@@ -331,7 +331,7 @@ function clean_8() {
     |sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' |sed 's/\? / /g' \
     |sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' |sed 's/\! / /g' \
     |sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' |sed 's/\… / /g' \
-    |sed 's/__/ \n/g;s/ \+/ /g'
+    |sed 's/__/ \n/g;s/ \+/ /g' |sed 's/ \+/ /g'
 }
 
 function clean_9() {
@@ -593,7 +593,7 @@ function dlg_checklist_3() {
     --skip-taskbar --orient=vert --window-icon=idiomind --center --on-top \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --width=700 --height=350 --borders=5 --splitter=250 \
-    --button="$(gettext "Edit")":2 \
+    --button="gtk-edit":2 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Add")"!'list-add':0
 }
@@ -624,7 +624,7 @@ function dlg_text_info_1() {
     --window-icon=idiomind \
     --wrap --margins=30 --fontname=vendana \
     --skip-taskbar --center --on-top \
-    --width=700 --height=450 --borders=5 \
+    --width=700 --height=450 --borders=2 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Save")":0
 }

@@ -391,8 +391,7 @@ function topic() {
 
     else
         tpa="$(sed -n 1p "$DC_s/4.cfg")"
-        source "$DS/ifs/mods/topic/${tpa}.sh"
-        ${tpa} &
+        source "$DS/ifs/mods/topic/${tpa}.sh"; ${tpa} &
     fi
     
     oclean & return 0

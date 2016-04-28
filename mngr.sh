@@ -226,8 +226,9 @@ edit_item() {
                 edit_dlg="${edit_dlg2}"
                 trgt_mod="$(clean_2 "$(cut -d "|" -f3 <<< "${edit_dlg}")")"
                 srce_mod="$(clean_2 "$(cut -d "|" -f4 <<< "${edit_dlg}")")"
-                audf_mod="$(cut -d "|" -f7 <<< "${edit_dlg}")"
-                tpc_mod="$(cut -d "|" -f6 <<< "${edit_dlg}")"
+                note_mod="$(clean_2 "$(cut -d "|" -f5 <<< "${edit_dlg}")")"
+                audf_mod="$(cut -d "|" -f8 <<< "${edit_dlg}")"
+                tpc_mod="$(cut -d "|" -f7 <<< "${edit_dlg}")"
                 mark_mod="$(cut -d "|" -f1 <<< "${edit_dlg}")"
                 type_mod="$(cut -d "|" -f2 <<< "${edit_dlg}")"
                 grmr_mod="${grmr}"
@@ -393,11 +394,11 @@ edit_list() {
             cols2=""
         fi
         more="$(echo -e "${cols1}${cols2}" |sed '/^$/d' \
-        |yad --list --title="$(gettext "Tools")"\
+        |yad --list --title=" "\
         --name=Idiomind --class=Idiomind \
         --expand-column=2 --no-click \
         --window-icon=idiomind --on-top --center \
-        --width=470 --height=250 --borders=3 \
+        --width=470 --height=260 --borders=3 \
         --column="$(gettext "Options")":TXT \
         --button="$(gettext "Cancel")":1 \
         --button="$(gettext "OK")":0)"
