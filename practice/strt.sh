@@ -4,8 +4,8 @@
 source /usr/share/idiomind/default/c.conf
 sz=(500 470); [[ ${swind} = TRUE ]] && sz=(420 410)
 source "$DS/ifs/cmns.sh"
-dir="${DC_tlt}/practice"
-dirs="$DS/practice"
+pdir="${DC_tlt}/practice"
+pdirs="$DS/practice"
 export -f f_lock
 
 function stats() {
@@ -27,7 +27,7 @@ function scoresplit() {
         if [ $ret = 1 ]; then
             practices ${pr}
         elif [ $ret = 0 ]; then
-            if [[ "$(egrep -cv '#|^$' < "$dir/${pr}.div")" = 0 ]]; then
+            if [[ "$(egrep -cv '#|^$' < "$pdir/${pr}.div")" = 0 ]]; then
                 export div=0; score
             else
                 practices ${pr}
@@ -42,7 +42,7 @@ function score() {
     rm ./*.tmp
     [ ! -e ./${pr}.l ] && touch ./${pr}.l
     if [[ $(($(< ./${pr}.l)+easy)) -ge ${all} ]] || [[ ${div} = 0 ]]; then
-        _log ${pr}; play "$dirs/all.mp3" &
+        _log ${pr}; play "$pdirs/all.mp3" &
         date "+%a %d %B" > ./${pr}.lock
         comp 0 & echo 21 > .${icon}
         strt 1
@@ -185,7 +185,7 @@ function practice_a() {
 }
 
 function practice_b(){
-    snd="$dirs/no.mp3"
+    snd="$pdirs/no.mp3"
     fonts() {
         _item="$(grep -F -m 1 "trgt{${item}}" "${cfg0}" |sed 's/}/}\n/g')"
         if [[ ${rev} != 1 ]]; then
@@ -579,22 +579,22 @@ function practice_e() {
 function get_list() {
     
     if grep -o -E 'a|b|c' <<< ${pr}; then
-        > "$dir/${pr}.0"
+        > "$pdir/${pr}.0"
         if [[ $(wc -l < "${cfg4}") -gt 0 ]]; then
             grep -Fvx -f "${cfg4}" "${cfg1}" > "$DT/${pr}.0"
-            sed '/^$/d' < "$DT/${pr}.0" > "$dir/${pr}.0"
+            sed '/^$/d' < "$DT/${pr}.0" > "$pdir/${pr}.0"
             rm -f "$DT/${pr}.0"
         else
-            sed '/^$/d' < "${cfg1}" > "$dir/${pr}.0"
+            sed '/^$/d' < "${cfg1}" > "$pdir/${pr}.0"
         fi
         
         if [ ${pr} = b ]; then
-            if [ ! -e "$dir/b.srces" ]; then
+            if [ ! -e "$pdir/b.srces" ]; then
             ( echo "5"
             while read word; do
                 item="$(grep -F -m 1 "trgt{${word}}" "${cfg0}" |sed 's/}/}\n/g')"
-                echo "$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")" >> "$dir/b.srces"
-            done < "$dir/${pr}.0" ) | yad --progress \
+                echo "$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")" >> "$pdir/b.srces"
+            done < "$pdir/${pr}.0" ) | yad --progress \
             --undecorated \
             --pulsate --auto-close \
             --skip-taskbar --center --no-buttons
@@ -608,14 +608,14 @@ function get_list() {
         else
             cat "${cfg1}" > "$DT/images"
         fi
-        > "$dir/${pr}.0"
+        > "$pdir/${pr}.0"
         
         ( echo "5"
         while read -r itm; do
         _item="$(grep -F -m 1 "trgt{${itm}}" "${cfg0}" |sed 's/}/}\n/g')"
         if [ -e "$DM_tls/images/${itm,,}-0.jpg" \
         -o -e "$DM_tlt/images/${itm,,}.jpg" ]; then
-            echo "${itm}" >> "$dir/${pr}.0"
+            echo "${itm}" >> "$pdir/${pr}.0"
         fi
         done < "$DT/images" ) | yad --progress \
         --name=Idiomind --class=Idiomind \
@@ -623,23 +623,23 @@ function get_list() {
         --pulsate --auto-close \
         --skip-taskbar --center --no-buttons
         
-        sed -i '/^$/d' "$dir/${pr}.0"
+        sed -i '/^$/d' "$pdir/${pr}.0"
         cleanups "$DT/images"
     
     elif [ ${pr} = e ]; then
         if [[ $(wc -l < "${cfg3}") -gt 0 ]]; then
             grep -Fxvf "${cfg3}" "${cfg1}" > "$DT/slist"
-            sed '/^$/d' < "$DT/slist" > "$dir/${pr}.0"
+            sed '/^$/d' < "$DT/slist" > "$pdir/${pr}.0"
             rm -f "$DT/slist"
         else
-            sed '/^$/d' < "${cfg1}" > "$dir/${pr}.0"
+            sed '/^$/d' < "${cfg1}" > "$pdir/${pr}.0"
         fi
     fi
 }
 
 function lock() {
-    if [ -e "$dir/${pr}.lock" ]; then
-        local lock="$dir/${pr}.lock"
+    if [ -e "$pdir/${pr}.lock" ]; then
+        local lock="$pdir/${pr}.lock"
         if ! grep 'wait' <<< "$(< "${lock}")"; then
             text_dlg="<b>$(gettext "Practice Completed")</b>\\n$(< "${lock}")"
 
@@ -673,15 +673,15 @@ function prosplit() {
     dialog-question "$(gettext "Siguientes")!go-next" "$(gettext "Volver")!view-refresh" " "
     ret=$?
     if [ $ret -eq 0 ]; then
-        grep -Fxvf "$dir/${pr}.1" "$dir/${pr}.div" |sed '/^$/d' > "$dir/${pr}.tmp"
-        mv -f "$dir/${pr}.tmp" "$dir/${pr}.div"
-        head -n ${splt} "$dir/${pr}.div" > "$dir/${pr}.tmp"
+        grep -Fxvf "$pdir/${pr}.1" "$pdir/${pr}.div" |sed '/^$/d' > "$pdir/${pr}.tmp"
+        mv -f "$pdir/${pr}.tmp" "$pdir/${pr}.div"
+        head -n ${splt} "$pdir/${pr}.div" > "$pdir/${pr}.tmp"
 
     elif [ $ret -eq 1 ]; then
-        head -n ${splt} "$dir/${pr}.div" > "$dir/${pr}.tmp"
-        grep -Fxvf "$dir/${pr}.tmp" "$dir/${pr}.1" |sed '/^$/d' > "$dir/${pr}.1tmp"
-        mv -f "$dir/${pr}.1tmp" "$dir/${pr}.1"
-        sed '/^$/d' "$dir/${pr}.1" |awk '!a[$0]++' |wc -l > "$dir/${pr}.l"
+        head -n ${splt} "$pdir/${pr}.div" > "$pdir/${pr}.tmp"
+        grep -Fxvf "$pdir/${pr}.tmp" "$pdir/${pr}.1" |sed '/^$/d' > "$pdir/${pr}.1tmp"
+        mv -f "$pdir/${pr}.1tmp" "$pdir/${pr}.1"
+        sed '/^$/d' "$pdir/${pr}.1" |awk '!a[$0]++' |wc -l > "$pdir/${pr}.l"
         easy=0; hard=0; ling=0; step=1
         export easy hard ling step
     else
@@ -696,56 +696,52 @@ function practices() {
     cfg3="$DC_tlt/3.cfg"
     cfg4="$DC_tlt/4.cfg"
     hits="$(gettext "hits")"
-    touch "$dir/log1" "$dir/log2" "$dir/log3"
+    touch "$pdir/log1" "$pdir/log2" "$pdir/log3"
     pr="${1}"
     div=""; splt=""; rev=""
-    if [ -f "$dir/$pr" ]; then 
-        optns="$(cat $dir/$pr)"
+    if [ -f "$pdir/$pr" ]; then 
+        optns="$(cat $pdir/$pr)"
         div="$(cut -d "|" -f1 <<< "${optns}")"
         splt="$(cut -d "|" -f2 <<< "${optns}")"
         rev="$(cut -d "|" -f3 <<< "${optns}")"
     fi
-    
     if [ ${pr} = a ]; then icon=1
     elif [ ${pr} = b ]; then icon=2
     elif [ ${pr} = c ]; then icon=3
     elif [ ${pr} = d ]; then icon=4
     elif [ ${pr} = e ]; then icon=5
     else exit; fi
-    
     lock
     
-    if [ -e "$dir/${pr}.0" -a -e "$dir/${pr}.1" ]; then
+    if [ -e "$pdir/${pr}.0" -a -e "$pdir/${pr}.1" ]; then
     
         if [[ ${div} = 1 ]]; then
-            head -n ${splt} "$dir/${pr}.div" \
-            |grep -Fxvf "$dir/${pr}.1" |sed '/^$/d' > "$dir/${pr}.tmp"
+            head -n ${splt} "$pdir/${pr}.div" \
+            |grep -Fxvf "$pdir/${pr}.1" |sed '/^$/d' > "$pdir/${pr}.tmp"
         else
-            grep -Fxvf "$dir/${pr}.1" "$dir/${pr}.0" \
-            |sed '/^$/d' > "$dir/${pr}.tmp"
+            grep -Fxvf "$pdir/${pr}.1" "$pdir/${pr}.0" \
+            |sed '/^$/d' > "$pdir/${pr}.tmp"
         fi
 
-        if [[ "$(egrep -cv '#|^$' < "$dir/${pr}.tmp")" = 0 ]]; then
+        if [[ "$(egrep -cv '#|^$' < "$pdir/${pr}.tmp")" = 0 ]]; then
             if [[ ${div} = 1 ]]; then prosplit; else lock; fi
         fi
         
         echo " practice --restarting session"
     else
-        if [ ! -e "$dir/${pr}.0" ]; then
+        if [ ! -e "$pdir/${pr}.0" ]; then
         
             if grep -o -E 'a|b|d' <<< ${pr}; then
             llists="$(gettext "$tlng")!$(gettext "$slng")"
             else llists="$(gettext "$tlng")"; fi
-            
             optns=$(yad --form --title="$(gettext "Comenzando...")" \
-            --skip-taskbar --center --on-top \
-            --width=380 --height=180 --borders=5 \
+            --skip-taskbar --align=center --center --on-top \
+            --width=300 --height=180 --borders=10 \
             --field="Cantidad de elementos para practicar":LBL " " \
             --field="":CB "$(gettext "Todos los items")!$(gettext "Tandas de 20 items")!$(gettext "Tandas de 50 items")" \
             --field="Preguntas en":LBL " " \
             --field="":CB "${llists}" \
             --button="   $(gettext "OK")  ":2)
-
             if cut -d "|" -f2 <<< "${optns}" |grep '20'; then div=1; splt=20;
             elif cut -d "|" -f2 <<< "${optns}" |grep '50'; then div=1; splt=50; fi
             if [ "$(cut -d "|" -f4 <<< "${optns}")" = "$(gettext "$slng")" ]; then rev=1; fi
@@ -755,22 +751,22 @@ function practices() {
         export div splt rev; get_list
         
         if [[ ${div} = 1 ]]; then
-            head -n ${splt} "$dir/${pr}.0" > "$dir/${pr}.tmp"
-            cp -f "$dir/${pr}.0" "$dir/${pr}.div"
+            head -n ${splt} "$pdir/${pr}.0" > "$pdir/${pr}.tmp"
+            cp -f "$pdir/${pr}.0" "$pdir/${pr}.div"
         else
-            cp -f "$dir/${pr}.0" "$dir/${pr}.tmp"
+            cp -f "$pdir/${pr}.0" "$pdir/${pr}.tmp"
         fi
         
         echo " practice --new session"
     fi
     
-    if [[ $(wc -l < "$dir/${pr}.0") -lt 2 ]]; then \
+    if [[ $(wc -l < "$pdir/${pr}.0") -lt 2 ]]; then \
         msg "$(gettext "Insufficient number of items to start")\n" \
         dialog-information " " "$(gettext "OK")"
         strt 0 & return 1
     fi
 
-    cleanups "$dir/${pr}.2" "$dir/${pr}.3"
+    cleanups "$pdir/${pr}.2" "$pdir/${pr}.3"
     all=$(egrep -cv '#|^$' ./${pr}.0)
     img_cont="$DS/images/cont.png"
     img_no="$DS/images/no.png"
@@ -781,8 +777,8 @@ function practices() {
 }
 
 function strt() {
-    [ ! -d "${dir}" ] && mkdir -p "${dir}"
-    cd "${dir}"
+    [ ! -d "${pdir}" ] && mkdir -p "${pdir}"
+    cd "${pdir}"
     [ ! -e ./.1 ] && echo 1 > .1
     [ ! -e ./.2 ] && echo 1 > .2
     [ ! -e ./.3 ] && echo 1 > .3
@@ -813,11 +809,11 @@ function strt() {
     --ellipsize=NONE --no-headers --expand-column=2 --hide-column=1 \
     --width=${sz[0]} --height=${sz[1]} --borders=10 \
     --column="Action" --column="Pick":IMG --column="Label" \
-    "a" "$dirs/images/$(< ./.1).png" "   $info1  $(gettext "Flashcards")" \
-    "b" "$dirs/images/$(< ./.2).png" "   $info2  $(gettext "Multiple Choice")" \
-    "c" "$dirs/images/$(< ./.3).png" "   $info3  $(gettext "Recognizing Words")" \
-    "d" "$dirs/images/$(< ./.4).png" "   $info4  $(gettext "Images")" \
-    "e" "$dirs/images/$(< ./.5).png" "   $info5  $(gettext "Writing Sentences")" \
+    "a" "$pdirs/images/$(< ./.1).png" "   $info1  $(gettext "Flashcards")" \
+    "b" "$pdirs/images/$(< ./.2).png" "   $info2  $(gettext "Multiple Choice")" \
+    "c" "$pdirs/images/$(< ./.3).png" "   $info3  $(gettext "Recognizing Words")" \
+    "d" "$pdirs/images/$(< ./.4).png" "   $info4  $(gettext "Images")" \
+    "e" "$pdirs/images/$(< ./.5).png" "   $info5  $(gettext "Writing Sentences")" \
     --button="$(gettext "Restart")":3 \
     --button="$(gettext "Start")":0)"
     ret=$?
@@ -831,8 +827,8 @@ function strt() {
             practices ${pr}
         fi
     elif [ $ret -eq 3 ]; then
-        if [ -d "${dir}" ]; then
-            cd "${dir}"/; rm ./.[^.]; rm ./*
+        if [ -d "${pdir}" ]; then
+            cd "${pdir}"/; rm ./.[^.]; rm ./*
             touch ./log1 ./log2 ./log3
         fi
         unset pr; strt 0
