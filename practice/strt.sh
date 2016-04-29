@@ -28,8 +28,7 @@ function scoresplit() {
             practices ${pr}
         elif [ $ret = 0 ]; then
             if [[ "$(egrep -cv '#|^$' < "$dir/${pr}.div")" = 0 ]]; then
-                export div=0
-                score
+                export div=0; score
             else
                 practices ${pr}
             fi
@@ -63,8 +62,7 @@ function score() {
             ((c=c+5))
             let n++
         done
-        comp 1 & stats
-        strt 2
+        comp 1 & stats; strt 2
     fi
 }
     
@@ -662,7 +660,6 @@ function lock() {
             cleanups "${lock}" ./${pr}.0 ./${pr}.1 \
             ./${pr}.2 ./${pr}.3 ./${pr}.srces ./${pr}
             echo 1 > ./.${icon}; echo 0 > ./${pr}.l
-
         elif [ $ret -eq 4 ]; then
             cleanups "${lock}"; return 0
         fi
@@ -673,29 +670,24 @@ function lock() {
 
 function prosplit() {
     msg_2 "$(gettext "Volver a practicar o Practicar los siguientes")\n" \
-    dialog-question "$(gettext "Siguientes")!go-next" "$(gettext "Volver")!view-refresh" "$(gettext "Question")"
+    dialog-question "$(gettext "Siguientes")!go-next" "$(gettext "Volver")!view-refresh" " "
     ret=$?
     if [ $ret -eq 0 ]; then
-        # avanzar
         grep -Fxvf "$dir/${pr}.1" "$dir/${pr}.div" |sed '/^$/d' > "$dir/${pr}.tmp"
         mv -f "$dir/${pr}.tmp" "$dir/${pr}.div"
         head -n ${splt} "$dir/${pr}.div" > "$dir/${pr}.tmp"
 
     elif [ $ret -eq 1 ]; then
-        l="$(< "$dir/${pr}.l")"
-        # volver
-        echo $((l-easy)) > "$dir/${pr}.l"
         head -n ${splt} "$dir/${pr}.div" > "$dir/${pr}.tmp"
         grep -Fxvf "$dir/${pr}.tmp" "$dir/${pr}.1" |sed '/^$/d' > "$dir/${pr}.1tmp"
         mv -f "$dir/${pr}.1tmp" "$dir/${pr}.1"
+        sed '/^$/d' "$dir/${pr}.1" |awk '!a[$0]++' |wc -l > "$dir/${pr}.l"
         easy=0; hard=0; ling=0; step=1
         export easy hard ling step
     else
         "$DS/ifs/tls.sh" colorize 1 & exit
     fi
-    export ret
 }
-
 
 function practices() {
     log="$DC_s/log"
@@ -726,19 +718,17 @@ function practices() {
     if [ -e "$dir/${pr}.0" -a -e "$dir/${pr}.1" ]; then
     
         if [[ ${div} = 1 ]]; then
-            head -n ${splt} "$dir/${pr}.div" |grep -Fxvf "$dir/${pr}.1" |sed '/^$/d' > "$dir/${pr}.tmp"
+            head -n ${splt} "$dir/${pr}.div" \
+            |grep -Fxvf "$dir/${pr}.1" |sed '/^$/d' > "$dir/${pr}.tmp"
         else
-            grep -Fxvf "$dir/${pr}.1" "$dir/${pr}.0" |sed '/^$/d' > "$dir/${pr}.tmp"
+            grep -Fxvf "$dir/${pr}.1" "$dir/${pr}.0" \
+            |sed '/^$/d' > "$dir/${pr}.tmp"
         fi
 
         if [[ "$(egrep -cv '#|^$' < "$dir/${pr}.tmp")" = 0 ]]; then
-
-            if [[ ${div} = 1 ]]; then
-                prosplit
-            else
-                lock
-            fi
+            if [[ ${div} = 1 ]]; then prosplit; else lock; fi
         fi
+        
         echo " practice --restarting session"
     else
         if [ ! -e "$dir/${pr}.0" ]; then
@@ -748,24 +738,21 @@ function practices() {
             else llists="$(gettext "$tlng")"; fi
             
             optns=$(yad --form --title="$(gettext "Comenzando...")" \
-            --text="" \
-            --skip-taskbar --center --on-top --align=center \
-            --width=380 --height=230 --borders=8 \
+            --skip-taskbar --center --on-top \
+            --width=380 --height=180 --borders=5 \
             --field="Cantidad de elementos para practicar":LBL " " \
-            --field="":CB "$(gettext "Todos los items")!$(gettext "Tandas de 10 items")!$(gettext "Tandas de 20 items")" \
+            --field="":CB "$(gettext "Todos los items")!$(gettext "Tandas de 20 items")!$(gettext "Tandas de 50 items")" \
             --field="Preguntas en":LBL " " \
             --field="":CB "${llists}" \
-            --button="  $(gettext "OK") !$img_cont":2)
+            --button="   $(gettext "OK")  ":2)
 
-            if cut -d "|" -f2 <<< "${optns}" |grep '10'; then div=1; splt=5;
-            elif cut -d "|" -f2 <<< "${optns}" |grep '20'; then div=1; splt=20; fi
+            if cut -d "|" -f2 <<< "${optns}" |grep '20'; then div=1; splt=20;
+            elif cut -d "|" -f2 <<< "${optns}" |grep '50'; then div=1; splt=50; fi
             if [ "$(cut -d "|" -f4 <<< "${optns}")" = "$(gettext "$slng")" ]; then rev=1; fi
             echo -e "$div|$splt|$rev" > ${pr}
         fi
         
-        export div splt rev
-    
-        get_list
+        export div splt rev; get_list
         
         if [[ ${div} = 1 ]]; then
             head -n ${splt} "$dir/${pr}.0" > "$dir/${pr}.tmp"
@@ -774,14 +761,15 @@ function practices() {
             cp -f "$dir/${pr}.0" "$dir/${pr}.tmp"
         fi
         
-        if [[ $(wc -l < "$dir/${pr}.0") -lt 2 ]]; then \
-            msg "$(gettext "Insufficient number of items to start")" \
-            dialog-information " " "$(gettext "Information")"
-            strt 0 & return 1
-        fi
         echo " practice --new session"
     fi
     
+    if [[ $(wc -l < "$dir/${pr}.0") -lt 2 ]]; then \
+        msg "$(gettext "Insufficient number of items to start")\n" \
+        dialog-information " " "$(gettext "OK")"
+        strt 0 & return 1
+    fi
+
     cleanups "$dir/${pr}.2" "$dir/${pr}.3"
     all=$(egrep -cv '#|^$' ./${pr}.0)
     img_cont="$DS/images/cont.png"
@@ -804,10 +792,6 @@ function strt() {
     
     if [[ ${step} -gt 1 && ${ling} -ge 1 && ${hard} = 0 ]]; then
         echo -e "wait=\"$(date +%d)\"" > ./${pr}.lock; fi
-        
-    #if [ ${div} = 1 -a ${1} = 1 ]; then
-        #practices ${pr} & return 1
-    #fi
 
     if [ ${1} = 1 ]; then
         NUMBER="<span color='#6E6E6E'><b><big>$(wc -l < ${pr}.0)</big></b></span>"; declare info${icon}="<span font_desc='Arial Bold 12'>$(gettext "Test completed") </span> —"
