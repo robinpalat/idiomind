@@ -383,7 +383,7 @@ edit_item() {
 edit_list() {
     dlg_more() {
         file="$HOME/.idiomind/backup/${tpc}.bk"
-        cols1="$(gettext "Reverse items order")\n$(gettext "Remove all items")\n$(gettext "Restart topic's status")\n$(gettext "Add feed")\n$(gettext "Display sentences of less than 5 words in word's view")\n$(gettext "Translate source language")"
+        cols1="$(gettext "Reverse items order")\n$(gettext "Remove all items")\n$(gettext "Restart topic status")\n$(gettext "Add feed")\n$(gettext "Show short sentences in word's view")\n$(gettext "Translate source language")"
         dt1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
         dt2=$(grep '\----- oldest' "${file}" |cut -d' ' -f3)
         if [ -n "$dt2" ]; then
@@ -408,11 +408,11 @@ edit_list() {
                 return 2
             elif grep "$(gettext "Remove all items")" <<< "${more}"; then
                 return 7
-            elif grep "$(gettext "Restart topic's status")" <<< "${more}"; then
+            elif grep "$(gettext "Restart topic status")" <<< "${more}"; then
                 return 8
             elif grep "$(gettext "Add feed")" <<< "${more}"; then
                 return 9
-            elif grep "$(gettext "Display sentences of less than 5 words in word's view")" <<< "${more}"; then
+            elif grep "$(gettext "Show short sentences in word's view")" <<< "${more}"; then
                 return 4
             elif grep "$(gettext "Translate source language")" <<< "${more}"; then
                 return 5
@@ -462,12 +462,12 @@ edit_list() {
     if [ $ret = 5 ]; then dlg_more; ret=$?; fi
     
         if [ $ret = 2 ]; then
-            msg_2 "$(gettext "Are you sure you want to do this?")\n" \
+            msg_2 "$(gettext "Confirm")\n" \
             dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
             [ $? = 0 ] && ret=2 || ret=1
             
         elif [ $ret = 4 ]; then
-            msg_2 "$(gettext "Are you sure you want to do this?")\n" \
+            msg_2 "$(gettext "Confirm")\n" \
             dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
             [ $? = 0 ] && ret=4 || ret=1
             
@@ -488,19 +488,19 @@ edit_list() {
             [ "$l" != $slng ] && idiomind translate "$l" & ret=1
             
         elif [ $ret = 6 ]; then
-            msg_2 "$(gettext "Are you sure you want to do this?")\n" \
+            msg_2 "$(gettext "Confirm")\n" \
             dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
             [ $? = 0 ] && "$DS/ifs/tls.sh" restore "${tpc}" ${line}
             ret=1
         elif [ $ret = 7 ]; then
-            msg_2 "$(gettext "Are you sure you want to do this?")\n" \
+            msg_2 "$(gettext "Confirm")\n" \
             dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
             if [ $? = 0 ]; then cleanups "${direc}/0.cfg" "${direc}/1.cfg" "${direc}/2.cfg" \
             "${direc}/3.cfg" "${direc}/4.cfg" "${direc}/5.cfg" "${direc}/6.cfg"
             [ -n "${2}" ] && rm "$DM_tl/${2}"/*.mp3; fi
             ret=1
         elif [ $ret = 8 ]; then
-            msg_2 "$(gettext "Are you sure you want to do this?")\n" \
+            msg_2 "$(gettext "Confirm")\n" \
             dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
             if [ $? = 0 ]; then cleanups "${direc}/1.cfg" "${direc}/2.cfg" "${direc}/7.cfg" 
                 echo 1 > "${direc}/8.cfg"; > "${direc}/9.cfg"

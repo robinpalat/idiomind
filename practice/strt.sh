@@ -116,10 +116,9 @@ function practice_a() {
 
     question() {
         yad --form --title=" " \
-        --no-focus \
-        --skip-taskbar --text-align=center --center --on-top \
+        --no-focus --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
-        --width=400 --height=270 --borders=8 \
+        --width=400 --height=265 --borders=8 \
         --field="\n$question":lbl "" \
         --field="":lbl "" \
         --button="$(gettext "Exit")":1 \
@@ -131,7 +130,7 @@ function practice_a() {
         --no-focus --selectable-labels \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
-        --width=400 --height=270 --borders=8 \
+        --width=400 --height=265 --borders=8 \
         --field="$answer1":lbl "" \
         --field="":lbl "" \
         --field="$answer2":lbl "" \
@@ -215,11 +214,11 @@ function practice_b(){
     mchoise() {
         dlg=$(ofonts | yad --list --title=" " \
         --text="${question}" \
-        --separator=" " --selectable-labels \
+        --no-focus --separator=" " --selectable-labels \
         --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --undecorated \
         --no-headers \
-        --width=400 --height=325 --borders=8 \
+        --width=400 --height=300 --borders=8 \
         --column=Option \
         --button="$(gettext "Exit")":1 \
         --button="   $(gettext "Continue")   !$img_cont":0)
@@ -297,7 +296,7 @@ function practice_c() {
 
         yad --form --title=" " \
         --text="$lquestion" \
-        --skip-taskbar --text-align=center --center --on-top \
+        --no-focus --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --image-on-top --undecorated \
         --width=390 --height=260 --borders=10 \
         --field="!$DS/images/listen.png":BTN "$cmd_play" \
@@ -369,7 +368,8 @@ function practice_d() {
     question() {
         yad --form --title=" " \
         --image="$img" \
-        --skip-taskbar --text-align=center --align=center --center --on-top \
+        --no-focus \ --skip-taskbar --text-align=center \
+        --align=center --center --on-top \
         --image-on-top --undecorated --buttons-layout=spread \
         --width=418 --height=360 --borders=5 \
         --field="$cuest":lbl "" \
@@ -381,7 +381,8 @@ function practice_d() {
         yad --form --title=" " \
         --image="$img" \
         --selectable-labels \
-        --skip-taskbar --text-align=center --align=center --center --on-top \
+        --no-focus --skip-taskbar --text-align=center \
+        --align=center --center --on-top \
         --image-on-top --undecorated --buttons-layout=spread \
         --width=418 --height=360 --borders=5 \
         --field="$aswer":lbl "" \
@@ -678,11 +679,11 @@ function lock() {
 function decide_group() {
     optns=$(yad --form --title=" " \
     --always-print-result \
-    --skip-taskbar --undecorated --buttons-layout=spread \
+    --no-focus --skip-taskbar --undecorated --buttons-layout=spread \
     --align=center --center --on-top --borders=5 \
     --button="$(gettext "Exit")":5 \
-    --button="$(gettext "Volver")!view-refresh!$(gettext "Volver a practicar los anteriores")":1 \
-    --button="$(gettext "Siguientes")!go-next!$(gettext "Practicar el grupo siguiente")":0); ret="$?"
+    --button="$(gettext "Again")!view-refresh!$(gettext "Go back to practice the above items")":1 \
+    --button="$(gettext "Next")!go-next!$(gettext "Practice the next group")":0); ret="$?"
 
     if [ $ret -eq 0 ]; then
         grep -Fxvf "${pdir}/${pr}.1" "${pdir}/${pr}.group" \
@@ -744,17 +745,15 @@ function practices() {
         if [[ "$(egrep -cv '#|^$' < "${pdir}/${pr}.tmp")" = 0 ]]; then
             if [[ ${group} = 1 ]]; then decide_group; else lock; fi
         fi
-        
-        echo " practice --restarting session"
     else
         if [ ! -e "${pdir}/${pr}.0" ]; then
   
             optns=$(yad --form --title=" " \
             --always-print-result \
-            --skip-taskbar --undecorated --buttons-layout=spread \
+            --no-focus --skip-taskbar --undecorated --buttons-layout=spread \
             --align=center --center --on-top \
             --width=350 --height=105 --borders=5 \
-            --field="":CB "$(gettext "Practicar todos los items")!$(gettext "En grupos de 10")!$(gettext "En grupos de 20")!$(gettext "En grupos de 30")" \
+            --field="":CB "$(gettext "Practice all items")!$(gettext "In groups of 10")!$(gettext "In groups of 20")!$(gettext "In groups of 30")" \
             --button="      $(gettext "$slng")      !!$(gettext "Questions in $slng - Answers in $tlng")":3 \
             --button="      $(gettext "$tlng")      !!$(gettext "Questions in $tlng - Answers in $slng")":2); ret="$?"
             if grep '10' <<< "${optns}"; then group=1; split=10;
@@ -772,8 +771,6 @@ function practices() {
         else
             cp -f "${pdir}/${pr}.0" "${pdir}/${pr}.tmp"
         fi
-        
-        echo " practice --new session"
     fi
     
     if [[ $(wc -l < "${pdir}/${pr}.0") -lt 2 ]]; then \
