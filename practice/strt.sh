@@ -285,6 +285,7 @@ function practice_c() {
             fi
         else
             trgt="$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")"
+            lst="${trgt}"
         fi
         s=$((30-${#trgt}))
         lquestion="\n\n<span font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n\n"
@@ -353,7 +354,7 @@ function practice_d() {
         img="$DM_tlt/images/${item,,}.jpg" || \
         img="$DM_tls/images/${item,,}-0.jpg"
         _item="$(grep -F -m 1 "trgt{${item}}" "${cfg0}" |sed 's/}/}\n/g')"
-        if [[ ${quest} != 1 ]]; then
+        if [[ ${quest} = 1 ]]; then
             srce="${item}"
             trgt=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
         else
@@ -361,8 +362,8 @@ function practice_d() {
             srce=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
         fi
         [ ! -e "$img" ] && img="$DS/images/imgmiss.jpg"
-        cuest="<span font_desc='Arial Bold 11'>${trgt}</span>"
-        aswer="<span font_desc='Arial Bold 11'>${srce}</span>"
+        cuest="<span font_desc='Arial Bold 12'>${trgt}</span>"
+        aswer="<span font_desc='Arial Bold 12'>${srce}</span>"
     }
 
     question() {
