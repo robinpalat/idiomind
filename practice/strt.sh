@@ -476,7 +476,7 @@ function practice_e() {
         --field="<span font_desc='Free Sans 9'>$OK\n\n$prc $hits</span>":lbl \
         --button="    $(gettext "Continue")    ":2
         }
-        
+    
     get_text() {
         trgt=$(echo "${1}" |sed 's/^ *//;s/ *$//')
         chk=`echo "${trgt}" |awk '{print tolower($0)}'`
@@ -642,11 +642,11 @@ function lock() {
         local lock="$pdir/${pr}.lock"
         if ! grep 'wait' <<< "$(< "${lock}")"; then
             text_dlg="<b>$(gettext "Practice Completed")</b>\\n$(< "${lock}")"
-
             optns=$(yad --form --title="$(gettext "Practice Completed")" \
+            --always-print-result \
             --skip-taskbar --buttons-layout=spread \
             --align=center --center --on-top \
-            --width=280 --height=150 --borders=10 \
+            --width=320 --height=150 --borders=10 \
             --field="$text_dlg":LBL " " \
             --button="$(gettext "Restart")":0 \
             --button="$(gettext "OK")":1); ret="$?"
@@ -654,17 +654,17 @@ function lock() {
             if [ $(grep -o "wait"=\"[^\"]* "${lock}" |grep -o '[^"]*$') != $(date +%d) ]; then
                 rm "${lock}" & return 0
             else
-                text_dlg="$(gettext "Consider waiting a while before resuming to practice some items")\n"
+                text_dlg="$(gettext "Consider waiting a while before resuming to practice some items")"
                 optns=$(yad --form --title="$(gettext "Advice")" \
+                --always-print-result \
                 --skip-taskbar --buttons-layout=spread \
                 --align=center --center --on-top \
-                --width=280 --height=150 --borders=10 \
+                --width=340 --height=150 --borders=10 \
                 --field="$text_dlg":LBL " " \
                 --button="$(gettext "Practice")":0 \
                 --button="$(gettext "OK")":4); ret="$?"
             fi
         fi
-        
         if [ $ret -eq 0 ]; then
             cleanups "${lock}" ./${pr}.0 ./${pr}.1 \
             ./${pr}.2 ./${pr}.3 ./${pr}.srces ./${pr}
@@ -672,16 +672,16 @@ function lock() {
         elif [ $ret -eq 4 ]; then
             cleanups "${lock}"; return 0
         fi
-        
         strt 0
     fi
 }
 
 function prosplit() {
     optns=$(yad --form --title="$(gettext "Question")" \
+    --always-print-result \
     --skip-taskbar --buttons-layout=spread \
     --align=center --center --on-top \
-    --width=280 --height=150 --borders=10 \
+    --width=340 --height=150 --borders=10 \
     --field="\n$(gettext "Volver a practicar o Practicar los siguientes")":LBL " " \
     --button="$(gettext "Volver")!view-refresh":1 \
     --button="$(gettext "Siguientes")!go-next":0); ret="$?"
@@ -749,15 +749,18 @@ function practices() {
             llists="$(gettext "$tlng")!$(gettext "$slng")"
             else llists="$(gettext "$tlng")"; fi
             optns=$(yad --form --title="$(gettext "Comenzando...")" \
+            --always-print-result \
             --skip-taskbar --buttons-layout=spread \
             --align=center --center --on-top \
-            --width=280 --height=150 --borders=10 \
+            --width=320 --height=170 --borders=10 \
             --field="Cantidad de elementos para practicar":LBL " " \
-            --field="":CB "$(gettext "Todos los items")!$(gettext "Tandas de 20 items")!$(gettext "Tandas de 50 items")" \
+            --field="":CB "$(gettext "Todos los items")!$(gettext "Tandas de 10 items")!$(gettext "Tandas de 20 items")!$(gettext "Tandas de 50 items")" \
             --field="Preguntas en":LBL " " \
             --button="   $(gettext "$slng")  ":3 \
             --button="   $(gettext "$tlng")  ":2); ret="$?"
-            if cut -d "|" -f2 <<< "${optns}" |grep '20'; then div=1; splt=20;
+
+            if cut -d "|" -f2 <<< "${optns}" |grep '10'; then div=1; splt=10;
+            elif cut -d "|" -f2 <<< "${optns}" |grep '20'; then div=1; splt=20
             elif cut -d "|" -f2 <<< "${optns}" |grep '50'; then div=1; splt=50; fi
             if [ "$ret" = 3 ]; then rev=1; else rev=0; fi
             echo -e "$div|$splt|$rev" > ${pr}
