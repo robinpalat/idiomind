@@ -680,12 +680,10 @@ function prosplit() {
     optns=$(yad --form --title="$(gettext "Question")" \
     --always-print-result \
     --skip-taskbar --undecorated --buttons-layout=spread \
-    --align=center --center --on-top \
-    --width=450 --height=110 --borders=8 \
-    --field="<b>$(gettext "Volver a practicar los anteriores o pasar los siguientes?")</b>":LBL " " \
+    --align=center --center --on-top --borders=5 \
     --button="$(gettext "Exit")":5 \
-    --button="$(gettext "Volver")!view-refresh":1 \
-    --button="$(gettext "Siguientes")!go-next":0); ret="$?"
+    --button="$(gettext "Volver")!view-refresh!$(gettext "Volver a practicar los anteriores")":1 \
+    --button="$(gettext "Siguientes")!go-next!$(gettext "Practicar el grupo siguiente")":0); ret="$?"
 
     if [ $ret -eq 0 ]; then
         grep -Fxvf "$pdir/${pr}.1" "$pdir/${pr}.div" |sed '/^$/d' > "$pdir/${pr}.tmp"
@@ -753,16 +751,14 @@ function practices() {
             --always-print-result \
             --skip-taskbar --undecorated --buttons-layout=spread \
             --align=center --center --on-top \
-            --width=350 --height=150 --borders=8 \
-            --field="<b>$(gettext "Cantidad de elementos para practicar")</b>":LBL " " \
-            --field="":CB "$(gettext "Todos los items")!$(gettext "Tandas de 10 items")!$(gettext "Tandas de 20 items")!$(gettext "Tandas de 30 items")" \
-            --field="<b>$(gettext "Preguntas en")</b>":LBL " " \
-            --button="      $(gettext "$slng")      ":3 \
-            --button="      $(gettext "$tlng")      ":2); ret="$?"
+            --width=300 --borders=5 \
+            --field="":CB "$(gettext "Practicar todos los items")!$(gettext "En grupos de 10")!$(gettext "En grupos de 20")!$(gettext "En grupos de 30")" \
+            --button="      $(gettext "$slng")      !!$(gettext "Questions in $slng - Answers in $tlng")":3 \
+            --button="      $(gettext "$tlng")      !!$(gettext "Questions in $tlng - Answers in $slng")":2); ret="$?"
 
-            if cut -d "|" -f2 <<< "${optns}" |grep '10'; then div=1; splt=10;
-            elif cut -d "|" -f2 <<< "${optns}" |grep '20'; then div=1; splt=20
-            elif cut -d "|" -f2 <<< "${optns}" |grep '30'; then div=1; splt=30; fi
+            if cut -d "|" -f1 <<< "${optns}" |grep '10'; then div=1; splt=10;
+            elif cut -d "|" -f1 <<< "${optns}" |grep '20'; then div=1; splt=20
+            elif cut -d "|" -f1 <<< "${optns}" |grep '30'; then div=1; splt=30; fi
             if [ "$ret" = 3 ]; then rev=1; else rev=0; fi
             echo -e "$div|$splt|$rev" > ${pr}
         fi
