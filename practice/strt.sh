@@ -643,16 +643,25 @@ function lock() {
         if ! grep 'wait' <<< "$(< "${lock}")"; then
             text_dlg="<b>$(gettext "Practice Completed")</b>\\n$(< "${lock}")"
 
-            msg_2 "$text_dlg" \
-            dialog-ok-apply "$(gettext "Restart")" "$(gettext "OK")" "$(gettext "Practice Completed")"
-            ret=$?
+            optns=$(yad --form --title="$(gettext "Practice Completed")" \
+            --skip-taskbar --buttons-layout=spread \
+            --align=center --center --on-top \
+            --width=280 --height=150 --borders=10 \
+            --field="$text_dlg":LBL " " \
+            --button="$(gettext "Restart")":0 \
+            --button="$(gettext "OK")":1); ret="$?"
         else
             if [ $(grep -o "wait"=\"[^\"]* "${lock}" |grep -o '[^"]*$') != $(date +%d) ]; then
                 rm "${lock}" & return 0
             else
-                msg_2 "$(gettext "Consider waiting a while before resuming to practice some items")\n" \
-                dialog-information "$(gettext "OK")" "$(gettext "Practice")"
-                ret=$?; [ $ret = 1 ] && ret=4 #TODO
+                text_dlg="$(gettext "Consider waiting a while before resuming to practice some items")\n"
+                optns=$(yad --form --title="$(gettext "Advice")" \
+                --skip-taskbar --buttons-layout=spread \
+                --align=center --center --on-top \
+                --width=280 --height=150 --borders=10 \
+                --field="$text_dlg":LBL " " \
+                --button="$(gettext "Practice")":0 \
+                --button="$(gettext "OK")":4); ret="$?"
             fi
         fi
         
@@ -669,9 +678,14 @@ function lock() {
 }
 
 function prosplit() {
-    msg_2 "$(gettext "Volver a practicar o Practicar los siguientes")\n" \
-    dialog-question "$(gettext "Siguientes")!go-next" "$(gettext "Volver")!view-refresh" " "
-    ret=$?
+    optns=$(yad --form --title="$(gettext "Question")" \
+    --skip-taskbar --buttons-layout=spread \
+    --align=center --center --on-top \
+    --width=280 --height=150 --borders=10 \
+    --field="\n$(gettext "Volver a practicar o Practicar los siguientes")":LBL " " \
+    --button="$(gettext "Volver")!view-refresh":1 \
+    --button="$(gettext "Siguientes")!go-next":0); ret="$?"
+
     if [ $ret -eq 0 ]; then
         grep -Fxvf "$pdir/${pr}.1" "$pdir/${pr}.div" |sed '/^$/d' > "$pdir/${pr}.tmp"
         mv -f "$pdir/${pr}.tmp" "$pdir/${pr}.div"
@@ -735,16 +749,17 @@ function practices() {
             llists="$(gettext "$tlng")!$(gettext "$slng")"
             else llists="$(gettext "$tlng")"; fi
             optns=$(yad --form --title="$(gettext "Comenzando...")" \
-            --skip-taskbar --align=center --center --on-top \
-            --width=300 --height=180 --borders=10 \
+            --skip-taskbar --buttons-layout=spread \
+            --align=center --center --on-top \
+            --width=280 --height=150 --borders=10 \
             --field="Cantidad de elementos para practicar":LBL " " \
             --field="":CB "$(gettext "Todos los items")!$(gettext "Tandas de 20 items")!$(gettext "Tandas de 50 items")" \
             --field="Preguntas en":LBL " " \
-            --field="":CB "${llists}" \
-            --button="   $(gettext "OK")  ":2)
+            --button="   $(gettext "$slng")  ":3 \
+            --button="   $(gettext "$tlng")  ":2); ret="$?"
             if cut -d "|" -f2 <<< "${optns}" |grep '20'; then div=1; splt=20;
             elif cut -d "|" -f2 <<< "${optns}" |grep '50'; then div=1; splt=50; fi
-            if [ "$(cut -d "|" -f4 <<< "${optns}")" = "$(gettext "$slng")" ]; then rev=1; fi
+            if [ "$ret" = 3 ]; then rev=1; else rev=0; fi
             echo -e "$div|$splt|$rev" > ${pr}
         fi
         
