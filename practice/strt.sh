@@ -645,24 +645,24 @@ function lock() {
             optns=$(yad --form --title="$(gettext "Practice Completed")" \
             --always-print-result \
             --skip-taskbar --buttons-layout=spread \
-            --align=center --center --on-top \
-            --width=320 --height=150 --borders=10 \
+            --center --on-top \
+            --width=300 --height=120 --borders=8 \
             --field="$text_dlg":LBL " " \
-            --button="$(gettext "Restart")":0 \
-            --button="$(gettext "OK")":1); ret="$?"
+            --button="  $(gettext "Restart")    ":0 \
+            --button="  $(gettext "OK") ":1); ret="$?"
         else
             if [ $(grep -o "wait"=\"[^\"]* "${lock}" |grep -o '[^"]*$') != $(date +%d) ]; then
                 rm "${lock}" & return 0
             else
-                text_dlg="$(gettext "Consider waiting a while before resuming to practice some items")"
+                text_dlg="<b>$(gettext "Consider waiting a while before resuming to practice some items")</b>"
                 optns=$(yad --form --title="$(gettext "Advice")" \
                 --always-print-result \
                 --skip-taskbar --buttons-layout=spread \
-                --align=center --center --on-top \
-                --width=340 --height=150 --borders=10 \
+                --center --on-top \
+                --width=300 --height=120 --borders=8 \
                 --field="$text_dlg":LBL " " \
-                --button="$(gettext "Practice")":0 \
-                --button="$(gettext "OK")":4); ret="$?"
+                --button="  $(gettext "Practice")   ":0 \
+                --button="  $(gettext "OK") ":4); ret="$?"
             fi
         fi
         if [ $ret -eq 0 ]; then
@@ -679,10 +679,11 @@ function lock() {
 function prosplit() {
     optns=$(yad --form --title="$(gettext "Question")" \
     --always-print-result \
-    --skip-taskbar --buttons-layout=spread \
+    --skip-taskbar --undecorated --buttons-layout=spread \
     --align=center --center --on-top \
-    --width=340 --height=150 --borders=10 \
-    --field="\n$(gettext "Volver a practicar o Practicar los siguientes")":LBL " " \
+    --width=450 --height=110 --borders=8 \
+    --field="<b>$(gettext "Volver a practicar los anteriores o pasar los siguientes?")</b>":LBL " " \
+    --button="$(gettext "Exit")":5 \
     --button="$(gettext "Volver")!view-refresh":1 \
     --button="$(gettext "Siguientes")!go-next":0); ret="$?"
 
@@ -699,7 +700,7 @@ function prosplit() {
         easy=0; hard=0; ling=0; step=1
         export easy hard ling step
     else
-        "$DS/ifs/tls.sh" colorize 1 & exit
+        score
     fi
 }
 
@@ -714,7 +715,7 @@ function practices() {
     pr="${1}"
     div=""; splt=""; rev=""
     if [ -f "$pdir/$pr" ]; then 
-        optns="$(cat $pdir/$pr)"
+        optns="$(cat "$pdir/$pr")"
         div="$(cut -d "|" -f1 <<< "${optns}")"
         splt="$(cut -d "|" -f2 <<< "${optns}")"
         rev="$(cut -d "|" -f3 <<< "${optns}")"
@@ -750,18 +751,18 @@ function practices() {
             else llists="$(gettext "$tlng")"; fi
             optns=$(yad --form --title="$(gettext "Comenzando...")" \
             --always-print-result \
-            --skip-taskbar --buttons-layout=spread \
+            --skip-taskbar --undecorated --buttons-layout=spread \
             --align=center --center --on-top \
-            --width=320 --height=170 --borders=10 \
-            --field="Cantidad de elementos para practicar":LBL " " \
-            --field="":CB "$(gettext "Todos los items")!$(gettext "Tandas de 10 items")!$(gettext "Tandas de 20 items")!$(gettext "Tandas de 50 items")" \
-            --field="Preguntas en":LBL " " \
-            --button="   $(gettext "$slng")  ":3 \
-            --button="   $(gettext "$tlng")  ":2); ret="$?"
+            --width=350 --height=150 --borders=8 \
+            --field="<b>$(gettext "Cantidad de elementos para practicar")</b>":LBL " " \
+            --field="":CB "$(gettext "Todos los items")!$(gettext "Tandas de 10 items")!$(gettext "Tandas de 20 items")!$(gettext "Tandas de 30 items")" \
+            --field="<b>$(gettext "Preguntas en")</b>":LBL " " \
+            --button="      $(gettext "$slng")      ":3 \
+            --button="      $(gettext "$tlng")      ":2); ret="$?"
 
             if cut -d "|" -f2 <<< "${optns}" |grep '10'; then div=1; splt=10;
             elif cut -d "|" -f2 <<< "${optns}" |grep '20'; then div=1; splt=20
-            elif cut -d "|" -f2 <<< "${optns}" |grep '50'; then div=1; splt=50; fi
+            elif cut -d "|" -f2 <<< "${optns}" |grep '30'; then div=1; splt=30; fi
             if [ "$ret" = 3 ]; then rev=1; else rev=0; fi
             echo -e "$div|$splt|$rev" > ${pr}
         fi
