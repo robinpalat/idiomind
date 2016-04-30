@@ -115,7 +115,8 @@ function practice_a() {
     }
 
     question() {
-        yad --form --title="$(gettext "Practice")" \
+        yad --form --title=" " \
+        --no-focus \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
         --width=400 --height=270 --borders=8 \
@@ -126,8 +127,8 @@ function practice_a() {
     }
 
     answer() {
-        yad --form --title="$(gettext "Practice")" \
-        --selectable-labels \
+        yad --form --title=" " \
+        --no-focus --selectable-labels \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
         --width=400 --height=270 --borders=8 \
@@ -212,7 +213,7 @@ function practice_b(){
     }
 
     mchoise() {
-        dlg=$(ofonts | yad --list --title="$(gettext "Practice")" \
+        dlg=$(ofonts | yad --list --title=" " \
         --text="${question}" \
         --separator=" " --selectable-labels \
         --skip-taskbar --text-align=center --center --on-top \
@@ -293,7 +294,7 @@ function practice_c() {
         cmd_play="$DS/play.sh play_word "\"${trgt}\"" ${cdid}"
         (sleep 0.5 && "$DS/play.sh" play_word "${trgt}" ${cdid}) &
 
-        yad --form --title="$(gettext "Practice")" \
+        yad --form --title=" " \
         --text="$lquestion" \
         --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --image-on-top --undecorated \
@@ -365,7 +366,7 @@ function practice_d() {
     }
 
     question() {
-        yad --form --title="$(gettext "Practice")" \
+        yad --form --title=" " \
         --image="$img" \
         --skip-taskbar --text-align=center --align=center --center --on-top \
         --image-on-top --undecorated --buttons-layout=spread \
@@ -376,7 +377,7 @@ function practice_d() {
     }
 
     answer() {
-        yad --form --title="$(gettext "Practice")" \
+        yad --form --title=" " \
         --image="$img" \
         --selectable-labels \
         --skip-taskbar --text-align=center --align=center --center --on-top \
@@ -454,7 +455,7 @@ function practice_e() {
         fi
         text="<span font_desc='Serif Bold 14'>$hint</span>\n"
         
-        entry=$(>/dev/null | yad --form --title="$(gettext "Practice")" \
+        entry=$(>/dev/null | yad --form --title=" " \
         --text="${text}" \
         --name=Idiomind --class=Idiomind \
         --separator="" --focus-field=1 \
@@ -471,7 +472,7 @@ function practice_e() {
         
     check() {
         sz=$((sz+3))
-        yad --form --title="$(gettext "Practice")" \
+        yad --form --title=" " \
         --text="<span font_desc='Free Sans 12'>${wes^}</span>\\n" \
         --name=Idiomind --class=Idiomind \
         --selectable-labels \
@@ -687,6 +688,9 @@ function decide_group() {
         |sed '/^$/d' > "${pdir}/${pr}.tmp"
         mv -f "${pdir}/${pr}.tmp" "${pdir}/${pr}.group"
         head -n ${split} "${pdir}/${pr}.group" > "${pdir}/${pr}.tmp"
+        sed '/^$/d' "${pdir}/${pr}.1" \
+        |awk '!a[$0]++' |wc -l > "${pdir}/${pr}.l"
+        
     elif [ $ret -eq 1 ]; then
         head -n ${split} "${pdir}/${pr}.group" > "${pdir}/${pr}.tmp"
         grep -Fxvf "${pdir}/${pr}.tmp" "${pdir}/${pr}.1" \
@@ -743,15 +747,12 @@ function practices() {
         echo " practice --restarting session"
     else
         if [ ! -e "${pdir}/${pr}.0" ]; then
-        
-            if grep -o -E 'a|b|d' <<< ${pr}; then
-            llists="$(gettext "$tlng")!$(gettext "$slng")"
-            else llists="$(gettext "$tlng")"; fi
+  
             optns=$(yad --form --title=" " \
             --always-print-result \
             --skip-taskbar --undecorated --buttons-layout=spread \
             --align=center --center --on-top \
-            --width=300 --borders=5 \
+            --width=350 --height=105 --borders=5 \
             --field="":CB "$(gettext "Practicar todos los items")!$(gettext "En grupos de 10")!$(gettext "En grupos de 20")!$(gettext "En grupos de 30")" \
             --button="      $(gettext "$slng")      !!$(gettext "Questions in $slng - Answers in $tlng")":3 \
             --button="      $(gettext "$tlng")      !!$(gettext "Questions in $tlng - Answers in $slng")":2); ret="$?"
