@@ -41,7 +41,7 @@ function scoreschk() {
 function score() {
     rm ./*.tmp
     [ ! -e ./${pr}.l ] && touch ./${pr}.l
-    if [[ $(($(< ./${pr}.l)+easy)) -ge ${all} ]] || [[ ${group} = 0 ]]; then
+    if [[ $(($(< ./${pr}.l)+easy)) -ge ${all} ]]; then
         _log ${pr}; play "$pdirs/all.mp3" &
         date "+%a %d %B" > ./${pr}.lock
         save_gains 0 & echo 21 > .${icon}
@@ -684,7 +684,7 @@ function lock() {
 
 function decide_group() {
     [ -e ./${pr}.l ] && learnt=$(($(< ./${pr}.l)+easy)) || learnt=${easy}
-    info="<small>$(gettext "Learnt")</small> <span color='#6E6E6E'><b>$learnt</b></span>   <small>$(gettext "Easy")</small> <span color='#6E6E6E'><b>$easy </b></span>   <small>$(gettext "Learning")</small> <span color='#6E6E6E'><b>$ling </b></span>   <small>$(gettext "Difficult")</small> <span color='#6E6E6E'><b>$hard </b></span>"
+    info="<small>$(gettext "Learnt")</small> <span color='#6E6E6E'><b>$learnt </b></span>   <small>$(gettext "Easy")</small> <span color='#6E6E6E'><b>$easy </b></span>   <small>$(gettext "Learning")</small> <span color='#6E6E6E'><b>$ling </b></span>   <small>$(gettext "Difficult")</small> <span color='#6E6E6E'><b>$hard </b></span>"
     optns=$(yad --form --title=" " \
     --always-print-result \
     --no-focus --skip-taskbar --undecorated --buttons-layout=spread \
@@ -719,8 +719,7 @@ function decide_group() {
 }
 
 function practices() {
-    easy=0; hard=0; ling=0; step=1
-    export easy hard ling step
+    pr=${1}
     log="$DC_s/log"
     cfg0="$DC_tlt/0.cfg"
     cfg1="$DC_tlt/1.cfg"
@@ -728,13 +727,14 @@ function practices() {
     cfg4="$DC_tlt/4.cfg"
     hits="$(gettext "hits")"
     touch "${pdir}/log1" "${pdir}/log2" "${pdir}/log3"
-    pr="${1}"
+    easy=0; hard=0; ling=0; step=1
+    export easy hard ling step
     group=""; split=""; quest=""
     if [ -f "${pdir}/$pr" ]; then 
-        optns="$(cat "${pdir}/$pr")"
-        group="$(cut -d "|" -f1 <<< "${optns}")"
-        split="$(cut -d "|" -f2 <<< "${optns}")"
-        quest="$(cut -d "|" -f3 <<< "${optns}")"
+    optns="$(cat "${pdir}/$pr")"
+    group="$(cut -d "|" -f1 <<< "${optns}")"
+    split="$(cut -d "|" -f2 <<< "${optns}")"
+    quest="$(cut -d "|" -f3 <<< "${optns}")"
     fi
     if [ ${pr} = a ]; then icon=1
     elif [ ${pr} = b ]; then icon=2
@@ -745,6 +745,8 @@ function practices() {
     lock
     
     if [ -e "${pdir}/${pr}.0" -a -e "${pdir}/${pr}.1" ]; then
+    
+        export all=$(egrep -cv '#|^$' "${pdir}/${pr}.0")
     
         if [[ ${group} = 1 ]]; then
             head -n ${split} "${pdir}/${pr}.group" \
@@ -763,7 +765,6 @@ function practices() {
         fi
     else
         if [ ! -e "${pdir}/${pr}.0" ]; then
-  
             optns=$(yad --form --title=" " \
             --always-print-result \
             --no-focus --skip-taskbar --undecorated --buttons-layout=spread \
@@ -787,16 +788,15 @@ function practices() {
         else
             cp -f "${pdir}/${pr}.0" "${pdir}/${pr}.tmp"
         fi
+        export all=$(egrep -cv '#|^$' "${pdir}/${pr}.0")
     fi
-    
-    if [[ $(wc -l < "${pdir}/${pr}.0") -lt 2 ]]; then \
+    if [[ ${all} -lt 2 ]]; then \
         msg "$(gettext "Insufficient number of items to start")\n" \
         dialog-information " " "$(gettext "OK")"
         strt 0 & return 1
     fi
 
     cleanups "${pdir}/${pr}.2" "${pdir}/${pr}.3"
-    all=$(egrep -cv '#|^$' ./${pr}.0)
     img_cont="$DS/images/cont.png"
     img_no="$DS/images/no.png"
     img_yes="$DS/images/yes.png"
@@ -814,7 +814,7 @@ function strt() {
     [[ ${hard} -lt 0 ]] && hard=0
     
     if [[ ${step} -gt 1 && ${ling} -ge 1 && ${hard} = 0 ]]; then
-        echo -e "wait=\"$(date +%d)\"" > ./${pr}.lock; fi
+    echo -e "wait=\"$(date +%d)\"" > ./${pr}.lock; fi
 
     if [ ${1} = 1 ]; then
         NUMBER="<span color='#6E6E6E'><b><big>$(wc -l < ${pr}.0)</big></b></span>"; declare info${icon}="<span font_desc='Arial Bold 12'>$(gettext "Test completed") </span> —"
