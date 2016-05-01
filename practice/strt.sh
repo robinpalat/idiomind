@@ -702,7 +702,8 @@ function decide_group() {
         |awk '!a[$0]++' |wc -l > "${pdir}/${pr}.l"
         easy=0; hard=0; ling=0; step=1
         export easy hard ling step
-    else
+        
+    elif [ $ret -eq 5 ]; then
         score
     fi
 }
@@ -741,9 +742,12 @@ function practices() {
             grep -Fxvf "${pdir}/${pr}.1" "${pdir}/${pr}.0" \
             |sed '/^$/d' > "${pdir}/${pr}.tmp"
         fi
-
         if [[ "$(egrep -cv '#|^$' < "${pdir}/${pr}.tmp")" = 0 ]]; then
-            if [[ ${group} = 1 ]]; then decide_group; else lock; fi
+            if [[ ${group} = 1 ]]; then 
+				export easy=0; decide_group
+			else 
+				lock
+			fi
         fi
     else
         if [ ! -e "${pdir}/${pr}.0" ]; then
