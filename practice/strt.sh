@@ -276,11 +276,17 @@ function practice_c() {
         cdid="$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")"
         if [[ ${quest} != 1 ]]; then
             if [[ $p = 2 ]]; then
-                [ $tlng = Japanese -o $tlng = Chinese -o $tlng = Russian ] \
-                && lst="${trgt:0:1} ${trgt:5:5}" || lst=$(echo "${trgt,,}" |awk '$1=$1' FS= OFS=" " |tr aeiouy '.')
+                if grep -o -E 'Japanese|Chinese|Russian' <<< ${tlng}; then
+                    lst="${trgt:0:1} ${trgt:5:5}"
+                else
+                    lst=$(echo "${trgt,,}" |awk '$1=$1' FS= OFS=" " |tr aeiouy '.')
+                fi
             elif [[ $p = 1 ]]; then
-                [ $tlng = Japanese -o $tlng = Chinese -o $tlng = Russian ] \
-                && lst="${trgt:0:1} ${trgt:5:5}" || lst=$(echo "${trgt^}" |sed "s|[a-z]|"\ \."|g")
+                if grep -o -E 'Japanese|Chinese|Russian' <<< ${tlng}; then
+                    lst="${trgt:0:1} ${trgt:5:5}"
+                else
+                    lst=$(echo "${trgt^}" |sed "s|[a-z]|"\ \."|g")
+                fi
             fi
         else
             trgt="$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")"
@@ -440,7 +446,7 @@ function practice_e() {
 
     dialog2() {
         if [[ ${quest} != 1 ]]; then
-            if [ $tlng = Japanese -o $tlng = Chinese -o $tlng = Russian ]; then
+            if grep -o -E 'Japanese|Chinese|Russian' <<< ${tlng}; then
                 hint=" "
             else
                 hint="$(echo "$@" |tr -d "',.;?!¿¡()" |tr -d '"' \
@@ -677,8 +683,8 @@ function lock() {
 }
 
 function decide_group() {
-    [ -e ./${pr}.l ] && learnt=$(($(< ./${pr}.l)+easy)) || learnt=0
-    info="<small>$(gettext "Learnt")</small> <span color='#6E6E6E'><b><big>$learnt</big></b></span>   <small>$(gettext "Easy")</small> <span color='#6E6E6E'><b><big>$easy </big></b></span>   <small>$(gettext "Learning")</small> <span color='#6E6E6E'><b><big>$ling </big></b></span>   <small>$(gettext "Difficult")</small> <span color='#6E6E6E'><b><big>$hard </big></b></span>"
+    [ -e ./${pr}.l ] && learnt=$(($(< ./${pr}.l)+easy)) || learnt=${easy}
+    info="<small>$(gettext "Learnt")</small> <span color='#6E6E6E'><b>$learnt</b></span>   <small>$(gettext "Easy")</small> <span color='#6E6E6E'><b>$easy </b></span>   <small>$(gettext "Learning")</small> <span color='#6E6E6E'><b>$ling </b></span>   <small>$(gettext "Difficult")</small> <span color='#6E6E6E'><b>$hard </b></span>"
     optns=$(yad --form --title=" " \
     --always-print-result \
     --no-focus --skip-taskbar --undecorated --buttons-layout=spread \
