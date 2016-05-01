@@ -677,10 +677,14 @@ function lock() {
 }
 
 function decide_group() {
+    [ -e ./${pr}.l ] && learnt=$(($(< ./${pr}.l)+easy)) || learnt=0
+    info="<small>$(gettext "Learnt")</small> <span color='#6E6E6E'><b><big>$learnt</big></b></span>   <small>$(gettext "Easy")</small> <span color='#6E6E6E'><b><big>$easy </big></b></span>   <small>$(gettext "Learning")</small> <span color='#6E6E6E'><b><big>$ling </big></b></span>   <small>$(gettext "Difficult")</small> <span color='#6E6E6E'><b><big>$hard </big></b></span>"
     optns=$(yad --form --title=" " \
     --always-print-result \
     --no-focus --skip-taskbar --undecorated --buttons-layout=spread \
-    --align=center --center --on-top --borders=5 \
+    --text-align=center --align=center --center --on-top --borders=5 \
+    --text="${info}" \
+    --field="":lbl \
     --button="$(gettext "Exit")":5 \
     --button="$(gettext "Again")!view-refresh!$(gettext "Go back to practice the above items")":1 \
     --button="$(gettext "Next")!go-next!$(gettext "Practice the next group")":0); ret="$?"
@@ -709,6 +713,8 @@ function decide_group() {
 }
 
 function practices() {
+    easy=0; hard=0; ling=0; step=1
+    export easy hard ling step
     log="$DC_s/log"
     cfg0="$DC_tlt/0.cfg"
     cfg1="$DC_tlt/1.cfg"
@@ -788,8 +794,6 @@ function practices() {
     img_cont="$DS/images/cont.png"
     img_no="$DS/images/no.png"
     img_yes="$DS/images/yes.png"
-    easy=0; hard=0; ling=0; step=1
-    export easy hard ling step
     practice_${pr}
 }
 
