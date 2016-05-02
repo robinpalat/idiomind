@@ -168,7 +168,6 @@ edit_item() {
     fi
     export cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"""
     export cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" ${cdid}"
-    export cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" "\"${trgt}\"""
     export cmd_def="'$DS/ifs/tls.sh' 'find_def' "\"${trgt}\"""
     export cmd_trad="'$DS/ifs/tls.sh' 'find_trad' "\"${trgt}\"""
 

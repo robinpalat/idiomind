@@ -25,7 +25,7 @@ function dlg_form_1() {
     --field="$(gettext "Definition")":FBTN "${cmd_def}" \
     --button="$(gettext "Image")":"${cmd_image}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
-    --button="!$DS/images/listen.png!$(gettext "Listen")":"$cmd_play" \
+    --button="!$DS/images/listen.png!$(gettext "Listen")":"${cmd_play}" \
     --button="$(gettext "Next")":2 \
     --button="$(gettext "Close")":0
 }
@@ -51,9 +51,8 @@ function dlg_form_2() {
     --field="$(gettext "Go to Google Translate")":FBTN "${cmd_trad}" \
     --field="\t\t\t$(gettext "Topic")":CB "${tpc_list}" \
     --field="$(gettext "Audio")":FL "${audf}" \
-    --button="$(gettext "Words")":"${cmd_words}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
-    --button="!$DS/images/listen.png!$(gettext "Listen")":"$cmd_play" \
+    --button="!$DS/images/listen.png!$(gettext "Listen")":"${cmd_play}" \
     --button="$(gettext "Next")":2 \
     --button="$(gettext "Close")":0
 }

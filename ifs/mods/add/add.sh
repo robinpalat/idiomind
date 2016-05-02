@@ -243,13 +243,13 @@ function clean_2() {
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
     echo "${1}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
     |sed "s/’/'/g" |sed 's/quot\;/"/g' \
-    |tr -s '/' '-' |tr -d ':\*' |tr -s '*&|{}[]<>+' ' ' \
+    |tr -s '/' '-' |tr -d '\*' |tr -s '*&|{}[]<>+' ' ' \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g;s/<[^>]*>//g;s/^\s*./\U&\E/g'
     else
     echo "${1}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
     |sed "s/’/'/g" |sed 's/quot\;/"/g' \
-    |tr -s ':\*&|{}[]<>+' ' ' \
+    |tr -s '\*&|{}[]<>+' ' ' \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g; s/^\s*./\U&\E/g' |tr -s '/' '-' \
     |sed 's|/||g; s/<[^>]*>//g;s/^\s*./\U&\E/g' #; s/-.\s*./\U&\E/g
@@ -267,15 +267,15 @@ function clean_3() {
 function clean_4() {
     if [ $(wc -c <<< "${1}") -le ${sentence_chars} ] && \
     [ $(echo -e "${1}" |wc -l) -gt ${sentence_lines} ]; then
-    echo "${1}" | tr -d '*/' |tr -s '&:|{}[]<>+' ' ' \
+    echo "${1}" | tr -d '*/' |tr -s '&|{}[]<>+' ' ' \
     |sed 's/ — / - /;s/--/ /g; /^$/d;s/ \+/ /g;s/ʺͶ//;s/	/ /g'
     elif [ $(wc -c <<< "${1}") -le ${sentence_chars} ]; then
     echo "${1}" |sed ':a;N;$!ba;s/\n/ /;s/	/ /g' \
-    |tr -d '*/' |tr -s '&:|{}[]<>+' ' ' \
+    |tr -d '*/' |tr -s '&|{}[]<>+' ' ' \
     |sed 's/ — / - /;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
     else
     echo "${1}" |sed ':a;N;$!ba;s/\n/\__/;s/	/ /g' \
-    |tr -d '*/' |tr -s '&:|{}[]<>+' ' ' \
+    |tr -d '*/' |tr -s '&|{}[]<>+' ' ' \
     |sed 's/ — /__/;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
     fi
 }
@@ -283,10 +283,10 @@ function clean_4() {
 function clean_5() {
     sed -n -e '1x;1!H;${x;s-\n- -gp}' \
     |sed 's/<[^>]*>//g' |sed 's/ \+/ /g' \
-    |sed '/^$/d' |sed 's/ \+/ /;s/\://g' \
+    |sed '/^$/d' |sed 's/ \+/ /g' \
     |sed 's/^[ \t]*//;s/[ \t]*$//;s/^ *//; s/ *$//g' \
     |sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' |grep -v '^..$' \
-    |grep -v '^.$' |sed 's/<[^>]\+>//;s/\://g' \
+    |grep -v '^.$' |sed 's/<[^>]\+>//g' \
     |sed 's/\&quot;/\"/g' |sed "s/\&#039;/\'/g" \
     |sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
     |sed 's/ — /\n/g' \
@@ -302,7 +302,7 @@ function clean_6() {
     sed 's/\\n/./g' \
     |sed '/^$/d' |sed 's/^[ \t]*//;s/[ \t]*$//' \
     |sed 's/ — /\n/g;s/ʺͶ//g' \
-    |sed 's/ \+/ /;s/\://;s/\&quot;/\"/;s/^ *//;s/ *$//g' \
+    |sed 's/ \+/ /;s/\&quot;/\"/;s/^ *//;s/ *$//g' \
     |sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g; s/\. //g' \
     |sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g; s/\? //g' \
     |sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g; s/\! //g' \
@@ -311,7 +311,7 @@ function clean_6() {
 
 function clean_7() {
     sed 's/^ *//;s/ *$//g' |sed 's/^[ \t]*//;s/[ \t]*$//' \
-    |sed 's/ \+/ /;s/\://;s/	/ /g' \
+    |sed 's/ \+/ /;s/	/ /g' \
     |sed '/^$/d' |sed 's/ — /\n/g' \
     |sed 's/\&quot;/\"/g' |sed "s/\&#039;/\'/g" \
     |sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
@@ -322,7 +322,7 @@ function clean_7() {
 function clean_8() {
     sed 's/\[ \.\.\. \]//;s/	/ /g' \
     |sed 's/^ *//;s/ *$//g' |sed 's/^[ \t]*//;s/[ \t]*$//' \
-    |sed 's/ \+/ /;s/\://g' \
+    |sed 's/ \+/ /g' \
     |sed '/^$/d' |sed 's/ — /\n/g' \
     |sed 's/\&quot;/\"/g' |sed "s/\&#039;/\'/g" \
     |sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
@@ -339,7 +339,7 @@ function clean_9() {
     |sed "s/’/'/g" \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g' |sed 's/^\s*./\U&\E/g' \
-    |tr -s '/' '-' |tr -d ':/*|()[]&:<>+' \
+    |tr -s '/' '-' |tr -d '/*|()[]&<>+' \
     |sed 's/<[^>]*>//g; s/ \+/ /g'
 }
 
@@ -519,11 +519,11 @@ function list_words_3() {
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
     echo "${2}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
     |sed 's/\[ \.\.\. ] //g' |sed 's/\.//g' \
-    |tr '_' '\n' |tr -d ',;' |sed -n 1~2p |sed '/^$/d' > "$DT_r/lst"
+    |tr '_' '\n' |tr -d ',;:' |sed -n 1~2p |sed '/^$/d' > "$DT_r/lst"
     else
     echo "${1}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
     |sed 's/\[ \.\.\. ] //g' |sed 's/\.//g' \
-    |tr -s "[:blank:]" '\n' |tr -d ',;()' \
+    |tr -s "[:blank:]" '\n' |tr -d ':,;()' \
     |sed '/^$/d' |sed '/"("/d' \
     |grep -v '^.$' |grep -v '^..$' \
     |sed 's/[^ ]\+/\L\u&/g' \
@@ -606,7 +606,7 @@ function dlg_checklist_1() {
         fi
         done
     }
-    list "${1}" | yad --list --checklist --title="$(gettext "Words")" \
+    list "${1}" | yad --list --checklist --title="$(gettext "Add words")" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind \
     --mouse --on-top --no-headers \
@@ -620,9 +620,10 @@ function dlg_text_info_1() {
     cat "${1}" |awk '{print "\n"$0}' | \
     yad --text-info --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
+    --gtkrc="$DS/default/gtkrc.cfg" \
     --editable \
     --window-icon=idiomind \
-    --wrap --margins=30 --fontname=vendana \
+    --wrap --margins=20 --fontname='vendana 11' \
     --skip-taskbar --center --on-top \
     --width=700 --height=450 --borders=2 \
     --button="$(gettext "Cancel")":1 \

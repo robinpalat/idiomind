@@ -203,7 +203,7 @@ function practice_b(){
             srce_s=$((35-${#trgt}))
             question="\n<span font_desc='Free Sans ${srce_s}'><b>${trgt}</b></span>\n\n"
         fi
-        }
+    }
 
     ofonts() {
         while read -r name; do
@@ -690,7 +690,6 @@ function decide_group() {
     --no-focus --skip-taskbar --undecorated --buttons-layout=spread \
     --text-align=center --align=center --center --on-top --borders=5 \
     --text="${info}" \
-    --field="":lbl \
     --button="$(gettext "Exit")":5 \
     --button="$(gettext "Again")!view-refresh!$(gettext "Go back to practice the above items")":1 \
     --button="$(gettext "Next")!go-next!$(gettext "Practice the next group")":0); ret="$?"
@@ -828,7 +827,7 @@ function strt() {
     fi
 
     pr="$(yad --list --title="$(gettext "Practice ")" \
-    --text="$info" \
+    --text="${info}" \
     --class=Idiomind --name=Idiomind \
     --print-column=1 --separator="" \
     --window-icon=idiomind \

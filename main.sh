@@ -134,9 +134,9 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     file="${1}"
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
     level="${lv[${levl}]}"
-    itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$name</span>\n$nwrd $(gettext "Words") \
+    itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$name</span><small>\n$nwrd $(gettext "Words") \
 $nsnt $(gettext "Sentences") $nimg $(gettext "Images") \n$(gettext "Level:") \
-$level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(gettext "$slng")"
+$level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(gettext "$slng")</small>"
     dclk="$DS/play.sh play_word"
     _lst() {
         while read -r line; do
