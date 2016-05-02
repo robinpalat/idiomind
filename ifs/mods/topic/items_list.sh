@@ -93,7 +93,7 @@ function word_view() {
 function sentence_view() {
     if [ $(grep -oP '(?<=gramr=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
-    [ -n "${note}" ] && field_note="📝 <span font_desc='Arial 8' color='#676767'>$note</span>\n"
+    [ -n "${note}" ] && field_note="💬  <span font_desc='Arial 8' color='#676767'>$note</span>\n"
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free 16'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i>$link</span>\n<small>$tag</small>\n"
     cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"""

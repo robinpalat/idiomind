@@ -764,19 +764,20 @@ function practices() {
         fi
     else
         if [ ! -e "${pdir}/${pr}.0" ]; then
-            optns=$(yad --form --title="$(gettext "Options")" \
+            optns=$(yad --form --title="$(gettext "Options")..." \
             --always-print-result \
-            --no-focus --skip-taskbar --buttons-layout=spread \
+            --skip-taskbar --buttons-layout=spread \
             --align=center --center --on-top \
-            --width=325 --height=105 --borders=5 \
+            --borders=5 \
             --field="":CB "$(gettext "Practice all items")!$(gettext "In groups of 10")!$(gettext "In groups of 20")!$(gettext "In groups of 30")" \
             --button="      $(gettext "$slng")      !!$(gettext "Questions in $slng - Answers in $tlng")":3 \
             --button="      $(gettext "$tlng")      !!$(gettext "Questions in $tlng - Answers in $slng")":2); ret="$?"
-            if [ $ret = 3 -o $ret 2 ]; then
+            
+            if [ $ret = 3 -o $ret = 2 ]; then
                 if grep '10' <<< "${optns}"; then group=1; split=10;
                 elif grep '20' <<< "${optns}"; then group=1; split=20
                 elif grep '30' <<< "${optns}"; then group=1; split=30; fi
-                if [ "$ret" = 3 ]; then quest=1; else quest=0; fi
+                if [ $ret = 3 ]; then quest=1; else quest=0; fi
                 
                 echo -e "$group|$split|$quest" > ${pr}
             else
