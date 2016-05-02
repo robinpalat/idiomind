@@ -68,15 +68,14 @@ function new_item() {
         msg "$(gettext "You need to fill text fields.")\n" \
         dialog-information "$(gettext "Information")" & exit 1
     fi
-    if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
+    if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
         srce=$(translate "${trgt}" auto $lgs)
         if [ $(wc -w <<< "${srce}") = 1 ]; then
             new_word
         elif [ "$(wc -w <<< "${srce}")" -ge 1 -a ${#srce} -le ${sentence_chars} ]; then
             new_sentence
         fi
-    elif [ $lgt != ja -o $lgt != 'zh-cn' -o $lgt != ru ]; then
-    
+    elif ! grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
         if [ $(wc -w <<< "${trgt}") = 1 ]; then
             new_word
         elif [ "$(wc -w <<< "${trgt}")" -ge 1 -a ${#trgt} -le ${sentence_chars} ]; then
@@ -313,7 +312,7 @@ function list_words_dclik() {
     source "$DS/ifs/mods/add/add.sh"
     words="${3}"
     
-    if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
+    if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
         ( echo "1"
         echo "# $(gettext "Processing")..." ;
         export srce="$(translate "${words}" $lgt $lgs)"
@@ -378,7 +377,7 @@ function process() {
                 cleanups "$DT_r" "$DT/n_s_pr"; return 1; 
             fi
 
-            if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
+            if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
                 echo "${conten}" |clean_7 > "$DT_r/xxlines"; epa=0
             else
                 echo "${conten}" |clean_8 > "$DT_r/xxlines"; epa=1
@@ -387,7 +386,7 @@ function process() {
         fi
         
         [ -e "$DT_r/xlines" ] && rm -f "$DT_r/xlines"
-        if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
+        if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
             lenght() {
                 if [ $(wc -c <<< "${1}") -le ${sentence_chars} ]; then
                     echo -e "${1}" >> "$DT_r/xlines"
@@ -493,7 +492,9 @@ function process() {
         fi
         
         internet
-        [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w
+
+        if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then c=c; else c=w; fi
+
         lns="$(cat "$DT_r/select_lines" "$DT_r/wrds" |sed '/^$/d' |wc -l)"
         
         n=1

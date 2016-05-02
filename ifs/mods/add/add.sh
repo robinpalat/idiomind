@@ -106,7 +106,7 @@ function sentence_p() {
 
     r=$((RANDOM%10000))
     touch "$DT_r/swrd.$r" "$DT_r/twrd.$r"
-    if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
+    if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
         vrbl="${srce_p}"; lg=$lgt; aw="$DT_r/swrd.$r"; bw="$DT_r/twrd.$r"
     else
         vrbl="${trgt_p}"; lg=$lgs; aw="$DT_r/twrd.$r"; bw="$DT_r/swrd.$r"
@@ -150,7 +150,7 @@ function sentence_p() {
     touch "$DT_r/A.$r" "$DT_r/B.$r" "$DT_r/g.$r"; bcle=1
     trgt_q="${trgt//\'/\'\'}"
     
-    if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
+    if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
         while [[ ${bcle} -le $(wc -l < "${aw}") ]]; do
         s=$(sed -n ${bcle}p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         t=$(sed -n ${bcle}p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
@@ -240,7 +240,7 @@ function clean_1() {
 }
 
 function clean_2() {
-    if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
+    if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
     echo "${1}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
     |sed "s/’/'/g" |sed 's/quot\;/"/g' \
     |tr -s '/' '-' |tr -d '\*' |tr -s '*&|{}[]<>+' ' ' \
@@ -433,8 +433,8 @@ function fetch_audio() {
     if ! ls "$DC_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
         "$DS_a/Dics/cnfg.sh" 0
     fi
-    [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] \
-    && words_list="${2}" || words_list="${1}"
+    if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then 
+    words_list="${2}"; else words_list="${1}"; fi
     
     while read -r Word; do
         word="${Word,,}"; audio_file="$DM_tls/audio/$word.mp3"
@@ -506,7 +506,7 @@ function voice() {
 }
 
 function list_words_2() {
-    if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
+    if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
         echo "${1}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
         |tr -d '*/“”"' |tr '_' '\n' |sed -n 1~2p |sed '/^$/d'
     else
@@ -516,7 +516,7 @@ function list_words_2() {
 }
 
 function list_words_3() {
-    if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
+    if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
     echo "${2}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
     |sed 's/\[ \.\.\. ] //g' |sed 's/\.//g' \
     |tr '_' '\n' |tr -d ',;:' |sed -n 1~2p |sed '/^$/d' > "$DT_r/lst"

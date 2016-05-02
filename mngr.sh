@@ -445,7 +445,7 @@ edit_list() {
     if [ -e "$DC_s/elist_first_run" ]; then 
         "$DS/ifs/tls.sh" first_run edit_list &
     fi
-    [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w
+    if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then c=c; else c=w; fi
     direc="$DM_tl/${2}/.conf"
 
     > "$DT/list_input"
