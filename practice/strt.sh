@@ -288,7 +288,7 @@ function practice_c() {
             fi
         else
             local trgt="$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")"
-            lst="${trgt}"
+            lst="<span color='#858585'>${trgt}</span>"
         fi
         s=$((30-${#trgt}))
         lquestion="\n\n<span font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n"
