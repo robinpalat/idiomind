@@ -663,7 +663,7 @@ function lock() {
             else
                 msg_2 "$(gettext "Consider waiting a while before resuming to practice some items")\n" \
                 dialog-information "$(gettext "OK")" "$(gettext "Practice")"
-                ret=$?; [ $ret = 1 ] && ret=4 #TODO
+                ret=$?; [ $ret = 1 ] && ret=4
             fi
         fi
         if [ $ret -eq 0 ]; then
@@ -683,9 +683,10 @@ function decide_group() {
     optns=$(yad --form --title=" " \
     --window-icon=idiomind \
     --always-print-result \
-    --no-focus --skip-taskbar --buttons-layout=spread \
-    --text-align=center --align=center --center --on-top --borders=5 \
+    --skip-taskbar --buttons-layout=spread \
+    --text-align=center --align=center --center --on-top \
     --text="${info}" \
+    --width=350 --height=90 --borders=5 \
     --button="$(gettext "Exit")":5 \
     --button="$(gettext "Again")!view-refresh!$(gettext "Go back to practice the above items")":1 \
     --button="$(gettext "Next")!go-next!$(gettext "Practice the next group")":0); ret="$?"
@@ -708,7 +709,7 @@ function decide_group() {
         easy=0; hard=0; ling=0; step=1
         export easy hard ling step
         
-    elif [ $ret -eq 5 ]; then
+    elif [ $ret -gt 1 ]; then
         score
     fi
 }
@@ -765,7 +766,7 @@ function practices() {
             --window-icon=idiomind \
             --skip-taskbar --buttons-layout=spread \
             --align=center --center --on-top \
-            --borders=5 \
+            --width=350 --height=90 --borders=5 \
             --field="":CB "$(gettext "Practice all items")!$(gettext "In groups of 10")!$(gettext "In groups of 20")!$(gettext "In groups of 30")" \
             --button="      $(gettext "$slng")      !!$(gettext "Questions in $slng - Answers in $tlng")":3 \
             --button="      $(gettext "$tlng")      !!$(gettext "Questions in $tlng - Answers in $slng")":2); ret="$?"
