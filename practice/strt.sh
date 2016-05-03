@@ -179,7 +179,6 @@ function practice_a() {
             fi
         done < ./a.2
         export hard ling
-        
         scoreschk
     fi
 }
@@ -264,7 +263,6 @@ function practice_b(){
             fi
         done < ./b.2
         export hard ling
-        
         scoreschk
     fi
 }
@@ -289,11 +287,11 @@ function practice_c() {
                 fi
             fi
         else
-            trgt="$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")"
+            local trgt="$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")"
             lst="${trgt}"
         fi
         s=$((30-${#trgt}))
-        lquestion="\n\n<span font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n\n"
+        lquestion="\n\n<span font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n"
     }
 
     question() {
@@ -304,7 +302,7 @@ function practice_c() {
         --text="$lquestion" \
         --no-focus --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --image-on-top --undecorated \
-        --width=390 --height=260 --borders=10 \
+        --width=390 --height=250 --borders=10 \
         --field="!$DS/images/listen.png":BTN "$cmd_play" \
         --button="$(gettext "Exit")":1 \
         --button="  $(gettext "No")  !$img_no":3 \
@@ -347,7 +345,6 @@ function practice_c() {
             fi
         done < ./c.2
         export hard ling
-        
         scoreschk
     fi
 }
@@ -437,7 +434,6 @@ function practice_d() {
             fi
         done < ./d.2
         export hard ling
-        
         scoreschk
     fi
 }
@@ -591,7 +587,6 @@ function practice_e() {
         fi
     done < ./e.tmp
     export hard ling
-    
     scoreschk
 }
 
@@ -766,6 +761,7 @@ function practices() {
         if [ ! -e "${pdir}/${pr}.0" ]; then
             optns=$(yad --form --title="$(gettext "Options")..." \
             --always-print-result \
+            --window-icon=idiomind \
             --skip-taskbar --buttons-layout=spread \
             --align=center --center --on-top \
             --borders=5 \
