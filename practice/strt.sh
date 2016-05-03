@@ -288,7 +288,7 @@ function practice_c() {
             fi
         else
             local trgt="$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")"
-            lst="<span color='#858585'>${trgt}</span>"
+            lst="<span color='#5E5E5E'>${trgt}</span>"
         fi
         s=$((30-${#trgt}))
         lquestion="\n\n<span font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n"
@@ -302,7 +302,7 @@ function practice_c() {
         --text="$lquestion" \
         --no-focus --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --image-on-top --undecorated \
-        --width=390 --height=250 --borders=10 \
+        --width=390 --height=240 --borders=10 \
         --field="!$DS/images/listen.png":BTN "$cmd_play" \
         --button="$(gettext "Exit")":1 \
         --button="  $(gettext "No")  !$img_no":3 \
@@ -681,8 +681,9 @@ function decide_group() {
     [ -e ./${pr}.l ] && learnt=$(($(< ./${pr}.l)+easy)) || learnt=${easy}
     info="<small>$(gettext "Learnt")</small> <span color='#6E6E6E'><b>$learnt </b></span>   <small>$(gettext "Easy")</small> <span color='#6E6E6E'><b>$easy </b></span>   <small>$(gettext "Learning")</small> <span color='#6E6E6E'><b>$ling </b></span>   <small>$(gettext "Difficult")</small> <span color='#6E6E6E'><b>$hard </b></span>"
     optns=$(yad --form --title=" " \
+    --window-icon=idiomind \
     --always-print-result \
-    --no-focus --skip-taskbar --undecorated --buttons-layout=spread \
+    --no-focus --skip-taskbar --buttons-layout=spread \
     --text-align=center --align=center --center --on-top --borders=5 \
     --text="${info}" \
     --button="$(gettext "Exit")":5 \
