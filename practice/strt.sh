@@ -680,7 +680,7 @@ function lock() {
 function decide_group() {
     [ -e ./${pr}.l ] && learnt=$(($(< ./${pr}.l)+easy)) || learnt=${easy}
     info="<small>$(gettext "Learnt")</small> <span color='#6E6E6E'><b>$learnt </b></span>   <small>$(gettext "Easy")</small> <span color='#6E6E6E'><b>$easy </b></span>   <small>$(gettext "Learning")</small> <span color='#6E6E6E'><b>$ling </b></span>   <small>$(gettext "Difficult")</small> <span color='#6E6E6E'><b>$hard </b></span>"
-    optns=$(yad --form --title=" " \
+    optns=$(yad --form --title="$(gettext "Continue")" \
     --window-icon=idiomind \
     --always-print-result \
     --skip-taskbar --buttons-layout=spread \
