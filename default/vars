@@ -4,9 +4,8 @@
 "name=\"${tpc}\"\nslng=\"${slng^}\"\ntlng=\"${tlng^}\"\nautr=\"${autr}\"\ncntt=\"${cntt}\"\nctgy=\"${ctgy}\"\nilnk=\"${ilnk}\"\norig=\"${orig}\"\ndtec=\"${dtec}\"\ndteu=\"${dteu}\"\ndtei=\"${dtei}\"\nnwrd=\"${nwrd}\"\nnsnt=\"${nsnt}\"\nnimg=\"${nimg}\"\nnaud=\"${naud}\"\nnsze=\"${nsze}\"\nlevl=\"${levl}\"\nmd5i=\"${md5i}\""
 "<a href=\"/${tlng,}/${ctgy,}/$tpcid.${orig}.idmnd\">"$(gettext "Download")"</a> | <a href=\"/study.php?l=${tlng,}&c=${ctgy,}&set=$tpcid.${orig}\">"$(gettext "Study")"</a><br>"
 
-
-#1line item json
-#2line item data
-#3line info json
-#4line info data
-#5line html
+#1 item json
+#2 item data
+#3 info json
+#4 info data
+#5 html(share)

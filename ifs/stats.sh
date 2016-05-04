@@ -152,7 +152,6 @@ function mk_topic_stats() {
     exec 6< <(sqlite3 "$db" "select val2 FROM ${mtable}" |tail -n11)
     exec 7< <(sqlite3 "$db" "select val3 FROM ${mtable}" |tail -n11)
     exec 8< <(sqlite3 "$db" "select val4 FROM ${mtable}" |tail -n11)
-    
     for m in {01..12}; do
         declare a$m=0
         declare b$m=0
@@ -160,7 +159,6 @@ function mk_topic_stats() {
         declare d$m=0
         declare e$m=0
     done
-    
     for m in {01..12}; do
         if [[ ${dmonth} = ${m} ]]; then
             declare a$m=$(cut -d ',' -f 1 < ${pross})

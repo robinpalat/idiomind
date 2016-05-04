@@ -761,15 +761,15 @@ function practices() {
         fi
     else
         if [ ! -e "${pdir}/${pr}.0" ]; then
-            optns=$(yad --form --title="$(gettext "Options")..." \
+            optns=$(yad --form --title="$(gettext "Options")" \
             --always-print-result \
             --window-icon=idiomind \
             --skip-taskbar --buttons-layout=spread \
             --align=center --center --on-top \
             --width=350 --height=90 --borders=5 \
             --field="":CB "$(gettext "Practice all items")!$(gettext "In groups of 10")!$(gettext "In groups of 20")!$(gettext "In groups of 30")" \
-            --button="      $(gettext "$slng")      !!$(gettext "Questions in $slng - Answers in $tlng")":3 \
-            --button="      $(gettext "$tlng")      !!$(gettext "Questions in $tlng - Answers in $slng")":2); ret="$?"
+            --button="      $(gettext "$slng")      !!$(gettext "Questions in") $(gettext "$slng") - $(gettext "Answers in") $(gettext "$tlng")":3 \
+            --button="      $(gettext "$tlng")      !!$(gettext "Questions in") $(gettext "$tlng") - $(gettext "Answers in") $(gettext "$slng")":2); ret="$?"
             
             if [ $ret = 3 -o $ret = 2 ]; then
                 if grep '10' <<< "${optns}"; then group=1; split=10;
