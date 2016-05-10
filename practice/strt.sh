@@ -372,7 +372,7 @@ function practice_d() {
         yad --form --title=" " \
         --image="$img" \
         --no-focus \ --skip-taskbar --text-align=center \
-        --align=center --center --on-top \
+        --skip-taskbar --align=center --center --on-top \
         --image-on-top --undecorated --buttons-layout=spread \
         --width=418 --height=360 --borders=5 \
         --field="$cuest":lbl "" \

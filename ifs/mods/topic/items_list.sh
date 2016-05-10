@@ -69,13 +69,14 @@ function vwr() {
 
 
 function word_view() {
+    font_size=25; [ ${#trgt} -gt 20 ] && font_size=18
     [ -n "${tags}" ] && field_tag="--field=<small>$tags</small>:lbl"
     [ -n "${defn}" ] && field_defn="--field=$defn:lbl"
     [ -n "${note}" ] && field_note="--field=<i>$note</i>\n:lbl"
     [ -n "${exmp}" ] && field_exmp="--field=<span font_desc='Verdana 11' color='#6D6D6D'>$exmp</span>:lbl"
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
-    local sentence="<span font_desc='Sans Free 25'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>$link\n\n"
-
+    local sentence="<span font_desc='Sans Free ${font_size}'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>$link\n\n"
+   
     yad --form --title=" " \
     --selectable-labels --quoted-output \
     --text="${sentence}" \
