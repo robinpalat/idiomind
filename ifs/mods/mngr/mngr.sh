@@ -12,8 +12,8 @@ function dlg_form_1() {
     --align=right --text-align=center --columns=2 \
     --buttons-layout=end --on-top --center \
     --width=650 --height=480 --borders=10 \
-    --field="$tlng" "${trgt}" \
-    --field="$slng" "${srce}" \
+    --field="$(gettext "$tlng")" "${trgt}" \
+    --field="$(gettext "$slng")" "${srce}" \
     --field="$(gettext "Topic")":CB "${tpc_list}" \
     --field=" ":LBL " " \
     --field="$(gettext "Example")\t\t\t\t\t\t\t\t\t\t\t":TXT "${exmp}" \
@@ -45,8 +45,8 @@ function dlg_form_2() {
     --width=650 --height=480 --borders=10 \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field=" $lbl_2":${t} "$type" \
-    --field="$tlng":TXT "${trgt}" \
-    --field="$slng":TXT "${srce}" \
+    --field="$(gettext "$tlng")":TXT "${trgt}" \
+    --field="$(gettext "$slng")":TXT "${srce}" \
     --field="$(gettext "Note")":TXT "${note}" \
     --field="$(gettext "Go to Google Translate")":FBTN "${cmd_trad}" \
     --field="\t\t\t$(gettext "Topic")":CB "${tpc_list}" \
