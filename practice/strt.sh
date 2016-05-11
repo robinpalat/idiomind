@@ -143,7 +143,7 @@ function practice_a() {
         if [ $? = 1 ]; then
             ling=${hard}; hard=0
             export hard ling
-            break & score
+            break & score & return
         else
             answer
             ans=$?
@@ -166,7 +166,7 @@ function practice_a() {
             fonts; question
             if [ $? = 1 ]; then
                 export hard ling
-                break & score
+                break & score & return
             else
                 answer
                 ans=$?
@@ -238,7 +238,7 @@ function practice_b(){
         elif [ $? = 1 ]; then
             ling=${hard}; hard=0
             export hard ling
-            break & score
+            break & score & return
         fi
     done < ./b.tmp
         
@@ -259,7 +259,7 @@ function practice_b(){
                 fi
             elif [ $? = 1 ]; then
                 export hard ling
-                break & score
+                break & score & return
             fi
         done < ./b.2
         export hard ling
@@ -322,7 +322,7 @@ function practice_c() {
         elif [ ${ans} = 1 ]; then
             ling=${hard}; hard=0
             export hard ling
-            break & score
+            break & score & return
         fi
     done < ./c.tmp
 
@@ -341,7 +341,7 @@ function practice_c() {
                 echo "${trgt}" >> c.3
             elif [ ${ans} = 1 ]; then
                 export hard ling
-                break & score
+                break & score & return
             fi
         done < ./c.2
         export hard ling
@@ -398,7 +398,7 @@ function practice_d() {
         if [ $? = 1 ]; then
             ling=${hard}; hard=0
             export hard ling
-            break & score
+            break & score & return
         else
             answer
             ans=$?
@@ -421,7 +421,7 @@ function practice_d() {
             fonts; question
             if [ $? = 1 ]; then
                 export hard ling
-                break & score
+                break & score & return
             else
                 answer
                 ans=$?
@@ -439,7 +439,7 @@ function practice_d() {
 }
 
 function practice_e() {
-
+    
     dialog2() {
         if [[ ${quest} != 1 ]]; then
             if grep -o -E 'Japanese|Chinese|Russian' <<< ${tlng}; then
@@ -563,27 +563,27 @@ function practice_e() {
 
         dialog2 "${push}"
         ret=$?
-        if [[ $ret = 1 ]]; then
+        if [ $ret = 1 ]; then
             break &
             if ps -A |pgrep -f 'play'; then killall play & fi
             export hard ling
-            score
+            score & return
+            
         else
             if ps -A |pgrep -f 'play'; then killall play & fi
             result "${trgt}"
-        fi
-
-        check "${trgt}"
-        ret=$?
-        if [[ $ret = 1 ]]; then
-            break &
-            if ps -A |pgrep -f 'play'; then killall play & fi
-            rm -f ./mtch.tmp ./words.tmp
-            export hard ling
-            score
-        elif [[ $ret -eq 2 ]]; then
-            if ps -A |pgrep -f 'play'; then killall play & fi
-            rm -f ./mtch.tmp ./words.tmp &
+            check "${trgt}"
+            ret=$?
+            if [ $ret = 1 ]; then
+                break &
+                if ps -A |pgrep -f 'play'; then killall play & fi
+                rm -f ./mtch.tmp ./words.tmp
+                export hard ling
+                score
+            elif [ $ret -eq 2 ]; then
+                if ps -A |pgrep -f 'play'; then killall play & fi
+                rm -f ./mtch.tmp ./words.tmp &
+            fi
         fi
     done < ./e.tmp
     export hard ling
@@ -766,7 +766,7 @@ function practices() {
             --window-icon=idiomind \
             --skip-taskbar --buttons-layout=spread \
             --align=center --center --on-top \
-            --width=350 --height=90 --borders=5 \
+            --width=380 --height=115 --borders=10 \
             --field="":CB "$(gettext "Practice all items")!$(gettext "In groups of 10")!$(gettext "In groups of 20")!$(gettext "In groups of 30")" \
             --button="      $(gettext "$slng")      !!$(gettext "Questions in") $(gettext "$slng") - $(gettext "Answers in") $(gettext "$tlng")":3 \
             --button="      $(gettext "$tlng")      !!$(gettext "Questions in") $(gettext "$tlng") - $(gettext "Answers in") $(gettext "$slng")":2); ret="$?"
@@ -796,14 +796,14 @@ function practices() {
     if [[ ${all} -lt 2 ]]; then \
         msg "$(gettext "Insufficient number of items to start")\n" \
         dialog-information " " "$(gettext "OK")"
-        strt 0 & return 1
+        strt 0 & return
+    else
+        cleanups "${pdir}/${pr}.2" "${pdir}/${pr}.3"
+        img_cont="$DS/images/cont.png"
+        img_no="$DS/images/no.png"
+        img_yes="$DS/images/yes.png"
+        practice_${pr}
     fi
-
-    cleanups "${pdir}/${pr}.2" "${pdir}/${pr}.3"
-    img_cont="$DS/images/cont.png"
-    img_no="$DS/images/no.png"
-    img_yes="$DS/images/yes.png"
-    practice_${pr}
 }
 
 function strt() {
