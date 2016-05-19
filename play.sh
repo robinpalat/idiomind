@@ -27,9 +27,9 @@ play_sentence() {
     if [ -f "${DM_tlt}/$2.mp3" ]; then
         play "${DM_tlt}/$2.mp3" &
     elif [ -n "$synth" ]; then
-        sed 's/<[^>]*>//g' <<<"${trgt}." |${synth}; [ $? != 0 ] && msg_err1
+        sed 's/<[^>]*>//g' <<< "${trgt}." |${synth}; [ $? != 0 ] && msg_err1
     else
-        sed 's/<[^>]*>//g' <<<"${trgt}." |espeak -v ${tlangs[$tlng]} \
+        sed 's/<[^>]*>//g' <<< "${trgt}." |espeak -v ${tlangs[$tlng]} \
         -a ${sAmplitude} -s ${sSpeed} -p ${sPitch} -g ${sWordgap} -b ${sEncoding} &
     fi
 } >/dev/null 2>&1

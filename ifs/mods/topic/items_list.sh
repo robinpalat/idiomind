@@ -228,7 +228,7 @@ function dialog_1() {
     --image='view-refresh' \
     --window-icon=idiomind \
     --buttons-layout=edge --center --on-top \
-    --width=440 --height=140 --borders=10 \
+    --width=440 --height=100 --borders=10 \
     --button=" $(gettext "Not Yet") ":1 \
     --button=" $(gettext "Yes") ":2
 }

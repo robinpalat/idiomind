@@ -440,12 +440,14 @@ edit_list() {
             dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" " " "$DT/el_lk"
             ret=$?
         fi
-        if [ $ret -eq 1 ]; then cleanups "$DT/items_to_add" "$DT/el_lk"; else exit 1; fi
+        if [ $ret -eq 1 ]; then 
+        cleanups "$DT/items_to_add" "$DT/el_lk"
+        else exit 1; fi
     fi
     if [ -e "$DC_s/elist_first_run" ]; then 
         "$DS/ifs/tls.sh" first_run edit_list &
     fi
-    if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then c=c; else c=w; fi
+    if grep -o -E 'ja|zh-cn|ru' <<< "${lgt}"; then c=c; else c=w; fi
     direc="$DM_tl/${2}/.conf"
 
     > "$DT/list_input"

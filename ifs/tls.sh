@@ -307,7 +307,15 @@ _definition() {
 _translation() {
     source "$DS/ifs/cmns.sh"
     source /usr/share/idiomind/default/c.conf
-    xdg-open "https://translate.google.com/#$lgt/$lgs/${2}"
+    local link="https://translate.google.com/#$lgt/$lgs/${2}"
+    sz=(800 500); [[ ${swind} = TRUE ]] && sz=(700 400)
+    yad --html --title="" \
+    --name=Idiomind --class=Idiomind \
+    --uri="${link}" --browser \
+    --window-icon=idiomind \
+    --fixed --on-top --mouse \
+    --width=${sz[0]} --height=${sz[1]} --borders=5 \
+    --button="$(gettext "Close")":1 &
 } >/dev/null 2>&1
 
 _help() {
