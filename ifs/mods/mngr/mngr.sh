@@ -20,8 +20,8 @@ function dlg_form_1() {
     --field="$(gettext "Definition")":TXT "${defn}" \
     --field="$(gettext "Note")":TXT "${note}" \
     --field="$(gettext "Go to Google Translate")":FBTN "${cmd_trad}" \
-    --field="$(gettext "Mark")":CHK "$mark" \
     --field="$(gettext "Audio")":FL "${audf}" \
+    --field="$(gettext "Mark")":CHK "$mark" \
     --field="$(gettext "Definition")":FBTN "${cmd_def}" \
     --button="$(gettext "Image")":"${cmd_image}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \

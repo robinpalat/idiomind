@@ -218,8 +218,8 @@ edit_item() {
                 defn_mod="$(clean_0 "$(cut -d "|" -f6 <<< "${edit_dlg}")")"
                 note_mod="$(clean_0 "$(cut -d "|" -f7 <<< "${edit_dlg}")")"
                 tpc_mod="$(cut -d "|" -f3 <<< "${edit_dlg}")"
-                mark_mod="$(cut -d "|" -f9 <<< "${edit_dlg}")"
-                audf_mod="$(cut -d "|" -f10 <<< "${edit_dlg}")"
+                audf_mod="$(cut -d "|" -f9 <<< "${edit_dlg}")"
+                mark_mod="$(cut -d "|" -f10 <<< "${edit_dlg}")"
                 type_mod=1
             elif [ ${type} = 2 ]; then
                 edit_dlg="${edit_dlg2}"

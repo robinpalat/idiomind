@@ -6,6 +6,7 @@ sz=(500 470); [[ ${swind} = TRUE ]] && sz=(420 410)
 source "$DS/ifs/cmns.sh"
 pdir="${DC_tlt}/practice"
 pdirs="$DS/practice"
+declare -A prcts=( ['a']='Flashcards' ['b']='Multiple Choise' ['c']='Recogning Words' ['d']='Images' ['e']='Writing Sentences')
 export -f f_lock
 
 function stats() {
@@ -679,9 +680,10 @@ function lock() {
 
 function decide_group() {
     [ -e ./${pr}.l ] && learnt=$(($(< ./${pr}.l)+easy)) || learnt=${easy}
-    info="<small>$(gettext "Learnt")</small> <span color='#6E6E6E'><b>$learnt </b></span>   <small>$(gettext "Easy")</small> <span color='#6E6E6E'><b>$easy </b></span>   <small>$(gettext "Learning")</small> <span color='#6E6E6E'><b>$ling </b></span>   <small>$(gettext "Difficult")</small> <span color='#6E6E6E'><b>$hard </b></span>"
+    info="$(gettext "Learnt") <span color='#6E6E6E'><b>$learnt </b></span>   $(gettext "Easy") <span color='#6E6E6E'><b>$easy </b></span>   $(gettext "Learning") <span color='#6E6E6E'><b>$ling </b></span>   $(gettext "Difficult") <span color='#6E6E6E'><b>$hard </b></span>"
     optns=$(yad --form --title="$(gettext "Continue")" \
     --window-icon=idiomind \
+    --image=dialog-question \
     --always-print-result \
     --skip-taskbar --buttons-layout=spread \
     --text-align=center --align=center --center --on-top \
@@ -761,20 +763,20 @@ function practices() {
         fi
     else
         if [ ! -e "${pdir}/${pr}.0" ]; then
-            optns=$(yad --form --title="$(gettext "Options")" \
+            optns=$(yad --form --title="$(gettext "Options for") $(gettext "${prcts[$pr]}")" \
             --always-print-result \
+            --image=gtk-preferences \
             --window-icon=idiomind \
             --skip-taskbar --buttons-layout=spread \
-            --align=center --center --on-top \
-            --width=380 --height=115 --borders=10 \
-            --field="":CB "$(gettext "Practice all items")!$(gettext "In groups of 10")!$(gettext "In groups of 20")!$(gettext "In groups of 30")" \
+            --align=left --center --on-top \
+            --width=350 --height=120 --borders=10 \
+            --field="$(gettext "Practice in groups of 10")":CHK "" \
+            --field="$(gettext "Choose the language for the questions:")":LBL "" \
             --button="      $(gettext "$slng")      !!$(gettext "Questions in") $(gettext "$slng") - $(gettext "Answers in") $(gettext "$tlng")":3 \
             --button="      $(gettext "$tlng")      !!$(gettext "Questions in") $(gettext "$tlng") - $(gettext "Answers in") $(gettext "$slng")":2); ret="$?"
             
             if [ $ret = 3 -o $ret = 2 ]; then
-                if grep '10' <<< "${optns}"; then group=1; split=10;
-                elif grep '20' <<< "${optns}"; then group=1; split=20
-                elif grep '30' <<< "${optns}"; then group=1; split=30; fi
+                if grep 'TRUE' <<< "${optns}"; then group=1; split=10; fi
                 if [ $ret = 3 ]; then quest=1; else quest=0; fi
                 
                 echo -e "$group|$split|$quest" > ${pr}
