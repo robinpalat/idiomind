@@ -683,7 +683,6 @@ function decide_group() {
     info="$(gettext "Learnt") <span color='#6E6E6E'><b>$learnt </b></span>   $(gettext "Easy") <span color='#6E6E6E'><b>$easy </b></span>   $(gettext "Learning") <span color='#6E6E6E'><b>$ling </b></span>   $(gettext "Difficult") <span color='#6E6E6E'><b>$hard </b></span>"
     optns=$(yad --form --title="$(gettext "Continue")" \
     --window-icon=idiomind \
-    --image=dialog-question \
     --always-print-result \
     --skip-taskbar --buttons-layout=spread \
     --text-align=center --align=center --center --on-top \
@@ -765,11 +764,10 @@ function practices() {
         if [ ! -e "${pdir}/${pr}.0" ]; then
             optns=$(yad --form --title="$(gettext "Options for") $(gettext "${prcts[$pr]}")" \
             --always-print-result \
-            --image=gtk-preferences \
             --window-icon=idiomind \
             --skip-taskbar --buttons-layout=spread \
             --align=left --center --on-top \
-            --width=350 --height=120 --borders=10 \
+            --width=350 --height=125 --borders=10 \
             --field="$(gettext "Practice in groups of 10")":CHK "" \
             --field="$(gettext "Choose the language for the questions:")":LBL "" \
             --button="      $(gettext "$slng")      !!$(gettext "Questions in") $(gettext "$slng") - $(gettext "Answers in") $(gettext "$tlng")":3 \
