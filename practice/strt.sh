@@ -6,7 +6,8 @@ sz=(500 470); [[ ${swind} = TRUE ]] && sz=(420 410)
 source "$DS/ifs/cmns.sh"
 pdir="${DC_tlt}/practice"
 pdirs="$DS/practice"
-declare -A prcts=( ['a']='Flashcards' ['b']='Multiple Choise' ['c']='Recogning Words' ['d']='Images' ['e']='Writing Sentences')
+declare -A prcts=( ['a']='Flashcards' ['b']='Multiple Choise'\
+ ['c']='Recogning Words' ['d']='Images' ['e']='Writing Sentences')
 export -f f_lock
 
 function stats() {
@@ -680,17 +681,17 @@ function lock() {
 
 function decide_group() {
     [ -e ./${pr}.l ] && learnt=$(($(< ./${pr}.l)+easy)) || learnt=${easy}
-    info="$(gettext "Learnt") <span color='#6E6E6E'><b>$learnt </b></span>   $(gettext "Easy") <span color='#6E6E6E'><b>$easy </b></span>   $(gettext "Learning") <span color='#6E6E6E'><b>$ling </b></span>   $(gettext "Difficult") <span color='#6E6E6E'><b>$hard </b></span>"
-    optns=$(yad --form --title="$(gettext "Continue")" \
+    info="$(gettext "Total") <span color='#6E6E6E'><b>$all</b></span>  $(gettext "Learnt") <span color='#6E6E6E'><b>$learnt</b></span>  $(gettext "Easy") <span color='#6E6E6E'><b>$easy</b></span>  $(gettext "Learning") <span color='#6E6E6E'><b>$ling</b></span>  $(gettext "Difficult") <span color='#6E6E6E'><b>$hard</b></span>"
+    optns=$(yad --form --title="Volver o $(gettext "Continue?")" \
     --window-icon=idiomind \
     --always-print-result \
     --skip-taskbar --buttons-layout=spread \
     --text-align=center --align=center --center --on-top \
-    --text="${info}" \
-    --width=350 --height=90 --borders=5 \
+    --text="${info}" "" \
+    --width=380 --height=90 --borders=5 \
     --button="$(gettext "Exit")":5 \
     --button="$(gettext "Again")!view-refresh!$(gettext "Go back to practice the above items")":1 \
-    --button="$(gettext "Next")!go-next!$(gettext "Practice the next group")":0); ret="$?"
+    --button="$(gettext "Continue")!go-next!$(gettext "Practice the next group")":0); ret="$?"
 
     if [ $ret -eq 0 ]; then
         grep -Fxvf "${pdir}/${pr}.1" "${pdir}/${pr}.group" \
@@ -827,7 +828,7 @@ function strt() {
         echo 21 > .${icon}
     elif [ ${1} = 2 ]; then
         learnt=$(< ./${pr}.l); declare info${icon}="* "
-        info="<small>$(gettext "Learnt")</small> <span color='#6E6E6E'><b><big>$learnt </big></b></span>   <small>$(gettext "Easy")</small> <span color='#6E6E6E'><b><big>$easy </big></b></span>   <small>$(gettext "Learning")</small> <span color='#6E6E6E'><b><big>$ling </big></b></span>   <small>$(gettext "Difficult")</small> <span color='#6E6E6E'><b><big>$hard </big></b></span>\n"
+        info="<small>$(gettext "Total")</small> <span color='#6E6E6E'><b>$all</b></span>  <small>$(gettext "Learnt")</small> <span color='#6E6E6E'><b><big>$learnt</big></b></span>  <small>$(gettext "Easy")</small> <span color='#6E6E6E'><b><big>$easy</big></b></span>  <small>$(gettext "Learning")</small> <span color='#6E6E6E'><b><big>$ling</big></b></span>  <small>$(gettext "Difficult")</small> <span color='#6E6E6E'><b><big>$hard</big></b></span>\n"
     fi
 
     pr="$(yad --list --title="$(gettext "Practice ")" \
