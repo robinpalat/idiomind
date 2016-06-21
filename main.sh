@@ -258,6 +258,7 @@ function topic() {
     apply() {
             note_mod="$(< "${cnf3}")"
             if [ "${note_mod}" != "$(< "${nt}")" ]; then
+                msg "\n__________${note_mod}\n__________$(< "${nt}")\n__________" dialog-question
                 if ! grep '^$' < <(sed -n '1p' "${cnf3}")
                 then echo -e "\n${note_mod}" > "${nt}"
                 else echo "${note_mod}" > "${nt}"; fi
