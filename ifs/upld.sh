@@ -317,6 +317,7 @@ function upld() {
             fi
         done < "${DC_tlt}/3.cfg"
         while read -r img; do
+            unset img_path
             if [ -e "$DM_tlt/images/${img,,}.jpg" ]; then
                 img_path="$DM_tlt/images/${img,,}.jpg"
             elif [ -e "$DM_tls/images/${img,,}-0.jpg" ]; then
