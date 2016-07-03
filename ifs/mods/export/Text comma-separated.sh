@@ -9,9 +9,7 @@ while read -r _item; do
     if [ ! -d "$DT/export" ]; then break & exit 1; fi
     unset trgt srce expl
     get_item "${_item}"
-    if [ $type = 1 ]; then
-        echo -e "$trgt,$srce" >> "$DT/export/txt"
-    fi
+    echo -e "\"$trgt\",\"$srce\"" >> "$DT/export/txt"
 done < "${DC_tlt}/0.cfg"
 if [ -e "$DT/export/txt" ]; then
     cat "$DT/export/txt" > "$file"

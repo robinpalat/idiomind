@@ -87,16 +87,16 @@ play_list() {
         while [ ${n} -le 4 ]; do
             arr="in${n}"
             [[ ${!arr} -lt 1 ]] && echo "$DS/images/addi.png" || echo "$DS/images/add.png"
-            echo "  <span font_desc='Arial 11'>$(gettext "${lbls[$n]}")</span>"
             echo ${!psets[${n}]}
+            echo "  <span font_desc='Arial 11'>$(gettext "${lbls[$n]}")</span>"
             let n++
         done
         for ad in "$DS/ifs/mods/play"/*; do
             source "${ad}"
             for item in "${!items[@]}"; do
                 echo "$DS/images/${items[$item]}.png"
-                echo "  <span font_desc='Arial 11'>$(gettext "${item}") <i><small><small>${aname}</small></small></i></span>"
                 echo `grep -o ${items[$item]}=\"[^\"]* "${file_cfg}" |grep -o '[^"]*$'`
+                echo "  <span font_desc='Arial 11'>$(gettext "${item}") <i><small><small>${aname}</small></small></i></span>"
             done
             unset items
         done
@@ -125,10 +125,10 @@ play_list() {
     
     setting_1 | yad --plug=$KEY --tabnum=1 --list \
     --print-all --always-print-result --separator="|" \
-    --center --expand-column=2 --no-headers --borders=0 \
+    --center --expand-column=3 --no-headers --borders=0 \
     --column=IMG:IMG \
-    --column=TXT:TXT \
-    --column=CHK:CHK > $tab1 &
+    --column=CHK:CHK \
+    --column=TXT:TXT > $tab1 &
     yad --plug=$KEY --form --tabnum=2 --borders=5 \
     --align=right --center \
     --separator='|' --always-print-result --print-all \
@@ -145,13 +145,13 @@ play_list() {
     --tab-pos=right --tab-borders=0 \
     --tab=" $(gettext "Lists") " \
     --tab="$(gettext "Options")" \
-    --width=440 --height=300 --borders=0 \
+    --width=420 --height=300 --borders=0 \
     "$btn2" --button="$btn1" --button="$(gettext "Close")":1
     ret=$?
         tab1=$(< $tab1); tab2=$(< $tab2); rm -f "$DT"/*.p
         f=1; n=0; count=0
         for item in "${psets[@]:0:5}"; do
-            val=$(sed -n $((n+1))p <<< "${tab1}" |cut -d "|" -f3)
+            val=$(sed -n $((n+1))p <<< "${tab1}" |cut -d "|" -f2)
             [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
             [ "$val" = TRUE ] && count=$((count+$(wc -l |sed '/^$/d' <<<"${!in[${n}]}")))
             let n++
@@ -159,7 +159,7 @@ play_list() {
         for ad in "$DS/ifs/mods/play"/*; do
             source "${ad}"
             for item in "${!items[@]}"; do
-                val=$(sed -n $((n+1))p <<< "${tab1}" |cut -d "|" -f3)
+                val=$(sed -n $((n+1))p <<< "${tab1}" |cut -d "|" -f2)
                 [ -n "${val}" ] && sed -i "s/${items[$item]}=.*/${items[$item]}=\"$val\"/g" "${file_cfg}"
                 [ "$val" = TRUE ] && count=$((count+1))
                 let n++
