@@ -478,15 +478,25 @@ function img_word() {
                     fi
                 done
             fi
-            
             if [ -e "$DT/${1}.jpg" -o -e "$DT/${2}.jpg" ]; then
                 [[ $(wc -w <<< ${1}) -gt 1 ]] && sf="${DM_tlt}/images/${1,,}.jpg" || sf="${DM_tls}/images/${1,,}-0.jpg"
-                [ -e "$DT/${1}.jpg" ] && img_file="$DT/${1}.jpg" || img_file="$DT/${2}.jpg"
-                /usr/bin/convert "${img_file}" -interlace Plane -thumbnail 405x275^ \
+                [ -e "$DT/${1}.jpg" ] && img_file="${1}.jpg" || img_file="${2}.jpg"
+                local size="$(/usr/bin/identify -ping -format '%w %h' "$DT/${img_file}")"
+                w="$(echo $size |cut -f1 -d ' ')"
+                e="$(echo $size |cut -f2 -d ' ')"
+                if [[ $((e*100/w)) -gt 80 ]]; then
+                    echo 'liquid-rescale...'
+                    cp "$DT/${img_file}" "$HOME/${img_file}"
+                    #/usr/bin/convert "$DT/${img_file}" -liquid-rescale 405x275%\! "$DT/${img_file}"
+                else
+                    mv "$DT/${img_file}" "$DT/l_${img_file}"
+                
+                /usr/bin/convert "$DT/l_${img_file}" -interlace Plane -thumbnail 405x275^ \
                 -gravity center -extent 400x270 -quality 90% "${sf}"
-                rm -f "${img_file}"
+                fi
+                cleanups "$DT/${img_file}" "$DT/l_${img_file}"
             fi
-            rm -f "$DT/${1}.img"
+            cleanups "$DT/${1}.img"
         fi
     fi
 }

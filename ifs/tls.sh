@@ -472,6 +472,39 @@ set_image() {
     exit
 } >/dev/null 2>&1
 
+function transl_batch() {
+    source /usr/share/idiomind/default/c.conf
+    source "$DS/ifs/cmns.sh"
+    n=1
+
+    (echo "#"
+    echo -e "yad --form --title=\"$(gettext \"Edit translations\") \\
+    --text=\"$(gettext "Save Lorem ipsum dolor si Lorem\n")\" \\
+    --class=Idiomind --name=Idiomind --window-icon=idiomind \\
+    --width=800 --height=600 --borders=10 \\
+    --scroll --columns=1  --center \\
+    --button=$(gettext \"Cancel\"):0 \\
+    --button=$(gettext \"Save\")!gtk-save:0 \\" > "$DT/dlg"
+
+    while read -r _item; do
+        unset trgt srce expl
+        get_item "${_item}"
+        declare a$n="${trgt/\"/\\\"/}"
+        declare b$n="${srce/\"/\\\"/}"
+        echo "# ${trgt:0:35}...";
+        echo -e "--field=\"\":RO \"$trgt\" --field=\"\" \"$srce\" \\" >> "$DT/dlg"
+        let n++
+    done < "${DC_tlt}/0.cfg"
+    ) | progress
+
+    chmod +x /tmp/test.sh
+
+    function dia() { dlg="$(cat "$DT/dlg")"; eval "$dlg"; }
+
+    dia > "$DT/dlg_out"
+    cleanups "$dlg" "$DT/dlg_out"
+}
+
 translate_to() {
     source /usr/share/idiomind/default/c.conf
     source $DS/default/sets.cfg
@@ -869,6 +902,8 @@ case "$1" in
     stats_dlg ;;
     colorize)
     colorize "$@" ;;
+    transl_batch)
+    transl_batch ;;
     translate)
     translate_to "$@" ;;
     itray)

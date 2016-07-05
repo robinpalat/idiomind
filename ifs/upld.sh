@@ -310,12 +310,19 @@ function upld() {
                 "$DT_u/files/share/$audio.mp3"
             fi
         done <<< "$auds"
-        while read -r audio; do
-            if [ -f "$DM_tl/.share/audio/${audio,,}.mp3" ]; then
-                cp -f "$DM_tl/.share/audio/${audio,,}.mp3" \
-                "$DT_u/files/share/${audio,,}.mp3"
+        
+        while read -r _item; do
+            unset trgt cdid
+            get_item "${_item}"
+            if [ $type = 1 ]; then
+                if [ -f "$DT_u/files/$cdid.mp3" ]; then :
+                elif [ -f "$DM_tl/.share/audio/${trgt,,}.mp3" ]; then
+                    cp -f "$DM_tl/.share/audio/${trgt,,}.mp3" \
+                    "$DT_u/files/share/${trgt,,}.mp3"
+                fi
             fi
-        done < "${DC_tlt}/3.cfg"
+        done < "${DC_tlt}/0.cfg"
+        
         while read -r img; do
             unset img_path
             if [ -e "$DM_tlt/images/${img,,}.jpg" ]; then
