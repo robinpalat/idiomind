@@ -126,9 +126,11 @@ function notebook_1() {
     btn1="$(gettext "Edit list")"
     btn2="$(gettext "Share")"
     btn3="$(gettext "Delete")"
+    btn4="$(gettext "Translate")"
     cmd1="'$DS/mngr.sh' edit_list "\"${tpc}\"""
     cmd2="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd3="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
+    cmd4="'$DS/ifs/tls.sh' transl_batch"
     chk1=$(($(wc -l < "${DC_tlt}/1.cfg")*3))
     chk5=$(wc -l < "${DC_tlt}/5.cfg")
     list() { if [[ ${chk1} = ${chk5} ]]; then
@@ -158,8 +160,10 @@ function notebook_1() {
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field=" $(gettext "Mark as learnt") ":FBTN "$cmd_mark" \
     --field="$(gettext "Auto-checked of checkbox on list Learning")\t\t":CHK "$acheck" \
+    --field=" ":LBL " " \
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn2":FBTN "$cmd2" \
+    --field="$btn4":FBTN "$cmd4" \
     --field="$btn3":FBTN "$cmd3" > "$cnf4" &
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \

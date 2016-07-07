@@ -475,34 +475,32 @@ set_image() {
 function transl_batch() {
     source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/cmns.sh"
-    n=1
+    source "$DS/default/source_langs.cfg"
+    
+echo -e "yad --form --title=\"$(gettext \"Edit translations\") \\
+--text=\"56 $(gettext "items")\\n$(gettext "Traducciones revisadas:")\\n<b>English</b>\\n$(gettext "Traducciones automaticas:")\\n<b>Spanish</b>\\n\" \\
+--class=Idiomind --name=Idiomind --window-icon=idiomind \\
+--width=600 --height=400 --borders=8 \\
+--scroll --columns=1  --center --separator=\"\\n\" \\
+--field=\"Mark as reviewed\":CHK \"$trgt\" \\
+--button=$(gettext \"Cancel\"):1 \\
+--button=$(gettext \"Translate\"):\"idiomind translate\" \\
+--button=$(gettext \"Save\")!gtk-save:0 \\" > "$DT/dlg"
 
-    (echo "#"
-    echo -e "yad --form --title=\"$(gettext \"Edit translations\") \\
-    --text=\"$(gettext "Save Lorem ipsum dolor si Lorem\n")\" \\
-    --class=Idiomind --name=Idiomind --window-icon=idiomind \\
-    --width=800 --height=600 --borders=10 \\
-    --scroll --columns=1  --center \\
-    --button=$(gettext \"Cancel\"):0 \\
-    --button=$(gettext \"Save\")!gtk-save:0 \\" > "$DT/dlg"
-
+    (echo "#"; n=1
     while read -r _item; do
-        unset trgt srce expl
+        unset trgt srce
         get_item "${_item}"
-        declare a$n="${trgt/\"/\\\"/}"
-        declare b$n="${srce/\"/\\\"/}"
-        echo "# ${trgt:0:35}...";
-        echo -e "--field=\"\":RO \"$trgt\" --field=\"\" \"$srce\" \\" >> "$DT/dlg"
+        declare a$n="${trgt}"; declare b$n="${srce}"
+        echo -e "--field=\"\":RO \"$trgt\" --field=\"\" \"$srce\" --field=\"\":lbl \"\" \\" >> "$DT/dlg"
         let n++
     done < "${DC_tlt}/0.cfg"
     ) | progress
 
-    chmod +x /tmp/test.sh
-
     function dia() { dlg="$(cat "$DT/dlg")"; eval "$dlg"; }
 
     dia > "$DT/dlg_out"
-    cleanups "$dlg" "$DT/dlg_out"
+    cleanups "$DT/dlg" "$DT/dlg_out"
 }
 
 translate_to() {
@@ -510,7 +508,24 @@ translate_to() {
     source $DS/default/sets.cfg
     source $DS/default/source_langs.cfg
     source "$DS/ifs/cmns.sh"
+
+    if [ -e "$DC_tlt/0.data" ]; then r="$(gettext "Restore original")"; fi
+    source "$DS/default/source_langs.cfg"
+    list1=$(for i in "${!tranlangs[@]}"; do echo -n "!$i"; done)
+    l="$(yad --form --title="$(gettext "Translate")" --text=" " \
+    --class=Idiomind --name=Idiomind \
+    --separator='' --always-print-result --window-icon=idiomind \
+    --buttons-layout=end --align=right --center --on-top \
+    --width=460 --height=170 --borders=10 \
+    --field="$(gettext "Select source language to translate")":CB "${r}${list1}" \
+    --button="$(gettext "Cancel")":1 \
+    --button="$(gettext "OK")":0)"
+    r="$?"
+    [ "$r" != 0 ] && return 1
+    [ "$l" != $slng ] && idiomind translate "$l"
+    
     internet
+    
     [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && exit 1
     l="$(grep -o 'tlng="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
     if [ -n "$l" ]; then lgt=${tlangs[$l]}; else lgt=${tlangs[$tlng]}; fi

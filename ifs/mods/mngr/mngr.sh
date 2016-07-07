@@ -59,13 +59,13 @@ function dlg_form_2() {
 
 function edit_list_list() {
     yad --list --title="$(gettext "Edit list")" \
-    --text="$(gettext "Double click to edit, drag and drop to move, right-click to display menu.")" \
+    --text="$(gettext "Double click to edit, drag and drop to move, right-click to display menu.")\n" \
     --name=Idiomind --class=Idiomind \
     --editable --separator='' \
     --always-print-result --print-all \
     --window-icon=idiomind \
     --no-headers --center \
-    --width=580 --height=350 --borders=3 \
+    --width=580 --height=350 --borders=5 \
     --column="" \
     --button="$(gettext "More")":5 \
     --button="$(gettext "Save")!gtk-save":0 \

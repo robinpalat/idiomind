@@ -382,7 +382,7 @@ edit_item() {
 edit_list() {
     dlg_more() {
         file="$HOME/.idiomind/backup/${tpc}.bk"
-        cols1="$(gettext "Reverse items order")\n$(gettext "Remove all items")\n$(gettext "Restart topic status")\n$(gettext "Add feed")\n$(gettext "Show short sentences in word's view")\n$(gettext "Translate source language")\n$(gettext "Edit translations in batch")"
+        cols1="$(gettext "Reverse items order")\n$(gettext "Remove all items")\n$(gettext "Restart topic status")\n$(gettext "Add feed")\n$(gettext "Show short sentences in word's view")"
         dt1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
         dt2=$(grep '\----- oldest' "${file}" |cut -d' ' -f3)
         if [ -n "$dt2" ]; then
@@ -395,18 +395,16 @@ edit_list() {
         more="$(echo -e "${cols1}${cols2}" |sed '/^$/d' \
         |yad --list --title=" "\
         --name=Idiomind --class=Idiomind \
-        --expand-column=2 --no-click \
+        --expand-column=2 --no-click --no-headers\
         --window-icon=idiomind --on-top --center \
         --width=470 --height=260 --borders=3 \
-        --column="$(gettext "Options")":TXT \
+        --column="":TXT \
         --button="$(gettext "Cancel")":1 \
         --button="$(gettext "OK")":0)"
         ret="$?"
         if [ $ret -eq 0 ]; then
             if grep "$(gettext "Reverse items order")" <<< "${more}"; then
                 return 2
-            elif grep "$(gettext "Edit translations in batch")" <<< "${more}"; then
-                return 3
             elif grep "$(gettext "Remove all items")" <<< "${more}"; then
                 return 7
             elif grep "$(gettext "Restart topic status")" <<< "${more}"; then
@@ -415,8 +413,6 @@ edit_list() {
                 return 9
             elif grep "$(gettext "Show short sentences in word's view")" <<< "${more}"; then
                 return 4
-            elif grep "$(gettext "Translate source language")" <<< "${more}"; then
-                return 5
             elif grep "$(gettext "Restore backup:")" <<< "${more}"; then
                 if grep ${dt1} <<< "${more}"; then
                     export line=1
@@ -477,22 +473,6 @@ edit_list() {
             msg_2 "$(gettext "Confirm")\n" \
             dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
             [ $? = 0 ] && ret=4 || ret=1
-            
-        elif [ $ret = 5 ]; then
-            if [ -e "$direc/0.data" ]; then r="$(gettext "Restore original")"; fi
-            source "$DS/default/source_langs.cfg"
-            list1=$(for i in "${!tranlangs[@]}"; do echo -n "!$i"; done)
-            l="$(yad --form --title="$(gettext "Translate")" --text=" " \
-            --class=Idiomind --name=Idiomind \
-            --separator='' --always-print-result --window-icon=idiomind \
-            --buttons-layout=end --align=right --center --on-top \
-            --width=460 --height=170 --borders=10 \
-            --field="$(gettext "Select source language to translate")":CB "${r}${list1}" \
-            --button="$(gettext "Cancel")":1 \
-            --button="$(gettext "OK")":0)"
-            r="$?"
-            [ "$r" != 0 ] && return 1
-            [ "$l" != $slng ] && idiomind translate "$l" & ret=1
             
         elif [ $ret = 6 ]; then
             msg_2 "$(gettext "Confirm")\n" \
