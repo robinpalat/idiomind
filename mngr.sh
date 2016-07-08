@@ -379,142 +379,22 @@ edit_item() {
         return 0
 } >/dev/null 2>&1
 
-edit_list() {
-    dlg_more() {
-        file="$HOME/.idiomind/backup/${tpc}.bk"
-        cols1="$(gettext "Reverse items order")\n$(gettext "Remove all items")\n$(gettext "Restart topic status")\n$(gettext "Add feed")\n$(gettext "Show short sentences in word's view")"
-        dt1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
-        dt2=$(grep '\----- oldest' "${file}" |cut -d' ' -f3)
-        if [ -n "$dt2" ]; then
-            cols2="\n$(gettext "Restore backup:") $dt1\n$(gettext "Restore backup:") $dt2"
-        elif [ -n "$dt1" ]; then
-            cols2="\n$(gettext "Restore backup:") $dt1"
-        else
-            cols2=""
-        fi
-        more="$(echo -e "${cols1}${cols2}" |sed '/^$/d' \
-        |yad --list --title=" "\
-        --name=Idiomind --class=Idiomind \
-        --expand-column=2 --no-click --no-headers\
-        --window-icon=idiomind --on-top --center \
-        --width=470 --height=260 --borders=3 \
-        --column="":TXT \
-        --button="$(gettext "Cancel")":1 \
-        --button="$(gettext "OK")":0)"
-        ret="$?"
-        if [ $ret -eq 0 ]; then
-            if grep "$(gettext "Reverse items order")" <<< "${more}"; then
-                return 2
-            elif grep "$(gettext "Remove all items")" <<< "${more}"; then
-                return 7
-            elif grep "$(gettext "Restart topic status")" <<< "${more}"; then
-                return 8
-            elif grep "$(gettext "Add feed")" <<< "${more}"; then
-                return 9
-            elif grep "$(gettext "Show short sentences in word's view")" <<< "${more}"; then
-                return 4
-            elif grep "$(gettext "Restore backup:")" <<< "${more}"; then
-                if grep ${dt1} <<< "${more}"; then
-                    export line=1
-                elif grep ${dt2} <<< "${more}"; then
-                    export line=2
-                fi
-                return 6
-            else
-                return 1
-            fi
-        else
-            return 1
-        fi
-    }
-
-    if [ -e "$DT/items_to_add" -o -e "$DT/el_lk" ]; then
-        if [ -e "$DT/items_to_add" ]; then
-            msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
-            dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" " " "$DT/items_to_add"
-            ret=$?
-        elif [ -e "$DT/el_lk" ]; then
-            msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
-            dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" " " "$DT/el_lk"
-            ret=$?
-        fi
-        if [ $ret -eq 1 ]; then 
-        cleanups "$DT/items_to_add" "$DT/el_lk"
-        else exit 1; fi
-    fi
-    if [ -e "$DC_s/elist_first_run" ]; then 
-        "$DS/ifs/tls.sh" first_run edit_list &
-    fi
+edit_list_cmds() {
+   
     if grep -o -E 'ja|zh-cn|ru' <<< "${lgt}"; then c=c; else c=w; fi
     direc="$DM_tl/${2}/.conf"
-
-    > "$DT/list_input"
-    (echo "5"; cat "${direc}/0.cfg" | while read -r item_; do
-        item="$(sed 's/}/}\n/g' <<< "${item_}")"
-        trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
-        [ -n "${trgt}" ] && echo "${trgt}" >> "$DT/list_input"
-    done ) | progr_3
-
-    edit_list_list < "$DT/list_input" > "$DT/list_output"
-    ret=$?
-
-    if [ $ret = 5 ]; then dlg_more; ret=$?; fi
     
-        if [ $ret = 2 ]; then
-            msg_2 "$(gettext "Confirm")\n" \
-            dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
-            [ $? = 0 ] && ret=2 || ret=1
-            
-        elif [ $ret = 3 ]; then
-            "$DS/ifs/tls.sh" transl_batch
-            ret=1
-            
-        elif [ $ret = 4 ]; then
-            msg_2 "$(gettext "Confirm")\n" \
-            dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
-            [ $? = 0 ] && ret=4 || ret=1
-            
-        elif [ $ret = 6 ]; then
-            msg_2 "$(gettext "Confirm")\n" \
-            dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
-            [ $? = 0 ] && "$DS/ifs/tls.sh" restore "${tpc}" ${line}
-            ret=1
-        elif [ $ret = 7 ]; then
-            msg_2 "$(gettext "Confirm")\n" \
-            dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
-            if [ $? = 0 ]; then cleanups "${direc}/0.cfg" "${direc}/1.cfg" "${direc}/2.cfg" \
-            "${direc}/3.cfg" "${direc}/4.cfg" "${direc}/5.cfg" "${direc}/6.cfg"
-            [ -n "${2}" ] && rm "$DM_tl/${2}"/*.mp3; fi
-            ret=1
-        elif [ $ret = 8 ]; then
-            msg_2 "$(gettext "Confirm")\n" \
-            dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
-            if [ $? = 0 ]; then cleanups "${direc}/1.cfg" "${direc}/2.cfg" "${direc}/7.cfg" 
-                echo 1 > "${direc}/8.cfg"; > "${direc}/9.cfg"
-                while read -r item_; do
-                    item="$(sed 's/}/}\n/g' <<< "${item_}")"
-                    trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
-                    [ -n "${trgt}" ] && echo "${trgt}" >> "${DC_tlt}/1.cfg"
-                done < "${DC_tlt}/0.cfg"
-                "$DS/mngr.sh" mkmn 1; "$DS/ifs/tls.sh" colorize 0
-            fi
-            ret=1
-        elif [ $ret = 9 ]; then
-            idiomind feeds
-            ret=1
-        fi
-
-    if [ $ret -eq 0 -o $ret -eq 2 -o $ret -eq 4 ]; then
-        if [ $ret = 0 ]; then cmd=cat && invrt_msg=FALSE
-        elif [ $ret = 2 ]; then cmd=tac && invrt_msg=TRUE
-        elif [ $ret = 4 ]; then cmd=cat && invrt_msg=FALSE; fi
+    if [ $1 -eq 0 -o $1 -eq 2 -o $1 -eq 4 ]; then
+        if [ $1 = 0 ]; then cmd=cat && invrt_msg=FALSE
+        elif [ $1 = 2 ]; then cmd=tac && invrt_msg=TRUE
+        elif [ $1 = 4 ]; then cmd=cat && invrt_msg=FALSE; fi
         
         dlaud="$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")"
         include "$DS/ifs/mods/add"
         n=1; f_lock "$DT/el_lk"
         cleanups "${direc}/1.cfg" "${direc}/3.cfg" "${direc}/4.cfg"
 
-        $cmd "$DT/list_output" |sed '/^$/d;/(null)/d' |while read -r trgt; do
+        $cmd "$DT/list_input" |sed '/^$/d;/(null)/d' |while read -r trgt; do
             if grep -F -m 1 "trgt{${trgt}}" "${direc}/0.cfg"; then
                 item="$(grep -F -m 1 "trgt{${trgt}}" "${direc}/0.cfg" |sed 's/}/}\n/g')"
                 get_item "${item}"
@@ -573,7 +453,8 @@ edit_list() {
             invrt_msg=FALSE
             export DT_r=$(mktemp -d "$DT/XXXX")
             temp="...."
-            internet
+            
+            #internet
             while read -r trgt; do
                 pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${direc}/0.cfg" \
                 |sed -n 's/^\([0-9]*\)[:].*/\1/p')
@@ -587,14 +468,14 @@ edit_list() {
                     srce_mod="$(clean_9 "$(translate "${trgt}" $lgt $lgs)")"
                     audio="${trgt,,}"
                     [[ ${dlaud} = TRUE ]] && tts_word "${audio}" "$DT_r"
-
+                
                 elif [ ${type} = 2 ]; then
                     srce_mod="$(clean_2 "$(translate "${trgt}" $lgt $lgs)")"
                     db="$DS/default/dicts/$lgt"
                     export DT_r; sentence_p 2
                     [[ ${dlaud} = TRUE ]] && fetch_audio "${aw}" "${bw}"
                 fi
-                 
+                
                 cdid_mod="$(set_name_file ${type} "${trgt}" "${srce_mod}" \
                 "${exmp}" "${defn}" "${note}" "${wrds_mod}" "${grmr_mod}")"
                 
@@ -611,8 +492,119 @@ edit_list() {
     fi
     cleanups "$DT/list_output" "$DT/list_input" \
     "$DT/items_to_add" "$DT_r" "$DT/act_restfile"
-    exit 1
+    return 1
 } >/dev/null 2>&1
+
+
+edit_list_more() {
+    
+    file="$HOME/.idiomind/backup/${tpc}.bk"
+    cols1="$(gettext "Reverse items order")\n$(gettext "Remove all items")\n$(gettext "Restart topic status")\n$(gettext "Add feed")\n$(gettext "Show short sentences in word's view")"
+    dt1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
+    dt2=$(grep '\----- oldest' "${file}" |cut -d' ' -f3)
+    if [ -n "$dt2" ]; then
+        cols2="\n$(gettext "Restore backup:") $dt1\n$(gettext "Restore backup:") $dt2"
+    elif [ -n "$dt1" ]; then
+        cols2="\n$(gettext "Restore backup:") $dt1"
+    else
+        cols2=""
+    fi
+    
+    more="$(echo -e "${cols1}${cols2}" |sed '/^$/d' \
+    |yad --list --title=" "\
+    --name=Idiomind --class=Idiomind \
+    --expand-column=2 --no-click --no-headers\
+    --window-icon=idiomind --on-top --center \
+    --width=470 --height=260 --borders=3 \
+    --column="":TXT \
+    --button="$(gettext "Cancel")":1 \
+    --button="$(gettext "OK")":0)"
+    ret="$?"
+    
+    if [ $? != 0 ]; then 
+        return 1
+    else
+    
+        msg_2 "$(gettext "Confirm")\n" \
+        dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
+        
+        kill -9 $(pgrep -f "yad --list --title=")
+
+        
+        if grep "$(gettext "Reverse items order")" <<< "${more}"; then
+        
+            edit_list_cmds 2 "${tpc}"
+
+        elif grep "$(gettext "Remove all items")" <<< "${more}"; then
+            if [ $? = 0 ]; then cleanups "${direc}/0.cfg" "${direc}/1.cfg" "${direc}/2.cfg" \
+            "${direc}/3.cfg" "${direc}/4.cfg" "${direc}/5.cfg" "${direc}/6.cfg"
+            [ -n "${tpc}" ] && rm "$DM_tl/${2}"/*.mp3; fi
+            ret=1
+            
+        elif grep "$(gettext "Restart topic status")" <<< "${more}"; then
+            if [ $? = 0 ]; then cleanups "${direc}/1.cfg" "${direc}/2.cfg" "${direc}/7.cfg" 
+                echo 1 > "${direc}/8.cfg"; > "${direc}/9.cfg"
+                while read -r item_; do
+                    item="$(sed 's/}/}\n/g' <<< "${item_}")"
+                    trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
+                    [ -n "${trgt}" ] && echo "${trgt}" >> "${DC_tlt}/1.cfg"
+                done < "${DC_tlt}/0.cfg"
+                "$DS/mngr.sh" mkmn 1; "$DS/ifs/tls.sh" colorize 0
+            fi
+        elif grep "$(gettext "Add feed")" <<< "${more}"; then
+            idiomind feeds
+        elif grep "$(gettext "Show short sentences in word's view")" <<< "${more}"; then
+            edit_list_cmds 4 "${tpc}"
+        elif grep "$(gettext "Restore backup:")" <<< "${more}"; then
+            if grep ${dt1} <<< "${more}"; then
+                export line=1
+            elif grep ${dt2} <<< "${more}"; then
+                export line=2
+            fi
+            "$DS/ifs/tls.sh" restore "${tpc}" ${line}
+        else
+            ret=1
+        fi
+    fi
+}
+
+
+edit_list_dlg() {
+    direc="$DM_tl/${2}/.conf"
+    if [ -e "$DT/items_to_add" -o -e "$DT/el_lk" ]; then
+        if [ -e "$DT/items_to_add" ]; then
+            msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
+            dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" " " "$DT/items_to_add"
+            ret=$?
+        elif [ -e "$DT/el_lk" ]; then
+            msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
+            dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" " " "$DT/el_lk"
+            ret=$?
+        fi
+        if [ $ret -eq 1 ]; then 
+        cleanups "$DT/items_to_add" "$DT/el_lk"
+        else exit 1; fi
+    fi
+    if [ -e "$DC_s/elist_first_run" ]; then 
+        "$DS/ifs/tls.sh" first_run edit_list &
+    fi
+
+    > "$DT/list_input"
+    (echo "5"; cat "${direc}/0.cfg" | while read -r item_; do
+        item="$(sed 's/}/}\n/g' <<< "${item_}")"
+        trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
+        [ -n "${trgt}" ] && echo "${trgt}" >> "$DT/list_input"
+    done ) | progr_3
+
+    edit_list_list < "$DT/list_input" > "$DT/list_output"
+    ret=$?
+    
+    [ $ret = 0 ] && edit_list_cmds $ret "${tpc}"
+    
+    #cleanups "$DT/list_output" "$DT/list_input" \
+    "$DT/items_to_add" "$DT_r" "$DT/act_restfile"
+}
+
 
 edit_feeds() {
     file="$DM_tl/${2}/.conf/feeds"
@@ -628,6 +620,7 @@ edit_feeds() {
         "$DS/add.sh" fetch_content "${tpc}" &
     fi
 } >/dev/null 2>&1
+
 
 delete_topic() {
     if [ -z "${tpc}" ]; then exit 1; fi
@@ -674,6 +667,7 @@ delete_topic() {
     fi
     rm -f "$DT/rm_lk" "$DM_tl/.share"/*.tmp & exit 1
 }
+
 
 rename_topic() {
     source "$DS/ifs/mods/add/add.sh"
@@ -728,6 +722,7 @@ rename_topic() {
         "$DS/mngr.sh" mkmn 0 & exit 1
     fi
 }
+
 
 mark_to_learn_topic() {
     [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
@@ -881,7 +876,11 @@ case "$1" in
     edit)
     edit_item "$@" ;;
     edit_list)
-    edit_list "$@" ;;
+    edit_list_dlg "$@" ;;
+    edit_list_cmds)
+    edit_list_cmds "$@" ;;
+    edit_list_more)
+    edit_list_more ;;
     edit_feeds)
     edit_feeds "$@" ;;
     colorize)

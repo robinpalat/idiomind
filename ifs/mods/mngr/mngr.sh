@@ -67,7 +67,7 @@ function edit_list_list() {
     --no-headers --center \
     --width=580 --height=350 --borders=5 \
     --column="" \
-    --button="$(gettext "More")":5 \
+    --button="$(gettext "More")":"$DS/mngr.sh edit_list_more" \
     --button="$(gettext "Save")!gtk-save":0 \
     --button="$(gettext "Cancel")":1
 }
@@ -83,7 +83,7 @@ function edit_feeds_list() {
     --width=450 --height=140 --borders=3 \
     --column="" \
     --button="$(gettext "Cancel")":1 \
-    --button="$(gettext "Update")":2 \
+    --button="$(gettext "Fetch Content")":2 \
     --button="$(gettext "Save")":0
 }
 
