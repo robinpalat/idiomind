@@ -65,7 +65,7 @@ function edit_list_list() {
     --always-print-result --print-all \
     --window-icon=idiomind \
     --no-headers --center \
-    --width=580 --height=350 --borders=5 \
+    --width=590 --height=350 --borders=5 \
     --column="" \
     --button="$(gettext "More")":"$DS/mngr.sh edit_list_more" \
     --button="$(gettext "Save")!gtk-save":0 \

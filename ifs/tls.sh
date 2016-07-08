@@ -254,7 +254,6 @@ _backup() {
     fi 
 } >/dev/null 2>&1
 
-
 _restore_backup() {
     [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/cmns.sh"
@@ -478,13 +477,24 @@ function transl_batch() {
     source "$DS/ifs/add/add.sh"
     source "$DS/default/source_langs.cfg"
     
+    if [ -e "$DT/index.trad_tmp" ]; then
+        msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
+        dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" " " "$DT/index.trad_tmp"
+        ret=$?
+        if [ $ret -eq 1 ]; then 
+        cleanups "$DT/index.trad_tmp" #TODO
+        else
+            return 1
+        fi
+    fi
+
 echo -e "yad --form --title=\"$(gettext "Edit translations")\" \\
 --text=\"$(gettext "Traducciones automaticas:") Spanish\\n\" \\
 --class=Idiomind --name=Idiomind --window-icon=idiomind \\
---width=600 --height=400 --borders=8 \\
+--width=590 --height=350 --borders=8 \\
 --scroll --columns=1  --center --separator=\"\\n\" \\
 --button=$(gettext \"Cancel\"):1 \\
---button=$(gettext \"Translate\"):\"idiomind translate\" \\
+--button=$(gettext \"Settings\"):\"idiomind translate\" \\
 --button=$(gettext \"Save\")!gtk-save:0 \\" > "$DT/dlg"
 
     (echo "#"; n=1
@@ -496,26 +506,38 @@ echo -e "yad --form --title=\"$(gettext "Edit translations")\" \\
         let n++
     done < "${DC_tlt}/0.cfg") |progress
 
-    dlg="$(cat "$DT/dlg")"; eval "$dlg"; ret="$?"
-    dia > "$DT/transl_batch_out"
-    cp -f "${DC_tlt}/0.cfg" "$DT/0.cfg"
+    dlg="$(cat "$DT/dlg")"; eval "$dlg" > "$DT/transl_batch_out"; ret="$?"
+    if [ $ret = 0 ]; then
     
-    while read -r item_; do
-        item="$(sed 's/}/}\n/g' <<< "${item_}")"
-        trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
-        srce="$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")"
-        edit_pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
-        if [ -n "${trgt}" ]; then
-            srce_mod="$(sed -n "/^${trgt}/{;n;p;}" "$DT/transl_batch_out")"
-            if [ "${srce}" != "${srce_mod}" ]; then
-                sed -i "${edit_pos}s|srce{$srce}|srce{$srce_mod}|g" "$DT/0.cfg"
+        if [ -e "$DT/index.trad_tmp" ]; then
+            msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
+            dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" " " "$DT/index.trad_tmp"
+            ret=$?
+            if [ $ret -eq 1 ]; then 
+            cleanups "$DT/index.trad_tmp" #TODO
+            else
+                return 1
             fi
         fi
-    done < "${DC_tlt}/0.cfg"
+
+        cp -f "${DC_tlt}/0.cfg" "$DT/0.cfg"
+        while read -r item_; do
+            item="$(sed 's/}/}\n/g' <<< "${item_}")"
+            trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
+            srce="$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")"
+            edit_pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
+            if [ -n "${trgt}" ]; then
+                srce_mod="$(sed -n "/^${trgt}/{;n;p;}" "$DT/transl_batch_out")"
+                if [ "${srce}" != "${srce_mod}" ]; then
+                    sed -i "${edit_pos}s|srce{$srce}|srce{$srce_mod}|g" "$DT/0.cfg"
+                fi
+            fi
+        done < "${DC_tlt}/0.cfg"
+    fi
     
     mv -f "$DT/0.cfg" "${DC_tlt}/0.cfg"
-    cleanups "$DT/dlg" "$DT/transl_batch_out"
-}
+    #cleanups "$DT/dlg" "$DT/transl_batch_out"
+} >/dev/null 2>&1
 
 translate_to() {
     source /usr/share/idiomind/default/c.conf
@@ -530,7 +552,7 @@ translate_to() {
     --class=Idiomind --name=Idiomind \
     --always-print-result --window-icon=idiomind \
     --buttons-layout=end --align=left --center --on-top \
-    --width=460 --height=170 --borders=10 \
+    --width=500 --height=270 --borders=10 \
     --field="$(gettext "Idioma de origen Ingles")":LBL " " \
     --field="$(gettext "Mark as reviewed")":CHK "$trgt" \
     --field="":LBL " " \
@@ -543,6 +565,8 @@ translate_to() {
     
     if [ "$ret" = 0 ]; then
         if [ "$ls" != $slng ]; then
+            > "$DT/words.trad_tmp"
+            > "$DT/index.trad_tmp"
             internet
             [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && exit 1
             l="$(grep -o 'tlng="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
@@ -561,8 +585,7 @@ translate_to() {
                 include "$DS/ifs/mods/add"
                 echo -e "\n\n  translating \"$tpc\"...\n"
                 cnt=$(wc -l "${DC_tlt}/0.cfg")
-                > "$DT/words.trad_tmp"
-                > "$DT/index.trad_tmp"
+        
                 while read -r item_; do
                     item="$(sed 's/}/}\n/g' <<<"${item_}")"
                     type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"

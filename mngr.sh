@@ -380,10 +380,18 @@ edit_item() {
 } >/dev/null 2>&1
 
 edit_list_cmds() {
-   
     if grep -o -E 'ja|zh-cn|ru' <<< "${lgt}"; then c=c; else c=w; fi
     direc="$DM_tl/${2}/.conf"
-    
+    if [ -e "$DT/transl_batch_out" ]; then
+        msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
+        dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" " " "$DT/transl_batch_out"
+        ret=$?
+    fi
+    if [ $ret -eq 1 ]; then 
+        cleanups "$DT/transl_batch_out" #TODO
+    else
+        return 1
+    fi
     if [ $1 -eq 0 -o $1 -eq 2 -o $1 -eq 4 ]; then
         if [ $1 = 0 ]; then cmd=cat && invrt_msg=FALSE
         elif [ $1 = 2 ]; then cmd=tac && invrt_msg=TRUE
@@ -497,7 +505,6 @@ edit_list_cmds() {
 
 
 edit_list_more() {
-    
     file="$HOME/.idiomind/backup/${tpc}.bk"
     cols1="$(gettext "Reverse items order")\n$(gettext "Remove all items")\n$(gettext "Restart topic status")\n$(gettext "Add feed")\n$(gettext "Show short sentences in word's view")"
     dt1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
@@ -521,28 +528,26 @@ edit_list_more() {
     --button="$(gettext "OK")":0)"
     ret="$?"
     
-    if [ $? != 0 ]; then 
-        return 1
-    else
-    
-        msg_2 "$(gettext "Confirm")\n" \
-        dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
-        
-        kill -9 $(pgrep -f "yad --list --title=")
+    if [ $ret = 0 ]; then
+        _war(){ msg_2 "$(gettext "Confirm")\n" \
+        dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"; }
+        _kill(){ kill -9 $(pgrep -f "yad --list --title="); }
 
-        
         if grep "$(gettext "Reverse items order")" <<< "${more}"; then
-        
-            edit_list_cmds 2 "${tpc}"
-
+            _war; if [ $? = 0 ]; then 
+                _kill; edit_list_cmds 2 "${tpc}"
+            fi
         elif grep "$(gettext "Remove all items")" <<< "${more}"; then
-            if [ $? = 0 ]; then cleanups "${direc}/0.cfg" "${direc}/1.cfg" "${direc}/2.cfg" \
-            "${direc}/3.cfg" "${direc}/4.cfg" "${direc}/5.cfg" "${direc}/6.cfg"
-            [ -n "${tpc}" ] && rm "$DM_tl/${2}"/*.mp3; fi
-            ret=1
-            
+            _war; if [ $? = 0 ]; then
+                _kill
+                cleanups "${direc}/0.cfg" "${direc}/1.cfg" "${direc}/2.cfg" \
+                "${direc}/3.cfg" "${direc}/4.cfg" "${direc}/5.cfg" "${direc}/6.cfg"
+                [ -n "${tpc}" ] && rm "$DM_tl/${2}"/*.mp3
+            fi
         elif grep "$(gettext "Restart topic status")" <<< "${more}"; then
-            if [ $? = 0 ]; then cleanups "${direc}/1.cfg" "${direc}/2.cfg" "${direc}/7.cfg" 
+            _war; if [ $? = 0 ]; then 
+                _kill
+                cleanups "${direc}/1.cfg" "${direc}/2.cfg" "${direc}/7.cfg" 
                 echo 1 > "${direc}/8.cfg"; > "${direc}/9.cfg"
                 while read -r item_; do
                     item="$(sed 's/}/}\n/g' <<< "${item_}")"
@@ -554,19 +559,23 @@ edit_list_more() {
         elif grep "$(gettext "Add feed")" <<< "${more}"; then
             idiomind feeds
         elif grep "$(gettext "Show short sentences in word's view")" <<< "${more}"; then
-            edit_list_cmds 4 "${tpc}"
-        elif grep "$(gettext "Restore backup:")" <<< "${more}"; then
-            if grep ${dt1} <<< "${more}"; then
-                export line=1
-            elif grep ${dt2} <<< "${more}"; then
-                export line=2
+            _war; if [ $? = 0 ]; then
+                _kill
+                edit_list_cmds 4 "${tpc}"
             fi
-            "$DS/ifs/tls.sh" restore "${tpc}" ${line}
-        else
-            ret=1
+        elif grep "$(gettext "Restore backup:")" <<< "${more}"; then
+             _war; if [ $? = 0 ]; then
+                _kill
+                if grep ${dt1} <<< "${more}"; then
+                    export line=1
+                elif grep ${dt2} <<< "${more}"; then
+                    export line=2
+                fi
+                "$DS/ifs/tls.sh" restore "${tpc}" ${line}
+            fi
         fi
     fi
-}
+} >/dev/null 2>&1
 
 
 edit_list_dlg() {
