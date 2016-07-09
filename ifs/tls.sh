@@ -494,7 +494,7 @@ echo -e "yad --form --title=\"$(gettext "Edit translations")\" \\
 --width=590 --height=350 --borders=8 \\
 --scroll --columns=1  --center --separator=\"\\n\" \\
 --button=$(gettext \"Cancel\"):1 \\
---button=$(gettext \"Settings\"):\"idiomind translate\" \\
+--button=\!'gtk-preferences':\"idiomind translate\" \\
 --button=$(gettext \"Save\")!gtk-save:0 \\" > "$DT/dlg"
 
     (echo "#"; n=1

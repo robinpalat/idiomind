@@ -124,13 +124,14 @@ function notebook_1() {
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"${tpc}\"" 1"
     cmd_play="$DS/play.sh play_list"
     btn1="$(gettext "Edit list")"
-    btn2="$(gettext "Share")"
-    btn3="$(gettext "Delete")"
-    btn4="$(gettext "Translate")"
+    btn2="$(gettext "Translate")"
+    btn3="$(gettext "Share")"
+    btn4="$(gettext "Delete")"
     cmd1="'$DS/mngr.sh' edit_list "\"${tpc}\"""
-    cmd2="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
-    cmd3="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
-    cmd4="'$DS/ifs/tls.sh' transl_batch"
+    cmd2="'$DS/ifs/tls.sh' transl_batch"
+    cmd3="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
+    cmd4="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
+    
     chk1=$(($(wc -l < "${DC_tlt}/1.cfg")*3))
     chk5=$(wc -l < "${DC_tlt}/5.cfg")
     list() { if [[ ${chk1} = ${chk5} ]]; then
@@ -163,8 +164,8 @@ function notebook_1() {
     --field=" ":LBL " " \
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn2":FBTN "$cmd2" \
-    --field="$btn4":FBTN "$cmd4" \
-    --field="$btn3":FBTN "$cmd3" > "$cnf4" &
+    --field="$btn3":FBTN "$cmd3" \
+    --field="$btn4":FBTN "$cmd4" > "$cnf4" &
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
@@ -182,10 +183,14 @@ function notebook_1() {
 
 function notebook_2() {
     cmd_mark="'$DS/mngr.sh' 'mark_to_learn' "\"${tpc}\"" 1"
-    btn1="$(gettext "Share")"
-    btn2="$(gettext "Delete")"
-    cmd1="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
-    cmd2="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
+    btn1="$(gettext "Edit list")"
+    btn2="$(gettext "Translate")"
+    btn3="$(gettext "Share")"
+    btn4="$(gettext "Delete")"
+    cmd1="'$DS/mngr.sh' edit_list "\"${tpc}\"""
+    cmd2="'$DS/ifs/tls.sh' transl_batch"
+    cmd3="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
+    cmd4="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
 
     yad --multi-progress --tabnum=1 \
     --text="$pres" \
@@ -208,10 +213,11 @@ function notebook_2() {
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field=" $(gettext "Review") ":FBTN "$cmd_mark" \
     --field="\t\t\t\t\t\t\t\t\t\t\t":LBL "_" \
-    --field="$label_info2\n":LBL " " \
+    --field=" ":LBL " " --field=" ":LBL " " \
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn2":FBTN "$cmd2" \
-    --field=" ":LBL " " > "$cnf4" &
+    --field="$btn3":FBTN "$cmd3" \
+    --field="$btn4":FBTN "$cmd4" > "$cnf4" &
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
