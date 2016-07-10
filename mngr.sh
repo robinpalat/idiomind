@@ -179,7 +179,7 @@ edit_item() {
     if [[ "${srce}" = "${temp}" ]]; then
         if [ -e "$DT/${trgt}.edit" ]; then
             msg_4 "$(gettext "Wait till the process is completed...")\n" \
-            dialog-information "$(gettext "Cancel")" "$(gettext "Stop")" " " "$DT/${trgt}.edit"
+            dialog-information "$(gettext "OK")" "$(gettext "Stop")" " " "$DT/${trgt}.edit"
             if [ $? = 1 ]; then
                 srce=""; transl_mark=1; rm -f "$DT/${trgt}.edit"
             else 
@@ -374,7 +374,7 @@ edit_item() {
                 $DS/vwr.sh ${list} "${trgt}" ${item_pos} & 
             fi
         else
-            $DS/vwr.sh ${list} "${trgt}" $((item_pos+1)) &
+            "$DS/vwr.sh" ${list} "${trgt}" $((item_pos+1)) &
         fi
         return 0
 } >/dev/null 2>&1
@@ -384,25 +384,31 @@ edit_list_cmds() {
     direc="$DM_tl/${2}/.conf"
     if [ -e "$DT/transl_batch_out" ]; then
         msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
-        dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" " " "$DT/transl_batch_out"
+        dialog-warning "$(gettext "OK")" "$(gettext "Stop")" " " "$DT/transl_batch_out"
         ret=$?
-    fi
-    if [ $ret -eq 1 ]; then 
-        cleanups "$DT/transl_batch_out" #TODO
-    else
-        return 1
+        if [ $ret -eq 1 ]; then 
+            cleanups "$DT/transl_batch_out"
+        else
+            return 1
+        fi
     fi
     if [ $1 -eq 0 -o $1 -eq 2 -o $1 -eq 4 ]; then
-        if [ $1 = 0 ]; then cmd=cat && invrt_msg=FALSE
-        elif [ $1 = 2 ]; then cmd=tac && invrt_msg=TRUE
-        elif [ $1 = 4 ]; then cmd=cat && invrt_msg=FALSE; fi
+        if [ $1 -eq 0 ]; then 
+            cmd=cat && invrt_msg=FALSE
+        elif [ $1 -eq 2 ]; then 
+            cmd=tac && invrt_msg=TRUE
+            mv -f "$DT/list_input" "$DT/list_output"
+        elif [ $1 -eq 4 ]; then
+            cmd=cat && invrt_msg=FALSE
+            mv -f "$DT/list_input" "$DT/list_output"
+        fi
         
         dlaud="$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")"
         include "$DS/ifs/mods/add"
         n=1; f_lock "$DT/el_lk"
         cleanups "${direc}/1.cfg" "${direc}/3.cfg" "${direc}/4.cfg"
 
-        $cmd "$DT/list_input" |sed '/^$/d;/(null)/d' |while read -r trgt; do
+        $cmd "$DT/list_output" |sed '/^$/d;/(null)/d' |while read -r trgt; do
             if grep -F -m 1 "trgt{${trgt}}" "${direc}/0.cfg"; then
                 item="$(grep -F -m 1 "trgt{${trgt}}" "${direc}/0.cfg" |sed 's/}/}\n/g')"
                 get_item "${item}"
@@ -499,12 +505,13 @@ edit_list_cmds() {
         fi
     fi
     cleanups "$DT/list_output" "$DT/list_input" \
-    "$DT/items_to_add" "$DT_r" "$DT/act_restfile"
+    "$DT/items_to_add" "$DT_r" "$DT/act_restfile" "$DT/edit_list_more"
     return 1
 } >/dev/null 2>&1
 
 
 edit_list_more() {
+    touch "$DT/edit_list_more"
     file="$HOME/.idiomind/backup/${tpc}.bk"
     cols1="$(gettext "Reverse items order")\n$(gettext "Remove all items")\n$(gettext "Restart topic status")\n$(gettext "Add feed")\n$(gettext "Show short sentences in word's view")"
     dt1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
@@ -531,22 +538,24 @@ edit_list_more() {
     if [ $ret = 0 ]; then
         _war(){ msg_2 "$(gettext "Confirm")\n" \
         dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"; }
-        _kill(){ kill -9 $(pgrep -f "yad --list --title="); }
 
         if grep "$(gettext "Reverse items order")" <<< "${more}"; then
-            _war; if [ $? = 0 ]; then 
-                _kill; edit_list_cmds 2 "${tpc}"
+            _war; if [ $? = 0 ]; then
+                yad_kill "yad --list --title="
+                edit_list_cmds 2 "${tpc}"
             fi
+            
         elif grep "$(gettext "Remove all items")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
-                _kill
+                yad_kill "yad --list --title="
                 cleanups "${direc}/0.cfg" "${direc}/1.cfg" "${direc}/2.cfg" \
                 "${direc}/3.cfg" "${direc}/4.cfg" "${direc}/5.cfg" "${direc}/6.cfg"
                 [ -n "${tpc}" ] && rm "$DM_tl/${2}"/*.mp3
             fi
+            
         elif grep "$(gettext "Restart topic status")" <<< "${more}"; then
-            _war; if [ $? = 0 ]; then 
-                _kill
+            _war; if [ $? = 0 ]; then
+                yad_kill "yad --list --title="
                 cleanups "${direc}/1.cfg" "${direc}/2.cfg" "${direc}/7.cfg" 
                 echo 1 > "${direc}/8.cfg"; > "${direc}/9.cfg"
                 while read -r item_; do
@@ -554,18 +563,23 @@ edit_list_more() {
                     trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
                     [ -n "${trgt}" ] && echo "${trgt}" >> "${DC_tlt}/1.cfg"
                 done < "${DC_tlt}/0.cfg"
+                
+                sed -i "s/repass=.*/repass=\"0\"/g" "${DC_tlt}/10.cfg"
                 "$DS/mngr.sh" mkmn 1; "$DS/ifs/tls.sh" colorize 0
             fi
+            
         elif grep "$(gettext "Add feed")" <<< "${more}"; then
             idiomind feeds
+            
         elif grep "$(gettext "Show short sentences in word's view")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
-                _kill
+                yad_kill "yad --list --title="
                 edit_list_cmds 4 "${tpc}"
             fi
+            
         elif grep "$(gettext "Restore backup:")" <<< "${more}"; then
              _war; if [ $? = 0 ]; then
-                _kill
+                yad_kill "yad --list --title="
                 if grep ${dt1} <<< "${more}"; then
                     export line=1
                 elif grep ${dt2} <<< "${more}"; then
@@ -574,31 +588,38 @@ edit_list_more() {
                 "$DS/ifs/tls.sh" restore "${tpc}" ${line}
             fi
         fi
+    else
+        cleanups "$DT/list_output" "$DT/list_input" \
+        "$DT/items_to_add" "$DT/act_restfile" "$DT/edit_list_more"
     fi
 } >/dev/null 2>&1
 
 
 edit_list_dlg() {
     direc="$DM_tl/${2}/.conf"
+    
     if [ -e "$DT/items_to_add" -o -e "$DT/el_lk" ]; then
         if [ -e "$DT/items_to_add" ]; then
             msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
-            dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" " " "$DT/items_to_add"
+            dialog-warning "$(gettext "OK")" "$(gettext "Stop")" " " "$DT/items_to_add"
             ret=$?
         elif [ -e "$DT/el_lk" ]; then
             msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
-            dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" " " "$DT/el_lk"
+            dialog-warning "$(gettext "OK")" "$(gettext "Stop")" " " "$DT/el_lk"
             ret=$?
         fi
         if [ $ret -eq 1 ]; then 
-        cleanups "$DT/items_to_add" "$DT/el_lk"
-        else exit 1; fi
+            cleanups "$DT/items_to_add" "$DT/el_lk"
+        else 
+            return 1
+        fi
     fi
+    
     if [ -e "$DC_s/elist_first_run" ]; then 
         "$DS/ifs/tls.sh" first_run edit_list &
     fi
 
-    > "$DT/list_input"
+    cleanups "$DT/list_output"; > "$DT/list_input"
     (echo "5"; cat "${direc}/0.cfg" | while read -r item_; do
         item="$(sed 's/}/}\n/g' <<< "${item_}")"
         trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
@@ -608,10 +629,13 @@ edit_list_dlg() {
     edit_list_list < "$DT/list_input" > "$DT/list_output"
     ret=$?
     
-    [ $ret = 0 ] && edit_list_cmds $ret "${tpc}"
-    
-    #cleanups "$DT/list_output" "$DT/list_input" \
-    "$DT/items_to_add" "$DT_r" "$DT/act_restfile"
+    if [ $ret = 0 ]; then
+        edit_list_cmds 0 "${tpc}"
+    else
+        if [ ! -e "$DT/edit_list_more" ]; then
+            cleanups "$DT/list_input" "$DT/list_output"
+        fi
+    fi
 }
 
 
@@ -668,10 +692,9 @@ delete_topic() {
                 sed '/^$/d' "$DM_tl/.share/${n}.cfg.tmp" > "$DM_tl/.share/${n}.cfg"
             fi
         done
-        kill -9 $(pgrep -f "yad --list ") &
-        kill -9 $(pgrep -f "yad --text-info ") &
-        kill -9 $(pgrep -f "yad --form ") &
-        kill -9 $(pgrep -f "yad --notebook ") &
+        yad_kill "yad --list " "yad --text-info " \
+        "yad --form " "yad --notebook "
+        
         "$DS/mngr.sh" mkmn 1 &
     fi
     rm -f "$DT/rm_lk" "$DM_tl/.share"/*.tmp & exit 1
@@ -785,11 +808,9 @@ mark_to_learn_topic() {
     cp -f "${DC_tlt}/info" "${DC_tlt}/info.bk"
         
     if [[ ${3} = 1 ]]; then
-    kill -9 $(pgrep -f "yad --multi-progress ") &
-    kill -9 $(pgrep -f "yad --list ") &
-    kill -9 $(pgrep -f "yad --text-info ") &
-    kill -9 $(pgrep -f "yad --form ") &
-    kill -9 $(pgrep -f "yad --notebook ") & fi
+        yad_kill "yad --form " "yad --multi-progress " "yad --list " \
+        "yad --text-info " "yad --notebook "
+    fi
     touch "${DM_tlt}"
     
     ( sleep 1; mv -f "${DC_tlt}/info.bk" "${DC_tlt}/info" ) &
@@ -862,10 +883,9 @@ mark_as_learned_topic() {
     cp -f "${DC_tlt}/info" "${DC_tlt}/info.bk"
 
     if [[ ${3} = 1 ]]; then
-    kill -9 $(pgrep -f "yad --list ") &
-    kill -9 $(pgrep -f "yad --text-info ") &
-    kill -9 $(pgrep -f "yad --form ") &
-    kill -9 $(pgrep -f "yad --notebook ") & fi
+        yad_kill "yad --form " "yad --list " \
+        "yad --text-info " "yad --notebook "
+    fi
     "$DS/mngr.sh" mkmn 1 &
     
     ( sleep 1; mv -f "${DC_tlt}/info.bk" "${DC_tlt}/info" ) &

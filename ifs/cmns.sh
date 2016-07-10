@@ -69,6 +69,10 @@ function include() {
   unset f
 }
 
+function yad_kill() {
+    (sleep 0.5; for m in "${@}"; do kill -9 $(pgrep -f "$m"); done) 
+}
+
 function f_lock() {
     brk=0
     while true; do

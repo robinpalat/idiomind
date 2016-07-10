@@ -59,7 +59,7 @@ function dlg_form_2() {
 
 function edit_list_list() {
     yad --list --title="$(gettext "Edit list")" \
-    --text="$(gettext "Double click to edit, drag and drop to move, right-click to display menu.")\n" \
+    --text="$(gettext "Double click to edit, drag and drop to move, right-click to display menu.")" \
     --name=Idiomind --class=Idiomind \
     --editable --separator='' \
     --always-print-result --print-all \

@@ -494,7 +494,7 @@ function practice_e() {
     get_text() {
         trgt=$(echo "${1}" |sed 's/^ *//;s/ *$//')
         chk=`echo "${trgt}" |awk '{print tolower($0)}'`
-        }
+    }
 
     _clean() {
         sed 's/ /\n/g' \
@@ -756,10 +756,10 @@ function practices() {
         fi
         if [[ "$(egrep -cv '#|^$' < "${pdir}/${pr}.tmp")" = 0 ]]; then
             if [[ ${group} = 1 ]]; then 
-				export easy=0; decide_group
-			else 
-				lock
-			fi
+                export easy=0; decide_group
+            else 
+                lock
+            fi
         fi
     else
         if [ ! -e "${pdir}/${pr}.0" ]; then

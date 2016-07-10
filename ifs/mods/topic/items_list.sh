@@ -212,7 +212,7 @@ function notebook_2() {
     --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field=" $(gettext "Review") ":FBTN "$cmd_mark" \
-    --field="\t\t\t\t\t\t\t\t\t\t\t":LBL "_" \
+    --field="\t\t\t\t\t\t\t\\t\t\t\t\t\t":LBL "_" \
     --field=" ":LBL " " --field=" ":LBL " " \
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn2":FBTN "$cmd2" \
