@@ -560,21 +560,23 @@ translate_to() {
     ldgl="$(yad --form --title="$(gettext "Source Language Settings")" \
     --class=Idiomind --name=Idiomind \
     --always-print-result --window-icon=idiomind \
-    --buttons-layout=end --align=right --center --on-top \
-    --width=480 --height=280 --borders=10 \
+    --buttons-layout=end --center --on-top \
+    --width=380 --height=280 --borders=5 \
     --field="<b>$(gettext "Revised translations") ($num_tranl)</b> ":LBL " " \
-    --field="$(gettext "Change the source language")":CB "!${tranl_rvs}" \
+    --field="$(gettext "Change the source language:")":LBL " " \
+    --field="":CB "!${tranl_rvs}" \
     --field="$active — $(gettext "This translation was revised or is a human translation")":CHK "$chk" \
     --field="":LBL " " \
     --field="<b>$(gettext "Automatic translation")</b> ":LBL " " \
-    --field="$(gettext "Select source language to translate")":CB "${list1}" \
+    --field="$(gettext "Select source language to translate:")":LBL " " \
+    --field="":CB "${list1}" \
     --field="<small>$(gettext "Note that this translation used Google translate, so often will be inaccurate especially in complex sentences")</small>":LBL " " \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0)"; ret="$?"
     
-    auto_tr="$(cut -f6 -d'|' <<< "$ldgl")"
-    revw_tr="$(cut -f2 -d'|' <<< "$ldgl")"
-    revw_ck="$(cut -f3 -d'|' <<< "$ldgl")"
+    auto_tr="$(cut -f8 -d'|' <<< "$ldgl")"
+    revw_tr="$(cut -f3 -d'|' <<< "$ldgl")"
+    revw_ck="$(cut -f4 -d'|' <<< "$ldgl")"
 
     if [ "$ret" = 0 ]; then
 
