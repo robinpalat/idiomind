@@ -642,7 +642,9 @@ edit_list_dlg() {
 edit_feeds() {
     file="$DM_tl/${2}/.conf/feeds"
     feeds="$(< "${file}")"
-    mods="$(echo "${feeds}" |edit_feeds_list)"
+    [ -n "$feeds" ] && btnf="--button="$(gettext "Fetch Content")":2 " \
+    || btnf="--center"
+    export btnf; mods="$(echo "${feeds}" |edit_feeds_list)"
     ret=$?
     if [ -z "${mods}" ]; then
         cleanups "${file}"
