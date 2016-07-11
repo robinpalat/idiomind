@@ -17,9 +17,10 @@ new_topic() {
     ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
     
     if [[ $(wc -l <<< "${listt}") -ge 120 ]]; then
-    msg "$(gettext "Maximum number of topics reached.")" \
-    dialog-information "$(gettext "Information")" & exit 1; fi
-    
+        msg "$(gettext "Maximum number of topics reached.")" \
+        dialog-information "$(gettext "Information")" & return 1
+    fi
+
     source "$DS/ifs/mods/add/add.sh"
     add="$(dlg_form_0)"
     name="$(clean_3 "$(cut -d "|" -f1 <<< "${add}")")"
@@ -27,7 +28,7 @@ new_topic() {
     if [[ ${#name} -gt 55 ]]; then
         msg "$(gettext "Sorry, name too long.")\n" \
         dialog-information "$(gettext "Information")"
-        "$DS/add.sh" new_topic "${name}" & exit 1
+        "$DS/add.sh" new_topic "${name}" & return 1
     fi
     
     if grep -Fxo "${name}" < <(ls "$DS/addons/"); then name="${name} (1)"; fi
@@ -43,14 +44,13 @@ new_topic() {
     fi
     
     if [ -z "${name}" ]; then 
-        exit 1
+        return 1
     else
         mkdir "$DM_tl/${name}"
         check_list > "$DM_tl/.share/2.cfg"
         "$DS/default/tpc.sh" "${name}" 1 1
         "$DS/mngr.sh" mkmn 0
     fi
-    exit
 }
 
 function new_item() {

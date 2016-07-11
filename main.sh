@@ -161,10 +161,10 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
         if [ $ret -eq 0 ]; then
             listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
             ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
-            #if [ $(wc -l <<< "$listt") -ge 120 ]; then
-                #msg "$(gettext "Maximum number of topics reached.")\n" \
-                #dialog-information "$(gettext "Information")" & exit
-            #fi
+            if [ $(wc -l <<< "$listt") -ge 120 ]; then
+                msg "$(gettext "Maximum number of topics reached.")\n" \
+                dialog-information "$(gettext "Information")" & return 1
+            fi
             cn=0
             if [[ $(grep -Fxo "${name}" <<< "${listt}" |wc -l) -ge 1 ]]; then
                 cn=1
