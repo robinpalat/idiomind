@@ -490,7 +490,7 @@ function transl_batch() {
 
 echo -e "yad --form --title=\"$tlng $(gettext "to") $slng\" \\
 --class=Idiomind --name=Idiomind --window-icon=idiomind \\
---width=590 --height=350 --borders=8 \\
+--width=590 --height=350 --borders=10 \\
 --scroll --columns=1 --center --separator='\n' \\
 --button=$(gettext \"Cancel\"):1 \\
 --button=\!'gtk-preferences':\"idiomind translate\" \\
@@ -552,18 +552,19 @@ translate_to() {
     list1=$(for i in "${!tranlangs[@]}"; do echo -n "!$i"; done)
     if grep "$slng" <<<"${tranl_rvs}"; then chk=TRUE; else chk=FALSE; fi
     
-    ldgl="$(yad --form --title="$(gettext "Setting")" \
+    ldgl="$(yad --form --title="$(gettext "Source Language Settings")" \
     --class=Idiomind --name=Idiomind \
     --always-print-result --window-icon=idiomind \
     --buttons-layout=end --align=right --center --on-top \
-    --width=540 --height=320 --borders=15 \
+    --width=540 --height=300 --borders=15 \
     --field="<u>$(gettext "Revised translations") ($num_tranl)</u> ":LBL " " \
     --field="$(gettext "Change the source language")":CB "!${tranl_rvs}" \
     --field="$(gettext "This translation was revised or is a human translation") ($slng)":CHK "$chk" \
     --field="":LBL " " \
     --field="<u>$(gettext "Automatic translation")</u> ":LBL " " \
     --field="$(gettext "Select source language to translate")":CB "${list1}" \
-    --field="<small>$(gettext "Note that this translation using Google machine translation is often imprecise in complex sentences")</small>":LBL " " \
+    --field="<small>$(gettext "Note that this translation used Google translate, so often will be inaccurate especially in complex sentences")</small>":LBL " " \
+    --field="":LBL " " \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0)"; ret="$?"
     auto_tr="$(cut -f6 -d'|' <<< "$ldgl")"
