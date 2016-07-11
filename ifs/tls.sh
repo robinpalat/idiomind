@@ -488,11 +488,10 @@ function transl_batch() {
         fi
     fi
 
-echo -e "yad --form --title=\"$(gettext "Edit translations")\" \\
---text=\"$(gettext "Traducciones automaticas:") Spanish\" \\
+echo -e "yad --form --title=\"$tlng $(gettext "to") $slng\" \\
 --class=Idiomind --name=Idiomind --window-icon=idiomind \\
 --width=590 --height=350 --borders=8 \\
---scroll --columns=1  --center --separator=\"\\n\" \\
+--scroll --columns=1 --center --separator='\n' \\
 --button=$(gettext \"Cancel\"):1 \\
 --button=\!'gtk-preferences':\"idiomind translate\" \\
 --button=$(gettext \"Save\")!gtk-save:0 \\" > "$DT/dlg"
@@ -501,11 +500,14 @@ echo -e "yad --form --title=\"$(gettext "Edit translations")\" \\
     while read -r _item; do
         unset trgt srce
         get_item "${_item}"
+        trgt="$(tr -s '"' '*' <<< "${trgt}")"
+        srce="$(tr -s '"' '*' <<< "${srce}")"
         declare a$n="${trgt}"; declare b$n="${srce}"
         echo -e "--field=\"\":RO \"$trgt\" --field=\"\" \"$srce\" --field=\" \":lbl \"\" \\" >> "$DT/dlg"
         let n++
     done < "${DC_tlt}/0.cfg") |progress
-
+    sed -i 's/\*/\\\"/g' "$DT/dlg"
+    
     dlg="$(cat "$DT/dlg")"; eval "$dlg" > "$DT/transl_batch_out"; ret="$?"
     if [ $ret = 0 ]; then
     
@@ -541,113 +543,117 @@ echo -e "yad --form --title=\"$(gettext "Edit translations")\" \\
 
 translate_to() {
     source /usr/share/idiomind/default/c.conf
-    source $DS/default/sets.cfg
-    source $DS/default/source_langs.cfg
+    source "$DS/default/sets.cfg"
+    source "$DS/default/source_langs.cfg"
     source "$DS/ifs/cmns.sh"
     if [ ! -d "$DC_tlt/translations" ]; then mkdir "$DC_tlt/translations"; fi
-    if [ -e "$DC_tlt/translations/orig" ]; then r="$(gettext "Restore original")"; fi
-    source "$DS/default/source_langs.cfg"
+    tranl_rvs="$(cd "$DC_tlt/translations"; ls |tr "\\n" '!' |sed 's/\!*$//g')"
+    num_tranl=$(cd "$DC_tlt/translations"; ls |wc -l)
     list1=$(for i in "${!tranlangs[@]}"; do echo -n "!$i"; done)
+    if grep "$slng" <<<"${tranl_rvs}"; then chk=TRUE; else chk=FALSE; fi
     
-    ldgl="$(yad --form --title="$(gettext "Translate")" \
+    ldgl="$(yad --form --title="$(gettext "Setting")" \
     --class=Idiomind --name=Idiomind \
     --always-print-result --window-icon=idiomind \
-    --buttons-layout=end --align=left --center --on-top \
-    --width=500 --height=270 --borders=10 \
-    --field="$(gettext "Idioma de origen Ingles")":LBL " " \
-    --field="$(gettext "Mark as reviewed")":CHK "$trgt" \
+    --buttons-layout=end --align=right --center --on-top \
+    --width=540 --height=320 --borders=15 \
+    --field="<u>$(gettext "Revised translations") ($num_tranl)</u> ":LBL " " \
+    --field="$(gettext "Change the source language")":CB "!${tranl_rvs}" \
+    --field="$(gettext "This translation was revised or is a human translation") ($slng)":CHK "$chk" \
     --field="":LBL " " \
-    --field="\n$(gettext "Traducción automática:")":LBL " " \
-    --field="$(gettext "Select source language to translate")":CB "${r}${list1}" \
+    --field="<u>$(gettext "Automatic translation")</u> ":LBL " " \
+    --field="$(gettext "Select source language to translate")":CB "${list1}" \
+    --field="<small>$(gettext "Note that this translation using Google machine translation is often imprecise in complex sentences")</small>":LBL " " \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0)"; ret="$?"
-    ls="$(cut -f5 -d'|' <<< "$ldgl")"
-    chk="$(cut -f2 -d'|' <<< "$ldgl")"
-    
+    auto_tr="$(cut -f6 -d'|' <<< "$ldgl")"
+    revw_tr="$(cut -f2 -d'|' <<< "$ldgl")"
+    revw_ck="$(cut -f3 -d'|' <<< "$ldgl")"
+
     if [ "$ret" = 0 ]; then
-        if [ "$ls" != $slng ]; then
+
+        if [ $revw_ck = TRUE ]; then
+            cp -f "${DC_tlt}/0.cfg" "${DC_tlt}/translations/$slng"
+        elif [ $revw_ck = FALSE ]; then
+            cleanups "${DC_tlt}/translations/$slng"
+        fi
+        
+        if [ $revw_tr != $slng -a -n "$revw_tr" -a "$revw_tr" != "(null)" ]; then
+            if [ -e "${DC_tlt}/translations/$revw_tr" ]; then
+                yad_kill "yad --form --title="
+                mv -f "${DC_tlt}/translations/$revw_tr" "${DC_tlt}/0.cfg"
+            fi
+
+        elif [ $auto_tr != $slng -a -n "$auto_tr" -a "$auto_tr" != "(null)" ]; then
             > "$DT/words.trad_tmp"
             > "$DT/index.trad_tmp"
-            yad_kill "yad --form --title="
-            internet
-            [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && exit 1
+            yad_kill "yad --form --title="; internet
+            [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && return 1
             l="$(grep -o 'tlng="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
             if [ -n "$l" ]; then lgt=${tlangs[$l]}; else lgt=${tlangs[$tlng]}; fi
             
-            if [ "$ls" = "$(gettext "Restore original")" -o "$ls" = restore ]; then
-                if [ -e "${DC_tlt}/translations/orig" ]; then
-                    mv -f "${DC_tlt}/translations/orig" "${DC_tlt}/0.cfg"
-                    echo -e "  done!"
-                else 
-                    echo -e " -- error"
-                fi
-            else
-                tl=${tranlangs[$ls]}
-                if [ -e "${DC_tlt}/translations/$tl" ]; then
-                    cp -f "${DC_tlt}/translations/$tl" "${DC_tlt}/0.cfg"
-                else
-                    include "$DS/ifs/mods/add"
-                    cnt=$(wc -l "${DC_tlt}/0.cfg")
+            tl=${tranlangs[$auto_tr]}
             
-                    while read -r item_; do
-                        item="$(sed 's/}/}\n/g' <<<"${item_}")"
-                        type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"
-                        trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
-                        if [ -n "${trgt}" ]; then
-                            echo "${trgt}" \
-                            | python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
-                            | sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' \
-                            | tr -d '*)(,;"“”:' | tr -s '&{}[]' ' ' \
-                            | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
-                            | sed 's/\]//;s/\[//;s/<[^>]*>//g' \
-                            | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' \
-                            | tr -d '.' | sed 's/^ *//; s/ *$//; /^$/d' >> "$DT/words.trad_tmp"
-                            echo "|" >> "$DT/words.trad_tmp"
-                            echo "${trgt} |" >> "$DT/index.trad_tmp"; fi
-                    done < "${DC_tlt}/0.cfg"
-                    sed -i ':a;N;$!ba;s/\n/\. /g' "$DT/words.trad_tmp"
-                    sed -i 's/|/|\n/g' "$DT/words.trad_tmp"
-                    sed -i 's/^..//' "$DT/words.trad_tmp"
-                    index_to_trad="$(< "$DT/index.trad_tmp")"
-                    words_to_trad="$(< "$DT/words.trad_tmp")"
-                    translate "${index_to_trad}" $lgt $tl > "$DT/index.trad"
-                    translate "${words_to_trad}" $lgt $tl > "$DT/words.trad"
-                    sed -i ':a;N;$!ba;s/\n/ /g' "$DT/index.trad"
-                    sed -i 's/|/\n/g' "$DT/index.trad"
-                    sed -i 's/^ *//; s/ *$//g' "$DT/index.trad"
-                    sed -i ':a;N;$!ba;s/\n/ /g' "$DT/words.trad"
-                    sed -i 's/|/\n/g' "$DT/words.trad"
-                    sed -i 's/^ *//; s/ *$//;s/\。/\. /g' "$DT/words.trad"
-                    paste -d '&' "$DT/words.trad_tmp" "$DT/words.trad" > "$DT/mix_words.trad_tmp"
-                    n=1
-                    while read -r item_; do
-                        get_item "${item_}"
-                        srce="$(sed -n ${n}p "$DT/index.trad")"
-                        tt="$(sed -n ${n}p "$DT/mix_words.trad_tmp" |cut -d '&' -f1 \
-                        |sed 's/\. /\n/g' |sed 's/^ *//; s/ *$//g' |tr -d '|.')"
-                        st="$(sed -n ${n}p "$DT/mix_words.trad_tmp" |cut -d '&' -f2 \
-                        |sed 's/\. /\n/g' |sed 's/^ *//; s/ *$//g' |tr -d '|.')"
+            include "$DS/ifs/mods/add"
+            cnt=$(wc -l "${DC_tlt}/0.cfg")
+    
+            while read -r item_; do
+                item="$(sed 's/}/}\n/g' <<<"${item_}")"
+                type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"
+                trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
+                if [ -n "${trgt}" ]; then
+                    echo "${trgt}" \
+                    | python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
+                    | sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' \
+                    | tr -d '*)(,;"“”:' | tr -s '&{}[]' ' ' \
+                    | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
+                    | sed 's/\]//;s/\[//;s/<[^>]*>//g' \
+                    | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' \
+                    | tr -d '.' | sed 's/^ *//; s/ *$//; /^$/d' >> "$DT/words.trad_tmp"
+                    echo "|" >> "$DT/words.trad_tmp"
+                    echo "${trgt} |" >> "$DT/index.trad_tmp"; fi
+            done < "${DC_tlt}/0.cfg"
+            sed -i ':a;N;$!ba;s/\n/\. /g' "$DT/words.trad_tmp"
+            sed -i 's/|/|\n/g' "$DT/words.trad_tmp"
+            sed -i 's/^..//' "$DT/words.trad_tmp"
+            index_to_trad="$(< "$DT/index.trad_tmp")"
+            words_to_trad="$(< "$DT/words.trad_tmp")"
+            translate "${index_to_trad}" $lgt $tl > "$DT/index.trad"
+            translate "${words_to_trad}" $lgt $tl > "$DT/words.trad"
+            sed -i ':a;N;$!ba;s/\n/ /g' "$DT/index.trad"
+            sed -i 's/|/\n/g' "$DT/index.trad"
+            sed -i 's/^ *//; s/ *$//g' "$DT/index.trad"
+            sed -i ':a;N;$!ba;s/\n/ /g' "$DT/words.trad"
+            sed -i 's/|/\n/g' "$DT/words.trad"
+            sed -i 's/^ *//; s/ *$//;s/\。/\. /g' "$DT/words.trad"
+            paste -d '&' "$DT/words.trad_tmp" "$DT/words.trad" > "$DT/mix_words.trad_tmp"
+            n=1
+            while read -r item_; do
+                get_item "${item_}"
+                srce="$(sed -n ${n}p "$DT/index.trad")"
+                tt="$(sed -n ${n}p "$DT/mix_words.trad_tmp" |cut -d '&' -f1 \
+                |sed 's/\. /\n/g' |sed 's/^ *//; s/ *$//g' |tr -d '|.')"
+                st="$(sed -n ${n}p "$DT/mix_words.trad_tmp" |cut -d '&' -f2 \
+                |sed 's/\. /\n/g' |sed 's/^ *//; s/ *$//g' |tr -d '|.')"
 
-                        (bcle=1; > "$DT/w.tmp"
-                        while [[ ${bcle} -le $(wc -l <<<"${tt}") ]]; do
-                            t="$(sed -n ${bcle}p <<<"${tt}" |sed 's/^\s*./\U&\E/g')"
-                            s="$(sed -n ${bcle}p <<<"${st}" |sed 's/^\s*./\U&\E/g')"
-                            echo "${t}_${s}" >> "$DT/w.tmp"
-                            let bcle++
-                        done)
-                        wrds="$(tr '\n' '_' < "$DT/w.tmp" |sed '/^$/d')"; cdid="$id"
-                        eval line="$(sed -n 2p $DS/default/vars)"
-                        echo -e "${line}" >> "${DC_tlt}/translations/$tl"
-                    let n++
-                    done < "${DC_tlt}/0.cfg"
-                    unset item type trgt srce exmp defn note grmr mark link tag id
-                    rm -f "$DT"/*.tmp "$DT"/*.trad "$DT"/*.trad_tmp
-                    if [ ! -e "${DC_tlt}/translations/orig" ]; then
-                        mv "${DC_tlt}/0.cfg" "${DC_tlt}/translations/orig"
-                    fi
-                    cp -f "${DC_tlt}/translations/$tl" "${DC_tlt}/0.cfg"
-                fi
+                (bcle=1; > "$DT/w.tmp"
+                while [[ ${bcle} -le $(wc -l <<<"${tt}") ]]; do
+                    t="$(sed -n ${bcle}p <<<"${tt}" |sed 's/^\s*./\U&\E/g')"
+                    s="$(sed -n ${bcle}p <<<"${st}" |sed 's/^\s*./\U&\E/g')"
+                    echo "${t}_${s}" >> "$DT/w.tmp"
+                    let bcle++
+                done)
+                wrds="$(tr '\n' '_' < "$DT/w.tmp" |sed '/^$/d')"; cdid="$id"
+                eval line="$(sed -n 2p $DS/default/vars)"
+                echo -e "${line}" >> "$DT/translations"
+            let n++
+            done < "${DC_tlt}/0.cfg"
+            unset item type trgt srce exmp defn note grmr mark link tag id
+            rm -f "$DT"/*.tmp "$DT"/*.trad "$DT"/*.trad_tmp
+            if [ ! -e "${DC_tlt}/translations/orig" ]; then
+                mv "${DC_tlt}/0.cfg" "${DC_tlt}/translations/orig"
             fi
+            cp -f "$DT/translations" "${DC_tlt}/0.cfg"
         fi
     fi
 }

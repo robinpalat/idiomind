@@ -123,7 +123,7 @@ export -f word_view sentence_view vwr
 function notebook_1() {
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"${tpc}\"" 1"
     cmd_play="$DS/play.sh play_list"
-    btn1="$(gettext "Edit list")"
+    btn1="$(gettext "Edit")"
     btn2="$(gettext "Translate")"
     btn3="$(gettext "Share")"
     btn4="$(gettext "Delete")"
@@ -183,7 +183,7 @@ function notebook_1() {
 
 function notebook_2() {
     cmd_mark="'$DS/mngr.sh' 'mark_to_learn' "\"${tpc}\"" 1"
-    btn1="$(gettext "Edit list")"
+    btn1="$(gettext "Edit")"
     btn2="$(gettext "Translate")"
     btn3="$(gettext "Share")"
     btn4="$(gettext "Delete")"
