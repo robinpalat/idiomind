@@ -561,7 +561,7 @@ translate_to() {
     --class=Idiomind --name=Idiomind \
     --always-print-result --window-icon=idiomind \
     --buttons-layout=end --align=right --center --on-top \
-    --width=500 --height=300 --borders=10 \
+    --width=480 --height=280 --borders=10 \
     --field="<b>$(gettext "Revised translations") ($num_tranl)</b> ":LBL " " \
     --field="$(gettext "Change the source language")":CB "!${tranl_rvs}" \
     --field="$active — $(gettext "This translation was revised or is a human translation")":CHK "$chk" \
@@ -569,7 +569,6 @@ translate_to() {
     --field="<b>$(gettext "Automatic translation")</b> ":LBL " " \
     --field="$(gettext "Select source language to translate")":CB "${list1}" \
     --field="<small>$(gettext "Note that this translation used Google translate, so often will be inaccurate especially in complex sentences")</small>":LBL " " \
-    --field="":LBL " " \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0)"; ret="$?"
     
