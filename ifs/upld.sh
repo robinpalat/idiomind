@@ -346,9 +346,9 @@ function upld() {
                 fi
             fi
         done < "${DC_tlt}/0.cfg"
-        
+        # -------------------------------------------------------------------------
         if [ -d "$DC_tlt/translations" ]; then
-            tra=()
+            tra=( "$slng" )
             for t in $(cd "$DC_tlt/translations"; ls |grep -v 'active'); do
                 [ "$t" != "$slng" ] && tra=("${tra[@]}" "\"$t\"")
                 let n++

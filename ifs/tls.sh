@@ -10,7 +10,7 @@ function check_format_1() {
     file="${1}"
     invalid() {
         echo "Error! Value: ${1}"
-        msg "$(gettext "File is corrupted.")\n ${n}" error & exit 1
+        msg "$(gettext "File is corrupted.") ${n}\n" error & exit 1
     }
     if [ ! -f "${file}" ]; then invalid
     elif [ $(wc -l < "${file}") != 3 ]; then invalid 'lines'
