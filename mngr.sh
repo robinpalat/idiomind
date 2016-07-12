@@ -61,7 +61,7 @@ mkmn() {
         source "$DS/ifs/stats.sh"; save_topic_stats 0
     fi
 
-    rm -f "$DT/mn_lk"; exit
+    rm -f "$DT/mn_lk"; return 0
 }
 
 delete_item_ok() {
@@ -98,7 +98,7 @@ delete_item_ok() {
         rm -f "${DC_tlt}/lk"
     fi
     "$DS/ifs/tls.sh" colorize 1 &
-    rm -f "$DT/ps_lk" & exit 1
+    rm -f "$DT/ps_lk" & return 1
 }
 
 delete_item() {
@@ -138,7 +138,7 @@ delete_item() {
             rm "${DC_tlt}"/*.tmp
         fi
     fi
-    rm -f "$DT/ps_lk" & exit 1
+    rm -f "$DT/ps_lk" & return 1
 }
 
 edit_item() {
@@ -658,10 +658,10 @@ edit_feeds() {
 
 
 delete_topic() {
-    if [ -z "${tpc}" ]; then exit 1; fi
+    if [ -z "${tpc}" ]; then return 1; fi
     if [ "${tpc}" != "${2}" ]; then
         msg "$(gettext "Sorry, this topic is currently not active.")\n " \
-        dialog-information "$(gettext "Information")" & exit
+        dialog-information "$(gettext "Information")" & return
     fi
     msg_2 "$(gettext "Are you sure you want to delete this topic?")\n" \
     edit-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
@@ -699,7 +699,7 @@ delete_topic() {
         
         "$DS/mngr.sh" mkmn 1 &
     fi
-    rm -f "$DT/rm_lk" "$DM_tl/.share"/*.tmp & exit 1
+    rm -f "$DT/rm_lk" "$DM_tl/.share"/*.tmp & return 1
 }
 
 
@@ -714,19 +714,19 @@ rename_topic() {
     if grep -Fxo "${name}" < <(ls "$DS/addons/"); then name="${name} (1)"; fi
     chck="$(grep -Fxo "${name}" <<< "${listt}" |wc -l)"
     
-    if [ ! -d "$DM_tl/${tpc}" ]; then exit 1; fi
+    if [ ! -d "$DM_tl/${tpc}" ]; then return 1; fi
   
     if [ -e "$DT/n_s_pr" ] && [ "$(sed -n 1p "$DT/n_s_pr")" = "${tpc}" ]; then
         msg "$(gettext "Unable to rename at this time. Please try later ")\n" \
-        dialog-warning "$(gettext "Information")" & exit 1
+        dialog-warning "$(gettext "Information")" & return 1
     fi
     if [ -e "$DT/playlck" ] && [ "$(sed -n 1p "$DT/playlck")" = "${tpc}" ]; then
         msg "$(gettext "Unable to rename at this time. Please try later ")\n" \
-        dialog-warning "$(gettext "Information")" & exit 1
+        dialog-warning "$(gettext "Information")" & return 1
     fi
     if [ ${#name} -gt 55 ]; then
         msg "$(gettext "Sorry, new name too long.")\n" \
-        dialog-information "$(gettext "Information")" & exit 1
+        dialog-information "$(gettext "Information")" & return 1
     fi
     if [ ${chck} -ge 1 ]; then
         for i in {1..50}; do
@@ -753,21 +753,21 @@ rename_topic() {
         check_list > "$DM_tl/.share/2.cfg"
         rm "$DM_tl/.share"/*.tmp
         cleanups "$DM_tl/${tpc}" "$DM/backup/${tpc}.bk" "$DT/rm_lk"
-        "$DS/mngr.sh" mkmn 0 & exit 1
+        "$DS/mngr.sh" mkmn 0 & return 1
     fi
 }
 
 
 mark_to_learn_topic() {
-    [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
+    [ ! -s "${DC_tlt}/0.cfg" ] && return 1
     
     if [ "${tpc}" != "${2}" ]; then
         msg "$(gettext "Sorry, this topic is currently not active.")\n " \
-        dialog-information "$(gettext "Information")" & exit
+        dialog-information "$(gettext "Information")" & return
     fi
     if [ $((cfg3+cfg4)) -le 10 ]; then
         msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
-        dialog-information "$(gettext "Information")" & exit
+        dialog-information "$(gettext "Information")" & return
     fi
 
     (echo "5"
@@ -824,13 +824,13 @@ mark_to_learn_topic() {
 
 mark_as_learned_topic() {
     if [ "${tpc}" != "${2}" ]; then
-    msg "$(gettext "Sorry, this topic is currently not active.")\n " dialog-information "$(gettext "Information")" & exit; fi
+    msg "$(gettext "Sorry, this topic is currently not active.")\n " dialog-information "$(gettext "Information")" & return; fi
     
-    [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
+    [ ! -s "${DC_tlt}/0.cfg" ] && return 1
 
     if [ $((cfg3+cfg4)) -le 15 ]; then
     msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
-    dialog-information "$(gettext "Information")" & exit; fi
+    dialog-information "$(gettext "Information")" & return; fi
     
     (echo "5"
     stts=$(sed -n 1p "${DC_tlt}/8.cfg")
@@ -894,7 +894,7 @@ mark_as_learned_topic() {
     
     [[ ${3} = 1 ]] && idiomind topic &
     ( sleep 1; "$DS/ifs/tls.sh" colorize 0 ) &
-    exit 1
+    return
 }
 
 case "$1" in

@@ -20,15 +20,15 @@ function dwld() {
     mkdir "$DT/download"
     ilnk=$(grep -o 'ilnk="[^"]*' "$DM_tl/${2}/.conf/id.cfg" |grep -o '[^"]*$')
     tlng=$(grep -o 'tlng="[^"]*' "$DM_tl/${2}/.conf/id.cfg" |grep -o '[^"]*$')
-    [ -z "${ilnk}" ] &&  err
+    [ -z "${ilnk}" ] && err
 
     url1="http://idiomind.sourceforge.net/dl.php/?lg=${tlng,,}&fl=${ilnk}"
     if wget -S --spider "${url1}" 2>&1 |grep 'HTTP/1.1 200 OK'; then
         URL="${url1}"
-    else err & exit
+    else err & return
     fi
     wget -q -c -T 80 -O "$DT/download/${ilnk}.tar.gz" "${URL}"
-    [ $? != 0 ] && err && exit 1
+    [ $? != 0 ] && err && return 1
     
     if [ -f "$DT/download/${ilnk}.tar.gz" ]; then
         cd "$DT/download"/
@@ -67,12 +67,11 @@ function dwld() {
             "$DS/ifs/tls.sh" colorize 0
             rm -fr "$DT/download"
         else
-            err & exit
+            err & return 1
         fi
     else
-        err & exit
+        err & return 1
     fi
-    exit
 }
 
 function upld() {
@@ -100,23 +99,23 @@ function upld() {
     conds_upload() {
         if [ $((cfg3+cfg4)) -lt 8 ]; then
             msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
-            dialog-information "$(gettext "Information")" & exit 1
+            dialog-information "$(gettext "Information")" & return 1
         fi
         if [ -z "${autr_mod}" -o -z "${pass_mod}" ]; then
             msg "$(gettext "Sorry, Authentication failed.")\n" \
-            dialog-information "$(gettext "Information")" & exit 1
+            dialog-information "$(gettext "Information")" & return 1
         fi
         if [ -z "${ctgy}" ]; then
             msg "$(gettext "Please select a category.")\n " \
             dialog-information
-            "$DS/ifs/upld.sh" upld "${tpc}" & exit 1
+            "$DS/ifs/upld.sh" upld "${tpc}" & return 1
         fi
-        [ -d "$DT" ] && cd "$DT" || exit 1
+        [ -d "$DT" ] && cd "$DT" || return 1
         [ -d "$DT/upload" ] && rm -fr "$DT/upload"
         
         if [ "${tpc}" != "${1}" ]; then
             msg "$(gettext "Sorry, this topic is currently not active.")\n " \
-            dialog-information & exit 1
+            dialog-information & return 1
         fi
         internet
     }
@@ -195,13 +194,17 @@ function upld() {
     }
     
     sv_data() {
-        if [ "${autr}" != "${autr_mod}" -o "${pass}" != "${pass_mod}" ]; then
-            echo -e "autr=\"$autr_mod\"\npass=\"$pass_mod\"" > "$DC_s/3.cfg"
-        fi
-        if [ "${note}" != "${note_mod}"  ]; then
-            if ! grep '^$' <<< "${note_mod}"
-            then echo -e "\n${note_mod}" > "${DC_tlt}/info"
-            else echo "${note_mod}" > "${DC_tlt}/info"; fi
+        if [ $sv = TRUE ]; then
+            if [ "${autr}" != "${autr_mod}" -o "${pass}" != "${pass_mod}" ]; then
+                echo -e "autr=\"$autr_mod\"\npass=\"$pass_mod\"" > "$DC_s/3.cfg"
+            fi
+            if [ "${note}" != "${note_mod}"  ]; then
+                if ! grep '^$' <<< "${note_mod}"; then 
+                    echo -e "\n${note_mod}" > "${DC_tlt}/info.tmp"
+                else 
+                    echo "${note_mod}" > "${DC_tlt}/info.tmp"
+                fi
+            fi
         fi
     }
     
@@ -231,6 +234,7 @@ function upld() {
             dlg="$(dlg_export)"
             ret=$?
         fi
+        export sv=FALSE
     else
         shopt -s extglob
         if [ -z "${autr##+([[:space:]])}" -o -z "${pass##+([[:space:]])}" ]; then
@@ -240,6 +244,7 @@ function upld() {
             dlg="$(dlg_upload)"
             ret=$?
         fi
+        
         dlg="$(grep -oP '(?<=|).*(?=\|)' <<< "$dlg")"
         ctgy=$(echo "${dlg}" |cut -d "|" -f2)
         levl=$(echo "${dlg}" |cut -d "|" -f3)
@@ -253,10 +258,12 @@ function upld() {
         [ "$levl" = $(gettext "Beginner") ] && levl=0
         [ "$levl" = $(gettext "Intermediate") ] && levl=1
         [ "$levl" = $(gettext "Advanced") ] && levl=2
+        export sv=TRUE
     fi
     
     if [ $ret = 1 -o $ret = 4 ]; then
         sv_data
+        
     elif [ $ret = 2 ]; then
         sv_data
         if [ -d "$DT/export" ]; then
@@ -266,10 +273,11 @@ function upld() {
             if [ $ret -eq 1 ]; then
                 [ -d "$DT/export" ] && rm -fr "$DT/export"
             fi
-            exit 1
+            return 1
         else
-            "$DS/ifs/upld.sh" _export "${tpc}" & exit 1
+            "$DS/ifs/upld.sh" _export "${tpc}" & return 1
         fi
+        
     elif [ $ret = 0 ]; then
         sv_data
         conds_upload "${2}"
@@ -295,26 +303,26 @@ function upld() {
         # copying files
         cd "${DM_tlt}"/
         cp -r ./* "$DT_u/files/"
+        cleanups "$DT_u/files/.mp3"
         mkdir "$DT_u/files/share"
         [ ! -d "$DT_u/files/images" ] && mkdir "$DT_u/files/images"
 
-        auds="$(uniq < "${DC_tlt}/4.cfg" \
-        | sed 's/\n/ /g' | sed 's/ /\n/g' \
-        | grep -v '^.$' | grep -v '^..$' \
-        | sed 's/&//; s/,//; s/\?//; s/\¿//; s/;//'g \
-        |  sed 's/\!//; s/\¡//; s/\]//; s/\[//; s/\.//; s/  / /'g \
-        | tr -d ')' | tr -d '(' | tr '[:upper:]' '[:lower:]')"
-        while read -r audio; do
-            if [ -f "$DM_tl/.share/audio/$audio.mp3" ]; then
+        uniq < "${DC_tlt}/4.cfg" \
+        |sed 's/\n/ /; s/ /\n/g' \
+        |grep -v '^.$' |grep -v '^..$' \
+        |sed 's/&//; s/,//; s/\?//; s/\¿//; s/;//g' \
+        |sed 's/\!//; s/\¡//; s/\]//; s/\[//; s/\.//; s/  / /g' \
+        |tr -d ')' |tr -d '(' |tr '[:upper:]' '[:lower:]' |while read -r audio; do
+            if [ -f "$DM_tl/.share/audio/$audio.mp3" -a -n "$audio" ]; then
                 cp -f "$DM_tl/.share/audio/$audio.mp3" \
                 "$DT_u/files/share/$audio.mp3"
             fi
-        done <<< "$auds"
+        done
         
         while read -r _item; do
             unset trgt cdid
             get_item "${_item}"
-            if [ $type = 1 ]; then
+            if [ $type = 1 -a -n "$trgt" -a -n "$cdid" ]; then
                 if [ -f "$DT_u/files/$cdid.mp3" ]; then :
                 elif [ -f "$DM_tl/.share/audio/${trgt,,}.mp3" ]; then
                     cp -f "$DM_tl/.share/audio/${trgt,,}.mp3" \
@@ -323,21 +331,30 @@ function upld() {
             fi
         done < "${DC_tlt}/0.cfg"
         
-        while read -r img; do
-            unset img_path
-            if [ -e "$DM_tlt/images/${img,,}.jpg" ]; then
-                img_path="$DM_tlt/images/${img,,}.jpg"
-            elif [ -e "$DM_tls/images/${img,,}-0.jpg" ]; then
-                img_path="$DM_tls/images/${img,,}-0.jpg"
+        while read -r _item; do
+            unset trgt imgpath
+            get_item "${_item}"
+            if [ -n "$trgt" ]; then
+                if [ -e "$DM_tlt/images/${trgt,,}.jpg" ]; then
+                    imgpath="$DM_tlt/images/${trgt,,}.jpg"
+                elif [ -e "$DM_tls/images/${trgt,,}-0.jpg" ]; then
+                    imgpath="$DM_tls/images/${trgt,,}-0.jpg"
+                fi
+                if [ -e "${imgpath}" ]; then
+                    cp -f "${imgpath}" \
+                    "$DT_u/files/images/${trgt,,}.jpg"
+                fi
             fi
-            if [ -e "${img_path}" ]; then
-                cp -f "${img_path}" "$DT_u/files/images/${img,,}.jpg"
-            fi
-        done < "${DC_tlt}/3.cfg"
+        done < "${DC_tlt}/0.cfg"
+
         export naud=$(find "$DT_u/files" -maxdepth 5 -name '*.mp3' |wc -l)
         export nimg=$(cd "$DT_u/files/images"/; ls *.jpg |wc -l)
         cp "${DC_tlt}/6.cfg" "$DT_u/files/conf/6.cfg"
-        cp "${DC_tlt}/info" "$DT_u/files/conf/info"
+        if [ -e "${DC_tlt}/info.tmp" ]; then
+            mv "${DC_tlt}/info.tmp" "$DT_u/files/conf/info"
+        else
+            cp "${DC_tlt}/info" "$DT_u/files/conf/info"
+        fi
 
         cd "$DT/upload"/
         find "$DT_u"/ -type f -exec chmod 644 {} \;
@@ -347,19 +364,25 @@ function upld() {
         export nsze=$(du -h . |cut -f1)
         eval c="$(sed -n 4p "$DS/default/vars")"
         echo -e "${c}" > "${DC_tlt}/id.cfg"
-        direc="$DT_u"
         eval body="$(sed -n 5p "$DS/default/vars")"
-        export tpc direc body
-        echo -e "{\"items\":{" > "$DT_u/$tpcid.$orig.$lgt"
+        export tpc DT_u body
+        
+        idmnd="$DT_u/$tpcid.$orig.$lgt"
+        echo -e "{\"items\":{" > "${idmnd}"
         while read -r _item; do
             get_item "${_item}"
-            eval itm="$(sed -n 1p "$DS/default/vars")"
-            [ -n "${trgt}" ] && echo -en "${itm}" >> "$DT_u/$tpcid.$orig.$lgt"
+            
+            # tyurabnslatyiobns
+            #
+            #
+            
+            eval item="$(sed -n 1p "$DS/default/vars")"
+            [ -n "${trgt}" ] && echo -en "${item}" >> "${idmnd}"
         done < <(sed 's|"|\\"|g' < "${DC_tlt}/0.cfg")
-        sed -i 's/,$//' "$DT_u/$tpcid.$orig.$lgt"
-        echo "}," >> "$DT_u/$tpcid.$orig.$lgt"
+        sed -i 's/,$//' "${idmnd}"
+        echo "}," >> "${idmnd}"
         eval head="$(sed -n 3p "$DS/default/vars")"
-        echo -e "${head}}" >> "$DT_u/$tpcid.$orig.$lgt"
+        echo -e "${head}}" >> "${idmnd}"
 
         python << END
 import os, sys, requests, time, xmlrpclib
@@ -376,8 +399,8 @@ try:
 except:
     sys.exit(3)
 url = requests.get('http://idiomind.sourceforge.net/uploads.php').url
-direc = os.environ['direc']
-volumes = [i for i in os.listdir(direc)]
+DT_u = os.environ['DT_u']
+volumes = [i for i in os.listdir(DT_u)]
 for f in volumes:
     fl = {'file': open(f, 'rb')}
     r = requests.post(url, files=fl)
@@ -395,10 +418,10 @@ END
             info="$(gettext "A problem has occurred with the file upload, try again later.")\n"
             image='error'
         fi
-        msg "$info" $image
+        msg "${info}" $image
 
         cleanups "${DT_u}"
-        exit 0
+        return 0
     fi
     
 } >/dev/null 2>&1
@@ -423,7 +446,7 @@ _export() {
     dlg="$(fdlg)"; ret=$?
     if [ $ret -eq 0 ]; then
         "$DS/ifs/mods/export/$(head -n 1 <<< "$dlg").sh" \
-        "$(tail -n 1 <<< "$dlg")" "${tpc}" & exit 0
+        "$(tail -n 1 <<< "$dlg")" "${tpc}" & return 0
     fi
 } >/dev/null 2>&1
 
