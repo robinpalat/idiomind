@@ -445,7 +445,7 @@ set_image() {
         export btn2="--button=$(gettext "Remove")!edit-delete:2"
         export image="--image=$ifile"
     else
-        export btn2="--button="$(gettext "Screen clipping")":0"
+        export btn2="--button="$(gettext "+ Screen clipping")":0"
         export image="--image=$DS/images/bar.png"
     fi
     
@@ -565,7 +565,7 @@ translate_to() {
     --field="<b>$(gettext "Revised translations") ($num_tranl)</b> ":LBL " " \
     --field="$(gettext "Change the source language:")":LBL " " \
     --field="":CB "!${tranl_rvs}" \
-    --field="$active — $(gettext "This translation was revised or is a human translation")":CHK "$chk" \
+    --field="$active — $(gettext "This translation was revised")":CHK "$chk" \
     --field="":LBL " " \
     --field="<b>$(gettext "Automatic translation")</b> ":LBL " " \
     --field="$(gettext "Select source language to translate:")":LBL " " \
@@ -573,10 +573,9 @@ translate_to() {
     --field="<small>$(gettext "Note that this translation used Google translate, so often will be inaccurate especially in complex sentences")</small>":LBL " " \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0)"; ret="$?"
-    
-    auto_tr="$(cut -f8 -d'|' <<< "$ldgl")"
     revw_tr="$(cut -f3 -d'|' <<< "$ldgl")"
     revw_ck="$(cut -f4 -d'|' <<< "$ldgl")"
+    auto_tr="$(cut -f8 -d'|' <<< "$ldgl")"
 
     if [ "$ret" = 0 ]; then
 
@@ -588,6 +587,7 @@ translate_to() {
             if [ -e "${DC_tlt}/translations/$revw_tr" ]; then
                 yad_kill "yad --form --title="
                 mv -f "${DC_tlt}/translations/$revw_tr" "${DC_tlt}/0.cfg"
+                echo "$revw_tr" > "${DC_tlt}/translations/active"
             fi
 
         elif [ "$auto_tr" != "$active" -a -n "$auto_tr" -a "$auto_tr" != "(null)" ]; then

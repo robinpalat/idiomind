@@ -172,7 +172,7 @@ function upld() {
         --image="dialog-information" \
         --window-icon=idiomind --buttons-layout=end \
         --align=left --center --on-top \
-        --width=450 --height=180 --borders=10 \
+        --width=450 --height=140 --borders=10 \
         --text="$info" \
         --field="$info2:lbl" " " \
         --button="$(gettext "Export")":2 \
@@ -186,7 +186,7 @@ function upld() {
         --name=Idiomind --class=Idiomind \
         --window-icon=idiomind --buttons-layout=end \
         --align=left --center --on-top \
-        --width=450 --height=180 --borders=10 \
+        --width=450 --height=140 --borders=10 \
         --field="<b>$(gettext "Downloaded files")</b>:lbl" " " \
         --field="$(< "${DC_tlt}/download"):lbl" " " \
         --field=" :lbl" " " \

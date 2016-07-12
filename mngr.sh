@@ -412,7 +412,7 @@ edit_list_cmds() {
             if grep -F -m 1 "trgt{${trgt}}" "${direc}/0.cfg"; then
                 item="$(grep -F -m 1 "trgt{${trgt}}" "${direc}/0.cfg" |sed 's/}/}\n/g')"
                 get_item "${item}"
-                if [ $ret -eq 4 ]; then
+                if [ $1 -eq 4 ]; then
                     [ $(wc -$c <<< "${trgt}") -lt 5 ] && type=1
                 fi
                 if [ ${type} = 1 ]; then
@@ -548,16 +548,16 @@ edit_list_more() {
         elif grep "$(gettext "Remove all items")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
                 yad_kill "yad --list --title="
-                cleanups "${direc}/0.cfg" "${direc}/1.cfg" "${direc}/2.cfg" \
-                "${direc}/3.cfg" "${direc}/4.cfg" "${direc}/5.cfg" "${direc}/6.cfg"
-                [ -n "${tpc}" ] && rm "$DM_tl/${2}"/*.mp3
+                cleanups "${DC_tlt}/0.cfg" "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg" \
+                "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg" "${DC_tlt}/5.cfg" "${DC_tlt}/6.cfg"
+                [ -d "${DM_tlt}" -a -n "$tpc" ] && rm "$DM_tlt"/*.mp3
             fi
             
         elif grep "$(gettext "Restart topic status")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
                 yad_kill "yad --list --title="
-                cleanups "${direc}/1.cfg" "${direc}/2.cfg" "${direc}/7.cfg" 
-                echo 1 > "${direc}/8.cfg"; > "${direc}/9.cfg"
+                cleanups "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg" "${DC_tlt}/7.cfg" 
+                echo 1 > "${DC_tlt}/8.cfg"; > "${DC_tlt}/9.cfg"
                 while read -r item_; do
                     item="$(sed 's/}/}\n/g' <<< "${item_}")"
                     trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
