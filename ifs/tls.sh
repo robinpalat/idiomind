@@ -10,7 +10,7 @@ function check_format_1() {
     file="${1}"
     invalid() {
         echo "Error! Value: ${1}"
-        msg "$(gettext "File is corrupted.")\n ${n}" error & return 1
+        msg "$(gettext "File is corrupted.")\n ${n}" error & exit 1
     }
     if [ ! -f "${file}" ]; then invalid
     elif [ $(wc -l < "${file}") != 3 ]; then invalid 'lines'
@@ -134,7 +134,7 @@ check_index() {
             if [ -e "$DM/backup/${tpc}.bk" ]; then
                 cp -f "$DM/backup/${tpc}.bk" "${DC_tlt}/0.cfg"
             else
-                msg "$(gettext "No such file or directory")\n${topic}\n" error & return 1
+                msg "$(gettext "No such file or directory")\n${topic}\n" error & exit 1
             fi
         fi
         rm "${DC_tlt}/1.cfg" "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg"
@@ -353,17 +353,17 @@ a_check_updates() {
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
     if [ ! -e "$DC_s/9.cfg" ]; then
-        date "+%d" > "$DC_s/9.cfg"; return 1
+        date "+%d" > "$DC_s/9.cfg"; exit 1
     fi
     d1=$(< "$DC_s/9.cfg"); d2=$(date +%d)
     if [ $(sed -n 1p "$DC_s/9.cfg") = 1 ] \
     && [ $(wc -l < "$DC_s/9.cfg") -gt 1 ]; then
-        rm -f "$DC_s/9.cfg"; return 1
+        rm -f "$DC_s/9.cfg"; exit 1
     fi
-    [[ $(wc -l < "$DC_s/9.cfg") -gt 1 ]] && return 1
+    [[ $(wc -l < "$DC_s/9.cfg") -gt 1 ]] && exit 1
     if [ ${d1} != ${d2} ]; then
         sleep 5; curl -v www.google.com 2>&1 | \
-        grep -m1 "HTTP/1.1" >/dev/null 2>&1 || return 1
+        grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
         echo ${d2} > "$DC_s/9.cfg"
         link='http://idiomind.sourceforge.net/doc/checkversion'
         nver=$(wget --user-agent "$ua" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g')
@@ -381,7 +381,7 @@ a_check_updates() {
             fi
         fi
     fi
-    return 0
+    exit 0
 } >/dev/null 2>&1
 
 first_run() {
@@ -412,14 +412,14 @@ first_run() {
         if [ -n "$tpc" ]; then
         rm -f "$DC_s/topics_first_run"
         "$DS/add.sh" new_items & fi
-        return
+        exit
     elif [[ -z "${2}" ]]; then
         echo "-- done"
         touch "$DC_s/elist_first_run" \
         "$DC_s/topics_first_run"
-        return
+        exit
     else 
-        return
+        exit
     fi
 }
 
@@ -463,7 +463,7 @@ set_image() {
         scrot -s --quality 90 "$DT/temp.jpg"
         /usr/bin/convert "$DT/temp.jpg" -interlace Plane -thumbnail 405x275^ \
         -gravity center -extent 400x270 -quality 90% "$ifile"
-        "$DS/ifs/tls.sh" set_image "${2}" "${trgt}" & return
+        "$DS/ifs/tls.sh" set_image "${2}" "${trgt}" & exit
     fi
     cleanups "$DT/temp.jpg"
     exit
@@ -631,8 +631,8 @@ translate_to() {
             paste -d '&' "$DT/words.trad_tmp" "$DT/words.trad" > "$DT/mix_words.trad_tmp"
             
             if [ -z "$(< "$DT/index.trad")" -o -z "$(< "$DT/words.trad")" ]; then
-                msg "$(gettext "A problem has occurred with the file upload, try again later.")\n" 'error'
-                return 1
+                msg "$(gettext "A problem has occurred, try again later.")\n" 'error'
+                exit 1
             fi
             
             n=1

@@ -25,10 +25,10 @@ function dwld() {
     url1="http://idiomind.sourceforge.net/dl.php/?lg=${tlng,,}&fl=${ilnk}"
     if wget -S --spider "${url1}" 2>&1 |grep 'HTTP/1.1 200 OK'; then
         URL="${url1}"
-    else err & return
+    else err & exit 1
     fi
     wget -q -c -T 80 -O "$DT/download/${ilnk}.tar.gz" "${URL}"
-    [ $? != 0 ] && err && return 1
+    [ $? != 0 ] && err && exit 1
     
     if [ -f "$DT/download/${ilnk}.tar.gz" ]; then
         cd "$DT/download"/
@@ -67,10 +67,10 @@ function dwld() {
             "$DS/ifs/tls.sh" colorize 0
             rm -fr "$DT/download"
         else
-            err & return 1
+            err & exit 1
         fi
     else
-        err & return 1
+        err & exit 1
     fi
 }
 
@@ -82,7 +82,7 @@ function upld() {
         if [ $ret -eq 1 ]; then
             cleanups "$DT/upload"; "$DS/stop.sh" 5
         else
-            return 1
+            exit 1
         fi
     fi
     if [ -d "$DT/download" ]; then
@@ -92,30 +92,30 @@ function upld() {
         if [ $ret -eq 1 ]; then
             cleanups "$DT/download"; "$DS/stop.sh" 5
         else
-            return 1
+            exit 1
         fi
     fi
 
     conds_upload() {
         if [ $((cfg3+cfg4)) -lt 8 ]; then
             msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
-            dialog-information "$(gettext "Information")" & return 1
+            dialog-information "$(gettext "Information")" & exit 1
         fi
         if [ -z "${autr_mod}" -o -z "${pass_mod}" ]; then
             msg "$(gettext "Sorry, Authentication failed.")\n" \
-            dialog-information "$(gettext "Information")" & return 1
+            dialog-information "$(gettext "Information")" & exit 1
         fi
         if [ -z "${ctgy}" ]; then
             msg "$(gettext "Please select a category.")\n " \
             dialog-information
-            "$DS/ifs/upld.sh" upld "${tpc}" & return 1
+            "$DS/ifs/upld.sh" upld "${tpc}" & exit 1
         fi
-        [ -d "$DT" ] && cd "$DT" || return 1
+        [ -d "$DT" ] && cd "$DT" || exit 1
         [ -d "$DT/upload" ] && rm -fr "$DT/upload"
         
         if [ "${tpc}" != "${1}" ]; then
             msg "$(gettext "Sorry, this topic is currently not active.")\n " \
-            dialog-information & return 1
+            dialog-information & exit 1
         fi
         internet
     }
@@ -273,9 +273,9 @@ function upld() {
             if [ $ret -eq 1 ]; then
                 [ -d "$DT/export" ] && rm -fr "$DT/export"
             fi
-            return 1
+            exit 1
         else
-            "$DS/ifs/upld.sh" _export "${tpc}" & return 1
+            "$DS/ifs/upld.sh" _export "${tpc}" & exit 1
         fi
         
     elif [ $ret = 0 ]; then
@@ -346,6 +346,15 @@ function upld() {
                 fi
             fi
         done < "${DC_tlt}/0.cfg"
+        
+        if [ -d "$DC_tlt/translations" ]; then
+            tra=()
+            for t in $(cd "$DC_tlt/translations"; ls |grep -v 'active'); do
+                [ "$t" != "$slng" ] && tra=("${tra[@]}" "\"$t\"")
+                let n++
+            done
+        fi
+        local slng="${tra[@]}"
 
         export naud=$(find "$DT_u/files" -maxdepth 5 -name '*.mp3' |wc -l)
         export nimg=$(cd "$DT_u/files/images"/; ls *.jpg |wc -l)
@@ -371,11 +380,6 @@ function upld() {
         echo -e "{\"items\":{" > "${idmnd}"
         while read -r _item; do
             get_item "${_item}"
-            
-            # tyurabnslatyiobns
-            #
-            #
-            
             eval item="$(sed -n 1p "$DS/default/vars")"
             [ -n "${trgt}" ] && echo -en "${item}" >> "${idmnd}"
         done < <(sed 's|"|\\"|g' < "${DC_tlt}/0.cfg")
@@ -397,7 +401,8 @@ try:
     nid = server.metaWeblog.newPost('blog', autr, pssw, 
     {'title': tpc, 'description': body}, True)
 except:
-    sys.exit(3)
+    # sys.exit(3)
+    print 'error'
 url = requests.get('http://idiomind.sourceforge.net/uploads.php').url
 DT_u = os.environ['DT_u']
 volumes = [i for i in os.listdir(DT_u)]
