@@ -341,20 +341,17 @@ function upld() {
                     imgpath="$DM_tls/images/${trgt,,}-0.jpg"
                 fi
                 if [ -e "${imgpath}" ]; then
-                    cp -f "${imgpath}" \
-                    "$DT_u/files/images/${trgt,,}.jpg"
+                    cp -f "${imgpath}" "$DT_u/files/images/${trgt,,}.jpg"
                 fi
             fi
         done < "${DC_tlt}/0.cfg"
-        # -------------------------------------------------------------------------
+
         if [ -d "$DC_tlt/translations" ]; then
-            tra=( "$slng" )
-            for t in $(cd "$DC_tlt/translations"; ls |grep -v 'active'); do
-                [ "$t" != "$slng" ] && tra=("${tra[@]}" "\"$t\"")
-                let n++
-            done
+            slng="$(for t in "$(cd "$DC_tlt/translations"
+            ls |grep -v 'active')"; do 
+            echo "$t"; done |sed ':a;N;$!ba;s/\n/ | /g')"
+            cp -r "$DC_tlt/translations" "$DT_u/files/translations"
         fi
-        local slng="${tra[@]}"
 
         export naud=$(find "$DT_u/files" -maxdepth 5 -name '*.mp3' |wc -l)
         export nimg=$(cd "$DT_u/files/images"/; ls *.jpg |wc -l)

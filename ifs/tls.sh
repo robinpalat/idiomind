@@ -25,7 +25,8 @@ function check_format_1() {
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
             [ "$(grep -o -E '\*|\/|\@|$|=|' <<< "${val}")" ]; then invalid $n; fi
         elif [[ ${n} = 1 || ${n} = 2 ]]; then
-            if ! grep -Fo "${val}" <<< "${!tlangs[@]}" >/dev/null 2>&1; then invalid $n; fi
+            #if ! grep -Fo "${val}" <<< "${!tlangs[@]}" >/dev/null 2>&1; then invalid $n; fi
+            echo
         elif [[ ${n} = 3 || ${n} = 4 ]]; then
             if [ ${#val} -gt 30 ] || \
             [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<< "${val}")" ]; then invalid $n; fi
