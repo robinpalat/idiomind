@@ -24,9 +24,10 @@ function check_format_1() {
         if [[ ${n} = 0 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
             [ "$(grep -o -E '\*|\/|\@|$|=|' <<< "${val}")" ]; then invalid $n; fi
-        elif [[ ${n} = 1 || ${n} = 2 ]]; then
-            #if ! grep -Fo "${val}" <<< "${!tlangs[@]}" >/dev/null 2>&1; then invalid $n; fi
-            echo
+        elif [[ ${n} = 1 ]]; then
+            if ! grep -Fo "${val}" <<< "${!tlangs[@]}" >/dev/null 2>&1; then invalid $n; fi
+        elif [[ ${n} = 2 ]]; then
+           if [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<< "${val}")" -o ${#val} -gt 30 ]; then invalid $n; fi
         elif [[ ${n} = 3 || ${n} = 4 ]]; then
             if [ ${#val} -gt 30 ] || \
             [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<< "${val}")" ]; then invalid $n; fi
@@ -633,6 +634,7 @@ translate_to() {
             
             if [ -z "$(< "$DT/index.trad")" -o -z "$(< "$DT/words.trad")" ]; then
                 msg "$(gettext "A problem has occurred, try again later.")\n" 'error'
+                cleanups "$DT/words.trad_tmp" "$DT/index.trad_tmp" "$DT/mix_words.trad_tmp"
                 exit 1
             fi
             

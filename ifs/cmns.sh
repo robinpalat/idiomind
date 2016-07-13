@@ -70,7 +70,7 @@ function include() {
 }
 
 function yad_kill() {
-    (sleep 0.5; for m in "${@}"; do kill -9 $(pgrep -f "$m"); done) 
+    for X in "${@}"; do kill -9 $(pgrep -f "$X"); done
 }
 
 function f_lock() {
