@@ -161,10 +161,11 @@ function upld() {
     dlg_dwld_content() {
         naud="$(grep -o 'naud="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         nimg="$(grep -o 'nimg="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        trad="$(grep -o 'slng="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         fsize="$(grep -o 'nsze="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
-        info="<b>$(gettext "Downloadable content available")</b>"
-        info2="$(gettext "Audio files:") $naud\n$(gettext "Images:") $nimg\n$(gettext "Size:") $fsize"
+        info="$(gettext "Downloadable content available")"
+        info2="<sup>$(gettext "Audio files:") $naud\n$(gettext "Images:") $nimg\n$(gettext "Others translations:") $trad\n$(gettext "Size:") $fsize</sup>"
         yad --form --columns=1 --title="$(gettext "Share")" \
         --name=Idiomind --class=Idiomind \
         --always-print-result \

@@ -134,9 +134,9 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     file="${1}"
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
     level="${lv[${levl}]}"
-    itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$name</span><small>\n$nwrd $(gettext "Words") \
+    itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$name</span><sup>\n$nwrd $(gettext "Words") \
 $nsnt $(gettext "Sentences") $nimg $(gettext "Images") \n$(gettext "Level:") \
-$level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(gettext "$slng")</small>"
+$level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(gettext "$slng")</sup>"
     dclk="$DS/play.sh play_word"
     _lst() {
         while read -r line; do
@@ -248,9 +248,13 @@ function topic() {
         export cnf1=$(mktemp "$DT/cnf1.XXXX")
         export cnf3=$(mktemp "$DT/cnf3.XXXX")
         export cnf4=$(mktemp "$DT/cnf4.XXXX")
-        if [ ! -z "$dtei" ]; then export infolbl="$(gettext "Review ")$repass. $(gettext "Installed on") $dtei\n$(gettext "created by") $autr"
-        elif [ ! -z "$dtec" ]; then export infolbl="$(gettext "Review ")$repass. $(gettext "Created on") $dtec"; fi
-        export lbl1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n$cfg4 $(gettext "Sentences") $cfg3 $(gettext "Words") \n$infolbl</small>"
+        if [ ! -z "$dtei" ]; then 
+            export infolbl="$(gettext "Review ")$repass. $(gettext "Installed on") $dtei\n$(gettext "created by") $autr"
+            [ -e "${DC_tlt}/download" ] && export plusinfo="- $(gettext "Downloadable content available (click Share button)")."
+        elif [ ! -z "$dtec" ]; then 
+            export infolbl="$(gettext "Review ")$repass. $(gettext "Created on") $dtec"
+        fi
+        export lbl1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><sup>\n$cfg4 $(gettext "Sentences") $cfg3 $(gettext "Words") $plusinfo\n$infolbl</sup>"
     }
     
     oclean() { cleanups "$cnf1" "$cnf3" "$cnf4"; }

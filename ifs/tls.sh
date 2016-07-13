@@ -122,7 +122,6 @@ check_index() {
         fi
         
         export stts
-
         cnt0=$(wc -l < "${DC_tlt}/0.cfg" |sed '/^$/d')
         cnt1=$(wc -l < "${DC_tlt}/1.cfg" |sed '/^$/d')
         cnt2=$(wc -l < "${DC_tlt}/2.cfg" |sed '/^$/d')
@@ -483,7 +482,7 @@ function transl_batch() {
         dialog-warning "$(gettext "OK")" "$(gettext "Stop")" " " "$DT/index.trad_tmp"
         ret=$?
         if [ $ret -eq 1 ]; then 
-            cleanups "$DT/index.trad_tmp" #TODO
+            cleanups "$DT/index.trad_tmp"
         else
             exit 1
         fi
@@ -499,11 +498,9 @@ echo -e "yad --form --title=\"$tlng $(gettext "to") $active\" \\
 
     (echo "#"; n=1
     while read -r _item; do
-        unset trgt srce
-        get_item "${_item}"
-        trgt="$(tr -s '"' '*' <<< "${trgt}")"
-        srce="$(tr -s '"' '*' <<< "${srce}")"
-        declare a$n="${trgt}"; declare b$n="${srce}"
+        unset trgt srce; get_item "${_item}"
+        trgt="$(tr -s '"' '*' <<< "${trgt}")"; declare a$n="${trgt}"
+        srce="$(tr -s '"' '*' <<< "${srce}")"; declare b$n="${srce}"
         echo -e "--field=\"\":RO \"$trgt\" --field=\"\" \"$srce\" --field=\" \":lbl \"\" \\" >> "$DT/dlg"
         let n++
     done < "${DC_tlt}/0.cfg") |progress
@@ -517,7 +514,7 @@ echo -e "yad --form --title=\"$tlng $(gettext "to") $active\" \\
             dialog-warning "$(gettext "OK")" "$(gettext "Stop")" " " "$DT/index.trad_tmp"
             ret=$?
             if [ $ret -eq 1 ]; then 
-                cleanups "$DT/index.trad_tmp" #TODO
+                cleanups "$DT/words.trad_tmp" "$DT/index.trad_tmp" "$DT/mix_words.trad_tmp"
             else
                 exit 1
             fi
@@ -550,7 +547,6 @@ translate_to() {
     
     if [ ! -d "$DC_tlt/translations" ]; then mkdir "$DC_tlt/translations"; fi
     tranl_rvs="$(cd "$DC_tlt/translations"; ls |grep -v 'active' |tr "\\n" '!' |sed 's/\!*$//g')"
-    num_tranl=$(cd "$DC_tlt/translations"; ls |grep -v 'active' |wc -l)
     list1=$(for i in "${!tranlangs[@]}"; do echo -n "!$i"; done)
     active=$(sed -n 1p "${DC_tlt}/translations/active")
     if [ -n "$active" ]; then active="$active"; else active="$slng"; fi
@@ -558,10 +554,12 @@ translate_to() {
     
     ldgl="$(yad --form --title="$(gettext "Source Language Settings")" \
     --class=Idiomind --name=Idiomind \
+    --text="$(gettext "The current source language is:") <b>$active</b>" \
     --always-print-result --window-icon=idiomind \
     --buttons-layout=end --center --on-top \
-    --width=380 --height=280 --borders=5 \
-    --field="<b>$(gettext "Revised translations") ($num_tranl)</b> ":LBL " " \
+    --width=380 --height=390 --borders=10 \
+    --field="":LBL " " \
+    --field="<b>$(gettext "Revised translations") </b> ":LBL " " \
     --field="$(gettext "Change the source language:")":LBL " " \
     --field="":CB "!${tranl_rvs}" \
     --field="$active — $(gettext "This translation was revised")":CHK "$chk" \
@@ -572,9 +570,9 @@ translate_to() {
     --field="<small>$(gettext "Note that this translation used Google translate, so often will be inaccurate especially in complex sentences")</small>":LBL " " \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0)"; ret="$?"
-    revw_tr="$(cut -f3 -d'|' <<< "$ldgl")"
-    revw_ck="$(cut -f4 -d'|' <<< "$ldgl")"
-    auto_tr="$(cut -f8 -d'|' <<< "$ldgl")"
+    revw_tr="$(cut -f4 -d'|' <<< "$ldgl")"
+    revw_ck="$(cut -f5 -d'|' <<< "$ldgl")"
+    auto_tr="$(cut -f9 -d'|' <<< "$ldgl")"
 
     if [ "$ret" = 0 ]; then
         if [ "$revw_ck" = TRUE ]; then
@@ -639,7 +637,7 @@ translate_to() {
             n=1
             while read -r item_; do
                 get_item "${item_}"
-                srce="$(sed -n ${n}p "$DT/index.trad")"
+                srce="$(sed -n ${n}p "$DT/index.trad")"; srce="${srce^}"
                 tt="$(sed -n ${n}p "$DT/mix_words.trad_tmp" |cut -d '&' -f1 \
                 |sed 's/\. /\n/g' |sed 's/^ *//; s/ *$//g' |tr -d '|.')"
                 st="$(sed -n ${n}p "$DT/mix_words.trad_tmp" |cut -d '&' -f2 \
