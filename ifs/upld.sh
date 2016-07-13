@@ -349,7 +349,7 @@ function upld() {
         if [ -d "$DC_tlt/translations" ]; then
             slng="$(for t in "$(cd "$DC_tlt/translations"
             ls |grep -v 'active')"; do 
-            echo "$t"; done |sed ':a;N;$!ba;s/\n/ | /g')"
+            echo "$t"; done |sed ':a;N;$!ba;s/\n/, /g')"
             cp -r "$DC_tlt/translations" "$DT_u/files/translations"
         fi
 

@@ -9,8 +9,8 @@ function check_format_1() {
     source "$DS/ifs/cmns.sh"
     file="${1}"
     invalid() {
-        echo "Error! Value: ${1}"
-        msg "$(gettext "File is corrupted.") ${val}\n" error & exit 1
+        echo "Error! Value: ${val}"
+        msg "$(gettext "File is corrupted.") ${1}\n" error & exit 1
     }
     if [ ! -f "${file}" ]; then invalid
     elif [ $(wc -l < "${file}") != 3 ]; then invalid 'lines'
@@ -209,7 +209,6 @@ check_index() {
     if [[ ${mkmn} = 1 ]] ;then
         "$DS/ifs/tls.sh" colorize 1; "$DS/mngr.sh" mkmn 0
     fi
-    
     cleanups "$DT/ps_lk"
 }
 
@@ -484,9 +483,9 @@ function transl_batch() {
         dialog-warning "$(gettext "OK")" "$(gettext "Stop")" " " "$DT/index.trad_tmp"
         ret=$?
         if [ $ret -eq 1 ]; then 
-        cleanups "$DT/index.trad_tmp" #TODO
+            cleanups "$DT/index.trad_tmp" #TODO
         else
-            return 1
+            exit 1
         fi
     fi
 
@@ -518,9 +517,9 @@ echo -e "yad --form --title=\"$tlng $(gettext "to") $active\" \\
             dialog-warning "$(gettext "OK")" "$(gettext "Stop")" " " "$DT/index.trad_tmp"
             ret=$?
             if [ $ret -eq 1 ]; then 
-            cleanups "$DT/index.trad_tmp" #TODO
+                cleanups "$DT/index.trad_tmp" #TODO
             else
-                return 1
+                exit 1
             fi
         fi
 
@@ -578,7 +577,6 @@ translate_to() {
     auto_tr="$(cut -f8 -d'|' <<< "$ldgl")"
 
     if [ "$ret" = 0 ]; then
-
         if [ "$revw_ck" = TRUE ]; then
             cp -f "${DC_tlt}/0.cfg" "${DC_tlt}/translations/$active"
             echo "$active" > "${DC_tlt}/translations/active"
