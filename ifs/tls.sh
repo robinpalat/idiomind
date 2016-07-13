@@ -475,14 +475,18 @@ function transl_batch() {
     source "$DS/ifs/add/add.sh"
     source "$DS/default/source_langs.cfg"
     touch "${DC_tlt}/translations/active"; active=$(sed -n 1p "${DC_tlt}/translations/active")
-    if [ -n "$active" ]; then active="$active"; else active="$slng"; fi
+    if [ -n "$active" ]; then 
+        active="$active"
+    else 
+        active="$(gettext "$slng")"
+    fi
     
-    if [ -e "$DT/index.trad_tmp" ]; then
+    if [ -e "$DT/translation" ]; then
         msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
-        dialog-warning "$(gettext "OK")" "$(gettext "Stop")" " " "$DT/index.trad_tmp"
+        dialog-warning "$(gettext "OK")" "$(gettext "Stop")" " " "$DT/translation"
         ret=$?
         if [ $ret -eq 1 ]; then 
-            cleanups "$DT/index.trad_tmp"
+            cleanups "$DT/translation"
         else
             exit 1
         fi
@@ -509,12 +513,12 @@ echo -e "yad --form --title=\"$tlng $(gettext "to") $active\" \\
     dlg="$(cat "$DT/dlg")"; eval "$dlg" > "$DT/transl_batch_out"; ret="$?"
     if [ $ret = 0 ]; then
     
-        if [ -e "$DT/index.trad_tmp" ]; then
+        if [ -e "$DT/translation" ]; then
             msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
-            dialog-warning "$(gettext "OK")" "$(gettext "Stop")" " " "$DT/index.trad_tmp"
+            dialog-warning "$(gettext "OK")" "$(gettext "Stop")" " " "$DT/translation"
             ret=$?
             if [ $ret -eq 1 ]; then 
-                cleanups "$DT/words.trad_tmp" "$DT/index.trad_tmp" "$DT/mix_words.trad_tmp"
+                cleanups "$DT/translation"
             else
                 exit 1
             fi
@@ -545,51 +549,102 @@ translate_to() {
     source "$DS/default/sets.cfg"
     source "$DS/default/source_langs.cfg"
     
-    if [ ! -d "$DC_tlt/translations" ]; then mkdir "$DC_tlt/translations"; fi
-    tranl_rvs="$(cd "$DC_tlt/translations"; ls |grep -v 'active' |tr "\\n" '!' |sed 's/\!*$//g')"
+    if [ ! -d "$DC_tlt/translations" ]; then
+        mkdir "$DC_tlt/translations"
+    fi
+    tranl_rvs="$(cd "$DC_tlt/translations"; ls *.tra |sed 's/\.tra//g' |tr "\\n" '!' |sed 's/\!*$//g')"
     list1=$(for i in "${!tranlangs[@]}"; do echo -n "!$i"; done)
     active=$(sed -n 1p "${DC_tlt}/translations/active")
-    if [ -n "$active" ]; then active="$active"; else active="$slng"; fi
+    tranl_num="$(cd "$DC_tlt/translations"; ls *.tra | wc -l)"
+    if [ -n "$active" ]; then 
+        active="$active"
+    else 
+        active="$(gettext "$slng")"
+    fi
     if grep "$active" <<< "${tranl_rvs}"; then chk=TRUE; else chk=FALSE; fi
     
-    ldgl="$(yad --form --title="$(gettext "Source Language Settings")" \
-    --class=Idiomind --name=Idiomind \
-    --text="$(gettext "The current source language is:") <b>$active</b>" \
-    --always-print-result --window-icon=idiomind \
-    --buttons-layout=end --center --on-top \
-    --width=380 --height=390 --borders=10 \
-    --field="":LBL " " \
-    --field="<b>$(gettext "Revised translations") </b> ":LBL " " \
-    --field="$(gettext "Change the source language:")":LBL " " \
-    --field="":CB "!${tranl_rvs}" \
-    --field="$active — $(gettext "This translation was revised")":CHK "$chk" \
-    --field="":LBL " " \
-    --field="<b>$(gettext "Automatic translation")</b> ":LBL " " \
-    --field="$(gettext "Select source language to translate:")":LBL " " \
-    --field="":CB "${list1}" \
-    --field="<small>$(gettext "Note that this translation used Google translate, so often will be inaccurate especially in complex sentences")</small>":LBL " " \
-    --button="$(gettext "Cancel")":1 \
-    --button="$(gettext "OK")":0)"; ret="$?"
+    if [ ${tranl_num} -lt 1 ]; then
+        ldgl="$(yad --form --title="$(gettext "Source Language Settings")" \
+        --class=Idiomind --name=Idiomind \
+        --text="$(gettext "The current source language of this topic is:") <b>$active</b>" \
+        --text-align=center --always-print-result --window-icon=idiomind \
+        --buttons-layout=end --center --on-top \
+        --width=380 --height=390 --borders=10 \
+        --field="":LBL " " \
+        --field="<b>$(gettext "Revised translations") </b> ":LBL " " \
+        --field="$(gettext "This topic has no further revised translations")":LBL " " \
+        --field=" ":LBL " " \
+        --field="$active — $(gettext "This translation was revised")":CHK "$chk" \
+        --field="":LBL " " \
+        --field="<b>$(gettext "Automatic translation")</b> ":LBL " " \
+        --field="$(gettext "Select source language to translate:")":LBL " " \
+        --field="":CB "${list1}" \
+        --field="<small>$(gettext "Note that this translation used Google translate, so often will be inaccurate especially in complex sentences")</small>":LBL " " \
+        --button="$(gettext "Cancel")":1 \
+        --button="$(gettext "OK")":0)"; ret="$?"
+    else
+        ldgl="$(yad --form --title="$(gettext "Source Language Settings")" \
+        --class=Idiomind --name=Idiomind \
+        --text="$(gettext "The current source language of this topic is:") <b>$active</b>" \
+        --text-align=center --always-print-result --window-icon=idiomind \
+        --buttons-layout=end --center --on-top \
+        --width=380 --height=390 --borders=10 \
+        --field="":LBL " " \
+        --field="<b>$(gettext "Revised translations") </b> ":LBL " " \
+        --field="$(gettext "Change the source language:")":LBL " " \
+        --field="":CB "!${tranl_rvs}" \
+        --field="$active — $(gettext "This translation was revised")":CHK "$chk" \
+        --field="":LBL " " \
+        --field="<b>$(gettext "Automatic translation")</b> ":LBL " " \
+        --field="$(gettext "Select source language to translate:")":LBL " " \
+        --field="":CB "${list1}" \
+        --field="<small>$(gettext "Note that this translation used Google translate, so often will be inaccurate especially in complex sentences")</small>":LBL " " \
+        --button="$(gettext "Cancel")":1 \
+        --button="$(gettext "OK")":0)"; ret="$?"
+    fi
     revw_tr="$(cut -f4 -d'|' <<< "$ldgl")"
     revw_ck="$(cut -f5 -d'|' <<< "$ldgl")"
     auto_tr="$(cut -f9 -d'|' <<< "$ldgl")"
 
     if [ "$ret" = 0 ]; then
+    
         if [ "$revw_ck" = TRUE ]; then
-            cp -f "${DC_tlt}/0.cfg" "${DC_tlt}/translations/$active"
+            cp -f "${DC_tlt}/0.cfg" "${DC_tlt}/translations/$active.tra"
             echo "$active" > "${DC_tlt}/translations/active"
+            
+        elif [ "$revw_ck" = FALSE ]; then
+            cleanups "${DC_tlt}/translations/$active.tra"
         fi
+        
         if [ "$revw_tr" != "$active" -a -n "$revw_tr" -a "$revw_tr" != "(null)" ]; then
-            if [ -e "${DC_tlt}/translations/$revw_tr" ]; then
+            if [ -e "${DC_tlt}/translations/$revw_tr.tra" ]; then
                 yad_kill "yad --form --title="
-                mv -f "${DC_tlt}/translations/$revw_tr" "${DC_tlt}/0.cfg"
+                mv -f "${DC_tlt}/translations/$revw_tr.tra" "${DC_tlt}/0.cfg"
                 echo "$revw_tr" > "${DC_tlt}/translations/active"
             fi
 
         elif [ -n "$auto_tr" -a "$auto_tr" != "(null)" ]; then
+            yad_kill "yad --form --title="
+            if grep "$auto_tr" <<< "$(cd "$DC_tlt/translations"; ls *.bk)"; then
+                msg_2 "$(gettext "There is a copy of this translation. Do you want to restore the copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
+                if [ $? = 0 ]; then
+                    mv -f "$DC_tlt/translations/$auto_tr.bk" "${DC_tlt}/0.cfg" & exit 1
+                    echo "$(gettext "$auto_tr")" > "${DC_tlt}/translations/active"
+                else
+                    cleanups "$DC_tlt/translations/$auto_tr.bk"
+                fi
+            fi
+            if grep "$auto_tr" <<< "$(cd "$DC_tlt/translations"; ls *.tra)"; then
+                msg_2 "$(gettext "There is a revised translation of this language. Do you want to use this copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
+                if [ $? = 0 ]; then
+                    cp -f "$DC_tlt/translations/$auto_tr.tra" "${DC_tlt}/0.cfg" & exit 1
+                    echo "$(gettext "$auto_tr")" > "${DC_tlt}/translations/active"
+                fi
+            fi
             > "$DT/words.trad_tmp"
             > "$DT/index.trad_tmp"
-            yad_kill "yad --form --title="; internet
+            > "$DT/translation"
+            internet
             [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && return 1
             l="$(grep -o 'tlng="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
             if [ -n "$l" ]; then lgt=${tlangs[$l]}; else lgt=${tlangs[$tlng]}; fi
@@ -602,13 +657,13 @@ translate_to() {
                 trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
                 if [ -n "${trgt}" ]; then
                     echo "${trgt}" \
-                    | python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
-                    | sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' \
-                    | tr -d '*)(,;"“”:' | tr -s '&{}[]' ' ' \
-                    | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
-                    | sed 's/\]//;s/\[//;s/<[^>]*>//g' \
-                    | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' \
-                    | tr -d '.' | sed 's/^ *//; s/ *$//; /^$/d' >> "$DT/words.trad_tmp"
+                    |python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
+                    |sed 's/ /\n/g' |grep -v '^.$' |grep -v '^..$' \
+                    |tr -d '*)(,;"“”:' |tr -s '&{}[]' ' ' \
+                    |sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
+                    |sed 's/\]//;s/\[//;s/<[^>]*>//g' \
+                    |sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' \
+                    |tr -d '.' |sed 's/^ *//; s/ *$//; /^$/d' >> "$DT/words.trad_tmp"
                     echo "|" >> "$DT/words.trad_tmp"
                     echo "${trgt} |" >> "$DT/index.trad_tmp"; fi
             done < "${DC_tlt}/0.cfg"
@@ -636,6 +691,7 @@ translate_to() {
             
             n=1
             while read -r item_; do
+                [ ! -f "$DT/translation" ] && break
                 get_item "${item_}"
                 srce="$(sed -n ${n}p "$DT/index.trad")"; srce="${srce^}"
                 tt="$(sed -n ${n}p "$DT/mix_words.trad_tmp" |cut -d '&' -f1 \
@@ -657,12 +713,12 @@ translate_to() {
             
             unset item type trgt srce exmp defn note grmr mark link tag id
             rm -f "$DT"/*.tmp "$DT"/*.trad "$DT"/*.trad_tmp
-            origl=$(grep -oP '(?<=slng=\").*(?=\")' "${DC_tlt}/id.cfg")
-            if [ -n "$origl" -a ! -e "${DC_tlt}/translations/$origl" ]; then
-                mv "${DC_tlt}/0.cfg" "${DC_tlt}/translations/$origl"
+
+            if [ -e "$DT/translation" ]; then
+                mv -f "${DC_tlt}/0.cfg" "${DC_tlt}/translations/$active.bk"
+                mv -f "$DT/translation" "${DC_tlt}/0.cfg"
+                echo "$(gettext "$auto_tr")" > "${DC_tlt}/translations/active"
             fi
-            mv -f "$DT/translation" "${DC_tlt}/0.cfg"
-            echo "$auto_tr" > "${DC_tlt}/translations/active"
         fi
     fi
 }
