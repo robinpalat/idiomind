@@ -44,17 +44,17 @@ else
         else s=0; fi
 
         if [ -z "$voice" ]; then
-        if [ "$lgt" = en ]; then v='en-us'
-        elif [ "$lgt" = es ]; then v='es-es'
-        elif [ "$lgt" = pt ]; then v='pt-br'
-        elif [ "$lgt" = ru ]; then v='ru-ru'
-        elif [ "$lgt" = it ]; then v='it-it'
-        elif [ "$lgt" = de ]; then v='de-de'
-        elif [ "$lgt" = fr ]; then v='fr-fr'
-        elif [ "$lgt" = zh-cn ]; then v='zh-cn'
-        fi
+            if [ "$lgt" = en ]; then v='en-us'
+            elif [ "$lgt" = es ]; then v='es-es'
+            elif [ "$lgt" = pt ]; then v='pt-br'
+            elif [ "$lgt" = ru ]; then v='ru-ru'
+            elif [ "$lgt" = it ]; then v='it-it'
+            elif [ "$lgt" = de ]; then v='de-de'
+            elif [ "$lgt" = fr ]; then v='fr-fr'
+            elif [ "$lgt" = zh-cn ]; then v='zh-cn'
+            fi
         else
-        v=$(grep -o voice=\"[^\"]* "$DC_a/voicerss.cfg" |grep -o '[^"]*$')
+            v=$(grep -o voice=\"[^\"]* "$DC_a/voicerss.cfg" |grep -o '[^"]*$')
         fi
         export LINK="http://api.voicerss.org/?key=$k&hl=$v&r=$s&f=16khz_16bit_mono&src=${word}"
         export ex='mp3'

@@ -210,6 +210,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             done < "${DC_tlt}/0.cfg"
 
             "$DS/ifs/tls.sh" colorize 1
+            # ------------------------------------------------------
             echo -e "$tlng\n$slng" > "$DC_s/6.cfg"
             echo 1 > "${DC_tlt}/8.cfg"
             echo "${name}" >> "$DM_tl/.share/3.cfg"

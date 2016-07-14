@@ -94,6 +94,7 @@ function new_sentence() {
             _trgt="$(translate "${trgt,,}" auto $lgt)"
             [ -n "${_trgt}" ] && trgt=$(clean_2 "${_trgt}")
         fi
+        yad --text="$lgt $lgs"
         srce="$(translate "${trgt,,}" $lgt $lgs)"
         srce="$(clean_2 "${srce}")"
         export trgt="${trgt^}"
