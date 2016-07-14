@@ -513,6 +513,8 @@ case "$1" in
     ipanel ;;
     stop)
     "$DS/stop.sh" 2 ;;
+    update_menu)
+    "$DS/ifs/tls.sh" "${@}" ;;
     *)
     idiomind_start ;;
 esac

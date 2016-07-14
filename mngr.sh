@@ -51,6 +51,7 @@ mkmn() {
     while read -r tpc; do
     
         dir="$DM_tl/${tpc}/.conf"; unset stts tpc
+        stts=$(sed -n 1p "${dir}/8.cfg")
         if [ ${stts} != 12 ]; then
             mv -f "${dir}/8.cfg"  "${dir}/8.bk"; echo 12 > "${dir}/8.cfg"
         fi

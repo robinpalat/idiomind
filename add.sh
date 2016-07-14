@@ -6,6 +6,7 @@ source "$DS/ifs/cmns.sh"
 source "$DS/default/sets.cfg"
 export lgt=${tlangs[$tlng]}
 export lgs=${slangs[$slng]}
+# if [ "$lgs" #TODO
 include "$DS/ifs/mods/add"
 wlist=$(grep -oP '(?<=wlist=\").*(?=\")' "$DC_s/1.cfg")
 trans=$(grep -oP '(?<=trans=\").*(?=\")' "$DC_s/1.cfg")
@@ -94,7 +95,6 @@ function new_sentence() {
             _trgt="$(translate "${trgt,,}" auto $lgt)"
             [ -n "${_trgt}" ] && trgt=$(clean_2 "${_trgt}")
         fi
-        yad --text="$lgt $lgs"
         srce="$(translate "${trgt,,}" $lgt $lgs)"
         srce="$(clean_2 "${srce}")"
         export trgt="${trgt^}"

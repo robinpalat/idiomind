@@ -356,23 +356,33 @@ function set_image_2() {
 }
 
 function translate() {
-    cdb="$DM_tls/data/${tlng}.db"
+    cdb="$DM_tls/data/${tlng}.db"; stop=0
     if [[ $(wc -w <<<${1}) = 1 ]] && [ ${ttrgt} != TRUE ] && \
     [[ `sqlite3 ${cdb} "select ${slng} from Words where Word is '${1}';"` ]]; then
         sqlite3 ${cdb} "select ${slng} from Words where Word is '${1}';"
     else
         internet
+        if ls "$DA_d"/*."Traslator online.Translator".* 1> /dev/null 2>&1; then
+            for trans in "$DC_d"/*."Traslator online.Translator".*; do
+                trans="$DS_a/Dics/dicts/$(basename "${trans}")"
+                if [ -e "${trans}" ]; then
+                    stop=1; "${trans}" "$@" && break
+                fi
+            done
+        fi
         if ! ls "$DC_d"/*."Traslator online.Translator".* 1> /dev/null 2>&1; then
         "$DS_a/Dics/cnfg.sh" 2; fi
-        for trans in "$DC_d"/*."Traslator online.Translator".*; do
-            trans="$DS_a/Dics/dicts/$(basename "${trans}")"
-            [ -e "${trans}" ] && "${trans}" "$@" && break
-        done
+        if [ ${stop} = 0 ]; then
+            for trans in "$DC_d"/*."Traslator online.Translator".*; do
+                trans="$DS_a/Dics/dicts/$(basename "${trans}")"
+                [ -e "${trans}" ] && "${trans}" "$@" && break
+            done
+        fi
     fi
 }
 
 dwld1() {
-    LINK=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
+    LINK=""; source "$1/dicts/$(basename "${dict}")"
     if [ "${LINK}" -a ! -e "$audio_file" ]; then
         wget -T 51 -q -U "$ua" -O "$audio_dwld.$ex" "${LINK}"
         if [[ ${ex} != 'mp3' ]]; then
@@ -383,11 +393,12 @@ dwld1() {
     && [[ $(du -b "$audio_file" |cut -f1) -gt 100 ]]; then
         return 5
     else
-        [ -e "$audio_file" ] && rm "$audio_file"; fi
+        [ -e "$audio_file" ] && rm "$audio_file"
+    fi
 }
 
 dwld2() {
-    LINK=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
+    LINK=""; source "$1/dicts/$(basename "${dict}")"
     if [ "${LINK}" -a ! -e "${audio_file}" ]; then
         wget -T 51 -q -U "$ua" -O "$DT_r/audio.mp3" "${LINK}"
     fi
@@ -395,35 +406,66 @@ dwld2() {
     && [[ $(du -b "$DT_r/audio.mp3" |cut -f1) -gt 100 ]]; then
         mv -f "$DT_r/audio.mp3" "${audio_file}"; return 5
     else 
-        [ -e "$DT_r/audio.mp3" ] && rm "$DT_r/audio.mp3"; fi
+        [ -e "$DT_r/audio.mp3" ] && rm "$DT_r/audio.mp3"
+    fi
 }
 
 export -f translate dwld1 dwld2
 
 function tts_sentence() {
+    stop=0
+    if ls "$DA_d"/*."TTS online.Pronunciation".* 1> /dev/null 2>&1; then
+        word="${1}"; DT_r="$2"; audio_file="${3}"
+        for dict in "$DA_d"/*."TTS online.Pronunciation".*; do
+            dwld2 "$DS_a/Dics API"
+            if [ $? = 5 ]; then stop=1; break; fi
+        done
+    fi
+
     if ! ls "$DC_d"/*."TTS online.Pronunciation".* 1> /dev/null 2>&1; then
         "$DS_a/Dics/cnfg.sh" 1
     fi
-    word="${1}"; DT_r="$2"; audio_file="${3}"
-    for dict in "$DC_d"/*."TTS online.Pronunciation".*; do
-        dwld2; [ $? = 5 ] && break
-    done
+    if [ ${stop} = 0 ]; then
+        word="${1}"; DT_r="$2"; audio_file="${3}"
+        for dict in "$DC_d"/*."TTS online.Pronunciation".*; do
+            dwld2 "$DS_a/Dics"; [ $? = 5 ] && break
+        done
+    fi
 }
 
 function tts_word() {
+    stop=0
+    if ls "$DA_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
+        word="${1,,}"; audio_file="${2}/$word.mp3"; audio_dwld="${2}/$word"
+        if ls "$DA_d"/*."TTS online.Word pronunciation".$lgt 1> /dev/null 2>&1; then
+            for dict in "$DA_d"/*."TTS online.Word pronunciation".$lgt; do
+                dwld1 "$DS_a/Dics API"
+                if [ $? = 5 ]; then stop=1; break; fi
+            done
+        fi
+        if [ ${stop} = 0 ] && ls "$DA_d"/*."TTS online.Word pronunciation".various 1> /dev/null 2>&1; then
+            if [ ! -e "${2}/${1}.mp3" ]; then
+                for dict in "$DA_d"/*."TTS online.Word pronunciation".various; do
+                    dwld1 "$DS_a/Dics API"
+                    if [ $? = 5 ]; then stop=1; break; fi
+                done
+            fi
+        fi
+    fi
+
     if ! ls "$DC_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
         "$DS_a/Dics/cnfg.sh" 0
     fi
     word="${1,,}"; audio_file="${2}/$word.mp3"; audio_dwld="${2}/$word"
-    if ls "$DC_d"/*."TTS online.Word pronunciation".$lgt 1> /dev/null 2>&1; then
+    if [ ${stop} = 0 ] && ls "$DC_d"/*."TTS online.Word pronunciation".$lgt 1> /dev/null 2>&1; then
         for dict in $DC_d/*."TTS online.Word pronunciation".$lgt; do
-            dwld1; [ $? = 5 ] && break
+            dwld1 "$DS_a/Dics"; [ $? = 5 ] && break
         done
     fi
-    if ls "$DC_d"/*."TTS online.Word pronunciation".various 1> /dev/null 2>&1; then
+    if [ ${stop} = 0 ] && ls "$DC_d"/*."TTS online.Word pronunciation".various 1> /dev/null 2>&1; then
         if [ ! -e "${2}/${1}.mp3" ]; then
             for dict in $DC_d/*."TTS online.Word pronunciation".various; do
-                dwld1; [ $? = 5 ] && break
+                dwld1 "$DS_a/Dics"; [ $? = 5 ] && break
             done
         fi
     fi
@@ -440,15 +482,29 @@ function fetch_audio() {
         word="${Word,,}"; audio_file="$DM_tls/audio/$word.mp3"
         audio_dwld="$DM_tls/audio/$word"
         if [ ! -e "$audio_file" ]; then
-            if ls "$DC_d"/*."TTS online.Word pronunciation".$lgt 1> /dev/null 2>&1; then
+            if ls "$DA_d"/*."TTS online.Word pronunciation".$lgt 1> /dev/null 2>&1; then
                 for dict in "$DC_d"/*."TTS online.Word pronunciation".$lgt; do
-                    dwld1; [ $? = 5 ] && break
+                    dwld1 "$DS_a/Dics API"; [ $? = 5 ] && break
                 done
+            fi
+            if [ ! -e "$audio_file" ]; then
+                if ls "$DA_d"/*."TTS online.Word pronunciation".various 1> /dev/null 2>&1; then
+                    for dict in "$DC_d"/*."TTS online.Word pronunciation".various; do
+                        dwld1 "$DS_a/Dics API"; [ $? = 5 ] && break
+                    done
+                fi
+            fi
+            if [ ! -e "$audio_file" ]; then
+                if ls "$DC_d"/*."TTS online.Word pronunciation".$lgt 1> /dev/null 2>&1; then
+                    for dict in "$DC_d"/*."TTS online.Word pronunciation".$lgt; do
+                        dwld1 "$DS_a/Dics"; [ $? = 5 ] && break
+                    done
+                fi
             fi
             if [ ! -e "$audio_file" ]; then
                 if ls "$DC_d"/*."TTS online.Word pronunciation".various 1> /dev/null 2>&1; then
                     for dict in "$DC_d"/*."TTS online.Word pronunciation".various; do
-                        dwld1; [ $? = 5 ] && break
+                        dwld1 "$DS_a/Dics"; [ $? = 5 ] && break
                     done
                 fi
             fi

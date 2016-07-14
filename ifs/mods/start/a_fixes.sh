@@ -1,6 +1,7 @@
 #!/bin/bash
 
 $DS_a/Dics/cnfg.sh updt_dicts &
+"$DS_a/Dics API/cnfg.sh" updt_dicts &
 
 if [ -d "$DM_tl/.share/Dictionary" ]; then
     if [ -d "$DM_tl/.share/Dictionary" ]; then

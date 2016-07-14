@@ -8,6 +8,9 @@ pdir="${DC_tlt}/practice"
 pdirs="$DS/practice"
 declare -A prcts=( ['a']='Flashcards' ['b']='Multiple Choise'\
  ['c']='Recogning Words' ['d']='Images' ['e']='Writing Sentences')
+active=$(sed -n 1p "${DC_tlt}/translations/active")
+[ -n "$active" ] && slng="$active"
+
 export -f f_lock
 
 function stats() {
