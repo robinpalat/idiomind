@@ -209,12 +209,11 @@ function upld() {
         fi
     }
     
-    emrk='!'
+    em='!'; unset list
     for val in "${Categories[@]}"; do
         declare clocal="$(gettext "${val}")"
-        list="${list}${emrk}${clocal}"
+        list="${list}${em}${clocal}"
     done
-    
     LANGUAGE_TO_LEARN="${tlng^}"
     linkc="http://idiomind.net/${tlng,,}"
     linkac='http://idiomind.net/community/?q=user/register'
