@@ -163,7 +163,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
             if [ $(wc -l <<< "$listt") -ge 120 ]; then
                 msg "$(gettext "Maximum number of topics reached.")\n" \
-                dialog-information "$(gettext "Information")" & return 1
+                dialog-information "$(gettext "Information")" & exit 1
             fi
             cn=0
             if [[ $(grep -Fxo "${name}" <<< "${listt}" |wc -l) -ge 1 ]]; then

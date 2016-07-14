@@ -38,14 +38,13 @@ function dwld() {
             total_lbl="$(gettext "Total")"
             audio_lbl="$(gettext "Audio files")"
             image_lbl="$(gettext "Images")"
-            others_lbl="$(gettext "Others")"
+            trans_lbl="$(gettext "Translations")"
             tmp="$DT/download/files"
             total=$(find "${tmp}" -maxdepth 5 -type f |wc -l)
             naud=$(find "${tmp}" -maxdepth 5 -name '*.mp3' |wc -l)
             nimg=$(find "${tmp}" -maxdepth 5 -name '*.jpg' |wc -l)
-            hfiles="$(cd "${tmp}"; ls -d ./.[^.]* |less |wc -l)"
-            exfiles="$(find "${tmp}" -maxdepth 5 -perm -111 -type f |wc -l)"
-            others=$((hfiles+exfiles))
+            tran=$(find "${tmp}" -maxdepth 5 -name '*.tra' |wc -l)
+
             mv -f "${tmp}/conf/info" "${DC_tlt}/info"
             check_dir "$DM_t/$tlng/.share/images" "$DM_t/$tlng/.share/audio"
             mv -n "${tmp}/share"/*.mp3 "$DM_t/$tlng/.share/audio"/
@@ -63,7 +62,7 @@ function dwld() {
             rm -fr "${tmp}/share" "${tmp}/conf" "${tmp}/images"
             mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
             echo "${tpc}" >> "$DM_tl/.share/3.cfg"
-            echo -e "$total_lbl $total\n$audio_lbl $naud\n$image_lbl $nimg\n$others_lbl $others" > "${DC_tlt}/download"
+            echo -e "$total_lbl $total\n$audio_lbl $naud\n$image_lbl $nimg\n$trans_lbl $tran" > "${DC_tlt}/download"
             "$DS/ifs/tls.sh" colorize 0
             rm -fr "$DT/download"
         else
@@ -165,11 +164,11 @@ function upld() {
         fsize="$(grep -o 'nsze="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
         info="$(gettext "Downloadable content available")"
-        info2="<sup>$(gettext "Audio files:") $naud\n$(gettext "Images:") $nimg\n$(gettext "Others translations:") $trad\n$(gettext "Size:") $fsize</sup>"
+        info2="<sup>$(gettext "Audio files:") $naud\n$(gettext "Images:") $nimg\n$(gettext "Translations:") $trad\n$(gettext "Size:") $fsize</sup>"
         yad --form --columns=1 --title="$(gettext "Share")" \
         --name=Idiomind --class=Idiomind \
         --always-print-result \
-        --image="dialog-information" \
+        --image="$DS/images/dl.png" \
         --window-icon=idiomind --buttons-layout=end \
         --align=left --center --on-top \
         --width=450 --height=140 --borders=10 \
@@ -348,9 +347,11 @@ function upld() {
 
         if [ -d "$DC_tlt/translations" ]; then
             slng="$(for t in "$(cd "$DC_tlt/translations"
-            ls |grep -v 'active')"; do 
+            ls *.tra |sed 's/\.tra//g')"; do 
             echo "$t"; done |sed ':a;N;$!ba;s/\n/, /g')"
+            act="$(< "$DC_tlt/translations/active")"
             cp -r "$DC_tlt/translations" "$DT_u/files/translations"
+            cleanups "$DT_u/files/translations/$act.tra"
         fi
 
         export naud=$(find "$DT_u/files" -maxdepth 5 -name '*.mp3' |wc -l)
