@@ -35,7 +35,7 @@ else
     ! [ "$DC_a/voicerss.cfg" ] && touch "$DC_a/voicerss.cfg"
     k=$(grep -o key=\"[^\"]* "$DC_a/voicerss.cfg" |grep -o '[^"]*$')
     if [ -z "${k}" ]; then
-        "$DS_a/Dics/dicts/Voicerss.TTS online.Pronunciation.various" dlgcnfg
+        "$DS_a/Dics API/dicts/Voicerss.TTS online.Pronunciation.various" dlgcnfg
     else
         speed=$(grep -o speed=\"[^\"]* "$DC_a/voicerss.cfg" |grep -o '[^"]*$')
         if [ "$speed" = Slow ]; then s=-2

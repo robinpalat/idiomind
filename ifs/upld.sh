@@ -344,12 +344,22 @@ function upld() {
                 fi
             fi
         done < "${DC_tlt}/0.cfg"
-
+        
         if [ -d "$DC_tlt/translations" ]; then
-            slng="$(for t in "$(cd "$DC_tlt/translations"
-            ls *.tra |sed 's/\.tra//g')"; do 
-            echo "$t"; done |sed ':a;N;$!ba;s/\n/, /g')"
             act="$(< "$DC_tlt/translations/active")"
+            if [ -n "$act" ] && grep -Fo "${act}" <<< "${!slangs[@]}" >/dev/null 2>&1; then
+                a="$act"
+            else
+                a="$slng"
+            fi
+            if [ $(cd "$DC_tlt/translations"; ls *.tra |wc -l) -gt 1 ]; then
+                slng="$(for t in "$(cd "$DC_tlt/translations"
+                ls *.tra |sed 's/\.tra//g' |grep -v "$a")"; do
+                [ -n "$t" ] && echo "$t"; done |sed ':a;N;$!ba;s/\n/, /g')"
+                slng="${a}, ${slng}"
+            else
+                slng="${a}"
+            fi
             cp -r "$DC_tlt/translations" "$DT_u/files/translations"
             cleanups "$DT_u/files/translations/$act.tra"
         fi

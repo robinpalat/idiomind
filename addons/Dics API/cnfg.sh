@@ -42,11 +42,11 @@ function add_dlg() {
         else
             if [ -f /usr/bin/gksu ]; then
                 gksu -S -m "$(gettext "Idiomind requires admin privileges for this task")" "$DS_a/Dics API/cnfg.sh" \
-                cpfile "${add}" "$DS_a/Dics API/dicts"/ "$DC_a/dict/disables/$(basename "${add}")"
-                elif [ -f /usr/bin/kdesudo ]; then
+                cpfile "${add}" "$DS_a/Dics API/dicts"/ "$DC_a/dict-api/disables/$(basename "${add}")"
+            elif [ -f /usr/bin/kdesudo ]; then
                 kdesudo -d --comment="$(gettext "Idiomind requires admin privileges for this task")" "$DS_a/Dics API/cnfg.sh" \
-                cpfile "${add}" "$DS_a/Dics API/dicts"/ "$DC_a/dict/disables/$(basename "${add}")"
-                else
+                cpfile "${add}" "$DS_a/Dics API/dicts"/ "$DC_a/dict-api/disables/$(basename "${add}")"
+            else
                 msg "$(gettext "No authentication program found").\n" error \
                 "$(gettext "No authentication program found")"
                 exit 1

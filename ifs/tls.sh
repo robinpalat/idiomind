@@ -25,7 +25,11 @@ function check_format_1() {
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
             [ "$(grep -o -E '\*|\/|\@|$|=|' <<< "${val}")" ]; then invalid $n; fi
         elif [[ ${n} = 1 ]]; then
-            if [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<< "${val}")" -o ${#val} -gt 50 ]; then invalid $n; fi
+            if grep ',' <<< "$val" >/dev/null 2>&1; then
+                opre="$val"; val="$(cut -f1  -d ',' <<< "$val" |sed 's/ \+//g')"
+                export otranslations=", $(sed "s/${val}, //g" <<< "$opre")"
+            fi
+            if ! grep -Fo "${val}" <<< "${!slangs[@]}" >/dev/null 2>&1; then invalid $n; fi 
         elif [[ ${n} = 2 ]]; then
             if ! grep -Fo "${val}" <<< "${!tlangs[@]}" >/dev/null 2>&1; then invalid $n; fi
         elif [[ ${n} = 3 || ${n} = 4 ]]; then

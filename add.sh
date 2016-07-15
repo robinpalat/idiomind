@@ -19,7 +19,7 @@ new_topic() {
     
     if [[ $(wc -l <<< "${listt}") -ge 120 ]]; then
         msg "$(gettext "Maximum number of topics reached.")" \
-        dialog-information "$(gettext "Information")" & return 1
+        dialog-information "$(gettext "Information")" & exit 1
     fi
 
     source "$DS/ifs/mods/add/add.sh"

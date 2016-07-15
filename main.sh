@@ -48,7 +48,7 @@ function new_session() {
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     if [ $? -ne 0 ]; then
     msg "$(gettext "An error occurred while trying to write on '/tmp'")\n" \
-    error "$(gettext "Error")" & return 1
+    error "$(gettext "Error")" & exit 1
     fi
     
     f_lock "$DT/ps_lk"
@@ -136,7 +136,7 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     level="${lv[${levl}]}"
     itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$name</span><sup>\n$nwrd $(gettext "Words") \
 $nsnt $(gettext "Sentences") $nimg $(gettext "Images") \n$(gettext "Level:") \
-$level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(gettext "$slng")</sup>"
+$level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(gettext "$slng")$otranslations</sup>" 
     dclk="$DS/play.sh play_word"
     _lst() {
         while read -r line; do
@@ -144,7 +144,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
         done < <(sed -n 2p "${file}"|sed 's/},/\n/g'|tr -d '\'|sed '/^$/d')
     }
     
-    swind=$(grep -oP '(?<=swind=\").*(?=\")' "$DC_s/1.cfg")
+    export swind=$(grep -oP '(?<=swind=\").*(?=\")' "$DC_s/1.cfg")
     sz=(600 560); [[ ${swind} = TRUE ]] && sz=(480 440)
     _lst | yad --list --title="Idiomind" \
     --text="${itxt}" \
@@ -210,7 +210,6 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             done < "${DC_tlt}/0.cfg"
 
             "$DS/ifs/tls.sh" colorize 1
-            # ------------------------------------------------------
             echo -e "$tlng\n$slng" > "$DC_s/6.cfg"
             echo 1 > "${DC_tlt}/8.cfg"
             echo "${name}" >> "$DM_tl/.share/3.cfg"
@@ -218,7 +217,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             "$DS/mngr.sh" mkmn 1
             "$DS/default/tpc.sh" "${name}" 1 &
         fi
-    exit 1
+    exit 0
 fi
 
 function topic() {

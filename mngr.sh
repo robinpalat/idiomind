@@ -543,12 +543,14 @@ edit_list_more() {
         if grep "$(gettext "Reverse items order")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
                 yad_kill "yad --list --title="
+                cleanups "$DT/list_output" "$DT/list_input"
                 edit_list_cmds 2 "${tpc}"
             fi
             
         elif grep "$(gettext "Remove all items")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
                 yad_kill "yad --list --title="
+                cleanups "$DT/list_output" "$DT/list_input"
                 cleanups "${DC_tlt}/0.cfg" "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg" \
                 "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg" "${DC_tlt}/5.cfg" "${DC_tlt}/6.cfg"
                 [ -d "${DM_tlt}" -a -n "$tpc" ] && rm "$DM_tlt"/*.mp3
@@ -557,6 +559,7 @@ edit_list_more() {
         elif grep "$(gettext "Restart topic status")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
                 yad_kill "yad --list --title="
+                cleanups "$DT/list_output" "$DT/list_input"
                 cleanups "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg" "${DC_tlt}/7.cfg" 
                 echo 1 > "${DC_tlt}/8.cfg"; > "${DC_tlt}/9.cfg"
                 while read -r item_; do
@@ -575,12 +578,14 @@ edit_list_more() {
         elif grep "$(gettext "Show short sentences in word's view")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
                 yad_kill "yad --list --title="
+                cleanups "$DT/list_output" "$DT/list_input"
                 edit_list_cmds 4 "${tpc}"
             fi
             
         elif grep "$(gettext "Restore backup:")" <<< "${more}"; then
              _war; if [ $? = 0 ]; then
                 yad_kill "yad --list --title="
+                cleanups "$DT/list_output" "$DT/list_input"
                 if grep ${dt1} <<< "${more}"; then
                     export line=1
                 elif grep ${dt2} <<< "${more}"; then
@@ -590,8 +595,8 @@ edit_list_more() {
             fi
         fi
     else
-        cleanups "$DT/list_output" "$DT/list_input" \
-        "$DT/items_to_add" "$DT/act_restfile" "$DT/edit_list_more"
+        cleanups "$DT/items_to_add"  \
+        "$DT/act_restfile" "$DT/edit_list_more"
     fi
 } >/dev/null 2>&1
 

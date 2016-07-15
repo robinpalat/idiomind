@@ -5,7 +5,7 @@
     <script type="text/javascript" src="/tmp/.idiomind_stats"></script>
     <style type="text/css">
     a.cursor {cursor:hand;}
-    body {margin:10;padding:10;}
+    body {margin:12;padding:10;}
     </style>
     <script>
     function page2() { window.location = "/usr/share/idiomind/default/pg2.html"; }
@@ -13,7 +13,7 @@
 </head>
 <body>
     <div>
-    <font size="1.5" color="#828282"><svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#6CBEC5" /></svg> It includes new items and unprocessed <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#48B951" /></svg> Learnt <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#5A8AD8" /></svg> Reviewing <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#DC8E7A" /></svg> Learnt but need to review <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#CACACA" /></svg> Iddle</font>
+    <font size="1.5" color="#828282"><svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#C5E8E3" /></svg> It includes new items and unprocessed <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#CACACA" /></svg> Iddle <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#48B951" /></svg> Learnt <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#5A8AD8" /></svg> Reviewing <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#E07748" /></svg> Learnt but need to review </font>
     </div>
     <div>
     <canvas id="canvas" height="270" width="520"></canvas>
@@ -25,18 +25,18 @@
     var fdata = JSON.parse(data1);
     var lineChartData = {
     labels : ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
-    datasets : [{ label: "Learnt", 
-    fillColor : "rgba(228,251,226,0)",
-    strokeColor : "rgba(72,185,81,1)",
-    pointColor : "rgba(72,185,81,1)",
-    pointStrokeColor : "rgba(72,185,81,0.1)",
+    datasets : [{ label: "Iddle", 
+    fillColor : "rgba(220,220,220,0.0)",
+    strokeColor : "rgba(230,230,230,1)",
+    pointColor : "rgba(230,230,230,1)",
+    pointStrokeColor : "rgba(230,230,230,0.1)",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f1},
+    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f4},
     { label: "Total",
-    fillColor : "rgba(108,190,197,0.0)",
-    strokeColor : "rgba(108,190,197,1)",
-    pointColor : "rgba(108,190,197,1)",
-    pointStrokeColor : "rgba(108,190,197,0.1)",
+    fillColor : "rgba(197,232,227,0.0)",
+    strokeColor : "rgba(197,232,227,1)",
+    pointColor : "rgba(197,232,227,1)",
+    pointStrokeColor : "rgba(197,232,227,1)",
     pointHighlightFill : "#fff",
     pointHighlightStroke : "rgba(220,220,220,1)", data : fdata[0].f0},
     { label: "Reviewing", 
@@ -48,18 +48,18 @@
     pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f2},
     { label: "Alert", 
     fillColor : "rgba(236,119,89,0.0)",
-    strokeColor : "rgba(236,119,89,1)",
-    pointColor : "rgba(236,119,89,1)",
-    pointStrokeColor : "rgba(236,119,89,0.1)",
+    strokeColor : "rgba(224,119,72,1)",
+    pointColor : "rgba(224,119,72,1)",
+    pointStrokeColor : "rgba(224,119,72,1)",
     pointHighlightFill : "#fff",
     pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f3},
-    { label: "Iddle", 
-    fillColor : "rgba(220,220,220,0.0)",
-    strokeColor : "rgba(230,230,230,1)",
-    pointColor : "rgba(230,230,230,1)",
-    pointStrokeColor : "rgba(230,230,230,0.1)",
+    { label: "Learnt", 
+    fillColor : "rgba(228,251,226,0)",
+    strokeColor : "rgba(72,185,81,1)",
+    pointColor : "rgba(72,185,81,1)",
+    pointStrokeColor : "rgba(72,185,81,0.1)",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f4}]
+    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f1}]
     }
     window.onload = function(){
     var ctx = document.getElementById("canvas").getContext("2d");

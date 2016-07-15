@@ -8,8 +8,10 @@ pdir="${DC_tlt}/practice"
 pdirs="$DS/practice"
 declare -A prcts=( ['a']='Flashcards' ['b']='Multiple Choise'\
  ['c']='Recogning Words' ['d']='Images' ['e']='Writing Sentences')
-active=$(sed -n 1p "${DC_tlt}/translations/active")
-[ -n "$active" ] && slng="$active"
+if [ -e "${DC_tlt}/translations/active" ]; then
+    act=$(sed -n 1p "${DC_tlt}/translations/active")
+    [ -n "$act" ] && slng="$act"
+fi
 
 export -f f_lock
 
