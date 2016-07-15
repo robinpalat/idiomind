@@ -7,8 +7,8 @@ source "$DS/default/sets.cfg"
 export lgt=${tlangs[$tlng]}
 export lgs=${slangs[$slng]}
 dir="$DC/addons/dict-api"
-enables="$DC/addons/dict-api/enables"
-disables="$DC/addons/dict-api/disables"
+enables="$dir/enables"
+disables="$dir/disables"
 task=( 'Word pronunciation' 'Pronunciation' 'Translator' \
 'Search definition' 'Search images' 'Download images' '_' )
 
@@ -38,14 +38,14 @@ function add_dlg() {
 
         if [ ${i} = TRUE ]; then
             msg "$(gettext "You have entered an Invalid format").\n" \
-            error "$(gettext "You have entered an Invalid format")"
+            error "$(gettext "Invalid format")"
         else
             if [ -f /usr/bin/gksu ]; then
-                gksu -S -m "$(gettext "Idiomind requires admin privileges for this task")" "$DS_a/Dics API/cnfg.sh" \
-                cpfile "${add}" "$DS_a/Dics API/dicts"/ "$DC_a/dict-api/disables/$(basename "${add}")"
+                gksu -S -m "$(gettext "Idiomind requires admin privileges for this task")" "$DS_a/Dics-API/cnfg.sh" \
+                cpfile "${add}" "$DS_a/Dics-API/dicts/" "$DC_a/dict-api/disables/$(basename "${add}")"
             elif [ -f /usr/bin/kdesudo ]; then
-                kdesudo -d --comment="$(gettext "Idiomind requires admin privileges for this task")" "$DS_a/Dics API/cnfg.sh" \
-                cpfile "${add}" "$DS_a/Dics API/dicts"/ "$DC_a/dict-api/disables/$(basename "${add}")"
+                kdesudo -d --comment="$(gettext "Idiomind requires admin privileges for this task")" "$DS_a/Dics-API/cnfg.sh" \
+                cpfile "${add}" "$DS_a/Dics-API/dicts/" "$DC_a/dict-api/disables/$(basename "${add}")"
             else
                 msg "$(gettext "No authentication program found").\n" error \
                 "$(gettext "No authentication program found")"
@@ -53,13 +53,13 @@ function add_dlg() {
             fi
         fi
     fi
-    "$DS_a/Dics API/cnfg.sh"
+    "$DS_a/Dics-API/cnfg.sh"
 }
 
 function dclk() {
     [ "$2" = TRUE ] && dir=enables
     [ "$2" = FALSE ] && dir=disables
-    "$DS_a/Dics API/dicts/$3.$4.$5.$6" dlgcnfg "$@"
+    "$DS_a/Dics-API/dicts/$3.$4.$5.$6" dlgcnfg "$@"
 }
 
 function cpfile() {
@@ -96,7 +96,7 @@ function dlg() {
     if [ ! -d "$DC_d" -o ! -d "$DC_a/dict-api/disables" ]; then
     mkdir -p "$enables"; mkdir -p "$disables"
     echo -e "$tlng\n$v_dicts" > "$DC_a/dict-api/.dict"
-    for r in "$DS_a/Dics API/dicts"/*; do > "$disables/$(basename "$r")"; done; fi
+    for r in "$DS_a/Dics-API/dicts"/*; do > "$disables/$(basename "$r")"; done; fi
     
     txtinf="$(gettext "Please, select at least one script for each task.\n(To start is okay select all. Later, according to your preferences you can go testing to disable some.)")\n"
     if [ -n "${1}" ]; then text="--text=$txtinf"; n=${1}; else text="--center"; n=6; fi
@@ -106,7 +106,7 @@ function dlg() {
     --text=" $(gettext "Double-Click to configure") " \
     --name=Idiomind --class=Idiomind "${text}" \
     --print-all --always-print-result --separator="|" \
-    --dclick-action="'$DS_a/Dics API/cnfg.sh' dclk" \
+    --dclick-action="'$DS_a/Dics-API/cnfg.sh' dclk" \
     --window-icon=idiomind \
     --expand-column=2 --hide-column=3 \
     --search-column=4 --regex-search \
@@ -123,7 +123,7 @@ function dlg() {
     ret=$?
 
         if [ $ret -eq 2 ]; then
-                "$DS_a/Dics API/cnfg.sh" add_dlg
+                "$DS_a/Dics-API/cnfg.sh" add_dlg
         elif [ $ret -eq 0 ]; then
             while read -r dict; do
                 name="$(cut -d "|" -f2 <<< "$dict")"
@@ -173,7 +173,7 @@ function update_config_dir() {
             -a ! -e "$disables/$(basename "${dict}")" ]; then
             echo "-- added dict-api: $(basename "${dict}")"
             > "$disables/$(basename "${dict}")"; fi
-    done < <(ls "$DS_a/Dics API/dicts/")
+    done < <(ls "$DS_a/Dics-API/dicts/")
 }
 
 case "$1" in

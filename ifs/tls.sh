@@ -613,6 +613,16 @@ translate_to() {
     revw_tr="$(cut -f4 -d'|' <<< "$ldgl")"
     revw_ck="$(cut -f5 -d'|' <<< "$ldgl")"
     auto_tr="$(cut -f9 -d'|' <<< "$ldgl")"
+    
+    ######################################
+    
+    pre="${tranlangs[$auto_tr]}"
+    auto_tr="${slangs[$pre]}"
+    
+    pre="${slangs[$revw_tr]}"
+    revw_tr="${slangs[$pre]}"
+    
+    ######################################
 
     if [ "$ret" = 0 ]; then
     

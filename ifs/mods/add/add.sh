@@ -483,13 +483,13 @@ function fetch_audio() {
         audio_dwld="$DM_tls/audio/$word"
         if [ ! -e "$audio_file" ]; then
             if ls "$DA_d"/*."TTS online.Word pronunciation".$lgt 1> /dev/null 2>&1; then
-                for dict in "$DC_d"/*."TTS online.Word pronunciation".$lgt; do
+                for dict in "$DA_d"/*."TTS online.Word pronunciation".$lgt; do
                     dwld1 "$DS_a/Dics API"; [ $? = 5 ] && break
                 done
             fi
             if [ ! -e "$audio_file" ]; then
                 if ls "$DA_d"/*."TTS online.Word pronunciation".various 1> /dev/null 2>&1; then
-                    for dict in "$DC_d"/*."TTS online.Word pronunciation".various; do
+                    for dict in "$DA_d"/*."TTS online.Word pronunciation".various; do
                         dwld1 "$DS_a/Dics API"; [ $? = 5 ] && break
                     done
                 fi
@@ -541,15 +541,14 @@ function img_word() {
                 w="$(echo $size |cut -f1 -d ' ')"
                 e="$(echo $size |cut -f2 -d ' ')"
                 if [[ $((e*100/w)) -gt 80 ]]; then
-                    echo 'liquid-rescale...'
-                    cp "$DT/${img_file}" "$HOME/${img_file}"
-                    #/usr/bin/convert "$DT/${img_file}" -liquid-rescale 405x275%\! "$DT/${img_file}"
+                    mv "$DT/${img_file}" "$DT/l_${img_file}"
+                    #/usr/bin/convert "$DT/${img_file}" -liquid-rescale 405x275%\! "$DT/${img_file}" # TODO: liquid rescale 
                 else
                     mv "$DT/${img_file}" "$DT/l_${img_file}"
-                
+                fi
                 /usr/bin/convert "$DT/l_${img_file}" -interlace Plane -thumbnail 405x275^ \
                 -gravity center -extent 400x270 -quality 90% "${sf}"
-                fi
+                
                 cleanups "$DT/${img_file}" "$DT/l_${img_file}"
             fi
             cleanups "$DT/${1}.img"

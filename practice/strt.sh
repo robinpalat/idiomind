@@ -869,7 +869,7 @@ function strt() {
         fi
         unset pr; strt 0
     else
-        "$DS/ifs/tls.sh" colorize 1 & exit
+        "$DS/ifs/tls.sh" colorize 1 & exit 0
     fi
 }
 

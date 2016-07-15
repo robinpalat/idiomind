@@ -7,8 +7,8 @@ source "$DS/default/sets.cfg"
 export lgt=${tlangs[$tlng]}
 export lgs=${slangs[$slng]}
 dir="$DC/addons/dict"
-enables="$DC/addons/dict/enables"
-disables="$DC/addons/dict/disables"
+enables="$dir/enables"
+disables="$dir/disables"
 task=( 'Word pronunciation' 'Pronunciation' 'Translator' \
 'Search definition' 'Search images' 'Download images' '_' )
 

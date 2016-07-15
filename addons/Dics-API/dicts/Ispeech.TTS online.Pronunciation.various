@@ -28,7 +28,7 @@ else
     ! [ "$DC_a/ispeech.cfg" ] && touch "$DC_a/ispeech.cfg"
     k=$(grep -o key=\"[^\"]* "$DC_a/ispeech.cfg" |grep -o '[^"]*$')
     if [ -z "${k}" ]; then
-        "$DS_a/Dics API/dicts/Ispeech.TTS online.Pronunciation.various" dlgcnfg
+        "$DS_a/Dics-API/dicts/Ispeech.TTS online.Pronunciation.various" dlgcnfg
     else
         speed=$(grep -o speed=\"[^\"]* "$DC_a/ispeech.cfg" |grep -o '[^"]*$')
         if [ "$speed" = Slow ]; then s=-2
