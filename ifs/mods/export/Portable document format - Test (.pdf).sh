@@ -26,4 +26,4 @@ export _checkbox="<img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAA
 export f=2
 export -f word_examen
 
-$(dirname "$0")/PDF.sh "$@"
+"$(dirname "$0")/Portable document format (.pdf).sh" "$@"

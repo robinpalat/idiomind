@@ -135,6 +135,10 @@ mkhtml() {
 [ -z "${f}" ] && f=0
 export f; mkhtml
 wkhtmltopdf -s A4 -O Portrait "$file" "$DT/export/tmp.pdf"
-mv -f "$DT/export/tmp.pdf" "${1}.pdf"
+if [ $f = 2 ]; then
+    mv -f "$DT/export/tmp.pdf" "${1} - Test.pdf"
+else
+    mv -f "$DT/export/tmp.pdf" "${1}.pdf"
+fi
 chmod 664 "${1}.pdf"
 cleanups "$DT/export"
