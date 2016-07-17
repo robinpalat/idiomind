@@ -392,7 +392,7 @@ first_run() {
     source /usr/share/idiomind/default/c.conf
     dlg() {
         sleep 3; mv -f "${file}" "${file}".p
-        yad --title=" " --text="${note}" \
+        yad --title="$title" --text="${note}" \
         --name=Idiomind --class=Idiomind \
         --always-print-result --selectable-labels \
         --image=dialog-information --window-icon=idiomind \
@@ -580,7 +580,7 @@ translate_to() {
         --text="$(gettext "The current source language of this topic is") <b>$active_label</b>" \
         --text-align=center --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top \
-        --width=380 --height=370 --borders=10 \
+        --width=350 --height=370 --borders=10 \
         --field="":LBL " " \
         --field="<b>$(gettext "Revised translations") </b> ":LBL " " \
         --field="$(gettext "This topic has no revised translations.")":LBL " " \
@@ -599,7 +599,7 @@ translate_to() {
         --text="$(gettext "The current source language of this topic is") <b>$active_label</b>" \
         --text-align=center --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top \
-        --width=380 --height=370 --borders=10 \
+        --width=350 --height=370 --borders=10 \
         --field="":LBL " " \
         --field="<b>$(gettext "Revised translations") </b> ":LBL " " \
         --field="$(gettext "Change the source language:")":LBL " " \

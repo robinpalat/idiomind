@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# update dicts
 "$DS_a/Dics/cnfg.sh" updt_dicts
 "$DS_a/Dics-API/cnfg.sh" updt_dicts
 
