@@ -129,7 +129,7 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     source "$DS/ifs/tls.sh"; check_format_1 "${1}"
     if [ $? != 18 ]; then
-        msg "$(gettext "File is corrupted.")\n" error "$(gettext "Information")" & return 1
+        msg "$(gettext "File is corrupted.")\n" error "$(gettext "Information")" & exit 1
     fi
     file="${1}"
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
@@ -211,6 +211,15 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
 
             "$DS/ifs/tls.sh" colorize 1
             echo -e "$tlng\n$slng" > "$DC_s/6.cfg"
+            
+            active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
+            if [ "$slng" !=  "$active_trans" ]; then
+t="<b>$(gettext "El idioma nativo de este tema no coincide con la configuracion del programa.")</b>
+$(gettext "Usted puede:\n1) Traducir el tema. Ir a Pestaña Editar de la ventana principal, clik en boton Traducir, y luego \"Traducciones automaticas\"
+2) Cambiar la configuracion del programa. Ir a Configuraciones en al apartado \"Mi idioma es\"")"
+                msg "$t" dialog-warning "$(gettext "Notice")" "$(gettext "OK")"
+            fi
+
             echo 1 > "${DC_tlt}/8.cfg"
             echo "${name}" >> "$DM_tl/.share/3.cfg"
             source /usr/share/idiomind/default/c.conf

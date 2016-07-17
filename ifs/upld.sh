@@ -347,7 +347,7 @@ function upld() {
         
         if [ -d "$DC_tlt/translations" ]; then
             act="$(< "$DC_tlt/translations/active")"
-            if [ -n "$act" ] && grep -Fo "${act}" <<< "${!slangs[@]}" >/dev/null 2>&1; then
+            if [ -z "$act" ] && grep -Fo "${act}" <<< "${!slangs[@]}" >/dev/null 2>&1; then
                 a="$act"
             else
                 a="$slng"

@@ -46,11 +46,9 @@ function msg_4() {
 
 function progress() {
     yad --progress \
-    --progress-text="${1}" \
     --name=Idiomind --class=Idiomind \
-    --undecorated \
-    --pulsate --auto-close --on-top \
-    --skip-taskbar --center --no-buttons
+    --undecorated --${1} --auto-close \
+    --skip-taskbar --center --on-top --no-buttons
 }
 
 export numer='^[0-9]+$'

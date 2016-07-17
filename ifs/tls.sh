@@ -29,7 +29,7 @@ function check_format_1() {
                 opre="$val"; val="$(cut -f1  -d ',' <<< "$val" |sed 's/ \+//g')"
                 export otranslations=", $(sed "s/${val}, //g" <<< "$opre")"
             fi
-            if ! grep -Fo "${val}" <<< "${!slangs[@]}" >/dev/null 2>&1; then invalid $n; fi 
+            if ! grep -Fo "${val}" <<< "${!slangs[@]}" >/dev/null 2>&1; then invalid $n; fi
         elif [[ ${n} = 2 ]]; then
             if ! grep -Fo "${val}" <<< "${!tlangs[@]}" >/dev/null 2>&1; then invalid $n; fi
         elif [[ ${n} = 3 || ${n} = 4 ]]; then
@@ -480,6 +480,7 @@ function transl_batch() {
     source "$DS/default/source_langs.cfg"
     touch "${DC_tlt}/translations/active"
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
+    lns=$(cat "${DC_tlt}/0.cfg" |wc -l)
     if [ -z "$active_trans" ]; then active_trans="$slng"; fi
     pre="${slangs[$active_trans]}"
     export active_label="$(for l in "${!tranlangs[@]}"; do
@@ -513,7 +514,8 @@ echo -e "yad --form --title=\"$tlng $(gettext "to") $active_label\" \\
         srce="$(tr -s '"' '*' <<< "${srce}")"
         echo -e "--field=\"\":RO \"$trgt\" --field=\"\" \"$srce\" --field=\" \":lbl \"\" \\" >> "$DT/dlg"
         let n++
-    done < "${DC_tlt}/0.cfg") |progress
+        echo $((100*n/lns-1))
+    done < "${DC_tlt}/0.cfg") |progress "progress"
     sed -i 's/\*/\\\"/g' "$DT/dlg"
     
     dlg="$(cat "$DT/dlg")"; eval "${dlg}" > "$DT/transl_batch_out"; ret="$?"
@@ -547,8 +549,7 @@ echo -e "yad --form --title=\"$tlng $(gettext "to") $active_label\" \\
     
     mv -f "$DT/0.cfg" "${DC_tlt}/0.cfg"
     cleanups "$DT/dlg" "$DT/transl_batch_out"
-}
-
+} >/dev/null 2>&1
 
 translate_to() {
     source /usr/share/idiomind/default/c.conf
@@ -744,6 +745,14 @@ translate_to() {
                 mv -f "$DT/translation" "${DC_tlt}/0.cfg"
                 echo "$autom_trans" > "${DC_tlt}/translations/active"
             fi
+        fi
+        # check and notice
+        active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
+        if [ "$slng" !=  "$active_trans" ]; then
+t="<b>$(gettext "El idioma nativo de este tema no coincide con la configuracion del programa.")</b>
+$(gettext "Usted puede:\n1) Traducir el tema. Ir a Pestaña Editar de la ventana principal, clik en boton Traducir, y luego \"Traducciones automaticas\"
+2) Cambiar la configuracion del programa. Ir a Configuraciones en al apartado \"Mi idioma es\"")"
+            msg "$t" dialog-warning "$(gettext "Notice")" "$(gettext "OK")"
         fi
     fi
 }

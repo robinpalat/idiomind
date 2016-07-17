@@ -626,11 +626,14 @@ edit_list_dlg() {
     fi
 
     cleanups "$DT/list_output"; > "$DT/list_input"
-    (echo "5"; cat "${direc}/0.cfg" | while read -r item_; do
+    
+    lns=$(cat "${direc}/0.cfg" |wc -l)
+    (n=1; echo "5"; cat "${direc}/0.cfg" | while read -r item_; do
         item="$(sed 's/}/}\n/g' <<< "${item_}")"
         trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
         [ -n "${trgt}" ] && echo "${trgt}" >> "$DT/list_input"
-    done ) | progr_3
+        let n++; echo $((100*n/lns-1))
+    done ) | progr_3 "progress"
 
     edit_list_list < "$DT/list_input" > "$DT/list_output"
     ret=$?
@@ -809,7 +812,7 @@ mark_to_learn_topic() {
             fi
             echo "${trgt}" >> "${DC_tlt}/1.cfg"
         fi
-    done < "${DC_tlt}/0.cfg" ) | progr_3
+    done < "${DC_tlt}/0.cfg" ) | progr_3 "pulsate"
 
     if [ -e "${DC_tlt}/lk" ]; then rm "${DC_tlt}/lk"; fi
     
@@ -886,7 +889,7 @@ mark_as_learned_topic() {
         item="$(sed 's/}/}\n/g' <<< "${item_}")"
         trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
         [ -n "${trgt}" ] && echo "${trgt}" >> "${DC_tlt}/2.cfg"
-    done < "${DC_tlt}/0.cfg" ) | progr_3
+    done < "${DC_tlt}/0.cfg" ) | progr_3 "pulsate"
     
     cp -f "${DC_tlt}/info" "${DC_tlt}/info.bk"
 
