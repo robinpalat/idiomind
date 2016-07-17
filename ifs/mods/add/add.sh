@@ -363,7 +363,7 @@ function translate() {
     else
         internet
         if ls "$DA_d"/*."Traslator online.Translator".* 1> /dev/null 2>&1; then
-            for trans in "$DC_d"/*."Traslator online.Translator".*; do
+            for trans in "$DA_d"/*."Traslator online.Translator".*; do
                 trans="$DS_a/Dics/dicts/$(basename "${trans}")"
                 if [ -e "${trans}" ]; then
                     stop=1; "${trans}" "$@" && break
@@ -371,7 +371,8 @@ function translate() {
             done
         fi
         if ! ls "$DC_d"/*."Traslator online.Translator".* 1> /dev/null 2>&1; then
-        "$DS_a/Dics/cnfg.sh" 2; fi
+            "$DS_a/Dics/cnfg.sh" 2
+        fi
         if [ ${stop} = 0 ]; then
             for trans in "$DC_d"/*."Traslator online.Translator".*; do
                 trans="$DS_a/Dics/dicts/$(basename "${trans}")"
@@ -542,17 +543,14 @@ function img_word() {
                 e="$(echo $size |cut -f2 -d ' ')"
                 if [[ $((e*100/w)) -gt 80 ]]; then
                     /usr/bin/convert "$DT/${img_file}" -resize 400x270^ "$DT_r/${1}pre.jpg"
+                    [ -e "$DT/${img_file}" ] && "$DT/${img_file}"
                     /usr/bin/convert "$DT_r/${1}pre.jpg" -gravity center \
-                    -background white -compress jpeg -extent 400x270 "$DT/l_${img_file}"
-                    #/usr/bin/convert "$DT/${img_file}" \
-                    -liquid-rescale 405x275%\! "$DT/${img_file}" # TODO: liquid rescale 
-                else
-                    mv "$DT/${img_file}" "$DT/l_${img_file}"
+                    -background white -compress jpeg -extent 400x270 "$DT/${img_file}"
                 fi
-                /usr/bin/convert "$DT/l_${img_file}" -interlace Plane -thumbnail 405x275^ \
+                /usr/bin/convert "$DT/${img_file}" -interlace Plane -thumbnail 405x275^ \
                 -gravity center -extent 400x270 -quality 90% "${sf}"
                 
-                cleanups "$DT/${img_file}" "$DT/l_${img_file}"
+                cleanups "$DT/${img_file}"
             fi
             cleanups "$DT/${1}.img" "$DT_r/${1}pre.jpg"
         fi

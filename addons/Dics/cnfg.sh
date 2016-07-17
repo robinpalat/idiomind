@@ -98,7 +98,7 @@ function dlg() {
     echo -e "$tlng\n$v_dicts" > "$DC_a/dict/.dict"
     for r in "$DS_a/Dics/dicts"/*; do > "$disables/$(basename "$r")"; done; fi
     
-    txtinf="$(gettext "Please, select at least one script for each task.\n(To start is okay select all. Later, according to your preferences you can go testing to disable some.)")\n"
+    txtinf="$(gettext "Please, select at least one script for each task.\nTo start is okay select all. Later, according to your preferences you can go testing to disable some.")\n"
     if [ -n "${1}" ]; then text="--text=$txtinf"; n=${1}; else text="--center"; n=6; fi
 
     sel="$(dict_list ${n} |yad --list \

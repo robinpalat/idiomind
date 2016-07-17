@@ -1,9 +1,0 @@
-#!/bin/bash
-
-if [[ "$1" = dlgcnfg ]]; then
-    source "$DS/ifs/cmns.sh"
-    msg "$(gettext "Does not need configuration")\n" dialog-information "$4"
-else
-    export LINK="http://translate.google.com/translate_tts?ie=utf-8&total=1&idx=0&client=t&tl=$lgt&q=${word}"
-    export ex='mp3'
-fi

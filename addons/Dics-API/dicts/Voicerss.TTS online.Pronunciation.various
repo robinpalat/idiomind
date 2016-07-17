@@ -18,7 +18,7 @@ Text-to-speech (TTS) API Documentation\nhttp://www.voicerss.org/api/documentatio
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" --center \
     --on-top --skip-taskbar --expand-column=3 \
-    --width=420 --height=200 --borders=10 \
+    --width=450 --height=250 --borders=10 \
     --always-print-result --editable --print-all --align=right \
     --field=Voice:CB "" \
     --field=Speed:CB "$speed!Slow!Normal!Fast" \

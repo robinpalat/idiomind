@@ -3,15 +3,17 @@
 if [[ "$1" = dlgcnfg ]]; then
 voices=""
 if [ ! -f "$DC_a/ispeech.cfg" ] || [[ -z "$(< "$DC_a/ispeech.cfg")" ]]; then
+    DC_a="$HOME/.config/idiomind/addons"
     echo -e "voice=\"\"\nspeed=\"\"\nkey=\"\"" > "$DC_a/ispeech.cfg"; fi
     voice=$(grep -o voice=\"[^\"]* "$DC_a/ispeech.cfg" |grep -o '[^"]*$')
     speed=$(grep -o speed=\"[^\"]* "$DC_a/ispeech.cfg" |grep -o '[^"]*$')
     key=$(grep -o key=\"[^\"]* "$DC_a/ispeech.cfg" |grep -o '[^"]*$')
-    c=$(yad --form --title="ispeech" \
+    c=$(yad --form --title="Ispeech" \
     --name=Idiomind --class=Idiomind \
-    --window-icon="$DS/images/icon.png" --center \
+    --text="$(gettext "Languages"): English, Spanish, Portuguese, Russian, Italian, German, French, Chinese, Japanese Text-to-speech (TTS) API Documentation\nhttp://www.voicerss.org/api/documentation.aspx" \
+    --window-icon="idiomind" --center \
     --on-top --skip-taskbar --expand-column=3 \
-    --width=400 --height=200 --borders=10 \
+    --width=450 --height=250 --borders=10 \
     --always-print-result --editable --print-all --align=right \
     --field=Voice:CB "" \
     --field=Speed:CB "$speed!Slow!Normal!Fast" \
