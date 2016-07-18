@@ -68,38 +68,50 @@ function cpfile() {
 }
 
 function dlg() {
+    if [ -f "$DT/dicts" ]; then
+        (sleep 20 && cleanups "$DT/dicts") & exit 1
+    fi
     dict_list() {
-    sus="${task[$1]}"
-    cd "$enables/"
-    find . -not -name "*.$lgt" -and -not -name "*.various" -type f \
-    -exec mv --target-directory="$disables/" {} +
-    
-    while read -r dict; do
-        if [ -n "${dict}" ]; then
-            echo 'TRUE'
-            sed 's/\./\n/g' <<< "${dict}"; fi
-    done < <(ls "$enables/")
-    
-    while read -r dict; do
-        if [ -n "${dict}" ]; then
-            echo 'FALSE'
-            if grep -E ".$lgt|.various" <<< "${dict}">/dev/null 2>&1; then
-                sed 's/\./\n/g' <<< "${dict}"| \
-                sed "3s|${sus}|<span color='#0038FF'>${sus}<\/span>|"
-            else 
-                echo "${dict}" |sed 's/\./\n/g'
+        sus="${task[$1]}"
+        cd "$enables/"
+        find . -not -name "*.$lgt" -and -not -name "*.various" -type f \
+        -exec mv --target-directory="$disables/" {} +
+        
+        while read -r dict; do
+            if [ -n "${dict}" ]; then
+                echo 'TRUE'
+                sed 's/\./\n/g' <<< "${dict}"; fi
+        done < <(ls "$enables/")
+        
+        while read -r dict; do
+            if [ -n "${dict}" ]; then
+                echo 'FALSE'
+                if grep -E ".$lgt|.various" <<< "${dict}">/dev/null 2>&1; then
+                    sed 's/\./\n/g' <<< "${dict}"| \
+                    sed "3s|${sus}|<span color='#0038FF'>${sus}<\/span>|"
+                else 
+                    echo "${dict}" |sed 's/\./\n/g'
+                fi
             fi
-        fi
-    done < <(ls "$disables/")
+        done < <(ls "$disables/")
     }
    
-    if [ ! -d "$DC_d" -o ! -d "$DC_a/dict/disables" ]; then
-    mkdir -p "$enables"; mkdir -p "$disables"
-    echo -e "$tlng\n$v_dicts" > "$DC_a/dict/.dict"
-    for r in "$DS_a/Dics/dicts"/*; do > "$disables/$(basename "$r")"; done; fi
-    
-    txtinf="$(gettext "Please, select at least one script for each task.\nTo start is okay select all. Later, according to your preferences you can go testing to disable some.")\n"
-    if [ -n "${1}" ]; then text="--text=$txtinf"; n=${1}; else text="--center"; n=6; fi
+    if [ ! -d "$DC_d" -o ! -d "$DC_a/dict-api/disables" ]; then
+        mkdir -p "$enables"; mkdir -p "$disables"
+        echo -e "$tlng\n$v_dicts" > "$DC_a/dict-api/.dict"
+        for r in "$DS_a/Dics-API/dicts"/*; do > "$disables/$(basename "$r")"; done
+    fi
+
+    if [ -e "$DC_s/dics_first_run" ]; then
+        plus="$(gettext "To start is okay select all. Later, according to your preferences you can go testing to disable some.")\n"
+        rm "$DC_s/dics_first_run"
+    fi
+    inf="$(gettext "Please, select at least one script for each task.") $plus"
+    if [[ -n "${1}" ]]; then 
+        text="--text=$inf"; n=${1}
+    else 
+        text="--center"; n=6
+    fi
 
     sel="$(dict_list ${n} |yad --list \
     --title="$(gettext "Dictionaries")" \

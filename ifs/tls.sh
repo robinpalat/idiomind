@@ -416,15 +416,13 @@ first_run() {
         if [ -n "$tpc" ]; then
         rm -f "$DC_s/topics_first_run"
         "$DS/add.sh" new_items & fi
-        exit
     elif [[ -z "${2}" ]]; then
         echo "-- done"
         touch "$DC_s/elist_first_run" \
-        "$DC_s/topics_first_run"
-        exit
-    else 
-        exit
+        "$DC_s/topics_first_run" \
+        "$DC_s/dics_first_run"
     fi
+    exit
 }
 
 set_image() {

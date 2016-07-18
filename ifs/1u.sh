@@ -8,7 +8,8 @@ alias gettext='gettext "idiomind"'
 source /usr/share/idiomind/default/sets.cfg
 lang1="${!tlangs[@]}"; declare lt=( $lang1 )
 lang2="${!slangs[@]}"; declare ls=( $lang2 )
-text="\n<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") ${USER^}\n</span>$(gettext "To get started, please configure the following:")\n"
+text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") ${USER^} </span>
+\n      $(gettext "To get started, please configure the following:")\n"
 
 if [[ ! $(which yad) ]]; then
 zenity --info --text="$(gettext "Oops. sorry! To run idiomind we need to use a GUI output with yad.\nPlease install [yad], you can use:")
@@ -62,12 +63,12 @@ function set_lang() {
 }
 
 dlg=$(yad --form --title="Idiomind" \
---text="$text" --image=/usr/share/idiomind/images/logo.png \
+--text="$text" \
 --class=Idiomind --name=Idiomind \
 --window-icon=idiomind \
 --image-on-top --buttons-layout=end --align=right --center --on-top \
---width=480 --height=250 --borders=15 \
---field="$(gettext "Select foreign language (Language to learn)"):CB" "$list1" \
+--width=450 --height=240 --borders=15 \
+--field="$(gettext "Select foreign language"):CB" "$list1" \
 --field="$(gettext "Select native language"):CB" "$list2" \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "OK")":0)

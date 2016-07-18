@@ -357,7 +357,7 @@ function set_image_2() {
 
 function translate() {
     cdb="$DM_tls/data/${tlng}.db"; stop=0
-    if [[ $(wc -w <<<${1}) = 1 ]] && [ ${ttrgt} != TRUE ] && \
+    if [[ $(wc -w <<< ${1}) = 1 ]] && [ "${ttrgt}" != TRUE ] && \
     [[ `sqlite3 ${cdb} "select ${slng} from Words where Word is '${1}';"` ]]; then
         sqlite3 ${cdb} "select ${slng} from Words where Word is '${1}';"
     else

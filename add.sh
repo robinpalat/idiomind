@@ -4,14 +4,16 @@
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 source "$DS/default/sets.cfg"
-export lgt=${tlangs[$tlng]}
-export lgs=${slangs[$slng]}
-# if [ "$lgs" #TODO
+lgt=${tlangs[$tlng]}
+lgs=${slangs[$slng]}
 include "$DS/ifs/mods/add"
 wlist=$(grep -oP '(?<=wlist=\").*(?=\")' "$DC_s/1.cfg")
 trans=$(grep -oP '(?<=trans=\").*(?=\")' "$DC_s/1.cfg")
 ttrgt=$(grep -oP '(?<=ttrgt=\").*(?=\")' "$DC_s/1.cfg")
 dlaud=$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")
+[ -z "$ttrgt" ] && ttrgt='FALSE'
+[ -z "$trans" ] && trans='FALSE'
+export ttrgt trans lgt lgs
 
 new_topic() {
     listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \

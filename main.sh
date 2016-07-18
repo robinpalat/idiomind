@@ -214,9 +214,10 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             
             active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
             if [ "$slng" !=  "$active_trans" ]; then
-t="<b>$(gettext "El idioma nativo de este tema no coincide con la configuracion del programa.")</b>
-$(gettext "Usted puede:\n1) Traducir el tema. Ir a Pestaña Editar de la ventana principal, clik en boton Traducir, y luego \"Traducciones automaticas\"
-2) Cambiar la configuracion del programa. Ir a Configuraciones en al apartado \"Mi idioma es\"")"
+t="<b>$(gettext "The native language of this topic does not match your current configuration.
+You may need to do one of these 2 options:
+1) Translate the subject. Go to Edit tab of the main window, clik Translate button, and then \"Automatic Translation\" selected from the list of languages:")
+$(gettext "2) Change the settings of the program. Go to Settings in the \"My language is\", select:")"
                 msg "$t" dialog-warning "$(gettext "Notice")" "$(gettext "OK")"
             fi
 
