@@ -873,4 +873,5 @@ function strt() {
     fi
 }
 
+touch "${DM_tlt}"
 strt 0

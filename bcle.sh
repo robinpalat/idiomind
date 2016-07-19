@@ -8,6 +8,7 @@ cfg="${DC_tlt}/10.cfg"
 rplay="$(grep -o rplay=\"[^\"]* "${cfg}" |grep -o '[^"]*$')"
 ritem=0; stnrd=0; f=0
 echo 0 > "$DT/playlck"
+touch "${DM_tlt}"
 
 [ -z "${tpc}" -a ! -d "${DC_tlt}" ] && exit 1
 export tpc DC_tlt cfg f ritem stnrd numer
