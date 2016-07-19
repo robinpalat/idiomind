@@ -543,7 +543,7 @@ function img_word() {
                 e="$(echo $size |cut -f2 -d ' ')"
                 if [[ $((e*100/w)) -gt 80 ]]; then
                     /usr/bin/convert "$DT/${img_file}" -resize 400x270^ "$DT_r/${1}pre.jpg"
-                    [ -e "$DT/${img_file}" ] && "$DT/${img_file}"
+                    [ -f "$DT/${img_file}" ] && rm -f "$DT/${img_file}"
                     /usr/bin/convert "$DT_r/${1}pre.jpg" -gravity center \
                     -background white -compress jpeg -extent 400x270 "$DT/${img_file}"
                 fi
