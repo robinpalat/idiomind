@@ -557,23 +557,10 @@ translate_to() {
     [ ! -d "$DC_tlt/translations" ] && mkdir "$DC_tlt/translations"
     list_transl_saved="$(cd "$DC_tlt/translations"; ls *.tra \
     |sed 's/\.tra//g' |tr "\\n" '!' |sed 's/\!*$//g')"
-    
     list_transl=$(for i in "${!slangs[@]}"; do echo -n "!$i"; done)
-    
     list_transl_saved_WC="$(cd "$DC_tlt/translations"; ls *.tra |wc -l)"
-    
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
-    
     if [ -z "$active_trans" ]; then active_trans="$slng"; fi
-    
-    #active_label="${slangs[$active_trans]}"
-    
-    #export active_label="$(for l in "${!tranlangs[@]}"; do
-        #if [ "${tranlangs[$l]}" = "${pre}" ]; then
-            #echo "$l"; break
-        #fi
-    #done)"
-    
     if grep "$active_trans" <<< "${list_transl_saved}"; then chk=TRUE; else chk=FALSE; fi
     
     if [ ${list_transl_saved_WC} -lt 1 ]; then
@@ -619,19 +606,7 @@ translate_to() {
     review_trans="$(cut -f4 -d'|' <<< "$ldgl")"
     review_chek="$(cut -f5 -d'|' <<< "$ldgl")"
     autom_trans="$(cut -f9 -d'|' <<< "$ldgl")"
-    #pre1="${tranlangs[$autom_trans_label]}"
-    #pre2="${tranlangs[$review_trans_label]}"
-    #autom_trans="$(for l in "${!slangs[@]}"; do
-        #if [ "${slangs[$l]}" = "${pre1}" ]; then
-            #echo "$l"; break
-        #fi
-    #done)"
-    #review_trans="$(for l in "${!slangs[@]}"; do
-        #if [ "${slangs[$l]}" = "${pre2}" ]; then
-            #echo "$l"; break
-        #fi
-    #done)"
-
+    
     if [ "$ret" = 0 ]; then
     
         if [ "$review_chek" = TRUE ]; then
