@@ -113,12 +113,9 @@ elif [ $ret -eq 0 ]; then
             export tlng=$val
         fi
     done
-    for val in "${ls[@]}"; do
-        if [[ ${source} = $(gettext ${val}) ]]; then
-            export slng=$val
-        fi
-    done
-    
+
+    export slng=${source}
+
     set_lang ${tlng}
 
     if ! grep -q ${slng} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
@@ -127,7 +124,7 @@ elif [ $ret -eq 0 ]; then
     
     echo ${slng} >> "$DC_s/6.cfg"
 
-    if echo "$target$source" |grep -oE 'Chinese|Japanese|Russian'; then _info; fi
+    if echo "$target" |grep -oE 'Chinese|Japanese|Russian'; then _info; fi
 
     > "$DC_s/1.cfg"
     for n in {0..12}; do echo -e "${csets[$n]}=\"\"" >> "$DC_s/1.cfg"; done

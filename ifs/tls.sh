@@ -475,17 +475,18 @@ function transl_batch() {
     source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
-    source "$DS/default/source_langs.cfg"
     touch "${DC_tlt}/translations/active"
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
     lns=$(cat "${DC_tlt}/0.cfg" |wc -l)
+    
     if [ -z "$active_trans" ]; then active_trans="$slng"; fi
-    pre="${slangs[$active_trans]}"
-    export active_label="$(for l in "${!tranlangs[@]}"; do
-        if [ "${tranlangs[$l]}" = "${pre}" ]; then
-            echo "$l"; break
-        fi
-    done)"
+    
+    #pre="${slangs[$active_trans]}"
+    #export active_label="$(for l in "${!tranlangs[@]}"; do
+        #if [ "${tranlangs[$l]}" = "${pre}" ]; then
+            #echo "$l"; break
+        #fi
+    #done)"
     if [ -e "$DT/translation" ]; then
         msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
         dialog-warning "$(gettext "OK")" "$(gettext "Stop")" " " "$DT/translation"
@@ -497,7 +498,7 @@ function transl_batch() {
         fi
     fi
 
-echo -e "yad --form --title=\"$tlng $(gettext "to") $active_label\" \\
+echo -e "yad --form --title=\"$(gettext "$tlng") $(gettext "to") $active_trans\" \\
 --class=Idiomind --name=Idiomind --window-icon=idiomind \\
 --width=590 --height=350 --borders=10 \\
 --scroll --columns=1 --center --separator='\n' \\
@@ -553,27 +554,32 @@ translate_to() {
     source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
-    source "$DS/default/source_langs.cfg"
     [ ! -d "$DC_tlt/translations" ] && mkdir "$DC_tlt/translations"
-    list_transl_saved_labels="$(cd "$DC_tlt/translations"; ls *.tra \
+    list_transl_saved="$(cd "$DC_tlt/translations"; ls *.tra \
     |sed 's/\.tra//g' |tr "\\n" '!' |sed 's/\!*$//g')"
-    list_transl_labels=$(for i in "${!tranlangs[@]}"; do echo -n "!$i"; done)
-    list_transl_saved_labels_WC="$(cd "$DC_tlt/translations"; ls *.tra |wc -l)"
+    
+    list_transl=$(for i in "${!slangs[@]}"; do echo -n "!$i"; done)
+    
+    list_transl_saved_WC="$(cd "$DC_tlt/translations"; ls *.tra |wc -l)"
+    
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
+    
     if [ -z "$active_trans" ]; then active_trans="$slng"; fi
-    pre="${slangs[$active_trans]}"
-    export active_label="$(for l in "${!tranlangs[@]}"; do
-        if [ "${tranlangs[$l]}" = "${pre}" ]; then
-            echo "$l"; break
-        fi
-    done)"
     
-    if grep "$active_label" <<< "${list_transl_saved_labels}"; then chk=TRUE; else chk=FALSE; fi
+    #active_label="${slangs[$active_trans]}"
     
-    if [ ${list_transl_saved_labels_WC} -lt 1 ]; then
+    #export active_label="$(for l in "${!tranlangs[@]}"; do
+        #if [ "${tranlangs[$l]}" = "${pre}" ]; then
+            #echo "$l"; break
+        #fi
+    #done)"
+    
+    if grep "$active_trans" <<< "${list_transl_saved}"; then chk=TRUE; else chk=FALSE; fi
+    
+    if [ ${list_transl_saved_WC} -lt 1 ]; then
         ldgl="$(yad --form --title="$(gettext "Source Language Settings")" \
         --class=Idiomind --name=Idiomind \
-        --text="$(gettext "The current source language of this topic is") <b>$active_label</b>" \
+        --text="$(gettext "The current source language of this topic is") <b>$active_trans</b>" \
         --text-align=center --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top \
         --width=350 --height=370 --borders=10 \
@@ -581,65 +587,65 @@ translate_to() {
         --field="<b>$(gettext "Revised translations") </b> ":LBL " " \
         --field="$(gettext "This topic has no revised translations.")":LBL " " \
         --field=" ":LBL " " \
-        --field="$active_label — $(gettext "This translation was revised")":CHK "$chk" \
+        --field="$active_trans — $(gettext "This translation was revised")":CHK "$chk" \
         --field="":LBL " " \
         --field="<b>$(gettext "Automatic translation")</b> ":LBL " " \
         --field="$(gettext "Select source language to translate:")":LBL " " \
-        --field="":CB "${list_transl_labels}" \
+        --field="":CB "${list_transl}" \
         --field="<small>$(gettext "Note that this translation used Google translate, so often will be inaccurate especially in complex sentences.")</small>":LBL " " \
         --button="$(gettext "Cancel")":1 \
         --button="$(gettext "OK")":0)"; ret="$?"
     else
         ldgl="$(yad --form --title="$(gettext "Source Language Settings")" \
         --class=Idiomind --name=Idiomind \
-        --text="$(gettext "The current source language of this topic is") <b>$active_label</b>" \
+        --text="$(gettext "The current source language of this topic is") <b>$active_trans</b>" \
         --text-align=center --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top \
         --width=350 --height=370 --borders=10 \
         --field="":LBL " " \
         --field="<b>$(gettext "Revised translations") </b> ":LBL " " \
         --field="$(gettext "Change the source language:")":LBL " " \
-        --field="":CB "!${list_transl_saved_labels}" \
-        --field="$active_label — $(gettext "This translation was revised")":CHK "$chk" \
+        --field="":CB "!${list_transl_saved}" \
+        --field="$active_trans — $(gettext "This translation was revised")":CHK "$chk" \
         --field="":LBL " " \
         --field="<b>$(gettext "Automatic translation")</b> ":LBL " " \
         --field="$(gettext "Select source language to translate:")":LBL " " \
-        --field="":CB "${list_transl_labels}" \
+        --field="":CB "${list_transl}" \
         --field="<small>$(gettext "Note that this translation used Google translate, so often will be inaccurate especially in complex sentences.")</small>":LBL " " \
         --button="$(gettext "Cancel")":1 \
         --button="$(gettext "OK")":0)"; ret="$?"
     fi
     
-    review_trans_label="$(cut -f4 -d'|' <<< "$ldgl")"
+    review_trans="$(cut -f4 -d'|' <<< "$ldgl")"
     review_chek="$(cut -f5 -d'|' <<< "$ldgl")"
-    autom_trans_label="$(cut -f9 -d'|' <<< "$ldgl")"
-    pre1="${tranlangs[$autom_trans_label]}"
-    pre2="${tranlangs[$review_trans_label]}"
-    autom_trans="$(for l in "${!slangs[@]}"; do
-        if [ "${slangs[$l]}" = "${pre1}" ]; then
-            echo "$l"; break
-        fi
-    done)"
-    review_trans="$(for l in "${!slangs[@]}"; do
-        if [ "${slangs[$l]}" = "${pre2}" ]; then
-            echo "$l"; break
-        fi
-    done)"
+    autom_trans="$(cut -f9 -d'|' <<< "$ldgl")"
+    #pre1="${tranlangs[$autom_trans_label]}"
+    #pre2="${tranlangs[$review_trans_label]}"
+    #autom_trans="$(for l in "${!slangs[@]}"; do
+        #if [ "${slangs[$l]}" = "${pre1}" ]; then
+            #echo "$l"; break
+        #fi
+    #done)"
+    #review_trans="$(for l in "${!slangs[@]}"; do
+        #if [ "${slangs[$l]}" = "${pre2}" ]; then
+            #echo "$l"; break
+        #fi
+    #done)"
 
     if [ "$ret" = 0 ]; then
     
         if [ "$review_chek" = TRUE ]; then
-            cp -f "${DC_tlt}/0.cfg" "${DC_tlt}/translations/$active_label.tra"
+            cp -f "${DC_tlt}/0.cfg" "${DC_tlt}/translations/$active_trans.tra"
             echo "$active_trans" > "${DC_tlt}/translations/active"
             
         elif [ "$review_chek" = FALSE ]; then
-            cleanups "${DC_tlt}/translations/$active_label.tra"
+            cleanups "${DC_tlt}/translations/$active_trans.tra"
         fi
         
         if [ "$review_trans" != "$active_trans" -a -n "$review_trans" -a "$review_trans" != "(null)" ]; then
-            if [ -e "${DC_tlt}/translations/$review_trans_label.tra" ]; then
+            if [ -e "${DC_tlt}/translations/$review_trans.tra" ]; then
                 yad_kill "yad --form --title="
-                cp -f "${DC_tlt}/translations/$review_trans_label.tra" "${DC_tlt}/0.cfg"
+                cp -f "${DC_tlt}/translations/$review_trans.tra" "${DC_tlt}/0.cfg"
                 echo "$review_trans" > "${DC_tlt}/translations/active"
             fi
 
@@ -655,10 +661,10 @@ translate_to() {
                     cleanups "$DC_tlt/translations/$autom_trans.bk"
                 fi
             fi
-            if grep "$autom_trans_label" <<< "$(cd "$DC_tlt/translations"; ls *.tra)"; then
+            if grep "$autom_trans" <<< "$(cd "$DC_tlt/translations"; ls *.tra)"; then
                 msg_2 "$(gettext "There is a revised translation of this language. Do you want to use this copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
                 if [ $? = 0 ]; then
-                    cp -f "$DC_tlt/translations/$autom_trans_label.tra" "${DC_tlt}/0.cfg"
+                    cp -f "$DC_tlt/translations/$autom_trans.tra" "${DC_tlt}/0.cfg"
                     echo "$autom_trans" > "${DC_tlt}/translations/active"
                     exit 1
                 fi

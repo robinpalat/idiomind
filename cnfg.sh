@@ -88,11 +88,13 @@ config_dlg() {
         declare clocal="$(gettext "${val}")"
         list1="${list1}${emrk}${clocal}"
     done
-    unset clocal
-    for val in "${!slangs[@]}"; do
-        declare clocal="$(gettext "${val}")"
-        list2="${list2}${emrk}${clocal}"
-    done
+    #unset clocal
+    #for val in "${!slangs[@]}"; do
+        #declare clocal="$(gettext "${val}")"
+        #list2="${list2}${emrk}${clocal}"
+    #done
+    
+    list2=$(for i in "${!slangs[@]}"; do echo -n "!$i"; done)
 
     c=$((RANDOM%100000)); KEY=$c
     yad --plug=$KEY --form --tabnum=1 \
@@ -195,12 +197,10 @@ config_dlg() {
         fi
         
         nslang=$(cut -d "|" -f16 < "$cnf1")
-        if [[ $(gettext ${slng}) != ${nslang} ]]; then
-            for val in "${ls[@]}"; do
-                if [[ ${nslang} = $(gettext ${val}) ]]; then
-                    export slng=$val
-                fi
-            done
+        if [[ ${slng} != ${nslang} ]]; then
+        
+            slng=${nslang}
+
             confirm "$info2" dialog-question ${slng}
             if [ $? -eq 0 ]; then
                 echo ${tlng} > "$DC_s/6.cfg"
