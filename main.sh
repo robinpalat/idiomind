@@ -127,7 +127,7 @@ function new_session() {
 
 if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
-    source "$DS/ifs/tls.sh"; check_format_1 "${1}"
+    slngcurrent="$slng"; source "$DS/ifs/tls.sh"; check_format_1 "${1}"
     if [ $? != 18 ]; then
         msg "$(gettext "File is corrupted.")\n" error "$(gettext "Information")" & exit 1
     fi
@@ -210,17 +210,11 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             done < "${DC_tlt}/0.cfg"
 
             "$DS/ifs/tls.sh" colorize 1
+            slngtopic="$slng"; slng="$slngcurrent"
             echo -e "$tlng\n$slng" > "$DC_s/6.cfg"
-            
-            active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
-            if [ "$slng" !=  "$active_trans" ]; then
-t="<b>$(gettext "The native language of this topic does not match your current configuration.
-You may need to do one of these 2 options:
-1) Translate the subject. Go to Edit tab of the main window, clik Translate button, and then \"Automatic Translation\" selected from the list of languages:")
-$(gettext "2) Change the settings of the program. Go to Settings in the \"My language is\", select:")"
-                msg "$t" dialog-warning "$(gettext "Notice")" "$(gettext "OK")"
+            if [[ "$slngtopic" != "$slng" ]]; then
+echo -e "$(gettext "The native language of this topic does not match your current configuration. You may need to translate the topic. Click Edit tab on the main window, click Translate button, and then in \"Automatic Translation\" select from the list of languages:") <u>$slng</u>\n" > "${DC_tlt}/err"
             fi
-
             echo 1 > "${DC_tlt}/8.cfg"
             echo "${name}" >> "$DM_tl/.share/3.cfg"
             source /usr/share/idiomind/default/c.conf

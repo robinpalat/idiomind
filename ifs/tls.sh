@@ -554,9 +554,7 @@ translate_to() {
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
     source "$DS/default/source_langs.cfg"
-    if [ ! -d "$DC_tlt/translations" ]; then
-        mkdir "$DC_tlt/translations"
-    fi
+    [ ! -d "$DC_tlt/translations" ] && mkdir "$DC_tlt/translations"
     list_transl_saved_labels="$(cd "$DC_tlt/translations"; ls *.tra \
     |sed 's/\.tra//g' |tr "\\n" '!' |sed 's/\!*$//g')"
     list_transl_labels=$(for i in "${!tranlangs[@]}"; do echo -n "!$i"; done)
@@ -746,11 +744,8 @@ translate_to() {
         fi
         # check and notice
         active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
-        if [ "$slng" !=  "$active_trans" ]; then
-t="<b>$(gettext "El idioma nativo de este tema no coincide con la configuracion del programa.")</b>
-$(gettext "Usted puede:\n1) Traducir el tema. Ir a Pestaña Editar de la ventana principal, clik en boton Traducir, y luego \"Traducciones automaticas\"
-2) Cambiar la configuracion del programa. Ir a Configuraciones en al apartado \"Mi idioma es\"")"
-            msg "$t" dialog-warning "$(gettext "Notice")" "$(gettext "OK")"
+        if [[ "$active_trans" != "$slng" ]]; then
+echo -e "$(gettext "The native language of this topic does not match your current configuration. You may need to translate the topic. Click Edit tab on the main window, click Translate button, and then in \"Automatic Translation\" select from the list of languages:") <u>$slng</u>\n" > "${DC_tlt}/err"
         fi
     fi
 }

@@ -12,13 +12,13 @@ function dicts() {
             if [ ! -e "$DC_s/topics_first_run" ]; then
                 source "$DS/ifs/cmns.sh"
                 msg_2 "$(gettext "You may need to configure a list of Internet resources. \nDo you want to do this now?")" \
-                dialog-information "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Information")"
+                dialog-information "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Info")"
                 if [ $? = 0 ]; then 
                     rm -f "$DT/dicts"; "$DS_a/Dics/cnfg.sh" 6
                 fi
                 echo "$tlng" > "$DC_a/dict/.dict"
             fi
-            [ -f "$DT/dicts" ] && rm  "$DT/dicts"
+            [ -f "$DT/dicts" ] && rm -f "$DT/dicts"
         fi
         return 0
     }

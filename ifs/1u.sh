@@ -67,7 +67,7 @@ dlg=$(yad --form --title="Idiomind" \
 --class=Idiomind --name=Idiomind \
 --window-icon=idiomind \
 --image-on-top --buttons-layout=end --align=right --center --on-top \
---width=450 --height=240 --borders=15 \
+--width=450 --height=220 --borders=10 \
 --field="$(gettext "Select foreign language"):CB" "$list1" \
 --field="$(gettext "Select native language"):CB" "$list2" \
 --button="$(gettext "Cancel")":1 \
@@ -93,14 +93,14 @@ elif [ $ret -eq 0 ]; then
     
     mkdir "$HOME/.idiomind"
     if [ $? -ne 0 ]; then
-    yad --title=Idiomind \
-    --text="$(gettext "An error occurred while trying to write on file system")\n" \
-    --image=error \
-    --name=Idiomind --class=Idiomind \
-    --window-icon=idiomind \
-    --skip-taskbar --center \
-    --width=420 --height=120 --borders=2 \
-    --button="$(gettext "OK")":1 & exit 1
+        yad --title=Idiomind \
+        --text="$(gettext "An error occurred while trying to write on file system")\n" \
+        --image=error \
+        --name=Idiomind --class=Idiomind \
+        --window-icon=idiomind \
+        --skip-taskbar --center \
+        --width=420 --height=120 --borders=2 \
+        --button="$(gettext "OK")":1 & exit 1
     fi
     
     DM_t="$HOME/.idiomind/topics"
@@ -132,7 +132,7 @@ elif [ $ret -eq 0 ]; then
     > "$DC_s/1.cfg"
     for n in {0..12}; do echo -e "${csets[$n]}=\"\"" >> "$DC_s/1.cfg"; done
     touch "$DC_s/4.cfg"
-    echo -e "authr=\"\"\pass=\"\"\ncntt=\"\"" > "$DC_s/3.cfg"
+    echo -e "authr=\"\"\npass=\"\"\ncntt=\"\"" > "$DC_s/3.cfg"
     /usr/share/idiomind/ifs/tls.sh first_run
     export u=1
     idiomind -s
