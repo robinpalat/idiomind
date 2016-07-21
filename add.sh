@@ -113,7 +113,7 @@ function new_sentence() {
     mksure "${trgt}" "${srce}" "${grmr}" "${wrds}"
 
     if [ $? = 1 ]; then
-        echo -e "${trgt}" >> "${DC_tlt}/err"
+        echo -e "${trgt}" >> "${DC_tlt}/note_err"
         cleanups "$DT_r"; exit 1
     else
         index 2
@@ -170,7 +170,7 @@ function new_word() {
     mksure "${trgt}" "${srce}"
     
     if [ $? = 1 ]; then
-        echo -e "${trgt}" >> "${DC_tlt}/err"
+        echo -e "${trgt}" >> "${DC_tlt}/note_err"
         cleanups "$DT_r"; exit 1
     else
         index 1
@@ -228,7 +228,7 @@ function list_words_edit() {
     n=1
     while read -r trgt; do
         if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
-            echo -e "\n\n$n) [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> "${DC_tlt}/err"
+            echo -e "\n\n$n) [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> "${DC_tlt}/note_err"
         elif [ -z "$(< "$DT_r/select_lines")" ]; then
             cleanups "${DT_r}"; exit 0
         else
@@ -247,7 +247,7 @@ function list_words_edit() {
                 fi
                 ( img_word "${trgt}" "${srce}" ) &
             else
-                echo -e "\n$trgt" >> "${DC_tlt}/err"
+                echo -e "\n$trgt" >> "${DC_tlt}/note_err"
                 cleanups "${DM_tlt}/$cdid.mp3"
             fi
         fi
@@ -283,7 +283,7 @@ function list_words_sentence() {
     n=1
     while read -r trgt; do
         if [ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]; then
-            echo -e "\n$trgt" >> "${DC_tlt}/err"
+            echo -e "\n$trgt" >> "${DC_tlt}/note_err"
         elif [ -z "$(< "$DT_r/select_lines")" ]; then
             cleanups "${DT_r}"; exit 0
         else
@@ -302,7 +302,7 @@ function list_words_sentence() {
                 fi
                 ( img_word "${trgt}" "${srce}" ) &
             else
-                echo -e "\n$trgt" >> "${DC_tlt}/err"
+                echo -e "\n$trgt" >> "${DC_tlt}/note_err"
             fi
         fi
         let n++
@@ -636,7 +636,7 @@ function process() {
             "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
         fi
         
-        [ -n "$log" ] && echo "$log" >> "${DC_tlt}/err"
+        [ -n "$log" ] && echo "$log" >> "${DC_tlt}/note_err"
     fi
     cleanups "$DT/n_s_pr" "$DT_r" & exit 0
 }

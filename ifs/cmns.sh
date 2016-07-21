@@ -44,6 +44,17 @@ function msg_4() {
     --button="${4}":1 --button="${3}":0
 }
 
+function msg_5() {
+    echo -e "${1}" | yad --text-info \
+    --title="$2" \
+    --name=Idiomind --class=Idiomind \
+    --window-icon=idiomind \
+    --wrap --margins=5 \
+    --center --on-top \
+    --width=450 --height=180 --borders=3 \
+    --button="$3":1
+}
+
 function progress() {
     yad --progress \
     --name=Idiomind --class=Idiomind \

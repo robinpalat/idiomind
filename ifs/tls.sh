@@ -67,7 +67,8 @@ function check_format_1() {
 check_index() {
     [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/cmns.sh"
-    DC_tlt="$DM_tl/${2}/.conf"; DM_tlt="$DM_tl/${2}"
+    DC_tlt="$DM_tl/${2}/.conf"
+    DM_tlt="$DM_tl/${2}"
     tpc="${2}"; mkmn=0; f=0
     [[ ${3} = 1 ]] && r=1 || r=0
     
@@ -352,6 +353,30 @@ a_check_updates() {
     exit 0
 } >/dev/null 2>&1
 
+promp_info() {
+    [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
+    source "$DS/ifs/cmns.sh"
+    source "$DS/default/sets.cfg"
+    active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
+    slng_err_lbl="$(gettext "The native language of this topic does not match your current configuration. You may need to translate the topic.\nClick \"Edit\" tab on the main window, click \"Translate\" button, and then in \"Automatic Translation\" select from the list of languages:") \"$slng\""
+    
+    if [ -e "${DC_tlt}/note_err" ]; then
+        include "$DS/ifs/mods/add"
+        dlg_text_info_3 "$(cat "${DC_tlt}/note_err")"
+        rm "${DC_tlt}/note_err"
+    fi
+    if [ -e "${DC_tlt}/slng_err" ]; then
+        msg_5 "$slng_err_lbl" \
+        "$(gettext "Language does not match")"
+        rm "${DC_tlt}/slng_err"
+    elif [ "$active_trans" != "$slng" ]; then
+        msg_5 "$slng_err_lbl" \
+        "$(gettext "Language does not match")" \
+        "$(gettext "OK")"
+    fi
+    
+} >/dev/null 2>&1
+
 first_run() {
     source /usr/share/idiomind/default/c.conf
     dlg() {
@@ -378,8 +403,9 @@ first_run() {
         "$DS/chng.sh" "$NOTE3"; sleep 1
         source /usr/share/idiomind/default/c.conf
         if [ -n "$tpc" ]; then
-        rm -f "$DC_s/topics_first_run"
-        "$DS/add.sh" new_items & fi
+            rm -f "$DC_s/topics_first_run"
+            "$DS/add.sh" new_items &
+        fi
     elif [[ -z "${2}" ]]; then
         echo "-- done"
         touch "$DC_s/elist_first_run" \
@@ -977,8 +1003,8 @@ case "$1" in
     check_updates ;;
     a_check_updates)
     a_check_updates ;;
-    edit_tag)
-    edit_tag "$@" ;;
+    promp_info)
+    promp_info "$@" ;;
     set_image)
     set_image "$@" ;;
     first_run)

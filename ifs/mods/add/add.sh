@@ -717,9 +717,8 @@ function dlg_text_info_3() {
     --window-icon=idiomind \
     --wrap --margins=5 \
     --center --on-top \
-    --width=450 --height=180 --borders=0 \
+    --width=450 --height=180 --borders=3 \
     "${3}" --button="$(gettext "OK")":1
-    rm -f "${DC_tlt}/err"
 }
 
 function dlg_form_3() {

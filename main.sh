@@ -202,18 +202,18 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
                 if [ -n "${trgt}" ]; then
                     if [[ ${type} = 1 ]]; then
                         echo "${trgt}" >> "${DC_tlt}/3.cfg"
-                    else 
+                    else
                         echo "${trgt}" >> "${DC_tlt}/4.cfg"
                     fi
                     echo "${trgt}" >> "${DC_tlt}/1.cfg"
-                fi    
+                fi
             done < "${DC_tlt}/0.cfg"
 
             "$DS/ifs/tls.sh" colorize 1
             slngtopic="$slng"; slng="$slngcurrent"
             echo -e "$tlng\n$slng" > "$DC_s/6.cfg"
             if [[ "$slngtopic" != "$slng" ]]; then
-echo -e "$(gettext "The native language of this topic does not match your current configuration. You may need to translate the topic. Click Edit tab on the main window, click Translate button, and then in \"Automatic Translation\" select from the list of languages:") <u>$slng</u>\n" > "${DC_tlt}/err"
+                touch "${DC_tlt}/err"
             fi
             echo 1 > "${DC_tlt}/8.cfg"
             echo "${name}" >> "$DM_tl/.share/3.cfg"
@@ -245,9 +245,7 @@ function topic() {
         repass=$(grep -oP '(?<=repass=\").*(?=\")' "${DC_tlt}/10.cfg")
         export acheck=$(grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg")
         [ -z $repass ] && repass=0
-        ( if [ -e "${DC_tlt}/err" ]; then
-        sleep 2; include "$DS/ifs/mods/add"
-        dlg_text_info_3 "$(cat "${DC_tlt}/err")"; fi ) &
+        ( sleep 3 && "$DS/ifs/tls.sh" promp_info ) &
         c=$((RANDOM%100000)); export KEY=$c
         export cnf1=$(mktemp "$DT/cnf1.XXXX")
         export cnf3=$(mktemp "$DT/cnf3.XXXX")
