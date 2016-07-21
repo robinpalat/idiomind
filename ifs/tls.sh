@@ -427,7 +427,8 @@ set_image() {
 
     if [ -e "$DT/$trgt.img" ]; then
         msg_4 "$(gettext "Attempting download image")...\n" \
-        dialog-warning "$(gettext "OK")" "$(gettext "Stop")" " " "$DT/$trgt.img"
+        dialog-warning "$(gettext "OK")" "$(gettext "Stop")" \
+        "$(gettext "Wait")" "$DT/$trgt.img"
         if [ $? -eq 1 ]; then rm -f "$DT/$trgt".img; else return 1 ; fi
     fi
 
@@ -472,7 +473,8 @@ function transl_batch() {
     
     if [ -e "$DT/translation" ]; then
         msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
-        dialog-warning "$(gettext "OK")" "$(gettext "Stop")" " " "$DT/translation"
+        dialog-warning "$(gettext "OK")" "$(gettext "Stop")" \
+        "$(gettext "Wait")" "$DT/translation"
         ret=$?
         if [ $ret -eq 1 ]; then 
             cleanups "$DT/translation"
@@ -505,7 +507,8 @@ echo -e "yad --form --title=\"$(gettext "$tlng") $(gettext "to") $active_trans\"
     
         if [ -e "$DT/translation" ]; then
             msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
-            dialog-warning "$(gettext "OK")" "$(gettext "Stop")" " " "$DT/translation"
+            dialog-warning "$(gettext "OK")" "$(gettext "Stop")" \
+            "$(gettext "Wait")" "$DT/translation"
             ret=$?
             if [ $ret -eq 1 ]; then 
                 cleanups "$DT/translation"
