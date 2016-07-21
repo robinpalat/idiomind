@@ -63,7 +63,7 @@ function index() {
         img0='/usr/share/idiomind/images/0.png'
         #
         if [ ! -z "${trgt}" ]; then
-            if ! grep -Fxq "${trgt}" < <(cat "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"); then
+            if ! grep -Fxq "${trgt}" < <(cat "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg") >/dev/null 2>&1; then
                 if [[ ${1} = 1 ]]; then
                     unset wrds grmr
                     echo "${trgt}" >> "${DC_tlt}/1.cfg"

@@ -187,7 +187,6 @@ edit_item() {
             else 
                 $DS/vwr.sh ${list} "${trgt}" ${item_pos} & exit 1
             fi
-            
         else
             srce=""; transl_mark=1
         fi
@@ -545,7 +544,6 @@ edit_list_more() {
         if grep "$(gettext "Reverse items order")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
                 yad_kill "yad --list --title="
-                cleanups "$DT/list_output" "$DT/list_input"
                 edit_list_cmds 2 "${tpc}"
             fi
             
@@ -580,7 +578,6 @@ edit_list_more() {
         elif grep "$(gettext "Show short sentences in word's view")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
                 yad_kill "yad --list --title="
-                cleanups "$DT/list_output" "$DT/list_input"
                 edit_list_cmds 4 "${tpc}"
             fi
             

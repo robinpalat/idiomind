@@ -369,7 +369,7 @@ promp_info() {
         msg_5 "$slng_err_lbl" \
         "$(gettext "Language does not match")"
         rm "${DC_tlt}/slng_err"
-    elif [ "$active_trans" != "$slng" ]; then
+    elif [ -n "$active_trans" -a "$active_trans" != "$slng" ]; then
         msg_5 "$slng_err_lbl" \
         "$(gettext "Language does not match")" \
         "$(gettext "OK")"
@@ -392,7 +392,7 @@ first_run() {
         [ $? = 1 ] && rm -f "${file}" "${file}".p
     }
     NOTE2="$(gettext "If you modify the text of an item, its audio file can be overwritten by another new file, to avoid this you can edit it individually through its edit dialog.\nClose and reopen the main window to see any changes.")\n"
-    NOTE3="$(gettext "To start adding notes you need to have a Topic.\nTo create one you can click on the New button...")"
+    NOTE3="$(gettext "To start adding notes you need to have a Topic.\nCreate one using the "New" button...")"
 
     if [[ ${2} = edit_list ]]; then
         title="$(gettext "Information")"
