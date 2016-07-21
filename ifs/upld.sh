@@ -128,7 +128,7 @@ function upld() {
         --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
-        --width=450 --height=450 --borders=15 \
+        --width=420 --height=420 --borders=15 \
         --field=" :LBL" "" \
         --field="$(gettext "Category"):CB" "" \
         --field="$(gettext "Skill Level"):CB" "" \
@@ -147,7 +147,7 @@ function upld() {
         --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
-        --width=450 --height=450 --borders=15 --field=" :LBL" "" \
+        --width=420 --height=420 --borders=15 --field=" :LBL" "" \
         --field="$(gettext "Category"):CBE" "$_Categories" \
         --field="$(gettext "Skill Level"):CB" "$_levels" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
@@ -173,7 +173,7 @@ function upld() {
         --image="$DS/images/dl.png" \
         --window-icon=idiomind --buttons-layout=end \
         --align=left --center --on-top \
-        --width=450 --height=140 --borders=10 \
+        --width=420 --height=140 --borders=10 \
         --text="$info" \
         --field="$info2:lbl" " " \
         --button="$(gettext "Export")":2 \
@@ -187,7 +187,7 @@ function upld() {
         --name=Idiomind --class=Idiomind \
         --window-icon=idiomind --buttons-layout=end \
         --align=left --center --on-top \
-        --width=450 --height=140 --borders=10 \
+        --width=420 --height=140 --borders=10 \
         --field="<b>$(gettext "Downloaded files")</b>:lbl" " " \
         --field="$(< "${DC_tlt}/download"):lbl" " " \
         --field=" :lbl" " " \
