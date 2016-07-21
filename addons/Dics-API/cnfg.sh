@@ -169,12 +169,24 @@ function dlg() {
 function update_config_dir() {
     [ ! -d "$enables" ] && mkdir -p "$enables"
     [ ! -d "$disables" ] && mkdir -p "$disables"
+    lsdics="$(ls "$DS_a/Dics-API/dicts/")"
+    
     while read -r dict; do
         if [ ! -e "$enables/$(basename "${dict}")" \
             -a ! -e "$disables/$(basename "${dict}")" ]; then
             echo "-- added dict-api: $(basename "${dict}")"
             > "$disables/$(basename "${dict}")"; fi
-    done < <(ls "$DS_a/Dics-API/dicts/")
+    done <<< "${lsdics}"
+    while read -r dict; do
+        if ! grep "$(basename "${dict}")" <<< "${lsdics}">/dev/null 2>&1; then
+            cleanups "$enables/${dict}"; echo "-- removed: $(basename "${dict}")"
+        fi
+    done < <(ls "$enables")
+    while read -r dict; do
+        if ! grep "$(basename "${dict}")" <<< "${lsdics}">/dev/null 2>&1; then
+            cleanups "$disables/${dict}"; echo "-- removed: $(basename "${dict}")"
+        fi
+    done < <(ls "$disables")
 }
 
 case "$1" in

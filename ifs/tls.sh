@@ -637,7 +637,8 @@ translate_to() {
             [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && return 1
             l="$(grep -o 'tlng="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
             if [ -n "$l" ]; then lgt=${tlangs[$l]}; else lgt=${tlangs[$tlng]}; fi
-            tl="$pre1"
+            
+            tl=${slangs[$autom_trans]}
             include "$DS/ifs/mods/add"
     
             while read -r item_; do
