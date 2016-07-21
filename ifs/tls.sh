@@ -130,8 +130,6 @@ check_index() {
         cnt1=$(wc -l < "${DC_tlt}/1.cfg" |sed '/^$/d')
         cnt2=$(wc -l < "${DC_tlt}/2.cfg" |sed '/^$/d')
         if [ $((cnt1+cnt2)) != ${cnt0} ]; then export f=1; fi
-        
-        if grep '},' "${DC_tlt}/0.cfg"; then export c=1; fi
     }
     
     _restore() {
@@ -165,42 +163,8 @@ check_index() {
         sed -i '/^$/d' "${DC_tlt}/0.cfg"
     }
     
-    _newformat() {
-        get_item() {
-            export item="$(sed 's/},/}\n/g' <<< "${1}")"
-            export type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
-            export trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-            export srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
-            export exmp="$(grep -oP '(?<=exmp={).*(?=})' <<<"${item}")"
-            export defn="$(grep -oP '(?<=defn={).*(?=})' <<<"${item}")"
-            export note="$(grep -oP '(?<=note={).*(?=})' <<<"${item}")"
-            export wrds="$(grep -oP '(?<=wrds={).*(?=})' <<<"${item}")"
-            export grmr="$(grep -oP '(?<=grmr={).*(?=})' <<<"${item}")"
-            export mark="$(grep -oP '(?<=mark={).*(?=})' <<<"${item}")"
-            export link="$(grep -oP '(?<=link={).*(?=})' <<<"${item}")"
-            export tags="$(grep -oP '(?<=tag={).*(?=})' <<<"${item}")"
-            export cdid="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
-        }
-        rm -f "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"
-        while read -r _item; do
-            get_item "${_item}"
-            eval line="$(sed -n 2p $DS/default/vars)"
-            echo -e "${line}" >> "${DC_tlt}/cfg"
-            echo "${trgt}" >> "${DC_tlt}/1.cfg"
-        done < <(tac "${DC_tlt}/0.cfg")
-        mv -f "${DC_tlt}/cfg" "${DC_tlt}/0.cfg"
-        touch "${DC_tlt}/2.cfg"
-        "$DS/ifs/tls.sh" colorize 1
-    }
-    
     _check
     
-    if [[ ${c} = 1 ]]; then
-        > "$DT/ps_lk"; 
-        (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
-        "$(gettext "Convert to new format...")" -t 3000) &
-        _newformat
-    fi
     if [[ ${f} = 1 ]]; then
         > "$DT/ps_lk"; mkmn=1
         if [[ ${r} = 0 ]]; then
@@ -456,7 +420,7 @@ set_image() {
         if [ ${im} = 0 ]; then
             mv -f "$img" "${DM_tlt}/images/${trgt,,}.jpg"
         else
-            ls "${DM_tls}/images/${trgt,,}"-*.jpg | while read -r img; do
+            ls "${DM_tls}/images/${trgt,,}"-*.jpg |while read -r img; do
             mv -f "$img" "${DM_tls}/images/${trgt,,}"-${r}.jpg
             let r++
             done
@@ -478,15 +442,8 @@ function transl_batch() {
     touch "${DC_tlt}/translations/active"
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
     lns=$(cat "${DC_tlt}/0.cfg" |wc -l)
-    
     if [ -z "$active_trans" ]; then active_trans="$slng"; fi
     
-    #pre="${slangs[$active_trans]}"
-    #export active_label="$(for l in "${!tranlangs[@]}"; do
-        #if [ "${tranlangs[$l]}" = "${pre}" ]; then
-            #echo "$l"; break
-        #fi
-    #done)"
     if [ -e "$DT/translation" ]; then
         msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
         dialog-warning "$(gettext "OK")" "$(gettext "Stop")" " " "$DT/translation"

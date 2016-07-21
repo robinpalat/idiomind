@@ -13,7 +13,8 @@ task=( 'Word pronunciation' 'Pronunciation' 'Translator' \
 'Search definition' 'Search images' 'Download images' '_' )
 
 function add_dlg() {
-    langs=( 'various' 'zh-cn' 'en' 'fr' 'de' 'it' 'ja' 'pt' 'ru' 'es' 'vi' )
+    langs=( 'various' 'zh-cn' 'en' 'fr' \
+    'de' 'it' 'ja' 'pt' 'ru' 'es' 'vi' )
     i=FALSE; cd "$HOME"
     add="$(yad --file --title="$(gettext "Add resource")" \
     --text=" $(gettext "Browse to and select the file that you want to add.")" \
