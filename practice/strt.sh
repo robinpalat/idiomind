@@ -817,9 +817,11 @@ function hardToRecall() {
     img3='/usr/share/idiomind/images/3.png'
     if [ ! -f "${DM_tls}/6.cfg" ]; then
         msg "$(gettext "Do you want to create a topic for words harder to remember?")\n " \
-        dialog-question "$(gettext "Not ask again")" "$(gettext "Yes")"
+        dialog-question "$(gettext "Practice")" "$(gettext "Yes")" "$(gettext "Not ask again")"
         if [ $? = 0 ]; then
             "$DS/add.sh" new_topic 14 0 "$(gettext "Words harder to remember")"
+        elif [ $? = 1 ]; then
+            :
         fi
     fi
     name=$(< "${DM_tls}/6.cfg")
@@ -832,9 +834,8 @@ function hardToRecall() {
                 item="$(grep -F -m 1 "trgt{${trgt}}" "${DC_tlt}/0.cfg")"
                 if [ -n "${item}" ]; then
                     echo "${item}" >> "${DM_tl}/${name}/.conf/0.cfg"
-                    echo "${trgt}" >> "${DM_tl}/${name}/.conf/1.cfg"
-                    echo "${trgt}" >> "${DM_tl}/${name}/.conf/3.cfg"
-                    echo "${trgt}" >> "${DM_tl}/${name}/.conf/practice/log3"
+                    echo "${trgt}" |tee "${DM_tl}/${name}/.conf/1.cfg" \
+                    "${DM_tl}/${name}/.conf/3.cfg" "${DM_tl}/${name}/.conf/practice/log3"
                     echo -e "$img3\n${trgt}\nFALSE" >> "${DM_tl}/${name}/.conf/5.cfg"
                 fi
             fi
@@ -856,12 +857,11 @@ function strt() {
     if [[ ${step} -gt 1 ]] && [[ ${ling} -ge 1 ]] && [[ ${hard} = 0 ]]; then
     echo -e "wait=\"$(date +%d)\"" > ./${pr}.lock; fi
     
-    ( if [[ $repass -gt 0 ]]; then
+    ( if [ $repass -gt 0 -a ${pr} != e ]; then
         if [ ${hard} -gt 0 -o ${ling} -gt 0 ]; then
             sleep 2; hardToRecall
         fi
     fi ) &
-    
 
     if [ ${1} = 1 ]; then
         NUMBER="<span color='#6E6E6E'><b><big>$(wc -l < ${pr}.0)</big></b></span>"; declare info${icon}="<span font_desc='Arial Bold 12'>$(gettext "Test completed") </span> —"
