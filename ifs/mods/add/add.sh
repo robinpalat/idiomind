@@ -357,7 +357,7 @@ function set_image_2() {
 
 function translate() {
     cdb="$DM_tls/data/${tlng}.db"; stop=0
-    if [[ $(wc -w <<< ${1}) = 1 ]] && [ "${ttrgt}" != TRUE ] && \
+    if [[ $(wc -w <<< ${1}) = 1 ]] && [[ "${ttrgt}" != TRUE ]] && \
     [[ `sqlite3 ${cdb} "select ${slng} from Words where Word is '${1}';"` ]]; then
         sqlite3 ${cdb} "select ${slng} from Words where Word is '${1}';"
     else
@@ -602,9 +602,10 @@ function dlg_form_0() {
     --name=Idiomind --class=Idiomind \
     --separator='|' \
     --window-icon=idiomind \
-    --skip-taskbar --center --on-top \
+    --buttons-layout=edge --skip-taskbar --center --on-top \
     --width=450 --height=80 --borders=0 \
     --field="$(gettext "Name")" "$1" \
+    --button="$(gettext "Examples")":0 \
     --button="$(gettext "OK")":0
 }
 

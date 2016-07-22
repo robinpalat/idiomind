@@ -697,8 +697,7 @@ delete_topic() {
             dialog-information "$(gettext "Information")"
         fi
         
-        rm -f "$DT/tpe"
-        > "$DC_s/4.cfg"
+        rm -f "$DT/tpe"; > "$DC_s/4.cfg"
         for n in {0..6}; do
             if [ -e "$DM_tl/.share/${n}.cfg" ]; then
                 grep -vxF "${tpc}" "$DM_tl/.share/${n}.cfg" > "$DM_tl/.share/${n}.cfg.tmp"
@@ -791,9 +790,9 @@ mark_to_learn_topic() {
         echo 6 > "${DC_tlt}/8.cfg"
     else
         if [ ${RM} -ge 50 ]; then
-        echo 5 > "${DC_tlt}/8.cfg"
+            echo 5 > "${DC_tlt}/8.cfg"
         else
-        echo 1 > "${DC_tlt}/8.cfg"
+            echo 1 > "${DC_tlt}/8.cfg"
         fi
     fi
 

@@ -156,7 +156,7 @@ elif [[ ${1} != 0 ]]; then
     --column=File:TEXT \
     --button="$(gettext "Statistics")":"'$DS/ifs/tls.sh' _stats" \
     --button="$(gettext "New")"!document-new:3 \
-    --button="$(gettext "Apply")":2 \
+    --button="$(gettext "OK")":2 \
     --button="$(gettext "Close")"!window-close:1)
     ret=$?
     if [ $ret -eq 3 ]; then

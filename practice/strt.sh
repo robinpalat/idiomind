@@ -510,11 +510,11 @@ function practice_e() {
 
     result() {
         if [[ $(wc -w <<< "$chk") -gt 6 ]]; then
-        out=$(awk '{print tolower($0)}' <<< "${entry}" |_clean |grep -v '^.$')
-        in=$(awk '{print tolower($0)}' <<< "${chk}" |_clean |grep -v '^.$')
+            out=$(awk '{print tolower($0)}' <<< "${entry}" |_clean |grep -v '^.$')
+            in=$(awk '{print tolower($0)}' <<< "${chk}" |_clean |grep -v '^.$')
         else
-        out=$(awk '{print tolower($0)}' <<< "${entry}" |_clean)
-        in=$(awk '{print tolower($0)}' <<< "${chk}" |_clean)
+            out=$(awk '{print tolower($0)}' <<< "${entry}" |_clean)
+            in=$(awk '{print tolower($0)}' <<< "${chk}" |_clean)
         fi
         
         echo "${chk}" > ./chk.tmp; touch ./words.tmp
@@ -812,6 +812,33 @@ function practices() {
     fi
 }
 
+function hardToRecall() {
+    local name
+    img3='/usr/share/idiomind/images/3.png'
+    if [ ! -d "${DM_tls}/repass" -o ! -f "${DM_tls}/repass/id.cfg" ]; then
+        mkdir "${DM_tls}/repass"; touch "${DM_tls}/repass/id.cfg"
+    fi
+    name=$(< "${DM_tls}/repass/id.cfg")
+    [[ -z "$name" ]] && return 1
+
+    index="$(cat "${DM_tl}/${name}/.conf/1.cfg" "${DM_tl}/${name}/.conf/2.cfg")"
+    log23="$(cat ./log2 ./log3)"
+    
+    echo "${log23}" |while read -r trgt; do
+        if ! grep -Fxq "${trgt}" "${index}"; then
+            item="$(grep -F -m 1 "trgt{${trgt}}" "${DC_tlt}/0.cfg")"
+            if [ -n "${item}" ]; then
+                echo "${item}" >> "${DM_tl}/${name}/.conf/0.cfg"
+                echo "${trgt}" >> "${DM_tl}/${name}/.conf/1.cfg"
+                echo "${trgt}" >> "${DM_tl}/${name}/.conf/3.cfg"
+                echo "${trgt}" >> "${DM_tl}/${name}/.conf/practice/log3"
+                echo -e "$img3\n${trgt}\nFALSE" >> "${DM_tl}/${name}/.conf/5.cfg"
+            fi
+        fi
+    done
+}
+
+
 function strt() {
     [ ! -d "${pdir}" ] && mkdir -p "${pdir}"
     cd "${pdir}"
@@ -822,8 +849,15 @@ function strt() {
     [ ! -e ./.5 ] && echo 1 > .5
     [[ ${hard} -lt 0 ]] && hard=0
     
-    if [[ ${step} -gt 1 && ${ling} -ge 1 && ${hard} = 0 ]]; then
+    if [[ ${step} -gt 1 ]] && [[ ${ling} -ge 1 ]] && [[ ${hard} = 0 ]]; then
     echo -e "wait=\"$(date +%d)\"" > ./${pr}.lock; fi
+    
+    ( if [[ $repass -gt 0 ]]; then
+        if [ ${hard} -gt 0 -o ${ling} -gt 0 ]; then
+            sleep 2; hardToRecall
+        fi
+    fi ) &
+    
 
     if [ ${1} = 1 ]; then
         NUMBER="<span color='#6E6E6E'><b><big>$(wc -l < ${pr}.0)</big></b></span>"; declare info${icon}="<span font_desc='Arial Bold 12'>$(gettext "Test completed") </span> —"

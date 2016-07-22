@@ -4,10 +4,11 @@
 if [ -z "${1}" ]; then exit 1; fi
 source "$DS/ifs/cmns.sh"
 topic="${1}"
-notif="${3}"
+mode="${2}"
+activ="${3}"
 DC_tlt="$DM_tl/${topic}/.conf"
 DM_tlt="$DM_tl/${topic}"
-export mode=${2}
+export mode
 
 chk_topic() {
     if [ ! -d "${DC_tlt}" -o ! -e "${DC_tlt}/id.cfg" ]; then
@@ -16,7 +17,7 @@ chk_topic() {
         for i in {0..10}; do touch "${DC_tlt}/${i}.cfg"; done
         rm ./"7.cfg" ./"9.cfg"
         echo " " > "info"
-        echo 1 > "8.cfg"; cd /
+        echo ${mode} > "8.cfg"; cd /
     fi
     
     if [ ! -e "$DT/n_s_pr" ]; then
@@ -24,10 +25,17 @@ chk_topic() {
     fi
 }
 
-act_topic() {
-    if [[ ${notif} = 1 ]]; then
+active_topic() {
+
+    if [[ ${activ} = 0 ]]; then
+        :
+        
+    elif [[ ${activ} = 1 ]]; then
+        echo "${topic}" > "$DC_s/4.cfg"
         ( sleep 1; notify-send -i idiomind "${topic}" "$(gettext "Is now your topic")" -t 4000 ) & exit
-    elif [[ -z "$notif" ]]; then
+        
+    elif [[ -z "$activ" ]]; then
+        echo "${topic}" > "$DC_s/4.cfg"
         idiomind topic & exit
     fi
 }
@@ -37,15 +45,15 @@ if [ -d "${DM_tlt}" ]; then
     if ((mode>=1 && mode<=10)); then
     
         chk_topic
-        echo "${topic}" > "$DC_s/4.cfg"
         if [ ! -e "${DC_tlt}/feeds" ]; then
-            echo "${topic}" > "$DT/tpe"; fi
+            echo "${topic}" > "$DT/tpe"
+        fi
         
         ( sleep 10 && "$DS/ifs/tls.sh" backup "${topic}" ) &
 
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
         
-        act_topic
+        active_topic
         
      elif [ ${mode} = 12 ]; then
      
@@ -75,28 +83,31 @@ if [ -d "${DM_tlt}" ]; then
                     fi
                 fi
             fi
-            echo "${topic}" > "$DC_s/4.cfg"
             chk_topic
             "$DS/mngr.sh" mkmn 1
             ( sleep 10 && "$DS/ifs/tls.sh" backup "${topic}" ) &
             
-            act_topic
+            active_topic
         else
-            echo "${topic}" > "$DC_s/4.cfg"
+            active_topic
             idiomind topic & exit 0
         fi
 
-    elif [ ${mode} = 14 -o ${mode} = 13 ]; then
+    elif [ ${mode} = 13 ]; then
     
         chk_topic
-        echo "${topic}" > "$DC_s/4.cfg"
-        act_topic
+        active_topic
+    
+    elif [ ${mode} = 14 ]; then
+    
+        chk_topic
+        active_topic
         
     else
         if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
             source "$DS/ifs/mods/topic/${topic}.sh"
             echo "${tpc}" > "$DC_s/4.cfg"
-            act_topic
+            active_topic
         fi
     fi
     

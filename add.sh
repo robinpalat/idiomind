@@ -11,11 +11,12 @@ wlist=$(grep -oP '(?<=wlist=\").*(?=\")' "$DC_s/1.cfg")
 trans=$(grep -oP '(?<=trans=\").*(?=\")' "$DC_s/1.cfg")
 ttrgt=$(grep -oP '(?<=ttrgt=\").*(?=\")' "$DC_s/1.cfg")
 dlaud=$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")
-[ -z "$ttrgt" ] && ttrgt='FALSE'
 [ -z "$trans" ] && trans='FALSE'
 export ttrgt trans lgt lgs
 
 new_topic() {
+    [ -z "$2" ] && mode=1 || mode=$2
+    [ -z "$3" ] && activ=1 || activ=$3
     listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
     ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
     
@@ -49,9 +50,12 @@ new_topic() {
     if [ -z "${name}" ]; then 
         return 1
     else
-        mkdir "$DM_tl/${name}"
+        if [ "$mode" = 14 ]; then
+            echo "${name}" > "${DM_tls}/repass/id.cfg"; mode=1
+        fi
+        mkdir -p "$DM_tl/${name}"
         check_list > "$DM_tl/.share/2.cfg"
-        "$DS/default/tpc.sh" "${name}" 1 1
+        "$DS/default/tpc.sh" "${name}" "$mode" "$activ"
         "$DS/mngr.sh" mkmn 0
     fi
 }

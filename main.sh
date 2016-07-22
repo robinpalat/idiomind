@@ -186,7 +186,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             sed -n 3p "${file}" \
             |sed 's/,"/\n/g;s/":/=/g;s/^\s*.//g' > "${DC_tlt}/id.cfg"
 
-            if [ ${cn} = 1  ]; then
+            if [ ${cn} = 1 ]; then
             sed -i "s/name=.*/name=\"${name}\"/g" "${DC_tlt}/id.cfg"; fi
             sed -i "s/dtei=.*/dtei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
             > "${DC_tlt}/download"
@@ -243,8 +243,8 @@ function topic() {
         dtec=$(grep -oP '(?<=dtec=\").*(?=\")' <<< "${inf}")
         dtei=$(grep -oP '(?<=dtei=\").*(?=\")' <<< "${inf}")
         repass=$(grep -oP '(?<=repass=\").*(?=\")' "${DC_tlt}/10.cfg")
-        export acheck=$(grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg")
-        [ -z $repass ] && repass=0
+        acheck=$(grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg")
+        [ -z $repass ] && repass=0; export repass acheck
         ( sleep 3 && "$DS/ifs/tls.sh" promp_topic_info ) &
         c=$((RANDOM%100000)); export KEY=$c
         export cnf1=$(mktemp "$DT/cnf1.XXXX")
