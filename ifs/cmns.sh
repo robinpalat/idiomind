@@ -52,7 +52,7 @@ function msg_5() {
     --window-icon=idiomind \
     --wrap --margins=5 \
     --center --on-top \
-    --width=450 --height=180 --borders=3 \
+    --width=450 --height=150 --borders=3 \
     --button="$3":1
 }
 

@@ -715,11 +715,11 @@ function dlg_text_info_3() {
     --title="$(gettext "Some notes could not be added to your list")" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind \
-    --image='dialog-information' \
+    --image="$DS/images/warning.png" \
     --wrap --margins=5 \
     --center --on-top \
-    --width=450 --height=180 --borders=3 \
-    "${3}" --button="$(gettext "OK")":1
+    --width=450 --height=150 --borders=3 \
+    "${3}" --button="$(gettext "Close")":1
 }
 
 function dlg_form_3() {

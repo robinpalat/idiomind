@@ -367,12 +367,13 @@ promp_topic_info() {
     fi
     if [ -e "${DC_tlt}/slng_err" ]; then
         msg_5 "$slng_err_lbl" \
-        "$(gettext "Language does not match")" dialog-information
+        "$(gettext "Language does not match")" \
+        "$(gettext "Close")" "$DS/images/warning.png"
         rm "${DC_tlt}/slng_err"
     elif [ -n "$active_trans" -a "$active_trans" != "$slng" ]; then
         msg_5 "$slng_err_lbl" \
         "$(gettext "Language does not match")" \
-        "$(gettext "OK")" dialog-information
+        "$(gettext "Close")" "$DS/images/warning.png"
     fi
     
 } >/dev/null 2>&1

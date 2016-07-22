@@ -813,7 +813,7 @@ function practices() {
 }
 
 function hardToRecall() {
-    local name
+    local name log
     img3='/usr/share/idiomind/images/3.png'
     if [ ! -f "${DM_tls}/6.cfg" ]; then
         msg "$(gettext "Do you want to create a topic for words harder to remember?")\n " \
@@ -827,15 +827,15 @@ function hardToRecall() {
     name=$(< "${DM_tls}/6.cfg")
     if [[ -d "${DM_tl}/${name}/.conf" ]]; then
         index="$(cat "${DM_tl}/${name}/.conf/1.cfg" "${DM_tl}/${name}/.conf/2.cfg")"
-        log23="$(cat ./log2 ./log3)"
-        
-        echo "${log23}" |while read -r trgt; do
+        log="$(cat ./log2 ./log3)"
+        echo "${log}" |while read -r trgt; do
             if ! grep -Fxq "${trgt}" "${index}"; then
                 item="$(grep -F -m 1 "trgt{${trgt}}" "${DC_tlt}/0.cfg")"
                 if [ -n "${item}" ]; then
                     echo "${item}" >> "${DM_tl}/${name}/.conf/0.cfg"
-                    echo "${trgt}" |tee "${DM_tl}/${name}/.conf/1.cfg" \
-                    "${DM_tl}/${name}/.conf/3.cfg" "${DM_tl}/${name}/.conf/practice/log3"
+                    echo "${trgt}" >> "${DM_tl}/${name}/.conf/1.cfg"
+                    echo "${trgt}" >> "${DM_tl}/${name}/.conf/3.cfg"
+                    echo "${trgt}" >> "${DM_tl}/${name}/.conf/practice/log3"
                     echo -e "$img3\n${trgt}\nFALSE" >> "${DM_tl}/${name}/.conf/5.cfg"
                 fi
             fi

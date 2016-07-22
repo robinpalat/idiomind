@@ -479,7 +479,7 @@ function process() {
         export DM_tlt="$DM_tl/${tpe}"
         export DC_tlt="$DM_tl/${tpe}/.conf"
         if [ ! -d "${DM_tlt}" ]; then
-            msg "$(gettext "An error occurred.")\n" dialog-warning "$(gettext "Information")"
+            msg "$(gettext "An error occurred.")\n" "$DS/images/warning.png" "$(gettext "Information")"
             cleanups "$DT_r" "$DT/n_s_pr" "$slt" & exit 1
         fi
         while read -r chkst; do
@@ -789,7 +789,7 @@ new_items() {
     
         if [ -z "${tpe}" ] && [[ ${3} != 3 ]]; then cleanups "$DT_r"
             msg "$(gettext "No topic is active")\n" \
-            dialog-warning "$(gettext "Information")" & exit 1; fi
+            "$DS/images/warning.png" "$(gettext "Information")" & exit 1; fi
 
         if [ -z "${trgt}" ]; then
             cleanups "$DT_r"; exit 1; fi
