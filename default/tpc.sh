@@ -17,7 +17,7 @@ chk_topic() {
         for i in {0..10}; do touch "${DC_tlt}/${i}.cfg"; done
         rm ./"7.cfg" ./"9.cfg"
         echo " " > "info"
-        echo ${mode} > "8.cfg"; cd /
+        echo ${mode} > ./"8.cfg"; cd /
     fi
     
     if [ ! -e "$DT/n_s_pr" ]; then

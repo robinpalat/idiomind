@@ -815,16 +815,15 @@ function practices() {
 function hardToRecall() {
     local name
     img3='/usr/share/idiomind/images/3.png'
-    if [ ! -d "${DM_tls}/repass" -o ! -f "${DM_tls}/repass/id.cfg" ]; then
-        msg "$(gettext "Do you want to create a topic for words harder to remember?")" \
+    if [ ! -f "${DM_tls}/6.cfg" ]; then
+        msg "$(gettext "Do you want to create a topic for words harder to remember?")\n " \
         dialog-question "$(gettext "Not ask again")" "$(gettext "Yes")"
         if [ $? = 0 ]; then
-            mkdir "${DM_tls}/repass"; touch "${DM_tls}/repass/id.cfg"
             "$DS/add.sh" new_topic 14 0 "$(gettext "Words harder to remember")"
         fi
     fi
-    name=$(< "${DM_tls}/repass/id.cfg")
-    if [[ -n "$name" ]]; then
+    name=$(< "${DM_tls}/6.cfg")
+    if [[ -d "${DM_tl}/${name}/.conf" ]]; then
         index="$(cat "${DM_tl}/${name}/.conf/1.cfg" "${DM_tl}/${name}/.conf/2.cfg")"
         log23="$(cat ./log2 ./log3)"
         

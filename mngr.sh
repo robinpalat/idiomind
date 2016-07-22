@@ -705,13 +705,6 @@ delete_topic() {
             fi
         done
         
-        if [ -e "${DM_tls}/repass/id.cfg" ]; then
-            chkname=$(< "${DM_tls}/repass/id.cfg")
-            if [[ "$chkname" = "${tpc}" ]]; then
-                rm "${DM_tls}/repass/id.cfg"
-            fi
-        fi
-        
         yad_kill "yad --list " "yad --text-info " \
         "yad --form " "yad --notebook "
         
@@ -768,13 +761,6 @@ rename_topic() {
             fi
         done
         
-        if [ -e "${DM_tls}/repass/id.cfg" ]; then
-            chkname=$(< "${DM_tls}/repass/id.cfg")
-            if [[ "$chkname" = "${tpc}" ]]; then
-                echo "${name}" > "${DM_tls}/repass/id.cfg"
-            fi
-        fi
-            
         check_list > "$DM_tl/.share/2.cfg"
         rm "$DM_tl/.share"/*.tmp
         cleanups "$DM_tl/${tpc}" "$DM/backup/${tpc}.bk" "$DT/rm_lk"

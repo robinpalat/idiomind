@@ -55,7 +55,7 @@ new_topic() {
         return 1
     else
         if [ "$mode" = 14 ]; then
-            echo "${name}" > "${DM_tls}/repass/id.cfg"; mode=1
+            echo "${name}" > "${DM_tls}/6.cfg"; mode=1
         fi
         mkdir -p "$DM_tl/${name}"
         check_list > "$DM_tl/.share/2.cfg"
