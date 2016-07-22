@@ -816,26 +816,31 @@ function hardToRecall() {
     local name
     img3='/usr/share/idiomind/images/3.png'
     if [ ! -d "${DM_tls}/repass" -o ! -f "${DM_tls}/repass/id.cfg" ]; then
-        mkdir "${DM_tls}/repass"; touch "${DM_tls}/repass/id.cfg"
+        msg "$(gettext "Do you want to create a topic for words harder to remember?")" \
+        dialog-question "$(gettext "Not ask again")" "$(gettext "Yes")"
+        if [ $? = 0 ]; then
+            mkdir "${DM_tls}/repass"; touch "${DM_tls}/repass/id.cfg"
+            "$DS/add.sh" new_topic 14 0 "$(gettext "Words harder to remember")"
+        fi
     fi
     name=$(< "${DM_tls}/repass/id.cfg")
-    [[ -z "$name" ]] && return 1
-
-    index="$(cat "${DM_tl}/${name}/.conf/1.cfg" "${DM_tl}/${name}/.conf/2.cfg")"
-    log23="$(cat ./log2 ./log3)"
-    
-    echo "${log23}" |while read -r trgt; do
-        if ! grep -Fxq "${trgt}" "${index}"; then
-            item="$(grep -F -m 1 "trgt{${trgt}}" "${DC_tlt}/0.cfg")"
-            if [ -n "${item}" ]; then
-                echo "${item}" >> "${DM_tl}/${name}/.conf/0.cfg"
-                echo "${trgt}" >> "${DM_tl}/${name}/.conf/1.cfg"
-                echo "${trgt}" >> "${DM_tl}/${name}/.conf/3.cfg"
-                echo "${trgt}" >> "${DM_tl}/${name}/.conf/practice/log3"
-                echo -e "$img3\n${trgt}\nFALSE" >> "${DM_tl}/${name}/.conf/5.cfg"
+    if [[ -n "$name" ]]; then
+        index="$(cat "${DM_tl}/${name}/.conf/1.cfg" "${DM_tl}/${name}/.conf/2.cfg")"
+        log23="$(cat ./log2 ./log3)"
+        
+        echo "${log23}" |while read -r trgt; do
+            if ! grep -Fxq "${trgt}" "${index}"; then
+                item="$(grep -F -m 1 "trgt{${trgt}}" "${DC_tlt}/0.cfg")"
+                if [ -n "${item}" ]; then
+                    echo "${item}" >> "${DM_tl}/${name}/.conf/0.cfg"
+                    echo "${trgt}" >> "${DM_tl}/${name}/.conf/1.cfg"
+                    echo "${trgt}" >> "${DM_tl}/${name}/.conf/3.cfg"
+                    echo "${trgt}" >> "${DM_tl}/${name}/.conf/practice/log3"
+                    echo -e "$img3\n${trgt}\nFALSE" >> "${DM_tl}/${name}/.conf/5.cfg"
+                fi
             fi
-        fi
-    done
+        done
+    fi
 }
 
 

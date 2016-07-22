@@ -26,8 +26,12 @@ new_topic() {
     fi
 
     source "$DS/ifs/mods/add/add.sh"
-    add="$(dlg_form_0)"
-    name="$(clean_3 "$(cut -d "|" -f1 <<< "${add}")")"
+    if [[ -n "$4" ]]; then
+        name="$4"
+    else
+        add="$(dlg_form_0)"
+        name="$(clean_3 "$(cut -d "|" -f1 <<< "${add}")")"
+    fi
 
     if [[ ${#name} -gt 55 ]]; then
         msg "$(gettext "Sorry, name too long.")\n" \

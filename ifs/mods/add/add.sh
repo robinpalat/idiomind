@@ -602,10 +602,9 @@ function dlg_form_0() {
     --name=Idiomind --class=Idiomind \
     --separator='|' \
     --window-icon=idiomind \
-    --buttons-layout=edge --skip-taskbar --center --on-top \
+    --skip-taskbar --center --on-top \
     --width=450 --height=80 --borders=0 \
     --field="$(gettext "Name")" "$1" \
-    --button="$(gettext "Examples")":0 \
     --button="$(gettext "OK")":0
 }
 
