@@ -353,7 +353,7 @@ a_check_updates() {
     exit 0
 } >/dev/null 2>&1
 
-promp_info() {
+promp_topic_info() {
     [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
@@ -367,12 +367,12 @@ promp_info() {
     fi
     if [ -e "${DC_tlt}/slng_err" ]; then
         msg_5 "$slng_err_lbl" \
-        "$(gettext "Language does not match")"
+        "$(gettext "Language does not match")" dialog-information
         rm "${DC_tlt}/slng_err"
     elif [ -n "$active_trans" -a "$active_trans" != "$slng" ]; then
         msg_5 "$slng_err_lbl" \
         "$(gettext "Language does not match")" \
-        "$(gettext "OK")"
+        "$(gettext "OK")" dialog-information
     fi
     
 } >/dev/null 2>&1
@@ -713,7 +713,7 @@ translate_to() {
         # check and notice
         active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
         if [[ "$active_trans" != "$slng" ]]; then
-echo -e "$(gettext "The native language of this topic does not match your current configuration. You may need to translate the topic. Click Edit tab on the main window, click Translate button, and then in \"Automatic Translation\" select from the list of languages:") <u>$slng</u>\n" > "${DC_tlt}/err"
+            touch "${DC_tlt}/slng_err"
         fi
     fi
 }
@@ -1007,8 +1007,8 @@ case "$1" in
     check_updates ;;
     a_check_updates)
     a_check_updates ;;
-    promp_info)
-    promp_info "$@" ;;
+    promp_topic_info)
+    promp_topic_info "$@" ;;
     set_image)
     set_image "$@" ;;
     first_run)

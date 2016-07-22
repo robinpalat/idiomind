@@ -213,7 +213,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             slngtopic="$slng"; slng="$slngcurrent"
             echo -e "$tlng\n$slng" > "$DC_s/6.cfg"
             if [[ "$slngtopic" != "$slng" ]]; then
-                touch "${DC_tlt}/err"
+                touch "${DC_tlt}/slng_err"
             fi
             echo 1 > "${DC_tlt}/8.cfg"
             echo "${name}" >> "$DM_tl/.share/3.cfg"
@@ -245,7 +245,7 @@ function topic() {
         repass=$(grep -oP '(?<=repass=\").*(?=\")' "${DC_tlt}/10.cfg")
         export acheck=$(grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg")
         [ -z $repass ] && repass=0
-        ( sleep 3 && "$DS/ifs/tls.sh" promp_info ) &
+        ( sleep 3 && "$DS/ifs/tls.sh" promp_topic_info ) &
         c=$((RANDOM%100000)); export KEY=$c
         export cnf1=$(mktemp "$DT/cnf1.XXXX")
         export cnf3=$(mktemp "$DT/cnf3.XXXX")

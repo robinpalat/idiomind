@@ -715,6 +715,7 @@ function dlg_text_info_3() {
     --title="$(gettext "Some notes could not be added to your list")" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind \
+    --image='dialog-information' \
     --wrap --margins=5 \
     --center --on-top \
     --width=450 --height=180 --borders=3 \

@@ -47,6 +47,7 @@ function msg_4() {
 function msg_5() {
     echo -e "${1}" | yad --text-info \
     --title="$2" \
+    --image="$4" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind \
     --wrap --margins=5 \
