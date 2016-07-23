@@ -611,6 +611,8 @@ translate_to() {
                 msg_2 "$(gettext "There is a copy of this translation. Do you want to restore the copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
                 if [ $? = 0 ]; then
                     mv -f "$DC_tlt/translations/$autom_trans.bk" "${DC_tlt}/0.cfg"
+                    cleanups "$DT/translation" "$DT/transl_batch_lk" \
+                    "$DT/translate_to"
                     echo "$autom_trans" > "${DC_tlt}/translations/active"
                     exit 1
                 else
@@ -622,6 +624,8 @@ translate_to() {
                 if [ $? = 0 ]; then
                     cp -f "$DC_tlt/translations/$autom_trans.tra" "${DC_tlt}/0.cfg"
                     echo "$autom_trans" > "${DC_tlt}/translations/active"
+                    cleanups "$DT/translation" "$DT/transl_batch_lk" \
+                    "$DT/translate_to"
                     exit 1
                 fi
             fi

@@ -106,10 +106,9 @@ play_list() {
     if [ "$(< $DT/playlck)" = 0 ]; then
         btn2="--center"
         title="$(gettext "Play")"
-        [ ${mode} -gt 1 -a -n "${tpc}" ] \
-        && title="$(gettext "Play") (${tpc})"
+        [ ${mode} -ge 1 -a -n "${tpc}" ] && title="${tpc}"
     else
-        tpp="$(sed -n 1p "$DT/playlck")"
+        tpp="$(gettext "Playing:") $(sed -n 1p "$DT/playlck") ..."
         title="${tpp}"
         btn2="--button=$(gettext "Stop"):2"
     fi
@@ -153,7 +152,7 @@ play_list() {
         for item in "${psets[@]:0:5}"; do
             val=$(sed -n $((n+1))p <<< "${tab1}" |cut -d "|" -f2)
             [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
-            [ "$val" = TRUE ] && count=$((count+$(wc -l |sed '/^$/d' <<<"${!in[${n}]}")))
+            [ "$val" = TRUE ] && count=$((count+$(wc -l |sed '/^$/d' <<< "${!in[${n}]}")))
             let n++
         done
         for ad in "$DS/ifs/mods/play"/*; do

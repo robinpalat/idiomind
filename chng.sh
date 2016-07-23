@@ -35,7 +35,7 @@ if [[ ${1} = 0 ]]; then
                 done )
             fi
         else
-            echo "$(gettext "Playing: ") $trgt" > "$DT/playlck"
+            echo -e "${trgt}" > "$DT/playlck"
             [ ${mime} = 1 ] && notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000 &
             "$DS/play.sh" play_file "${file}" "${trgt}"
         fi
@@ -66,33 +66,33 @@ if [[ ${1} = 0 ]]; then
     }
 
     if [ ${W} = TRUE -a ${S} = TRUE ]; then
-        echo "${tpc}" > "$DT/playlck"
+        echo -e "${tpc}" > "$DT/playlck"
         while read item; do _stop=1; getitem; _play
         done < "${DC_tlt}/1.cfg"
     fi
     if [ ${W} = TRUE -a ${S} = FALSE ]; then
-        echo "${tpc}" > "$DT/playlck"
+        echo -e "${tpc}" > "$DT/playlck"
         while read item; do _stop=1; getitem; _play
         done < <(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg")
     fi
     if [ ${W} = FALSE -a ${S} = TRUE ]; then
-        echo "${tpc}" > "$DT/playlck"
+        echo -e "${tpc}" > "$DT/playlck"
         while read item; do _stop=1; getitem; _play
         done < <(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg")
     fi
     if [ ${M} = TRUE ]; then
-        echo "${tpc}" > "$DT/playlck"
+        echo -e "${tpc}" > "$DT/playlck"
         while read item; do _stop=1; getitem; _play
         done < "${DC_tlt}/6.cfg"
     fi
     if [ ${L} = TRUE ]; then
-        echo "${tpc}" > "$DT/playlck"
+        echo -e "${tpc}" > "$DT/playlck"
         while read item; do _stop=1; getitem; _play
         done < <(grep -Fxvf "${DC_tlt}/practice/log3" \
         "${DC_tlt}/practice/log2" |sort |uniq)
     fi
     if [ ${D} = TRUE ]; then
-        echo "${tpc}" > "$DT/playlck"
+        echo -e "${tpc}" > "$DT/playlck"
         while read item; do _stop=1; getitem; _play
         done < <(sort |uniq "${DC_tlt}/practice/log3")
     fi
