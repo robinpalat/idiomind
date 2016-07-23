@@ -464,7 +464,7 @@ function practice_e() {
         else
             hint="$(echo "$@")"
         fi
-        text="<span font_desc='Serif Bold 14'>$hint</span>\n"
+        text="<span font_desc='Serif Bold 12'>$hint</span>\n"
         
         entry=$(>/dev/null | yad --form --title=" " \
         --text="${text}" \
@@ -474,7 +474,7 @@ function practice_e() {
         --buttons-layout=end --skip-taskbar \
         --undecorated --center --on-top \
         --align=center --image-on-top \
-        --width=550 --height=240 --borders=8 \
+        --width=550 --height=220 --borders=5 \
         --field="" "" \
         --button="$(gettext "Exit")":1 \
         --button="!$DS/images/listen.png":"$cmd_play" \
@@ -490,7 +490,7 @@ function practice_e() {
         --window-icon=idiomind \
         --skip-taskbar --wrap --image-on-top --center --on-top \
         --undecorated --buttons-layout=end \
-        --width=530 --height=230 --borders=14 \
+        --width=530 --height=220 --borders=14 \
         --field="":lbl "" \
         --field="<span font_desc='Free Sans 9'>$OK\n\n$prc $hits</span>":lbl \
         --button="    $(gettext "Continue")    ":2

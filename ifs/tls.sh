@@ -488,7 +488,7 @@ function transl_batch() {
     lns=$(cat "${DC_tlt}/0.cfg" |wc -l)
     if [ -z "$active_trans" ]; then active_trans="$slng"; fi
 
-echo -e "yad --form --title=\"$(gettext "$tlng") $(gettext "to") $active_trans\" \\
+echo -e "yad --form --title=\"$(gettext "$tlng") → $active_trans\" \\
 --class=Idiomind --name=Idiomind --window-icon=idiomind \\
 --width=590 --height=350 --borders=10 \\
 --scroll --columns=1 --center --separator='\n' \\
