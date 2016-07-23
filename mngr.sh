@@ -180,7 +180,7 @@ edit_item() {
     if [[ "${srce}" = "${temp}" ]]; then
         if [ -e "$DT/${trgt}.edit" ]; then
             msg_4 "$(gettext "Wait till the process is completed.")\n" \
-            dialog-information "$(gettext "OK")" "$(gettext "Stop")" \
+            "$DS/images/warning.png" "$(gettext "OK")" "$(gettext "Stop")" \
             "$(gettext "Wait")" "$DT/${trgt}.edit"
             if [ $? = 1 ]; then
                 srce=""; transl_mark=1; rm -f "$DT/${trgt}.edit"
@@ -385,7 +385,7 @@ edit_list_cmds() {
     direc="$DM_tl/${2}/.conf"
     if [ -e "$DT/transl_batch_out" ]; then
         msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
-        dialog-warning "$(gettext "OK")" "$(gettext "Stop")" \
+        "$DS/images/warning.png" "$(gettext "OK")" "$(gettext "Stop")" \
         "$(gettext "Wait")" "$DT/transl_batch_out"
         ret=$?
         if [ $ret -eq 1 ]; then 
@@ -607,12 +607,12 @@ edit_list_dlg() {
     if [ -e "$DT/items_to_add" -o -e "$DT/el_lk" ]; then
         if [ -e "$DT/items_to_add" ]; then
             msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
-            dialog-warning "$(gettext "OK")" "$(gettext "Stop")" \
+            "$DS/images/warning.png" "$(gettext "OK")" "$(gettext "Stop")" \
             "$(gettext "Wait")" "$DT/items_to_add"
             ret=$?
         elif [ -e "$DT/el_lk" ]; then
             msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
-            dialog-warning "$(gettext "OK")" "$(gettext "Stop")" \
+            "$DS/images/warning.png" "$(gettext "OK")" "$(gettext "Stop")" \
             "$(gettext "Wait")" "$DT/el_lk"
             ret=$?
         fi

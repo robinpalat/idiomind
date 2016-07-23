@@ -37,23 +37,12 @@ function msg_4() {
 	sleep 1; echo "# "; [ ! -e "${6}" ] && break
 	done )  | yad --progress --title="${title}" --text="${1}" \
     --name=Idiomind --class=Idiomind \
+    --image="$2" \
     --pulsate --auto-close --always-print-result \
     --window-icon=idiomind \
     --buttons-layout=edge --image-on-top --on-top --sticky --center \
-    --width=380 --height=110 --borders=5 \
+    --width=380 --height=100 --borders=3 \
     --button="${4}":1 --button="${3}":0
-}
-
-function msg_5() {
-    echo -e "${1}" | yad --text-info \
-    --title="$2" \
-    --image="$4" \
-    --name=Idiomind --class=Idiomind \
-    --window-icon=idiomind \
-    --wrap --margins=5 \
-    --center --on-top \
-    --width=450 --height=150 --borders=3 \
-    --button="$3":1
 }
 
 function progress() {
@@ -75,8 +64,9 @@ function set_name_file() {
 }
 
 function include() {
-  for f in "${1}"/*; do source "${f}"; done
-  unset f
+    if [[ -d "${1}" ]]; then
+        local f; for f in "${1}"/*; do source "${f}"; done
+    fi
 }
 
 function yad_kill() {

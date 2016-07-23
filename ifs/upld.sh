@@ -76,7 +76,7 @@ function dwld() {
 function upld() {
     if [ -d "$DT/upload" ]; then
         msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
-        dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" \
+        "$DS/images/warning.png" "$(gettext "Cancel")" "$(gettext "Stop")" \
         "$(gettext "Uploading")" "$DT/upload"
         ret=$?
         if [ $ret -eq 1 ]; then
@@ -87,7 +87,7 @@ function upld() {
     fi
     if [ -d "$DT/download" ]; then
         msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
-        dialog-warning "$(gettext "Cancel")" "$(gettext "Stop")" \
+        "$DS/images/warning.png" "$(gettext "Cancel")" "$(gettext "Stop")" \
         "$(gettext "Downloading")" "$DT/download"
         ret=$?
         if [ $ret -eq 1 ]; then
@@ -269,7 +269,7 @@ function upld() {
         sv_data
         if [ -d "$DT/export" ]; then
             msg_4 "$(gettext "Wait until it finishes a previous process").\n" \
-            dialog-information "$(gettext "Cancel")" "$(gettext "Stop")" \
+            "$DS/images/warning.png" "$(gettext "Cancel")" "$(gettext "Stop")" \
             "$(gettext "Wait")" "$DT/export"
             ret=$?
             if [ $ret -eq 1 ]; then

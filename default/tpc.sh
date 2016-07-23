@@ -10,7 +10,7 @@ DC_tlt="$DM_tl/${topic}/.conf"
 DM_tlt="$DM_tl/${topic}"
 export mode
 
-chk_topic() {
+chek_topic() {
     if [ ! -d "${DC_tlt}" -o ! -e "${DC_tlt}/id.cfg" ]; then
         mkdir -p "${DM_tlt}/images"
         mkdir "${DC_tlt}"; cd "${DC_tlt}"
@@ -26,7 +26,6 @@ chk_topic() {
 }
 
 active_topic() {
-
     if [[ ${activ} = 0 ]]; then
         :
         
@@ -44,7 +43,7 @@ if [ -d "${DM_tlt}" ]; then
 
     if ((mode>=1 && mode<=10)); then
     
-        chk_topic
+        chek_topic
         if [ ! -e "${DC_tlt}/feeds" ]; then
             echo "${topic}" > "$DT/tpe"
         fi
@@ -83,7 +82,7 @@ if [ -d "${DM_tlt}" ]; then
                     fi
                 fi
             fi
-            chk_topic
+            chek_topic
             "$DS/mngr.sh" mkmn 1
             ( sleep 10 && "$DS/ifs/tls.sh" backup "${topic}" ) &
             
@@ -95,12 +94,12 @@ if [ -d "${DM_tlt}" ]; then
 
     elif [ ${mode} = 13 ]; then
     
-        chk_topic
+        chek_topic
         active_topic
     
     elif [ ${mode} = 14 ]; then
     
-        chk_topic
+        chek_topic
         active_topic
         
     else

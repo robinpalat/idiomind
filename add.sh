@@ -17,6 +17,7 @@ export ttrgt trans lgt lgs
 new_topic() {
     [ -z "$2" ] && mode=1 || mode=$2
     [ -z "$3" ] && activ=1 || activ=$3
+    [ -n "$4" ] && name="${4}"
     listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
     ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
     
@@ -26,9 +27,7 @@ new_topic() {
     fi
 
     source "$DS/ifs/mods/add/add.sh"
-    if [[ -n "$4" ]]; then
-        name="$4"
-    else
+    if [[ -z "$name" ]]; then
         add="$(dlg_form_0)"
         name="$(clean_3 "$(cut -d "|" -f1 <<< "${add}")")"
     fi
@@ -54,9 +53,6 @@ new_topic() {
     if [ -z "${name}" ]; then 
         return 1
     else
-        if [ "$mode" = 14 ]; then
-            echo "${name}" > "${DM_tls}/6.cfg"; mode=1
-        fi
         mkdir -p "$DM_tl/${name}"
         check_list > "$DM_tl/.share/2.cfg"
         "$DS/default/tpc.sh" "${name}" "$mode" "$activ"

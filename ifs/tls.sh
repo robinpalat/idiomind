@@ -358,22 +358,23 @@ promp_topic_info() {
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
-    slng_err_lbl="$(gettext "The native language of this topic does not match your current configuration. You may need to translate the topic.\nClick \"Edit\" tab on the main window, click \"Translate\" button, and then in \"Automatic Translation\" select from the list of languages:") \"$slng\""
+    slng_err_lbl="$(gettext "The native language of this topic does not match your current configuration. You may need to translate the topic.\nClick \"Edit\" tab on the main window, click \"Translate\" button, and then in \"Automatic Translation\" select from the list of languages:") <b>\"$slng\"</b>\n"
     
     if [ -e "${DC_tlt}/note_err" ]; then
         include "$DS/ifs/mods/add"
         dlg_text_info_3 "$(cat "${DC_tlt}/note_err")"
-        rm "${DC_tlt}/note_err"
+        cleanups "${DC_tlt}/note_err"
     fi
     if [ -e "${DC_tlt}/slng_err" ]; then
-        msg_5 "$slng_err_lbl" \
+        msg "$slng_err_lbl" "$DS/images/warning.png" \
         "$(gettext "Language does not match")" \
-        "$(gettext "Close")" "$DS/images/warning.png"
-        rm "${DC_tlt}/slng_err"
+        "$(gettext "Close")"
+        cleanups "${DC_tlt}/slng_err"
+        
     elif [ -n "$active_trans" -a "$active_trans" != "$slng" ]; then
-        msg_5 "$slng_err_lbl" \
+        msg "$slng_err_lbl" "$DS/images/warning.png" \
         "$(gettext "Language does not match")" \
-        "$(gettext "Close")" "$DS/images/warning.png"
+        "$(gettext "Close")"
     fi
     
 } >/dev/null 2>&1
@@ -428,7 +429,7 @@ set_image() {
 
     if [ -e "$DT/$trgt.img" ]; then
         msg_4 "$(gettext "Attempting download image")...\n" \
-        dialog-warning "$(gettext "OK")" "$(gettext "Stop")" \
+        "$DS/images/warning.png" "$(gettext "OK")" "$(gettext "Stop")" \
         "$(gettext "Wait")" "$DT/$trgt.img"
         if [ $? -eq 1 ]; then rm -f "$DT/$trgt".img; else return 1 ; fi
     fi
@@ -467,22 +468,25 @@ function transl_batch() {
     source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
+    if [ -e "$DT/transl_batch_lk" -o -e "$DT/translate_to" ]; then
+        msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
+        "$DS/images/warning.png" "$(gettext "OK")" "$(gettext "Stop")" \
+        "$(gettext "Wait")" "$DT/translation"
+        ret=$?
+        if [ $ret -eq 1 ]; then 
+            cleanups "$DT/translation" \
+            "$DT/transl_batch_lk" \
+            "$DT/translate_to" "$DT/translation"
+        else
+            exit 1
+        fi
+    else
+        > "$DT/transl_batch_lk"
+    fi
     touch "${DC_tlt}/translations/active"
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
     lns=$(cat "${DC_tlt}/0.cfg" |wc -l)
     if [ -z "$active_trans" ]; then active_trans="$slng"; fi
-    
-    if [ -e "$DT/translation" ]; then
-        msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
-        dialog-warning "$(gettext "OK")" "$(gettext "Stop")" \
-        "$(gettext "Wait")" "$DT/translation"
-        ret=$?
-        if [ $ret -eq 1 ]; then 
-            cleanups "$DT/translation"
-        else
-            exit 1
-        fi
-    fi
 
 echo -e "yad --form --title=\"$(gettext "$tlng") $(gettext "to") $active_trans\" \\
 --class=Idiomind --name=Idiomind --window-icon=idiomind \\
@@ -504,20 +508,8 @@ echo -e "yad --form --title=\"$(gettext "$tlng") $(gettext "to") $active_trans\"
     sed -i 's/\*/\\\"/g' "$DT/dlg"
     
     dlg="$(cat "$DT/dlg")"; eval "${dlg}" > "$DT/transl_batch_out"; ret="$?"
-    if [ $ret = 0 ]; then
     
-        if [ -e "$DT/translation" ]; then
-            msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
-            dialog-warning "$(gettext "OK")" "$(gettext "Stop")" \
-            "$(gettext "Wait")" "$DT/translation"
-            ret=$?
-            if [ $ret -eq 1 ]; then 
-                cleanups "$DT/translation"
-            else
-                exit 1
-            fi
-        fi
-
+    if [ $ret = 0 ]; then
         cp -f "${DC_tlt}/0.cfg" "$DT/0.cfg"
         while read -r item_; do
             item="$(sed 's/}/}\n/g' <<< "${item_}")"
@@ -534,12 +526,14 @@ echo -e "yad --form --title=\"$(gettext "$tlng") $(gettext "to") $active_trans\"
     fi
     
     mv -f "$DT/0.cfg" "${DC_tlt}/0.cfg"
-    cleanups "$DT/dlg" "$DT/transl_batch_out"
+    cleanups "$DT/dlg" "$DT/transl_batch_out" \
+    "$DT/transl_batch_lk"
 } >/dev/null 2>&1
 
 translate_to() {
     source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/cmns.sh"
+    > "$DT/translate_to"
     source "$DS/default/sets.cfg"
     [ ! -d "$DC_tlt/translations" ] && mkdir "$DC_tlt/translations"
     list_transl_saved="$(cd "$DC_tlt/translations"; ls *.tra \
@@ -676,7 +670,8 @@ translate_to() {
             
             if [ -z "$(< "$DT/index.trad")" -o -z "$(< "$DT/words.trad")" ]; then
                 msg "$(gettext "A problem has occurred, try again later.")\n" 'error'
-                cleanups "$DT/words.trad_tmp" "$DT/index.trad_tmp" "$DT/mix_words.trad_tmp"
+                cleanups "$DT/words.trad_tmp" "$DT/index.trad_tmp" \
+                "$DT/mix_words.trad_tmp" "$DT/translate_to" "$DT/translation"
                 exit 1
             fi
             
@@ -717,6 +712,7 @@ translate_to() {
             touch "${DC_tlt}/slng_err"
         fi
     fi
+    cleanups "$DT/translate_to"
 }
 
 menu_addons() {
