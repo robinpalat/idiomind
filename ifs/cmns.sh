@@ -37,12 +37,12 @@ function msg_4() {
 	sleep 1; echo "# "; [ ! -e "${6}" ] && break
 	done )  | yad --progress --title="${title}" --text="${1}" \
     --name=Idiomind --class=Idiomind \
-    --image="$2" \
     --pulsate --auto-close --always-print-result \
     --window-icon=idiomind \
     --buttons-layout=edge --image-on-top --on-top --sticky --center \
     --width=380 --height=100 --borders=3 \
     --button="${4}":1 --button="${3}":0
+    #--image="$2"
 }
 
 function progress() {

@@ -488,8 +488,9 @@ function transl_batch() {
     lns=$(cat "${DC_tlt}/0.cfg" |wc -l)
     if [ -z "$active_trans" ]; then active_trans="$slng"; fi
 
-echo -e "yad --form --title=\"$(gettext "$tlng") → $active_trans\" \\
+echo -e "yad --form --title=\"$(gettext "$tlng") | $active_trans\" \\
 --class=Idiomind --name=Idiomind --window-icon=idiomind \\
+--selectable-labels \\
 --width=590 --height=350 --borders=10 \\
 --scroll --columns=1 --center --separator='\n' \\
 --button=$(gettext \"Cancel\"):1 \\
@@ -501,7 +502,7 @@ echo -e "yad --form --title=\"$(gettext "$tlng") → $active_trans\" \\
         unset trgt srce; get_item "${_item}"
         trgt="$(tr -s '"' '*' <<< "${trgt}")"
         srce="$(tr -s '"' '*' <<< "${srce}")"
-        echo -e "--field=\"\":RO \"$trgt\" --field=\"\" \"$srce\" --field=\" \":lbl \"\" \\" >> "$DT/dlg"
+        echo -e "--field=\"$trgt\":lbl \"\" --field=\"\" \"$srce\" --field=\" \":lbl \"\" \\" >> "$DT/dlg"
         let n++
         echo $((100*n/lns-1))
     done < "${DC_tlt}/0.cfg") |progress "progress"

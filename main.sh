@@ -252,7 +252,7 @@ function topic() {
         export cnf4=$(mktemp "$DT/cnf4.XXXX")
         if [ ! -z "$dtei" ]; then 
             export infolbl="$(gettext "Review ")$repass. $(gettext "Installed on") $dtei\n$(gettext "created by") $autr"
-            [ -e "${DC_tlt}/download" ] && export plusinfo="- $(gettext "Downloadable content available, click Share button")."
+            [ -e "${DC_tlt}/download" ] && export plusinfo="- $(gettext "Downloadable content available")."
         elif [ ! -z "$dtec" ]; then 
             export infolbl="$(gettext "Review ")$repass. $(gettext "Created on") $dtec"
         fi

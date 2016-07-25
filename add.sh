@@ -71,7 +71,7 @@ function new_item() {
         msg "$(gettext "You need to fill text fields.")\n" \
         dialog-information "$(gettext "Information")" & exit 1
     fi
-    if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
+    if grep -o -E 'ja|zh-cn|ru' <<< "${lgt}"; then
         srce=$(translate "${trgt}" auto $lgs)
         [ -z "${srce}" ] && internet
         if [ $(wc -w <<< "${srce}") = 1 ]; then
@@ -500,7 +500,8 @@ function process() {
                 trgt="$(translate "${trgt}" auto $lgt)"
                 export trgt="$(clean_2 "${trgt}")"
             fi
-            srce="$(translate "${trgt}" $lgt $lgs)"; [ -z "${srce}" ] && internet
+            srce="$(translate "${trgt}" $lgt $lgs)"
+            [ -z "${srce}" ] && internet
             export srce="$(clean_2 "${srce}")"
             export cdid="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "" "")"
 
@@ -667,7 +668,8 @@ fetch_content() {
 
    while read -r _feed; do
         if [ -n "$_feed" ]; then
-            feed_items="$(xsltproc - "$_feed" <<< "${tmplitem}" 2> /dev/null)"; [ -z "${feed_items}" ] && internet
+            feed_items="$(xsltproc - "$_feed" <<< "${tmplitem}" 2> /dev/null)"
+            [ -z "${feed_items}" ] && internet
             feed_items="$(echo "$feed_items" |tr '\n' '*' |tr -s '[:space:]' |sed 's/EOL/\n/g' |head -n2)"
             feed_items="$(echo "$feed_items" |sed '/^$/d')"
             while read -r item; do
@@ -696,10 +698,6 @@ fetch_content() {
 } >/dev/null 2>&1
 
 new_items() {
-    if [ ! -d "$DT" ]; then
-        ( "$DS/ifs/tls.sh" a_check_updates ) &
-        idiomind -s; sleep 0.5
-    fi
     if [ ! -e "$DT/tpe" ]; then
         tpc="$(sed -n 1p "$DC_s/4.cfg")"
         if ! ls -1a "$DS/addons/" |grep -Fxo "${tpc}" >/dev/null 2>&1; then
@@ -728,14 +726,14 @@ new_items() {
     [ -n "$tpcs" ] && e='!'
 
     if [[ ${trans} = TRUE ]]; then
-        lzgpr="$(dlg_form_1)"; ret=$?
-        trgt=$(cut -d "|" -f1 <<< "${lzgpr}")
-        tpe=$(cut -d "|" -f2 <<< "${lzgpr}")
+        lzgplr="$(dlg_form_1)"; ret=$?
+        trgt=$(cut -d "|" -f1 <<< "${lzgplr}")
+        tpe=$(cut -d "|" -f2 <<< "${lzgplr}")
     else 
-        lzgpr="$(dlg_form_2)"; ret=$?
-        trgt=$(cut -d "|" -f1 <<< "${lzgpr}")
-        srce=$(cut -d "|" -f2 <<< "${lzgpr}")
-        tpe=$(cut -d "|" -f3 <<< "${lzgpr}")
+        lzgplr="$(dlg_form_2)"; ret=$?
+        trgt=$(cut -d "|" -f1 <<< "${lzgplr}")
+        srce=$(cut -d "|" -f2 <<< "${lzgplr}")
+        tpe=$(cut -d "|" -f3 <<< "${lzgplr}")
     fi
     if [ $ret -eq 3 ]; then
     
