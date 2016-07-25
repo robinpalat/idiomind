@@ -22,7 +22,6 @@ function dicts() {
         fi
         return 0
     }
-
     if [ ! -d "$DC_d" -o ! -d "$DC_a/dict/disables" ]; then
         mkdir -p "$DC_d"; mkdir -p "$DC_a/dict/disables"
         echo "$tlng" > "$DC_a/dict/.dict"

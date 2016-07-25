@@ -273,14 +273,16 @@ edit_item() {
                 
                     DT_r=$(mktemp -d "$DT/XXXX")
                     > "$DT/${trgt_mod}.edit"
-                    internet
+                    
                     if [ ${type_mod} = 1 ]; then
                         srce_mod="$(clean_9 "$(translate "${trgt_mod}" $lgt $lgs)")"
+                        [ -z "${srce_mod}" ] && internet
                         audio="${trgt_mod,,}"
                         [[ ${dlaud} = TRUE ]] && tts_word "${audio}" "$DT_r"
                         srce="$temp"
                     elif [ ${type_mod} = 2 ]; then
                         srce_mod="$(clean_2 "$(translate "${trgt_mod}" $lgt $lgs)")"
+                        [ -z "${srce_mod}" ] && internet
                         db="$DS/default/dicts/$lgt"
                         export DT_r; sentence_p 2
                         [[ ${dlaud} = TRUE ]] && fetch_audio "${aw}" "${bw}"
@@ -470,7 +472,6 @@ edit_list_cmds() {
             export DT_r=$(mktemp -d "$DT/XXXX")
             temp="...."
             
-            #internet
             while read -r trgt; do
                 pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${direc}/0.cfg" \
                 |sed -n 's/^\([0-9]*\)[:].*/\1/p')
@@ -482,11 +483,13 @@ edit_list_cmds() {
                 
                 if [ ${type} = 1 ]; then
                     srce_mod="$(clean_9 "$(translate "${trgt}" $lgt $lgs)")"
+                    [ -z "${srce_mod}" ] && internet
                     audio="${trgt,,}"
                     [[ ${dlaud} = TRUE ]] && tts_word "${audio}" "$DT_r"
                 
                 elif [ ${type} = 2 ]; then
                     srce_mod="$(clean_2 "$(translate "${trgt}" $lgt $lgs)")"
+                    [ -z "${srce_mod}" ] && internet
                     db="$DS/default/dicts/$lgt"
                     export DT_r; sentence_p 2
                     [[ ${dlaud} = TRUE ]] && fetch_audio "${aw}" "${bw}"

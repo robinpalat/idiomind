@@ -25,19 +25,16 @@ new_topic() {
         msg "$(gettext "Maximum number of topics reached.")" \
         dialog-information "$(gettext "Information")" & exit 1
     fi
-
     source "$DS/ifs/mods/add/add.sh"
     if [[ -z "$name" ]]; then
         add="$(dlg_form_0)"
         name="$(clean_3 "$(cut -d "|" -f1 <<< "${add}")")"
     fi
-
     if [[ ${#name} -gt 55 ]]; then
         msg "$(gettext "Sorry, name too long.")\n" \
         dialog-information "$(gettext "Information")"
         "$DS/add.sh" new_topic "${name}" & return 1
     fi
-    
     if grep -Fxo "${name}" < <(ls "$DS/addons/"); then name="${name} (1)"; fi
     chck=$(grep -Fxo "${name}" <<< "${listt}" |wc -l)
     
@@ -49,7 +46,6 @@ new_topic() {
     else
         name="${name}"
     fi
-    
     if [ -z "${name}" ]; then 
         return 1
     else
@@ -123,11 +119,9 @@ function new_sentence() {
         cleanups "$DT_r"; exit 1
     else
         index 2
-        
         if [ -e "$DT_r/img.jpg" ]; then
             set_image_2 "$DT_r/img.jpg" "${DM_tlt}/images/${trgt,,}.jpg"
         fi
-
         if [ ! -e "$DT_r/audtm.mp3" ]; then
             if [[ ${dlaud} = TRUE ]]; then
                 tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$cdid.mp3"
@@ -387,15 +381,12 @@ function process() {
             if [[ ${#conten} = 1 ]]; then
                 cleanups "$DT_r" "$DT/n_s_pr"; return 1; 
             fi
-
             if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
                 echo "${conten}" |clean_7 > "$DT_r/xxlines"; epa=0
             else
                 echo "${conten}" |clean_8 > "$DT_r/xxlines"; epa=1
             fi
-            
         fi
-        
         [ -e "$DT_r/xlines" ] && rm -f "$DT_r/xlines"
         if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
             lenght() {
@@ -414,7 +405,6 @@ function process() {
                 fi
             }
         fi
-        
         if [ ${#@} -lt 4 ]; then
             while read l; do
                 if [ $(wc -c <<< "${l}") -gt 140 ]; then
@@ -466,7 +456,6 @@ function process() {
             else
                 unset trgt; process "$(< "$DT_r/xlines")"
             fi
-    
     elif [ $ret -eq 0 ]; then
         unset link
         touch "$DT_r/select_lines"
@@ -502,12 +491,8 @@ function process() {
             cleanups "$DT_r" "$DT/n_s_pr" "$slt" & exit 1
         fi
         
-        internet
-
         if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then c=c; else c=w; fi
-
         lns="$(cat "$DT_r/select_lines" "$DT_r/wrds" |sed '/^$/d' |wc -l)"
-        
         n=1
         while read -r trgt; do
             export trgt="$(clean_2 "${trgt}")"
@@ -629,7 +614,6 @@ function process() {
         if [[ ${wadds} = 1 ]]; then
             W=" $(gettext "word")"
         fi
-        
         a=$(sed '/^$/d' "$DT_r/adds" |wc -l)
         b=$(sed '/^$/d' "$DT_r/slog" |wc -l)
         sadds=" $((a-b))"
@@ -660,7 +644,6 @@ fetch_content() {
     else
         > "$DT/updating_feeds"
     fi
-    internet
     feeds="${DC_tlt}/feeds"
     source "$DS/ifs/mods/add/add.sh"
     tmplitem="<?xml version='1.0' encoding='UTF-8'?>
@@ -684,7 +667,7 @@ fetch_content() {
 
    while read -r _feed; do
         if [ -n "$_feed" ]; then
-            feed_items="$(xsltproc - "$_feed" <<< "${tmplitem}" 2> /dev/null)"
+            feed_items="$(xsltproc - "$_feed" <<< "${tmplitem}" 2> /dev/null)"; [ -z "${feed_items}" ] && internet
             feed_items="$(echo "$feed_items" |tr '\n' '*' |tr -s '[:space:]' |sed 's/EOL/\n/g' |head -n2)"
             feed_items="$(echo "$feed_items" |sed '/^$/d')"
             while read -r item; do
@@ -724,7 +707,6 @@ new_items() {
         fi
         tpe="$(sed -n 1p "$DT/tpe")"
     fi
-    
     if [ -e "$DC_s/topics_first_run" ]; then
         "$DS/ifs/tls.sh" first_run topics & exit 1
     fi
@@ -755,7 +737,6 @@ new_items() {
         srce=$(cut -d "|" -f2 <<< "${lzgpr}")
         tpe=$(cut -d "|" -f3 <<< "${lzgpr}")
     fi
-
     if [ $ret -eq 3 ]; then
     
         [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
@@ -779,7 +760,6 @@ new_items() {
         else
             echo "${tpe}" > "$DT/tpe"
         fi
-        
         if [ "$3" = 2 ]; then
             [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
         else 
