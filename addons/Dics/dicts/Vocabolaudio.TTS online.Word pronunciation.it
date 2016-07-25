@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ "$1" = dlgcnfg ]]; then
+if [[ "$1" = _dlg_ ]]; then
     source "$DS/ifs/cmns.sh"
     msg "$(gettext "Languages"): Italian\n$(gettext "Does not need configuration")\n" dialog-information "$4"
 else

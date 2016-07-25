@@ -77,6 +77,7 @@ function new_item() {
     fi
     if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
         srce=$(translate "${trgt}" auto $lgs)
+        [ -z "${srce}" ] && internet
         if [ $(wc -w <<< "${srce}") = 1 ]; then
             new_word
         elif [ "$(wc -w <<< "${srce}")" -ge 1 -a ${#srce} -le ${sentence_chars} ]; then
@@ -102,6 +103,7 @@ function new_sentence() {
             [ -n "${_trgt}" ] && trgt=$(clean_2 "${_trgt}")
         fi
         srce="$(translate "${trgt,,}" $lgt $lgs)"
+        [ -z "${srce}" ] && internet
         srce="$(clean_2 "${srce}")"
         export trgt="${trgt^}"
         export srce="${srce^}"
@@ -160,6 +162,7 @@ function new_word() {
             [ -n "${_trgt}" ] && export trgt="$(clean_1 "${_trgt}")"
         fi
         srce="$(translate "${trgt}" $lgt $lgs)"
+        [ -z "${srce}" ] && internet
         export srce="$(clean_0 "${srce}")"
     else 
         if [ -z "${srce}" -o -z "${trgt}" ]; then
@@ -239,7 +242,7 @@ function list_words_edit() {
             export trgt="$(clean_1 "${trgt}")"
             audio="${trgt,,}"
             translate "${trgt}" auto $lgs > "$DT_r/tr"
-            srce=$(< "$DT_r/tr")
+            srce=$(< "$DT_r/tr"); [ -z "${srce}" ] && internet
             export srce="$(clean_0 "${srce}")"
             export cdid="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
             mksure "${trgt}" "${srce}"
@@ -294,7 +297,7 @@ function list_words_sentence() {
             export trgt="$(clean_1 "${trgt}")"
             audio="${trgt,,}"
             translate "${trgt}" auto $lgs > "$DT_r/tr.$c"
-            srce=$(< "$DT_r/tr.$c")
+            srce=$(< "$DT_r/tr.$c"); [ -z "${srce}" ] && internet
             export srce="$(clean_0 "${srce}")"
             export cdid="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
             mksure "${trgt}" "${srce}"
@@ -323,6 +326,7 @@ function list_words_dclik() {
         ( echo "1"
         echo "# $(gettext "Processing")..." ;
         export srce="$(translate "${words}" $lgt $lgs)"
+        [ -z "${srce}" ] && internet
         export $DT_r; sentence_p 1
         echo "$wrds"
         list_words_3 "${words}" "${wrds}"
@@ -511,7 +515,7 @@ function process() {
                 trgt="$(translate "${trgt}" auto $lgt)"
                 export trgt="$(clean_2 "${trgt}")"
             fi
-            srce="$(translate "${trgt}" $lgt $lgs)"
+            srce="$(translate "${trgt}" $lgt $lgs)"; [ -z "${srce}" ] && internet
             export srce="$(clean_2 "${srce}")"
             export cdid="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "" "")"
 
@@ -589,6 +593,7 @@ function process() {
                     echo -e "\n\n$n) [$(gettext "Maximum number of notes has been exceeded")] ${trgt}" >> "$DT_r/wlog"
                 else
                     export srce="$(translate "${trgt}" auto $lgs)"
+                    [ -z "${srce}" ] && internet
                     export cdid="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
                     mksure "${trgt}" "${srce}"
                     

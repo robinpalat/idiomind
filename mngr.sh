@@ -515,7 +515,7 @@ edit_list_cmds() {
 edit_list_more() {
     touch "$DT/edit_list_more"
     file="$HOME/.idiomind/backup/${tpc}.bk"
-    cols1="$(gettext "Reverse items order")\n$(gettext "Remove all items")\n$(gettext "Restart topic status")\n$(gettext "Add feed")\n$(gettext "Show short sentences in word's view")"
+    cols1="$(gettext "Reverse items order")\n$(gettext "Remove all items")\n$(gettext "Restart topic status")\n$(gettext "Feeds manager")\n$(gettext "Show short sentences in word's view")"
     dt1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
     dt2=$(grep '\----- oldest' "${file}" |cut -d' ' -f3)
     if [ -n "$dt2" ]; then
@@ -573,7 +573,7 @@ edit_list_more() {
                 "$DS/mngr.sh" mkmn 1; "$DS/ifs/tls.sh" colorize 0
             fi
             
-        elif grep "$(gettext "Add feed")" <<< "${more}"; then
+        elif grep "$(gettext "Feeds manager")" <<< "${more}"; then
             idiomind feeds
             
         elif grep "$(gettext "Show short sentences in word's view")" <<< "${more}"; then
@@ -653,17 +653,19 @@ edit_list_dlg() {
 edit_feeds() {
     file="$DM_tl/${2}/.conf/feeds"
     feeds="$(< "${file}")"
-    [ -n "$feeds" ] && btnf="--button="$(gettext "Fetch Content")":2 " \
+    [ -n "$feeds" ] && btnf="--button="$(gettext "Fetch Content")":2" \
     || btnf="--center"
     export btnf; mods="$(echo "${feeds}" |edit_feeds_list)"
-    ret=$?
-    if [ -z "${mods}" ]; then
-        cleanups "${file}"
-    elif [ "${feeds}" != "${mods}" ]; then
-        echo "${mods}" |sed -e '/^$/d' > "${file}"
-    fi
-    if  [ $ret = 2 ]; then
-        "$DS/add.sh" fetch_content "${tpc}" &
+    ret="$?"
+    if [ $ret != 1 -a $ret -le 2 ]; then
+        if [ -z "${mods}" ]; then
+            cleanups "${file}"
+        elif [ "${feeds}" != "${mods}" ]; then
+            echo "${mods}" |sed -e '/^$/d' > "${file}"
+        fi
+        if  [ $ret = 2 ]; then
+            "$DS/add.sh" fetch_content "${tpc}" &
+        fi
     fi
 } >/dev/null 2>&1
 

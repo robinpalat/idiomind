@@ -21,7 +21,7 @@
 # from, out of or in connection with the software or the use or other
 # dealings in the software.
 
-if [[ "$1" = dlgcnfg ]]; then
+if [[ "$1" = _dlg_ ]]; then
     source "$DS/ifs/cmns.sh"
     msg "$(gettext "Does not need configuration")\n" dialog-information "$4"
 else

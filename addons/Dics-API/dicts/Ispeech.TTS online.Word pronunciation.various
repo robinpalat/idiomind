@@ -1,5 +1,0 @@
-#!/bin/bash
-
-dir="/usr/share/idiomind/addons/Dics-API/dicts"
-source "$dir/Ispeech.TTS online.Pronunciation.various"
-

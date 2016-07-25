@@ -60,7 +60,7 @@ function add_dlg() {
 function dclk() {
     [ "$2" = TRUE ] && dir=enables
     [ "$2" = FALSE ] && dir=disables
-    "$DS_a/Dics/dicts/$3.$4.$5.$6" dlgcnfg "$@"
+    "$DS_a/Dics/dicts/$3.$4.$5.$6" _dlg_ "$@"
 }
 
 function cpfile() {
