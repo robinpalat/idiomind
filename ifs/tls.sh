@@ -435,12 +435,13 @@ set_image() {
     fi
 
     if [ -e "$ifile" ]; then
-        export btn2="--button=$(gettext "Remove")!edit-delete:2"
-        export image="--image=$ifile"
+        btn2="--button=$(gettext "Remove")!edit-delete:2"
+        image="--image=$ifile"
     else
-        export btn2="--button="$(gettext "+ Screen clipping")":0"
-        export image="--image=$DS/images/bar.png"
+        btn2="--button="$(gettext "+ Screen clipping")":0"
+        image="--image=$DS/images/bar.png"
     fi
+    export btn2 image
     
     dlg_form_3; ret=$?
     
@@ -502,7 +503,7 @@ echo -e "yad --form --title=\"$(gettext "$tlng") | $active_trans\" \\
         unset trgt srce; get_item "${_item}"
         trgt="$(tr -s '"' '*' <<< "${trgt}")"
         srce="$(tr -s '"' '*' <<< "${srce}")"
-        echo -e "--field=\"$trgt\":lbl \"\" --field=\"\" \"$srce\" --field=\" \":lbl \"\" \\" >> "$DT/dlg"
+        echo -e "--field=\"${trgt}\":lbl \"\" --field=\"\" \"${srce}\" --field=\" \":lbl \"\" \\" >> "$DT/dlg"
         let n++
         echo $((100*n/lns-1))
     done < "${DC_tlt}/0.cfg") |progress "progress"
@@ -803,6 +804,7 @@ itray() {
     export lbl3="$(gettext "Stop playback")"
     export lbl4="$(gettext "Next")"
     export lbl5="$(gettext "Index")"
+    export lbl9="$(gettext "Tasks")"
     export lbl6="$(gettext "Options")"
     export lbl7="$(gettext "Show panel")"
     export lbl8="$(gettext "Quit")"
@@ -816,6 +818,7 @@ play = os.environ['lbl2']
 stop = os.environ['lbl3']
 next = os.environ['lbl4']
 topics = os.environ['lbl5']
+tasks = os.environ['lbl9']
 options = os.environ['lbl6']
 panel = os.environ['lbl7']
 quit = os.environ['lbl8']
@@ -825,6 +828,7 @@ class IdiomindIndicator:
         self.indicator.set_status(appindicator.STATUS_ACTIVE)
         self.cfg = os.getenv('HOME') + '/.config/idiomind/4.cfg'
         self.playlck = os.environ['dirt'] + 'playlck'
+        self.tasks = os.environ['dirt'] + 'tasks'
         self.menu_items = []
         self.stts = 1
         self.change_label()
@@ -885,6 +889,27 @@ class IdiomindIndicator:
             popup_menu.append(item)
         item = gtk.SeparatorMenuItem()
         popup_menu.append(item)
+
+        if os.path.exists(self.tasks):
+            listMenu=gtk.Menu()
+            listItems=gtk.MenuItem(tasks)
+            listItems.set_submenu(listMenu)
+            try:
+                m = open(self.tasks).readlines()
+            except:
+                m = []
+            for bm in m:
+                label = bm.rstrip('\n')
+                if not label:
+                    label = ""
+                item = self.create_menu_label(label)
+                item.connect("activate", self.on_Home)
+                listMenu.append(item)
+            
+            popup_menu.append(listItems)
+            item.show()
+            listItems.show()
+        
         item = self.create_menu_label(topics)
         item.connect("activate", self.on_Topics_click)
         popup_menu.append(item)
@@ -924,6 +949,10 @@ class IdiomindIndicator:
     def on_Play_Changed(self, filemonitor, file2, other_file, event_type):
         if event_type == gio.FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
             self._on_menu_update()
+    def on_Tasks_Changed(self, filemonitor, file3, other_file, event_type):
+        if event_type == gio.FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
+            self._on_menu_update()
+    
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, lambda signal, frame: gtk.main_quit())
     i = IdiomindIndicator()
@@ -933,6 +962,9 @@ if __name__ == "__main__":
     file2 = gio.File(i.playlck)
     monitor2 = file2.monitor_file()
     monitor2.connect("changed", i.on_Play_Changed)
+    file3 = gio.File(i.tasks)
+    monitor3 = file3.monitor_file()
+    monitor3.connect("changed", i.on_Tasks_Changed)
     gtk.main()
 PY
 return 0
