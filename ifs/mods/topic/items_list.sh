@@ -52,16 +52,14 @@ function vwr() {
         fi
     fi
         ret=$?
-        if ps -A | pgrep -f 'play'; then killall play & fi
+        if ps -A | pgrep -f 'mplayer'; then killall mplayer & fi
         if [ $ret -eq 4 ]; then
             "$DS/mngr.sh" edit ${1} ${index_pos} ${text_missing} &
-            
         elif [ $ret -eq 2 ]; then
             ff=$((index_pos+1))
             "$DS/vwr.sh" ${1} "" ${ff} &
-            
         else
-            if ps -A | pgrep -f 'play'; then killall play & fi
+            if ps -A | pgrep -f 'mplayer'; then killall mplayer & fi
             exit 1
         fi
     return
@@ -72,8 +70,8 @@ function word_view() {
     font_size=25; [ ${#trgt} -gt 20 ] && font_size=18
     [ -n "${tags}" ] && field_tag="--field=<small>$tags</small>:lbl"
     [ -n "${defn}" ] && field_defn="--field=$defn:lbl"
-    [ -n "${note}" ] && field_note="--field=<i>$note</i>\n:lbl"
-    [ -n "${exmp}" ] && field_exmp="--field=<span font_desc='Verdana 11' color='#6D6D6D'>$exmp</span>:lbl"
+    [ -n "${note}" ] && field_note="--field=<span font_desc='Arial 9' color='#676767'>$note</span>\n:lbl"
+    [ -n "${exmp}" ] && field_exmp="--field=<span font_desc='Verdana 10' color='#6D6D6D'>\"$exmp\"</span>:lbl"
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free ${font_size}'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>$link\n\n"
    
@@ -94,7 +92,7 @@ function word_view() {
 function sentence_view() {
     if [ $(grep -oP '(?<=gramr=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
-    [ -n "${note}" ] && field_note="💬  <span font_desc='Arial 8' color='#676767'>$note</span>\n"
+    [ -n "${note}" ] && field_note="💬  <span font_desc='Arial 9' color='#676767'>$note</span>\n"
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free 16'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i>$link</span>\n<small>$tag</small>\n"
     cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"""
@@ -132,22 +130,23 @@ function notebook_1() {
     cmd3="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd4="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
     
-    chk1=$(($(wc -l < "${DC_tlt}/1.cfg")*3))
+    chk1=$(($(wc -l < "${DC_tlt}/1.cfg")*4))
     chk5=$(wc -l < "${DC_tlt}/5.cfg")
     list() { if [[ ${chk1} = ${chk5} ]]; then
     cat "${DC_tlt}/5.cfg"; else cat "${ls1}" | \
-    awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE"}'; fi; }
-    
+    awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE\n"$0""}'; fi; }
+
     list | yad --list --tabnum=1 \
     --plug=$KEY --print-all --separator='|' \
-    --dclick-action="$DS/vwr.sh 1" \
-    --expand-column=2 --no-headers --ellipsize=END \
-    --search-column=2 --regex-search \
-    --column=Name:IMG --column=Name:TEXT --column=Learned:CHK > "$cnf1" &
+    --dclick-action="$DS/vwr.sh 1" --no-rules-hint \
+    --print-column=2 --expand-column=2 --no-headers --ellipsize=END \
+    --search-column=2 --regex-search --hide-column=4 --tooltip-column=4 \
+    --column=Name:IMG --column=Name:TEXT \
+    --column=Learned:CHK --column=@back@:TIP > "$cnf1" &
     cat "${ls2}" | yad --list --tabnum=2 \
-    --plug=$KEY --print-all --separator='|' \
+    --plug=$KEY --print-all --separator='|' --no-rules-hint \
     --dclick-action="$DS/vwr.sh 2"  \
-    --expand-column=0 --no-headers --ellipsize=END --tooltip-column=1 \
+    --expand-column=0 --no-headers --ellipsize=END  \
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \
     --plug=$KEY \
@@ -175,7 +174,7 @@ function notebook_1() {
     --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Edit")  " \
-    --width=${sz[0]} --height=${sz[1]} --borders=0 --tab-borders=6 \
+    --width=${sz[0]} --height=${sz[1]} --borders=0 --tab-borders=0 \
     --button="$(gettext "Play")":"$cmd_play" \
     --button="$(gettext "Practice")":3 \
     --button="$(gettext "Close")"!'window-close':2
@@ -198,7 +197,7 @@ function notebook_2() {
     --align=center --borders=80 --bar="":NORM $RM &
     cat "${ls2}" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
-    --dclick-action="$DS/vwr.sh 2" \
+    --dclick-action="$DS/vwr.sh 2" --no-rules-hint \
     --expand-column=0 --no-headers --ellipsize=END \
     --search-column=1 --regex-search \
     --column=Name:TEXT &
@@ -227,18 +226,18 @@ function notebook_2() {
     --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Edit")  " \
-    --width=${sz[0]} --height=${sz[1]} --borders=0 --tab-borders=6 \
+    --width=${sz[0]} --height=${sz[1]} --borders=0 --tab-borders=0 \
     --button="$(gettext "Close")"!'window-close':2
 } >/dev/null 2>&1
 
 function dialog_1() {
-    yad --title="$(gettext "Review") - ${tpc}" \
+    yad --title="$(gettext "Review")  \"${tpc}\"" \
     --class=idiomind --name=Idiomind \
     --text="$(gettext "<b>Would you like to review it?</b>\n The waiting period already has been completed.")" \
     --image='view-refresh' \
     --window-icon=idiomind \
-    --buttons-layout=edge --center --on-top \
-    --width=440 --height=100 --borders=10 \
+    --buttons-layout=edge --fixed --center --on-top \
+    --width=440 --height=80 --borders=8 \
     --button=" $(gettext "Not Yet") ":1 \
     --button=" $(gettext "Yes") ":2
 }
