@@ -48,7 +48,7 @@ function dlg_form_2() {
     --field="$(gettext "$tlng")":TXT "${trgt}" \
     --field="$(gettext "$slng")":TXT "${srce}" \
     --field="$(gettext "Note")":TXT "${note}" \
-    --field="$(gettext "See Translation")":FBTN "${cmd_trad}" \
+    --field="$(gettext "Translation")":FBTN "${cmd_trad}" \
     --field="\t\t\t$(gettext "Topic")":CB "${tpc_list}" \
     --field="$(gettext "Audio")":FL "${audf}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
