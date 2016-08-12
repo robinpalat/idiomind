@@ -117,8 +117,8 @@ play_list() {
     unset iteml[${rword}]
     lst=`for i in "${iteml[@]}"; do echo -n "!$i"; done`
     lst_opts1="$set$lst"
-    tab1=$(mktemp "$DT/XXXXXX.p")
-    tab2=$(mktemp "$DT/XXXXXX.p")
+    tab1=$(mktemp "$DT/XXXXXX")
+    tab2=$(mktemp "$DT/XXXXXX")
     c=$((RANDOM%100000)); KEY=$c
     [ ${ntosd} != TRUE -a ${audio} != TRUE ] && audio=TRUE
     
@@ -147,7 +147,7 @@ play_list() {
     --width=400 --height=260 --borders=0 \
     "$btn2" --button="$btn1" --button="$(gettext "Close")":1
     ret=$?
-        tab1=$(< $tab1); tab2=$(< $tab2); rm -f "$DT"/*.p
+        tab1=$(< $tab1); tab2=$(< $tab2); cleanups "$tab1" "$tab2"
         f=1; n=0; count=0
         for item in "${psets[@]:0:5}"; do
             val=$(sed -n $((n+1))p <<< "${tab1}" |cut -d "|" -f2)
