@@ -490,7 +490,7 @@ echo -e "yad --form --title=\"$(gettext "$tlng") > $active_trans\" \\
 --scroll --center --separator='|\n' \\
 --button=$(gettext \"Cancel\"):1 \\
 --button=\!'gtk-preferences':\"idiomind translate\" \\
---button=$(gettext \"Save\")!gtk-save:0 \\" > "$DT/dlg"
+--button=$(gettext \"Save\")!document-save:0 \\" > "$DT/dlg"
 
     (echo "#"; n=1
     while read -r _item; do
@@ -547,7 +547,7 @@ translate_to() {
         --text="$(gettext "The current source language of this topic is") <b>$active_trans</b>" \
         --text-align=center --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top \
-        --width=320 --height=340 --borders=10 \
+        --width=370 --height=340 --borders=10 \
         --field="":LBL " " \
         --field="<b>$(gettext "Revised translations") </b> ":LBL " " \
         --field="$(gettext "This topic has no revised translations.")":LBL " " \
@@ -566,7 +566,7 @@ translate_to() {
         --text="$(gettext "The current source language of this topic is") <b>$active_trans</b>" \
         --text-align=center --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top \
-        --width=320 --height=340 --borders=10 \
+        --width=370 --height=340 --borders=10 \
         --field="":LBL " " \
         --field="<b>$(gettext "Revised translations") </b> ":LBL " " \
         --field="$(gettext "Change the source language:")":LBL " " \

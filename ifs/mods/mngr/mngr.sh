@@ -68,7 +68,7 @@ function edit_list_list() {
     --width=590 --height=350 --borders=5 \
     --column="" \
     --button="$(gettext "More")":"$DS/mngr.sh edit_list_more" \
-    --button="$(gettext "Save")!gtk-save":0 \
+    --button="$(gettext "Save")!document-save":0 \
     --button="$(gettext "Cancel")":1
 }
 
