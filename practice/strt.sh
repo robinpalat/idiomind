@@ -840,7 +840,7 @@ function strt() {
     --print-column=1 --separator="" \
     --window-icon=idiomind \
     --buttons-layout=edge --image-on-top --center --on-top --text-align=center \
-    --ellipsize=NONE --no-headers --expand-column=2 --hide-column=1 \
+    --ellipsize=NONE --no-headers --expand-column=3 --hide-column=1 \
     --width=${sz[0]} --height=${sz[1]} --borders=10 \
     --column="Action" --column="Pick":IMG --column="Label" \
     "a" "$pdirs/images/$(< ./.1).png" "   $info1  $(gettext "Flashcards")" \
