@@ -96,12 +96,6 @@ function dlg() {
             fi
         done < <(ls "$disables/")
     }
-   
-    if [ ! -d "$DC_d" -o ! -d "$DC_a/dict-api/disables" ]; then
-        mkdir -p "$enables"; mkdir -p "$disables"
-        echo -e "$tlng\n$v_dicts" > "$DC_a/dict-api/.dict"
-        for r in "$DS_a/Dics-API/dicts"/*; do > "$disables/$(basename "$r")"; done
-    fi
 
     if [ -e "$DC_s/dics_first_run" ]; then
         plus="$(gettext "To start is okay select all. Later, according to your preferences you can go testing to disable some.")\n"
