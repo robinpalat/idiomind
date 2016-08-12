@@ -88,12 +88,6 @@ config_dlg() {
         declare clocal="$(gettext "${val}")"
         list1="${list1}${emrk}${clocal}"
     done
-    #unset clocal
-    #for val in "${!slangs[@]}"; do
-        #declare clocal="$(gettext "${val}")"
-        #list2="${list2}${emrk}${clocal}"
-    #done
-    
     list2=$(for i in "${!slangs[@]}"; do echo -n "!$i"; done)
 
     c=$((RANDOM%100000)); KEY=$c
