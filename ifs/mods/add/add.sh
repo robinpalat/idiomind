@@ -68,12 +68,12 @@ function index() {
                     unset wrds grmr
                     echo "${trgt}" >> "${DC_tlt}/1.cfg"
                     echo "${trgt}" >> "${DC_tlt}/3.cfg"
-                    echo -e "$img0\n${trgt}\nFALSE" >> "${DC_tlt}/5.cfg"
+                    echo -e "$img0\n${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/5.cfg"
 
                 elif [[ ${1} = 2 ]]; then
                     echo "${trgt}" >> "${DC_tlt}/1.cfg"
                     echo "${trgt}" >> "${DC_tlt}/4.cfg"
-                    echo -e "$img0\n${trgt}\nFALSE" >> "${DC_tlt}/5.cfg"
+                    echo -e "$img0\n${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/5.cfg"
                 fi
             fi
             if ! grep -Fo "trgt{${trgt}}" "${DC_tlt}/0.cfg"; then
@@ -442,7 +442,6 @@ function fetch_audio() {
         word="${Word,,}"; audio_file="$DM_tls/audio/$word.mp3"
         audio_dwld="$DM_tls/audio/$word"
         if [ ! -e "$audio_file" ]; then
-
             if ls "$DC_d"/*."TTS online.Word pronunciation".$lgt 1> /dev/null 2>&1; then
                 for dict in "$DC_d"/*."TTS online.Word pronunciation".$lgt; do
                     dwld1 "$DS_a/Dics"; [ $? = 5 ] && break
@@ -468,7 +467,10 @@ function img_word() {
                 [ -e "${Script}" ] && "${Script}" "${1}"
                 if [ -e "$DT/${1}.jpg" ]; then
                     if [[ $(du "$DT/${1}.jpg" |cut -f1) -gt 10 ]]; then
-                        break; else rm -f "$DT/${1}.jpg"; fi
+                        break
+                    else 
+                        rm -f "$DT/${1}.jpg"
+                    fi
                 fi
             done
             if [ ! -e "$DT/${1}.jpg" ]; then
@@ -477,7 +479,10 @@ function img_word() {
                     [ -e "${Script}" ] && "${Script}" "${2}"
                     if [ -e "$DT/${2}.jpg" ]; then
                         if [[ $(du "$DT/${2}.jpg" |cut -f1) -gt 10 ]]; then
-                        break; else rm -f "$DT/${2}.jpg"; fi
+                            break
+                        else 
+                            rm -f "$DT/${2}.jpg"
+                        fi
                     fi
                 done
             fi
@@ -488,17 +493,16 @@ function img_word() {
                 w="$(echo $size |cut -f1 -d ' ')"
                 e="$(echo $size |cut -f2 -d ' ')"
                 if [[ $((e*100/w)) -gt 80 ]]; then
-                    /usr/bin/convert "$DT/${img_file}" -resize 400x270^ "$DT_r/${1}pre.jpg"
+                    /usr/bin/convert "$DT/${img_file}" -resize 400x270^ "$DT/${img_file}.pre"
                     [ -f "$DT/${img_file}" ] && rm -f "$DT/${img_file}"
-                    /usr/bin/convert "$DT_r/${1}pre.jpg" -gravity center \
+                    /usr/bin/convert "$DT/${img_file}.pre" -gravity center \
                     -background white -compress jpeg -extent 400x270 "$DT/${img_file}"
                 fi
                 /usr/bin/convert "$DT/${img_file}" -interlace Plane -thumbnail 405x275^ \
                 -gravity center -extent 400x270 -quality 90% "${sf}"
-                
                 cleanups "$DT/${img_file}"
             fi
-            cleanups "$DT/${1}.img" "$DT_r/${1}pre.jpg"
+            cleanups "$DT/${1}.img" "$DT/${img_file}.pre"
         fi
     fi
 }
@@ -598,7 +602,7 @@ function dlg_checklist_3() {
     --gtkrc="$DS/default/gtkrc.cfg" \
     --separator="" \
     --field=" ":lbl null \
-    --field=":CB" "$2!$(gettext "New") *$e$tpcs" &
+    --field="$(gettext "Add to"):CB" "$2!$(gettext "New") *$e$tpcs" &
     yad --paned --key="$fkey" \
     --title="$(gettext "Found") $(wc -l < "${1}") $(gettext "notes")" \
     --name=Idiomind --class=Idiomind \
