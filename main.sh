@@ -141,6 +141,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
     _lst() {
         while read -r line; do
         cut -d ':' -f1 <<< "${line}" |sed 's/\"*//;s/\"$//'
+        cut -d ':' -f3 <<< "${line}" |sed 's/\"*//;s/\"$//;s/\",\"slch//'
         done < <(sed -n 2p "${file}"|sed 's/},/\n/g'|tr -d '\'|sed '/^$/d')
     }
     
@@ -149,13 +150,13 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
     _lst | yad --list --title="Idiomind" \
     --text="${itxt}" \
     --name=Idiomind --class=Idiomind \
-    --no-click --print-column=0 \
+    --no-click --print-column=0 --hide-column=2 --tooltip-column=2 \
     --dclick-action="${dclk}" \
     --window-icon=idiomind \
     --hide-column=2 --tooltip-column=2 \
     --no-headers --ellipsize=END --center \
     --width=${sz[0]} --height=${sz[1]} --borders=8 \
-    --column=" " \
+    --column=" " --column=" " \
     --button="$(gettext "Install")":0
     ret=$?
         if [ $ret -eq 0 ]; then
@@ -213,6 +214,8 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             slngtopic="$slng"; slng="$slngcurrent"
             echo -e "$tlng\n$slng" > "$DC_s/6.cfg"
             if [[ "$slngtopic" != "$slng" ]]; then
+                mkdir "${DC_tlt}/translations/"
+                echo "$slngtopic" > "${DC_tlt}/translations/active"
                 touch "${DC_tlt}/slng_err"
             fi
             echo 1 > "${DC_tlt}/8.cfg"
