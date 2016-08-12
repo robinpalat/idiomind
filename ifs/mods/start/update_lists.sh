@@ -3,14 +3,14 @@
 
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
+check_list > "$DM_tl/.share/2.cfg"
 [ ! -e "$DC_s/log" ] && exit 1 || log="$DC_s/log"
 items=$(mktemp "$DT/w1.XXXX")
 words=$(grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' \
 |sort |uniq -dc |sort -n -r |sed 's/ \+/ /g')
 sentences=$(grep -o -P '(?<=s1.).*(?=\.s1)' "${log}" |tr '|' '\n' \
 |sort |uniq -dc |sort -n -r |sed 's/ \+/ /g')
-topics="$(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
--not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')"
+topics="$(cat "$DM_tl/.share/2.cfg"|head -n20)"
 check_file "${DC_tlt}/1.cfg" "${DC_tlt}/6.cfg" "${DC_tlt}/9.cfg"
 # grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' |sort |uniq
 img1="$DS/images/1.png"
@@ -36,7 +36,7 @@ lstp="${items}"
 export dir topics lstp img0 img1 img2 img3
 
 python <<PY
-import os
+import os, re, subprocess
 topics = os.environ['topics']
 dir = os.environ['dir']
 img0 = os.environ['img0']
@@ -47,22 +47,16 @@ lstp = os.environ['lstp']
 lstp = [line.strip() for line in open(lstp)]
 topics = topics.split('\n')
 for tpc in topics:
-    cfg1 = dir + tpc + "/.conf/1.cfg"
+    cnfg_dir = dir + tpc + "/.conf/"
+    cfg1 = cnfg_dir+"1.cfg"
     if os.path.exists(cfg1):
         try:
             cont = str
-            cfg = dir + tpc + "/.conf/10.cfg"
-            cfg5 = dir + tpc + "/.conf/5.cfg"
-            cfg6 = dir + tpc + "/.conf/6.cfg"
-            cfg7 = dir + tpc + "/.conf/7.cfg"
-            cfg9 = dir + tpc + "/.conf/9.cfg"
-            log1 = dir + tpc + "/.conf/practice/log1"
-            log2 = dir + tpc + "/.conf/practice/log2"
-            log3 = dir + tpc + "/.conf/practice/log3"
-            log1 = [line.strip() for line in open(log1)]
-            log2 = [line.strip() for line in open(log2)]
-            log3 = [line.strip() for line in open(log3)]
-            cfg = [line.strip() for line in open(cfg)]
+            log1 = [line.strip() for line in open(cnfg_dir+"practice/log1")]
+            log2 = [line.strip() for line in open(cnfg_dir+"practice/log2")]
+            log3 = [line.strip() for line in open(cnfg_dir+"practice/log3")]
+            cfg = [line.strip() for line in open(cnfg_dir+"10.cfg")]
+            items = [line.strip() for line in open(cnfg_dir+"0.cfg")]
             try:
                 auto_mrk = (cfg[9].split('acheck="'))[1].split('"')[0]
             except:
@@ -74,43 +68,55 @@ for tpc in topics:
                 auto_mrk = True
             else:
                 auto_mrk = False
-            if os.path.exists(cfg1) and not os.path.exists(cfg7):
+            if os.path.exists(cfg1) and not os.path.exists(cnfg_dir+"7.cfg"):
                 cont = True
             if not os.path.exists(dir + tpc + "/.conf/practice"):
                 cont = False
-            if os.path.exists(cfg9):
-                steps = [line.strip() for line in open(cfg9)]
+            if os.path.exists(cnfg_dir+"9.cfg"):
+                steps = [line.strip() for line in open(cnfg_dir+"9.cfg")]
             else:
                 steps = []
+            steps=len(steps)
+            cfg1len = 0
             if cont == True:
-                items = [line.strip() for line in open(cfg1)]
-                marks = [line.strip() for line in open(cfg6)]
-                chk = 'FALSE'
-                if len(steps) > 3 and auto_mrk == True:
-                    chk = 'TRUE'
-                f = open(cfg5, "w")
+                cfg1 = [line.strip() for line in open(cfg1)]
+                marks = [line.strip() for line in open(cnfg_dir+"6.cfg")]
+                f = open(cnfg_dir+"5.cfg", "w")
                 for item in items:
-                    if item in marks:
-                        i="<b><big>"+item+"</big></b>"
-                    else:
-                        i=item
-                    if item in lstp and auto_mrk == True:
-                        chk = 'TRUE'
-                    if item in log3:
-                        f.write(img3+"\n"+i+"\nFALSE\n")
-                    elif item in log2:
-                        f.write(img2+"\n"+i+"\nFALSE\n")
-                    elif item in log1:
-                        print chk + ' check -> ' + item
-                        f.write(img1+"\n"+i+"\n"+chk+"\n")
-                    else:
-                        f.write(img0+"\n"+i+"\nFALSE\n")
+                    item = item.replace('}', '}\n')
+                    fields = re.split('\n',item)
+                    item = (fields[0].split('trgt{'))[1].split('}')[0]
+                    if item in cfg1:
+                        srce = (fields[1].split('srce{'))[1].split('}')[0]
+                        if item in marks:
+                            i="<b><big>"+item+"</big></b>"
+                        else:
+                            i=item
+                        if item in lstp and auto_mrk == True and steps > 3:
+                            chk = 'TRUE'
+                        else:
+                            chk = 'FALSE'
+                        if item in log3:
+                            f.write(img3+"\n"+i+"\nFALSE\n"+srce+"\n")
+                        elif item in log2:
+                            f.write(img2+"\n"+i+"\nFALSE\n"+srce+"\n")
+                        elif item in log1:
+                            print chk + ' -> ' + item
+                            f.write(img1+"\n"+i+"\n"+chk+"\n"+srce+"\n")
+                        else:
+                            f.write(img0+"\n"+i+"\nFALSE\n"+srce+"\n")
+                        if chk == 'TRUE':
+                            cfg1len=cfg1len+1
                 f.close()
+                if len(cfg1) == cfg1len and len(cnfg_dir+"0.cfg") > 15:
+                    subprocess.Popen(['/usr/share/idiomind/mngr.sh %s %s' % ('mark_to_learnt_ok', '"'+tpc+'"')], shell=True)
+                    print 'mark_as_learnt -> ' + tpc
         except:
             print 'err -> ' + tpc
 PY
 
 [ $(date +%d) = 1 -o $(date +%d) = 14 ] && rm "$log"; touch "$log"
+"$DS/mngr.sh" mkmn 1 &
 cleanups "$items" "$DT/co_lk"
-echo "--updated lists"
+echo "--lists updated"
 exit

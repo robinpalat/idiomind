@@ -5,7 +5,7 @@ source /usr/share/idiomind/default/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
 info2="$(gettext "Switch Language")?"
 cd "$DS/addons"
-cnf1=$(mktemp "$DT/cnf1.XXXX")
+cnf1=$(mktemp "$DT/cnf1.XXXXXX")
 source $DS/default/sets.cfg
 lang1="${!tlangs[@]}"; lt=( $lang1 )
 lang2="${!slangs[@]}"; ls=( $lang2 )
@@ -28,7 +28,7 @@ confirm() {
     --image="dialog-question" --text="$1\n" \
     --window-icon=idiomind \
     --skip-taskbar --center --on-top \
-    --width=380 --height=120 --borders=5 \
+    --width=380 --height=100 --borders=3 \
     --button="   $(gettext "Cancel")   ":1 \
     --button="$(gettext "Yes")":0
 }
@@ -44,7 +44,7 @@ set_lang() {
     if [ -n "${last}" ]; then
         mode="$(< "$DM_tl/${last}/.conf/8.cfg")"
         if [[ ${mode} =~ $numer ]]; then
-            "$DS/default/tpc.sh" "${last}" ${mode} 1 &
+            "$DS/ifs/tpc.sh" "${last}" ${mode} 1 &
         fi
     else
         > "$DT/tpe"; > "$DC_s/4.cfg"
@@ -100,7 +100,6 @@ config_dlg() {
     yad --plug=$KEY --form --tabnum=1 \
     --align=right --scroll \
     --separator='|' --always-print-result --print-all \
-    --field="$(gettext "General Options")\t":lbl " " \
     --field=":LBL" " " \
     --field="$(gettext "Use color to highlight grammar")":CHK "$gramr" \
     --field="$(gettext "List words after adding a sentence")":CHK "$wlist" \
@@ -111,17 +110,14 @@ config_dlg() {
     --field="$(gettext "Show icon in the notification area")":CHK "$itray" \
     --field="$(gettext "Adjust windows size to small screens")":CHK "$swind" \
     --field="$(gettext "Perform tasks at startup")":CHK "$stsks" \
-    --field=" :LBL" " " \
-    --field="$(gettext "Languages")\t":LBL " " \
-    --field=":LBL" " " \
+    --field=" :LBL" " " --field=":LBL" " " \
     --field="$(gettext "I'm learning")":CB "$(gettext ${tlng})$list1" \
     --field="$(gettext "My language is")":CB "$(gettext ${slng})$list2" \
-    --field=" :LBL" " " \
-    --field=":LBL" " " \
+    --field=" :LBL" " " --field=":LBL" " " \
     --field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
     --field="<small>$(gettext "Program to convert text to WAV file")</small>" "$txaud" \
     --field="$(gettext "Display in")":CB "$lst" \
-    --field=" :LBL" " " \
+    --field=" :LBL" " " --field=":LBL" " " \
     --field="$(gettext "Help")":BTN "$DS/ifs/tls.sh help" \
     --field="$(gettext "Report a problem")":BTN "$DS/ifs/tls.sh fback" \
     --field="$(gettext "Check for updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
@@ -145,7 +141,7 @@ config_dlg() {
 
     if [ $ret -eq 0 ]; then
         n=1; v=0
-        while [ ${n} -le 17 ]; do
+        while [ ${n} -le 16 ]; do
             val=$(cut -d "|" -f$n < "$cnf1")
             if [ -n "$val" ]; then
                 sed -i "s/${csets[$v]}=.*/${csets[$v]}=\"$val\"/g" "$DC_s/1.cfg"
@@ -153,13 +149,13 @@ config_dlg() {
             fi
             ((n=n+1))
         done
-        val=$(cut -d "|" -f19 < "$cnf1")
+        val=$(cut -d "|" -f17 < "$cnf1")
         [[ "$val" != "$synth" ]] && \
         sed -i "s/${csets[11]}=.*/${csets[11]}=\"$(sed 's|/|\\/|g' <<< "$val")\"/g" "$DC_s/1.cfg"
-        val=$(cut -d "|" -f20 < "$cnf1")
+        val=$(cut -d "|" -f18 < "$cnf1")
         [[ "$val" != "$txaud" ]] && \
         sed -i "s/${csets[12]}=.*/${csets[12]}=\"$(sed 's|/|\\/|g' <<< "$val")\"/g" "$DC_s/1.cfg"
-        val=$(cut -d "|" -f21 < "$cnf1")
+        val=$(cut -d "|" -f19 < "$cnf1")
         [[ "$val" != "$intrf" ]] && \
         sed -i "s/${csets[13]}=.*/${csets[13]}=\"$val\"/g" "$DC_s/1.cfg"
         
@@ -172,7 +168,7 @@ config_dlg() {
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
-        if cut -d "|" -f11 < "$cnf1" | grep "TRUE"; then
+        if cut -d "|" -f10 < "$cnf1" | grep "TRUE"; then
             if [ ! -f "$config_dir/idiomind.desktop" ]; then
             echo "$desktopfile" > "$config_dir/idiomind.desktop"
             fi
@@ -182,7 +178,7 @@ config_dlg() {
             fi
         fi
 
-        ntlang=$(cut -d "|" -f15 < "$cnf1")
+        ntlang=$(cut -d "|" -f13 < "$cnf1")
         if [[ $(gettext ${tlng}) != ${ntlang} ]]; then
             for val in "${lt[@]}"; do
                 if [[ ${ntlang} = $(gettext ${val}) ]]; then
@@ -196,11 +192,9 @@ config_dlg() {
             [ $? -eq 0 ] && set_lang ${tlng}
         fi
         
-        nslang=$(cut -d "|" -f16 < "$cnf1")
+        nslang=$(cut -d "|" -f14 < "$cnf1")
         if [[ ${slng} != ${nslang} ]]; then
-        
             slng=${nslang}
-
             confirm "$info2" dialog-question ${slng}
             if [ $? -eq 0 ]; then
                 echo ${tlng} > "$DC_s/6.cfg"

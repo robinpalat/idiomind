@@ -76,7 +76,8 @@ check_index() {
         if [ ! -f "${DC_tlt}/0.cfg" ]; then export f=1; fi
         
         check_dir "${DC_tlt}" "${DC_tlt}" "${DM_tlt}/images" "${DC_tlt}/practice"
-        check_file "${DC_tlt}/practice/log1" "${DC_tlt}/practice/log2" "${DC_tlt}/practice/log3"
+        check_file "${DC_tlt}/practice/log1" "${DC_tlt}/practice/log2" "${DC_tlt}/practice/log3" \
+        "${DC_tlt}/9.cfg" "${DC_tlt}/10.cfg" "${DC_tlt}/info"
         
         for n in {0..4}; do
             if [ ! -e "${DC_tlt}/${n}.cfg" ]; then 
@@ -86,9 +87,8 @@ check_index() {
                 sed -i '/^$/d' "${DC_tlt}/${n}.cfg"
             fi
         done
-        
         cfg="${DC_tlt}/10.cfg"
-        if [ ! -e "${cfg}" -o ! -s "${cfg}" ]; then
+        if [[ $(wc -l < "${cfg}") != 12 ]]; then
             source "$DS/default/sets.cfg"; > "${cfg}"
             for n in ${psets[@]}; do
                 echo -e "${n}=\"FALSE\"" >> "${cfg}"
@@ -98,9 +98,6 @@ check_index() {
             sed -i "s/words=.*/words=\"TRUE\"/g" "${cfg}"
             sed -i "s/sntcs=.*/sntcs=\"TRUE\"/g" "${cfg}"
         fi
-        
-        check_file "${DC_tlt}/9.cfg" "${DC_tlt}/info"
-        
         id=1
         [ ! -e "${DC_tlt}/id.cfg" ] && touch "${DC_tlt}/id.cfg" && id=0
         [[ $(egrep -cv '#|^$' < "${DC_tlt}/id.cfg") != 18 ]] && id=0
@@ -248,7 +245,7 @@ _restore_backup() {
         echo 13 > "$DM_tl/${2}/.conf/8.cfg"; mode=13
     fi
     
-    "$DS/default/tpc.sh" "${2}" ${mode} 0 &
+    "$DS/ifs/tpc.sh" "${2}" ${mode} 0 &
 } >/dev/null 2>&1
 
 fback() {
@@ -287,7 +284,7 @@ _translation() {
 } >/dev/null 2>&1
 
 _help() {
-    sz=(620 520); [[ ${swind} = TRUE ]] && sz=(520 420)
+    sz=(540 500); [[ ${swind} = TRUE ]] && sz=(520 420)
     _url='http://idiomind.sourceforge.net/doc/help.html'
     yad --html --title="$(gettext "Reference")" \
     --name=Idiomind --class=Idiomind \
@@ -358,7 +355,7 @@ promp_topic_info() {
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
-    slng_err_lbl="$(gettext "The native language of this topic does not match your current configuration. You may need to translate the topic.\nClick \"Edit\" tab on the main window, click \"Translate\" button, and then in \"Automatic Translation\" select from the list of languages:") <b>\"$slng\"</b>\n"
+    slng_err_lbl="$(gettext "The native language of this topic does not match your current configuration. You may need to translate the topic:\nclick \"Edit\" tab on the main window, click \"Translate\" button, and then in \"Automatic Translation\" select from the list of languages:") <b>$slng</b>\n"
     
     if [ -e "${DC_tlt}/note_err" ]; then
         include "$DS/ifs/mods/add"
@@ -397,7 +394,7 @@ first_run() {
     NOTE3="$(gettext "To start adding notes you need to have a Topic.\nCreate one using the "New" button...")"
 
     if [[ ${2} = edit_list ]]; then
-        title="$(gettext "Information")"
+        title="$(gettext "Info")"
         note="${NOTE2}"
         file="$DC_s/elist_first_run"
         dlg
@@ -426,14 +423,12 @@ set_image() {
     else
         ifile="${DM_tls}/images/${trgt,,}-0.jpg"; im=0
     fi
-
     if [ -e "$DT/$trgt.img" ]; then
-        msg_4 "$(gettext "Attempting download image")...\n" \
+        msg_4 "$(gettext "Attempting download image")..." \
         "$DS/images/warning.png" "$(gettext "OK")" "$(gettext "Stop")" \
         "$(gettext "Wait")" "$DT/$trgt.img"
         if [ $? -eq 1 ]; then rm -f "$DT/$trgt".img; else return 1 ; fi
     fi
-
     if [ -e "$ifile" ]; then
         btn2="--button=$(gettext "Remove")!edit-delete:2"
         image="--image=$ifile"
@@ -442,7 +437,6 @@ set_image() {
         image="--image=$DS/images/bar.png"
     fi
     export btn2 image
-    
     dlg_form_3; ret=$?
     
     if [ $ret -eq 2 ]; then
@@ -456,7 +450,7 @@ set_image() {
             done
         fi
     elif [ $ret -eq 0 ]; then
-        scrot -s --quality 90 "$DT/temp.jpg"
+        /usr/bin/import "$DT/temp.jpg"
         /usr/bin/convert "$DT/temp.jpg" -interlace Plane -thumbnail 405x275^ \
         -gravity center -extent 400x270 -quality 90% "$ifile"
         "$DS/ifs/tls.sh" set_image "${2}" "${trgt}" & exit
@@ -470,7 +464,7 @@ function transl_batch() {
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
     if [ -e "$DT/transl_batch_lk" -o -e "$DT/translate_to" ]; then
-        msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
+        msg_4 "$(gettext "Wait until it finishes a previous process")" \
         "$DS/images/warning.png" "$(gettext "OK")" "$(gettext "Stop")" \
         "$(gettext "Wait")" "$DT/translation"
         ret=$?
@@ -489,11 +483,11 @@ function transl_batch() {
     lns=$(cat "${DC_tlt}/0.cfg" |wc -l)
     if [ -z "$active_trans" ]; then active_trans="$slng"; fi
 
-echo -e "yad --form --title=\"$(gettext "$tlng") | $active_trans\" \\
+echo -e "yad --form --title=\"$(gettext "$tlng") > $active_trans\" \\
 --class=Idiomind --name=Idiomind --window-icon=idiomind \\
---selectable-labels \\
+--selectable-labels --always-print-result --print-all \\
 --width=590 --height=350 --borders=10 \\
---scroll --columns=1 --center --separator='\n' \\
+--scroll --center --separator='|\n' \\
 --button=$(gettext \"Cancel\"):1 \\
 --button=\!'gtk-preferences':\"idiomind translate\" \\
 --button=$(gettext \"Save\")!gtk-save:0 \\" > "$DT/dlg"
@@ -503,7 +497,7 @@ echo -e "yad --form --title=\"$(gettext "$tlng") | $active_trans\" \\
         unset trgt srce; get_item "${_item}"
         trgt="$(tr -s '"' '*' <<< "${trgt}")"
         srce="$(tr -s '"' '*' <<< "${srce}")"
-        echo -e "--field=\"${trgt}\":lbl \"\" --field=\"\" \"${srce}\" --field=\" \":lbl \"\" \\" >> "$DT/dlg"
+        echo -e "--field=\"$trgt\":lbl \"\" --field=\"\" \"$srce\" --field=\" \":lbl \"\" \\" >> "$DT/dlg"
         let n++
         echo $((100*n/lns-1))
     done < "${DC_tlt}/0.cfg") |progress "progress"
@@ -519,7 +513,8 @@ echo -e "yad --form --title=\"$(gettext "$tlng") | $active_trans\" \\
             srce="$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")"
             edit_pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
             if [ -n "${trgt}" ]; then
-                srce_mod="$(sed -n "/^${trgt}/{;n;p;}" "$DT/transl_batch_out")"
+                srce_pos=$((edit_pos*3-1))
+                srce_mod="$(sed -n ${srce_pos}p "$DT/transl_batch_out" |tr -d '|')"
                 if [ "${srce}" != "${srce_mod}" ]; then
                     sed -i "${edit_pos}s|srce{$srce}|srce{${srce_mod^}}|g" "$DT/0.cfg"
                 fi
@@ -552,7 +547,7 @@ translate_to() {
         --text="$(gettext "The current source language of this topic is") <b>$active_trans</b>" \
         --text-align=center --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top \
-        --width=300 --height=340 --borders=10 \
+        --width=320 --height=340 --borders=10 \
         --field="":LBL " " \
         --field="<b>$(gettext "Revised translations") </b> ":LBL " " \
         --field="$(gettext "This topic has no revised translations.")":LBL " " \
@@ -571,7 +566,7 @@ translate_to() {
         --text="$(gettext "The current source language of this topic is") <b>$active_trans</b>" \
         --text-align=center --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top \
-        --width=300 --height=340 --borders=10 \
+        --width=320 --height=340 --borders=10 \
         --field="":LBL " " \
         --field="<b>$(gettext "Revised translations") </b> ":LBL " " \
         --field="$(gettext "Change the source language:")":LBL " " \
@@ -592,6 +587,7 @@ translate_to() {
     
     if [ "$ret" = 0 ]; then
     
+        [ -e "${DC_tlt}/slng_err" ] && mv "${DC_tlt}/slng_err" "${DC_tlt}/slng_err.bk"
         if [ "$review_chek" = TRUE ]; then
             cp -f "${DC_tlt}/0.cfg" "${DC_tlt}/translations/$active_trans.tra"
             echo "$active_trans" > "${DC_tlt}/translations/active"
@@ -599,14 +595,12 @@ translate_to() {
         elif [ "$review_chek" = FALSE ]; then
             cleanups "${DC_tlt}/translations/$active_trans.tra"
         fi
-        
         if [ "$review_trans" != "$active_trans" -a -n "$review_trans" -a "$review_trans" != "(null)" ]; then
             if [ -e "${DC_tlt}/translations/$review_trans.tra" ]; then
                 yad_kill "yad --form --title="
                 cp -f "${DC_tlt}/translations/$review_trans.tra" "${DC_tlt}/0.cfg"
                 echo "$review_trans" > "${DC_tlt}/translations/active"
             fi
-
         elif [ -n "$autom_trans" -a "$autom_trans" != "(null)" ]; then
             yad_kill "yad --form --title="
             if grep "$autom_trans" <<< "$(cd "$DC_tlt/translations"; ls *.bk)"; then
@@ -614,7 +608,7 @@ translate_to() {
                 if [ $? = 0 ]; then
                     mv -f "$DC_tlt/translations/$autom_trans.bk" "${DC_tlt}/0.cfg"
                     cleanups "$DT/translation" "$DT/transl_batch_lk" \
-                    "$DT/translate_to"
+                    "$DT/translate_to" "${DC_tlt}/slng_err.bk"
                     echo "$autom_trans" > "${DC_tlt}/translations/active"
                     exit 1
                 else
@@ -627,7 +621,7 @@ translate_to() {
                     cp -f "$DC_tlt/translations/$autom_trans.tra" "${DC_tlt}/0.cfg"
                     echo "$autom_trans" > "${DC_tlt}/translations/active"
                     cleanups "$DT/translation" "$DT/transl_batch_lk" \
-                    "$DT/translate_to"
+                    "$DT/translate_to" "${DC_tlt}/slng_err.bk"
                     exit 1
                 fi
             fi
@@ -635,7 +629,7 @@ translate_to() {
             > "$DT/index.trad_tmp"
             > "$DT/translation"
             internet
-            [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && return 1
+            if [ ! -e "${DC_tlt}/id.cfg" ]; then return 1; fi
             l="$(grep -o 'tlng="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
             if [ -n "$l" ]; then lgt=${tlangs[$l]}; else lgt=${tlangs[$tlng]}; fi
             
@@ -678,6 +672,7 @@ translate_to() {
                 msg "$(gettext "A problem has occurred, try again later.")\n" 'error'
                 cleanups "$DT/words.trad_tmp" "$DT/index.trad_tmp" \
                 "$DT/mix_words.trad_tmp" "$DT/translate_to" "$DT/translation"
+                [ -e "${DC_tlt}/slng_err.bk" ] && mv "${DC_tlt}/slng_err.bk" "${DC_tlt}/slng_err"
                 exit 1
             fi
             
@@ -697,14 +692,14 @@ translate_to() {
                     echo "${t}_${s}" >> "$DT/w.tmp"
                     let bcle++
                 done)
-                wrds="$(tr '\n' '_' < "$DT/w.tmp" |sed '/^$/d')"; cdid="$id"
+                wrds="$(tr '\n' '_' < "$DT/w.tmp" |sed '/^$/d')"
                 eval line="$(sed -n 2p $DS/default/vars)"
                 echo -e "${line}" >> "$DT/translation"
             let n++
             done < "${DC_tlt}/0.cfg"
             
-            unset item type trgt srce exmp defn note grmr mark link tag id
-            rm -f "$DT"/*.tmp "$DT"/*.trad "$DT"/*.trad_tmp
+            unset item type trgt srce exmp defn note grmr mark link tag cdid
+            if [ -n "$DT" ]; then rm -f "$DT"/*.tmp "$DT"/*.trad "$DT"/*.trad_tmp; fi
 
             if [ -e "$DT/translation" ]; then
                 mv -f "${DC_tlt}/0.cfg" "${DC_tlt}/translations/$active_trans.bk"
@@ -712,13 +707,12 @@ translate_to() {
                 echo "$autom_trans" > "${DC_tlt}/translations/active"
             fi
         fi
-        # check and notice
         active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
         if [[ "$active_trans" != "$slng" ]]; then
             touch "${DC_tlt}/slng_err"
         fi
     fi
-    cleanups "$DT/translate_to"
+    cleanups "$DT/translate_to" "${DC_tlt}/slng_err.bk"
 }
 
 menu_addons() {
@@ -751,17 +745,19 @@ colorize() {
     img2="$DS/images/2.png"
     img3="$DS/images/3.png"
     img0="$DS/images/0.png"
+    cfg0="${DC_tlt}/0.cfg"
     cfg1="${DC_tlt}/1.cfg"
     cfg5="${DC_tlt}/5.cfg"
     cfg6="${DC_tlt}/6.cfg"
     log3="$(cat "${DC_tlt}/practice"/log3)"
     log2="$(cat "${DC_tlt}/practice"/log2)"
     log1="$(cat "${DC_tlt}/practice"/log1)"
-    export chk cfg1 cfg5 cfg6 log1 \
+    export chk cfg0 cfg1 cfg5 cfg6 log1 \
     log2 log3 img0 img1 img2 img3
     python <<PY
-import os
+import os, re
 chk = os.environ['chk']
+cfg0 = os.environ['cfg0']
 cfg1 = os.environ['cfg1']
 cfg5 = os.environ['cfg5']
 cfg6 = os.environ['cfg6']
@@ -772,25 +768,28 @@ img0 = os.environ['img0']
 img1 = os.environ['img1']
 img2 = os.environ['img2']
 img3 = os.environ['img3']
-items = [line.strip() for line in open(cfg1)]
+items = [line.strip() for line in open(cfg0)]
+cfg1 = [line.strip() for line in open(cfg1)]
 marks = [line.strip() for line in open(cfg6)]
 f = open(cfg5, "w")
-n = 0
-while n < len(items):
-    item = items[n]
-    if item in marks:
-        i="<b><big>"+item+"</big></b>"
-    else:
-        i=item
-    if item in log3:
-        f.write(img3+"\n"+i+"\nFALSE\n")
-    elif item in log2:
-        f.write(img2+"\n"+i+"\nFALSE\n")
-    elif item in log1:
-        f.write(img1+"\n"+i+"\n"+chk+"\n")
-    else:
-        f.write(img0+"\n"+i+"\nFALSE\n")
-    n += 1
+for item in items:
+    item = item.replace('}', '}\n')
+    fields = re.split('\n',item)
+    item = (fields[0].split('trgt{'))[1].split('}')[0]
+    if item in cfg1:
+        srce = (fields[1].split('srce{'))[1].split('}')[0]
+        if item in marks:
+            i="<b><big>"+item+"</big></b>"
+        else:
+            i=item
+        if item in log3:
+            f.write(img3+"\n"+i+"\nFALSE\n"+srce+"\n")
+        elif item in log2:
+            f.write(img2+"\n"+i+"\nFALSE\n"+srce+"\n")
+        elif item in log1:
+            f.write(img1+"\n"+i+"\n"+chk+"\n"+srce+"\n")
+        else:
+            f.write(img0+"\n"+i+"\nFALSE\n"+srce+"\n")
 f.close()
 PY
     rm -f "$DT/co_lk"
@@ -804,9 +803,7 @@ itray() {
     export lbl3="$(gettext "Stop playback")"
     export lbl4="$(gettext "Next")"
     export lbl5="$(gettext "Index")"
-    export lbl9="$(gettext "Tasks")"
     export lbl6="$(gettext "Options")"
-    export lbl7="$(gettext "Show panel")"
     export lbl8="$(gettext "Quit")"
     export dirt="$DT/"
     python <<PY
@@ -818,9 +815,7 @@ play = os.environ['lbl2']
 stop = os.environ['lbl3']
 next = os.environ['lbl4']
 topics = os.environ['lbl5']
-tasks = os.environ['lbl9']
 options = os.environ['lbl6']
-panel = os.environ['lbl7']
 quit = os.environ['lbl8']
 class IdiomindIndicator:
     def __init__(self):
@@ -828,7 +823,6 @@ class IdiomindIndicator:
         self.indicator.set_status(appindicator.STATUS_ACTIVE)
         self.cfg = os.getenv('HOME') + '/.config/idiomind/4.cfg'
         self.playlck = os.environ['dirt'] + 'playlck'
-        self.tasks = os.environ['dirt'] + 'tasks'
         self.menu_items = []
         self.stts = 1
         self.change_label()
@@ -889,27 +883,6 @@ class IdiomindIndicator:
             popup_menu.append(item)
         item = gtk.SeparatorMenuItem()
         popup_menu.append(item)
-
-        if os.path.exists(self.tasks):
-            listMenu=gtk.Menu()
-            listItems=gtk.MenuItem(tasks)
-            listItems.set_submenu(listMenu)
-            try:
-                m = open(self.tasks).readlines()
-            except:
-                m = []
-            for bm in m:
-                label = bm.rstrip('\n')
-                if not label:
-                    label = ""
-                item = self.create_menu_label(label)
-                item.connect("activate", self.on_Home)
-                listMenu.append(item)
-            
-            popup_menu.append(listItems)
-            item.show()
-            listItems.show()
-        
         item = self.create_menu_label(topics)
         item.connect("activate", self.on_Topics_click)
         popup_menu.append(item)
@@ -949,10 +922,6 @@ class IdiomindIndicator:
     def on_Play_Changed(self, filemonitor, file2, other_file, event_type):
         if event_type == gio.FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
             self._on_menu_update()
-    def on_Tasks_Changed(self, filemonitor, file3, other_file, event_type):
-        if event_type == gio.FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
-            self._on_menu_update()
-    
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, lambda signal, frame: gtk.main_quit())
     i = IdiomindIndicator()
@@ -962,16 +931,13 @@ if __name__ == "__main__":
     file2 = gio.File(i.playlck)
     monitor2 = file2.monitor_file()
     monitor2.connect("changed", i.on_Play_Changed)
-    file3 = gio.File(i.tasks)
-    monitor3 = file3.monitor_file()
-    monitor3.connect("changed", i.on_Tasks_Changed)
     gtk.main()
 PY
 return 0
 }
 
 about() {
-    export _descrip="$(gettext "Utility for learning foreign vocabulary")"
+    export _descrip="$(gettext "Learning foreign vocabulary")"
     python << ABOUT
 import gtk, os
 app_logo = os.path.join('/usr/share/idiomind/images/logo.png')
@@ -994,7 +960,7 @@ app_license = (('Idiomind is free software: you can redistribute it and/or modif
 '\n'+
 'You should have received a copy of the GNU General Public License\n'+
 'along with this program.  If not, see http://www.gnu.org/licenses'))
-app_authors = ['Robin Palatnik <robinpalat@users.sourceforge.net>']
+app_authors = ['Robin Palatnik <robinpalat@users.sourceforge.net>\nMade with YAD <https://sourceforge.net/projects/yad-dialog>']
 app_artists = ["Logo based on rg1024's openclipart Ufo Cartoon."]
 class AboutDialog:
     def __init__(self):

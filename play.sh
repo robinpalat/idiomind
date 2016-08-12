@@ -11,9 +11,9 @@ msg_err1() {
 play_word() {
     w="$(sed 's/<[^>]*>//g' <<<"${2}")"
     if [ -f "${DM_tlt}/$3.mp3" ]; then
-        play "${DM_tlt}/$3.mp3" &
+        mplayer "${DM_tlt}/$3.mp3" &
     elif [ -f "${DM_tls}/audio/${w,,}.mp3" ]; then
-        play "${DM_tls}/audio/${w,,}.mp3" &
+        mplayer "${DM_tls}/audio/${w,,}.mp3" &
     elif [ -n "$synth" ]; then
         echo "${w}." |${synth}; [ $? != 0 ] && msg_err1
     else
@@ -23,9 +23,9 @@ play_word() {
 } >/dev/null 2>&1
 
 play_sentence() {
-    if ps -A | pgrep -f 'play'; then killall 'play'; fi
+    if ps -A | pgrep -f 'mplayer'; then killall 'mplayer'; fi
     if [ -f "${DM_tlt}/$2.mp3" ]; then
-        play "${DM_tlt}/$2.mp3" &
+        mplayer "${DM_tlt}/$2.mp3" &
     elif [ -n "$synth" ]; then
         sed 's/<[^>]*>//g' <<< "${trgt}." |${synth}; [ $? != 0 ] && msg_err1
     else
@@ -117,8 +117,8 @@ play_list() {
     unset iteml[${rword}]
     lst=`for i in "${iteml[@]}"; do echo -n "!$i"; done`
     lst_opts1="$set$lst"
-    tab1=$(mktemp "$DT/XXX.p")
-    tab2=$(mktemp "$DT/XXX.p")
+    tab1=$(mktemp "$DT/XXXXXX.p")
+    tab2=$(mktemp "$DT/XXXXXX.p")
     c=$((RANDOM%100000)); KEY=$c
     [ ${ntosd} != TRUE -a ${audio} != TRUE ] && audio=TRUE
     
@@ -140,7 +140,7 @@ play_list() {
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all \
     --window-icon=idiomind \
-    --align=right --center --on-top \
+    --align=right --fixed --center --on-top \
     --tab-pos=right --tab-borders=0 \
     --tab=" $(gettext "Lists") " \
     --tab="$(gettext "Options")" \

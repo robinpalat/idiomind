@@ -223,7 +223,7 @@ function word_p() {
 
 function clean_0() {
     echo "${1}" |sed 's/\\n/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
-    |sed "s/’/'/g" \
+    |sed "s/’/'/g" | sed "s/^-\(.*\)/\1/" \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g' |sed 's/^\s*./\U&\E/g' \
     |tr -d ':*|;!¿?[]&:<>+'  |sed 's/\¡//g' \
@@ -232,7 +232,7 @@ function clean_0() {
 
 function clean_1() {
     echo "${1}" |sed 's/\\n/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
-    |sed "s/’/'/g" \
+    |sed "s/’/'/g" | sed "s/^-\(.*\)/\1/" \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g' |sed 's/^\s*./\U&\E/g' \
     |tr -s '/' '-' |tr -d '/*|",;!¿?()[]&:.<>+'  |sed 's/\¡//g' \
@@ -267,14 +267,14 @@ function clean_3() {
 function clean_4() {
     if [ $(wc -c <<< "${1}") -le ${sentence_chars} ] && \
     [ $(echo -e "${1}" |wc -l) -gt ${sentence_lines} ]; then
-    echo "${1}" | tr -d '*/' |tr -s '&|{}[]<>+' ' ' \
+    echo "${1}" |sed "s/^-\(.*\)/\1/" | tr -d '*/' |tr -s '&|{}[]<>+' ' ' \
     |sed 's/ — / - /;s/--/ /g; /^$/d;s/ \+/ /g;s/ʺͶ//;s/	/ /g'
     elif [ $(wc -c <<< "${1}") -le ${sentence_chars} ]; then
-    echo "${1}" |sed ':a;N;$!ba;s/\n/ /;s/	/ /g' \
+    echo "${1}" |sed "s/^-\(.*\)/\1/" |sed ':a;N;$!ba;s/\n/ /;s/	/ /g' \
     |tr -d '*/' |tr -s '&|{}[]<>+' ' ' \
     |sed 's/ — / - /;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
     else
-    echo "${1}" |sed ':a;N;$!ba;s/\n/\__/;s/	/ /g' \
+    echo "${1}" |sed "s/^-\(.*\)/\1/" |sed ':a;N;$!ba;s/\n/\__/;s/	/ /g' \
     |tr -d '*/' |tr -s '&|{}[]<>+' ' ' \
     |sed 's/ — /__/;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
     fi
@@ -376,7 +376,7 @@ dwld1() {
     if [ "${LINK}" -a ! -e "$audio_file" ]; then
         wget -T 51 -q -U "$ua" -O "$audio_dwld.$ex" "${LINK}"
         if [[ ${ex} != 'mp3' ]]; then
-            sox "$audio_dwld.$ex" "$audio_dwld.mp3"; rm "$audio_dwld.$ex"
+            mv -f "$audio_dwld.$ex" "$audio_dwld.mp3"
         fi
     fi
     if file -b --mime-type "$audio_file" |grep -E 'audio\/mpeg|mp3|' >/dev/null 2>&1 \
@@ -511,7 +511,7 @@ function voice() {
             local info="$(gettext "Please check the speech synthesizer configuration in the preferences dialog.")"
             msg "$info" error Info & exit 1
         fi
-        sox "$DT_r"/*.wav "${3}"
+        mv "$DT_r"/*.wav "${3}"
     else
         return 1
     fi
@@ -548,7 +548,7 @@ function dlg_form_0() {
     --name=Idiomind --class=Idiomind \
     --separator='|' \
     --window-icon=idiomind \
-    --skip-taskbar --center --on-top \
+    --skip-taskbar --fixed --center --on-top \
     --width=450 --height=80 --borders=0 \
     --field="$(gettext "Name")" "$1" \
     --button="$(gettext "OK")":0
@@ -559,7 +559,7 @@ function dlg_form_1() {
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --always-print-result --separator="|" \
-    --skip-taskbar --center --on-top \
+    --skip-taskbar --fixed --center --on-top \
     --align=right --image="${img}" \
     --window-icon=idiomind \
     --width=450 --height=130 --borders=0 \
@@ -575,10 +575,10 @@ function dlg_form_2() {
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --always-print-result --separator="|" \
-    --skip-taskbar --center --on-top \
+    --skip-taskbar --fixed --center --on-top \
     --align=right --image="${img}" \
     --window-icon=idiomind \
-    --width=450 --height=150 --borders=0 \
+    --width=450 --height=120 --borders=0 \
     --field="" "$txt" \
     --field="" "$srce" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
@@ -600,7 +600,7 @@ function dlg_checklist_3() {
     --field=" ":lbl null \
     --field=":CB" "$2!$(gettext "New") *$e$tpcs" &
     yad --paned --key="$fkey" \
-    --title="$(wc -l < "${1}") $(gettext "notes found")" \
+    --title="$(gettext "Found") $(wc -l < "${1}") $(gettext "notes")" \
     --name=Idiomind --class=Idiomind \
     --skip-taskbar --orient=vert --window-icon=idiomind --center --on-top \
     --gtkrc="$DS/default/gtkrc.cfg" \
@@ -663,7 +663,7 @@ function dlg_text_info_3() {
     --window-icon=idiomind \
     --image="$DS/images/warning.png" \
     --wrap --margins=5 \
-    --center --on-top \
+    --fixed --center --on-top \
     --width=450 --height=150 --borders=3 \
     "${3}" --button="$(gettext "Close")":1
 }

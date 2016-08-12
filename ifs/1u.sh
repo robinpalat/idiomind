@@ -66,8 +66,8 @@ dlg=$(yad --form --title="Idiomind" \
 --text="$text" \
 --class=Idiomind --name=Idiomind \
 --window-icon=idiomind \
---image-on-top --buttons-layout=end --align=right --center --on-top \
---width=450 --height=220 --borders=10 \
+--image-on-top --buttons-layout=end --align=right --fixed --center --on-top \
+--width=450 --height=240 --borders=12 \
 --field="$(gettext "Select foreign language"):CB" "$list1" \
 --field="$(gettext "Select native language"):CB" "$list2" \
 --button="$(gettext "Cancel")":1 \
@@ -90,7 +90,6 @@ elif [ $ret -eq 0 ]; then
     elif [ $target = $source ]; then
     /usr/share/idiomind/ifs/1u.sh t & exit 1
     fi
-    
     mkdir "$HOME/.idiomind"
     if [ $? -ne 0 ]; then
         yad --title=Idiomind \
@@ -102,7 +101,6 @@ elif [ $ret -eq 0 ]; then
         --width=420 --height=120 --borders=2 \
         --button="$(gettext "OK")":1 & exit 1
     fi
-    
     DM_t="$HOME/.idiomind/topics"
     [ ! -d  "$HOME/.config" ] && mkdir "$HOME/.config"
     mkdir -p "$HOME/.config/idiomind/addons"
@@ -113,19 +111,13 @@ elif [ $ret -eq 0 ]; then
             export tlng=$val
         fi
     done
-
     export slng=${source}
-
     set_lang ${tlng}
-
     if ! grep -q ${slng} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
         sqlite3 ${cdb} "alter table Words add column ${slng} TEXT;"
     fi
-    
     echo ${slng} >> "$DC_s/6.cfg"
-
     if echo "$target" |grep -oE 'Chinese|Japanese|Russian'; then _info; fi
-
     > "$DC_s/1.cfg"
     for n in {0..12}; do echo -e "${csets[$n]}=\"\"" >> "$DC_s/1.cfg"; done
     touch "$DC_s/4.cfg"

@@ -11,18 +11,18 @@ function dlg_form_1() {
     --window-icon=idiomind \
     --align=right --text-align=center --columns=2 \
     --buttons-layout=end --on-top --center \
-    --width=650 --height=480 --borders=10 \
+    --width=650 --height=400 --borders=10 \
     --field="$(gettext "$tlng")" "${trgt}" \
     --field="$(gettext "$slng")" "${srce}" \
     --field="$(gettext "Topic")":CB "${tpc_list}" \
     --field=" ":LBL " " \
     --field="$(gettext "Example")\t\t\t\t\t\t\t\t\t\t\t":TXT "${exmp}" \
     --field="$(gettext "Definition")":TXT "${defn}" \
-    --field="$(gettext "Note")":TXT "${note}" \
-    --field="$(gettext "Go to Google Translate")":FBTN "${cmd_trad}" \
+    --field="$(gettext "Definition")":FBTN "${cmd_def}" \
+    --field="$(gettext "Translation")":FBTN "${cmd_trad}" \
     --field="$(gettext "Audio")":FL "${audf}" \
     --field="$(gettext "Mark")":CHK "$mark" \
-    --field="$(gettext "Definition")":FBTN "${cmd_def}" \
+    --field="$(gettext "Note")":TXT "${note}" \
     --button="$(gettext "Image")":"${cmd_image}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
     --button="!$DS/images/listen.png!$(gettext "Listen")":"${cmd_play}" \
@@ -42,13 +42,13 @@ function dlg_form_2() {
     --separator="|" --selectable-labels \
     --window-icon=idiomind \
     --buttons-layout=end --align=right --on-top --center \
-    --width=650 --height=480 --borders=10 \
+    --width=650 --height=400 --borders=10 \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field=" $lbl_2":${t} "$type" \
     --field="$(gettext "$tlng")":TXT "${trgt}" \
     --field="$(gettext "$slng")":TXT "${srce}" \
     --field="$(gettext "Note")":TXT "${note}" \
-    --field="$(gettext "Go to Google Translate")":FBTN "${cmd_trad}" \
+    --field="$(gettext "See Translation")":FBTN "${cmd_trad}" \
     --field="\t\t\t$(gettext "Topic")":CB "${tpc_list}" \
     --field="$(gettext "Audio")":FL "${audf}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \

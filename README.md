@@ -4,7 +4,7 @@
 
 <b>Dependencies:</b>
 
-bash (>=4.1), yad (>=0.30), mplayer, imagemagick, wkhtmltopdf, curl, html2text, sox, libsox-fmt-mp3, wget, xdg-utils, xclip, tesseract-ocr, python, python-requests, espeak, sqlite3
+bash (>=4.1), yad (>=0.30), mplayer, imagemagick, wkhtmltopdf, curl, html2text, xdg-utils, xclip, tesseract-ocr, python, python-requests, espeak, sqlite3
 
 
 

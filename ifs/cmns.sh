@@ -2,10 +2,10 @@
 # -*- ENCODING: UTF-8 -*-
 
 function internet() {
-    curl -v www.google.com 2>&1 \
-    | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { zenity --info \
-    --text="$(gettext "No network connection\nPlease connect to a network, then try again.")  " \
-    >&2; exit 1;}
+    if curl -v www.google.com 2>&1 |grep -m1 "HTTP/1.1" >/dev/null 2>&1; then :
+    else zenity --info \
+    --text="$(gettext "No network connection\nPlease connect to a network, then try again.")  " & exit 1
+    fi
 }
 
 function msg() {
@@ -14,8 +14,8 @@ function msg() {
     yad --title="${title}" --text="${1}" --image="${2}" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind \
-    --image-on-top --center --sticky --on-top \
-    --width=450 --height=110 --borders=3 \
+    --image-on-top --center --fixed --sticky --on-top \
+    --width=450 --height=80 --borders=3 \
     --button="${btn}":0
 }
 
@@ -26,8 +26,8 @@ function msg_2() {
     --name=Idiomind --class=Idiomind \
     --always-print-result \
     --window-icon=idiomind \
-    --image-on-top --on-top --sticky --center \
-    --width=450 --height=110 --borders=3 \
+    --image-on-top --on-top --fixed --sticky --center \
+    --width=450 --height=80 --borders=3 \
     "${btn3}" --button="${4}":1 --button="${3}":0
 }
 
@@ -39,7 +39,7 @@ function msg_4() {
     --name=Idiomind --class=Idiomind \
     --pulsate --auto-close --always-print-result \
     --window-icon=idiomind \
-    --buttons-layout=edge --image-on-top --on-top --sticky --center \
+    --buttons-layout=edge --image-on-top --fixed --on-top --sticky --center \
     --width=380 --height=100 --borders=3 \
     --button="${4}":1 --button="${3}":0
     #--image="$2"

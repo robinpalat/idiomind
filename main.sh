@@ -219,7 +219,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             echo "${name}" >> "$DM_tl/.share/3.cfg"
             source /usr/share/idiomind/default/c.conf
             "$DS/mngr.sh" mkmn 1
-            "$DS/default/tpc.sh" "${name}" 1 &
+            "$DS/ifs/tpc.sh" "${name}" 1 &
         fi
     exit 0
 fi
@@ -231,7 +231,7 @@ function topic() {
 
     readd(){
         [ -z "${tpc}" ] && return 1
-        source "$DS/ifs/mods/topic/items_list.sh"
+        source "$DS/ifs/mods/main/items_list.sh"
         for n in {0..4}; do
             [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg"
             export ls${n}="${DC_tlt}/${n}.cfg"
@@ -247,9 +247,9 @@ function topic() {
         [ -z $repass ] && repass=0; export repass acheck
         ( sleep 3 && "$DS/ifs/tls.sh" promp_topic_info ) &
         c=$((RANDOM%100000)); export KEY=$c
-        export cnf1=$(mktemp "$DT/cnf1.XXXX")
-        export cnf3=$(mktemp "$DT/cnf3.XXXX")
-        export cnf4=$(mktemp "$DT/cnf4.XXXX")
+        export cnf1=$(mktemp "$DT/cnf1.XXXXXX")
+        export cnf3=$(mktemp "$DT/cnf3.XXXXXX")
+        export cnf4=$(mktemp "$DT/cnf4.XXXXXX")
         if [ ! -z "$dtei" ]; then 
             export infolbl="$(gettext "Review ")$repass. $(gettext "Installed on") $dtei\n$(gettext "created by") $autr"
             [ -e "${DC_tlt}/download" ] && export plusinfo="- $(gettext "Downloadable content available")."
@@ -398,7 +398,7 @@ function topic() {
 
     else
         tpa="$(sed -n 1p "$DC_s/4.cfg")"
-        source "$DS/ifs/mods/topic/${tpa}.sh"; ${tpa} &
+        source "$DS/ifs/mods/main/${tpa}.sh"; ${tpa} &
     fi
     
     oclean & return 0

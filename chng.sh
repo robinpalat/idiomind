@@ -102,7 +102,7 @@ if [[ ${1} = 0 ]]; then
 
 elif [[ ${1} != 0 ]]; then
     source /usr/share/idiomind/default/c.conf
-    sz=(620 580); [[ ${swind} = TRUE ]] && sz=(450 420)
+    sz=(600 560); [[ ${swind} = TRUE ]] && sz=(450 420)
 
     remove_d() {
         source "$DS/ifs/cmns.sh"
@@ -168,9 +168,9 @@ elif [[ ${1} != 0 ]]; then
         "$DM_tl/${tpc}/.conf/8.cfg" && mode=13
         if ((mode>=0 && mode<=20)); then
             if [ $ret -eq 2 ]; then
-                "$DS/default/tpc.sh" "${tpc}" ${mode} 1 &
+                "$DS/ifs/tpc.sh" "${tpc}" ${mode} 1 &
             elif [ $ret -eq 0 ]; then
-                "$DS/default/tpc.sh" "${tpc}" ${mode} &
+                "$DS/ifs/tpc.sh" "${tpc}" ${mode} &
             fi
         fi
     fi

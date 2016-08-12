@@ -179,7 +179,7 @@ edit_item() {
     temp="...."
     if [[ "${srce}" = "${temp}" ]]; then
         if [ -e "$DT/${trgt}.edit" ]; then
-            msg_4 "$(gettext "Wait till the process is completed.")\n" \
+            msg_4 "$(gettext "Wait till the process is completed.")" \
             "$DS/images/warning.png" "$(gettext "OK")" "$(gettext "Stop")" \
             "$(gettext "Wait")" "$DT/${trgt}.edit"
             if [ $? = 1 ]; then
@@ -201,7 +201,6 @@ edit_item() {
     elif [ ${type} = 2 ]; then
         edit_dlg2="$(dlg_form_2)"
     fi
-    
     ret=$?
         if [ -z "${edit_dlg1}" -a -z "${edit_dlg2}" ]; then
             item_pos=$((item_pos-1))
@@ -217,7 +216,7 @@ edit_item() {
                 srce_mod="$(clean_9 "$(cut -d "|" -f2 <<< "${edit_dlg}")")"
                 exmp_mod="$(clean_0 "$(cut -d "|" -f5 <<< "${edit_dlg}")")"
                 defn_mod="$(clean_0 "$(cut -d "|" -f6 <<< "${edit_dlg}")")"
-                note_mod="$(clean_0 "$(cut -d "|" -f7 <<< "${edit_dlg}")")"
+                note_mod="$(clean_0 "$(cut -d "|" -f11 <<< "${edit_dlg}")")"
                 tpc_mod="$(cut -d "|" -f3 <<< "${edit_dlg}")"
                 audf_mod="$(cut -d "|" -f9 <<< "${edit_dlg}")"
                 mark_mod="$(cut -d "|" -f10 <<< "${edit_dlg}")"
@@ -271,7 +270,7 @@ edit_item() {
             (
                 if [ ${mod_index} = 1 ]; then
                 
-                    DT_r=$(mktemp -d "$DT/XXXX")
+                    DT_r=$(mktemp -d "$DT/XXXXXX")
                     > "$DT/${trgt_mod}.edit"
                     
                     if [ ${type_mod} = 1 ]; then
@@ -386,7 +385,7 @@ edit_list_cmds() {
     if grep -o -E 'ja|zh-cn|ru' <<< "${lgt}"; then c=c; else c=w; fi
     direc="$DM_tl/${2}/.conf"
     if [ -e "$DT/transl_batch_out" ]; then
-        msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
+        msg_4 "$(gettext "Wait until it finishes a previous process")" \
         "$DS/images/warning.png" "$(gettext "OK")" "$(gettext "Stop")" \
         "$(gettext "Wait")" "$DT/transl_batch_out"
         ret=$?
@@ -469,7 +468,7 @@ edit_list_cmds() {
 
         if [ -e "$DT/items_to_add" ]; then
             invrt_msg=FALSE
-            export DT_r=$(mktemp -d "$DT/XXXX")
+            export DT_r=$(mktemp -d "$DT/XXXXXX")
             temp="...."
             
             while read -r trgt; do
@@ -518,7 +517,7 @@ edit_list_cmds() {
 edit_list_more() {
     touch "$DT/edit_list_more"
     file="$HOME/.idiomind/backup/${tpc}.bk"
-    cols1="$(gettext "Reverse items order")\n$(gettext "Remove all items")\n$(gettext "Restart topic status")\n$(gettext "Feeds manager")\n$(gettext "Show short sentences in word's view")"
+    cols1="$(gettext "Reverse items order")\n$(gettext "Remove all items")\n$(gettext "Restart topic status")\n$(gettext "Manage feeds")\n$(gettext "Show short sentences in word's view")"
     dt1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
     dt2=$(grep '\----- oldest' "${file}" |cut -d' ' -f3)
     if [ -n "$dt2" ]; then
@@ -576,7 +575,7 @@ edit_list_more() {
                 "$DS/mngr.sh" mkmn 1; "$DS/ifs/tls.sh" colorize 0
             fi
             
-        elif grep "$(gettext "Feeds manager")" <<< "${more}"; then
+        elif grep "$(gettext "Manage feeds")" <<< "${more}"; then
             idiomind feeds
             
         elif grep "$(gettext "Show short sentences in word's view")" <<< "${more}"; then
@@ -609,12 +608,12 @@ edit_list_dlg() {
     
     if [ -e "$DT/items_to_add" -o -e "$DT/el_lk" ]; then
         if [ -e "$DT/items_to_add" ]; then
-            msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
+            msg_4 "$(gettext "Wait until it finishes a previous process")" \
             "$DS/images/warning.png" "$(gettext "OK")" "$(gettext "Stop")" \
             "$(gettext "Wait")" "$DT/items_to_add"
             ret=$?
         elif [ -e "$DT/el_lk" ]; then
-            msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
+            msg_4 "$(gettext "Wait until it finishes a previous process")" \
             "$DS/images/warning.png" "$(gettext "OK")" "$(gettext "Stop")" \
             "$(gettext "Wait")" "$DT/el_lk"
             ret=$?
@@ -633,7 +632,7 @@ edit_list_dlg() {
     cleanups "$DT/list_output"; > "$DT/list_input"
     
     lns=$(cat "${direc}/0.cfg" |wc -l)
-    (n=1; echo "5"; cat "${direc}/0.cfg" | while read -r item_; do
+    (n=1; echo "#"; cat "${direc}/0.cfg" | while read -r item_; do
         item="$(sed 's/}/}\n/g' <<< "${item_}")"
         trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
         [ -n "${trgt}" ] && echo "${trgt}" >> "$DT/list_input"
@@ -662,8 +661,9 @@ edit_feeds() {
     ret="$?"
     if [ $ret != 1 -a $ret -le 2 ]; then
         if [ -z "${mods}" ]; then
-            cleanups "${file}"
+            cleanups "${file}" "$DM_tl/${2}/.conf/exclude"
         elif [ "${feeds}" != "${mods}" ]; then
+            touch "$DM_tl/${2}/.conf/exclude"
             echo "${mods}" |sed -e '/^$/d' > "${file}"
         fi
         if  [ $ret = 2 ]; then
@@ -786,7 +786,7 @@ mark_to_learn_topic() {
         dialog-information "$(gettext "Information")" & exit
     fi
 
-    (echo "5"
+    (echo "#"
     stts=$(sed -n 1p "${DC_tlt}/8.cfg")
     ! [[ ${stts} =~ ${numer} ]] && stts=1
     
@@ -839,16 +839,15 @@ mark_to_learn_topic() {
 }
 
 mark_as_learned_topic() {
-    if [ "${tpc}" != "${2}" ]; then
-    msg "$(gettext "Sorry, this topic is currently not active.")\n " dialog-information "$(gettext "Information")" & exit; fi
-    
+    if [[ "${3}" != 0 ]]; then
+        if [ "${tpc}" != "${2}" ]; then
+        msg "$(gettext "Sorry, this topic is currently not active.")\n " dialog-information "$(gettext "Information")" & exit; fi
+        if [ $((cfg3+cfg4)) -le 15 ]; then
+        msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
+        dialog-information "$(gettext "Information")" & exit; fi
+    fi
     [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
-
-    if [ $((cfg3+cfg4)) -le 15 ]; then
-    msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
-    dialog-information "$(gettext "Information")" & exit; fi
-    
-    (echo "5"
+    (echo "#"
     stts=$(sed -n 1p "${DC_tlt}/8.cfg")
     ! [[ ${stts} =~ ${numer} ]] && stts=1
 
@@ -913,6 +912,61 @@ mark_as_learned_topic() {
     exit
 }
 
+mark_to_learnt_topic_ok() {
+        tpc="${2}"
+        DM_tlt="$DM_tl/${tpc}"
+        DC_tlt="$DM_tl/${tpc}/.conf"
+        [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
+        stts=$(sed -n 1p "${DC_tlt}/8.cfg")
+        ! [[ ${stts} =~ ${numer} ]] && stts=1
+        if [ ! -e "${DC_tlt}/7.cfg" ]; then
+            [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
+            calculate_review "${tpc}"
+            steps=$(egrep -cv '#|^$' < "${DC_tlt}/9.cfg")
+            if [ -s "${DC_tlt}/9.cfg" ]; then
+                ! [[ ${steps} =~ ${numer} ]] && steps=1
+                
+                if [ ${steps} -eq 4 ]; then
+                    stts=$((stts+1)); fi
+                
+                if [ ${RM} -ge 50 ]; then
+                    if [ ${steps} -eq 8 ]; then
+                        sed -i '$ d' "${DC_tlt}/9.cfg"
+                        date "+%m/%d/%Y" >> "${DC_tlt}/9.cfg"
+                    elif [ ${steps} -gt 8 ]; then
+                        dts="$(head -7 < "${DC_tlt}/9.cfg")"
+                        echo -e "${dts}\n$(date +%m/%d/%Y)" > "${DC_tlt}/9.cfg"
+                    else
+                        date "+%m/%d/%Y" >> "${DC_tlt}/9.cfg"
+                    fi
+                fi
+            else
+                date +%m/%d/%Y > "${DC_tlt}/9.cfg"
+            fi
+            
+            if [ -d "${DC_tlt}/practice" ]; then
+                (cd "${DC_tlt}/practice"; rm ./.*; rm ./*
+                touch ./log1 ./log2 ./log3); fi
+
+            > "${DC_tlt}/7.cfg"
+            if [[ $((stts%2)) = 0 ]]; then
+                echo 4 > "${DC_tlt}/8.cfg"
+            else
+                echo 3 > "${DC_tlt}/8.cfg"
+            fi
+        fi
+        cleanups "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"
+        touch "${DC_tlt}/1.cfg"; > "${DC_tlt}/2.cfg"
+        while read -r item_; do
+            item="$(sed 's/}/}\n/g' <<< "${item_}")"
+            trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
+            [ -n "${trgt}" ] && echo "${trgt}" >> "${DC_tlt}/2.cfg"
+        done < "${DC_tlt}/0.cfg"
+
+        cp -f "${DC_tlt}/info" "${DC_tlt}/info.bk"
+        ( sleep 1; mv -f "${DC_tlt}/info.bk" "${DC_tlt}/info" ) &
+}
+
 case "$1" in
     mkmn)
     mkmn "$@" ;;
@@ -940,4 +994,6 @@ case "$1" in
     mark_as_learned_topic "$@" ;;
     mark_to_learn)
     mark_to_learn_topic "$@" ;;
+    mark_to_learnt_ok)
+    mark_to_learnt_topic_ok "$@" ;;
 esac

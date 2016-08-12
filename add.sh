@@ -51,7 +51,7 @@ new_topic() {
     else
         mkdir -p "$DM_tl/${name}"
         check_list > "$DM_tl/.share/2.cfg"
-        "$DS/default/tpc.sh" "${name}" "$mode" "$activ"
+        "$DS/ifs/tpc.sh" "${name}" "$mode" "$activ"
         "$DS/mngr.sh" mkmn 0
     fi
 }
@@ -64,7 +64,7 @@ function new_item() {
         export DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
     fi
     check_s "${tpe}"
-    if [ -z "$trgt" ]; then trgt="${3}"; fi
+    if [ -z "${trgt}" ]; then trgt="${3}"; fi
     
     if [[ ${trans} = FALSE ]] && [ -z "${srce}" -o -z "${trgt}" ]; then
         cleanups "$DT_r"
@@ -76,13 +76,13 @@ function new_item() {
         [ -z "${srce}" ] && internet
         if [ $(wc -w <<< "${srce}") = 1 ]; then
             new_word
-        elif [ "$(wc -w <<< "${srce}")" -ge 1 -a ${#srce} -le ${sentence_chars} ]; then
+        elif [ $(wc -w <<< "${srce}") -ge 1 -a ${#srce} -le ${sentence_chars} ]; then
             new_sentence
         fi
     elif ! grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
         if [ $(wc -w <<< "${trgt}") = 1 ]; then
             new_word
-        elif [ "$(wc -w <<< "${trgt}")" -ge 1 -a ${#trgt} -le ${sentence_chars} ]; then
+        elif [ $(wc -w <<< "${trgt}") -ge 1 -a ${#trgt} -le ${sentence_chars} ]; then
             new_sentence
         fi
     fi
@@ -109,7 +109,7 @@ function new_sentence() {
         msg "$(gettext "You need to fill text fields.")\n" \
         dialog-information "$(gettext "Information")" & exit; fi
     fi
-    notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
+    
     sentence_p 1
     export cdid="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
     mksure "${trgt}" "${srce}" "${grmr}" "${wrds}"
@@ -118,6 +118,7 @@ function new_sentence() {
         echo -e "${trgt}" >> "${DC_tlt}/note_err"
         cleanups "$DT_r"; exit 1
     else
+        notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
         index 2
         if [ -e "$DT_r/img.jpg" ]; then
             set_image_2 "$DT_r/img.jpg" "${DM_tlt}/images/${trgt,,}.jpg"
@@ -125,9 +126,9 @@ function new_sentence() {
         if [ ! -e "$DT_r/audtm.mp3" ]; then
             if [[ ${dlaud} = TRUE ]]; then
                 tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$cdid.mp3"
-                    if [ ! -e "${DM_tlt}/$cdid.mp3" ]; then
-                        voice "${trgt}" "$DT_r" "${DM_tlt}/$cdid.mp3"
-                    fi
+                if [ ! -e "${DM_tlt}/$cdid.mp3" ]; then
+                    voice "${trgt}" "$DT_r" "${DM_tlt}/$cdid.mp3"
+                fi
             else
                 voice "${trgt}" "$DT_r" "${DM_tlt}/$cdid.mp3"
                 if [ $? = 1 ]; then
@@ -175,7 +176,7 @@ function new_word() {
         cleanups "$DT_r"; exit 1
     else
         index 1
-
+        notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
         if [ -e "$DT_r/img.jpg" ]; then
             if [ -e "${DM_tls}/images/${trgt,,}-0.jpg" ]; then
                 n=$(ls "${DM_tls}/images/${trgt,,}-"*.jpg |wc -l)
@@ -185,8 +186,6 @@ function new_word() {
             fi
             set_image_2 "$DT_r/img.jpg" "$name_img"
         fi
-
-        notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
         if [ ! -e "$DT_r/audtm.mp3" ]; then
             if [ ! -e "${DM_tls}/audio/${audio}.mp3" ]; then
                 [[ ${dlaud} = TRUE ]] && tts_word "${audio}" "${DM_tls}/audio"
@@ -317,7 +316,7 @@ function list_words_dclik() {
     words="${3}"
     
     if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
-        ( echo "1"
+        ( echo "#"
         echo "# $(gettext "Processing")..." ;
         export srce="$(translate "${words}" $lgt $lgs)"
         [ -z "${srce}" ] && internet
@@ -367,7 +366,7 @@ function process() {
             trap rm "$pars*" EXIT
             /usr/bin/import "$DT_r/img_.png"
             /usr/bin/convert "$DT_r/img_.png" -shave 1x1 "$pars.png"
-            ( echo "# $(gettext "Processing")..."
+            ( echo "#"
             mogrify -modulate 100,0 -resize 400% "$pars.png"
             tesseract "$pars.png" "$pars" -l ${tesseract_lngs[$tlng]} &> /dev/null
             if [ $? != 0 ]; then
@@ -441,7 +440,7 @@ function process() {
         cleanups "$DT_r" "$DT/n_s_pr" "$slt" & exit 1
     else
         xclip -i /dev/null
-        export slt=$(mktemp $DT/slt.XXXX.x)
+        export slt=$(mktemp $DT/slt.XXXXXX.x)
         export tpcs="$(grep -vFx "${tpe}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
         [ -n "$tpcs" ] && export e='!'
         tpe=`dlg_checklist_3 "$DT_r/xlines" "${tpe}"`
@@ -638,13 +637,17 @@ function process() {
 fetch_content() {
     export tpe="${2}"
     DC_tlt="$DM_tl/${tpe}/.conf"
-    
     if [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then exit 1; fi
     if [ -e "$DT/updating_feeds" ]; then
         exit 1
     else
         > "$DT/updating_feeds"
     fi
+    for t in {0..30}; do
+        curl -v www.google.com 2>&1 \
+        | grep -m1 "HTTP/1.1" >/dev/null 2>&1 && break || sleep 10
+        [ ${t} = 30 ] && exit 1
+    done
     feeds="${DC_tlt}/feeds"
     source "$DS/ifs/mods/add/add.sh"
     tmplitem="<?xml version='1.0' encoding='UTF-8'?>
@@ -665,21 +668,21 @@ fetch_content() {
         </xsl:for-each>
       </xsl:template>
     </xsl:stylesheet>"
-
-   while read -r _feed; do
-        if [ -n "$_feed" ]; then
-            feed_items="$(xsltproc - "$_feed" <<< "${tmplitem}" 2> /dev/null)"
-            [ -z "${feed_items}" ] && internet
-            feed_items="$(echo "$feed_items" |tr '\n' '*' |tr -s '[:space:]' |sed 's/EOL/\n/g' |head -n2)"
-            feed_items="$(echo "$feed_items" |sed '/^$/d')"
+    
+    while read -r _feed; do
+        if [ -n "${_feed}" ]; then
+            feed_items="$(xsltproc - "${_feed}" <<< "${tmplitem}" 2> /dev/null)"
+            if [ -z "${feed_items}" ]; then internet; fi
+            feed_items="$(echo "${feed_items}" |tr '\n' '*' |tr -s '[:space:]' |sed 's/EOL/\n/g' |head -n2)"
+            feed_items="$(echo "${feed_items}" |sed '/^$/d')"
             while read -r item; do
                 if [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then exit 1; fi
-                fields="$(echo "$item" |sed -r 's|-\!-|\n|g')"
-                title=$(echo "$fields" |sed -n 3p \
+                fields="$(echo "${item}" |sed -r 's|-\!-|\n|g')"
+                title=$(echo "${fields}" |sed -n 3p \
                 |iconv -c -f utf8 -t ascii |sed 's/\://g' \
                 |sed 's/\&/&amp;/g' |sed 's/^\s*./\U&\E/g' \
                 |sed 's/<[^>]*>//g' |sed 's/^ *//; s/ *$//; /^$/d')
-                export link="$(echo "$fields" |sed -n 4p \
+                export link="$(echo "${fields}" |sed -n 4p \
                 |sed 's|/|\\/|g' |sed 's/\&/\&amp\;/g')"
 
                 if [ -n "${title}" ]; then
@@ -695,9 +698,12 @@ fetch_content() {
     done < "${feeds}"
     rm -f "$DT/updating_feeds"; exit 0
     
-} >/dev/null 2>&1
+} 
 
 new_items() {
+    if [ -f "$DT/clipw" ]; then 
+        "$DS/ifs/clipw.sh" 1 & exit 1
+    fi
     if [ ! -e "$DT/tpe" ]; then
         tpc="$(sed -n 1p "$DC_s/4.cfg")"
         if ! ls -1a "$DS/addons/" |grep -Fxo "${tpc}" >/dev/null 2>&1; then

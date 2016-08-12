@@ -49,7 +49,7 @@ function score() {
     rm ./*.tmp
     [ ! -e ./${pr}.l ] && touch ./${pr}.l
     if [[ $(($(< ./${pr}.l)+easy)) -ge ${all} ]]; then
-        _log ${pr}; play "$pdirs/all.mp3" &
+        _log ${pr}; mplayer "$pdirs/all.mp3" &
         date "+%a %d %B" > ./${pr}.lock
         save_gains 0 & echo 21 > .${icon}
         strt 1
@@ -88,9 +88,8 @@ function save_gains() {
 }
 
 function _log() { 
-    if [[ ${mode} -le 1 ]] && [ ${1} != 'e' ]; then
+    if [ ${1} != 'e' ]; then
         [ -e ./${1}.1 ] && echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1" |sed '/\.\./d' >> "$log"
-    elif [[ ${mode} -gt 1 ]] && [ ${1} != 'e' ]; then
         [ -e ./${1}.2 ] && echo "w2.$(tr -s '\n' '|' < ./${1}.2).w2" |sed '/\.\./d' >> "$log"
         [ -e ./${1}.3 ] && echo "w3.$(tr -s '\n' '|' < ./${1}.3).w3" |sed '/\.\./d' >> "$log"
     elif [ ${1} = 'e' ]; then
@@ -150,7 +149,7 @@ function practice_a() {
         if [ $? = 1 ]; then
             ling=${hard}; hard=0
             export hard ling
-            break & score & return
+            break & score && return
         else
             answer
             ans=$?
@@ -173,7 +172,7 @@ function practice_a() {
             fonts; question
             if [ $? = 1 ]; then
                 export hard ling
-                break & score & return
+                break & score && return
             else
                 answer
                 ans=$?
@@ -238,7 +237,7 @@ function practice_b(){
                 echo "${item}" >> b.1
                 easy=$((easy+1))
             else
-                play "$snd" &
+                mplayer "$snd" &
                 echo "${item}" >> b.2
                 hard=$((hard+1))
             fi  
@@ -261,12 +260,12 @@ function practice_b(){
                     hard=$((hard-1))
                     ling=$((ling+1))
                 else
-                    play "$snd" &
+                    mplayer "$snd" &
                     echo "${item}" >> b.3
                 fi
             elif [ $? = 1 ]; then
                 export hard ling
-                break & score & return
+                break & score && return
             fi
         done < ./b.2
         export hard ling
@@ -329,7 +328,7 @@ function practice_c() {
         elif [ ${ans} = 1 ]; then
             ling=${hard}; hard=0
             export hard ling
-            break & score & return
+            break & score && return
         fi
     done < ./c.tmp
 
@@ -348,7 +347,7 @@ function practice_c() {
                 echo "${trgt}" >> c.3
             elif [ ${ans} = 1 ]; then
                 export hard ling
-                break & score & return
+                break & score && return
             fi
         done < ./c.2
         export hard ling
@@ -405,7 +404,7 @@ function practice_d() {
         if [ $? = 1 ]; then
             ling=${hard}; hard=0
             export hard ling
-            break & score & return
+            break & score && return
         else
             answer
             ans=$?
@@ -428,7 +427,7 @@ function practice_d() {
             fonts; question
             if [ $? = 1 ]; then
                 export hard ling
-                break & score & return
+                break & score && return
             else
                 answer
                 ans=$?
@@ -572,23 +571,23 @@ function practice_e() {
         ret=$?
         if [ $ret = 1 ]; then
             break &
-            if ps -A |pgrep -f 'play'; then killall play & fi
+            if ps -A |pgrep -f 'mplayer'; then killall mplayer & fi
             export hard ling
-            score & return
+            score && return
             
         else
-            if ps -A |pgrep -f 'play'; then killall play & fi
+            if ps -A |pgrep -f 'mplayer'; then killall mplayer & fi
             result "${trgt}"
             check "${trgt}"
             ret=$?
             if [ $ret = 1 ]; then
                 break &
-                if ps -A |pgrep -f 'play'; then killall play & fi
+                if ps -A |pgrep -f 'mplayer'; then killall mplayer & fi
                 rm -f ./mtch.tmp ./words.tmp
                 export hard ling
-                score
+                score && return
             elif [ $ret -eq 2 ]; then
-                if ps -A |pgrep -f 'play'; then killall play & fi
+                if ps -A |pgrep -f 'mplayer'; then killall mplayer & fi
                 rm -f ./mtch.tmp ./words.tmp &
             fi
         fi
@@ -611,13 +610,12 @@ function get_list() {
     
         if [ ${pr} = b ]; then
             if [ ! -e "${pdir}/b.srces" ]; then
-            ( echo "5"
+            (echo "#"
             while read word; do
                 item="$(grep -F -m 1 "trgt{${word}}" "${cfg0}" |sed 's/}/}\n/g')"
                 echo "$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")" >> "${pdir}/b.srces"
-            done < "${pdir}/${pr}.0" ) | yad --progress \
-            --undecorated \
-            --pulsate --auto-close \
+            done < "${pdir}/${pr}.0") | yad --progress \
+            --undecorated --pulsate --auto-close \
             --skip-taskbar --center --no-buttons
             fi
         fi
@@ -631,17 +629,15 @@ function get_list() {
         fi
         > "${pdir}/${pr}.0"
     
-        ( echo "5"
+        (echo "#"
         while read -r itm; do
         _item="$(grep -F -m 1 "trgt{${itm}}" "${cfg0}" |sed 's/}/}\n/g')"
         if [ -e "$DM_tls/images/${itm,,}-0.jpg" \
         -o -e "$DM_tlt/images/${itm,,}.jpg" ]; then
             [ -n "${itm}" ] && echo "${itm}" >> "${pdir}/${pr}.0"
         fi
-        done < "$DT/images" ) | yad --progress \
-        --name=Idiomind --class=Idiomind \
-        --undecorated \
-        --pulsate --auto-close \
+        done < "$DT/images") | yad --progress \
+        --undecorated --pulsate --auto-close \
         --skip-taskbar --center --no-buttons
         cleanups "$DT/images"
     
@@ -717,7 +713,7 @@ function decide_group() {
         export easy hard ling step
         
     elif [ $ret -gt 1 ]; then
-        score
+        score && return
     fi
 }
 
