@@ -8,7 +8,7 @@ function dicts() {
     cmsg() {
         if [ ! -e "$DT/dicts" ]; then
             touch "$DT/dicts"
-            sleep 5
+            sleep 3
             if [ ! -e "$DC_s/topics_first_run" ]; then
                 source "$DS/ifs/cmns.sh"
                 msg_2 "$(gettext "You may need to configure a list of Internet resources. \nDo you want to do this now?")" \
