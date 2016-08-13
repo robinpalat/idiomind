@@ -114,7 +114,7 @@ elif [[ ${1} != 0 ]]; then
                     ( echo "# $(gettext "Removing") ${_rm}"; sleep 1
                     rm -fr "$DM_tl/${_rm}"/
                     "$DS/mngr.sh" mkmn 0 ) | \
-                    progress
+                    progress 'progress'
                 fi
             fi
         done < <(grep -Fvx "${ins}" <<< "${old}")
