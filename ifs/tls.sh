@@ -947,8 +947,8 @@ app_version = os.environ['_version']
 app_website = os.environ['_website']
 app_comments = os.environ['_descrip']
 website_label = os.environ['_website']
-app_copyright = 'Copyright (c) 2016 Robin Palatnik'
-app_license = (('Idiomind is free software: you can redistribute it and/or modify\n'+
+app_copyright = 'Copyright (c) 2014-2016 Robin Palatnik'
+app_license = (('This program is free software: you can redistribute it and/or modify\n'+
 'it under the terms of the GNU General Public License as published by\n'+
 'the Free Software Foundation, either version 3 of the License, or\n'+
 '(at your option) any later version.\n'+
@@ -960,7 +960,7 @@ app_license = (('Idiomind is free software: you can redistribute it and/or modif
 '\n'+
 'You should have received a copy of the GNU General Public License\n'+
 'along with this program.  If not, see http://www.gnu.org/licenses'))
-app_authors = ['Robin Palatnik <robinpalat@users.sourceforge.net>\nMade with YAD <https://sourceforge.net/projects/yad-dialog>']
+app_authors = ['Robin Palatnik <robinpalat@users.sourceforge.net>\nMade with YAD https://sourceforge.net/projects/yad-dialog']
 app_artists = ["Logo based on rg1024's openclipart Ufo Cartoon."]
 class AboutDialog:
     def __init__(self):
