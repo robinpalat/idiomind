@@ -582,7 +582,7 @@ function dlg_form_2() {
     --skip-taskbar --fixed --center --on-top \
     --align=right --image="${img}" \
     --window-icon=idiomind \
-    --width=450 --height=120 --borders=0 \
+    --width=450 --height=160 --borders=0 \
     --field="" "$txt" \
     --field="" "$srce" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
