@@ -76,12 +76,12 @@ function word_view() {
     local sentence="<span font_desc='Sans Free ${font_size}'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>$link\n\n"
    
     yad --form --title=" " \
-    --selectable-labels --quoted-output \
+    --quoted-output \
     --text="${sentence}" \
     --window-icon=idiomind \
     --skip-taskbar --text-align=center \
-    --image-on-top --center --on-top \
-    --width=630 --height=390 --borders=20 \
+    --image-on-top --center --on-top --no-focus \
+    --width=630 --height=390 --borders=10 \
     "${field_tag}" "${field_exmp}" "${field_defn}" "${field_note}" \
     --button="gtk-edit":4 \
     --button="!$DS/images/listen.png":"$cmd_listen" \
@@ -100,13 +100,13 @@ function sentence_view() {
 
     echo -e "${lwrds}" |yad --list --title=" " \
     --text="${sentence}${field_note}" \
-    --selectable-labels --print-column=0 \
+    --print-column=0 \
     --select-action="$DS/play.sh 'play_word'" \
     --dclick-action="$DS/play.sh 'play_word'" \
     --window-icon=idiomind \
-    --skip-taskbar --image-on-top --center --on-top \
+    --skip-taskbar --image-on-top --center --on-top --no-focus \
     --scroll --text-align=left --expand-column=0 --no-headers \
-    --width=630 --height=390 --borders=20 \
+    --width=630 --height=390 --borders=10 \
     --column="":TEXT \
     --column="":TEXT \
     --button="gtk-edit":4 \
@@ -174,7 +174,7 @@ function notebook_1() {
     --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Edit")  " \
-    --width=${sz[0]} --height=${sz[1]} --borders=0 --tab-borders=0 \
+    --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=0 \
     --button="$(gettext "Play")":"$cmd_play" \
     --button="$(gettext "Practice")":3 \
     --button="$(gettext "Close")"!'window-close':2

@@ -15,7 +15,7 @@ function msg() {
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind \
     --image-on-top --center --fixed --sticky --on-top \
-    --width=450 --height=110 --borders=3 \
+    --width=450 --height=110 --borders=5 \
     --button="${btn}":0
 }
 
@@ -27,7 +27,7 @@ function msg_2() {
     --always-print-result \
     --window-icon=idiomind \
     --image-on-top --on-top --fixed --sticky --center \
-    --width=450 --height=110 --borders=3 \
+    --width=450 --height=110 --borders=5 \
     "${btn3}" --button="${4}":1 --button="${3}":0
 }
 
@@ -40,7 +40,7 @@ function msg_4() {
     --pulsate --auto-close --always-print-result \
     --window-icon=idiomind \
     --buttons-layout=edge --image-on-top --fixed --on-top --sticky --center \
-    --width=380 --height=100 --borders=3 \
+    --width=380 --height=110 --borders=3 \
     --button="${4}":1 --button="${3}":0
     #--image="$2"
 }

@@ -67,7 +67,7 @@ dlg=$(yad --form --title="Idiomind" \
 --class=Idiomind --name=Idiomind \
 --window-icon=idiomind \
 --image-on-top --buttons-layout=end --align=right --fixed --center --on-top \
---width=450 --height=240 --borders=12 \
+--width=450 --height=250 --borders=12 \
 --field="$(gettext "Select foreign language"):CB" "$list1" \
 --field="$(gettext "Select native language"):CB" "$list2" \
 --button="$(gettext "Cancel")":1 \

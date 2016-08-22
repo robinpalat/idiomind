@@ -446,7 +446,7 @@ ipanel() {
     --window-icon=idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --on-top --no-buttons --align=center \
-    --width=140 --height=180 --borders=0 ${geometry} \
+    --width=130 --height=160 --borders=0 ${geometry} \
     --field="$(gettext "New")"!'document-new':btn "$DS/add.sh 'new_items'" \
     --field="$(gettext "Home")"!'go-home':btn "idiomind 'topic'" \
     --field="$(gettext "Index")"!'gtk-index':btn "$DS/chng.sh" \

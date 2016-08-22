@@ -124,7 +124,7 @@ function practice_a() {
         yad --form --title=" " \
         --no-focus --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
-        --width=400 --height=265 --borders=8 \
+        --width=400 --height=255 --borders=8 \
         --field="\n$question":lbl "" \
         --field="":lbl "" \
         --button="$(gettext "Exit")":1 \
@@ -133,10 +133,10 @@ function practice_a() {
 
     answer() {
         yad --form --title=" " \
-        --no-focus --selectable-labels \
+        --no-focus \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
-        --width=400 --height=265 --borders=8 \
+        --width=400 --height=255 --borders=8 \
         --field="$answer1":lbl "" \
         --field="":lbl "" \
         --field="$answer2":lbl "" \
@@ -219,7 +219,7 @@ function practice_b(){
     mchoise() {
         dlg=$(ofonts | yad --list --title=" " \
         --text="${question}" \
-        --no-focus --separator=" " --selectable-labels \
+        --no-focus --separator=" " \
         --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --undecorated \
         --no-headers \
@@ -297,7 +297,7 @@ function practice_c() {
             lst="<span color='#5E5E5E'>${trgt}</span>"
         fi
         s=$((30-${#trgt}))
-        lquestion="\n\n<span font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n"
+        lquestion="\n<span font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n"
     }
 
     question() {
@@ -308,7 +308,7 @@ function practice_c() {
         --text="$lquestion" \
         --no-focus --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --image-on-top --undecorated \
-        --width=390 --height=240 --borders=10 \
+        --width=390 --height=220 --borders=8 \
         --field="!$DS/images/listen.png":BTN "$cmd_play" \
         --button="$(gettext "Exit")":1 \
         --button="  $(gettext "No")  !$img_no":3 \
@@ -389,7 +389,6 @@ function practice_d() {
     answer() {
         yad --form --title=" " \
         --image="$img" \
-        --selectable-labels \
         --no-focus --skip-taskbar --text-align=center \
         --align=center --center --on-top \
         --image-on-top --undecorated --buttons-layout=spread \
@@ -485,7 +484,6 @@ function practice_e() {
         yad --form --title=" " \
         --text="<span font_desc='Free Sans 12'>${wes^}</span>\\n" \
         --name=Idiomind --class=Idiomind \
-        --selectable-labels \
         --window-icon=idiomind \
         --skip-taskbar --wrap --image-on-top --center --on-top \
         --undecorated --buttons-layout=end \
@@ -683,13 +681,13 @@ function lock() {
 function decide_group() {
     [ -e ./${pr}.l ] && learnt=$(($(< ./${pr}.l)+easy)) || learnt=${easy}
     info="$(gettext "Total") <span color='#6E6E6E'><b>$all</b></span>  $(gettext "Learnt") <span color='#6E6E6E'><b>$learnt</b></span>  $(gettext "Easy") <span color='#6E6E6E'><b>$easy</b></span>  $(gettext "Learning") <span color='#6E6E6E'><b>$ling</b></span>  $(gettext "Difficult") <span color='#6E6E6E'><b>$hard</b></span>"
-    optns=$(yad --form --title="Volver o $(gettext "Continue?")" \
+    optns=$(yad --form --title="$(gettext "Continue")" \
     --window-icon=idiomind \
     --always-print-result \
     --skip-taskbar --buttons-layout=spread \
     --text-align=center --align=center --center --on-top \
     --text="${info}" "" \
-    --width=380 --height=90 --borders=5 \
+    --width=420 --height=90 --borders=8 \
     --button="$(gettext "Exit")":5 \
     --button="$(gettext "Again")!view-refresh!$(gettext "Go back to practice the above items")":1 \
     --button="$(gettext "Continue")!go-next!$(gettext "Practice the next group")":0); ret="$?"
@@ -771,7 +769,7 @@ function practices() {
             --align=left --center --on-top \
             --width=350 --height=125 --borders=10 \
             --field="$(gettext "Practice in groups of 10")":CHK "" \
-            --field="$(gettext "Choose the language for the questions:")":LBL "" \
+            --field="\n$(gettext "Choose the language for the questions:")":LBL "" \
             --button="      $(gettext "$slng")      !!$(gettext "Questions in") $(gettext "$slng") - $(gettext "Answers in") $(gettext "$tlng")":3 \
             --button="      $(gettext "$tlng")      !!$(gettext "Questions in") $(gettext "$tlng") - $(gettext "Answers in") $(gettext "$slng")":2); ret="$?"
             

@@ -7,7 +7,7 @@ function dlg_form_1() {
     yad --form --title="$(gettext "Edit") - $(gettext "Note") ${edit_pos}" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all \
-    --separator="|" --selectable-labels \
+    --separator="|" \
     --window-icon=idiomind \
     --align=right --text-align=center --columns=2 \
     --buttons-layout=end --on-top --center \
@@ -39,7 +39,7 @@ function dlg_form_2() {
     yad --form --title="$(gettext "Edit") - $(gettext "Note") ${edit_pos}" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all \
-    --separator="|" --selectable-labels \
+    --separator="|" \
     --window-icon=idiomind \
     --buttons-layout=end --align=right --on-top --center \
     --width=650 --height=400 --borders=10 \

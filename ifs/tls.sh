@@ -382,7 +382,7 @@ first_run() {
         sleep 3; mv -f "${file}" "${file}".p
         yad --title="$title" --text="${note}" \
         --name=Idiomind --class=Idiomind \
-        --always-print-result --selectable-labels \
+        --always-print-result \
         --image=dialog-information --window-icon=idiomind \
         --image-on-top --on-top --sticky --center \
         --width=500 --height=140 --borders=5 \
@@ -485,8 +485,8 @@ function transl_batch() {
 
 echo -e "yad --form --title=\"$(gettext "$tlng") > $active_trans\" \\
 --class=Idiomind --name=Idiomind --window-icon=idiomind \\
---selectable-labels --always-print-result --print-all \\
---width=590 --height=350 --borders=10 \\
+--always-print-result --print-all \\
+--width=590 --height=350 --borders=5 \\
 --scroll --center --separator='|\n' \\
 --button=$(gettext \"Cancel\"):1 \\
 --button=\!'gtk-preferences':\"idiomind translate\" \\
@@ -497,7 +497,7 @@ echo -e "yad --form --title=\"$(gettext "$tlng") > $active_trans\" \\
         unset trgt srce; get_item "${_item}"
         trgt="$(tr -s '"' '*' <<< "${trgt}")"
         srce="$(tr -s '"' '*' <<< "${srce}")"
-        echo -e "--field=\"$trgt\":lbl \"\" --field=\"\" \"$srce\" --field=\" \":lbl \"\" \\" >> "$DT/dlg"
+        echo -e "--field=\"  $trgt\":lbl \"\" --field=\"\" \"$srce\" --field=\" \":lbl \"\" \\" >> "$DT/dlg"
         let n++
         echo $((100*n/lns-1))
     done < "${DC_tlt}/0.cfg") |progress "progress"
