@@ -226,7 +226,7 @@ function notebook_2() {
     --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Edit")  " \
-    --width=${sz[0]} --height=${sz[1]} --borders=0 --tab-borders=0 \
+    --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=0 \
     --button="$(gettext "Close")"!'window-close':2
 } >/dev/null 2>&1
 
