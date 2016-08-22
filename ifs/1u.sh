@@ -12,11 +12,25 @@ text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") ${USER^} </span>
 \n      $(gettext "To get started, please configure the following:")\n"
 
 if [[ ! $(which yad) ]]; then
-zenity --info --text="$(gettext "Oops. sorry! To run idiomind we need to use a GUI output with yad.\nPlease install [yad], you can use:")
+zenity --info --title="$(gettext "Installing YAD")" \
+--text="$(gettext "Sorry, to run idiomind we need to use a GUI output with yad.\nPlease install 'yad', you can use:")
 \nsudo add-apt-repository ppa:robinpalat/idiomind
 sudo apt-get update
-sudo apt-get install yad"
-exit 1
+sudo apt-get install yad\n
+$(gettext "You can also download the source code and compile it yourself.\nPlease go to:") https://sourceforge.net/projects/yad-dialog"
+    exit 1
+else
+    yv="$(yad --version |cut -f1 -d' ')"
+    yadversion() { test "$(echo "$@" |tr " " "\n" |sort -V |head -n 1)" != "$1"; }
+    if yadversion '0.37.0' "$yv"; then
+zenity --info --title="$(gettext "Installing YAD")" \
+--text="$(gettext "Sorry, idiomind is using a more recent version of yad.\nPlease update 'yad', you can use:")
+\nsudo add-apt-repository ppa:robinpalat/idiomind
+sudo apt-get update
+sudo apt-get install yad\n
+$(gettext "You can also download the source code and compile it yourself.\nPlease go to:") https://sourceforge.net/projects/yad-dialog"
+        exit 1
+    fi
 fi
 
 _info() {
