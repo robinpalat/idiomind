@@ -76,7 +76,7 @@ function edit_feeds_list() {
     yad --list --title="$(gettext "Feeds for") \"${tpc}\"" \
     --text="$(gettext "Configure feed urls to add content automatically from news headlines.")" \
     --name=Idiomind --class=Idiomind \
-    --editable --separator='\n' \
+    --editable --separator='\n' --grid-lines=hor \
     --always-print-result --print-all \
     --window-icon=idiomind \
     --limit=3 --no-headers --center \

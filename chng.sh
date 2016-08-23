@@ -151,7 +151,7 @@ elif [[ ${1} != 0 ]]; then
     --text-align=left $var2 --image-on-top \
     --no-headers --ellipsize=END --expand-column=2 \
     --search-column=2 --regex-search --center \
-    --width=${sz[0]} --height=${sz[1]} --borders=5 \
+    --width=${sz[0]} --height=${sz[1]} --borders=8 \
     --column=img:IMG \
     --column=File:TEXT \
     --button="$(gettext "Statistics")":"'$DS/ifs/tls.sh' _stats" \
