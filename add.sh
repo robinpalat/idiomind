@@ -366,7 +366,7 @@ function process() {
             trap rm "$pars*" EXIT
             /usr/bin/import "$DT_r/img_.png"
             /usr/bin/convert "$DT_r/img_.png" -shave 1x1 "$pars.png"
-            (echo "#"
+            ( echo "#"
             mogrify -modulate 100,0 -resize 400% "$pars.png"
             tesseract "$pars.png" "$pars" -l ${tesseract_lngs[$tlng]} &> /dev/null
             if [ $? != 0 ]; then

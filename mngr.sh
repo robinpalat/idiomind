@@ -532,7 +532,7 @@ edit_list_more() {
     |yad --list --title="$(gettext "Options")" \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --name=Idiomind --class=Idiomind \
-    --expand-column=2 --no-click --no-headers \
+    --expand-column=2 --no-click --no-headers\
     --window-icon=idiomind --on-top --center \
     --width=400 --height=220 --borders=3 \
     --column="":TXT \

@@ -254,12 +254,12 @@ function topic() {
         export cnf3=$(mktemp "$DT/cnf3.XXXXXX")
         export cnf4=$(mktemp "$DT/cnf4.XXXXXX")
         if [ ! -z "$dtei" ]; then 
-            export infolbl="$(gettext "Review ")$repass $(gettext "Installed on") $dtei\n$(gettext "created by") $autr"
+            export infolbl="$(gettext "Review") $repass  $(gettext "Installed on") $dtei\n$(gettext "created by") $autr"
             [ -e "${DC_tlt}/download" ] && export plusinfo="- $(gettext "Downloadable content available")."
         elif [ ! -z "$dtec" ]; then 
-            export infolbl="$(gettext "Review ")$repass $(gettext "Created on") $dtec"
+            export infolbl="$(gettext "Review") $repass  $(gettext "Created on") $dtec"
         fi
-        export lbl1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><sup>\n$(gettext "Sentences") $cfg4 $(gettext "Words") $cfg3 $plusinfo\n$infolbl</sup>"
+        export lbl1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><sup>\n$(gettext "Sentences") $cfg4  $(gettext "Words") $cfg3  $plusinfo\n$infolbl</sup>"
     }
     
     oclean() { cleanups "$cnf1" "$cnf3" "$cnf4"; }
@@ -329,7 +329,7 @@ function topic() {
                     fi
                 fi
 
-                pres="<u><b>$(gettext "Topic learnt")</b></u>  $(gettext "* however you have new notes") ($cfg1).\\n$(gettext "Waiting time set for review:") $tdays $(gettext "days")"
+                pres="<u><b>$(gettext "Topic learnt")</b></u>  $(gettext "* however you have new notes") ($cfg1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
                 notebook_2
             else
                 notebook_1
@@ -356,7 +356,7 @@ function topic() {
                 fi 
             fi
             
-            pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Waiting time set for review:") $tdays $(gettext "days")"
+            pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
             notebook_2; ret=$?
             
             if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
@@ -391,7 +391,7 @@ function topic() {
         elif [[ ${cfg1} -eq 0 ]]; then
 
             calculate_review "${tpc}"
-            pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Waiting time set for review:") $tdays $(gettext "days")"
+            pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
             notebook_2; ret=$?
         fi
         
@@ -446,7 +446,7 @@ ipanel() {
     --window-icon=idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --on-top --no-buttons --align=center \
-    --width=145 --height=160 --borders=3 ${geometry} \
+    --width=130 --height=160 --borders=0 ${geometry} \
     --field="$(gettext "New")"!'document-new':btn "$DS/add.sh 'new_items'" \
     --field="$(gettext "Home")"!'go-home':btn "idiomind 'topic'" \
     --field="$(gettext "Index")"!'gtk-index':btn "$DS/chng.sh" \

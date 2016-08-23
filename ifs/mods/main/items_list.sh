@@ -138,15 +138,15 @@ function notebook_1() {
 
     list | yad --list --tabnum=1 \
     --plug=$KEY --print-all --separator='|' \
-    --dclick-action="$DS/vwr.sh 1" \
-    --print-column=2 --expand-column=2 --no-headers --ellipsize=end \
+    --dclick-action="$DS/vwr.sh 1" --no-rules-hint \
+    --print-column=2 --expand-column=2 --no-headers --ellipsize=END \
     --search-column=2 --regex-search --hide-column=4 --tooltip-column=4 \
-    --column=img:IMG --column=name:TEXT \
+    --column=Name:IMG --column=Name:TEXT \
     --column=Learned:CHK --column=@back@:TIP > "$cnf1" &
     cat "${ls2}" | yad --list --tabnum=2 \
-    --plug=$KEY --print-all --separator='|' \
-    --dclick-action="$DS/vwr.sh 2" \
-    --expand-column=0 --no-headers --ellipsize=end  \
+    --plug=$KEY --print-all --separator='|' --no-rules-hint \
+    --dclick-action="$DS/vwr.sh 2"  \
+    --expand-column=0 --no-headers --ellipsize=END  \
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \
     --plug=$KEY \
@@ -168,7 +168,7 @@ function notebook_1() {
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
-    --center --align=right \
+    --center --align=right --ellipsize=END \
     --window-icon=idiomind \
     --tab="  $(gettext "Learning") ($cfg1) " \
     --tab="  $(gettext "Learnt") ($cfg2) " \
@@ -197,8 +197,8 @@ function notebook_2() {
     --align=center --borders=80 --bar="":NORM $RM &
     cat "${ls2}" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
-    --dclick-action="$DS/vwr.sh 2" \
-    --expand-column=0 --no-headers --ellipsize=end \
+    --dclick-action="$DS/vwr.sh 2" --no-rules-hint \
+    --expand-column=0 --no-headers --ellipsize=END \
     --search-column=1 --regex-search \
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \
@@ -220,7 +220,7 @@ function notebook_2() {
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
-    --center --align=right \
+    --center --align=right --ellipsize=END \
     --window-icon=idiomind \
     --tab="  $(gettext "Review")  " \
     --tab="  $(gettext "Learnt") ($cfg2) " \
