@@ -553,7 +553,7 @@ function dlg_form_0() {
     --separator='|' \
     --window-icon=idiomind \
     --skip-taskbar --fixed --center --on-top \
-    --width=450 --height=80 --borders=0 \
+    --width=450 --height=80 --borders=5 \
     --field="$(gettext "Name")" "$1" \
     --button="$(gettext "OK")":0
 }
@@ -641,7 +641,7 @@ function dlg_text_info_1() {
     --window-icon=idiomind \
     --wrap --margins=20 --fontname='vendana 11' \
     --skip-taskbar --center --on-top \
-    --width=700 --height=450 --borders=2 \
+    --width=700 --height=450 --borders=5 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Save")":0
 }
@@ -654,7 +654,7 @@ function msg_3() {
     --always-print-result \
     --window-icon=idiomind \
     --image-on-top --on-top --sticky --center \
-    --width=400 --height=120 --borders=3 \
+    --width=400 --height=120 --borders=5 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Play")":"$cmd_listen" \
     --button="$(gettext "Yes")":0
@@ -668,7 +668,7 @@ function dlg_text_info_3() {
     --image="$DS/images/warning.png" \
     --wrap --margins=5 \
     --fixed --center --on-top \
-    --width=450 --height=150 --borders=3 \
+    --width=450 --height=150 --borders=5 \
     "${3}" --button="$(gettext "Close")":1
 }
 

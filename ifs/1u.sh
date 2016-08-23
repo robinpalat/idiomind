@@ -22,7 +22,7 @@ $(gettext "You can also download the source code and compile it yourself.\nPleas
 else
     yv="$(yad --version |cut -f1 -d' ')"
     yadversion() { test "$(echo "$@" |tr " " "\n" |sort -V |head -n 1)" != "$1"; }
-    if yadversion '0.37.0' "$yv"; then
+    if yadversion "$yad_version" "$yv"; then
 zenity --info --title="$(gettext "Installing YAD")" \
 --text="$(gettext "Sorry, idiomind is using a more recent version of yad.\nPlease update 'yad', you can use:")
 \nsudo add-apt-repository ppa:robinpalat/idiomind

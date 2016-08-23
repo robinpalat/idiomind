@@ -80,7 +80,7 @@ function edit_feeds_list() {
     --always-print-result --print-all \
     --window-icon=idiomind \
     --limit=3 --no-headers --center \
-    --width=520 --height=140 --borders=3 \
+    --width=520 --height=140 --borders=5 \
     --column="" \
     "$btnf" --button="$(gettext "Save")":0
 }

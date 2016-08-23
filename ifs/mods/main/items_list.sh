@@ -81,7 +81,7 @@ function word_view() {
     --window-icon=idiomind \
     --skip-taskbar --text-align=center \
     --image-on-top --center --on-top --no-focus \
-    --width=630 --height=390 --borders=10 \
+    --width=630 --height=390 --borders=18 \
     "${field_tag}" "${field_exmp}" "${field_defn}" "${field_note}" \
     --button="gtk-edit":4 \
     --button="!$DS/images/listen.png":"$cmd_listen" \
@@ -106,7 +106,7 @@ function sentence_view() {
     --window-icon=idiomind \
     --skip-taskbar --image-on-top --center --on-top --no-focus \
     --scroll --text-align=left --expand-column=0 --no-headers \
-    --width=630 --height=390 --borders=10 \
+    --width=630 --height=390 --borders=18 \
     --column="":TEXT \
     --column="":TEXT \
     --button="gtk-edit":4 \

@@ -28,7 +28,7 @@ confirm() {
     --image="dialog-question" --text="$1\n" \
     --window-icon=idiomind \
     --skip-taskbar --center --on-top \
-    --width=380 --height=100 --borders=3 \
+    --width=380 --height=100 --borders=5 \
     --button="   $(gettext "Cancel")   ":1 \
     --button="$(gettext "Yes")":0
 }

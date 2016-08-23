@@ -483,7 +483,7 @@ function transl_batch() {
     lns=$(cat "${DC_tlt}/0.cfg" |wc -l)
     if [ -z "$active_trans" ]; then active_trans="$slng"; fi
 
-echo -e "yad --form --title=\"$(gettext "$tlng") > $active_trans\" \\
+echo -e "yad --form --title=\"$(gettext "$tlng") -> $active_trans\" \\
 --class=Idiomind --name=Idiomind --window-icon=idiomind \\
 --always-print-result --print-all \\
 --width=590 --height=350 --borders=5 \\
@@ -542,9 +542,9 @@ translate_to() {
     if grep "$active_trans" <<< "${list_transl_saved}"; then chk=TRUE; else chk=FALSE; fi
     
     if [ ${list_transl_saved_WC} -lt 1 ]; then
-        ldgl="$(yad --form --title="$(gettext "Source Language Settings")" \
+        ldgl="$(yad --form --title="$(gettext "Native Language Settings")" \
         --class=Idiomind --name=Idiomind \
-        --text="$(gettext "The current source language of this topic is") <b>$active_trans</b>" \
+        --text="$(gettext "The current Native language of this topic is") <b>$active_trans</b>" \
         --text-align=center --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top \
         --width=370 --height=340 --borders=10 \
@@ -555,26 +555,26 @@ translate_to() {
         --field="$active_trans — $(gettext "This translation was revised")":CHK "$chk" \
         --field="":LBL " " \
         --field="<b>$(gettext "Automatic translation")</b> ":LBL " " \
-        --field="$(gettext "Select source language to translate:")":LBL " " \
+        --field="$(gettext "Select Native language to translate:")":LBL " " \
         --field="":CB "${list_transl}" \
         --field="<small>$(gettext "Note that this translation used Google translate, so often will be inaccurate especially in complex sentences.")</small>":LBL " " \
         --button="$(gettext "Cancel")":1 \
         --button="$(gettext "OK")":0)"; ret="$?"
     else
-        ldgl="$(yad --form --title="$(gettext "Source Language Settings")" \
+        ldgl="$(yad --form --title="$(gettext "Native Language Settings")" \
         --class=Idiomind --name=Idiomind \
-        --text="$(gettext "The current source language of this topic is") <b>$active_trans</b>" \
+        --text="$(gettext "The current Native language of this topic is") <b>$active_trans</b>" \
         --text-align=center --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top \
         --width=370 --height=340 --borders=10 \
         --field="":LBL " " \
         --field="<b>$(gettext "Revised translations") </b> ":LBL " " \
-        --field="$(gettext "Change the source language:")":LBL " " \
+        --field="$(gettext "Change the Native language:")":LBL " " \
         --field="":CB "!${list_transl_saved}" \
         --field="$active_trans — $(gettext "This translation was revised")":CHK "$chk" \
         --field="":LBL " " \
         --field="<b>$(gettext "Automatic translation")</b> ":LBL " " \
-        --field="$(gettext "Select source language to translate:")":LBL " " \
+        --field="$(gettext "Select Native language to translate:")":LBL " " \
         --field="":CB "${list_transl}" \
         --field="<small>$(gettext "Note that this translation used Google translate, so often will be inaccurate especially in complex sentences.")</small>":LBL " " \
         --button="$(gettext "Cancel")":1 \

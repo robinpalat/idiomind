@@ -124,11 +124,11 @@ play_list() {
     
     setting_1 | yad --plug=$KEY --tabnum=1 --list \
     --print-all --always-print-result --separator="|" \
-    --center --expand-column=3 --no-headers --borders=0 \
+    --center --expand-column=3 --no-headers \
     --column=IMG:IMG \
     --column=CHK:CHK \
     --column=TXT:TXT > $tab1 &
-    yad --plug=$KEY --form --tabnum=2 --borders=5 \
+    yad --plug=$KEY --form --tabnum=2 \
     --align=right --center \
     --separator='|' --always-print-result --print-all \
     --field="$(gettext "Repeat")":CHK "$rplay" \

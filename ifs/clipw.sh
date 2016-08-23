@@ -22,7 +22,7 @@ if [[ $1 =  1 ]]; then
     --text="$(gettext "Deactivate Clipboard watcher?")" \
     --window-icon=idiomind \
     --fixed --skip-taskbar --center --on-top \
-    --width=270 --height=90 --borders=4 \
+    --width=270 --height=90 --borders=8 \
     --button="$(gettext "No")":2 \
     --button="$(gettext "Yes")":1
     ret="$?"

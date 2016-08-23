@@ -369,8 +369,8 @@ function process() {
             ( echo "#"
             mogrify -modulate 100,0 -resize 400% "$pars.png"
             tesseract "$pars.png" "$pars" -l ${tesseract_lngs[$tlng]} &> /dev/null
-            if [ $? != 4 ]; then
-                info="$(gettext "The package 'tesseract-ocr' is not installed\nPlease install") <b>tesseract-ocr-${tesseract_lngs[$tlng]}</b> $(gettext "package and try again.")"
+            if [ $? != 0 ]; then
+                info="$(gettext "The package 'tesseract-ocr' is not installed\nPlease install") <b>tesseract-ocr-${tesseract_lngs[$tlng]}</b> $(gettext "and try again.")"
                 msg "${info}" error "$(gettext "Error")"; cleanups "$DT/n_s_pr" "$DT_r" & exit 0
             fi
             clean_6 < "$pars.txt" > "$DT_r/xxlines"
