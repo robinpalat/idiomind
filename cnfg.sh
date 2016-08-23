@@ -89,6 +89,7 @@ config_dlg() {
         list1="${list1}${emrk}${clocal}"
     done
     list2=$(for i in "${!slangs[@]}"; do echo -n "!$i"; done)
+    link='https://poeditor.com/join/project/Y4OXR1mTmU'
 
     c=$((RANDOM%100000)); KEY=$c
     yad --plug=$KEY --form --tabnum=1 \
@@ -111,6 +112,7 @@ config_dlg() {
     --field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
     --field="<small>$(gettext "Program to convert text to WAV file")</small>" "$txaud" \
     --field="$(gettext "Display in")":CB "$lst" \
+    --field="<a href='$link'>$(gettext "Help translate into your language")</a>\t":LBL " " \
     --field=" :LBL" " " --field=":LBL" " " \
     --field="$(gettext "Help")":BTN "$DS/ifs/tls.sh help" \
     --field="$(gettext "Report a problem")":BTN "$DS/ifs/tls.sh fback" \

@@ -355,7 +355,7 @@ promp_topic_info() {
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
-    slng_err_lbl="$(gettext "The native language of this topic does not match your current configuration. You may need to translate the topic:\nclick \"Edit\" tab on the main window, click \"Translate\" button, and then in \"Automatic Translation\" select from the list of languages:") <b>$slng</b>\n"
+    slng_err_lbl="$(gettext "The native language of this topic does not match your current configuration. You may need to translate it:\nclick \"Edit\" tab on the main window, click \"Translate\" button, and then in \"Automatic Translation\" select from the list of languages:") <b>$slng</b>\n"
     
     if [ -e "${DC_tlt}/note_err" ]; then
         include "$DS/ifs/mods/add"
@@ -483,7 +483,7 @@ function transl_batch() {
     lns=$(cat "${DC_tlt}/0.cfg" |wc -l)
     if [ -z "$active_trans" ]; then active_trans="$slng"; fi
 
-echo -e "yad --form --title=\"$(gettext "$tlng") -> $active_trans\" \\
+echo -e "yad --form --title=\"$(gettext "$tlng") | $active_trans\" \\
 --class=Idiomind --name=Idiomind --window-icon=idiomind \\
 --always-print-result --print-all \\
 --width=590 --height=350 --borders=5 \\

@@ -769,7 +769,7 @@ function practices() {
             --align=left --center --on-top \
             --width=350 --height=125 --borders=10 \
             --field="$(gettext "Practice in groups of 10")":CHK "" \
-            --field="\n$(gettext "Choose the language for the questions:")":LBL "" \
+            --field="\n$(gettext "Language for the questions:")":LBL "" \
             --button="      $(gettext "$slng")      !!$(gettext "Questions in") $(gettext "$slng") - $(gettext "Answers in") $(gettext "$tlng")":3 \
             --button="      $(gettext "$tlng")      !!$(gettext "Questions in") $(gettext "$tlng") - $(gettext "Answers in") $(gettext "$slng")":2); ret="$?"
             
@@ -824,8 +824,8 @@ function strt() {
     if [ ${1} = 1 ]; then
         NUMBER="<span color='#6E6E6E'><b><big>$(wc -l < ${pr}.0)</big></b></span>"; declare info${icon}="<span font_desc='Arial Bold 12'>$(gettext "Test completed") </span> —"
         [ ${pr} = e ] && \
-        info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed this test of $NUMBER sentences")</span>\n" \
-        || info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed this test of $NUMBER words")</span>\n"
+        info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed this test of") $NUMBER $(gettext "sentences")</span>\n" \
+        || info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed this test of") $NUMBER $(gettext "words")</span>\n"
         echo 21 > .${icon}
     elif [ ${1} = 2 ]; then
         learnt=$(< ./${pr}.l); declare info${icon}="* "
@@ -842,10 +842,10 @@ function strt() {
     --width=${sz[0]} --height=${sz[1]} --borders=10 \
     --column="Action" --column="Pick":IMG --column="Label" \
     "a" "$pdirs/images/$(< ./.1).png" "   $info1  $(gettext "Flashcards")" \
-    "b" "$pdirs/images/$(< ./.2).png" "   $info2  $(gettext "Multiple Choice")" \
-    "c" "$pdirs/images/$(< ./.3).png" "   $info3  $(gettext "Recognizing Words")" \
+    "b" "$pdirs/images/$(< ./.2).png" "   $info2  $(gettext "Multiple-choice")" \
+    "c" "$pdirs/images/$(< ./.3).png" "   $info3  $(gettext "Recognize Pronunciation")" \
     "d" "$pdirs/images/$(< ./.4).png" "   $info4  $(gettext "Images")" \
-    "e" "$pdirs/images/$(< ./.5).png" "   $info5  $(gettext "Writing Sentences")" \
+    "e" "$pdirs/images/$(< ./.5).png" "   $info5  $(gettext "Listen and Writing Sentences")" \
     --button="$(gettext "Restart")":3 \
     --button="$(gettext "Start")":0)"
     ret=$?
