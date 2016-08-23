@@ -547,7 +547,7 @@ translate_to() {
         --text="$(gettext "The current Native language of this topic is") <b>$active_trans</b>" \
         --text-align=center --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top \
-        --width=370 --height=340 --borders=10 \
+        --width=390 --height=340 --borders=10 \
         --field="":LBL " " \
         --field="<b>$(gettext "Revised translations") </b> ":LBL " " \
         --field="$(gettext "This topic has no revised translations.")":LBL " " \
@@ -566,7 +566,7 @@ translate_to() {
         --text="$(gettext "The current Native language of this topic is") <b>$active_trans</b>" \
         --text-align=center --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top \
-        --width=370 --height=340 --borders=10 \
+        --width=390 --height=340 --borders=10 \
         --field="":LBL " " \
         --field="<b>$(gettext "Revised translations") </b> ":LBL " " \
         --field="$(gettext "Change the Native language:")":LBL " " \

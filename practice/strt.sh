@@ -6,8 +6,8 @@ sz=(500 470); [[ ${swind} = TRUE ]] && sz=(420 410)
 source "$DS/ifs/cmns.sh"
 pdir="${DC_tlt}/practice"
 pdirs="$DS/practice"
-declare -A prcts=( ['a']='Flashcards' ['b']='Multiple Choise'\
- ['c']='Recogning Words' ['d']='Images' ['e']='Writing Sentences')
+declare -A prcts=( ['a']='Flashcards' ['b']='Multiple-choice'\
+ ['c']='Recognize Pronunciation' ['d']='Images' ['e']='Listen and Writing Sentences')
 if [ -e "${DC_tlt}/translations/active" ]; then
     act=$(sed -n 1p "${DC_tlt}/translations/active")
     [ -n "$act" ] && slng="$act"
@@ -380,7 +380,7 @@ function practice_d() {
         --no-focus \ --skip-taskbar --text-align=center \
         --skip-taskbar --align=center --center --on-top \
         --image-on-top --undecorated --buttons-layout=spread \
-        --width=418 --height=360 --borders=5 \
+        --width=418 --height=360 --borders=8 \
         --field="$cuest":lbl "" \
         --button="$(gettext "Exit")":1 \
         --button="  $(gettext "Continue") >>  !$img_cont":0
@@ -392,7 +392,7 @@ function practice_d() {
         --no-focus --skip-taskbar --text-align=center \
         --align=center --center --on-top \
         --image-on-top --undecorated --buttons-layout=spread \
-        --width=418 --height=360 --borders=5 \
+        --width=418 --height=360 --borders=8 \
         --field="$aswer":lbl "" \
         --button="$(gettext "I did not know it")!$img_no":3 \
         --button="$(gettext "I Knew it")!$img_yes":2
@@ -472,7 +472,7 @@ function practice_e() {
         --buttons-layout=end --skip-taskbar \
         --undecorated --center --on-top \
         --align=center --image-on-top \
-        --width=550 --height=220 --borders=5 \
+        --width=550 --height=220 --borders=8 \
         --field="" "" \
         --button="$(gettext "Exit")":1 \
         --button="!$DS/images/listen.png":"$cmd_play" \
@@ -766,7 +766,7 @@ function practices() {
             --always-print-result \
             --window-icon=idiomind \
             --skip-taskbar --buttons-layout=spread \
-            --align=left --center --on-top \
+            --align=center --center --on-top \
             --width=350 --height=125 --borders=10 \
             --field="$(gettext "Practice in groups of 10")":CHK "" \
             --field="\n$(gettext "Language for the questions:")":LBL "" \
