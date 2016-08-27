@@ -13,10 +13,9 @@ mkmn() {
     f_lock "$DT/mn_lk"
     cleanups "$DM_tl/images" "$DM_tl/.conf"
     dirimg='/usr/share/idiomind/images'
-    rm -f "$DM_tl"/.share/0.cfg
+    > "$DM_tl"/.share/0.cfg
 
     while read -r tpc; do
-    
         dir="$DM_tl/${tpc}/.conf"; unset stts
         [ ! -d "${dir}" ] && mkdir -p "${dir}"
         if [ ! -e "$dir/8.cfg" ]; then
@@ -27,12 +26,10 @@ mkmn() {
             [[ ${stts} = 12 ]] && continue
         fi
         echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.share/0.cfg"
-        
     done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
     -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
 
     while read -r tpc; do
-    
         dir="$DM_tl/${tpc}/.conf"; unset stts
         [ ! -d "${dir}" ] && mkdir -p "${dir}"
         if [ ! -e "$dir/8.cfg" ]; then
@@ -44,12 +41,10 @@ mkmn() {
         if [ ${stts} = 12 -o ${stts} = 13 ]; then
             echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.share/0.cfg"
         fi
-
     done < <(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
     -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
     
     while read -r tpc; do
-    
         dir="$DM_tl/${tpc}/.conf"; unset stts tpc
         stts=$(sed -n 1p "${dir}/8.cfg")
         if [ ${stts} != 12 ]; then
