@@ -464,7 +464,7 @@ function transl_batch() {
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
     if [ -e "$DT/transl_batch_lk" -o -e "$DT/translate_to" ]; then
-        msg_4 "$(gettext "Wait until it finishes a previous process")" \
+        msg_4 "$(gettext "Please wait until the current actions are finished")" \
         "$DS/images/warning.png" "$(gettext "OK")" "$(gettext "Stop")" \
         "$(gettext "Wait")" "$DT/translation"
         ret=$?

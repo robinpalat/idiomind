@@ -35,7 +35,7 @@ if [ -z "${tlng}" -o -z "${slng}" ]; then
 fi
 if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
     source "$DS/ifs/cmns.sh"
-    msg "$(gettext "Wait until it finishes a previous process")\n" dialog-information
+    msg "$(gettext "Please wait until the current actions are finished")\n" dialog-information
     sleep 15; cleanups "$DT/ps_lk" "$DT/el_lk"; exit 1
 fi
 

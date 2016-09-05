@@ -71,7 +71,7 @@ function word_view() {
     [ -n "${tags}" ] && field_tag="--field=<small>$tags</small>:lbl"
     [ -n "${defn}" ] && field_defn="--field=$defn:lbl"
     [ -n "${note}" ] && field_note="--field=<span font_desc='Arial 9' color='#676767'>$note</span>\n:lbl"
-    [ -n "${exmp}" ] && field_exmp="--field=<span font_desc='Verdana 10' color='#6D6D6D'>\"$exmp\"</span>:lbl"
+    [ -n "${exmp}" ] && field_exmp="--field=<span font_desc='Verdana 10' color='#6D6D6D'>$exmp\n</span>:lbl"
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free ${font_size}'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>$link\n\n"
    
