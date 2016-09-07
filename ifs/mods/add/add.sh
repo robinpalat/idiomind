@@ -596,7 +596,7 @@ function dlg_checklist_3() {
     awk '{print "TRUE\n"$0}' < "${1}" | \
     yad --list --checklist --tabnum=1 --plug="$fkey" \
     --dclick-action="$DS/add.sh 'list_words_dclik'" --multiple \
-    --ellipsize=END --no-headers --text-align=right \
+    --no-headers --text-align=right \
     --column=" " --column=" " |sed '/^$/d' > "$slt" &
     yad --form --tabnum=2 --plug="$fkey" --columns=2 \
     --gtkrc="$DS/default/gtkrc.cfg" \

@@ -112,9 +112,9 @@ function practice_a() {
         trgt_f_c=$((38-${#trgt}))
         trgt_f_a=$((25-${#trgt}))
         srce_f_a=$((38-${#srce}))
-        [ ${trgt_f_c} -lt 5 ] && trgt_f_c=8
-        [ ${trgt_f_a} -lt 5 ] && trgt_f_a=8
-        [ ${srce_f_a} -lt 5 ] && srce_f_a=8
+        [ ${trgt_f_c} -lt 12 ] && trgt_f_c=12
+        [ ${trgt_f_a} -lt 12 ] && trgt_f_a=12
+        [ ${srce_f_a} -lt 12 ] && srce_f_a=12
         question="\n<span font_desc='Free Sans Bold ${trgt_f_c}'>${trgt}</span>"
         answer1="\n<span font_desc='Free Sans ${trgt_f_a}'>${trgt}</span>"
         answer2="<span font_desc='Free Sans Bold ${srce_f_a}'><i>${srce}</i></span>"
@@ -198,14 +198,14 @@ function practice_b(){
             srce=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
             ras=$(sort -Ru b.srces |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
-            srce_s=$((35-${#trgt}))
+            srce_s=$((35-${#trgt}));  [ ${srce_s} -lt 12 ] && srce_s=12
             question="\n<span font_desc='Free Sans ${srce_s}'><b>${trgt}</b></span>\n\n"
         else
             srce="${item}"
             trgt=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
             ras=$(sort -Ru "${cfg3}" |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
-            srce_s=$((35-${#trgt}))
+            srce_s=$((35-${#trgt})); [ ${srce_s} -lt 12 ] && srce_s=12
             question="\n<span font_desc='Free Sans ${srce_s}'><b>${trgt}</b></span>\n\n"
         fi
     }
@@ -296,7 +296,7 @@ function practice_c() {
             local trgt="$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")"
             lst="<span color='#5E5E5E'>${trgt}</span>"
         fi
-        s=$((30-${#trgt}))
+        s=$((30-${#trgt}));  [ ${s} -lt 12 ] && s=12
         lquestion="\n<span font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n"
     }
 

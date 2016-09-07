@@ -175,7 +175,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
                 done
                 name="${name} ($i)"
             fi
-
+            
             check_dir "$DM_t/$tlng" "$DM_t/$tlng/.share/images" \
             "$DM_t/$tlng/.share/audio" "$DM_t/$tlng/.share/data" \
             "$DM_t/$tlng/${name}/.conf/practice"
@@ -186,7 +186,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             for i in {1..3}; do > "${DC_tlt}/practice/log${i}"; done
             sed -n 3p "${file}" \
             |sed 's/,"/\n/g;s/":/=/g;s/^\s*.//g' > "${DC_tlt}/id.cfg"
-
+            
             if [ ${cn} = 1 ]; then
             sed -i "s/name=.*/name=\"${name}\"/g" "${DC_tlt}/id.cfg"; fi
             sed -i "s/dtei=.*/dtei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
@@ -195,7 +195,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             sed -n 2p "${file}" |tr -d '\' > "${DC_tlt}/0.cfg"
             sed -i 's/},/}\n/g;s|","|}|g;s|":"|{|g;s|":{"|}|g;s/"}/}/g' "${DC_tlt}/0.cfg"
             sed -i 's/^\s*./trgt{/g' "${DC_tlt}/0.cfg"
-
+            
             while read item_; do
                 item="$(sed 's/}/}\n/g' <<< "${item_}")"
                 type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
@@ -209,7 +209,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
                     echo "${trgt}" >> "${DC_tlt}/1.cfg"
                 fi
             done < "${DC_tlt}/0.cfg"
-
+            
             "$DS/ifs/tls.sh" colorize 1
             slngtopic="$slng"; slng="$slngcurrent"
             echo -e "$tlng\n$slng" > "$DC_s/6.cfg"

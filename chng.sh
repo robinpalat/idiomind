@@ -13,7 +13,7 @@ if [[ ${1} = 0 ]]; then
         if [[ ${stnrd} = 1 ]]; then
             a="$(grep -oP '(?<=audio=\").*(?=\")' "${cfg}")"
             n="$(grep -oP '(?<=ntosd=\").*(?=\")' "${cfg}")"
-            l="$(grep -oP '(?<=loop=\").*(?=\")' "${cfg}")"; ! [[ ${l} =~ $numer ]] &&  l=1
+            l="$(grep -oP '(?<=loop=\").*(?=\")' "${cfg}")"; ! [[ ${l} =~ $numer ]] && l=0
             rw="$(grep -oP '(?<=rword=\").*(?=\")' "${cfg}")"; ! [[ ${rw} =~ $numer ]] && rw=0
             [ ! -e "$DT"/playlck ] && echo 0 > "$DT"/playlck
 

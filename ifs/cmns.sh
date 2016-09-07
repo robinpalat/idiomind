@@ -14,8 +14,8 @@ function msg() {
     yad --title="${title}" --text="${1}" --image="${2}" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind \
-    --image-on-top --center --sticky --on-top \
-    --width=450 --height=110 --borders=5 \
+    --image-on-top --sticky --center --fixed --on-top \
+    --width=450 --height=100 --borders=5 \
     --button="${btn}":0
 }
 
@@ -26,8 +26,8 @@ function msg_2() {
     --name=Idiomind --class=Idiomind \
     --always-print-result \
     --window-icon=idiomind \
-    --image-on-top --on-top --sticky --center \
-    --width=450 --height=110 --borders=5 \
+    --image-on-top --sticky --center --fixed --on-top \
+    --width=450 --height=100 --borders=5 \
     "${btn3}" --button="${4}":1 --button="${3}":0
 }
 
