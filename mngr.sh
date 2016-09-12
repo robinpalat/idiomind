@@ -152,6 +152,9 @@ edit_item() {
     
     item_trgt="$(sed -n ${item_pos}p "${index_1}")"
     edit_pos=$(grep -Fon -m 1 "trgt{${item_trgt}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
+    if ! [[ ${pos} =~ ${numer} ]]; then
+        edit_pos="$(awk 'match($0,v){print NR; exit}' v="trgt{${item_trgt}}" "${DC_tlt}/0.cfg")"
+    fi
     if ! [[ ${edit_pos} =~ ${numer} ]]; then $DS/vwr.sh ${list} "${trgt}" 1 & exit; fi
     get_item "$(sed -n ${edit_pos}p "${DC_tlt}/0.cfg")"
 
@@ -314,7 +317,11 @@ edit_item() {
                 elif [ "${tpc}" = "${tpc_mod}" ]; then
                     cfg0="${DC_tlt}/0.cfg"
                     edit_pos=$(grep -Fon -m 1 "trgt{${trgt_mod}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
-                    if ! [[ ${edit_pos} =~ ${numer} ]]; then $DS/vwr.sh ${list} "${trgt}" 1 & exit; fi
+                    if ! [[ ${edit_pos} =~ ${numer} ]]; then 
+                        edit_pos="$(awk 'match($0,v){print NR; exit}' v="trgt{${trgt_mod}}" "${cfg0}")"
+                        if ! [[ ${edit_pos} =~ ${numer} ]]; then 
+                            $DS/vwr.sh ${list} "${trgt}" 1 & exit; fi
+                    fi
                     sed -i "${edit_pos}s|type{$type}|type{$type_mod}|;
                     ${edit_pos}s|srce{$srce}|srce{$srce_mod}|;
                     ${edit_pos}s|exmp{$exmp}|exmp{$exmp_mod}|;
@@ -469,6 +476,9 @@ edit_list_cmds() {
             while read -r trgt; do
                 pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${direc}/0.cfg" \
                 |sed -n 's/^\([0-9]*\)[:].*/\1/p')
+                if ! [[ ${pos} =~ ${numer} ]]; then
+                    pos="$(awk 'match($0,v){print NR; exit}' v="trgt{${trgt}}" "${direc}/0.cfg")"
+                fi
                 item="$(sed -n ${pos}p "${direc}/0.cfg" |sed 's/}/}\n/g')"
                 type=$(grep -oP '(?<=type{).*(?=})' <<< "${item}")
                 cdid=$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")

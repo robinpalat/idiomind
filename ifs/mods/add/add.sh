@@ -42,7 +42,6 @@ function index() {
                 sed -i "s/^${trgt}$/${trgt_mod}/" "${1}"
             fi
         }
-        
         s=1
         while [ ${s} -le 6 ]; do
             sust "${DC_tlt}/${s}.cfg"
@@ -69,7 +68,6 @@ function index() {
                     echo "${trgt}" >> "${DC_tlt}/1.cfg"
                     echo "${trgt}" >> "${DC_tlt}/3.cfg"
                     echo -e "$img0\n${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/5.cfg"
-
                 elif [[ ${1} = 2 ]]; then
                     echo "${trgt}" >> "${DC_tlt}/1.cfg"
                     echo "${trgt}" >> "${DC_tlt}/4.cfg"
@@ -87,7 +85,6 @@ function index() {
 }
 
 function sentence_p() {
-
     if [ ${1} = 1 ]; then 
         trgt_p="${trgt}"
         srce_p="${srce}"
@@ -95,7 +92,6 @@ function sentence_p() {
         trgt_p="${trgt_mod}"
         srce_p="${srce_mod}"
     fi
-
     cdb="$DM_tls/data/${tlng}.db"
     table="T`date +%m%y`"
     echo -n "create table if not exists ${table} \
@@ -103,7 +99,6 @@ function sentence_p() {
     if ! grep -q ${slng} <<< "$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
         sqlite3 ${cdb} "alter table ${table} add column ${slng} TEXT;"
     fi
-
     r=$((RANDOM%10000))
     touch "$DT_r/swrd.$r" "$DT_r/twrd.$r"
     if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
@@ -111,7 +106,7 @@ function sentence_p() {
     else
         vrbl="${trgt_p}"; lg=$lgs; aw="$DT_r/twrd.$r"; bw="$DT_r/swrd.$r"
     fi
-    
+    # sed 's/\s+/\n/g'
     echo "${vrbl}" |sed 's/ ./\U&/g' \
     |python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
     |sed 's/ /\n/g' |grep -v '^.$' |grep -v '^..$' \
@@ -119,9 +114,10 @@ function sentence_p() {
     |sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
     |sed 's/\]//;s/\[//;s/<[^>]*>//g' |sed "s/'$//;s/^'//"\
     |sed 's/\.//;s/  / /;s/ /\. /;s/-$//;s/^-//;s/"//g' \
-    |tr -d '.' |sed 's/^ *//; s/ *$//; /^$/d' > "${aw}"
-    translate "$(sed '/^$/d' "${aw}")" auto $lg |tr -d '!?¿,;.' > "${bw}"
-    
+    |tr -d '.' |sed 's/^ *//; s/ *$//; /^$/d' \
+    |sed 's/ \+/ /g' |sed ':a;N;$!ba;s/\n/\. /g' > "${aw}"
+    translate "$(sed '/^$/d' "${aw}")" auto "$lg" |tr -d '!?¿,;' |sed 's/\. /\n/g' > "${bw}"
+
     while read -r wrd; do
         w="$(tr -d '\.,;“”"' <<< "${wrd,,}")"
         if [[ `sqlite3 $db "select items from pronouns where items is '${w}';"` ]]; then
@@ -223,7 +219,7 @@ function word_p() {
 
 function clean_0() {
     echo "${1}" |sed 's/\\n/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
-    |sed "s/’/'/g" | sed "s/^-\(.*\)/\1/" \
+    |sed "s/’/'/g" | sed "s/^-\(.*\)/\1/" |sed -e 's|/|\\/|g' \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g' |sed 's/^\s*./\U&\E/g' \
     |tr -d ':*|;!¿?[]&:<>+'  |sed 's/\¡//g' \
@@ -232,50 +228,50 @@ function clean_0() {
 
 function clean_1() {
     echo "${1}" |sed 's/\\n/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
-    |sed "s/’/'/g" | sed "s/^-\(.*\)/\1/" \
+    |sed "s/’/'/g" | sed "s/^-\(.*\)/\1/" |sed -e 's|/|\\/|g' \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g' |sed 's/^\s*./\U&\E/g' \
-    |tr -s '/' '-' |tr -d '/*|",;!¿?()[]&:.<>+'  |sed 's/\¡//g' \
+    |tr -d '*|",;!¿?()[]&:.<>+'  |sed 's/\¡//g' \
     |sed 's/<[^>]*>//g; s/ \+/ /g'
 }
 
 function clean_2() {
     if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
     echo "${1}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
-    |sed "s/’/'/g" |sed 's/quot\;/"/g' \
-    |tr -s '/' '-' |tr -d '\*' |tr -s '*&|{}[]<>+' ' ' \
+    |sed "s/’/'/g" |sed 's/quot\;/"/g' |sed -e 's|/|\\/|g' \
+    |tr -d '*' |tr -s '&|{}[]<>+' ' ' \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g;s/<[^>]*>//g;s/^\s*./\U&\E/g'
     else
     echo "${1}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
-    |sed "s/’/'/g" |sed 's/quot\;/"/g' \
-    |tr -s '\*&|{}[]<>+' ' ' \
+    |sed "s/’/'/g" |sed 's/quot\;/"/g' |sed -e 's|/|\\/|g' \
+    |tr -s '*&|{}[]<>+' ' ' \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g; s/^\s*./\U&\E/g' |tr -s '/' '-' \
-    |sed 's|/||g; s/<[^>]*>//g;s/^\s*./\U&\E/g' #; s/-.\s*./\U&\E/g
+    |sed 's/<[^>]*>//g;s/^\s*./\U&\E/g' #; s/-.\s*./\U&\E/g
     fi
 }
 
 function clean_3() {
     echo "${1}" |cut -d "|" -f1 |sed 's/!//;s/&//;s/\://g' \
-    |sed "s/^[ \t]*//;s/[ \t]*$//;s/‘/'/g" \
+    |sed "s/^[ \t]*//;s/[ \t]*$//;s/‘/'/g" |sed -e 's|/|\\/|g' \
     |sed 's/^\s*./\U&\E/g' \
     |sed 's/\：//g;s/<[^>]*>//g' \
-    |tr -d '?./*' |tr -s '&:|{}[]<>+' ' ' |sed 's/ \+/ /g'
+    |tr -d '?.*' |tr -s '&:|{}[]<>+' ' ' |sed 's/ \+/ /g'
 }  
 
 function clean_4() {
     if [ $(wc -c <<< "${1}") -le ${sentence_chars} ] && \
     [ $(echo -e "${1}" |wc -l) -gt ${sentence_lines} ]; then
-    echo "${1}" |sed "s/^-\(.*\)/\1/" | tr -d '*/' |tr -s '&|{}[]<>+' ' ' \
+    echo "${1}" |sed "s/^-\(.*\)/\1/" | tr -d '*' |tr -s '&|{}[]<>+' ' ' \
     |sed 's/ — / - /;s/--/ /g; /^$/d;s/ \+/ /g;s/ʺͶ//;s/	/ /g'
     elif [ $(wc -c <<< "${1}") -le ${sentence_chars} ]; then
     echo "${1}" |sed "s/^-\(.*\)/\1/" |sed ':a;N;$!ba;s/\n/ /;s/	/ /g' \
-    |tr -d '*/' |tr -s '&|{}[]<>+' ' ' \
+    |tr -d '*' |tr -s '&|{}[]<>+' ' ' \
     |sed 's/ — / - /;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
     else
     echo "${1}" |sed "s/^-\(.*\)/\1/" |sed ':a;N;$!ba;s/\n/\__/;s/	/ /g' \
-    |tr -d '*/' |tr -s '&|{}[]<>+' ' ' \
+    |tr -d '*' |tr -s '&|{}[]<>+' ' ' \
     |sed 's/ — /__/;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
     fi
 }
@@ -339,8 +335,8 @@ function clean_9() {
     |sed "s/’/'/g" \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g' |sed 's/^\s*./\U&\E/g' \
-    |tr -s '/' '-' |tr -d '/*|[]&<>+' \
-    |sed 's/<[^>]*>//g; s/ \+/ /g'
+    |tr -d '*|[]&<>+' \
+    |sed 's/<[^>]*>//g; s/ \+/ /g' |sed -e 's|/|\\/|g'
 }
 
 function set_image_1() {

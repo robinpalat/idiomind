@@ -512,6 +512,9 @@ echo -e "yad --form --title=\"$(gettext "$tlng") | $active_trans\" \\
             trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
             srce="$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")"
             edit_pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
+            if ! [[ ${pos} =~ ${numer} ]]; then
+                edit_pos="$(awk 'match($0,v){print NR; exit}' v="trgt{${trgt}}" "${DC_tlt}/0.cfg")"
+            fi
             if [ -n "${trgt}" ]; then
                 srce_pos=$((edit_pos*3-1))
                 srce_mod="$(sed -n ${srce_pos}p "$DT/transl_batch_out" |tr -d '|')"
