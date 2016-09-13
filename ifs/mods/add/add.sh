@@ -39,7 +39,7 @@ function index() {
         DC_tlt="$DM_tl/${2}/.conf"
         sust(){
             if grep -Fxo "${trgt}" "${1}" 1> /dev/null 2>&1; then
-                sed -i "s/^${trgt}$/${trgt_mod}/" "${1}"
+                sed -i "s|^${trgt}$|${trgt_mod}|" "${1}"
             fi
         }
         s=1
@@ -336,7 +336,7 @@ function clean_9() {
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g' |sed 's/^\s*./\U&\E/g' \
     |tr -d '*|[]&<>+' \
-    |sed 's/<[^>]*>//g; s/ \+/ /g' |sed -e 's|/|\\/|g'
+    |sed 's/<[^>]*>//g; s/ \+/ /g'
 }
 
 function set_image_1() {

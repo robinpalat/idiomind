@@ -27,7 +27,7 @@ function vwr() {
     export tags="$(grep -oP '(?<=tags{).*(?=})' <<< "${item}")"
     export wrds="$(grep -oP '(?<=wrds{).*(?=})' <<< "${item}")"
     export cdid="$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")"
-    export exmp="$(sed "s/${trgt,,}/<span background='#FDFBCF'>${trgt,,}<\/\span>/g" <<< "${exmp}")"
+    export exmp="$(sed "s|${trgt,,}|<span background='#FDFBCF'>${trgt,,}<\/\span>|g" <<< "${exmp}")"
     text_missing=0
 
     if [ ${type} = 1 ]; then

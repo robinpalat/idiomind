@@ -56,8 +56,7 @@ mkmn() {
     if [[ "$2" = 1 ]]; then
         source "$DS/ifs/stats.sh"; save_topic_stats 0
     fi
-
-    rm -f "$DT/mn_lk"; exit 0
+    cleanups "$DT/mn_lk"; exit 0
 }
 
 delete_item_ok() {
@@ -91,10 +90,10 @@ delete_item_ok() {
         rm "${DC_tlt}"/*.tmp
     fi
     if [[ $(wc -l < "${DC_tlt}/0.cfg") -lt 200 ]] && [ -e "${DC_tlt}/lk" ]; then
-        rm -f "${DC_tlt}/lk"
+        cleanups "${DC_tlt}/lk"
     fi
     "$DS/ifs/tls.sh" colorize 1 &
-    rm -f "$DT/ps_lk" & exit 1
+    cleanups "$DT/ps_lk" & exit 1
 }
 
 delete_item() {
@@ -134,7 +133,7 @@ delete_item() {
             rm "${DC_tlt}"/*.tmp
         fi
     fi
-    rm -f "$DT/ps_lk" & exit 1
+    cleanups "$DT/ps_lk" & exit 1
 }
 
 edit_item() {
@@ -149,7 +148,6 @@ edit_item() {
         index_2="${DC_tlt}/1.cfg"
         [ ${item_pos} -lt 1 ] && item_pos=${cfg2}
     fi
-    
     item_trgt="$(sed -n ${item_pos}p "${index_1}")"
     edit_pos=$(grep -Fon -m 1 "trgt{${item_trgt}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
     if ! [[ ${pos} =~ ${numer} ]]; then
@@ -160,7 +158,7 @@ edit_item() {
 
     [ -z "${cdid}" ] && cdid=""
     export query="$(sed "s/'/ /g" <<< "${trgt}")"
-    to_modify=0; colorize_run=0; transl_mark=0
+    mod_index=0; tomodify=0; colorize_run=0; transl_mark=0
     if ((mode>=1 && mode<=10)); then
     tpcs="$(egrep -v "${tpc}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
     export tpc_list="${tpc}!${tpcs}"
@@ -203,7 +201,6 @@ edit_item() {
         if [ -z "${edit_dlg1}" -a -z "${edit_dlg2}" ]; then
             item_pos=$((item_pos-1))
         fi
-        
         if [ ${ret} -eq 0 -o ${ret} -eq 2 ]; then
         
             include "$DS/ifs/mods/add"
@@ -235,38 +232,34 @@ edit_item() {
                 [ -z "${type_mod}" ] && type_mod=2
             fi
             if [ "${trgt_mod}" != "${trgt}" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
-                if [ ${text_missing} != 0 ]; then
-                    trgt="${item_trgt}"
-                    index edit "${tpc}"
-                else
-                    index edit "${tpc}"
-                fi
+                trgt_mod="$(sed -e 's|/|\\/|g' <<< "$trgt_mod")"
+                if [ ${text_missing} != 0 ]; then trgt="${item_trgt}"; fi
+                index edit "${tpc}"
                 sed -i "${edit_pos}s|trgt{${trgt}}|trgt{${trgt_mod}}|;
                 ${edit_pos}s|grmr{${grmr}}|grmr{${trgt_mod}}|;
                 ${edit_pos}s|srce{${srce}}|srce{$temp}|g" "${DC_tlt}/0.cfg"
-                
-                mod_index=1; colorize_run=1; to_modify=1
+                mod_index=1; colorize_run=1; tomodify=1
             fi
             if [ "${mark}" != "${mark_mod}" ]; then
                 if [ "${mark_mod}" = "TRUE" ]; then
-                    to_modify=1; echo "${trgt}" >> "${DC_tlt}/6.cfg"; else
+                    tomodify=1; echo "${trgt}" >> "${DC_tlt}/6.cfg"; else
                     sed -i "/${trgt}/d" "${DC_tlt}/6.cfg"
                 fi
-                colorize_run=1; to_modify=1
+                colorize_run=1; tomodify=1
             fi
             [[ "${transl_mark}" = 1 ]] && srce="$temp"
-            [ "${type}" != "${type_mod}" ] && to_modify=1
-            [ "${srce}" != "${srce_mod}" ] && to_modify=1
-            [ "${exmp}" != "${exmp_mod}" ] && to_modify=1
-            [ "${defn}" != "${defn_mod}" ] && to_modify=1
-            [ "${note}" != "${note_mod}" ] && to_modify=1
-            [ "${mark}" != "${mark_mod}" ] && to_modify=1
-            [ "${audf}" != "${audf_mod}" ] && to_modify=1
-            [ "${tpc}" != "${tpc_mod}" ] && to_modify=1 && item_pos=$((item_pos+1))
+            [ "${type}" != "${type_mod}" ] && tomodify=1
+            [ "${srce}" != "${srce_mod}" ] && tomodify=1
+            [ "${exmp}" != "${exmp_mod}" ] && tomodify=1
+            [ "${defn}" != "${defn_mod}" ] && tomodify=1
+            [ "${note}" != "${note_mod}" ] && tomodify=1
+            [ "${mark}" != "${mark_mod}" ] && tomodify=1
+            [ "${audf}" != "${audf_mod}" ] && tomodify=1
+            [ "${tpc}" != "${tpc_mod}" ] && tomodify=1 && item_pos=$((item_pos+1))
 
-            if [ ${to_modify} = 1 ]; then
-            (
-                if [ ${mod_index} = 1 ]; then
+            if [ ${tomodify} = 1 ]; then
+            
+            ( if [ ${mod_index} = 1 ]; then
                 
                     DT_r=$(mktemp -d "$DT/XXXXXX")
                     > "$DT/${trgt_mod}.edit"
@@ -289,7 +282,6 @@ edit_item() {
                 fi
                 cdid_mod="$(set_name_file ${type_mod} "${trgt_mod}" "${srce_mod}" \
                 "${exmp_mod}" "${defn_mod}" "${note_mod}" "${wrds_mod}" "${grmr_mod}")"
-
                 if [ "${tpc}" != "${tpc_mod}" ]; then
                     if [ "${audf}" != "${audf_mod}" ]; then
                         if [ ${type_mod} = 1 ]; then
@@ -306,14 +298,12 @@ edit_item() {
                     fi
                     [ -e "${DM_tlt}/images/${trgt,,}.jpg" ] && \
                     mv -f "${DM_tlt}/images/${trgt,,}.jpg" "$DM_tl/${tpc_mod}/images/${trgt_mod,,}.jpg"
-                    
                     "$DS/mngr.sh" delete_item_ok "${tpc}" "${trgt}"
                     trgt="${trgt_mod}"; srce="${srce_mod}"; tpe="${tpc_mod}"
                     exmp="${exmp_mod}"; defn="${defn_mod}"; note="${note_mod}"
                     wrds="${wrds_mod}"; grmr="${grmr_mod}";
                     mark="${mark_mod}"; link="${link_mod}"; cdid="${cdid_mod}"
                     index ${type_mod}; unset type trgt srce exmp defn note wrds grmr mark cdid
-
                 elif [ "${tpc}" = "${tpc_mod}" ]; then
                     cfg0="${DC_tlt}/0.cfg"
                     edit_pos=$(grep -Fon -m 1 "trgt{${trgt_mod}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
@@ -331,7 +321,6 @@ edit_item() {
                     ${edit_pos}s|grmr{$grmr}|grmr{$grmr_mod}|;
                     ${edit_pos}s|mark{$mark}|mark{$mark_mod}|;
                     ${edit_pos}s|cdid{$cdid}|cdid{$cdid_mod}|g" "${cfg0}"
-                    
                     if [ "${audf}" != "${audf_mod}" ]; then
                         if [ ${type_mod} = 1 ]; then
                             cp -f "${audf_mod}" "${DM_tls}/audio/${trgt_mod,,}.mp3"
@@ -374,7 +363,7 @@ edit_item() {
 
             if [ $ret -eq 2 ]; then $DS/mngr.sh edit ${list} $((item_pos+1)) &
             elif [ $ret -eq 0 ]; then 
-                [ ${to_modify} = 1 -a $ret -eq 0 ] && sleep 0.2
+                [ ${tomodify} = 1 -a $ret -eq 0 ] && sleep 0.2
                 $DS/vwr.sh ${list} "${trgt}" ${item_pos} & 
             fi
         else
@@ -554,7 +543,6 @@ edit_list_more() {
                 yad_kill "yad --list --title="
                 edit_list_cmds 2 "${tpc}"
             fi
-            
         elif grep "$(gettext "Remove all items")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
                 yad_kill "yad --list --title="
@@ -563,7 +551,6 @@ edit_list_more() {
                 "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg" "${DC_tlt}/5.cfg" "${DC_tlt}/6.cfg"
                 [ -d "${DM_tlt}" -a -n "$tpc" ] && rm "$DM_tlt"/*.mp3
             fi
-            
         elif grep "$(gettext "Restart topic status")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
                 yad_kill "yad --list --title="
@@ -579,7 +566,6 @@ edit_list_more() {
                 sed -i "s/repass=.*/repass=\"0\"/g" "${DC_tlt}/10.cfg"
                 "$DS/mngr.sh" mkmn 1; "$DS/ifs/tls.sh" colorize 0
             fi
-            
         elif grep "$(gettext "Manage feeds")" <<< "${more}"; then
             idiomind feeds
             
@@ -588,7 +574,6 @@ edit_list_more() {
                 yad_kill "yad --list --title="
                 edit_list_cmds 4 "${tpc}"
             fi
-            
         elif grep "$(gettext "Restore backup:")" <<< "${more}"; then
              _war; if [ $? = 0 ]; then
                 yad_kill "yad --list --title="
@@ -629,7 +614,6 @@ edit_list_dlg() {
             return 1
         fi
     fi
-    
     if [ -e "$DC_s/elist_first_run" ]; then 
         "$DS/ifs/tls.sh" first_run edit_list &
     fi
