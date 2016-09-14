@@ -6,8 +6,12 @@ function vwr() {
     [ ${1} = 1 ] && index="${DC_tlt}/1.cfg" && item_name="$(sed 's/<[^>]*>//g' <<< "${3}")"
     [ ${1} = 2 ] && index="${DC_tlt}/2.cfg" && item_name="$(sed 's/<[^>]*>//g' <<< "${2}")"
     re='^[0-9]+$'; index_pos="$3"
+    
     if ! [[ ${index_pos} =~ $re ]]; then
-        index_pos="$(awk 'match($0,v){print NR; exit}' v="${item_name}" "${index}")"
+        index_pos=`grep -Fxon -m 1 "${item_name}" "${index}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+        if ! [[ ${index_pos} =~ $re ]]; then
+            index_pos="$(awk 'match($0,v){print NR; exit}' v="${item_name}" "${index}")"
+        fi
         nll=""
     fi
     _item="$(sed -n ${index_pos}p "${index}")"

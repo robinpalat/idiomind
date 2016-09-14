@@ -355,7 +355,7 @@ promp_topic_info() {
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
-    slng_err_lbl="$(gettext "The native language of this topic does not match your current configuration. You may need to translate it:\nclick \"Edit\" tab on the main window, click \"Translate\" button, and then in \"Automatic Translation\" select from the list of languages:") <b>$slng</b>\n"
+    slng_err_lbl="$(gettext "The native language of this topic does not match your current configuration.  \nYou may need to translate it:\nClick \"Edit\" tab on the main window, click \"Translate\" button,\nand then in \"Automatic Translation\" select from the list of languages:\n") <b>$slng</b>\n"
     
     if [ -e "${DC_tlt}/note_err" ]; then
         include "$DS/ifs/mods/add"
@@ -512,7 +512,7 @@ echo -e "yad --form --title=\"$(gettext "$tlng") | $active_trans\" \\
             trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
             srce="$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")"
             edit_pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
-            if ! [[ ${pos} =~ ${numer} ]]; then
+            if ! [[ ${edit_pos} =~ ${numer} ]]; then
                 edit_pos="$(awk 'match($0,v){print NR; exit}' v="trgt{${trgt}}" "${DC_tlt}/0.cfg")"
             fi
             if [ -n "${trgt}" ]; then
