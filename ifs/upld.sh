@@ -75,7 +75,7 @@ function dwld() {
 
 function upld() {
     if [ -d "$DT/upload" ]; then
-        msg_4 "$(gettext "Please wait until the current actions are finished")\n" \
+        msg_4 "$(gettext "Please wait until the current actions are finished")" \
         "$DS/images/warning.png" "$(gettext "OK")" "$(gettext "Stop")" \
         "$(gettext "Uploading")" "$DT/upload"
         ret=$?
@@ -86,7 +86,7 @@ function upld() {
         fi
     fi
     if [ -d "$DT/download" ]; then
-        msg_4 "$(gettext "Please wait until the current actions are finished")\n" \
+        msg_4 "$(gettext "Please wait until the current actions are finished")" \
         "$DS/images/warning.png" "$(gettext "OK")" "$(gettext "Stop")" \
         "$(gettext "Downloading")" "$DT/download"
         ret=$?
@@ -99,7 +99,7 @@ function upld() {
 
     conds_upload() {
         if [ $((cfg3+cfg4)) -lt 8 ]; then
-            msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
+            msg "$(gettext "Insufficient number of items to perform the action")." \
             dialog-information "$(gettext "Information")" & exit 1
         fi
         if [ -z "${autr_mod}" -o -z "${pass_mod}" ]; then
@@ -115,7 +115,7 @@ function upld() {
         [ -d "$DT/upload" ] && rm -fr "$DT/upload"
         
         if [ "${tpc}" != "${1}" ]; then
-            msg "$(gettext "Sorry, this topic is currently not active.")\n " \
+            msg "$(gettext "Sorry, this topic is currently not active.")" \
             dialog-information & exit 1
         fi
         internet
@@ -385,6 +385,9 @@ function upld() {
         eval c="$(sed -n 4p "$DS/default/vars")"
         echo -e "${c}" > "${DC_tlt}/id.cfg"
         eval body="$(sed -n 5p "$DS/default/vars")"
+        note_mod="$(echo -e "$note_mod" |sed 's/\&/&amp;/g')"
+        body="${body}<blockquote>$note_mod</blockquote>"
+        
         export tpc DT_u body
         
         idmnd="$DT_u/$tpcid.$orig.$lgt"
@@ -412,13 +415,13 @@ try:
     nid = server.metaWeblog.newPost('blog', autr, pssw, 
     {'title': tpc, 'description': body}, True)
 except:
-    # sys.exit(3)
-    print 'error'
+    sys.exit(3)
 url = requests.get('http://idiomind.sourceforge.net/uploads.php').url
 DT_u = os.environ['DT_u']
 volumes = [i for i in os.listdir(DT_u)]
 for f in volumes:
-    fl = {'file': open(f, 'rb')}
+    fl = {'file': open(DT_u + f, 'rb')}
+    print f
     r = requests.post(url, files=fl)
     time.sleep(5)
 END
@@ -430,7 +433,7 @@ END
             info="$(gettext "Authentication error.")\n"
             image='error'
         else
-            sleep 5
+            sleep 2
             info="$(gettext "A problem has occurred with the file upload, try again later.")\n"
             image='error'
         fi

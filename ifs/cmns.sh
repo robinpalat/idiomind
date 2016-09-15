@@ -39,7 +39,7 @@ function msg_4() {
     --name=Idiomind --class=Idiomind \
     --pulsate --auto-close --always-print-result \
     --window-icon=idiomind \
-    --buttons-layout=edge --image-on-top --on-top --sticky --center \
+    --buttons-layout=edge --image-on-top --fixed --on-top --sticky --center \
     --width=380 --height=110 --borders=3 \
     --button="${4}":1 --button="${3}":0
     #--image="$2"
