@@ -209,9 +209,9 @@ edit_item() {
                 edit_dlg="${edit_dlg1}"
                 trgt_mod="$(clean_9 "$(cut -d "|" -f1 <<< "${edit_dlg}")")"
                 srce_mod="$(clean_9 "$(cut -d "|" -f2 <<< "${edit_dlg}")")"
-                exmp_mod="$(clean_0 "$(cut -d "|" -f5 <<< "${edit_dlg}")")"
-                defn_mod="$(clean_0 "$(cut -d "|" -f6 <<< "${edit_dlg}")")"
-                note_mod="$(clean_0 "$(cut -d "|" -f11 <<< "${edit_dlg}")")"
+                exmp_mod="$(clean_2 "$(cut -d "|" -f5 <<< "${edit_dlg}")")"
+                defn_mod="$(clean_2 "$(cut -d "|" -f6 <<< "${edit_dlg}")")"
+                note_mod="$(clean_2 "$(cut -d "|" -f11 <<< "${edit_dlg}")")"
                 tpc_mod="$(cut -d "|" -f3 <<< "${edit_dlg}")"
                 audf_mod="$(cut -d "|" -f9 <<< "${edit_dlg}")"
                 mark_mod="$(cut -d "|" -f10 <<< "${edit_dlg}")"
@@ -232,7 +232,7 @@ edit_item() {
                 [ -z "${type_mod}" ] && type_mod=2
             fi
             if [ "${trgt_mod}" != "${trgt}" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
-                trgt_mod="$(sed -e 's|/|\\/|g' <<< "$trgt_mod")"
+                trgt_mod="$(sed -e 's|/|\/|g' <<< "$trgt_mod")"
                 if [ ${text_missing} != 0 ]; then trgt="${item_trgt}"; fi
                 index edit "${tpc}"
                 sed -i "${edit_pos}s|trgt{${trgt}}|trgt{${trgt_mod}}|;
@@ -261,8 +261,7 @@ edit_item() {
             
             ( if [ ${mod_index} = 1 ]; then
                 
-                    DT_r=$(mktemp -d "$DT/XXXXXX")
-                    > "$DT/${trgt_mod}.edit"
+                    DT_r=$(mktemp -d "$DT/XXXXXX"); > "$DT/${trgt_mod}.edit"
                     
                     if [ ${type_mod} = 1 ]; then
                         srce_mod="$(clean_9 "$(translate "${trgt_mod}" $lgt $lgs)")"

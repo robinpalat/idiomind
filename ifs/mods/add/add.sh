@@ -219,7 +219,7 @@ function word_p() {
 
 function clean_0() {
     echo "${1}" |sed 's/\\n/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
-    |sed "s/’/'/g" | sed "s/^-\(.*\)/\1/" |sed -e 's|/|\\/|g' \
+    |sed "s/’/'/g" | sed "s/^-\(.*\)/\1/" \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g' |sed 's/^\s*./\U&\E/g' \
     |tr -d ':*|;!¿?[]&:<>+'  |sed 's/\¡//g' \
@@ -228,7 +228,7 @@ function clean_0() {
 
 function clean_1() {
     echo "${1}" |sed 's/\\n/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
-    |sed "s/’/'/g" | sed "s/^-\(.*\)/\1/" |sed -e 's|/|\\/|g' \
+    |sed "s/’/'/g" | sed "s/^-\(.*\)/\1/" \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g' |sed 's/^\s*./\U&\E/g' \
     |tr -d '*|",;!¿?()[]&:.<>+'  |sed 's/\¡//g' \
@@ -238,17 +238,17 @@ function clean_1() {
 function clean_2() {
     if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
     echo "${1}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
-    |sed "s/’/'/g" |sed 's/quot\;/"/g' |sed -e 's|/|\\/|g' \
+    |sed "s/’/'/g" |sed 's/quot\;/"/g' \
     |tr -d '*' |tr -s '&|{}[]<>+' ' ' \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g;s/<[^>]*>//g;s/^\s*./\U&\E/g'
     else
     echo "${1}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
-    |sed "s/’/'/g" |sed 's/quot\;/"/g' |sed -e 's|/|\\/|g' \
+    |sed "s/’/'/g" |sed 's/quot\;/"/g' \
     |tr -s '*&|{}[]<>+' ' ' \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
-    |sed 's/^ *//;s/ *$//g; s/^\s*./\U&\E/g' |tr -s '/' '-' \
-    |sed 's/<[^>]*>//g;s/^\s*./\U&\E/g' #; s/-.\s*./\U&\E/g
+    |sed 's/^ *//;s/ *$//g; s/^\s*./\U&\E/g' \
+    |sed 's/<[^>]*>//g;s/^\s*./\U&\E/g'
     fi
 }
 
@@ -257,7 +257,7 @@ function clean_3() {
     |sed "s/^[ \t]*//;s/[ \t]*$//;s/‘/'/g" |sed -e 's|/|\\/|g' \
     |sed 's/^\s*./\U&\E/g' \
     |sed 's/\：//g;s/<[^>]*>//g' \
-    |tr -d '?.*' |tr -s '&:|{}[]<>+' ' ' |sed 's/ \+/ /g'
+    |tr -d '?.*{}[]' |tr -s '&:|<>+' ' ' |sed 's/ \+/ /g'
 }  
 
 function clean_4() {
