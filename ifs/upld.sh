@@ -364,7 +364,6 @@ function upld() {
                 slng="${a}"
             fi
             cp -r "$DC_tlt/translations" "$DT_u/files/translations"
-            cleanups "$DT_u/files/translations/$act.tra"
         fi
 
         export naud=$(find "$DT_u/files" -maxdepth 5 -name '*.mp3' |wc -l)
