@@ -388,14 +388,16 @@ function upld() {
         body="${body}<blockquote>$note_mod</blockquote>"
         
         export tpc DT_u body
-        
+        # convert to json format
         idmnd="$DT_u/$tpcid.$orig.$lgt"
         echo -e "{\"items\":{" > "${idmnd}"
         while read -r _item; do
             get_item "${_item}"
+            #
             eval item="$(sed -n 1p "$DS/default/vars")"
             [ -n "${trgt}" ] && echo -en "${item}" >> "${idmnd}"
         done < <(sed 's|"|\\"|g' < "${DC_tlt}/0.cfg")
+        
         sed -i 's/,$//' "${idmnd}"
         echo "}," >> "${idmnd}"
         eval head="$(sed -n 3p "$DS/default/vars")"

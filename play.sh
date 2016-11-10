@@ -88,7 +88,7 @@ play_list() {
             arr="in${n}"
             [[ ${!arr} -lt 1 ]] && echo "$DS/images/addi.png" || echo "$DS/images/add.png"
             echo ${!psets[${n}]}
-            echo "  <span font_desc='Arial 11'>$(gettext "${lbls[$n]}")</span>"
+            echo "  $(gettext "${lbls[$n]}")"
             let n++
         done
         for ad in "$DS/ifs/mods/play"/*; do
@@ -96,7 +96,7 @@ play_list() {
             for item in "${!items[@]}"; do
                 echo "$DS/images/${items[$item]}.png"
                 echo `grep -o ${items[$item]}=\"[^\"]* "${file_cfg}" |grep -o '[^"]*$'`
-                echo "  <span font_desc='Arial 11'>$(gettext "${item}") <i><small><small>${aname}</small></small></i></span>"
+                echo "  $(gettext "${item}") <i><small>${aname}</small></i>"
             done
             unset items
         done
