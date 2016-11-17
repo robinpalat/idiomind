@@ -127,7 +127,7 @@ play_list() {
     --center --expand-column=3 --no-headers \
     --column=IMG:IMG \
     --column=CHK:CHK \
-    --column=TXT:TXT > $tab1 &
+    --column=TXT:TXT > "$tab1" &
     yad --plug=$KEY --form --tabnum=2 \
     --align=right --center \
     --separator='|' --always-print-result --print-all \
@@ -135,7 +135,7 @@ play_list() {
     --field="$(gettext "Play audio")":CHK "$audio" \
     --field="$(gettext "Use desktop notifications")":CHK "$ntosd" \
     --field="$(gettext "Pause between items (sec)")":SCL "$loop" \
-    --field="$(gettext "Repeat sounding out")":CB "$lst_opts1" > $tab2 &
+    --field="$(gettext "Repeat sounding out")":CB "$lst_opts1" > "$tab2" &
     yad --notebook --key=$KEY --title="$title" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all \
@@ -147,10 +147,11 @@ play_list() {
     --width=400 --height=260 --borders=5 \
     "$btn2" --button="$btn1" --button="$(gettext "Close")":1
     ret=$?
-        tab1=$(< $tab1); tab2=$(< $tab2); cleanups "$tab1" "$tab2"
+        out1=$(< $tab1); out2=$(< $tab2)
+        [ -f "$tab1" ] && rm -f "$tab1"; [ -f "$tab2" ] && rm -f "$tab2"
         f=1; n=0; count=0
         for item in "${psets[@]:0:5}"; do
-            val=$(sed -n $((n+1))p <<< "${tab1}" |cut -d "|" -f2)
+            val=$(sed -n $((n+1))p <<< "${out1}" |cut -d "|" -f2)
             [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
             [ "$val" = TRUE ] && count=$((count+$(wc -l |sed '/^$/d' <<< "${!in[${n}]}")))
             let n++
@@ -158,7 +159,7 @@ play_list() {
         for ad in "$DS/ifs/mods/play"/*; do
             source "${ad}"
             for item in "${!items[@]}"; do
-                val=$(sed -n $((n+1))p <<< "${tab1}" |cut -d "|" -f2)
+                val=$(sed -n $((n+1))p <<< "${out1}" |cut -d "|" -f2)
                 [ -n "${val}" ] && sed -i "s/${items[$item]}=.*/${items[$item]}=\"$val\"/g" "${file_cfg}"
                 [ "$val" = TRUE ] && count=$((count+1))
                 let n++
@@ -166,12 +167,12 @@ play_list() {
             unset items
         done
         for item in "${psets[@]:5:9}"; do
-            val="$(cut -d "|" -f${f} <<< "${tab2}")"
+            val="$(cut -d "|" -f${f} <<< "${out2}")"
             [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
             let f++
         done
         
-        pval="$(cut -d "|" -f5 <<< "${tab2}")"
+        pval="$(cut -d "|" -f5 <<< "${out2}")"
         if [[ "$pval" = "$(gettext "Words")" ]]; then  val=1
         elif [[ "$pval" = "$(gettext "Sentences")" ]]; then  val=2
         else  val=0; fi
@@ -194,10 +195,8 @@ play_list() {
             else
                 "$DS/stop.sh" 2 && exit 1
             fi
-            
             "$DS/stop.sh" 2
             "$DS/bcle.sh" &
-            
         # cmd stop
         elif [ $ret -eq 2 ]; then
             [ -e "$DT/playlck" ] && echo 0 > "$DT/playlck"
