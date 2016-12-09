@@ -553,7 +553,7 @@ translate_to() {
         --width=390 --height=340 --borders=10 \
         --field="":LBL " " \
         --field="<b>$(gettext "Revised translations") </b> ":LBL " " \
-        --field="$(gettext "This topic has no revised translations.")":LBL " " \
+        --field="<small>$(gettext "This topic has no revised translations.")</small>":LBL " " \
         --field=" ":LBL " " \
         --field="$active_trans — $(gettext "This translation was revised")":CHK "$chk" \
         --field="":LBL " " \
