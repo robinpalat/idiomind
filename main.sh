@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-#  Copyright 2015-2016 Robin Palatnik
+#  Copyright 2015-2017 Robin Palatnik
 #  Email robinpalat@users.sourceforge.net
 #  Web site https://idiomind.sourceforge.net
 #  
