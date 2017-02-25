@@ -4,7 +4,7 @@
 
 <b>Dependencies:</b>
 
-bash (>=4.1), yad (>=0.37), mplayer, imagemagick, wkhtmltopdf, curl, html2text, xdg-utils, xclip, python, python-requests, espeak, sqlite3
+bash (>=4.1), yad (>=0.37), mplayer, imagemagick, wkhtmltopdf, curl, html2text, xdg-utils, xclip, python, espeak, sqlite3
 
 
 
