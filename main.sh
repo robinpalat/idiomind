@@ -134,7 +134,7 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     file="${1}"
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
     level="${lv[${levl}]}"
-    itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$name</span><sup>\n$(gettext "Words") $nwrd  \
+    itxt="<span font_desc='Droid Sans Bold 12'>$name</span><sup>\n$(gettext "Words") $nwrd  \
 $(gettext "Sentences") $nsnt  $(gettext "Images") $nimg \n$(gettext "Level:") \
 $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(gettext "$slng")$otranslations</sup>" 
     dclk="$DS/play.sh play_word"
@@ -259,7 +259,7 @@ function topic() {
         elif [ ! -z "$dtec" ]; then 
             export infolbl="$(gettext "Review") $repass  $(gettext "Created on") $dtec"
         fi
-        export lbl1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><sup>\n$(gettext "Sentences") $cfg4  $(gettext "Words") $cfg3  $plusinfo\n$infolbl</sup>"
+        export lbl1="<span font_desc='Free Sans 15'>${tpc}</span><sup>\n$(gettext "Sentences") $cfg4  $(gettext "Words") $cfg3  $plusinfo\n$infolbl</sup>"
     }
     
     oclean() { cleanups "$cnf1" "$cnf3" "$cnf4"; }

@@ -141,21 +141,22 @@ function notebook_1() {
     awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE\n"$0""}'; fi; }
 
     list | yad --list --tabnum=1 \
-    --plug=$KEY --print-all --separator='|' \
-    --dclick-action="$DS/vwr.sh 1" --no-rules-hint \
-    --print-column=2 --expand-column=2 --no-headers --ellipsize=END \
+    --plug=$KEY --print-all --separator='|' --wrap-width=20 --wrap-cols=2 \
+    --dclick-action="$DS/vwr.sh 1" --grid-lines=hor \
+    --print-column=2 --expand-column=2 --no-headers --ellipsize=end \
     --search-column=2 --regex-search --hide-column=4 --tooltip-column=4 \
     --column=Name:IMG --column=Name:TEXT \
     --column=Learned:CHK --column=@back@:TIP > "$cnf1" &
     cat "${ls2}" | yad --list --tabnum=2 \
-    --plug=$KEY --print-all --separator='|' --no-rules-hint \
+    --plug=$KEY --print-all --separator='|' --grid-lines=hor \
     --dclick-action="$DS/vwr.sh 2"  \
-    --expand-column=0 --no-headers --ellipsize=END  \
+    --expand-column=0 --no-headers --ellipsize=end  \
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \
     --plug=$KEY \
     --always-print-result \
-    --filename="${nt}" --editable --wrap --back='#FFFDF7' --fore='gray30' \
+    --show-uri --uri-color="#6591AA" \
+    --filename="${nt}" --editable --wrap \
     --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 \
     --plug=$KEY \
@@ -172,7 +173,7 @@ function notebook_1() {
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
-    --center --align=right --ellipsize=END \
+    --center --align=right \
     --window-icon=idiomind \
     --tab="  $(gettext "Learning") ($cfg1) " \
     --tab="  $(gettext "Learnt") ($cfg2) " \
@@ -201,13 +202,14 @@ function notebook_2() {
     --align=center --borders=80 --bar="":NORM $RM &
     cat "${ls2}" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
-    --dclick-action="$DS/vwr.sh 2" --no-rules-hint \
-    --expand-column=0 --no-headers --ellipsize=END \
+    --dclick-action="$DS/vwr.sh 2" --grid-lines=hor \
+    --expand-column=0 --no-headers --ellipsize=end \
     --search-column=1 --regex-search \
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \
     --plug=$KEY \
-    --filename="${nt}" --editable --wrap --back='#FFFDF7' --fore='gray30' \
+    --show-uri --uri-color="#6591AA" \
+    --filename="${nt}" --editable --wrap \
     --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 \
     --plug=$KEY \

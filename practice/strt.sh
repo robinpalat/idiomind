@@ -294,7 +294,7 @@ function practice_c() {
             fi
         else
             local trgt="$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")"
-            lst="<span color='#5E5E5E'>${trgt}</span>"
+            lst="<span color='#757575'>${trgt}</span>"
         fi
         s=$((30-${#trgt}));  [ ${s} -lt 12 ] && s=12
         lquestion="\n<span font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n"
@@ -457,7 +457,7 @@ function practice_e() {
                 |sed 's|\.|\ .|g' \
                 |tr "[:upper:]" "[:lower:]" \
                 |sed 's/^\s*./\U&\E/g' \
-                |sed "s|\.|<span color='#A3A3A3'>\.<\/span>|g")"
+                |sed "s|\.|<span color='#868686'>\.<\/span>|g")"
             fi
         else
             hint="$(echo "$@")"
@@ -523,7 +523,7 @@ function practice_e() {
                 [ -n "${line}" ] && echo "${line}" >> ./mtch.tmp
             else
                 [ -n "${line}" ] && echo \
-                "<span color='#7B4A44'><b>${line^}</b></span>  " >> ./words.tmp
+                "<span color='#984C42'><b>${line^}</b></span>  " >> ./words.tmp
             fi
         done
         
@@ -536,15 +536,15 @@ function practice_e() {
         if [ ${porc} -ge 70 ]; then
             echo "${trgt}" >> ./e.1
             export easy=$((easy+1))
-            color=3AB452
+            color="#3AB452"
         elif [ ${porc} -ge 50 ]; then
             echo "${trgt}" >> ./e.2
              export ling=$((ling+1))
-            color=E5801D
+            color="#E5801D"
         else
             [ -n "$entry" ] && echo "${trgt}" >> ./e.3
             [ -n "$entry" ] && export hard=$((hard+1))
-            color=D11B5D
+            color="#D11B5D"
         fi
         prc="<b>$porc%</b>"
         wes="$(< ./chk.tmp)"
