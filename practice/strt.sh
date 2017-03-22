@@ -127,7 +127,7 @@ function practice_a() {
         --width=400 --height=255 --borders=8 \
         --field="\n$question":lbl "" \
         --field="":lbl "" \
-        --button="$(gettext "Exit")":1 \
+        --button="[$(gettext "Exit")]":1 \
         --button="  $(gettext "Continue") >>  !$img_cont":0
     }
 
@@ -225,7 +225,7 @@ function practice_b(){
         --no-headers \
         --width=400 --height=300 --borders=8 \
         --column=Option \
-        --button="$(gettext "Exit")":1 \
+        --button="[$(gettext "Exit")]":1 \
         --button="   $(gettext "Continue")   !$img_cont":0)
     }
 
@@ -310,7 +310,7 @@ function practice_c() {
         --buttons-layout=edge --image-on-top --undecorated \
         --width=390 --height=220 --borders=8 \
         --field="!$DS/images/listen.png":BTN "$cmd_play" \
-        --button="$(gettext "Exit")":1 \
+        --button="[$(gettext "Exit")]":1 \
         --button="  $(gettext "No")  !$img_no":3 \
         --button="  $(gettext "Yes")  !$img_yes":2
     }
@@ -382,7 +382,7 @@ function practice_d() {
         --image-on-top --undecorated --buttons-layout=spread \
         --width=418 --height=360 --borders=8 \
         --field="$cuest":lbl "" \
-        --button="$(gettext "Exit")":1 \
+        --button="[$(gettext "Exit")]":1 \
         --button="  $(gettext "Continue") >>  !$img_cont":0
     }
 
@@ -474,7 +474,7 @@ function practice_e() {
         --align=center --image-on-top \
         --width=550 --height=220 --borders=8 \
         --field="" "" \
-        --button="$(gettext "Exit")":1 \
+        --button="[$(gettext "Exit")]":1 \
         --button="!$DS/images/listen.png":"$cmd_play" \
         --button="    $(gettext "Check")    ":0)
     }
@@ -688,7 +688,7 @@ function decide_group() {
     --text-align=center --align=center --center --on-top \
     --text="${info}" "" \
     --width=420 --height=90 --borders=8 \
-    --button="$(gettext "Exit")":5 \
+    --button="[$(gettext "Exit")]":5 \
     --button="$(gettext "Again")!view-refresh!$(gettext "Go back to practice the above items")":1 \
     --button="$(gettext "Continue")!go-next!$(gettext "Practice the next group")":0); ret="$?"
 
