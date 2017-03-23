@@ -767,9 +767,10 @@ function practices() {
             --window-icon=idiomind \
             --skip-taskbar --buttons-layout=spread \
             --align=center --center --on-top \
-            --width=350 --height=125 --borders=10 \
+            --width=310 --height=115 --borders=8 \
             --field="$(gettext "Practice in groups of 10")":CHK "" \
-            --field="\n$(gettext "Language for the questions:")":LBL "" \
+            --field="":LBL "" \
+            --field="$(gettext "Language for the questions:")":LBL "" \
             --button="      $(gettext "$slng")      !!$(gettext "Questions in") $(gettext "$slng") - $(gettext "Answers in") $(gettext "$tlng")":3 \
             --button="      $(gettext "$tlng")      !!$(gettext "Questions in") $(gettext "$tlng") - $(gettext "Answers in") $(gettext "$slng")":2); ret="$?"
             
