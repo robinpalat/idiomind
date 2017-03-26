@@ -99,10 +99,11 @@ function _log() {
     fi
 }
     
+#////////////////////////////////// practice A
 function practice_a() {
     fonts() {
         _item="$(grep -F -m 1 "trgt{${item}}" "${cfg0}" |sed 's/}/}\n/g')"
-        if [[ ${quest} != 1 ]]; then
+        if [[ ${lang_question} != 1 ]]; then
             trgt="${item}"
             srce="$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")"
         else
@@ -189,11 +190,12 @@ function practice_a() {
     fi
 }
 
+#////////////////////////////////// practice B
 function practice_b(){
     snd="$pdirs/no.mp3"
     fonts() {
         _item="$(grep -F -m 1 "trgt{${item}}" "${cfg0}" |sed 's/}/}\n/g')"
-        if [[ ${quest} != 1 ]]; then
+        if [[ ${lang_question} != 1 ]]; then
             trgt="${item}"
             srce=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
             ras=$(sort -Ru b.srces |egrep -v "$srce" |head -${P})
@@ -217,31 +219,30 @@ function practice_b(){
     }
 
     mchoise() {
-        dlg=$(ofonts | yad --list --title=" " \
+        dlg="$(ofonts | yad --list --title=" " \
         --text="${question}" \
-        --no-focus --separator=" " \
+        --no-focus --separator=" " --always-print-result \
         --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --undecorated \
         --no-headers \
         --width=400 --height=300 --borders=8 \
         --column=Option \
         --button="[$(gettext "Exit")]":1 \
-        --button="   $(gettext "Continue")   !$img_cont":0)
+        --button="   $(gettext "Continue")   !$img_cont":0)"
     }
 
     P=4; s=11
-    while read item; do
-        fonts; mchoise
-        if [ $? = 0 ]; then
+    while read -r item; do
+        fonts; mchoise; ret=$?
+        if [ $ret = 0 ]; then
             if grep -o "$srce" <<< "${dlg}"; then
                 echo "${item}" >> b.1
                 easy=$((easy+1))
             else
-                mplayer "$snd" &
-                echo "${item}" >> b.2
+                (mplayer "$snd" & echo "${item}" >> b.2)
                 hard=$((hard+1))
-            fi  
-        elif [ $? = 1 ]; then
+            fi
+        elif [ $ret = 1 ]; then
             ling=${hard}; hard=0
             export hard ling
             break & score & return
@@ -253,7 +254,7 @@ function practice_b(){
         scoreschk
     else
         step=2; P=2; s=12
-        while read item; do
+        while read -r item; do
             fonts; mchoise
             if [ $? = 0 ]; then
                 if grep -o "$srce" <<< "${dlg}"; then
@@ -273,12 +274,13 @@ function practice_b(){
     fi
 }
 
+#////////////////////////////////// practice C
 function practice_c() {
 
     fonts() {
         item="$(grep -F -m 1 "trgt{${trgt}}" "${cfg0}" |sed 's/}/}\n/g')"
         cdid="$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")"
-        if [[ ${quest} != 1 ]]; then
+        if [[ ${lang_question} != 1 ]]; then
             if [[ $p = 2 ]]; then
                 if grep -o -E 'Japanese|Chinese|Russian' <<< ${tlng}; then
                     lst="${trgt:0:1} ${trgt:5:5}"
@@ -355,6 +357,7 @@ function practice_c() {
     fi
 }
 
+#////////////////////////////////// practice D
 function practice_d() {
 
     fonts() {
@@ -362,7 +365,7 @@ function practice_d() {
         img="$DM_tlt/images/${item,,}.jpg" || \
         img="$DM_tls/images/${item,,}-0.jpg"
         _item="$(grep -F -m 1 "trgt{${item}}" "${cfg0}" |sed 's/}/}\n/g')"
-        if [[ ${quest} = 1 ]]; then
+        if [[ ${lang_question} = 1 ]]; then
             srce="${item}"
             trgt=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
         else
@@ -443,10 +446,11 @@ function practice_d() {
     fi
 }
 
+#////////////////////////////////// practice E
 function practice_e() {
     
     dialog2() {
-        if [[ ${quest} != 1 ]]; then
+        if [[ ${lang_question} != 1 ]]; then
             if grep -o -E 'Japanese|Chinese|Russian' <<< ${tlng}; then
                 hint=" "
             else
@@ -556,7 +560,7 @@ function practice_e() {
         pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${cfg0}" \
         |sed -n 's/^\([0-9]*\)[:].*/\1/p')
         item=$(sed -n ${pos}p "${cfg0}" |sed 's/}/}\n/g')
-        if [[ ${quest} = 1 ]]; then
+        if [[ ${lang_question} = 1 ]]; then
             push=$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")
         else 
             push="${trgt}"; fi
@@ -680,14 +684,15 @@ function lock() {
 
 function decide_group() {
     [ -e ./${pr}.l ] && learnt=$(($(< ./${pr}.l)+easy)) || learnt=${easy}
-    info="$(gettext "Total") <span color='#6E6E6E'><b>$all</b></span>  $(gettext "Learnt") <span color='#6E6E6E'><b>$learnt</b></span>  $(gettext "Easy") <span color='#6E6E6E'><b>$easy</b></span>  $(gettext "Learning") <span color='#6E6E6E'><b>$ling</b></span>  $(gettext "Difficult") <span color='#6E6E6E'><b>$hard</b></span>"
+    preeasy=$((learnt+easy)); left=$((all-learnt))
+    info="$(gettext "Left") <b>$left</b>   $(gettext "Learnt") <b><span color='#548F55'>$learnt</span></b>   $(gettext "Easy") <b>$easy</b>   $(gettext "Learning") <b>$ling</b>   $(gettext "Difficult") <b>$hard</b>"
     optns=$(yad --form --title="$(gettext "Continue")" \
     --window-icon=idiomind \
     --always-print-result \
     --skip-taskbar --buttons-layout=spread \
     --text-align=center --align=center --center --on-top \
     --text="${info}" "" \
-    --width=420 --height=90 --borders=8 \
+    --width=420 --height=85 --borders=8 \
     --button="[$(gettext "Exit")]":5 \
     --button="$(gettext "Again")!view-refresh!$(gettext "Go back to practice the above items")":1 \
     --button="$(gettext "Continue")!go-next!$(gettext "Practice the next group")":0); ret="$?"
@@ -726,18 +731,18 @@ function practices() {
     touch "${pdir}/log1" "${pdir}/log2" "${pdir}/log3"
     easy=0; hard=0; ling=0; step=1
     export easy hard ling step
-    group=""; split=""; quest=""
+    group=""; split=""; lang_question=""
     if [ -f "${pdir}/$pr" ]; then 
     optns="$(cat "${pdir}/$pr")"
     group="$(cut -d "|" -f1 <<< "${optns}")"
     split="$(cut -d "|" -f2 <<< "${optns}")"
-    quest="$(cut -d "|" -f3 <<< "${optns}")"
+    lang_question="$(cut -d "|" -f3 <<< "${optns}")"
     fi
-    if [ ${pr} = a ]; then icon=1
-    elif [ ${pr} = b ]; then icon=2
-    elif [ ${pr} = c ]; then icon=3
-    elif [ ${pr} = d ]; then icon=4
-    elif [ ${pr} = e ]; then icon=5
+    if [ ${pr} = a ]; then icon=1; title_act_pract="- $(gettext "Flashcards")"
+    elif [ ${pr} = b ]; then icon=2; title_act_pract="- $(gettext "Multiple-choice")"
+    elif [ ${pr} = c ]; then icon=3; title_act_pract="- $(gettext "Recognize Pronunciation")"
+    elif [ ${pr} = d ]; then icon=4; title_act_pract="- $(gettext "Images")"
+    elif [ ${pr} = e ]; then icon=5; title_act_pract="- $(gettext "Listen and Writing Sentences")"
     else exit; fi
     lock
     
@@ -767,7 +772,7 @@ function practices() {
             --window-icon=idiomind \
             --skip-taskbar --buttons-layout=spread \
             --align=center --center --on-top \
-            --width=310 --height=115 --borders=8 \
+            --width=310 --height=105 --borders=8 \
             --field="$(gettext "Practice in groups of 10")":CHK "" \
             --field="":LBL "" \
             --field="$(gettext "Language for the questions:")":LBL "" \
@@ -776,15 +781,15 @@ function practices() {
             
             if [ $ret = 3 -o $ret = 2 ]; then
                 if grep 'TRUE' <<< "${optns}"; then group=1; split=10; fi
-                if [ $ret = 3 ]; then quest=1; else quest=0; fi
+                if [ $ret = 3 ]; then lang_question=1; else lang_question=0; fi
                 
-                echo -e "$group|$split|$quest" > ${pr}
+                echo -e "$group|$split|$lang_question" > ${pr}
             else
                 strt & return
             fi
         fi
         
-        export group split quest; get_list
+        export group split lang_question; get_list
         
         if [[ ${group} = 1 ]]; then
             head -n ${split} "${pdir}/${pr}.0" > "${pdir}/${pr}.tmp"
@@ -830,10 +835,10 @@ function strt() {
         echo 21 > .${icon}
     elif [ ${1} = 2 ]; then
         learnt=$(< ./${pr}.l); declare info${icon}="* "
-        info="<small>$(gettext "Total")</small> <span color='#6E6E6E'><b>$all</b></span>  <small>$(gettext "Learnt")</small> <span color='#6E6E6E'><b><big>$learnt</big></b></span>  <small>$(gettext "Easy")</small> <span color='#6E6E6E'><b><big>$easy</big></b></span>  <small>$(gettext "Learning")</small> <span color='#6E6E6E'><b><big>$ling</big></b></span>  <small>$(gettext "Difficult")</small> <span color='#6E6E6E'><b><big>$hard</big></b></span>\n"
+        info="<small>$(gettext "Total")</small>  <b><big>$all</big></b>    <small>$(gettext "Learnt")</small>  <b><big>$learnt</big></b>    <small>$(gettext "Easy")</small>  <b><big>$easy</big></b>    <small>$(gettext "Learning")</small>  <b><big>$ling</big></b>    <small>$(gettext "Difficult")</small>  <b><big>$hard</big></b>\n"
     fi
 
-    pr="$(yad --list --title="$(gettext "Practice ")" \
+    pr="$(yad --list --title="$(gettext "Practice ") $title_act_pract" \
     --text="${info}" \
     --class=Idiomind --name=Idiomind \
     --print-column=1 --separator="" \
@@ -842,7 +847,7 @@ function strt() {
     --ellipsize=NONE --no-headers --expand-column=3 --hide-column=1 \
     --width=${sz[0]} --height=${sz[1]} --borders=10 \
     --column="Action" --column="Pick":IMG --column="Label" \
-    "a" "$pdirs/images/$(< ./.1).png" "   $info1  $(gettext "Flashcards")" \
+    "a" "$pdirs/images/$(< ./.1).png" "   $info1  $(gettext "Flashcards")"  \
     "b" "$pdirs/images/$(< ./.2).png" "   $info2  $(gettext "Multiple-choice")" \
     "c" "$pdirs/images/$(< ./.3).png" "   $info3  $(gettext "Recognize Pronunciation")" \
     "d" "$pdirs/images/$(< ./.4).png" "   $info4  $(gettext "Images")" \
@@ -850,7 +855,7 @@ function strt() {
     --button="$(gettext "Restart")":3 \
     --button="$(gettext "Start")":0)"
     ret=$?
-    unset info info1 info2 info3 info4 info5
+    unset info info1 info2 info3 info4 info5 title_act_pract
 
     if [ $ret -eq 0 ]; then
         if [ -z "$pr" ]; then
