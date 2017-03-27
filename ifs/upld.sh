@@ -9,9 +9,9 @@ lgs=${slangs[$slng]}
 
 function dwld() {
     err() {
-        cleanups "$DT/download" &
         msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" \
         dialog-information
+        cleanups "$DT/download"
     }
     sleep 0.5
     msg "$(gettext "When the download completes the files will be added to topic directory.")" \
@@ -22,18 +22,17 @@ function dwld() {
     tlng=$(grep -o 'tlng="[^"]*' "$DM_tl/${2}/.conf/id.cfg" |grep -o '[^"]*$')
     [ -z "${ilnk}" ] && err
 
-    url1="http://idiomind.sourceforge.net/dl.php/?lg=${tlng,,}&fl=${ilnk}"
-    if wget -S --spider "${url1}" 2>&1 |grep 'HTTP/1.1 200 OK'; then
-        URL="${url1}"
-    else err & exit 1
-    fi
+    url1="http://idiomind.sourceforge.net/dl.php/?fl=${tlng,,}/${ilnk}"
+    if wget -S --spider "${url1}" 2>&1 |grep 'HTTP/1.1 200 OK'; then 
+    URL="${url1}"; else err & exit 1; fi
+    
     wget -q -c -T 80 -O "$DT/download/${ilnk}.tar.gz" "${URL}"
     [ $? != 0 ] && err && exit 1
     
     if [ -f "$DT/download/${ilnk}.tar.gz" ]; then
         cd "$DT/download"/
-        tar -xzvf "$DT/download/${ilnk}.tar.gz"
-        
+        tar xvf "$DT/download/${ilnk}.tar.gz"
+
         if [ -d "$DT/download/files" ]; then
             total_lbl="$(gettext "Total")"
             audio_lbl="$(gettext "Audio files")"
@@ -64,7 +63,7 @@ function dwld() {
             echo "${tpc}" >> "$DM_tl/.share/3.cfg"
             echo -e "$total_lbl $total\n$audio_lbl $naud\n$image_lbl $nimg\n$trans_lbl $tran" > "${DC_tlt}/download"
             "$DS/ifs/tls.sh" colorize 0
-            rm -fr "$DT/download"
+            cleanups "$DT/download"
         else
             err & exit 1
         fi
@@ -99,7 +98,7 @@ function upld() {
 
     conds_upload() {
         if [ $((cfg3+cfg4)) -lt 8 ]; then
-            msg "$(gettext "Insufficient number of items to perform the action")." \
+            msg "$(gettext "Insufficient number of items")." \
             dialog-information "$(gettext "Information")" & exit 1
         fi
         if [ -z "${autr_mod}" -o -z "${pass_mod}" ]; then
@@ -165,15 +164,14 @@ function upld() {
         trad="$(grep -o 'slng="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         fsize="$(grep -o 'nsze="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
-        info="$(gettext "Downloadable content available")"
-        info2="<sup>$(gettext "Audio files:") $naud\n$(gettext "Images:") $nimg\n$(gettext "Translations:") $trad\n$(gettext "Size:") $fsize</sup>"
+        info="<b>$(gettext "Downloadable content available")</b>"
+        info2="$(gettext "Audio files:") $naud\n$(gettext "Images:") $nimg\n$(gettext "Translations:") $trad\n$(gettext "Size:") $fsize"
         yad --form --columns=1 --title="$(gettext "Share")" \
         --name=Idiomind --class=Idiomind \
         --always-print-result \
-        --image="$DS/images/dl.png" \
         --window-icon=idiomind --buttons-layout=end \
         --align=left --center --on-top \
-        --width=420 --height=140 --borders=10 \
+        --width=420 --height=170 --borders=10 \
         --text="$info" \
         --field="$info2:lbl" " " \
         --button="$(gettext "Export")":2 \
@@ -188,7 +186,7 @@ function upld() {
         --window-icon=idiomind --buttons-layout=end \
         --align=left --center --on-top \
         --width=420 --height=140 --borders=10 \
-        --field="<b>$(gettext "Downloaded files")</b>:lbl" " " \
+        --field="<b>$(gettext "Downloaded files"):</b>:lbl" " " \
         --field="$(< "${DC_tlt}/download"):lbl" " " \
         --field=" :lbl" " " \
         --button="$(gettext "Export")":2 \
