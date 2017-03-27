@@ -69,7 +69,7 @@ check_index() {
     source "$DS/ifs/cmns.sh"
     DC_tlt="$DM_tl/${2}/.conf"
     DM_tlt="$DM_tl/${2}"
-    tpc="${2}"; mkmn=0; f=0
+    tpc="${2}"; mkmn=0; f=0; c=0
     [[ ${3} = 1 ]] && r=1 || r=0
     
     _check() {
@@ -128,6 +128,8 @@ check_index() {
         cnt1=$(wc -l < "${DC_tlt}/1.cfg" |sed '/^$/d')
         cnt2=$(wc -l < "${DC_tlt}/2.cfg" |sed '/^$/d')
         if [ $((cnt1+cnt2)) != ${cnt0} ]; then export f=1; fi
+        
+        if grep '},' "${DC_tlt}/0.cfg"; then export c=1; fi
     }
     
     _restore() {
@@ -161,7 +163,44 @@ check_index() {
         sed -i '/^$/d' "${DC_tlt}/0.cfg"
     }
     
+    _newformat() {
+		
+		get_item() {
+			export item="$(sed 's/},/}\n/g' <<< "${1}")"
+			export type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
+			export trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+			export srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
+			export exmp="$(grep -oP '(?<=exmp={).*(?=})' <<<"${item}")"
+			export defn="$(grep -oP '(?<=defn={).*(?=})' <<<"${item}")"
+			export note="$(grep -oP '(?<=note={).*(?=})' <<<"${item}")"
+			export wrds="$(grep -oP '(?<=wrds={).*(?=})' <<<"${item}")"
+			export grmr="$(grep -oP '(?<=grmr={).*(?=})' <<<"${item}")"
+			export mark="$(grep -oP '(?<=mark={).*(?=})' <<<"${item}")"
+			export link="$(grep -oP '(?<=link={).*(?=})' <<<"${item}")"
+			export tags="$(grep -oP '(?<=tag={).*(?=})' <<<"${item}")"
+			export cdid="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
+		}
+		 
+        rm -f "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"
+        while read -r _item; do
+            get_item "${_item}"
+            eval line="$(sed -n 2p $DS/default/vars)"
+            echo -e "${line}" >> "${DC_tlt}/cfg"
+            echo "${trgt}" >> "${DC_tlt}/1.cfg"
+        done < <(tac "${DC_tlt}/0.cfg")
+        mv -f "${DC_tlt}/cfg" "${DC_tlt}/0.cfg"
+        touch "${DC_tlt}/2.cfg"
+        "$DS/ifs/tls.sh" colorize 1
+    }
+    
     _check
+    
+    if [[ ${c} = 1 ]]; then
+        > "$DT/ps_lk"
+        (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
+        "$(gettext "Convert to new format...")" -t 3000) &
+        _newformat
+    fi
     
     if [[ ${f} = 1 ]]; then
         > "$DT/ps_lk"; mkmn=1
