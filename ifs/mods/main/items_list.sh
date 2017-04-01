@@ -74,8 +74,8 @@ function word_view() {
     font_size=25; [ ${#trgt} -gt 20 ] && font_size=18
     [ -n "${tags}" ] && field_tag="--field=<small>$tags</small>:lbl"
     [ -n "${defn}" ] && field_defn="--field=$defn:lbl"
-    [ -n "${note}" ] && field_note="--field=<span font_desc='Arial 9' color='#676767'>$note</span>\n:lbl"
-    [ -n "${exmp}" ] && field_exmp="--field=<span font_desc='Verdana 10' color='#6D6D6D'>$exmp\n</span>:lbl"
+    [ -n "${note}" ] && field_note="--field=<span font_desc='Arial 9'>$note</span>\n:lbl"
+    [ -n "${exmp}" ] && field_exmp="--field=<span font_desc='Verdana 10'>$exmp\n</span>:lbl"
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free ${font_size}'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>$link\n\n"
    
@@ -96,7 +96,7 @@ function word_view() {
 function sentence_view() {
     if [ $(grep -oP '(?<=gramr=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
-    [ -n "${note}" ] && field_note="💬  <span font_desc='Arial 9' color='#676767'>$note</span>\n"
+    [ -n "${note}" ] && field_note="💬  <span font_desc='Arial 9'>$note</span>\n"
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free 16'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i>$link</span>\n<small>$tag</small>\n"
     cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"""

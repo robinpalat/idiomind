@@ -60,6 +60,7 @@ function dwld() {
             done < "${DC_tlt}/3.cfg"
             rm -fr "${tmp}/share" "${tmp}/conf" "${tmp}/images"
             mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
+            cleanups "$DM_t/$tlng/.share/audio/.mp3" "$DM_t/$tlng/.share/images/.jpg"
             echo "${tpc}" >> "$DM_tl/.share/3.cfg"
             echo -e "$total_lbl $total\n$audio_lbl $naud\n$image_lbl $nimg\n$trans_lbl $tran" > "${DC_tlt}/download"
             "$DS/ifs/tls.sh" colorize 0
@@ -291,11 +292,13 @@ function upld() {
         export autr="${autr_mod}"
         export pass="${pass_mod}"
         export md5i=$(md5sum "${DC_tlt}/0.cfg" |cut -d' ' -f1)
-        export ilnk="${pre,,}${md5i:0:20}"
+        ilnk="$(grep -o 'ilnk="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        if [ -z "$ilnk" ]; then ilnk="${pre,,}${md5i:0:20}"; fi
+        export ilnk
         export dtec="$(grep -o 'dtec="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         export dtei="$(grep -o 'dtei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         export dteu=$(date +%F)
-        tpcid=$(strings /dev/urandom |tr -cd '[:alnum:]' |fold -w 3 |head -n 1)
+        tpcid=$(echo -n "$ilnk" |tail -c 3)
         export nwrd=${cfg3}
         export nsnt=${cfg4}
         export orig levl
@@ -346,6 +349,8 @@ function upld() {
             fi
         done < "${DC_tlt}/0.cfg"
         
+        cleanups "$DT_u/files/images/.jpg" "$DT_u/files/share/.mp3"
+        
         if [ -d "$DC_tlt/translations" ]; then
             act="$(< "$DC_tlt/translations/active")"
             if [ -z "$act" ] && grep -Fo "${act}" <<< "${!slangs[@]}" >/dev/null 2>&1; then
@@ -387,7 +392,7 @@ function upld() {
         
         export tpc DT_u body
         # convert to json format
-        idmnd="$DT_u/$tpcid.$orig.$lgt"
+        idmnd="$DT_u/${orig}_${tpcid}.idmnd"
         echo -e "{\"items\":{" > "${idmnd}"
         while read -r _item; do
             get_item "${_item}"
