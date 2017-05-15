@@ -812,6 +812,7 @@ function practices() {
     fi
 }
 
+
 function strt() {
     [ ! -d "${pdir}" ] && mkdir -p "${pdir}"
     cd "${pdir}"
