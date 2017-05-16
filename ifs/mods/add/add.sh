@@ -115,9 +115,10 @@ function sentence_p() {
     |sed 's/\]//;s/\[//;s/<[^>]*>//g' |sed "s/'$//;s/^'//"\
     |sed 's/\.//;s/  / /;s/ /\. /;s/-$//;s/^-//;s/"//g' \
     |tr -d '.' |sed 's/^ *//; s/ *$//; /^$/d' \
-    |sed 's/ \+/ /g' |sed ':a;N;$!ba;s/\n/\.\./g' > "${aw}"
-    translate "$(sed '/^$/d' "${aw}")" auto "$lg" |tr -d '!?¿,;' \
-    |sed 's/\.\./\n/g' |sed 's/^ *//; s/ *$//; /^$/d' > "${bw}"
+    |sed 's/ \+/ /g' |sed -e ':a;N;$!ba;s/\n/\n/g' > "${aw}"
+    translate "$(sed '/^$/d' "${aw}")" auto "$lg" |tr -d '!?¿,;.' \
+    |sed -e 's/ \+/ /g' |sed -e 's/.*\]\[\"//g' |sed -e 's/ *$//; /^$/d' > "${bw}"
+    
 
     while read -r wrd; do
         w="$(tr -d '\.,;“”"' <<< "${wrd,,}")"
@@ -142,8 +143,6 @@ function sentence_p() {
         fi
     done < <(sed 's/ /\n/g' <<< "${trgt_p}")
     
-    sed -i 's/\.\./\n/g;s/ \+/ /g' "${bw}"
-    sed -i 's/\.\./\n/g;s/ \+/ /g' "${aw}"
     touch "$DT_r/A.$r" "$DT_r/B.$r" "$DT_r/g.$r"; bcle=1
     trgt_q="${trgt//\'/\'\'}"
     
