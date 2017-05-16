@@ -30,6 +30,6 @@ else
     link="http://translate.googleapis.com/translate_a/single?client=gtx&sl=$2&tl=$3&dt=t&q=$1"
     gtra="$(wget -U "$useragent" -qO - "$link")"
     while read t; do
-        echo -n "$(grep -oP '(?<=trgt=\").*(?=\",\")' <<< "${t}")"
-    done < <(echo "${gtra}" |sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g')
+        echo -ne "$(grep -oP '(?<=trgt=\").*(?=\",\")' <<< "${t}")"
+    done < <(echo -e "${gtra}" |sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g')
 fi
