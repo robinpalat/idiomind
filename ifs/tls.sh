@@ -338,7 +338,7 @@ check_updates() {
     source "$DS/ifs/cmns.sh"
     internet
     link='http://idiomind.sourceforge.net/doc/checkversion'
-    nver=$(wget --user-agent "$ua" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g')
+    nver=$(wget --user-agent "$useragent" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g')
     pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
     date "+%d" > "$DC_s/9.cfg"
     if [ ${#nver} -lt 9 ] && [ ${#_version} -lt 9 ] \
@@ -371,7 +371,7 @@ a_check_updates() {
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
         echo ${d2} > "$DC_s/9.cfg"
         link='http://idiomind.sourceforge.net/doc/checkversion'
-        nver=$(wget --user-agent "$ua" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g')
+        nver=$(wget --user-agent "$useragent" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g')
         pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
         if [ ${#nver} -lt 9 ] && [ ${#_version} -lt 9 ] \
         && [ ${#nver} -ge 3 ] && [ ${#_version} -ge 3 ] \

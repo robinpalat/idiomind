@@ -116,7 +116,7 @@ function sentence_p() {
     |sed 's/\.//;s/  / /;s/ /\. /;s/-$//;s/^-//;s/"//g' \
     |tr -d '.' |sed 's/^ *//; s/ *$//; /^$/d' \
     |sed 's/ \+/ /g' |sed -e ':a;N;$!ba;s/\n/\n/g' > "${aw}"
-    translate "$(sed '/^$/d' "${aw}")" auto "$lg" |tr -d '!?¿,;.' \
+    translate "$(sed '/^$/d' "${aw}")" auto "$lg" singleline |tr -d '!?¿,;.' \
     |sed -e 's/ \+/ /g' |sed -e 's/.*\]\[\"//g' |sed -e 's/ *$//; /^$/d' > "${bw}"
     
 
@@ -370,7 +370,7 @@ function translate() {
 dwld1() {
     LINK=""; source "$1/dicts/$(basename "${dict}")"
     if [ "${LINK}" -a ! -e "$audio_file" ]; then
-        wget -T 51 -q -U "$ua" -O "$audio_dwld.$ex" "${LINK}"
+        wget -T 51 -q -U "$useragent" -O "$audio_dwld.$ex" "${LINK}"
         if [[ ${ex} != 'mp3' ]]; then
             mv -f "$audio_dwld.$ex" "$audio_dwld.mp3"
         fi
@@ -386,7 +386,7 @@ dwld1() {
 dwld2() {
     LINK=""; source "$1/dicts/$(basename "${dict}")"
     if [ "${LINK}" -a ! -e "${audio_file}" ]; then
-        wget -T 51 -q -U "$ua" -O "$DT_r/audio.mp3" "${LINK}"
+        wget -T 51 -q -U "$useragent" -O "$DT_r/audio.mp3" "${LINK}"
     fi
     if file -b --mime-type "$DT_r/audio.mp3" |grep -E 'audio\/mpeg|mp3|' >/dev/null 2>&1 \
     && [[ $(du -b "$DT_r/audio.mp3" |cut -f1) -gt 100 ]]; then
