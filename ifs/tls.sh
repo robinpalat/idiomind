@@ -402,13 +402,13 @@ promp_topic_info() {
         cleanups "${DC_tlt}/note_err"
     fi
     if [ -e "${DC_tlt}/slng_err" ]; then
-        msg "$slng_err_lbl" "$DS/images/warning.png" \
+        msg "$slng_err_lbl" "face-worried" \
         "$(gettext "Language does not match")" \
         "$(gettext "Close")"
         cleanups "${DC_tlt}/slng_err"
         
     elif [ -n "$active_trans" -a "$active_trans" != "$slng" ]; then
-        msg "$slng_err_lbl" "$DS/images/warning.png" \
+        msg "$slng_err_lbl" "face-worried" \
         "$(gettext "Language does not match")" \
         "$(gettext "Close")"
     fi
@@ -464,7 +464,7 @@ set_image() {
     fi
     if [ -e "$DT/$trgt.img" ]; then
         msg_4 "$(gettext "Attempting download image")..." \
-        "$DS/images/warning.png" "$(gettext "OK")" "$(gettext "Stop")" \
+        "face-worried" "$(gettext "OK")" "$(gettext "Stop")" \
         "$(gettext "Wait")" "$DT/$trgt.img"
         if [ $? -eq 1 ]; then rm -f "$DT/$trgt".img; else return 1 ; fi
     fi
@@ -504,7 +504,7 @@ function transl_batch() {
     source "$DS/default/sets.cfg"
     if [ -e "$DT/transl_batch_lk" -o -e "$DT/translate_to" ]; then
         msg_4 "$(gettext "Please wait until the current actions are finished")" \
-        "$DS/images/warning.png" "$(gettext "OK")" "$(gettext "Stop")" \
+        "face-worried" "$(gettext "OK")" "$(gettext "Stop")" \
         "$(gettext "Wait")" "$DT/translation"
         ret=$?
         if [ $ret -eq 1 ]; then 
