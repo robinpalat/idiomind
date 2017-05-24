@@ -13,7 +13,7 @@ function check_format_1() {
         msg "$(gettext "File is corrupted.") ${1}\n" error & exit 1
     }
     if [ ! -f "${file}" ]; then invalid
-    elif [ $(wc -l < "${file}") != 3 ]; then invalid 'lines'
+    elif [ $(wc -l < "${file}") != 3 ]; then invalid "$(wc -l < "${file}") Lines!"
     elif [ $(sed -n 1p "$file" |tr -d '"{' |cut -d':' -f1) != 'items' ]; then
         invalid
     fi
@@ -54,7 +54,9 @@ function check_format_1() {
             if [ ${#val} -gt 6 ]; then invalid $n; fi
         elif [[ ${n} = 16 ]]; then
             if ! [[ $val =~ $numer ]] || [ ${#val} -gt 2 ]; then invalid $n; fi
-        elif [[ ${n} = 17 ]]; then
+         elif [[ ${n} = 17 ]]; then
+            if [ ${#val} -gt 10240 ]; then invalid $n; fi
+        elif [[ ${n} = 18 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 40 ] || \
             [ "$(grep -o -E '\*|\/|\@|$|=|-' <<< "${val}")" ]; then invalid $n; fi
         fi
@@ -100,7 +102,7 @@ check_index() {
         fi
         id=1
         [ ! -e "${DC_tlt}/id.cfg" ] && touch "${DC_tlt}/id.cfg" && id=0
-        [[ $(egrep -cv '#|^$' < "${DC_tlt}/id.cfg") != 18 ]] && id=0
+        [[ $(egrep -cv '#|^$' < "${DC_tlt}/id.cfg") != 17 ]] && id=0
         if [ ${id} != 1 ]; then
             dtec=$(date +%F)
             eval vls="$(sed -n 4p $DS/default/vars)"

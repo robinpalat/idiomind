@@ -44,7 +44,6 @@ function dwld() {
             nimg=$(find "${tmp}" -maxdepth 5 -name '*.jpg' |wc -l)
             tran=$(find "${tmp}" -maxdepth 5 -name '*.tra' |wc -l)
 
-            mv -f "${tmp}/conf/info" "${DC_tlt}/info"
             check_dir "$DM_t/$tlng/.share/images" "$DM_t/$tlng/.share/audio"
             mv -n "${tmp}/share"/*.mp3 "$DM_t/$tlng/.share/audio"/
             while read -r img; do
@@ -303,13 +302,14 @@ function upld() {
         export nsnt=${cfg4}
         export orig levl
         
-        # copying files
+        ### copying files
         cd "${DM_tlt}"/
         cp -r ./* "$DT_u/files/"
         cleanups "$DT_u/files/.mp3"
         mkdir "$DT_u/files/share"
         [ ! -d "$DT_u/files/images" ] && mkdir "$DT_u/files/images"
-
+        
+        ###  copying audio words
         uniq < "${DC_tlt}/4.cfg" \
         |sed 's/\n/ /; s/ /\n/g' \
         |grep -v '^.$' |grep -v '^..$' \
@@ -321,7 +321,6 @@ function upld() {
                 "$DT_u/files/share/$audio.mp3"
             fi
         done
-        
         while read -r _item; do
             unset trgt cdid
             get_item "${_item}"
@@ -334,6 +333,7 @@ function upld() {
             fi
         done < "${DC_tlt}/0.cfg"
         
+        ###  copying images
         while read -r _item; do
             unset trgt imgpath
             get_item "${_item}"
@@ -351,6 +351,7 @@ function upld() {
         
         cleanups "$DT_u/files/images/.jpg" "$DT_u/files/share/.mp3"
         
+        ### copying translations
         if [ -d "$DC_tlt/translations" ]; then
             act="$(< "$DC_tlt/translations/active")"
             if [ -z "$act" ] && grep -Fo "${act}" <<< "${!slangs[@]}" >/dev/null 2>&1; then
@@ -372,31 +373,37 @@ function upld() {
         export naud=$(find "$DT_u/files" -maxdepth 5 -name '*.mp3' |wc -l)
         export nimg=$(cd "$DT_u/files/images"/; ls *.jpg |wc -l)
         cp "${DC_tlt}/6.cfg" "$DT_u/files/conf/6.cfg"
+        
+        ### Get texto to info variable
         if [ -e "${DC_tlt}/info.tmp" ]; then
-            mv "${DC_tlt}/info.tmp" "$DT_u/files/conf/info"
-        else
-            cp "${DC_tlt}/info" "$DT_u/files/conf/info"
+            mv "${DC_tlt}/info.tmp" "${DC_tlt}/info"
         fi
-
+        cp "${DC_tlt}/info" "$DT_u/files/conf/info"
+		sed -i 's|\"|\\"|g' "$DT_u/files/conf/info"
+		sed -i ':a;N;$!ba;s/\n/<br>/g;s/\&/&amp;/g' "$DT_u/files/conf/info"
+        export info="$(sed '/^$/d' "$DT_u/files/conf/info")"
+		cleanups "$DT_u/files/conf/info"
+		
+		### split tar.gz, if file is big
         cd "$DT/upload"/
         find "$DT_u"/ -type f -exec chmod 644 {} \;
         tar czpvf - ./"files" |split -d -b 2500k - ./"${ilnk}"
         rm -fr ./"files"; rename 's/(.*)/$1.tar.gz/' *
         
+        ### get data for html
         export nsze=$(du -h . |cut -f1)
+        body="$(echo -e "$note_mod" |sed 's/\&/&amp;/g')"
         eval c="$(sed -n 4p "$DS/default/vars")"
         echo -e "${c}" > "${DC_tlt}/id.cfg"
         eval body="$(sed -n 5p "$DS/default/vars")"
-        note_mod="$(echo -e "$note_mod" |sed 's/\&/&amp;/g')"
-        body="${body}<blockquote>$note_mod</blockquote>"
-        
+        body="${body}<blockquote>$body</blockquote>"
         export tpc DT_u body
-        # convert to json format
+        
+        ###  convert to json format
         idmnd="$DT_u/${orig}_${tpcid}.idmnd"
         echo -e "{\"items\":{" > "${idmnd}"
         while read -r _item; do
             get_item "${_item}"
-            #
             eval item="$(sed -n 1p "$DS/default/vars")"
             [ -n "${trgt}" ] && echo -en "${item}" >> "${idmnd}"
         done < <(sed 's|"|\\"|g' < "${DC_tlt}/0.cfg")

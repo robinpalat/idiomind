@@ -128,7 +128,7 @@ function new_session() {
 if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     slngcurrent="$slng"; source "$DS/ifs/tls.sh"; check_format_1 "${1}"
-    if [ $? != 18 ]; then
+    if [ $? != 19 ]; then
         msg "$(gettext "File is corrupted.")\n" error "$(gettext "Information")" & exit 1
     fi
     file="${1}"
@@ -185,11 +185,16 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             for i in {1..6}; do > "${DC_tlt}/${i}.cfg"; done
             for i in {1..3}; do > "${DC_tlt}/practice/log${i}"; done
             sed -n 3p "${file}" \
-            |sed 's/,"/\n/g;s/":/=/g;s/^\s*.//g' > "${DC_tlt}/id.cfg"
+            |sed 's/,"/\n/g;s/":/=/g;s/^\s*.//g' > "${DC_tlt}/id_temp.cfg"
+            sed -n 1,17p "${DC_tlt}/id_temp.cfg" > "${DC_tlt}/id.cfg"
+            sed -n 18p "${DC_tlt}/id_temp.cfg" \
+            |sed -e 's/info\=\"//;s/<br>/ /g' |sed 's/.$//' > "${DC_tlt}/info"
+            cleanups "${DC_tlt}/id_temp.cfg"
             
             if [ ${cn} = 1 ]; then
             sed -i "s/name=.*/name=\"${name}\"/g" "${DC_tlt}/id.cfg"; fi
             sed -i "s/dtei=.*/dtei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
+
             > "${DC_tlt}/download"
             
             sed -n 2p "${file}" |tr -d '\' > "${DC_tlt}/0.cfg"
