@@ -142,7 +142,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
         while read -r line; do
         cut -d ':' -f1 <<< "${line}" |sed 's/\"*//;s/\"$//'
         cut -d ':' -f3 <<< "${line}" |sed 's/\"*//;s/\"$//;s/\",\"slch//'
-        done < <(sed -n 2p "${file}"|sed 's/},/\n/g'|tr -d '\'|sed '/^$/d')
+        done < <(sed -n 2p "${file}"|sed 's/},/\n/g'|tr -d '\\'|sed '/^$/d')
     }
     
     export swind=$(grep -oP '(?<=swind=\").*(?=\")' "$DC_s/1.cfg")
@@ -197,7 +197,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
 
             > "${DC_tlt}/download"
             
-            sed -n 2p "${file}" |tr -d '\' > "${DC_tlt}/0.cfg"
+            sed -n 2p "${file}" |tr -d '\\' > "${DC_tlt}/0.cfg"
             sed -i 's/},/}\n/g;s|","|}|g;s|":"|{|g;s|":{"|}|g;s/"}/}/g' "${DC_tlt}/0.cfg"
             sed -i 's/^\s*./trgt{/g' "${DC_tlt}/0.cfg"
             

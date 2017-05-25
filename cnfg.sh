@@ -129,7 +129,7 @@ config_dlg() {
     --window-icon=idiomind \
     --tab-borders=5 --sticky --center \
     --tab="$(gettext "Preferences")" \
-    --tab="$(gettext "Extensions")" \
+    --tab="$(gettext "Plus")" \
     --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=5 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0

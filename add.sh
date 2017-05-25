@@ -178,11 +178,11 @@ function new_word() {
         index 1
         notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
         if [ -e "$DT_r/img.jpg" ]; then
-            if [ -e "${DM_tls}/images/${trgt,,}-0.jpg" ]; then
-                n=$(ls "${DM_tls}/images/${trgt,,}-"*.jpg |wc -l)
+            if [ -e "${DM_tls}/images/${trgt,,}-1.jpg" ]; then
+                n=$(ls "${DM_tls}/images/${trgt,,}-"*.jpg |wc -l); n=$(($n+1))
                 name_img="${DM_tls}/images/${trgt,,}-"${n}.jpg
             else
-                name_img="${DM_tls}/images/${trgt,,}-0.jpg"
+                name_img="${DM_tls}/images/${trgt,,}-1.jpg"
             fi
             set_image_2 "$DT_r/img.jpg" "$name_img"
         fi
@@ -346,6 +346,7 @@ function process() {
     echo "${tpe}" > "$DT/n_s_pr"
     export ns=$(wc -l < "${DC_tlt}/0.cfg")
     export db="$DS/default/dicts/$lgt"
+    export cdb="$DM_tls/data/${tlng}.db"
     
     if [ ! -d "$DT_r" ] ; then
         export DT_r=$(mktemp -d "$DT/XXXXXX")
@@ -510,6 +511,8 @@ function process() {
                 else
                     export trgt="$(clean_1 "${trgt}")"
                     export srce="$(clean_0 "${srce}")"
+                    exmp="$(sqlite3 ${cdb} "select Example from Words where Word is '${trgt}';")"
+					export exmp="$(echo "$exmp" |tr '\n' ' ')"
                     export cdid="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "" "")"
                     audio="${trgt,,}"
                     mksure "${trgt}" "${srce}"

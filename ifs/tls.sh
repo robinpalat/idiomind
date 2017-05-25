@@ -460,9 +460,9 @@ set_image() {
     cd "$DT"; r=0
     source "$DS/ifs/mods/add/add.sh"
     if [ -e "${DM_tlt}/images/${trgt,,}.jpg" ]; then
-        ifile="${DM_tlt}/images/${trgt,,}.jpg"; im=1
+        ifile="${DM_tlt}/images/${trgt,,}.jpg"; im=0
     else
-        ifile="${DM_tls}/images/${trgt,,}-0.jpg"; im=0
+        ifile="${DM_tls}/images/${trgt,,}-1.jpg"; im=1
     fi
     if [ -e "$DT/$trgt.img" ]; then
         msg_4 "$(gettext "Attempting download image")..." \
@@ -482,13 +482,11 @@ set_image() {
     
     if [ $ret -eq 2 ]; then
         rm -f "$ifile"
-        if [ ${im} = 0 ]; then
+        if [ ${im} = 1 ]; then
             mv -f "$img" "${DM_tlt}/images/${trgt,,}.jpg"
         else
-            ls "${DM_tls}/images/${trgt,,}"-*.jpg |while read -r img; do
-            mv -f "$img" "${DM_tls}/images/${trgt,,}"-${r}.jpg
-            let r++
-            done
+            n=$(ls "${DM_tls}/images/${trgt,,}-"*.jpg |wc -l); n=$(($n+1))
+            mv -f "$img" "${DM_tls}/images/${trgt,,}"-${n}.jpg
         fi
     elif [ $ret -eq 0 ]; then
         /usr/bin/import "$DT/temp.jpg"

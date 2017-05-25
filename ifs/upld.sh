@@ -290,9 +290,9 @@ function upld() {
         pre=$(sed "s/ /_/g;s/'//g" <<< "${orig:0:15}" |iconv -c -f utf8 -t ascii)
         export autr="${autr_mod}"
         export pass="${pass_mod}"
-        export md5i=$(md5sum "${DC_tlt}/0.cfg" |cut -d' ' -f1)
+        export stts=$(md5sum "${DC_tlt}/0.cfg" |cut -d' ' -f1)
         ilnk="$(grep -o 'ilnk="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        if [ -z "$ilnk" ]; then ilnk="${pre,,}${md5i:0:20}"; fi
+        if [ -z "$ilnk" ]; then ilnk="${pre,,}${stts:0:20}"; fi
         export ilnk
         export dtec="$(grep -o 'dtec="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         export dtei="$(grep -o 'dtei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
@@ -374,7 +374,7 @@ function upld() {
         export nimg=$(cd "$DT_u/files/images"/; ls *.jpg |wc -l)
         cp "${DC_tlt}/6.cfg" "$DT_u/files/conf/6.cfg"
         
-        ### Get texto to info variable
+        ### Get text for info variable
         if [ -e "${DC_tlt}/info.tmp" ]; then
             mv "${DC_tlt}/info.tmp" "${DC_tlt}/info"
         fi

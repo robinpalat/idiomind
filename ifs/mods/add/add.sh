@@ -456,7 +456,7 @@ function fetch_audio() {
 
 function img_word() {
     if ls "$DC_d"/*."Script.Download image".* 1> /dev/null 2>&1; then
-        if [ ! -e "${DM_tls}/images/${1,,}-0.jpg" -a ! -e "${DM_tlt}/images/${1,,}.jpg" ]; then
+        if [ ! -e "${DM_tls}/images/${1,,}-1.jpg" -a ! -e "${DM_tlt}/images/${1,,}.jpg" ]; then
             touch "$DT/${1}.img"
             for Script in "$DC_d"/*."Script.Download image".*; do
                 Script="$DS_a/Dics/dicts/$(basename "${Script}")"
@@ -483,7 +483,7 @@ function img_word() {
                 done
             fi
             if [ -e "$DT/${1}.jpg" -o -e "$DT/${2}.jpg" ]; then
-                [[ $(wc -w <<< ${1}) -gt 1 ]] && sf="${DM_tlt}/images/${1,,}.jpg" || sf="${DM_tls}/images/${1,,}-0.jpg"
+                [[ $(wc -w <<< ${1}) -gt 1 ]] && sf="${DM_tlt}/images/${1,,}.jpg" || sf="${DM_tls}/images/${1,,}-1.jpg"
                 [ -e "$DT/${1}.jpg" ] && img_file="${1}.jpg" || img_file="${2}.jpg"
                 local size="$(/usr/bin/identify -ping -format '%w %h' "$DT/${img_file}")"
                 w="$(echo $size |cut -f1 -d ' ')"

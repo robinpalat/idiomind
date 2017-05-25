@@ -363,7 +363,7 @@ function practice_d() {
     fonts() {
         [ -e "$DM_tlt/images/${item,,}.jpg" ] && \
         img="$DM_tlt/images/${item,,}.jpg" || \
-        img="$DM_tls/images/${item,,}-0.jpg"
+        img="$DM_tls/images/${item,,}-1.jpg"
         _item="$(grep -F -m 1 "trgt{${item}}" "${cfg0}" |sed 's/}/}\n/g')"
         if [[ ${lang_question} = 1 ]]; then
             srce="${item}"
@@ -634,7 +634,7 @@ function get_list() {
         (echo "#"
         while read -r itm; do
         _item="$(grep -F -m 1 "trgt{${itm}}" "${cfg0}" |sed 's/}/}\n/g')"
-        if [ -e "$DM_tls/images/${itm,,}-0.jpg" \
+        if [ -e "$DM_tls/images/${itm,,}-1.jpg" \
         -o -e "$DM_tlt/images/${itm,,}.jpg" ]; then
             [ -n "${itm}" ] && echo "${itm}" >> "${pdir}/${pr}.0"
         fi
