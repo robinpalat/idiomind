@@ -290,17 +290,17 @@ function upld() {
         pre=$(sed "s/ /_/g;s/'//g" <<< "${orig:0:15}" |iconv -c -f utf8 -t ascii)
         export autr="${autr_mod}"
         export pass="${pass_mod}"
-        export stts=$(md5sum "${DC_tlt}/0.cfg" |cut -d' ' -f1)
+        export rand=$(md5sum "${DC_tlt}/0.cfg" |cut -d' ' -f1)
         ilnk="$(grep -o 'ilnk="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        if [ -z "$ilnk" ]; then ilnk="${pre,,}${stts:0:20}"; fi
+        if [ -z "$ilnk" ]; then ilnk="${pre,,}${rand:0:20}"; fi
         export ilnk
         export dtec="$(grep -o 'dtec="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         export dtei="$(grep -o 'dtei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         export dteu=$(date +%F)
-        tpcid=$(echo -n "$ilnk" |tail -c 3)
         export nwrd=${cfg3}
         export nsnt=${cfg4}
         export orig levl
+        export stts=0
         
         ### copying files
         cd "${DM_tlt}"/
@@ -332,24 +332,8 @@ function upld() {
                 fi
             fi
         done < "${DC_tlt}/0.cfg"
-        
-        ###  copying images
-        while read -r _item; do
-            unset trgt imgpath
-            get_item "${_item}"
-            if [ -n "$trgt" ]; then
-                if [ -e "$DM_tlt/images/${trgt,,}.jpg" ]; then
-                    imgpath="$DM_tlt/images/${trgt,,}.jpg"
-                elif [ -e "$DM_tls/images/${trgt,,}-0.jpg" ]; then
-                    imgpath="$DM_tls/images/${trgt,,}-0.jpg"
-                fi
-                if [ -e "${imgpath}" ]; then
-                    cp -f "${imgpath}" "$DT_u/files/images/${trgt,,}.jpg"
-                fi
-            fi
-        done < "${DC_tlt}/0.cfg"
-        
-        cleanups "$DT_u/files/images/.jpg" "$DT_u/files/share/.mp3"
+
+        cleanups "$DT_u/files/share/.mp3"
         
         ### copying translations
         if [ -d "$DC_tlt/translations" ]; then
@@ -380,18 +364,14 @@ function upld() {
         fi
         cp "${DC_tlt}/info" "$DT_u/files/conf/info"
 		sed -i 's|\"|\\"|g' "$DT_u/files/conf/info"
-		sed -i ':a;N;$!ba;s/\n/<br>/g;s/\&/&amp;/g' "$DT_u/files/conf/info"
+		sed -i ':a;N;$!ba;s/\n/<br><br>/g;s/\&/&amp;/g' "$DT_u/files/conf/info"
         export info="$(sed '/^$/d' "$DT_u/files/conf/info")"
 		cleanups "$DT_u/files/conf/info"
 		
 		### split tar.gz, if file is big
-        cd "$DT/upload"/
-        find "$DT_u"/ -type f -exec chmod 644 {} \;
-        tar czpvf - ./"files" |split -d -b 2500k - ./"${ilnk}"
-        rm -fr ./"files"; rename 's/(.*)/$1.tar.gz/' *
         
         ### get data for html
-        export nsze=$(du -h . |cut -f1)
+       
         body="$(echo -e "$note_mod" |sed 's/\&/&amp;/g')"
         eval c="$(sed -n 4p "$DS/default/vars")"
         echo -e "${c}" > "${DC_tlt}/id.cfg"
@@ -399,19 +379,37 @@ function upld() {
         body="${body}<blockquote>$body</blockquote>"
         export tpc DT_u body
         
-        ###  convert to json format
-        idmnd="$DT_u/${orig}_${tpcid}.idmnd"
+        ###  convert to json format and copy images
+        idmnd="$DT_u/${orig}.idmnd"
         echo -e "{\"items\":{" > "${idmnd}"
         while read -r _item; do
             get_item "${_item}"
+             if [ -n "$trgt" ] && [ "$type" = 1 ]; then
+                if [ -e "$DM_tlt/images/${trgt,,}.jpg" ]; then
+                    ipath="$DM_tlt/images/${trgt,,}.jpg"; export imag=2
+                elif [ -e "$DM_tls/images/${trgt,,}-1.jpg" ]; then
+                    ipath="$DM_tls/images/${trgt,,}-1.jpg"; export imag=1
+                fi
+                if [ -e "${ipath}" ]; then
+                    cp -f "${ipath}" "$DT_u/files/images/${trgt,,}-${imag}.jpg"
+                fi
+             else
+				export imag=0
+            fi
             eval item="$(sed -n 1p "$DS/default/vars")"
             [ -n "${trgt}" ] && echo -en "${item}" >> "${idmnd}"
         done < <(sed 's|"|\\"|g' < "${DC_tlt}/0.cfg")
         
         sed -i 's/,$//' "${idmnd}"
         echo "}," >> "${idmnd}"
+        
+        cd "$DT/upload"/; export nsze=$(du -h . |cut -f1)
         eval head="$(sed -n 3p "$DS/default/vars")"
         echo -e "${head}}" >> "${idmnd}"
+        
+        find "$DT_u"/ -type f -exec chmod 644 {} \;
+        tar czpvf - ./"files" |split -d -b 2500k - ./"${ilnk}"
+        rm -fr ./"files"; rename 's/(.*)/$1.tar.gz/' *
 
         python << END
 import os, sys, requests, time, xmlrpclib

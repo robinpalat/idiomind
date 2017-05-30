@@ -143,6 +143,7 @@ function get_item() {
     export mark="$(grep -oP '(?<=mark{).*(?=})' <<<"${item}")"
     export link="$(grep -oP '(?<=link{).*(?=})' <<<"${item}")"
     export tags="$(grep -oP '(?<=tags{).*(?=})' <<<"${item}")"
+    export refr="$(grep -oP '(?<=refr{).*(?=})' <<<"${item}")"
     export cdid="$(grep -oP '(?<=cdid{).*(?=})' <<<"${item}")"
 }
 
