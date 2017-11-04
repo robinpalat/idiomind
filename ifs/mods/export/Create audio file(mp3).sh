@@ -15,7 +15,7 @@ img="$DS/addons/Save as Audio/$tlng.png"
 cd "${dire}"/
 
 extchk () {
-	msg "$(gettext "Something Unexpected Happened, exiting.")\n(Item: $trg)" \
+	msg "$(gettext "Something unexpected happened, exiting.")\n(Item: $trg)" \
 	error "$(gettext "Information")" 
 	cleanups "$DT/export_audio" & exit 1
 }
