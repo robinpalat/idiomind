@@ -526,7 +526,7 @@ echo -e "yad --form --title=\"$(gettext "$tlng") | $active_trans\" \\
 --class=Idiomind --name=Idiomind --window-icon=idiomind \\
 --always-print-result --print-all \\
 --width=590 --height=350 --borders=5 \\
---scroll --center --separator='|\n' \\
+--on-top --scroll --center --separator='|\n' \\
 --button=$(gettext \"Cancel\"):1 \\
 --button=\!'gtk-preferences':\"idiomind translate\" \\
 --button=$(gettext \"Save\")!document-save:0 \\" > "$DT/dlg"
@@ -591,15 +591,15 @@ translate_to() {
         --buttons-layout=end --center --on-top \
         --width=390 --height=340 --borders=10 \
         --field="":LBL " " \
-        --field="<b>$(gettext "Revised translations") </b> ":LBL " " \
-        --field="<small>$(gettext "This topic has no revised translations.")</small>":LBL " " \
+        --field="<b>$(gettext "Verified translations") </b> ":LBL " " \
+        --field="<small>$(gettext "This topic has no verified translations.")</small>":LBL " " \
         --field=" ":LBL " " \
-        --field="$active_trans — $(gettext "This translation was revised")":CHK "$chk" \
+        --field="$active_trans — $(gettext "The  accuracy of this translation was verified")":CHK "$chk" \
         --field="":LBL " " \
-        --field="<b>$(gettext "Automatic translation")</b> ":LBL " " \
-        --field="$(gettext "Select Native language to translate:")":LBL " " \
+        --field="\n<b>$(gettext "Automatic translation")</b> ":LBL " " \
+        --field="$(gettext "Select Native language to translate automaticly:")":LBL " " \
         --field="":CB "${list_transl}" \
-        --field="<small>$(gettext "Note that this translation used Google translate, so often will be inaccurate especially in complex sentences.")</small>":LBL " " \
+        --field="<small>$(gettext "Note that translation from google translate service sometimes is inaccurate especially in complex frases.")</small>":LBL " " \
         --button="$(gettext "Cancel")":1 \
         --button="$(gettext "OK")":0)"; ret="$?"
     else
@@ -610,15 +610,15 @@ translate_to() {
         --buttons-layout=end --center --on-top \
         --width=390 --height=340 --borders=10 \
         --field="":LBL " " \
-        --field="<b>$(gettext "Revised translations") </b> ":LBL " " \
+        --field="<b>$(gettext "Verified translations") </b> ":LBL " " \
         --field="$(gettext "Change the Native language:")":LBL " " \
         --field="":CB "!${list_transl_saved}" \
-        --field="$active_trans — $(gettext "This translation was revised")":CHK "$chk" \
+        --field="$active_trans — $(gettext "The  accuracy of this translation was verified")":CHK "$chk" \
         --field="":LBL " " \
-        --field="<b>$(gettext "Automatic translation")</b> ":LBL " " \
-        --field="$(gettext "Select Native language to translate:")":LBL " " \
+        --field="\n<b>$(gettext "Automatic translation")</b> ":LBL " " \
+        --field="$(gettext "Select Native language to translate automaticly:")":LBL " " \
         --field="":CB "${list_transl}" \
-        --field="<small>$(gettext "Note that this translation used Google translate, so often will be inaccurate especially in complex sentences.")</small>":LBL " " \
+        --field="<small>$(gettext "Note that translation from google translate service sometimes is inaccurate especially in complex frases.")</small>":LBL " " \
         --button="$(gettext "Cancel")":1 \
         --button="$(gettext "OK")":0)"; ret="$?"
     fi
@@ -658,7 +658,7 @@ translate_to() {
                 fi
             fi
             if grep "$autom_trans" <<< "$(cd "$DC_tlt/translations"; ls *.tra)"; then
-                msg_2 "$(gettext "There is a revised translation of this language. Do you want to use this copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
+                msg_2 "$(gettext "There is a Verified translation for this language. Do you want to use this copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
                 if [ $? = 0 ]; then
                     cp -f "$DC_tlt/translations/$autom_trans.tra" "${DC_tlt}/0.cfg"
                     echo "$autom_trans" > "${DC_tlt}/translations/active"
@@ -754,7 +754,7 @@ translate_to() {
             touch "${DC_tlt}/slng_err"
         fi
     fi
-    cleanups "$DT/translate_to" "${DC_tlt}/slng_err.bk"
+    #cleanups "$DT/translate_to" "${DC_tlt}/slng_err.bk"
 }
 
 menu_addons() {

@@ -56,8 +56,8 @@ if [ -d "${DM_tlt}" ]; then
         
      elif [ ${mode} = 12 ]; then
      
-        msg_2 "$(gettext "Topic considered inactive. Do you want to enable it now?") " \
-        dialog-question "$(gettext "Yes")" "$(gettext "Open")"
+        msg_2 "$(gettext "Topic inactive. Do you want to enable it now?") " \
+        dialog-question "$(gettext "Yes")" "$(gettext "Just open it")"
         
         if [ $? = 0 ]; then
         
@@ -65,7 +65,7 @@ if [ -d "${DM_tlt}" ]; then
             rm "${DC_tlt}/8.bk"; echo ${mode} > "${DC_tlt}/8.cfg"
             touch "${DM_tlt}"
             
-            stts=${mode}
+            export stts=${mode}
             if [ -f "${DC_tlt}/9.cfg" ]; then
                 calculate_review "${topic}"
                 if [[ $((stts%2)) = 0 ]]; then
@@ -82,6 +82,10 @@ if [ -d "${DM_tlt}" ]; then
                     fi
                 fi
             fi
+            
+            if grep -E '3|4|7|8|9|10' <<<"$stts"; then
+            > "${DC_tlt}/7.cfg"; fi
+            
             chek_topic
             "$DS/mngr.sh" mkmn 1
             ( sleep 10 && "$DS/ifs/tls.sh" backup "${topic}" ) &

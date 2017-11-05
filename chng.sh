@@ -144,7 +144,7 @@ elif [[ ${1} != 0 ]]; then
     if [ -e "$DC_s/topics_first_run" -a -z "${1}" ]; then exit 1; fi
 
     tpc=$(cat "$DM_tl/.share/0.cfg" | \
-    yad --list --title="$(gettext "Topics")" "${var1}" \
+    yad --list --title="$(gettext "My topics")" "${var1}" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-column=2 --separator="" \
     --window-icon=idiomind \

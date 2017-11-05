@@ -521,7 +521,7 @@ edit_list_more() {
     fi
     
     more="$(echo -e "${cols1}${cols2}" |sed '/^$/d' \
-    |yad --list --title="$(gettext "Options")" \
+    |yad --list --title="$(gettext "More Options")" \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --name=Idiomind --class=Idiomind \
     --expand-column=2 --no-click --no-headers\

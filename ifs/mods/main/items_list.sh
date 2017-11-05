@@ -164,7 +164,7 @@ function notebook_1() {
     --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field=" $(gettext "Mark as learnt") ":FBTN "$cmd_mark" \
-    --field="$(gettext "Auto-checked of checkbox on list Learning")\t\t":CHK "$acheck" \
+    --field="$(gettext "Checkbox auto-checked to learned items")\t\t":CHK "$acheck" \
     --field=" ":LBL " " \
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn2":FBTN "$cmd2" \
