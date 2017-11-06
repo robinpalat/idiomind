@@ -18,6 +18,7 @@ on_quit() {
     kill -9 $(pgrep -f "yad --text-info ") &
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") & fi
+    [ -e "$DT/tray.pid" ] && rm -f "$DT/tray.pid"
     if [ -e $DT/clipw ]; then
         kill "$(< $DT/clipw)"; rm -f $DT/clipw; fi
     if [ "$(< $DT/playlck)" != 0 ]; then

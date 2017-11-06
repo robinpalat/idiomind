@@ -37,7 +37,13 @@ set_lang() {
     language="$1"
     source "$DS/ifs/cmns.sh"
     check_dir "$DM_t/$language/.share/images" "$DM_t/$language/.share/audio"
+    kill -9 $(cat $DT/tray.pid)
+    kill -9 $(pgrep -f "$DS/ifs/tls.sh itray")
     echo -e "$language\n$slng" > "$DC_s/6.cfg"
+    if [[ $(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && \
+    ! pgrep -f "$DS/ifs/tls.sh itray"; then
+        $DS/ifs/tls.sh itray &
+    fi
     "$DS/stop.sh" 4
     source $DS/default/c.conf
     last="$(cd "$DM_tl"/; ls -tNd */ |cut -f1 -d'/' |head -n1)"
@@ -160,7 +166,17 @@ config_dlg() {
         else 
             if [ -e $DT/clipw ]; then kill $(cat $DT/clipw); rm -f $DT/clipw; fi
         fi
-
+        
+        if [[ $(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && \
+		[[ ! -f "$DT/tray.pid" ]]; then
+			$DS/ifs/tls.sh itray &
+		elif [[ $(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg") = FALSE ]] && \
+		[[ -f "$DT/tray.pid" ]]; then
+			kill -9 $(cat $DT/tray.pid)
+			kill -9 $(pgrep -f "$DS/ifs/tls.sh itray")
+			rm -f "$DT/tray.pid"
+		fi
+        
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"

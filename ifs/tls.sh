@@ -838,8 +838,10 @@ PY
 }
 
 itray() {
+	
     [ ! -e "$HOME/.config/idiomind/4.cfg" ] && \
     touch "$HOME/.config/idiomind/4.cfg"
+    source "$DS/default/sets.cfg"
     export lbl1="$(gettext "Add")"
     export lbl2="$(gettext "Play")"
     export lbl3="$(gettext "Stop playback")"
@@ -850,9 +852,11 @@ itray() {
     export lbl7="$(gettext "Show panel")"
     export lbl8="$(gettext "Quit")"
     export dirt="$DT/"
+	export lgt=${tlangs[$tlng]}
     python <<PY
 import time, os, os.path, gtk, gio, signal, appindicator
-icon = '/usr/share/idiomind/images/flags/en.png'
+lgt = os.environ['lgt']
+icon = '/usr/share/idiomind/images/flags/'+lgt+'.png'
 HOME = os.getenv('HOME')
 add = os.environ['lbl1']
 play = os.environ['lbl2']
@@ -863,6 +867,13 @@ tasks = os.environ['lbl9']
 options = os.environ['lbl6']
 panel = os.environ['lbl7']
 quit = os.environ['lbl8']
+quit = os.environ['lbl8']
+my_pid = os.getpid()
+f_pid = open(os.environ['dirt']+'tray.pid', 'w')
+f_pid.write(str(my_pid))
+f_pid.close()
+
+
 class IdiomindIndicator:
     def __init__(self):
         self.indicator = appindicator.Indicator(icon, icon, appindicator.CATEGORY_APPLICATION_STATUS)
@@ -1008,7 +1019,7 @@ if __name__ == "__main__":
     monitor3.connect("changed", i.on_Tasks_Changed)
     gtk.main()
 PY
-return 0
+
 }
 
 about() {
