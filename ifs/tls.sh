@@ -852,7 +852,7 @@ itray() {
     export dirt="$DT/"
     python <<PY
 import time, os, os.path, gtk, gio, signal, appindicator
-icon = 'gtk-edit'
+icon = '/usr/share/idiomind/images/flags/en.png'
 HOME = os.getenv('HOME')
 add = os.environ['lbl1']
 play = os.environ['lbl2']

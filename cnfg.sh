@@ -112,7 +112,7 @@ config_dlg() {
     --field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
     --field="<small>$(gettext "Program to convert text to WAV file")</small>" "$txaud" \
     --field="$(gettext "Display in")":CB "$lst" \
-    --field="<a href='$link'>$(gettext "Help translate into your language")</a>\t":LBL " " \
+    --field="<a href='$link'>$(gettext "Join Idiomind translation")</a>\t":LBL " " \
     --field=" :LBL" " " --field=":LBL" " " \
     --field="$(gettext "Help")":BTN "$DS/ifs/tls.sh help" \
     --field="$(gettext "Report a problem")":BTN "$DS/ifs/tls.sh fback" \
