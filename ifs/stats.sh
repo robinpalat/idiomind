@@ -1,5 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
+source /usr/share/idiomind/default/c.conf
 
 function f_lock() {
     brk=0
@@ -18,7 +19,23 @@ function create_db() {
         echo -n "create table if not exists 'expire_month' (date TEXT);" |sqlite3 "${db}"
         echo -n "create table if not exists 'expire_week' (date TEXT);" |sqlite3 "${db}"
         touch "${no_data}"
+     fi
+        
+     if ! [[ "$(sqlite3 ${db} "SELECT name FROM sqlite_master WHERE type='table' AND name='$mtable';")" ]]; then
+        echo -n "create table if not exists ${mtable} \
+        (month TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT);" |sqlite3 "${db}"
+        echo -n "create table if not exists ${wtable} \
+        (week TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT, val5 TEXT);" |sqlite3 "${db}"
+        echo -n "create table if not exists 'expire_month' (date TEXT);" |sqlite3 "${db}"
+        echo -n "create table if not exists 'expire_week' (date TEXT);" |sqlite3 "${db}"
+        touch "${no_data}"
+        
+        #for i in $(seq 0 11); do
+			#month=$(date --date="${i}month" +'%b')
+			#sqlite3 ${db} "insert into ${mtable} (month) values ('${month}');"
+        #done
     fi
+
 }
 
 function save_topic_stats() {
@@ -240,8 +257,8 @@ function mk_topic_stats() {
 pross="$DM_tls/data/pre_data"
 data="/tmp/.idiomind_stats"
 no_data="${DM_tls}/data/no_data"
-databk="$DM_tls/data/idiomind_stats"
-db="$DM_tls/data/log.db"
+databk="${DM_tls}/data/idiomind_stats"
+db="${DM_tls}/data/log.db"
 int='^[0-9]+$'
 week=$(date +%b%d)
 month=$(date +%b)
@@ -312,3 +329,4 @@ function stats() {
         --no-buttons
     fi
 } >/dev/null 2>&1
+

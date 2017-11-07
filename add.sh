@@ -71,7 +71,7 @@ function new_item() {
         msg "$(gettext "You need to fill text fields.")\n" \
         dialog-information "$(gettext "Information")" & exit 1
     fi
-    if grep -o -E 'ja|zh-cn|ru' <<< "${lgt}"; then
+    if grep -o -E 'ja|zh-cn|ru' <<< "$lgt" >/dev/null 2>&1 ; then
         srce=$(translate "${trgt}" auto $lgs)
         [ -z "${srce}" ] && internet
         if [ $(wc -w <<< "${srce}") = 1 ]; then
@@ -79,7 +79,7 @@ function new_item() {
         elif [ $(wc -w <<< "${srce}") -ge 1 -a ${#srce} -le ${sentence_chars} ]; then
             new_sentence
         fi
-    elif ! grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
+    elif ! grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then
         if [ $(wc -w <<< "${trgt}") = 1 ]; then
             new_word
         elif [ $(wc -w <<< "${trgt}") -ge 1 -a ${#trgt} -le ${sentence_chars} ]; then
@@ -315,7 +315,7 @@ function list_words_dclik() {
     source "$DS/ifs/mods/add/add.sh"
     words="${3}"
     
-    if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
+    if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then
         ( echo "#"
         echo "# $(gettext "Processing")..." ;
         export srce="$(translate "${words}" $lgt $lgs)"
@@ -381,14 +381,14 @@ function process() {
             if [[ ${#conten} = 1 ]]; then
                 cleanups "$DT_r" "$DT/n_s_pr"; return 1; 
             fi
-            if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
+            if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then
                 echo "${conten}" |clean_7 > "$DT_r/xxlines"; epa=0
             else
                 echo "${conten}" |clean_8 > "$DT_r/xxlines"; epa=1
             fi
         fi
         [ -e "$DT_r/xlines" ] && rm -f "$DT_r/xlines"
-        if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then
+        if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then
             lenght() {
                 if [ $(wc -c <<< "${1}") -le ${sentence_chars} ]; then
                     echo -e "${1}" >> "$DT_r/xlines"
@@ -491,7 +491,7 @@ function process() {
             cleanups "$DT_r" "$DT/n_s_pr" "$slt" & exit 1
         fi
         
-        if grep -o -E 'ja|zh-cn|ru' <<< ${lgt}; then c=c; else c=w; fi
+        if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then c=c; else c=w; fi
         lns="$(cat "$DT_r/select_lines" "$DT_r/wrds" |sed '/^$/d' |wc -l)"
         n=1
         while read -r trgt; do

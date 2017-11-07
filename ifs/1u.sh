@@ -35,7 +35,7 @@ fi
 
 _info() {
     yad --form --title="$(gettext "Notice")" \
-    --text="$(gettext "Some things are still not working for these languages:") Chinese, Japanese, Russian." \
+    --text="$(gettext "Note that these languages may present some text display errors:") Chinese, Japanese, Russian." \
     --image=dialog-information \
     --name=Idiomind --class=Idiomind \
     --window-icon=dialog-information \

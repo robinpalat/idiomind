@@ -198,7 +198,7 @@ config_dlg() {
                 fi
             done
             if echo "$tlng$slng" |grep -oE 'Chinese|Japanese|Russian'; then
-                info3="\n$(gettext "Some things are still not working for these languages:") Chinese, Japanese, Russian."
+                info3="\n$(gettext "Note that these languages may present some text display errors:") Chinese, Japanese, Russian."
             fi
             confirm "$info2$info3" dialog-question ${tlng}
             [ $? -eq 0 ] && set_lang ${tlng}

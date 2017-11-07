@@ -692,7 +692,7 @@ translate_to() {
                     |sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' \
                     |tr -d '.' |sed 's/^ *//; s/ *$//; /^$/d' >> "$DT/words.trad_tmp"
                     echo "|" >> "$DT/words.trad_tmp"
-                    echo "${trgt} |" >> "$DT/index.trad_tmp"; fi
+                    echo "${trgt} ||" >> "$DT/index.trad_tmp"; fi
             done < "${DC_tlt}/0.cfg"
             
             sed -i ':a;N;$!ba;s/\n/\. /g' "$DT/words.trad_tmp"
@@ -703,9 +703,12 @@ translate_to() {
             translate "${index_to_trad}" "$lgt" "$tl" > "$DT/index.trad"
             translate "${words_to_trad}" "$lgt" "$tl" > "$DT/words.trad"
             sed -i ':a;N;$!ba;s/\n/ /g' "$DT/index.trad"
+            sed -i 's/||n/\n/g' "$DT/index.trad"
+            sed -i 's/||/\n/g' "$DT/index.trad"
             sed -i 's/|/\n/g' "$DT/index.trad"
             sed -i 's/^ *//; s/ *$//g' "$DT/index.trad"
             sed -i ':a;N;$!ba;s/\n/ /g' "$DT/words.trad"
+            sed -i 's/|n/\n/g' "$DT/words.trad"
             sed -i 's/|/\n/g' "$DT/words.trad"
             sed -i 's/^ *//; s/ *$//;s/\。/\. /g' "$DT/words.trad"
             paste -d '&' "$DT/words.trad_tmp" "$DT/words.trad" > "$DT/mix_words.trad_tmp"
@@ -754,7 +757,7 @@ translate_to() {
             touch "${DC_tlt}/slng_err"
         fi
     fi
-    #cleanups "$DT/translate_to" "${DC_tlt}/slng_err.bk"
+    cleanups "$DT/translate_to" "${DC_tlt}/slng_err.bk"
 }
 
 menu_addons() {

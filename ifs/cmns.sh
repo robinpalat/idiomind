@@ -130,6 +130,7 @@ function cleanups() {
     done
 }
 
+
 function get_item() {
     export item="$(sed 's/}/}\n/g' <<< "${1}")"
     export type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"
