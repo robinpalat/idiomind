@@ -50,7 +50,7 @@ img3 = os.environ['img3']
 lstp = os.environ['lstp']
 lstp = [line.strip() for line in open(lstp)]
 topics = topics.split('\n')
-days_ago = datetime.now() - timedelta(days=2)
+days_ago = datetime.now() - timedelta(days=10)
 for tpc in topics:
     cnfg_dir = dir + tpc + "/.conf/"
     cfg1 = cnfg_dir + "1.cfg"

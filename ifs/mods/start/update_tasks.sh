@@ -28,7 +28,6 @@ if [ -e "$DM_tls/3.cfg" ]; then
 		elif [ $cdg = 3 ]; then
 			echo "$l3$tpc" >> "$f"
 		fi
-		
 	done < "$DM_tls/3.cfg"
 fi
 if [ -e "$DM_tls/4.cfg" ]; then

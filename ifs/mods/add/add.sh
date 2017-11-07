@@ -75,6 +75,7 @@ function index() {
                 fi
             fi
             if ! grep -Fo "trgt{${trgt}}" "${DC_tlt}/0.cfg"; then
+				[[ ${1} = 1 ]] && unset link
                 eval newline="$(sed -n 2p $DS/default/vars)"
                 echo "${newline}" >> "${DC_tlt}/0.cfg"
             fi
