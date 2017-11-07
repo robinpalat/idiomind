@@ -836,7 +836,7 @@ function strt() {
         echo 21 > .${icon}
     elif [ ${1} = 2 ]; then
         learnt=$(< ./${pr}.l); declare info${icon}="* "
-        info="<small>$(gettext "Total")</small>  <b><big>$all</big></b>    <small>$(gettext "Learnt")</small>  <b><big>$learnt</big></b>    <small>$(gettext "Easy")</small>  <b><big>$easy</big></b>    <small>$(gettext "Learning")</small>  <b><big>$ling</big></b>    <small>$(gettext "Difficult")</small>  <b><big>$hard</big></b>\n"
+        info="<small>$(gettext "Total")</small> <b><big>$all</big></b>    <small>$(gettext "Learnt")</small> <b><big>$learnt</big></b>    <small>$(gettext "Easy")</small> <b><big>$easy</big></b>    <small>$(gettext "Learning")</small> <b><big>$ling</big></b>    <small>$(gettext "Difficult")</small> <b><big>$hard</big></b>\n"
     fi
 
     pr="$(yad --list --title="$(gettext "Practice ") $title_act_pract" \

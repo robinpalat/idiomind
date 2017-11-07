@@ -95,7 +95,7 @@ function check_index1() {
 function check_list() {
     if ls -tNd "$DM_tl"/*/ 1> /dev/null 2>&1; then
         while read -r topic; do
-            if ! echo -e "$(ls -1a "$DS/addons/")\n$(cat "$DM_tl/.share/3.cfg")" \
+            if ! echo -e "$(ls -1a "$DS/addons/")" \
             |grep -Fxo "${topic}" >/dev/null 2>&1; then
                 [ ! -L "$DM_tl/${topic}" ] && echo "${topic}"
             fi

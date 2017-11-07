@@ -521,7 +521,7 @@ edit_list_more() {
     fi
     
     more="$(echo -e "${cols1}${cols2}" |sed '/^$/d' \
-    |yad --list --title="$(gettext "More Options")" \
+    |yad --list --title="$(gettext "More options")" \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --name=Idiomind --class=Idiomind \
     --expand-column=2 --no-click --no-headers\
@@ -711,7 +711,7 @@ rename_topic() {
     listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
     ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
 
-    if grep -Fxo "${tpc}" < "$DM_tl/.share/3.cfg"; then i=1; fi
+    #if grep -Fxo "${tpc}" < "$DM_tl/.share/2.cfg"; then i=1; fi
     name="$(clean_3 "${2}")"
     
     if grep -Fxo "${name}" < <(ls "$DS/addons/"); then name="${name} (1)"; fi

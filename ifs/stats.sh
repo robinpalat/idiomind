@@ -39,6 +39,7 @@ function create_db() {
 }
 
 function save_topic_stats() {
+	
     count() {
         n=1; f0=0; f1=0; f2=0; f3=0; f4=0
         old_IFS=$IFS; IFS=$'\n'
@@ -288,6 +289,7 @@ function chktb() {
 }
 
 function pre_comp() {
+	echo -e "\n------------- updating statistics..."
     f_lock "$DT/p_stats"
     val1=0; val2=0
     echo -n "create table if not exists 'expire_month' (date TEXT);" |sqlite3 "${db}"
@@ -304,7 +306,8 @@ function pre_comp() {
     else
         save_topic_stats 0
     fi
-
+    
+	echo -e "------------- statistics updated\n"
     rm -f "$DT/p_stats"
 }
 
@@ -321,7 +324,7 @@ function stats() {
         msg "$(gettext "Insufficient data")\n" dialog-information " "
     else
         yad --html --uri="$DS/default/pg1.html" \
-        --title="$(gettext "Stats (beta)")" \
+        --title="$(gettext "Statistics")" \
         --name=Idiomind --class=Idiomind \
         --browser --encoding=UTF-8 \
         --orient=vert --window-icon=idiomind --center --on-top \

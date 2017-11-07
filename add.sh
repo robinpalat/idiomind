@@ -689,8 +689,8 @@ fetch_content() {
                 |sed 's|/|\\/|g' |sed 's/\&/\&amp\;/g')"
 
                 if [ -n "${title}" ]; then
-                    if ! grep -Fo "trgt{${title^}}" "${DC_tlt}/0.cfg" && \
-                    ! grep -Fxq "${title^}" "${DC_tlt}/exclude"; then
+                    if ! grep -Fo "trgt{${title^}}" "${DC_tlt}/0.cfg" >/dev/null 2>&1 && \
+                    ! grep -Fxq "${title^}" "${DC_tlt}/exclude" >/dev/null 2>&1; then
                         export wlist='FALSE'; export trans='TRUE'
                         export trgt="${title^}"
                         new_item
