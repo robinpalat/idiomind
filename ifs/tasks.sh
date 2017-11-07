@@ -14,7 +14,7 @@ act="${arg%%:*}"
 
 chngtpc(){
 	mode="$(< "$DM_tl/${1}/.conf/8.cfg")"
-	"$DS/ifs/tpc.sh" "${1}" ${mode} ${2} &
+	"$DS/ifs/tpc.sh" "${1}" ${mode} ${2}
 }
 
 modmenu() {
@@ -31,10 +31,10 @@ elif [ "${act}: " = "$l3" ]; then
 elif [ "${act}: " = "$l4" ]; then
 	modmenu "$arg"; chngtpc "$tpc"
 elif [ "${act}: " = "$l5" ]; then
-	modmenu "$arg"; chngtpc "$tpc" 1 &
+	modmenu "$arg"; chngtpc "$tpc" 1
 	"$DS/practice/strt.sh" &
 elif [ "${act}: " = "$l6" ]; then
-	modmenu "$arg"; chngtpc "$tpc" 1 &
+	modmenu "$arg"; chngtpc "$tpc" 1
 	"$DS/practice/strt.sh" &
 fi
 

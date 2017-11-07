@@ -775,7 +775,6 @@ function practices() {
             --width=400 --height=105 --borders=8 \
             --field="$(gettext "Practice in groups of 10")":CHK "" \
             --field=" ":LBL "" \
-            --field="$(gettext "Language for the questions:")":LBL "" \
             --button="      $(gettext "$slng")      !!$(gettext "Questions in") $(gettext "$slng") - $(gettext "Answers in") $(gettext "$tlng")":3 \
             --button="      $(gettext "$tlng")      !!$(gettext "Questions in") $(gettext "$tlng") - $(gettext "Answers in") $(gettext "$slng")":2); ret="$?"
             
@@ -828,13 +827,13 @@ function strt() {
     
     include "$DS/ifs/mods/practice"
     
-    if [ ${1} = 1 ]; then
+    if [[ "${1}" = 1 ]]; then
         NUMBER="<span color='#6E6E6E'><b><big>$(wc -l < ${pr}.0)</big></b></span>"; declare info${icon}="<span font_desc='Arial Bold 12'>$(gettext "Test completed") </span> —"
-        [ ${pr} = e ] && \
+        [[ "${pr}" = e ]] && \
         info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed this test of") $NUMBER $(gettext "sentences")</span>\n" \
         || info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed this test of") $NUMBER $(gettext "words")</span>\n"
         echo 21 > .${icon}
-    elif [ ${1} = 2 ]; then
+    elif [[ "${1}" = 2 ]]; then
         learnt=$(< ./${pr}.l); declare info${icon}="* "
         info="<small>$(gettext "Total")</small> <b><big>$all</big></b>    <small>$(gettext "Learnt")</small> <b><big>$learnt</big></b>    <small>$(gettext "Easy")</small> <b><big>$easy</big></b>    <small>$(gettext "Learning")</small> <b><big>$ling</big></b>    <small>$(gettext "Difficult")</small> <b><big>$hard</big></b>\n"
     fi

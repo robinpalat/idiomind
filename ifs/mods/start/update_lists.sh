@@ -90,7 +90,9 @@ for tpc in topics:
             f = open(cnfg_dir+"/8.cfg")
             stts = [line.rstrip('\n') for line in f]
             topractice = open(dir+"/.share/5.cfg", "a")
-            
+            l1m = False
+            l2m = False
+            l3m = False
             if log1m < days_ago:
                 l1m = True
             if log2m < days_ago:

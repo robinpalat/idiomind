@@ -110,7 +110,7 @@ config_dlg() {
     --field="$(gettext "Clipboard watcher")":CHK "$clipw" \
     --field="$(gettext "Show icon in the notification area")":CHK "$itray" \
     --field="$(gettext "Adjust windows size to small screens")":CHK "$swind" \
-    --field="$(gettext "Perform tasks at startup")":CHK "$stsks" \
+    --field="$(gettext "Run at startup")":CHK "$stsks" \
     --field=" :LBL" " " --field=":LBL" " " \
     --field="$(gettext "I'm learning")":CB "$(gettext ${tlng})$list1" \
     --field="$(gettext "My language is")":CB "$(gettext ${slng})$list2" \
