@@ -20,6 +20,11 @@ chek_topic() {
         echo ${mode} > ./"8.cfg"; cd /
     fi
     
+    if [ ${mode} = 7 ] || [ ${mode} = 8 ] || \
+    [ ${mode} = 9 ] || [ ${mode} = 10 ]; then
+         [ ! -e "${DC_tlt}/7.cfg" ] && touch "${DC_tlt}/7.cfg"
+    fi
+    
     if [ ! -e "$DT/n_s_pr" ]; then
         "$DS/ifs/tls.sh" check_index "${topic}"
     fi

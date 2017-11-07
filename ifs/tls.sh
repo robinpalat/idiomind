@@ -875,8 +875,6 @@ my_pid = os.getpid()
 f_pid = open(os.environ['dirt']+'tray.pid', 'w')
 f_pid.write(str(my_pid))
 f_pid.close()
-
-
 class IdiomindIndicator:
     def __init__(self):
         self.indicator = appindicator.Indicator(icon, icon, appindicator.CATEGORY_APPLICATION_STATUS)
@@ -958,7 +956,7 @@ class IdiomindIndicator:
                 if not label:
                     label = ""
                 item = self.create_menu_label(label)
-                item.connect("activate", self.on_Home)
+                item.connect("activate", self.on_Task)
                 listMenu.append(item)
             
             popup_menu.append(listItems)
@@ -979,6 +977,10 @@ class IdiomindIndicator:
         popup_menu.show_all()
         self.indicator.set_menu(popup_menu)
         self.menu_items = menu_items
+    def on_Task(self, widget):
+        t = widget.get_child()
+        t = t.get_label()
+        os.system("/usr/share/idiomind/ifs/tasks.sh '%s'" % (t))
     def on_Home(self, widget):
         os.system("idiomind topic &")
     def on_Add_click(self, widget):

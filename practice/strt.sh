@@ -692,7 +692,7 @@ function decide_group() {
     --skip-taskbar --buttons-layout=spread \
     --text-align=center --align=center --center --on-top \
     --text="${info}" "" \
-    --width=420 --height=85 --borders=8 \
+    --width=450 --height=85 --borders=8 \
     --button="[$(gettext "Exit")]":5 \
     --button="$(gettext "Again")!view-refresh!$(gettext "Go back to practice the above items")":1 \
     --button="$(gettext "Continue")!go-next!$(gettext "Practice the next group")":0); ret="$?"
@@ -772,9 +772,9 @@ function practices() {
             --window-icon=idiomind \
             --skip-taskbar --buttons-layout=spread \
             --align=center --center --on-top \
-            --width=310 --height=105 --borders=8 \
+            --width=400 --height=105 --borders=8 \
             --field="$(gettext "Practice in groups of 10")":CHK "" \
-            --field="":LBL "" \
+            --field=" ":LBL "" \
             --field="$(gettext "Language for the questions:")":LBL "" \
             --button="      $(gettext "$slng")      !!$(gettext "Questions in") $(gettext "$slng") - $(gettext "Answers in") $(gettext "$tlng")":3 \
             --button="      $(gettext "$tlng")      !!$(gettext "Questions in") $(gettext "$tlng") - $(gettext "Answers in") $(gettext "$slng")":2); ret="$?"
