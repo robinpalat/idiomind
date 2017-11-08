@@ -25,16 +25,23 @@ new_topic() {
         msg "$(gettext "Maximum number of topics reached.")" \
         dialog-information "$(gettext "Information")" & exit 1
     fi
-    source "$DS/ifs/mods/add/add.sh"
-    if [[ -z "$name" ]]; then
-        add="$(dlg_form_0)"
-        name="$(clean_3 "$(cut -d "|" -f1 <<< "${add}")")"
-    fi
-    if [[ ${#name} -gt 55 ]]; then
-        msg "$(gettext "Sorry, name too long.")\n" \
-        dialog-information "$(gettext "Information")"
-        "$DS/add.sh" new_topic "${name}" & return 1
-    fi
+	source "$DS/ifs/mods/add/add.sh"
+
+	if [[ -z "$name" ]]; then
+		to=0; while [ ${to} -lt 4 ]; do
+			if [[ -z "$name" ]]; then add="$(dlg_form_0)"
+			else add="$(dlg_form_0 "$name")"; fi
+			name="$(clean_3 "$(cut -d "|" -f1 <<< "${add}")")"
+			if [[ ${#name} -gt 55 ]]; then
+				msg "$(gettext "Sorry, the name is too long.")\n" \
+				dialog-information "$(gettext "Information")"
+			else 
+				export name & break
+			fi
+			let to++
+		done
+	fi
+    if [[ ${#name} -gt 55 ]]; then name="Untitled"; fi
     if grep -Fxo "${name}" < <(ls "$DS/addons/"); then name="${name} (1)"; fi
     chck=$(grep -Fxo "${name}" <<< "${listt}" |wc -l)
     
@@ -460,7 +467,7 @@ function process() {
         unset link
         touch "$DT_r/select_lines"
         if [ "${tpe}" = "$(gettext "New") *" ]; then
-            "$DS/add.sh" new_topic
+			new_topic
             source $DS/default/c.conf
         else
             echo "${tpe}" > "$DT/tpe"

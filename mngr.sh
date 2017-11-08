@@ -597,7 +597,7 @@ edit_list_dlg() {
     cleanups "$DT/list_output"; > "$DT/list_input"
     
     lns=$(cat "${direc}/0.cfg" |wc -l)
-    (n=1; echo "#"; tac "${direc}/0.cfg" | while read -r item_; do
+    (n=1; echo "#"; cat "${direc}/0.cfg" | while read -r item_; do
         item="$(sed 's/}/}\n/g' <<< "${item_}")"
         trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
         [ -n "${trgt}" ] && echo "${trgt}" >> "$DT/list_input"
@@ -706,7 +706,7 @@ rename_topic() {
         dialog-warning "$(gettext "Information")" & exit 1
     fi
     if [ ${#name} -gt 55 ]; then
-        msg "$(gettext "Sorry, new name too long.")\n" \
+        msg "$(gettext "Sorry, the new name is too long.")\n" \
         dialog-information "$(gettext "Information")" & exit 1
     fi
     if [ ${chck} -ge 1 ]; then

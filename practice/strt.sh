@@ -646,11 +646,24 @@ function get_list() {
     elif [ ${pr} = e ]; then
         if [[ $(wc -l < "${cfg3}") -gt 0 ]]; then
             grep -Fxvf "${cfg3}" "${cfg1}" > "$DT/slist"
-            sed '/^$/d' < "$DT/slist" > "${pdir}/${pr}.0"
+            sed '/^$/d' < "$DT/slist" > "${pdir}/${pr}.0.tmp"
             rm -f "$DT/slist"
         else
-            sed '/^$/d' < "${cfg1}" > "${pdir}/${pr}.0"
+            sed '/^$/d' < "${cfg1}" > "${pdir}/${pr}.0.tmp"
+            
         fi
+         inf=0; while read -r itm; do
+			cnt="$(echo "$itm" |wc -c)"
+			if [ ${cnt} -lt 90 ]; then
+				echo "$itm" >> "${pdir}/${pr}.0"
+			else
+				inf=1
+			fi
+		done < "${pdir}/${pr}.0.tmp"
+        if [ ${inf} = 1 ]; then
+			msg "$(gettext "Some sentences could not be listed because they are too long")\n" info
+		fi
+		> "${pdir}/${pr}.1"
     fi
 }
 

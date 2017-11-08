@@ -718,14 +718,23 @@ translate_to() {
              }
              
             pretrans 
-            
             c2=$(cat "$DT/index.trad" | wc -l)
             if [[ ${c1} != ${c2} ]]; then
 				> "$DT/words.trad_tmp"; > "$DT/index.trad_tmp"
 				del='||'; pretrans
 				c2=$(cat "$DT/index.trad" | wc -l)
 				if [[ ${c1} != ${c2} ]]; then
-					msg Error error
+					> "$DT/words.trad_tmp"; > "$DT/index.trad_tmp"
+					del=":"; pretrans
+					c2=$(cat "$DT/index.trad" | wc -l)
+					if [[ ${c1} != ${c2} ]]; then
+						> "$DT/words.trad_tmp"; > "$DT/index.trad_tmp"
+						del="_"; pretrans
+						c2=$(cat "$DT/index.trad" | wc -l)
+						if [[ ${c1} != ${c2} ]]; then
+						msg "$(gettext "There was a problem with the translation.")\n" error
+						fi
+					fi
 				fi
             fi
             
