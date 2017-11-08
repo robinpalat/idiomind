@@ -396,7 +396,7 @@ promp_topic_info() {
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
-    slng_err_lbl="$(gettext "The native language of this topic does not match your current configuration.  \nYou may need to translate it:\nClick \"Edit\" tab on the main window, click \"Translate\" button,\nand then in \"Automatic Translation\" select from the list of languages:\n") <b>$slng</b>\n"
+    slng_err_lbl="$(gettext "The native language of this topic does not match your current configuration.  \nYou may need to translate it:\nClick \"Edit\" tab on the main window, click \"Translate\" button, \nand then in \"Automatic Translation\" select from the list of languages:\n") \"$slng\"\n"
     
     if [ -e "${DC_tlt}/note_err" ]; then
         include "$DS/ifs/mods/add"
@@ -633,7 +633,6 @@ translate_to() {
         if [ "$review_chek" = TRUE ]; then
             cp -f "${DC_tlt}/0.cfg" "${DC_tlt}/translations/$active_trans.tra"
             echo "$active_trans" > "${DC_tlt}/translations/active"
-            
         elif [ "$review_chek" = FALSE ]; then
             cleanups "${DC_tlt}/translations/$active_trans.tra"
         fi
@@ -646,7 +645,7 @@ translate_to() {
         elif [ -n "$autom_trans" -a "$autom_trans" != "(null)" ]; then
             yad_kill "yad --form --title="
             if grep "$autom_trans" <<< "$(cd "$DC_tlt/translations"; ls *.bk)"; then
-                msg_2 "$(gettext "There is a copy of this translation. Do you want to restore the copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
+                msg_2 "$(gettext "Exist a copy of this translation. Do you want to restore the copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
                 if [ $? = 0 ]; then
                     mv -f "$DC_tlt/translations/$autom_trans.bk" "${DC_tlt}/0.cfg"
                     cleanups "$DT/translation" "$DT/transl_batch_lk" \
@@ -657,8 +656,9 @@ translate_to() {
                     cleanups "$DC_tlt/translations/$autom_trans.bk"
                 fi
             fi
+            
             if grep "$autom_trans" <<< "$(cd "$DC_tlt/translations"; ls *.tra)"; then
-                msg_2 "$(gettext "There is a Verified translation for this language. Do you want to use this copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
+                msg_2 "$(gettext "Exist a Verified translation for this language. Do you want to use this copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
                 if [ $? = 0 ]; then
                     cp -f "$DC_tlt/translations/$autom_trans.tra" "${DC_tlt}/0.cfg"
                     echo "$autom_trans" > "${DC_tlt}/translations/active"
@@ -667,9 +667,8 @@ translate_to() {
                     exit 1
                 fi
             fi
-            > "$DT/words.trad_tmp"
-            > "$DT/index.trad_tmp"
-            > "$DT/translation"
+            > "$DT/words.trad_tmp"; > "$DT/index.trad_tmp"; > "$DT/translation"
+            del='~~'
             internet
             if [ ! -e "${DC_tlt}/id.cfg" ]; then return 1; fi
             l="$(grep -o 'tlng="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
@@ -677,41 +676,57 @@ translate_to() {
             
             tl=${slangs[$autom_trans]}
             include "$DS/ifs/mods/add"
-    
-            while read -r item_; do
-                item="$(sed 's/}/}\n/g' <<< "${item_}")"
-                type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
-                trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
-                if [ -n "${trgt}" ]; then
-                    echo "${trgt}" \
-                    |python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
-                    |sed 's/ /\n/g' |grep -v '^.$' |grep -v '^..$' \
-                    |tr -d '*)(,;"“”:' |tr -s '&{}[]' ' ' \
-                    |sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
-                    |sed 's/\]//;s/\[//;s/<[^>]*>//g' \
-                    |sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' \
-                    |tr -d '.' |sed 's/^ *//; s/ *$//; /^$/d' >> "$DT/words.trad_tmp"
-                    echo "|" >> "$DT/words.trad_tmp"
-                    echo "${trgt} ||" >> "$DT/index.trad_tmp"; fi
-            done < "${DC_tlt}/0.cfg"
+            c1=$(cat "${DC_tlt}/0.cfg" |wc -l)
+			
+			pretrans() {
+				while read -r item_; do
+					item="$(sed 's/}/}\n/g' <<< "${item_}")"
+					type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
+					trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
+					if [ -n "${trgt}" ]; then
+						echo "${trgt}" \
+						|python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
+						|sed 's/ /\n/g' |grep -v '^.$' |grep -v '^..$' \
+						|tr -d '*)(,;"“”:' |tr -s '&{}[]' ' ' \
+						|sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
+						|sed 's/\]//;s/\[//;s/<[^>]*>//g' \
+						|sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' \
+						|tr -d '.' |sed 's/^ *//; s/ *$//; /^$/d' >> "$DT/words.trad_tmp"
+						echo "|" >> "$DT/words.trad_tmp"
+						echo "${trgt} ${del}" >> "$DT/index.trad_tmp"
+					fi
+				done < "${DC_tlt}/0.cfg"
+           
+				sed -i ':a;N;$!ba;s/\n/\. /g' "$DT/words.trad_tmp"
+				sed -i 's/|/|\n/g' "$DT/words.trad_tmp"
+				sed -i 's/^..//' "$DT/words.trad_tmp"
+				index_to_trad="$(< "$DT/index.trad_tmp")"
+				words_to_trad="$(< "$DT/words.trad_tmp")"
+				translate "${index_to_trad}" "$lgt" "$tl" > "$DT/index.trad"
+
+				translate "${words_to_trad}" "$lgt" "$tl" > "$DT/words.trad"
+				sed -i ':a;N;$!ba;s/\n/ /g' "$DT/index.trad"
+				sed -i "s/${del}n/\n/g" "$DT/index.trad"
+				sed -i "s/${del}/\n/g" "$DT/index.trad"
+				sed -i 's/^ *//; s/ *$//g' "$DT/index.trad"
+				sed -i ':a;N;$!ba;s/\n/ /g' "$DT/words.trad"
+				sed -i 's/|n/\n/g' "$DT/words.trad"
+				sed -i 's/|/\n/g' "$DT/words.trad"
+				sed -i 's/^ *//; s/ *$//;s/\。/\. /g' "$DT/words.trad"
+				paste -d '&' "$DT/words.trad_tmp" "$DT/words.trad" > "$DT/mix_words.trad_tmp"
+             }
+             
+            pretrans 
             
-            sed -i ':a;N;$!ba;s/\n/\. /g' "$DT/words.trad_tmp"
-            sed -i 's/|/|\n/g' "$DT/words.trad_tmp"
-            sed -i 's/^..//' "$DT/words.trad_tmp"
-            index_to_trad="$(< "$DT/index.trad_tmp")"
-            words_to_trad="$(< "$DT/words.trad_tmp")"
-            translate "${index_to_trad}" "$lgt" "$tl" > "$DT/index.trad"
-            translate "${words_to_trad}" "$lgt" "$tl" > "$DT/words.trad"
-            sed -i ':a;N;$!ba;s/\n/ /g' "$DT/index.trad"
-            sed -i 's/||n/\n/g' "$DT/index.trad"
-            sed -i 's/||/\n/g' "$DT/index.trad"
-            sed -i 's/|/\n/g' "$DT/index.trad"
-            sed -i 's/^ *//; s/ *$//g' "$DT/index.trad"
-            sed -i ':a;N;$!ba;s/\n/ /g' "$DT/words.trad"
-            sed -i 's/|n/\n/g' "$DT/words.trad"
-            sed -i 's/|/\n/g' "$DT/words.trad"
-            sed -i 's/^ *//; s/ *$//;s/\。/\. /g' "$DT/words.trad"
-            paste -d '&' "$DT/words.trad_tmp" "$DT/words.trad" > "$DT/mix_words.trad_tmp"
+            c2=$(cat "$DT/index.trad" | wc -l)
+            if [[ ${c1} != ${c2} ]]; then
+				> "$DT/words.trad_tmp"; > "$DT/index.trad_tmp"
+				del='||'; pretrans
+				c2=$(cat "$DT/index.trad" | wc -l)
+				if [[ ${c1} != ${c2} ]]; then
+					msg Error error
+				fi
+            fi
             
             if [ -z "$(< "$DT/index.trad")" -o -z "$(< "$DT/words.trad")" ]; then
                 msg "$(gettext "A problem has occurred, try again later.")\n" 'error'

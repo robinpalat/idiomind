@@ -19,17 +19,19 @@ l5="$(gettext "Practice:") "
 l6="$(gettext "Back to Practice:") "
 f="$DT/tasks"; cleanups "$f"
 
-if [ -e "$DM_tls/3.cfg" ]; then
+
+if [ -e "$DM_tls/5.cfg" ]; then
 	while read -r line; do
 		tpc="$(cut -d '|' -f1 <<< "${line}")"
 		cdg="$(cut -d '|' -f2 <<< "${line}")"
-		if [ $cdg = 1 ]; then
-			echo "$l1$tpc" >> "$f"
-		elif [ $cdg = 3 ]; then
-			echo "$l3$tpc" >> "$f"
+		if [ $cdg = 5 ]; then
+			echo "$l5$tpc" >> "$f"
+		elif [ $cdg = 6 ]; then
+			echo "$l6$tpc" >> "$f"
 		fi
-	done < "$DM_tls/3.cfg"
+	done < "$DM_tls/5.cfg"
 fi
+
 if [ -e "$DM_tls/4.cfg" ]; then
 	while read -r line; do
 		tpc="$(cut -d '|' -f1 <<< "${line}")"
@@ -41,16 +43,17 @@ if [ -e "$DM_tls/4.cfg" ]; then
 		fi
 	done < "$DM_tls/4.cfg"
 fi
-if [ -e "$DM_tls/5.cfg" ]; then
+
+if [ -e "$DM_tls/3.cfg" ]; then
 	while read -r line; do
 		tpc="$(cut -d '|' -f1 <<< "${line}")"
 		cdg="$(cut -d '|' -f2 <<< "${line}")"
-		if [ $cdg = 5 ]; then
-			echo "$l5$tpc" >> "$f"
-		elif [ $cdg = 6 ]; then
-			echo "$l6$tpc" >> "$f"
+		if [ $cdg = 1 ]; then
+			echo "$l1$tpc" >> "$f"
+		elif [ $cdg = 3 ]; then
+			echo "$l3$tpc" >> "$f"
 		fi
-	done < "$DM_tls/5.cfg"
+	done < "$DM_tls/3.cfg"
 fi
 
 echo -e "------------- tasks updated\n"

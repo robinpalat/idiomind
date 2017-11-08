@@ -117,21 +117,8 @@ function new_session() {
 				fi
 			fi
 		fi
-	done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
+	done < <(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
 	-not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
-
-    # iddles
-    while read -r line; do
-        unset stts
-        dir="$DM_tl/${line}"; [ ! -d "${dir}" ] && continue
-        stts=$(sed -n 1p "${dir}/8.cfg")
-        ! [[ ${stts} =~ $numer ]] && stts=1
-        if [ ${stts} != 12 ]; then
-            mv -f "${dir}/8.cfg"  "${dir}/8.bk"
-            echo 12 > "${dir}/8.cfg"
-        fi
-    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime +80 -type d \
-    -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
 
     rm -f "$DT/ps_lk"
     "$DS/mngr.sh" mkmn 0 &

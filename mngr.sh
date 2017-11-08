@@ -597,7 +597,7 @@ edit_list_dlg() {
     cleanups "$DT/list_output"; > "$DT/list_input"
     
     lns=$(cat "${direc}/0.cfg" |wc -l)
-    (n=1; echo "#"; cat "${direc}/0.cfg" | while read -r item_; do
+    (n=1; echo "#"; tac "${direc}/0.cfg" | while read -r item_; do
         item="$(sed 's/}/}\n/g' <<< "${item_}")"
         trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
         [ -n "${trgt}" ] && echo "${trgt}" >> "$DT/list_input"

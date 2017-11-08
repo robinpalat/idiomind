@@ -117,7 +117,7 @@ config_dlg() {
     --field=" :LBL" " " --field=":LBL" " " \
     --field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
     --field="<small>$(gettext "Program to convert text to WAV file")</small>" "$txaud" \
-    --field="$(gettext "Display in")":CB "$lst" \
+    --field="$(gettext "Interface language")":CB "$lst" \
     --field="<a href='$link'>$(gettext "Join Idiomind translation")</a>\t":LBL " " \
     --field=" :LBL" " " --field=":LBL" " " \
     --field="$(gettext "Help")":BTN "$DS/ifs/tls.sh help" \
@@ -135,7 +135,7 @@ config_dlg() {
     --window-icon=idiomind \
     --tab-borders=5 --sticky --center \
     --tab="$(gettext "Preferences")" \
-    --tab="$(gettext "Plus")" \
+    --tab="$(gettext "More")" \
     --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=5 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0

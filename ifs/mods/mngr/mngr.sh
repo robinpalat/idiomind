@@ -59,13 +59,13 @@ function dlg_form_2() {
 
 function edit_list_list() {
     yad --list --title="$(gettext "Edit list")" \
-    --text="$(gettext "Double click to edit, drag and drop to move, right-click to display menu.")" \
+    --text="<small>$(gettext "Double click to edit. Drag and drop to move. Right-click to display menu.")</small>" \
     --name=Idiomind --class=Idiomind \
     --editable --separator='' \
     --always-print-result --print-all \
     --window-icon=idiomind \
     --no-headers --center \
-    --width=590 --height=350 --borders=5 \
+    --width=650 --height=400 --borders=5 \
     --column="" \
     --button="$(gettext "More")":"$DS/mngr.sh edit_list_more" \
     --button="$(gettext "Save")!document-save":0 \
@@ -74,7 +74,7 @@ function edit_list_list() {
 
 function edit_feeds_list() {
     yad --list --title="$(gettext "Feeds for") \"${tpc}\"" \
-    --text="$(gettext "Configure feed urls to add content automatically from news headlines.")" \
+    --text="<small>$(gettext "Configure feed urls to add content automatically from news headlines.")</small>" \
     --name=Idiomind --class=Idiomind \
     --editable --separator='\n' \
     --always-print-result --print-all \
