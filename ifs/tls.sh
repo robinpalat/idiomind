@@ -592,9 +592,9 @@ translate_to() {
         --width=390 --height=340 --borders=10 \
         --field="":LBL " " \
         --field="<b>$(gettext "Verified translations") </b> ":LBL " " \
+        --field="$active_trans — $(gettext "The  accuracy of this translation was verified")":CHK "$chk" \
         --field="<small>$(gettext "This topic has no verified translations.")</small>":LBL " " \
         --field=" ":LBL " " \
-        --field="$active_trans — $(gettext "The  accuracy of this translation was verified")":CHK "$chk" \
         --field="":LBL " " \
         --field="\n<b>$(gettext "Automatic translation")</b> ":LBL " " \
         --field="$(gettext "Select Native language to translate automaticly:")":LBL " " \
@@ -611,9 +611,9 @@ translate_to() {
         --width=390 --height=340 --borders=10 \
         --field="":LBL " " \
         --field="<b>$(gettext "Verified translations") </b> ":LBL " " \
+        --field="$active_trans — $(gettext "The  accuracy of this translation was verified")":CHK "$chk" \
         --field="$(gettext "Change the Native language:")":LBL " " \
         --field="":CB "!${list_transl_saved}" \
-        --field="$active_trans — $(gettext "The  accuracy of this translation was verified")":CHK "$chk" \
         --field="":LBL " " \
         --field="\n<b>$(gettext "Automatic translation")</b> ":LBL " " \
         --field="$(gettext "Select Native language to translate automaticly:")":LBL " " \
@@ -623,8 +623,8 @@ translate_to() {
         --button="$(gettext "OK")":0)"; ret="$?"
     fi
     
-    review_trans="$(cut -f4 -d'|' <<< "$ldgl")"
-    review_chek="$(cut -f5 -d'|' <<< "$ldgl")"
+    review_trans="$(cut -f5 -d'|' <<< "$ldgl")"
+    review_chek="$(cut -f3 -d'|' <<< "$ldgl")"
     autom_trans="$(cut -f9 -d'|' <<< "$ldgl")"
     
     if [ "$ret" = 0 ]; then
