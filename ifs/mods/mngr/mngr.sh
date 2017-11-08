@@ -58,6 +58,7 @@ function dlg_form_2() {
 }
 
 function edit_list_list() {
+	sz=(580 560); [[ ${swind} = TRUE ]] && sz=(480 440)
     yad --list --title="$(gettext "Edit list")" \
     --text="<small>$(gettext "Double click to edit. Drag and drop to move. Right-click to display menu.")</small>" \
     --name=Idiomind --class=Idiomind \
@@ -65,7 +66,7 @@ function edit_list_list() {
     --always-print-result --print-all \
     --window-icon=idiomind \
     --no-headers --center \
-    --width=650 --height=400 --borders=5 \
+    --width=${sz[0]} --height=${sz[1]} --borders=5 \
     --column="" \
     --button="$(gettext "More")":"$DS/mngr.sh edit_list_more" \
     --button="$(gettext "Save")!document-save":0 \

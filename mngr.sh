@@ -504,7 +504,7 @@ edit_list_more() {
     --name=Idiomind --class=Idiomind \
     --expand-column=2 --no-click --no-headers\
     --window-icon=idiomind --on-top --center \
-    --width=400 --height=220 --borders=3 \
+    --width=400 --height=350 --borders=3 \
     --column="":TXT \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0)"

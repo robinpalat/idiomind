@@ -102,7 +102,7 @@ if [[ ${1} = 0 ]]; then
 
 elif [[ ${1} != 0 ]]; then
     source /usr/share/idiomind/default/c.conf
-    sz=(580 560); [[ ${swind} = TRUE ]] && sz=(450 420)
+    sz=(580 590); [[ ${swind} = TRUE ]] && sz=(450 420)
 
     remove_d() {
         source "$DS/ifs/cmns.sh"

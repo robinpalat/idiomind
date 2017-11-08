@@ -500,6 +500,7 @@ set_image() {
 
 function transl_batch() {
     source /usr/share/idiomind/default/c.conf
+    sz=(580 560); [[ ${swind} = TRUE ]] && sz=(480 440)
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
     if [ -e "$DT/transl_batch_lk" -o -e "$DT/translate_to" ]; then
@@ -522,14 +523,14 @@ function transl_batch() {
     lns=$(cat "${DC_tlt}/0.cfg" |wc -l)
     if [ -z "$active_trans" ]; then active_trans="$slng"; fi
 
-echo -e "yad --form --title=\"$(gettext "$tlng") | $active_trans\" \\
+echo -e "yad --form --title=\"$(gettext "$tlng") / $active_trans\" \\
 --class=Idiomind --name=Idiomind --window-icon=idiomind \\
 --always-print-result --print-all \\
---width=590 --height=350 --borders=5 \\
+--width=${sz[0]} --height=${sz[1]} --borders=5 \\
 --on-top --scroll --center --separator='|\n' \\
---button=$(gettext \"Cancel\"):1 \\
 --button=\!'gtk-preferences':\"idiomind translate\" \\
---button=$(gettext \"Save\")!document-save:0 \\" > "$DT/dlg"
+--button=$(gettext \"Save\")!document-save:0 \\
+--button=$(gettext \"Cancel\"):1 \\" > "$DT/dlg"
 
     (echo "#"; n=1
     while read -r _item; do
@@ -600,8 +601,8 @@ translate_to() {
         --field="$(gettext "Select Native language to translate automaticly:")":LBL " " \
         --field="":CB "${list_transl}" \
         --field="<small>$(gettext "Note that translation from google translate service sometimes is inaccurate especially in complex frases.")</small>":LBL " " \
-        --button="$(gettext "Cancel")":1 \
-        --button="$(gettext "OK")":0)"; ret="$?"
+        --button="$(gettext "Apply")"!gtk-apply:0 \
+        --button="$(gettext "Cancel")":1)"; ret="$?"
     else
         ldgl="$(yad --form --title="$(gettext "Native Language Settings")" \
         --class=Idiomind --name=Idiomind \
@@ -619,8 +620,8 @@ translate_to() {
         --field="$(gettext "Select Native language to translate automaticly:")":LBL " " \
         --field="":CB "${list_transl}" \
         --field="<small>$(gettext "Note that translation from google translate service sometimes is inaccurate especially in complex frases.")</small>":LBL " " \
-        --button="$(gettext "Cancel")":1 \
-        --button="$(gettext "OK")":0)"; ret="$?"
+        --button="$(gettext "Apply")"!gtk-apply:0 \
+        --button="$(gettext "Cancel")":1)"; ret="$?"
     fi
     
     review_trans="$(cut -f5 -d'|' <<< "$ldgl")"

@@ -767,7 +767,7 @@ function practices() {
         fi
     else
         if [ ! -e "${pdir}/${pr}.0" ]; then
-            optns=$(yad --form --title="$(gettext "Options for") $(gettext "${prcts[$pr]}")" \
+            optns=$(yad --form --title="$(gettext "Starting")" \
             --always-print-result \
             --window-icon=idiomind \
             --skip-taskbar --buttons-layout=spread \
@@ -775,8 +775,8 @@ function practices() {
             --width=400 --height=105 --borders=8 \
             --field="$(gettext "Practice in groups of 10")":CHK "" \
             --field=" ":LBL "" \
-            --button="      $(gettext "$slng")      !!$(gettext "Questions in") $(gettext "$slng") - $(gettext "Answers in") $(gettext "$tlng")":3 \
-            --button="      $(gettext "$tlng")      !!$(gettext "Questions in") $(gettext "$tlng") - $(gettext "Answers in") $(gettext "$slng")":2); ret="$?"
+            --button="      $(gettext "$slng")      !!$(gettext "Questions in") $(gettext "$slng") / $(gettext "Answers in") $(gettext "$tlng")":3 \
+            --button="      $(gettext "$tlng")      !!$(gettext "Questions in") $(gettext "$tlng") / $(gettext "Answers in") $(gettext "$slng")":2); ret="$?"
             
             if [ $ret = 3 -o $ret = 2 ]; then
                 if grep 'TRUE' <<< "${optns}"; then group=1; split=10; fi
