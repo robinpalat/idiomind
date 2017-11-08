@@ -5,6 +5,16 @@
 source "$DS/ifs/cmns.sh"
 check_list > "$DM_tl/.share/2.cfg"
 echo -e "\n------------- updating lists..."
+
+while read -r tpc; do
+	dir="$DM_tl/${tpc}/.conf"; unset stts tpc
+	stts=$(sed -n 1p "${dir}/8.cfg")
+	if [ ${stts} != 12 ]; then
+		mv -f "${dir}/8.cfg"  "${dir}/8.bk"; echo 12 > "${dir}/8.cfg"
+	fi
+done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime +80 -type d \
+-not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
+
 [ ! -e "$DC_s/log" ] && exit 1 || log="$DC_s/log"
 items=$(mktemp "$DT/w1.XXXX")
 words=$(grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' \
@@ -19,6 +29,7 @@ img2="$DS/images/2.png"
 img3="$DS/images/3.png"
 img0="$DS/images/0.png"
 dir="$DM_tl/"
+
 
 for n in {1..100}; do
     if [[ $(sed -n ${n}p <<<"${words}" |awk '{print ($1)}') -ge 3 ]]; then
@@ -55,7 +66,7 @@ for tpc in topics:
     cnfg_dir = dir + tpc + "/.conf/"
     cfg1 = cnfg_dir + "1.cfg"
     if os.path.exists(cfg1):
-        #try:
+        try:
             cont = str
             log1m = datetime.fromtimestamp(path.getctime(cnfg_dir+"practice/log1"))
             log1 = [line.strip() for line in open(cnfg_dir+"practice/log1")]
@@ -142,8 +153,8 @@ for tpc in topics:
                 if len(cfg1) == cfg1len and len(cnfg_dir+"0.cfg") > 15:
                     subprocess.Popen(['/usr/share/idiomind/mngr.sh %s %s' % ('mark_to_learnt_ok', '"'+tpc+'"')], shell=True)
                     print 'mark_as_learnt -> ' + tpc
-        #except:
-            #print 'err -> ' + tpc
+        except:
+            print 'err -> ' + tpc
 PY
 
 [ $(date +%d) = 1 -o $(date +%d) = 14 ] && rm "$log"; touch "$log"

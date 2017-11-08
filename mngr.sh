@@ -23,36 +23,14 @@ mkmn() {
         else
             stts=$(sed -n 1p "${dir}/8.cfg")
             ! [[ ${stts} =~ $numer ]] && stts=13
-            [[ ${stts} = 12 ]] && continue
         fi
-        echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.share/0.cfg"
-    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
-    -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
+		echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.share/0.cfg"
 
-    while read -r tpc; do
-        dir="$DM_tl/${tpc}/.conf"; unset stts
-        [ ! -d "${dir}" ] && mkdir -p "${dir}"
-        if [ ! -e "$dir/8.cfg" ]; then
-            stts=13; echo ${stts} > "${dir}/8.cfg"
-        else 
-            stts=$(sed -n 1p "${dir}/8.cfg")
-            ! [[ ${stts} =~ $numer ]] && stts=13
-        fi
-        if [ ${stts} = 12 -o ${stts} = 13 ]; then
-            echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.share/0.cfg"
-        fi
-    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
-    -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
-    
-    while read -r tpc; do
-        dir="$DM_tl/${tpc}/.conf"; unset stts tpc
-        stts=$(sed -n 1p "${dir}/8.cfg")
-        if [ ${stts} != 12 ]; then
-            mv -f "${dir}/8.cfg"  "${dir}/8.bk"; echo 12 > "${dir}/8.cfg"
-        fi
-    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime +80 -type d \
-    -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
-    
+    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
+    -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d'; \
+    find ./ -maxdepth 1 -mtime +79 -type d -not -path '*/\.*' \
+    -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
+
     if [[ "$2" = 1 ]]; then
         source "$DS/ifs/stats.sh"; save_topic_stats 0
     fi

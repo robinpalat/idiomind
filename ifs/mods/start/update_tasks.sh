@@ -11,12 +11,12 @@
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 echo -e "\n------------- updating tasks..."
-l1="$(gettext "To review (new):") "
-l2="$(gettext "need review (new):") "
-l3="$(gettext "Need to repass:") "
-l4="$(gettext "Need to repass:") "
-l5="$(gettext "To practice:") "
-l6="$(gettext "Back to practice:") "
+l1="$(gettext "To Repass (new):") "
+l2="$(gettext "Priority to Repass (new):") "
+l3="$(gettext "To Repass:") "
+l4="$(gettext "Priority to Repass:") "
+l5="$(gettext "Practice:") "
+l6="$(gettext "Back to Practice:") "
 f="$DT/tasks"; cleanups "$f"
 
 if [ -e "$DM_tls/3.cfg" ]; then
