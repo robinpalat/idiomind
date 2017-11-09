@@ -299,7 +299,7 @@ add_file() {
     FL=$(yad --file --title="$(gettext "Add File")" \
     --text=" $(gettext "Browse to and select the file that you want to add.")" \
     --name=Idiomind --class=Idiomind \
-    --file-filter="*.mp3 *.ogg *.mp4 *.m4v *.jpg *.jpeg *.png *.txt *.pdf *.gif" \
+    --file-filter="*.mp3 *.ogg *.mp4 *.m4v *.jpg *.jpeg *.png *.txt *.gif" \
     --add-preview --multiple \
     --window-icon="$DS/images/icon.png" --on-top --center \
     --width=680 --height=500 --borders=5 \
@@ -339,11 +339,27 @@ videourl() {
     fi
 }
 
+addFiles() {
+	yad --form --title="$(gettext "Attached Files")" \
+	--name=Idiomind --class=Idiomind \
+	--window-icon="$DS/images/icon.png" --center \
+	--width=350 --height=100 --borders=5 \
+	--field="$(gettext "Add")":FBTN "$DS/ifs/tls.sh 'add_file'" \
+	--field="$(gettext "YouTube URL")":FBTN "$DS/ifs/tls.sh 'videourl'" \
+	--button="$(gettext "Cancel")":1 \
+	--button="$(gettext "OK")":0
+	ret=$?
+	if [[ "$ch1" != "$(ls -A "${DM_tlt}/files")" ]] && [ $ret = 0 ]; then
+		mkindex
+	fi
+}
+
 attatchments() {
+	sz=(580 450); [[ ${swind} = TRUE ]] && sz=(480 440)
     source "$DS/ifs/mods/cmns.sh"
     mkindex() {
 rename 's/_/ /g' "${DM_tlt}/files"/*
-echo "<meta http-equiv=\"Content-Type\" \
+echo "<html><meta http-equiv=\"Content-Type\" \
 content=\"text/html; charset=UTF-8\" />
 <link rel=\"stylesheet\" \
 href=\"/usr/share/idiomind/default/attch.css\">\
@@ -398,7 +414,7 @@ style=\"width:100%;height:100%\"><br><br><br>" \
 >> "${DC_tlt}/att.html"
 elif grep ".url" <<<"${file: -4}"; then
 url=$(tr -d '=' < "${DM_tlt}/files/$file" \
-| sed 's|watch?v|v\/|;s|https|http|g')
+| sed 's|watch?v|embed\/|;s|https|http|g')
 echo "<iframe width=\"100%\" height=\"85%\" src=\"$url\" \
 frameborder=\"0\" allowfullscreen></iframe>
 <br><br>" >> "${DC_tlt}/att.html"
@@ -409,42 +425,28 @@ style=\"width:100%;height:100%\"><br><br><br>" \
 >> "${DC_tlt}/att.html"; fi
 done <<<"$(ls "${DM_tlt}/files")"
 
-echo "</body>" >> "${DC_tlt}/att.html"
+echo "</body></html>" >> "${DC_tlt}/att.html"
 } >/dev/null 2>&1
     [ ! -d "${DM_tlt}/files" ] && mkdir "${DM_tlt}/files"
     ch1="$(ls -A "${DM_tlt}/files")"
-    
     if [[ "$(ls -A "${DM_tlt}/files")" ]]; then
         [ ! -e "${DC_tlt}/att.html" ] && mkindex
-        yad --html --title="$(gettext "Attached Files")" \
-        --name=Idiomind --class=Idiomind \
-        --encoding=UTF-8 --uri="${DC_tlt}/att.html" --browser \
-        --window-icon="$DS/images/icon.png" --center \
-        --width=680 --height=580 --borders=10 \
-        --button="$(gettext "Open Folder")":"xdg-open \"${DM_tlt}\"/files" \
-        --button="$(gettext "Video URL")":2 \
-        --button="$(gettext "Add")":0 \
-        --button="gtk-close":1
-        ret=$?
-        
-        if [ $ret = 0 ]; then "$DS/ifs/tls.sh" add_file
+	     yad --html --title="$(gettext "Attached Files")" \
+		--name=Idiomind --class=Idiomind \
+		--encoding=UTF-8 --uri="${DC_tlt}/att.html" --browser \
+		--window-icon="$DS/images/icon.png" --center \
+		--width=${sz[0]} --height=${sz[1]} --borders=10 \
+		--button="$(gettext "Folder")":"xdg-open \"${DM_tlt}\"/files" \
+		--button="$(gettext "Add")":0 \
+		--button="gtk-close":1
+		ret=$?
+        if [ $ret = 0 ]; then "$DS/ifs/tls.sh" addFiles
         elif [ $ret = 2 ]; then "$DS/ifs/tls.sh" videourl; fi
         
         if [[ "$ch1" != "$(ls -A "${DM_tlt}/files")" ]]; then
         mkindex; fi
     else
-        yad --form --title="$(gettext "Attached Files")" \
-        --name=Idiomind --class=Idiomind \
-        --window-icon="$DS/images/icon.png" --center \
-        --width=350 --height=100 --borders=5 \
-        --field="$(gettext "Add File")":FBTN "$DS/ifs/tls.sh 'add_file'" \
-        --field="$(gettext "YouTube Video URL")":FBTN "$DS/ifs/tls.sh 'videourl'" \
-        --button="$(gettext "Cancel")":1 \
-        --button="$(gettext "OK")":0
-        ret=$?
-        if [[ "$ch1" != "$(ls -A "${DM_tlt}/files")" ]] && [ $ret = 0 ]; then
-            mkindex
-        fi
+		addFiles
     fi
 } >/dev/null 2>&1
 
@@ -656,7 +658,7 @@ set_image() {
 
 function transl_batch() {
     source /usr/share/idiomind/default/c.conf
-    sz=(580 560); [[ ${swind} = TRUE ]] && sz=(480 440)
+    sz=(580 450); [[ ${swind} = TRUE ]] && sz=(480 440)
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
     if [ -e "$DT/transl_batch_lk" -o -e "$DT/translate_to" ]; then
@@ -1271,6 +1273,8 @@ case "$1" in
     _restore_backup "$@" ;;
     check_index)
     check_index "$@" ;;
+    addFiles)
+    addFiles "$@" ;;
     videourl)
     videourl "$@" ;;
     add_file)
