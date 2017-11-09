@@ -42,7 +42,8 @@ elif [ "${act}: " = "$l6" ]; then
 else
 	a="$(echo "$tpt" |grep -oP '(?<=\[).*(?=\])')"
 	if [ -f "$DS/addons/$a/cnfg.sh" ]; then
-		"$DS/addons/$a/cnfg.sh" tasks "$tpt"
+		"$DS/addons/$a/cnfg.sh" tasks "$tpt" &
+		modmenu "$arg"
 	fi
 fi
 

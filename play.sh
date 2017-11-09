@@ -39,7 +39,9 @@ play_file() {
         if [[ ${mime} = 0 ]]; then
             exit 1
         else
-            mplayer "${2}" -novideo -noconsolecontrols -title "${3}"
+            mplayer "${2}" -novideo -noconsolecontrols -title "${3}"\
+            && [ -e "$DT/playlck" ] && echo 0 > "$DT/playlck"
+            
         fi
     elif [ -n "$synth" ]; then
         sed 's/<[^>]*>//g' <<<"${3}." |${synth}; [ $? != 0 ] && msg_err1

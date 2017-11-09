@@ -65,33 +65,33 @@ if [[ ${1} = 0 ]]; then
         fi
     }
 
-    if [ ${W} = TRUE -a ${S} = TRUE ]; then
+    if [[ ${W} = TRUE ]] && [[ ${S} = TRUE ]]; then
         echo -e "${tpc}" > "$DT/playlck"
         while read item; do _stop=1; getitem; _play
         done < "${DC_tlt}/1.cfg"
     fi
-    if [ ${W} = TRUE -a ${S} = FALSE ]; then
+    if [[ ${W} = TRUE ]] && [[ ${S} = FALSE ]]; then
         echo -e "${tpc}" > "$DT/playlck"
         while read item; do _stop=1; getitem; _play
         done < <(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg")
     fi
-    if [ ${W} = FALSE -a ${S} = TRUE ]; then
+    if [[ ${W} = FALSE ]] && [[ ${S} = TRUE ]]; then
         echo -e "${tpc}" > "$DT/playlck"
         while read item; do _stop=1; getitem; _play
         done < <(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg")
     fi
-    if [ ${M} = TRUE ]; then
+    if [[ ${M} = TRUE ]]; then
         echo -e "${tpc}" > "$DT/playlck"
         while read item; do _stop=1; getitem; _play
         done < "${DC_tlt}/6.cfg"
     fi
-    if [ ${L} = TRUE ]; then
+    if [[ ${L} = TRUE ]]; then
         echo -e "${tpc}" > "$DT/playlck"
         while read item; do _stop=1; getitem; _play
         done < <(grep -Fxvf "${DC_tlt}/practice/log3" \
         "${DC_tlt}/practice/log2" |sort |uniq)
     fi
-    if [ ${D} = TRUE ]; then
+    if [[ ${D} = TRUE ]]; then
         echo -e "${tpc}" > "$DT/playlck"
         while read item; do _stop=1; getitem; _play
         done < <(sort |uniq "${DC_tlt}/practice/log3")
