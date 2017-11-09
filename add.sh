@@ -421,10 +421,16 @@ function process() {
                                 lenght "${split}"
                             else
                                 while read -r split2; do
-                                    lenght "${split2}"
-                                done < <(sed 's/;/ \n/g' <<< "${split}") # TODO
+                                  if [ $(wc -c <<< "${split2}") -le 140 ]; then
+										lenght "${split2}"
+									else
+										while read -r split3; do
+											lenght "${split3}"
+										done < <(sed 's/\—/\—\n/g' <<< "${split}")
+									fi
+                                done < <(sed 's/\;/\;\n/g' <<< "${split}")
                             fi
-                        done < <(sed 's/,/ \n/g' <<< "${l}") # TODO
+                        done < <(sed 's/\,/\,\n/g' <<< "${l}")
                     else
                         lenght "${l}"
                     fi

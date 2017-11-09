@@ -320,7 +320,7 @@ function clean_8() {
     sed 's/\[ \.\.\. \]//;s/	/ /g' \
     |sed 's/^ *//;s/ *$//g' |sed 's/^[ \t]*//;s/[ \t]*$//' \
     |sed 's/ \+/ /g' \
-    |sed '/^$/d' |sed 's/ — /\n/g' \
+    |sed '/^$/d' \
     |sed 's/\&quot;/\"/g' |sed "s/\&#039;/\'/g" \
     |sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
     |sed 's/ *<[^>]\+> */ /; s/[<>£§]//; s/\&amp;/\&/g' \
@@ -605,7 +605,7 @@ function dlg_checklist_3() {
     --name=Idiomind --class=Idiomind \
     --skip-taskbar --orient=vert --window-icon=idiomind --center --on-top \
     --gtkrc="$DS/default/gtkrc.cfg" \
-    --width=700 --height=350 --borders=5 --splitter=250 \
+    --width=700 --height=450 --borders=5 --splitter=350 \
     --button="gtk-edit":2 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Add")"!'list-add':0
