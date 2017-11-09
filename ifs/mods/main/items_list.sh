@@ -126,11 +126,11 @@ function notebook_1() {
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"${tpc}\"" 1"
     cmd_play="$DS/play.sh play_list"
     btn1="$(gettext "Edit")"
-    btn2="$(gettext "Translate")"
+    btn2="$(gettext "Resources")"
     btn3="$(gettext "Share")"
     btn4="$(gettext "Delete")"
     cmd1="'$DS/mngr.sh' edit_list "\"${tpc}\"""
-    cmd2="'$DS/ifs/tls.sh' transl_batch"
+    cmd2="'$DS/ifs/tls.sh' attatchs"
     cmd3="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd4="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
     
@@ -188,11 +188,11 @@ function notebook_1() {
 function notebook_2() {
     cmd_mark="'$DS/mngr.sh' 'mark_to_learn' "\"${tpc}\"" 1"
     btn1="$(gettext "Edit")"
-    btn2="$(gettext "Translate")"
+    btn2="$(gettext "Resources")"
     btn3="$(gettext "Share")"
     btn4="$(gettext "Delete")"
     cmd1="'$DS/mngr.sh' edit_list "\"${tpc}\"""
-    cmd2="'$DS/ifs/tls.sh' transl_batch"
+    cmd2="'$DS/ifs/tls.sh' attatchs"
     cmd3="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd4="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
 

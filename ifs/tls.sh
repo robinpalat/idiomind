@@ -293,6 +293,162 @@ fback() {
     xdg-open "http://idiomind.sourceforge.net/contact"
 } >/dev/null 2>&1
 
+
+add_file() {
+    cd "$HOME"
+    FL=$(yad --file --title="$(gettext "Add File")" \
+    --text=" $(gettext "Browse to and select the file that you want to add.")" \
+    --name=Idiomind --class=Idiomind \
+    --file-filter="*.mp3 *.ogg *.mp4 *.m4v *.jpg *.jpeg *.png *.txt *.pdf *.gif" \
+    --add-preview --multiple \
+    --window-icon="$DS/images/icon.png" --on-top --center \
+    --width=680 --height=500 --borders=5 \
+    --button="$(gettext "Cancel")":1 \
+    --button="$(gettext "OK")":0)
+    ret=$?
+    if [ $ret -eq 0 ]; then
+        while read -r file; do
+        [ -f "${file}" ] && cp -f "${file}" \
+        "${DM_tlt}/files/$(basename "$file" |iconv -c -f utf8 -t ascii)"
+        done <<<"$(tr '|' '\n' <<<"$FL")"
+    fi
+    
+} >/dev/null
+
+videourl() {
+    source "$DS/ifs/mods/cmns.sh"
+    n=$(ls *.url "${DM_tlt}/files/" | wc -l)
+    url=$(yad --form --title=" " \
+    --name=Idiomind --class=Idiomind \
+    --separator="" \
+    --window-icon="$DS/images/icon.png" \
+    --skip-taskbar --center --on-top \
+    --width=420 --height=100 --borders=5 \
+    --field="$(gettext "URL")" \
+    --button="$(gettext "Cancel")":1 \
+    --button=gtk-ok:0)
+    ret=$?
+    [ $ret = 1 -o -z "$url" ] && exit
+    if [ ${#url} -gt 40 ] && \
+        ([ ${url:0:29} = 'https://www.youtube.com/watch' ] \
+        || [ ${url:0:28} = 'http://www.youtube.com/watch' ]); then \
+        echo "$url" > "${DM_tlt}/files/video$n.url"
+    else 
+        msg "$(gettext "You have entered an invalid URL").\n" error \
+        "$(gettext "You have entered an invalid URL")"
+    fi
+}
+
+attatchments() {
+    source "$DS/ifs/mods/cmns.sh"
+    mkindex() {
+rename 's/_/ /g' "${DM_tlt}/files"/*
+echo "<meta http-equiv=\"Content-Type\" \
+content=\"text/html; charset=UTF-8\" />
+<link rel=\"stylesheet\" \
+href=\"/usr/share/idiomind/default/attch.css\">\
+<body>" > "${DC_tlt}/att.html"
+
+while read -r file; do
+if grep ".mp3" <<<"${file: -4}"; then
+echo "${file::-4}<br><br><audio controls>
+<source src=\"../files/$file\" type=\"audio/mpeg\">
+</audio><br><br>" >> "${DC_tlt}/att.html"
+elif grep ".ogg" <<<"${file: -4}"; then
+echo "${file::-4}<audio controls>
+<source src=\"../files/$file\" type=\"audio/mpeg\">
+</audio><br><br>" >> "${DC_tlt}/att.html"; fi
+done <<<"$(ls "${DM_tlt}/files")"
+
+while read -r file; do
+if grep ".txt" <<<"${file: -4}"; then
+txto=$(sed ':a;N;$!ba;s/\n/<br>/g' \
+< "${DM_tlt}/files/$file" \
+| sed 's/\"/\&quot;/;s/\&/&amp;/g')
+echo "<div class=\"summary\">
+<h2>${file::-4}</h2><br>$txto \
+<br><br><br></div>" >> "${DC_tlt}/att.html"; fi
+done <<<"$(ls "${DM_tlt}/files")"
+
+while read -r file; do
+if grep ".mp4" <<<"${file: -4}"; then
+echo "${file::-4}<br><br>
+<video width=450 height=280 controls>
+<source src=\"../files/$file\" type=\"video/mp4\">
+</video><br><br><br>" >> "${DC_tlt}/att.html"
+elif grep ".m4v" <<<"${file: -4}"; then
+echo "${file::-4}<br><br>
+<video width=450 height=280 controls>
+<source src=\"../files/$file\" type=\"video/mp4\">
+</video><br><br><br>" >> "${DC_tlt}/att.html"
+elif grep ".jpg" <<<"${file: -4}"; then
+echo "${file::-4}<br><br>
+<img src=\"../files/$file\" alt=\"$name\" \
+style=\"width:100%;height:100%\"><br><br><br>" \
+>> "${DC_tlt}/att.html"
+elif grep ".jpeg" <<<"${file: -5}"; then
+echo "${file::-5}<br><br>
+<img src=\"../files/$file\" alt=\"$name\" \
+style=\"width:100%;height:100%\"><br><br><br>" \
+>> "${DC_tlt}/att.html"
+elif grep ".png" <<<"${file: -4}"; then
+echo "${file::-4}<br><br>
+<img src=\"../files/$file\" alt=\"$name\" \
+style=\"width:100%;height:100%\"><br><br><br>" \
+>> "${DC_tlt}/att.html"
+elif grep ".url" <<<"${file: -4}"; then
+url=$(tr -d '=' < "${DM_tlt}/files/$file" \
+| sed 's|watch?v|v\/|;s|https|http|g')
+echo "<iframe width=\"100%\" height=\"85%\" src=\"$url\" \
+frameborder=\"0\" allowfullscreen></iframe>
+<br><br>" >> "${DC_tlt}/att.html"
+elif grep ".gif" <<<"${file: -4}"; then
+echo "${file::-4}<br><br>
+<img src=\"../files/$file\" alt=\"$name\" \
+style=\"width:100%;height:100%\"><br><br><br>" \
+>> "${DC_tlt}/att.html"; fi
+done <<<"$(ls "${DM_tlt}/files")"
+
+echo "</body>" >> "${DC_tlt}/att.html"
+} >/dev/null 2>&1
+    [ ! -d "${DM_tlt}/files" ] && mkdir "${DM_tlt}/files"
+    ch1="$(ls -A "${DM_tlt}/files")"
+    
+    if [[ "$(ls -A "${DM_tlt}/files")" ]]; then
+        [ ! -e "${DC_tlt}/att.html" ] && mkindex
+        yad --html --title="$(gettext "Attached Files")" \
+        --name=Idiomind --class=Idiomind \
+        --encoding=UTF-8 --uri="${DC_tlt}/att.html" --browser \
+        --window-icon="$DS/images/icon.png" --center \
+        --width=680 --height=580 --borders=10 \
+        --button="$(gettext "Open Folder")":"xdg-open \"${DM_tlt}\"/files" \
+        --button="$(gettext "Video URL")":2 \
+        --button="$(gettext "Add")":0 \
+        --button="gtk-close":1
+        ret=$?
+        
+        if [ $ret = 0 ]; then "$DS/ifs/tls.sh" add_file
+        elif [ $ret = 2 ]; then "$DS/ifs/tls.sh" videourl; fi
+        
+        if [[ "$ch1" != "$(ls -A "${DM_tlt}/files")" ]]; then
+        mkindex; fi
+    else
+        yad --form --title="$(gettext "Attached Files")" \
+        --name=Idiomind --class=Idiomind \
+        --window-icon="$DS/images/icon.png" --center \
+        --width=350 --height=100 --borders=5 \
+        --field="$(gettext "Add File")":FBTN "$DS/ifs/tls.sh 'add_file'" \
+        --field="$(gettext "YouTube Video URL")":FBTN "$DS/ifs/tls.sh 'videourl'" \
+        --button="$(gettext "Cancel")":1 \
+        --button="$(gettext "OK")":0
+        ret=$?
+        if [[ "$ch1" != "$(ls -A "${DM_tlt}/files")" ]] && [ $ret = 0 ]; then
+            mkindex
+        fi
+    fi
+} >/dev/null 2>&1
+
+
 _definition() {
     source "$DS/ifs/cmns.sh"
     export query="$(sed 's/<[^>]*>//g' <<<"${2}")"
@@ -1115,6 +1271,12 @@ case "$1" in
     _restore_backup "$@" ;;
     check_index)
     check_index "$@" ;;
+    videourl)
+    videourl "$@" ;;
+    add_file)
+    add_file "$@" ;;
+    attatchs)
+    attatchments "$@" ;;
     add_audio)
     add_audio "$@" ;;
     help)

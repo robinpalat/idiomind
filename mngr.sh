@@ -609,6 +609,9 @@ edit_list_dlg() {
     
     if [ $ret = 0 ]; then
         edit_list_cmds 0 "${tpc}"
+     
+    elif [ $ret = 2 ]; then
+        "$DS/ifs/tls.sh" transl_batch
     else
         if [ ! -e "$DT/edit_list_more" ]; then
             cleanups "$DT/list_input" "$DT/list_output"
