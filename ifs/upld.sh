@@ -411,29 +411,29 @@ function upld() {
         tar czpvf - ./"files" |split -d -b 2500k - ./"${ilnk}.tar.gz"
         rm -fr ./"files"
 
-        #python << END
-#import os, sys, requests, time, xmlrpclib
-#reload(sys)
-#sys.setdefaultencoding("utf-8")
-#autr = os.environ['autr']
-#pssw = os.environ['pass']
-#tpc = os.environ['tpc']
-#body = os.environ['body']
-#try:
-    #server = xmlrpclib.Server('http://idiomind.net/community/xmlrpc.php')
-    #nid = server.metaWeblog.newPost('blog', autr, pssw, 
-    #{'title': tpc, 'description': body}, True)
-#except:
-    #sys.exit(3)
-#url = requests.get('http://idiomind.sourceforge.net/uploads.php').url
-#DT_u = os.environ['DT_u']
-#volumes = [i for i in os.listdir(DT_u)]
-#for f in volumes:
-    #fl = {'file': open(DT_u + f, 'rb')}
-    #print f
-    #r = requests.post(url, files=fl)
-    #time.sleep(5)
-#END
+        python << END
+import os, sys, requests, time, xmlrpclib
+reload(sys)
+sys.setdefaultencoding("utf-8")
+autr = os.environ['autr']
+pssw = os.environ['pass']
+tpc = os.environ['tpc']
+body = os.environ['body']
+try:
+    server = xmlrpclib.Server('http://idiomind.net/community/xmlrpc.php')
+    nid = server.metaWeblog.newPost('blog', autr, pssw, 
+    {'title': tpc, 'description': body}, True)
+except:
+    sys.exit(3)
+url = requests.get('http://idiomind.sourceforge.net/uploads.php').url
+DT_u = os.environ['DT_u']
+volumes = [i for i in os.listdir(DT_u)]
+for f in volumes:
+    fl = {'file': open(DT_u + f, 'rb')}
+    print f
+    r = requests.post(url, files=fl)
+    time.sleep(5)
+END
         u=$?
         if [ $u = 0 ]; then
             info="\"$tpc\"\n<b>$(gettext "Uploaded correctly")</b>\n"
