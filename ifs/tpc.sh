@@ -36,7 +36,8 @@ active_topic() {
         
     elif [[ ${activ} = 1 ]]; then
         echo "${topic}" > "$DC_s/4.cfg"
-        ( sleep 1; notify-send -i idiomind "${topic}" "$(gettext "Is now your topic")" -t 4000 ) & exit
+        ( sleep 1; notify-send -i idiomind \
+        "${topic}" "$(gettext "Is now your topic")" -t 4000 ) & exit
         
     elif [[ -z "$activ" ]]; then
         echo "${topic}" > "$DC_s/4.cfg"
@@ -75,21 +76,25 @@ if [ -d "${DM_tlt}" ]; then
                 calculate_review "${topic}"
                 if [[ $((stts%2)) = 0 ]]; then
                     if [ ${RM} -ge 180 -a ${stts} = 8 ]; then
-                        echo 10 > "${DC_tlt}/8.cfg"; touch "${DM_tlt}"
+                        stts=10;  touch "${DM_tlt}"
+                        echo ${stts} > "${DC_tlt}/8.cfg"
                     elif [ ${RM} -ge 100 -a ${stts} -lt 8 ]; then
-                        echo 8 > "${DC_tlt}/8.cfg"; touch "${DM_tlt}"
+                        stts=8; touch "${DM_tlt}"
+                        echo ${stts} > "${DC_tlt}/8.cfg"
                     fi
                 else
                     if [ ${RM} -ge 180 -a ${stts} = 7 ]; then
-                        echo 9 > "${DC_tlt}/8.cfg"; touch "${DM_tlt}"
+                       stts=9; touch "${DM_tlt}"
+                       echo ${stts} > "${DC_tlt}/8.cfg"
                     elif [ ${RM} -ge 100 -a ${stts} -lt 7 ]; then
-                        echo 7 > "${DC_tlt}/8.cfg"; touch "${DM_tlt}"
+                       stts=7; touch "${DM_tlt}"
+                       echo ${stts} > "${DC_tlt}/8.cfg"
                     fi
                 fi
             fi
             
-            if grep -E '3|4|7|8|9|10' <<<"$stts"; then
-            > "${DC_tlt}/7.cfg"; fi
+            if echo "$stts" |grep -E '3|4|7|8|9|10'; \
+            then > "${DC_tlt}/7.cfg"; fi
             
             chek_topic
             "$DS/mngr.sh" mkmn 1

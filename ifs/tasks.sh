@@ -9,12 +9,12 @@ l3="$(gettext "To Repass:") "
 l4="$(gettext "Priority to Repass:") "
 l5="$(gettext "Practice:") "
 l6="$(gettext "Back to Practice:") "
-tpc="${arg#*: }"
+tpt="${arg#*: }"
 act="${arg%%:*}"
 
-chngtpc(){
+chngtpt(){
 	mode="$(< "$DM_tl/${1}/.conf/8.cfg")"
-	"$DS/ifs/tpc.sh" "${1}" ${mode} ${2}
+	"$DS/ifs/tpt.sh" "${1}" ${mode} ${2}
 }
 
 modmenu() {
@@ -26,18 +26,23 @@ modmenu() {
 }
 
 if [ "${act}" = "$l1" ]; then
-	modmenu "$arg"; chngtpc "$tpc"
+	modmenu "$arg"; chngtpt "$tpt"
 elif [ "${act}: " = "$l2" ]; then
-	modmenu "$arg"; chngtpc "$tpc"
+	modmenu "$arg"; chngtpt "$tpt"
 elif [ "${act}: " = "$l3" ]; then
-	modmenu "$arg"; chngtpc "$tpc"
+	modmenu "$arg"; chngtpt "$tpt"
 elif [ "${act}: " = "$l4" ]; then
-	modmenu "$arg"; chngtpc "$tpc"
+	modmenu "$arg"; chngtpt "$tpt"
 elif [ "${act}: " = "$l5" ]; then
-	modmenu "$arg"; chngtpc "$tpc" 1
+	modmenu "$arg"; chngtpt "$tpt" 1
 	"$DS/practice/strt.sh" &
 elif [ "${act}: " = "$l6" ]; then
-	modmenu "$arg"; chngtpc "$tpc" 1
+	modmenu "$arg"; chngtpt "$tpt" 1
 	"$DS/practice/strt.sh" &
+else
+	a="$(echo "$tpt" |grep -oP '(?<=\[).*(?=\])')"
+	if [ -f "$DS/addons/$a/cnfg.sh" ]; then
+		"$DS/addons/$a/cnfg.sh" tasks "$tpt"
+	fi
 fi
 

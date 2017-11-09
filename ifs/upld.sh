@@ -61,7 +61,6 @@ function dwld() {
             rm -fr "${tmp}/share" "${tmp}/conf" "${tmp}/images"
             mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
             cleanups "$DM_t/$tlng/.share/audio/.mp3" "$DM_t/$tlng/.share/images/.jpg"
-            #echo "${tpc}" >> "$DM_tl/.share/3.cfg"
             echo -e "$total_lbl $total\n$audio_lbl $naud\n$image_lbl $nimg\n$trans_lbl $tran" > "${DC_tlt}/download"
             "$DS/ifs/tls.sh" colorize 0
             cleanups "$DT/download"

@@ -19,6 +19,11 @@ l5="$(gettext "Practice:") "
 l6="$(gettext "Back to Practice:") "
 f="$DT/tasks"; cleanups "$f"
 
+while read -r addon; do
+	if [ -e "$DC_a/$addon.tasks" ]; then
+		cat "$DC_a/$addon.tasks" >> "$f"
+	fi
+done < "$DS_a/menu_list"
 
 if [ -e "$DM_tls/5.cfg" ]; then
 	while read -r line; do

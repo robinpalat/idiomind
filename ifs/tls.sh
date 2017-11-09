@@ -317,11 +317,11 @@ add_file() {
 
 videourl() {
     source "$DS/ifs/mods/cmns.sh"
-    n=$(ls *.url "${DM_tlt}/files/" | wc -l)
+    n=$(ls *.url "${DM_tlt}/files/" |wc -l)
     url=$(yad --form --title=" " \
     --name=Idiomind --class=Idiomind \
     --separator="" \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --skip-taskbar --center --on-top \
     --width=420 --height=100 --borders=5 \
     --field="$(gettext "URL")" \
@@ -342,9 +342,9 @@ videourl() {
 addFiles() {
 	yad --form --title="$(gettext "Attached Files")" \
 	--name=Idiomind --class=Idiomind \
-	--window-icon="$DS/images/icon.png" --center \
+	---window-icon=idiomind --center \
 	--width=350 --height=100 --borders=5 \
-	--field="$(gettext "Add")":FBTN "$DS/ifs/tls.sh 'add_file'" \
+	--field="$(gettext "Add files")":FBTN "$DS/ifs/tls.sh 'add_file'" \
 	--field="$(gettext "YouTube URL")":FBTN "$DS/ifs/tls.sh 'videourl'" \
 	--button="$(gettext "Cancel")":1 \
 	--button="$(gettext "OK")":0
@@ -434,7 +434,7 @@ echo "</body></html>" >> "${DC_tlt}/att.html"
 	     yad --html --title="$(gettext "Attached Files")" \
 		--name=Idiomind --class=Idiomind \
 		--encoding=UTF-8 --uri="${DC_tlt}/att.html" --browser \
-		--window-icon="$DS/images/icon.png" --center \
+		--window-icon=idiomind --center \
 		--width=${sz[0]} --height=${sz[1]} --borders=10 \
 		--button="$(gettext "Folder")":"xdg-open \"${DM_tlt}\"/files" \
 		--button="$(gettext "Add")":0 \

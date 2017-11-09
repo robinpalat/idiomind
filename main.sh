@@ -2,8 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 #  Copyright 2015-2017 Robin Palatnik
-#  Email robinpalat@users.sourceforge.net
-#  Web site https://idiomind.sourceforge.net
+#  Email patapatass@hotmail.com
 #  
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -57,7 +56,6 @@ function new_session() {
     ( sleep 5 && "${strt}" ); done &
     
     check_list > "$DM_tl/.share/2.cfg"
-    #check_index1 "$DM_tl/.share/3.cfg"
     
     if ls "$DC_s"/*.p 1> /dev/null 2>&1; then
     cd "$DC_s"/; rename 's/\.p$//' *.p; fi; cd /
@@ -178,7 +176,6 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
                 done
                 name="${name} ($i)"
             fi
-            
             check_dir "$DM_t/$tlng" "$DM_t/$tlng/.share/images" \
             "$DM_t/$tlng/.share/audio" "$DM_t/$tlng/.share/data" \
             "$DM_t/$tlng/${name}/.conf/practice"
@@ -227,7 +224,6 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
                 touch "${DC_tlt}/slng_err"
             fi
             echo 1 > "${DC_tlt}/8.cfg"
-            #echo "${name}" >> "$DM_tl/.share/3.cfg"
             source /usr/share/idiomind/default/c.conf
             "$DS/mngr.sh" mkmn 1
             "$DS/ifs/tpc.sh" "${name}" 1 &
@@ -521,6 +517,8 @@ case "$1" in
     "$DS/add.sh" new_item "${@}" ;;
     feeds)
     "$DS/mngr.sh" edit_feeds "${tpc}" ;;
+    tasks)
+    "$DS/ifs/mods/start/update_tasks.sh" ;;
     panel)
     ipanel ;;
     stop)
