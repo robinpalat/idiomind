@@ -353,9 +353,10 @@ function upld() {
             fi
             cp -r "$DC_tlt/translations" "$DT_u/files/translations"
         fi
-
+		export slng
+		
         export naud=$(find "$DT_u/files" -maxdepth 5 -name '*.mp3' |wc -l)
-        export nimg=$(cd "$DT_u/files/images"/; ls *.jpg |wc -l)
+        
         cp "${DC_tlt}/6.cfg" "$DT_u/files/conf/6.cfg"
         
         ### Get text for info variable
@@ -368,10 +369,7 @@ function upld() {
         export info="$(sed '/^$/d' "$DT_u/files/conf/info")"
 		cleanups "$DT_u/files/conf/info"
 		
-		### split tar.gz, if file is big
-        
         ### get data for html
-       
         body="$(echo -e "$note_mod" |sed 's/\&/&amp;/g')"
         eval c="$(sed -n 4p "$DS/default/vars")"
         echo -e "${c}" > "${DC_tlt}/id.cfg"
@@ -399,41 +397,43 @@ function upld() {
             eval item="$(sed -n 1p "$DS/default/vars")"
             [ -n "${trgt}" ] && echo -en "${item}" >> "${idmnd}"
         done < <(sed 's|"|\\"|g' < "${DC_tlt}/0.cfg")
+        export nimg=$(cd "$DT_u/files/images"/; ls *.jpg |wc -l)
         
+        ### set head info
         sed -i 's/,$//' "${idmnd}"
         echo "}," >> "${idmnd}"
-        
-        cd "$DT/upload"/; export nsze=$(du -h . |cut -f1)
+        cd "$DT_u"; export nsze=$(du -sh ./* |sort -hr |head -n1 |cut -f1)
         eval head="$(sed -n 3p "$DS/default/vars")"
         echo -e "${head}}" >> "${idmnd}"
         
+        ### split tar.gz
         find "$DT_u"/ -type f -exec chmod 644 {} \;
-        tar czpvf - ./"files" |split -d -b 2500k - ./"${ilnk}"
-        rm -fr ./"files"; rename 's/(.*)/$1.tar.gz/' *
+        tar czpvf - ./"files" |split -d -b 2500k - ./"${ilnk}.tar.gz"
+        rm -fr ./"files"
 
-        python << END
-import os, sys, requests, time, xmlrpclib
-reload(sys)
-sys.setdefaultencoding("utf-8")
-autr = os.environ['autr']
-pssw = os.environ['pass']
-tpc = os.environ['tpc']
-body = os.environ['body']
-try:
-    server = xmlrpclib.Server('http://idiomind.net/community/xmlrpc.php')
-    nid = server.metaWeblog.newPost('blog', autr, pssw, 
-    {'title': tpc, 'description': body}, True)
-except:
-    sys.exit(3)
-url = requests.get('http://idiomind.sourceforge.net/uploads.php').url
-DT_u = os.environ['DT_u']
-volumes = [i for i in os.listdir(DT_u)]
-for f in volumes:
-    fl = {'file': open(DT_u + f, 'rb')}
-    print f
-    r = requests.post(url, files=fl)
-    time.sleep(5)
-END
+        #python << END
+#import os, sys, requests, time, xmlrpclib
+#reload(sys)
+#sys.setdefaultencoding("utf-8")
+#autr = os.environ['autr']
+#pssw = os.environ['pass']
+#tpc = os.environ['tpc']
+#body = os.environ['body']
+#try:
+    #server = xmlrpclib.Server('http://idiomind.net/community/xmlrpc.php')
+    #nid = server.metaWeblog.newPost('blog', autr, pssw, 
+    #{'title': tpc, 'description': body}, True)
+#except:
+    #sys.exit(3)
+#url = requests.get('http://idiomind.sourceforge.net/uploads.php').url
+#DT_u = os.environ['DT_u']
+#volumes = [i for i in os.listdir(DT_u)]
+#for f in volumes:
+    #fl = {'file': open(DT_u + f, 'rb')}
+    #print f
+    #r = requests.post(url, files=fl)
+    #time.sleep(5)
+#END
         u=$?
         if [ $u = 0 ]; then
             info="\"$tpc\"\n<b>$(gettext "Uploaded correctly")</b>\n"

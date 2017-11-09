@@ -20,6 +20,9 @@ chngtpc(){
 modmenu() {
 	grep -vxF "${1}" "$DT/tasks" > "$DT/tasks.tmp"
     sed '/^$/d' "$DT/tasks.tmp" > "$DT/tasks"
+    cleanups "$DT/tasks.tmp"
+    c1=$(cat "$DT/tasks" |wc -l)
+    [[ ${c1} = 0 ]] && > "$DT/tasks"
 }
 
 if [ "${act}" = "$l1" ]; then

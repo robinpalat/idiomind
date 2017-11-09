@@ -71,7 +71,7 @@ set_lang() {
 }
 
 config_dlg() {
-    sz=(520 370); [[ ${swind} = TRUE ]] && sz=(460 320)
+    sz=(520 360); [[ ${swind} = TRUE ]] && sz=(460 320)
     if [ ${cfg} = 1 ]; then
         for get in ${csets[@]}; do
             val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
