@@ -11,12 +11,13 @@
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 echo -e "\n------------- updating tasks..."
-l1="$(gettext "To Repass (new):") "
-l2="$(gettext "Priority to Repass (new):") "
-l3="$(gettext "To Repass:") "
-l4="$(gettext "Priority to Repass:") "
+l1="$(gettext "To Review (new):") "
+l2="$(gettext "To Review (overdue) (new):") "
+l3="$(gettext "To Review:") "
+l4="$(gettext "To Review (overdue):") "
 l5="$(gettext "Practice:") "
 l6="$(gettext "Back to Practice:") "
+l7="$(gettext "Finalize Review (overdue):") "
 f="$DT/tasks"; cleanups "$f"
 
 while read -r addon; do
@@ -25,6 +26,7 @@ while read -r addon; do
 	fi
 done < "$DS_a/menu_list"
 
+## practice issues
 if [ -e "$DM_tls/5.cfg" ]; then
 	while read -r line; do
 		tpc="$(cut -d '|' -f1 <<< "${line}")"
@@ -45,10 +47,13 @@ if [ -e "$DM_tls/4.cfg" ]; then
 			echo "$l2$tpc" >> "$f"
 		elif [ $cdg = 4 ]; then
 			echo "$l4$tpc" >> "$f"
+		elif [ $cdg = 7 ]; then
+			echo "$l7$tpc" >> "$f"
 		fi
 	done < "$DM_tls/4.cfg"
 fi
 
+## practice issues
 if [ -e "$DM_tls/3.cfg" ]; then
 	while read -r line; do
 		tpc="$(cut -d '|' -f1 <<< "${line}")"

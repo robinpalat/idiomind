@@ -3,24 +3,25 @@
 source /usr/share/idiomind/default/c.conf
 
 arg="$1"
-l1="$(gettext "To Repass (new):") "
-l2="$(gettext "Priority to Repass (new):") "
-l3="$(gettext "To Repass:") "
-l4="$(gettext "Priority to Repass:") "
+l1="$(gettext "To Review (new):") "
+l2="$(gettext "To Review (overdue) (new):") "
+l3="$(gettext "To Review:") "
+l4="$(gettext "To Review (overdue):") "
 l5="$(gettext "Practice:") "
 l6="$(gettext "Back to Practice:") "
+l7="$(gettext "Finalize Review (overdue):") "
 tpt="${arg#*: }"
 act="${arg%%:*}"
 
 chngtpt(){
 	mode="$(< "$DM_tl/${1}/.conf/8.cfg")"
-	"$DS/ifs/tpt.sh" "${1}" ${mode} ${2}
+	"$DS/ifs/tpc.sh" "${1}" ${mode} ${2}
 }
 
 modmenu() {
 	grep -vxF "${1}" "$DT/tasks" > "$DT/tasks.tmp"
     sed '/^$/d' "$DT/tasks.tmp" > "$DT/tasks"
-    cleanups "$DT/tasks.tmp"
+    [ -f "$DT/tasks.tmp" ] && rm "$DT/tasks.tmp"
     c1=$(cat "$DT/tasks" |wc -l)
     [[ ${c1} = 0 ]] && > "$DT/tasks"
 }

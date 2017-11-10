@@ -13,7 +13,7 @@ mkmn() {
     f_lock "$DT/mn_lk"
     cleanups "$DM_tl/images" "$DM_tl/.conf"
     dirimg='/usr/share/idiomind/images'
-    > "$DM_tl"/.share/0.cfg
+	cfg0="$DM_tl/.share/0.cfg"; > "$cfg0"
 
     while read -r tpc; do
         dir="$DM_tl/${tpc}/.conf"; unset stts
@@ -24,16 +24,15 @@ mkmn() {
             stts=$(sed -n 1p "${dir}/8.cfg")
             ! [[ ${stts} =~ $numer ]] && stts=13
         fi
-		echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.share/0.cfg"
+		echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$cfg0"
 
     done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
     -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d'; \
     find ./ -maxdepth 1 -mtime +79 -type d -not -path '*/\.*' \
     -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
 
-    if [[ "$2" = 1 ]]; then
-        source "$DS/ifs/stats.sh"; save_topic_stats 0
-    fi
+    [[ "$2" = 1 ]] && (source "$DS/ifs/stats.sh"; save_topic_stats 0) &
+
     cleanups "$DT/mn_lk"; exit 0
 }
 
@@ -692,7 +691,6 @@ rename_topic() {
     listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
     ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
 
-    #if grep -Fxo "${tpc}" < "$DM_tl/.share/2.cfg"; then i=1; fi
     name="$(clean_3 "${2}")"
     
     if grep -Fxo "${name}" < <(ls "$DS/addons/"); then name="${name} (1)"; fi
@@ -810,7 +808,7 @@ mark_as_learned_topic() {
     if [[ "${3}" != 0 ]]; then
         if [ "${tpc}" != "${2}" ]; then
         msg "$(gettext "Sorry, this topic is currently not active.")\n " dialog-information "$(gettext "Information")" & exit; fi
-        if [ $((cfg3+cfg4)) -le 15 ]; then
+        if [ $((cfg3+cfg4)) -le 11 ]; then
         msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
         dialog-information "$(gettext "Information")" & exit; fi
     fi
@@ -828,8 +826,8 @@ mark_as_learned_topic() {
             ! [[ ${steps} =~ ${numer} ]] && steps=1
             
             if [ ${steps} -eq 4 ]; then
-                stts=$((stts+1)); fi
-            
+                stts=$((stts+1))
+            fi
             if [ ${RM} -ge 50 ]; then
                 if [ ${steps} -eq 8 ]; then
                     sed -i '$ d' "${DC_tlt}/9.cfg"
@@ -895,8 +893,8 @@ mark_to_learnt_topic_ok() {
                 ! [[ ${steps} =~ ${numer} ]] && steps=1
                 
                 if [ ${steps} -eq 4 ]; then
-                    stts=$((stts+1)); fi
-                
+                    stts=$((stts+1))
+                fi
                 if [ ${RM} -ge 50 ]; then
                     if [ ${steps} -eq 8 ]; then
                         sed -i '$ d' "${DC_tlt}/9.cfg"
@@ -914,8 +912,8 @@ mark_to_learnt_topic_ok() {
             
             if [ -d "${DC_tlt}/practice" ]; then
                 (cd "${DC_tlt}/practice"; rm ./.*; rm ./*
-                touch ./log1 ./log2 ./log3); fi
-
+                touch ./log1 ./log2 ./log3)
+            fi
             > "${DC_tlt}/7.cfg"
             if [[ $((stts%2)) = 0 ]]; then
                 echo 4 > "${DC_tlt}/8.cfg"

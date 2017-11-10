@@ -605,7 +605,7 @@ function dlg_checklist_3() {
     --name=Idiomind --class=Idiomind \
     --skip-taskbar --orient=vert --window-icon=idiomind --center --on-top \
     --gtkrc="$DS/default/gtkrc.cfg" \
-    --width=700 --height=450 --borders=5 --splitter=350 \
+    --width=700 --height=400 --borders=5 --splitter=300 \
     --button="gtk-edit":2 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Add")"!'list-add':0

@@ -9,22 +9,19 @@ activ="${3}"
 DC_tlt="$DM_tl/${topic}/.conf"
 DM_tlt="$DM_tl/${topic}"
 export mode
+mode2=$((mode+mode%2))
 
 chek_topic() {
     if [ ! -d "${DC_tlt}" -o ! -e "${DC_tlt}/id.cfg" ]; then
         mkdir -p "${DM_tlt}/images"
         mkdir "${DC_tlt}"; cd "${DC_tlt}"
-        for i in {0..10}; do touch "${DC_tlt}/${i}.cfg"; done
-        rm ./"7.cfg" ./"9.cfg"
+        for i in {0..6} 8 10; do touch "${DC_tlt}/${i}.cfg"; done
         echo " " > "info"
         echo ${mode} > ./"8.cfg"; cd /
     fi
-    
-    if [ ${mode} = 7 ] || [ ${mode} = 8 ] || \
-    [ ${mode} = 9 ] || [ ${mode} = 10 ]; then
+    if [[ ${mode2} = 4 ]] || [ ${mode2} = 8 ] || [ ${mode2} = 10 ]; then
          [ ! -e "${DC_tlt}/7.cfg" ] && touch "${DC_tlt}/7.cfg"
     fi
-    
     if [ ! -e "$DT/n_s_pr" ]; then
         "$DS/ifs/tls.sh" check_index "${topic}"
     fi

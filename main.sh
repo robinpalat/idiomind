@@ -51,9 +51,6 @@ function new_session() {
     fi
     
     f_lock "$DT/ps_lk"
-    # run scripts
-    for strt in "$DS/ifs/mods/start"/*; do
-    ( sleep 5 && "${strt}" ); done &
     
     check_list > "$DM_tl/.share/2.cfg"
     
@@ -68,16 +65,17 @@ function new_session() {
     echo -n "create table if not exists Config (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
     fi
 
-    # log file
+    # log of practices
     if [ -f "$DC_s/log" ]; then
         if [[ "$(du -sb "$DC_s/log" |awk '{ print $1 }')" -gt 100000 ]]; then
         tail -n2000 < "$DC_s/log" > "$DT/log"
         mv -f "$DT/log" "$DC_s/log"; fi
     fi
     
-    # update topic status
+    # update the topics
     echo -e "\n------------- updating topics status..."
     cleanups "$DM_tls/3.cfg" "$DM_tls/4.cfg"
+    tdate=$(date +%Y%m%d)
 	while read -r line; do
 		unset stts
 		dir="$DM_tl/${line}/.conf"
@@ -87,7 +85,7 @@ function new_session() {
 		! [[ ${stts} =~ $numer ]] && stts=1
 		[[ ${stts} = 12 ]] && continue
 		
-		if [ -e "${dir}/9.cfg" ] && [ -e "${dir}/7.cfg" ]; then
+		if [ $((stts+stts%2)) = 4 -o $((stts+stts%2)) = 8 ]; then
 			calculate_review "${line}"
 			if [[ $((stts%2)) = 0 ]]; then
 				if [ ${RM} -ge 180 -a ${stts} = 8 ]; then
@@ -114,11 +112,23 @@ function new_session() {
 					echo "${line}|4" >> "$DM_tls/4.cfg"
 				fi
 			fi
+		elif [[ $((stts+stts%2)) = 6 ]]; then
+			datedir=$(stat -c %y "$dir" |cut -d ' ' -f1)
+			cdate=$(date -d $datedir +"%Y%m%d")
+			if [ $((tdate-cdate)) -gt 20 ]; then
+				echo "${line}|7" >> "$DM_tls/4.cfg"
+			fi
 		fi
-	done < <(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
+	done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
 	-not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
 
     rm -f "$DT/ps_lk"
+    
+    # run startups scripts
+    for strt in "$DS/ifs/mods/start"/*; do
+    ( sleep 5 && "${strt}" ); done &
+    
+    # make menu index
     "$DS/mngr.sh" mkmn 0 &
     echo -e "------------- topics updated\n"
     
