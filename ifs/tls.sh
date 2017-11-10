@@ -554,7 +554,8 @@ promp_topic_info() {
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
-    slng_err_lbl="$(gettext "The native language of this topic does not match your current configuration.  \nYou may need to translate it:\nClick \"Edit\" tab on the main window, click \"Translate\" button, \nand then in \"Automatic Translation\" select from the list of languages:\n") \"$slng\"\n"
+    slng_err_lbl="$(gettext "You may need to translate this topic to your language: click \"Edit\" tab on the main window, click \"Translate\" button, and then in \"Automatic Translation\" select from the list of languages:") \"$slng\""
+    slng_err_lbl="$(printf '%s\n' "$slng_err_lbl"| fold -s -w80)"
     
     if [ -e "${DC_tlt}/note_err" ]; then
         include "$DS/ifs/mods/add"
@@ -563,14 +564,14 @@ promp_topic_info() {
     fi
     if [ -e "${DC_tlt}/slng_err" ]; then
         msg "$slng_err_lbl" "face-worried" \
-        "$(gettext "Language does not match")" \
-        "$(gettext "Close")"
+        "$(gettext "Languages")" \
+        "$(gettext "OK")"
         cleanups "${DC_tlt}/slng_err"
         
     elif [ -n "$active_trans" -a "$active_trans" != "$slng" ]; then
         msg "$slng_err_lbl" "face-worried" \
-        "$(gettext "Language does not match")" \
-        "$(gettext "Close")"
+        "$(gettext "Languages")" \
+        "$(gettext "OK")"
     fi
     
 } >/dev/null 2>&1
@@ -589,7 +590,7 @@ first_run() {
         --button="$(gettext "OK")":0
         [ $? = 1 ] && rm -f "${file}" "${file}".p
     }
-    NOTE2="$(gettext "If you modify the text of an item, its audio file can be overwritten by another new file, to avoid this you can edit it individually through its edit dialog.\nClose and reopen the main window to see any changes.")\n"
+    NOTE2="$(gettext "Note: if you modify the text of an item, its audio file can be overwritten by another one, to avoid this you can edit it individually through its edit dialog.\nClose and reopen the main window to see any changes.")"
     NOTE3="$(gettext "To start adding notes you need to have a Topic.\nCreate one using the "New" button...")"
 
     if [[ ${2} = edit_list ]]; then

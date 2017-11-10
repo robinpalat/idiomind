@@ -34,6 +34,8 @@ elif [ "${act}: " = "$l3" ]; then
 	modmenu "$arg"; chngtpt "$tpt"
 elif [ "${act}: " = "$l4" ]; then
 	modmenu "$arg"; chngtpt "$tpt"
+elif [ "${act}: " = "$l7" ]; then
+	modmenu "$arg"; chngtpt "$tpt"
 elif [ "${act}: " = "$l5" ]; then
 	modmenu "$arg"; chngtpt "$tpt" 1
 	"$DS/practice/strt.sh" &

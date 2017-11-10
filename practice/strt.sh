@@ -851,7 +851,7 @@ function strt() {
         info="<small>$(gettext "Total")</small> <b><big>$all</big></b>    <small>$(gettext "Learnt")</small> <b><big>$learnt</big></b>    <small>$(gettext "Easy")</small> <b><big>$easy</big></b>    <small>$(gettext "Learning")</small> <b><big>$ling</big></b>    <small>$(gettext "Difficult")</small> <b><big>$hard</big></b>\n"
     fi
 
-    pr="$(yad --list --title="$(gettext "Practice ") $title_act_pract" \
+    pr="$(yad --list --title="$tpc  -  $(gettext "Practice ")"\
     --text="${info}" \
     --class=Idiomind --name=Idiomind \
     --print-column=1 --separator="" \
