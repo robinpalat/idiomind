@@ -120,7 +120,7 @@ config_dlg() {
     --field="$(gettext "Interface language")":CB "$lst" \
     --field="<a href=\"$lk\">$(gettext "Join Idiomind translation")</a>\t":LBL " " \
     --field=" :LBL" " " --field=":LBL" " " \
-    --field="$(gettext "Help")":BTN "$DS/ifs/tls.sh help" \
+    --field="$(gettext "Get started")":BTN "$DS/ifs/tls.sh help" \
     --field="$(gettext "Report a problem")":BTN "$DS/ifs/tls.sh fback" \
     --field="$(gettext "Check for updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
     --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &

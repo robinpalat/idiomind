@@ -20,11 +20,6 @@ l6="$(gettext "Back to Practice:") "
 l7="$(gettext "Finalize Review (overdue):") "
 f="$DT/tasks"; cleanups "$f"
 
-while read -r addon; do
-	if [ -e "$DC_a/$addon.tasks" ]; then
-		cat "$DC_a/$addon.tasks" >> "$f"
-	fi
-done < "$DS_a/menu_list"
 
 ## practice issues
 if [ -e "$DM_tls/5.cfg" ]; then
@@ -36,7 +31,7 @@ if [ -e "$DM_tls/5.cfg" ]; then
 		elif [ $cdg = 6 ]; then
 			echo "$l6$tpc" >> "$f"
 		fi
-	done < "$DM_tls/5.cfg"
+	done < <(tac "$DM_tls/5.cfg")
 fi
 
 if [ -e "$DM_tls/4.cfg" ]; then
@@ -50,7 +45,7 @@ if [ -e "$DM_tls/4.cfg" ]; then
 		elif [ $cdg = 7 ]; then
 			echo "$l7$tpc" >> "$f"
 		fi
-	done < "$DM_tls/4.cfg"
+	done < <(tac "$DM_tls/4.cfg")
 fi
 
 ## practice issues
@@ -63,8 +58,14 @@ if [ -e "$DM_tls/3.cfg" ]; then
 		elif [ $cdg = 3 ]; then
 			echo "$l3$tpc" >> "$f"
 		fi
-	done < "$DM_tls/3.cfg"
+	done < <(tac "$DM_tls/3.cfg")
 fi
+
+while read -r addon; do
+	if [ -e "$DC_a/$addon.tasks" ]; then
+		tac "$DC_a/$addon.tasks" >> "$f"
+	fi
+done < "$DS_a/menu_list"
 
 echo -e "------------- tasks updated\n"
 exit

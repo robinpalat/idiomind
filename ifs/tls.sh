@@ -749,16 +749,15 @@ translate_to() {
         --text="$(gettext "The current Native language of this topic is") <b>$active_trans</b>" \
         --text-align=center --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top \
-        --width=390 --height=340 --borders=10 \
+        --width=390 --height=300 --borders=10 \
         --field="":LBL " " \
         --field="<b>$(gettext "Verified translations") </b> ":LBL " " \
         --field="$active_trans — $(gettext "The  accuracy of this translation was verified")":CHK "$chk" \
         --field="<small>$(gettext "This topic has no verified translations.")</small>":LBL " " \
         --field=" ":LBL " " \
         --field="":LBL " " \
-        --field="\n<b>$(gettext "Automatic translation")</b> ":LBL " " \
-        --field="$(gettext "Select Native language to translate automaticly:")":LBL " " \
-        --field="":CB "${list_transl}" \
+        --field="<b>$(gettext "Automatic translation")</b> ":LBL " " \
+        --field="$(gettext "Select Native language to translate automaticly:")":CB "${list_transl}" \
         --field="<small>$(gettext "Note that translation from google translate service sometimes is inaccurate especially in complex frases.")</small>":LBL " " \
         --button="$(gettext "Apply")"!gtk-apply:0 \
         --button="$(gettext "Cancel")":1)"; ret="$?"
@@ -768,24 +767,22 @@ translate_to() {
         --text="$(gettext "The current Native language of this topic is") <b>$active_trans</b>" \
         --text-align=center --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top \
-        --width=390 --height=340 --borders=10 \
+        --width=390 --height=300 --borders=10 \
         --field="":LBL " " \
         --field="<b>$(gettext "Verified translations") </b> ":LBL " " \
         --field="$active_trans — $(gettext "The  accuracy of this translation was verified")":CHK "$chk" \
-        --field="$(gettext "Change the Native language:")":LBL " " \
-        --field="":CB "!${list_transl_saved}" \
+        --field="$(gettext "Change the Native language:")":CB "!${list_transl_saved}" \
         --field="":LBL " " \
-        --field="\n<b>$(gettext "Automatic translation")</b> ":LBL " " \
-        --field="$(gettext "Select Native language to translate automaticly:")":LBL " " \
-        --field="":CB "${list_transl}" \
+        --field="<b>$(gettext "Automatic translation")</b> ":LBL " " \
+        --field="$(gettext "Select Native language to translate automaticly:")":CB "${list_transl}" \
         --field="<small>$(gettext "Note that translation from google translate service sometimes is inaccurate especially in complex frases.")</small>":LBL " " \
         --button="$(gettext "Apply")"!gtk-apply:0 \
         --button="$(gettext "Cancel")":1)"; ret="$?"
     fi
     
-    review_trans="$(cut -f5 -d'|' <<< "$ldgl")"
+    review_trans="$(cut -f4 -d'|' <<< "$ldgl")"
     review_chek="$(cut -f3 -d'|' <<< "$ldgl")"
-    autom_trans="$(cut -f9 -d'|' <<< "$ldgl")"
+    autom_trans="$(cut -f7 -d'|' <<< "$ldgl")"
     
     if [ "$ret" = 0 ]; then
     
