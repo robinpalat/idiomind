@@ -104,13 +104,14 @@ play_list() {
 
     btn1="$(gettext "Play"):0"
     if [ "$(< $DT/playlck)" = 0 ]; then
-        btn2="--center"
         title="$(gettext "Play")"
+        cmdCls=1
         [ ${mode} -ge 1 -a -n "${tpc}" ] && title="${tpc}"
     else
         tpp="$(gettext "Playing:") $(sed -n 1p "$DT/playlck") ..."
         title="${tpp}"
-        btn2="--button=$(gettext "Stop"):2"
+        btn1="$(gettext "Stop"):2"
+        cmdCls=0
     fi
     [ -z "$rword" ] && rword=0
     set="$(echo "${iteml[${rword}]}")"
@@ -145,7 +146,7 @@ play_list() {
     --tab=" $(gettext "Lists") " \
     --tab="$(gettext "Options")" \
     --width=400 --height=260 --borders=5 \
-    "$btn2" --button="$btn1" --button="$(gettext "Close")":1
+    --button="$btn1" --button="$(gettext "Close")":$cmdCls
     ret=$?
         out1=$(< $tab1); out2=$(< $tab2)
         [ -f "$tab1" ] && rm -f "$tab1"; [ -f "$tab2" ] && rm -f "$tab2"

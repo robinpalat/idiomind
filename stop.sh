@@ -9,6 +9,7 @@ on_quit() {
     if ps -A |pgrep -f "/usr/share/idiomind/vwr.sh"; then killall vwr.sh & fi
     if ps -A |pgrep -f "/usr/share/idiomind/main.sh"; then killall main.sh & fi
     if ps -A |pgrep -f "/usr/share/idiomind/ifs/clipw.sh"; then killall clipw.sh & fi
+    if ps -A |pgrep -f "espeak"; then killall espeak & fi
     if ps -A |pgrep -f "yad --fixed --form"; then
     kill -9 $(pgrep -f "yad --fixed --form") >/dev/null 2>&1 & fi
     if ps -A |pgrep -f "mplayer"; then killall mplayer & fi
@@ -32,6 +33,7 @@ on_quit() {
 on_play() {
     [ -e "$DT/playlck" ] && echo 0 > "$DT/playlck"
     killall bcle.sh &
+    if ps -A |pgrep -f "espeak"; then killall espeak & fi
     if ps -A |pgrep -f "mplayer"; then killall mplayer & fi
     if ps -A |pgrep -f "/usr/share/idiomind/bcle.sh"; then killall bcle.sh & fi
     if ps -A |pgrep -f "/usr/share/idiomind/chng.sh"; then killall chng.sh; fi
@@ -43,6 +45,7 @@ on_play() {
 on_playm() {
     [ -e "$DT/playlck" ] && echo 0 > "$DT/playlck"
     killall bcle.sh &
+    if ps -A |pgrep -f "espeak"; then killall espeak & fi
     if ps -A |pgrep -f "/usr/share/idiomind/bcle.sh"; then killall bcle.sh & fi
     if ps -A |pgrep -f "/usr/share/idiomind/chng.sh"; then killall chng.sh & fi
     return

@@ -21,7 +21,7 @@ l7="$(gettext "Finalize Review (overdue):") "
 f="$DT/tasks"; cleanups "$f"
 
 
-## practice issues
+## topics 
 if [ -e "$DM_tls/5.cfg" ]; then
 	while read -r line; do
 		tpc="$(cut -d '|' -f1 <<< "${line}")"
@@ -48,7 +48,7 @@ if [ -e "$DM_tls/4.cfg" ]; then
 	done < <(tac "$DM_tls/4.cfg")
 fi
 
-## practice issues
+## practice 
 if [ -e "$DM_tls/3.cfg" ]; then
 	while read -r line; do
 		tpc="$(cut -d '|' -f1 <<< "${line}")"
@@ -61,6 +61,7 @@ if [ -e "$DM_tls/3.cfg" ]; then
 	done < <(tac "$DM_tls/3.cfg")
 fi
 
+## addons 
 while read -r addon; do
 	if [ -e "$DC_a/$addon.tasks" ]; then
 		tac "$DC_a/$addon.tasks" >> "$f"

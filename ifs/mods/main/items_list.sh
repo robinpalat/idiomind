@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-sz=(580 560); [[ ${swind} = TRUE ]] && sz=(480 440)
+sz=(580 560 480); [[ ${swind} = TRUE ]] && sz=(480 460 400)
 function vwr() {
     [ ${1} = 1 ] && index="${DC_tlt}/1.cfg" && item_name="$(sed 's/<[^>]*>//g' <<< "${3}")"
     [ ${1} = 2 ] && index="${DC_tlt}/2.cfg" && item_name="$(sed 's/<[^>]*>//g' <<< "${2}")"
@@ -141,16 +141,18 @@ function notebook_1() {
     awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE\n"$0""}'; fi; }
 
     list | yad --list --tabnum=1 \
-    --plug=$KEY --print-all --separator='|' --wrap-width=20 --wrap-cols=2 \
+    --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 1" --grid-lines=hor \
-    --print-column=2 --expand-column=2 --no-headers --ellipsize=end \
+    --print-column=2 --expand-column=2 --no-headers \
+    --ellipsize=end --wrap-width=${sz[2]} --ellipsize-cols=1 \
     --search-column=2 --regex-search --hide-column=4 --tooltip-column=4 \
     --column=Name:IMG --column=Name:TEXT \
     --column=Learned:CHK --column=@back@:TIP > "$cnf1" &
     cat "${ls2}" | yad --list --tabnum=2 \
-    --plug=$KEY --print-all --separator='|' --grid-lines=hor \
+    --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2"  \
-    --expand-column=0 --no-headers --ellipsize=end  \
+    --expand-column=0 --no-headers \
+    --ellipsize=end --wrap-width=${sz[2]} --ellipsize-cols=1 \
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \
     --plug=$KEY \

@@ -320,7 +320,7 @@ function list_words_sentence() {
 
 function list_words_dclik() {
     source "$DS/ifs/mods/add/add.sh"
-    words="${3}"
+    words="$(sed 's/<[^>]*>//g' <<< "${3}")"
     
     if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then
         ( echo "#"
@@ -400,7 +400,7 @@ function process() {
                 if [ $(wc -c <<< "${1}") -le ${sentence_chars} ]; then
                     echo -e "${1}" >> "$DT_r/xlines"
                 else
-                    echo -e "[ ... ]  ${1}" >> "$DT_r/xlines"
+                    echo -e "${1}" >> "$DT_r/xlines"
                 fi
             }
         else
@@ -408,7 +408,7 @@ function process() {
                 if [ $(wc -c <<< "${1}") -le ${sentence_chars} ]; then
                     [ ${#1} -gt 1 ] && echo -e "${1}" >> "$DT_r/xlines"
                 else
-                    echo -e "[ ... ]  ${1}" >> "$DT_r/xlines"
+                    echo -e "${1}" >> "$DT_r/xlines"
                 fi
             }
         fi
@@ -416,21 +416,27 @@ function process() {
             while read l; do
                 if [ $(wc -c <<< "${l}") -gt 140 ]; then
                     if grep -o -E '\,|\;' <<< "${l}" >/dev/null 2>&1; then
-                        while read -r split; do
-                            if [ $(wc -c <<< "${split}") -le 140 ]; then
-                                lenght "${split}"
-                            else
-                                while read -r split2; do
-                                  if [ $(wc -c <<< "${split2}") -le 140 ]; then
-										lenght "${split2}"
+						while read -r A; do
+							if [ $(wc -c <<< "${A}") -le 140 ]; then
+								lenght "${A}"
+							else									
+								while read -r B; do
+									if [ $(wc -c <<< "${B}") -le 140 ]; then
+										lenght "${B}"
 									else
-										while read -r split3; do
-											lenght "${split3}"
-										done < <(sed 's/\—/\—\n/g' <<< "${split}")
+										while read -r C; do
+										  if [ $(wc -c <<< "${C}") -le 140 ]; then
+												lenght "${C}"
+											else
+												while read -r D; do
+													lenght "${D}"
+												done < <(sed 's/\—/\—\n/g' <<< "${C}")
+											fi
+										done < <(sed 's/\;/\;\n/g' <<< "${B}")
 									fi
-                                done < <(sed 's/\;/\;\n/g' <<< "${split}")
-                            fi
-                        done < <(sed 's/\,/\,\n/g' <<< "${l}")
+								done < <(sed 's/\,/\,\n/g' <<< "${A}")
+							fi
+                        done < <(sed 's/\,"/\,"\n/g' <<< "${l}")
                     else
                         lenght "${l}"
                     fi
@@ -457,7 +463,7 @@ function process() {
         export slt=$(mktemp $DT/slt.XXXXXX.x)
         export tpcs="$(grep -vFx "${tpe}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
         [ -n "$tpcs" ] && export e='!'
-        tpe=`dlg_checklist_3 "$DT_r/xlines" "${tpe}"`
+        tpe="$(dlg_checklist_3 "$DT_r/xlines" "${tpe}")"
         ret="$?"
     fi
     if [ $ret -eq 2 ]; then

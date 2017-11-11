@@ -1,7 +1,6 @@
 #!/bin/bash
 
 source /usr/share/idiomind/default/c.conf
-
 arg="$1"
 l1="$(gettext "To Review (new):") "
 l2="$(gettext "To Review (overdue) (new):") "
@@ -43,10 +42,14 @@ elif [ "${act}: " = "$l6" ]; then
 	modmenu "$arg"; chngtpt "$tpt" 1
 	"$DS/practice/strt.sh" &
 else
-	a="$(echo "$tpt" |grep -oP '(?<=\[).*(?=\])')"
-	if [ -f "$DS/addons/$a/cnfg.sh" ]; then
-		"$DS/addons/$a/cnfg.sh" tasks "$tpt" &
-		modmenu "$arg"
-	fi
+	while read -r addon; do
+		if [ -e "$DC_a/$addon.tasks" ]; then
+			if grep -o "$arg" "$DC_a/$addon.tasks"; then
+				"$DS/addons/$addon/cnfg.sh" tasks "$tpt" &
+				modmenu "$arg"
+				break
+			fi
+		fi
+	done < "$DS_a/menu_list"
 fi
 

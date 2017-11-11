@@ -589,10 +589,20 @@ function dlg_form_2() {
 }
 
 function dlg_checklist_3() {
+	sz=(700 400 300 350); [[ ${swind} = TRUE ]] && sz=(600 340 240 250)
     fkey=$((RANDOM*$$))
-    awk '{print "TRUE\n"$0}' < "${1}" | \
-    yad --list --checklist --tabnum=1 --plug="$fkey" \
+	function _list_2() {
+		while read -r aitem; do
+			if [ "$(echo "$aitem" |wc -c)" -gt ${sentence_chars} ]; then
+				echo -e "FALSE\n<span color='#995B50'>$aitem</span>"
+			else
+				echo -e "TRUE\n$aitem"
+			fi
+		done < "${1}"
+    }
+    _list_2 "${1}" | yad --list --checklist --tabnum=1 --plug="$fkey" \
     --dclick-action="$DS/add.sh 'list_words_dclik'" --multiple \
+    --ellipsize=end --wrap-width=${sz[3]} --ellipsize-cols=1 \
     --no-headers --text-align=right \
     --column=" " --column=" " |sed '/^$/d' > "$slt" &
     yad --form --tabnum=2 --plug="$fkey" --columns=2 \
@@ -605,7 +615,7 @@ function dlg_checklist_3() {
     --name=Idiomind --class=Idiomind \
     --skip-taskbar --orient=vert --window-icon=idiomind --center --on-top \
     --gtkrc="$DS/default/gtkrc.cfg" \
-    --width=700 --height=400 --borders=5 --splitter=300 \
+    --width=${sz[0]} --height=${sz[1]} --borders=5 --splitter=${sz[2]} \
     --button="gtk-edit":2 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Add")"!'list-add':0
