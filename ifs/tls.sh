@@ -1151,8 +1151,6 @@ class IdiomindIndicator:
         item.connect("activate", self.on_Topics_click)
         popup_menu.append(item)
         item = self.create_menu_label(options)
-        item.connect("activate", self.on_Options_click)
-        popup_menu.append(item)
         item = gtk.SeparatorMenuItem()
         popup_menu.append(item)
         item = self.create_menu_label(quit)
@@ -1171,8 +1169,6 @@ class IdiomindIndicator:
         os.system("/usr/share/idiomind/add.sh new_items &")
     def on_Topics_click(self, widget):
         os.system("/usr/share/idiomind/chng.sh &")
-    def on_Options_click(self, widget):
-        os.system("/usr/share/idiomind/cnfg.sh &")
     def on_play(self, widget):
         self.stts = 0
         os.system("/usr/share/idiomind/bcle.sh &")

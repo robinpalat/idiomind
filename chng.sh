@@ -64,37 +64,39 @@ if [[ ${1} = 0 ]]; then
             let f++
         fi
     }
-
-    if [[ ${W} = TRUE ]] && [[ ${S} = TRUE ]]; then
-        echo -e "${tpc}" > "$DT/playlck"
-        while read item; do _stop=1; getitem; _play
-        done < "${DC_tlt}/1.cfg"
-    fi
-    if [[ ${W} = TRUE ]] && [[ ${S} = FALSE ]]; then
-        echo -e "${tpc}" > "$DT/playlck"
-        while read item; do _stop=1; getitem; _play
-        done < <(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg")
-    fi
-    if [[ ${W} = FALSE ]] && [[ ${S} = TRUE ]]; then
-        echo -e "${tpc}" > "$DT/playlck"
-        while read item; do _stop=1; getitem; _play
-        done < <(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg")
-    fi
-    if [[ ${M} = TRUE ]]; then
-        echo -e "${tpc}" > "$DT/playlck"
-        while read item; do _stop=1; getitem; _play
-        done < "${DC_tlt}/6.cfg"
-    fi
-    if [[ ${L} = TRUE ]]; then
-        echo -e "${tpc}" > "$DT/playlck"
-        while read item; do _stop=1; getitem; _play
-        done < <(grep -Fxvf "${DC_tlt}/practice/log3" \
-        "${DC_tlt}/practice/log2" |sort |uniq)
-    fi
-    if [[ ${D} = TRUE ]]; then
-        echo -e "${tpc}" > "$DT/playlck"
-        while read item; do _stop=1; getitem; _play
-        done < <(sort |uniq "${DC_tlt}/practice/log3")
+	
+	if [ ! -e "$DT/play2lck" ]; then
+		if [[ ${W} = TRUE ]] && [[ ${S} = TRUE ]]; then
+			echo -e "${tpc}" > "$DT/playlck"
+			while read item; do _stop=1; getitem; _play
+			done < "${DC_tlt}/1.cfg"
+		fi
+		if [[ ${W} = TRUE ]] && [[ ${S} = FALSE ]]; then
+			echo -e "${tpc}" > "$DT/playlck"
+			while read item; do _stop=1; getitem; _play
+			done < <(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg")
+		fi
+		if [[ ${W} = FALSE ]] && [[ ${S} = TRUE ]]; then
+			echo -e "${tpc}" > "$DT/playlck"
+			while read item; do _stop=1; getitem; _play
+			done < <(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg")
+		fi
+		if [[ ${M} = TRUE ]]; then
+			echo -e "${tpc}" > "$DT/playlck"
+			while read item; do _stop=1; getitem; _play
+			done < "${DC_tlt}/6.cfg"
+		fi
+		if [[ ${L} = TRUE ]]; then
+			echo -e "${tpc}" > "$DT/playlck"
+			while read item; do _stop=1; getitem; _play
+			done < <(grep -Fxvf "${DC_tlt}/practice/log3" \
+			"${DC_tlt}/practice/log2" |sort |uniq)
+		fi
+		if [[ ${D} = TRUE ]]; then
+			echo -e "${tpc}" > "$DT/playlck"
+			while read item; do _stop=1; getitem; _play
+			done < <(sort |uniq "${DC_tlt}/practice/log3")
+		fi
     fi
     include "$DS/ifs/mods/chng"
     echo ${_stop} > $DT/playlck
@@ -103,8 +105,6 @@ if [[ ${1} = 0 ]]; then
 elif [[ ${1} != 0 ]]; then
     source /usr/share/idiomind/default/c.conf
     sz=(580 560); [[ ${swind} = TRUE ]] && sz=(450 420)
-
-
     remove_d() {
         source "$DS/ifs/cmns.sh"
         ins="$(cd "/usr/share/idiomind/addons/"; set -- */; printf "%s\n" "${@%/}")"
@@ -155,6 +155,7 @@ elif [[ ${1} != 0 ]]; then
     --width=${sz[0]} --height=${sz[1]} --borders=5 \
     --column=img:IMG \
     --column=File:TEXT \
+    --button="$(gettext "Preferences")":"$DS/cnfg.sh" \
     --button="$(gettext "Stats")":"'$DS/ifs/tls.sh' _stats" \
     --button="$(gettext "New")"!document-new:3 \
     --button="$(gettext "Apply")":2 \

@@ -39,9 +39,7 @@ play_file() {
         if [[ ${mime} = 0 ]]; then
             exit 1
         else
-            mplayer "${2}" -novideo -noconsolecontrols -title "${3}"\
-            && [ -e "$DT/playlck" ] && echo 0 > "$DT/playlck"
-            
+            mplayer "${2}" -novideo -noconsolecontrols -title "${3}"
         fi
     elif [ -n "$synth" ]; then
         sed 's/<[^>]*>//g' <<<"${3}." |${synth}; [ $? != 0 ] && msg_err1
@@ -197,6 +195,7 @@ play_list() {
             else
                 "$DS/stop.sh" 2 && exit 1
             fi
+            [ -f "$DT/play2lck" ] && rm -f "$DT/play2lck"
             "$DS/stop.sh" 2
             "$DS/bcle.sh" &
         # cmd stop
