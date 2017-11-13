@@ -320,8 +320,12 @@ function list_words_sentence() {
 
 function list_words_dclik() {
     source "$DS/ifs/mods/add/add.sh"
+    p=0
     words="$(sed 's/<[^>]*>//g' <<< "${3}")"
-    
+    if [ ! -d "$DT_r" ]; then
+		export DT_r=$(mktemp -d "$DT/XXXXXX")
+		p=1
+    fi
     if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then
         ( echo "#"
         echo "# $(gettext "Processing")..." ;
@@ -335,15 +339,17 @@ function list_words_dclik() {
         list_words_3 "${words}"
     fi
     export wrds="$(< "$DT_r/lst")"
-    slt="$(dlg_checklist_1 "${wrds}")"
-    
-    if [ $? -eq 0 ]; then
-        while read -r chkst; do
-            if [ -n "$chkst" ]; then
-            sed 's/TRUE//;s/<[^>]*>//g;s/|//g' <<< "${chkst}" >> "$DT_r/wrds"
-            echo "${words}" >> "$DT_r/wrdsls"
-            fi
-        done <<< "${slt}"
+    if [[ -n "$wrds" ]]; then
+		slt="$(dlg_checklist_1 "${wrds}")"
+		if [ $? -eq 0 ]; then
+			while read -r chkst; do
+				if [ -n "$chkst" ]; then
+				sed 's/TRUE//;s/<[^>]*>//g;s/|//g' <<< "${chkst}" >> "$DT_r/wrds"
+				echo "${words}" >> "$DT_r/wrdsls"
+				fi
+			done <<< "${slt}"
+		fi
+		[ ${p} = 1 ] && process '__words__'
     fi
     exit 0
     
@@ -367,7 +373,9 @@ function process() {
     fi
     include "$DS/ifs/mods/add_process"
     
-    if [[ $conten != '__edit__' ]]; then
+    if [[ "$1" = '__words__' ]]; then 
+		ret=0; conten="${1}"
+    elif [[ $conten != '__edit__' ]]; then
     
         if [[ $1 = image ]]; then
             pars=`mktemp`
@@ -447,18 +455,18 @@ function process() {
 
         else 
             mv "$DT_r/xxlines" "$DT_r/xlines"
+            sed -i '/^$/d' "$DT_r/xlines"
         fi
     else 
         echo "${2}" > "$DT_r/xlines"
+        sed -i '/^$/d' "$DT_r/xlines"
     fi
 
-    sed -i '/^$/d' "$DT_r/xlines"
-
-    if [ -z "$(< "$DT_r/xlines")" ]; then
+    if [ -z "$(< "$DT_r/xlines")" ] && [[ $conten != '__words__' ]]; then
         msg "$(gettext "Failed to get text.")\n" \
         dialog-information "$(gettext "Information")"
         cleanups "$DT_r" "$DT/n_s_pr" "$slt" & exit 1
-    else
+    elif [[ $conten != '__words__' ]]; then
         xclip -i /dev/null
         export slt=$(mktemp $DT/slt.XXXXXX.x)
         export tpcs="$(grep -vFx "${tpe}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"

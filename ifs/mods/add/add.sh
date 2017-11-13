@@ -554,6 +554,7 @@ function dlg_form_0() {
 }
 
 function dlg_form_1() {
+	cmd_words="$DS/add.sh 'list_words_dclik' TRUE "\"${txt}\"""
     yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
@@ -564,12 +565,14 @@ function dlg_form_1() {
     --width=450 --height=120 --borders=5 \
     --field="" "$txt" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
-    --button="$(gettext "Image")":3 \
-    --button="$(gettext "Audio")":2 \
-    --button="$(gettext "Add")"!'list-add':0
+    --button=!'format-justify-left'!"$(gettext "List words")":"$cmd_words" \
+    --button=!'image-x-generic'!"$(gettext "Add an image file by screen")":3 \
+    --button=!'audio-x-generic'!"$(gettext "Add an Audio file")":2 \
+    --button=!'gtk-apply'!"$(gettext "Add")":0
 }
 
 function dlg_form_2() {
+	cmd_words="$DS/add.sh list_words_dclik "\"${txt}\"""
     yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
@@ -581,8 +584,9 @@ function dlg_form_2() {
     --field="" "$txt" \
     --field="" "$srce" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
-    --button="$(gettext "Image")":3 \
-    --button="$(gettext "Audio")":2 \
+    --button=!'format-justify-left'!"$(gettext "List words")":"$cmd_words" \
+    --button=!'image-x-generic'!"$(gettext "Add an image file")":3 \
+    --button=!'audio-x-generic'!"$(gettext "Add an Audio file")":2 \
     --button="$(gettext "Add")"!'list-add':0
 }
 
@@ -614,9 +618,8 @@ function dlg_checklist_3() {
     --skip-taskbar --orient=vert --window-icon=idiomind --center --on-top \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --width=${sz[0]} --height=${sz[1]} --borders=5 --splitter=${sz[2]} \
-    --button="gtk-edit":2 \
-    --button="$(gettext "Cancel")":1 \
-    --button="$(gettext "Add")"!'list-add':0
+    --button=!'gtk-edit'!"$(gettext "Edit")":2 \
+    --button=!'gtk-apply'!"$(gettext "Add")":0
 }
 
 function dlg_checklist_1() {
@@ -632,7 +635,7 @@ function dlg_checklist_1() {
     --window-icon=idiomind \
     --mouse --on-top --no-headers \
     --text-align=right --buttons-layout=end \
-    --width=380 --height=260 --borders=5  \
+    --width=380 --height=260 --borders=10  \
     --column=" " --column="Select" \
     --button="  $(gettext "Close")  ":0
 }
