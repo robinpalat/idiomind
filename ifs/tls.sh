@@ -776,7 +776,6 @@ translate_to() {
         --button="$(gettext "Apply")"!gtk-apply:0 \
         --button="$(gettext "Cancel")":1)"; ret="$?"
     fi
-    
     review_trans="$(cut -f4 -d'|' <<< "$ldgl")"
     review_chek="$(cut -f3 -d'|' <<< "$ldgl")"
     autom_trans="$(cut -f7 -d'|' <<< "$ldgl")"
@@ -810,7 +809,6 @@ translate_to() {
                     cleanups "$DC_tlt/translations/$autom_trans.bk"
                 fi
             fi
-            
             if grep "$autom_trans" <<< "$(cd "$DC_tlt/translations"; ls *.tra)"; then
                 msg_2 "$(gettext "Exist a Verified translation for this language. Do you want to use this copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
                 if [ $? = 0 ]; then
@@ -827,7 +825,6 @@ translate_to() {
             if [ ! -e "${DC_tlt}/id.cfg" ]; then return 1; fi
             l="$(grep -o 'tlng="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
             if [ -n "$l" ]; then lgt=${tlangs[$l]}; else lgt=${tlangs[$tlng]}; fi
-            
             tl=${slangs[$autom_trans]}
             include "$DS/ifs/mods/add"
             c1=$(cat "${DC_tlt}/0.cfg" |wc -l)
@@ -857,7 +854,6 @@ translate_to() {
 				index_to_trad="$(< "$DT/index.trad_tmp")"
 				words_to_trad="$(< "$DT/words.trad_tmp")"
 				translate "${index_to_trad}" "$lgt" "$tl" > "$DT/index.trad"
-
 				translate "${words_to_trad}" "$lgt" "$tl" > "$DT/words.trad"
 				sed -i ':a;N;$!ba;s/\n/ /g' "$DT/index.trad"
 				sed -i "s/${del}n/\n/g" "$DT/index.trad"
@@ -869,7 +865,6 @@ translate_to() {
 				sed -i 's/^ *//; s/ *$//;s/\。/\. /g' "$DT/words.trad"
 				paste -d '&' "$DT/words.trad_tmp" "$DT/words.trad" > "$DT/mix_words.trad_tmp"
              }
-             
             pretrans 
             c2=$(cat "$DT/index.trad" | wc -l)
             if [[ ${c1} != ${c2} ]]; then
@@ -890,7 +885,6 @@ translate_to() {
 					fi
 				fi
             fi
-            
             if [ -z "$(< "$DT/index.trad")" -o -z "$(< "$DT/words.trad")" ]; then
                 msg "$(gettext "A problem has occurred, try again later.")\n" 'error'
                 cleanups "$DT/words.trad_tmp" "$DT/index.trad_tmp" \
@@ -898,7 +892,6 @@ translate_to() {
                 [ -e "${DC_tlt}/slng_err.bk" ] && mv "${DC_tlt}/slng_err.bk" "${DC_tlt}/slng_err"
                 exit 1
             fi
-            
             n=1
             while read -r item_; do
                 [ ! -f "$DT/translation" ] && break
@@ -920,7 +913,6 @@ translate_to() {
                 echo -e "${line}" >> "$DT/translation"
             let n++
             done < "${DC_tlt}/0.cfg"
-            
             unset item type trgt srce exmp defn note grmr mark link tag cdid
             if [ -n "$DT" ]; then rm -f "$DT"/*.tmp "$DT"/*.trad "$DT"/*.trad_tmp; fi
 
@@ -1029,8 +1021,6 @@ itray() {
     export lbl4="$(gettext "Next")"
     export lbl5="$(gettext "Index")"
     export lbl9="$(gettext "Tasks")"
-    export lbl6="$(gettext "Options")"
-    export lbl7="$(gettext "Show panel")"
     export lbl8="$(gettext "Quit")"
     export dirt="$DT/"
 	export lgt=${tlangs[$tlng]}
@@ -1045,8 +1035,6 @@ stop = os.environ['lbl3']
 next = os.environ['lbl4']
 topics = os.environ['lbl5']
 tasks = os.environ['lbl9']
-options = os.environ['lbl6']
-panel = os.environ['lbl7']
 quit = os.environ['lbl8']
 quit = os.environ['lbl8']
 my_pid = os.getpid()
@@ -1144,7 +1132,6 @@ class IdiomindIndicator:
         item = self.create_menu_label(topics)
         item.connect("activate", self.on_Topics_click)
         popup_menu.append(item)
-        item = self.create_menu_label(options)
         item = gtk.SeparatorMenuItem()
         popup_menu.append(item)
         item = self.create_menu_label(quit)

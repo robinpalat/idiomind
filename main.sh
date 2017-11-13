@@ -455,7 +455,7 @@ ipanel() {
     
     export swind=$(grep -oP '(?<=swind=\").*(?=\")' "$DC_s/1.cfg")
 
-    ( yad --fixed --form --title="Panel" \
+    ( yad --fixed --form --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
     --window-icon=idiomind --columns=1 \

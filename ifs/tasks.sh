@@ -21,8 +21,8 @@ modmenu() {
 	grep -vxF "${1}" "$DT/tasks" > "$DT/tasks.tmp"
     sed '/^$/d' "$DT/tasks.tmp" > "$DT/tasks"
     [ -f "$DT/tasks.tmp" ] && rm "$DT/tasks.tmp"
-    c1=$(cat "$DT/tasks" |wc -l)
-    [[ ${c1} = 0 ]] && > "$DT/tasks"
+    c1=$(cat "$DT/tasks" |wc -l); if [[ ${c1} = 0 ]]; then
+    rm -f "$DT/tasks"; echo "$tpc" > "$DC_s/4.cfg"; fi
 }
 
 if [ "${act}" = "$l1" ]; then
