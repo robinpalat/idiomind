@@ -11,9 +11,9 @@ msg_err1() {
 play_word() {
     w="$(sed 's/<[^>]*>//g' <<<"${2}")"
     if [ -f "${DM_tlt}/$3.mp3" ]; then
-        mplayer "${DM_tlt}/$3.mp3" &
+        play "${DM_tlt}/$3.mp3" &
     elif [ -f "${DM_tls}/audio/${w,,}.mp3" ]; then
-        mplayer "${DM_tls}/audio/${w,,}.mp3" &
+        play "${DM_tls}/audio/${w,,}.mp3" &
     elif [ -n "$synth" ]; then
         echo "${w}." |${synth}; [ $? != 0 ] && msg_err1
     else
@@ -23,9 +23,9 @@ play_word() {
 } >/dev/null 2>&1
 
 play_sentence() {
-    if ps -A | pgrep -f 'mplayer'; then killall 'mplayer'; fi
+    if ps -A | pgrep -f 'play'; then killall 'play'; fi
     if [ -f "${DM_tlt}/$2.mp3" ]; then
-        mplayer "${DM_tlt}/$2.mp3" &
+        play "${DM_tlt}/$2.mp3" &
     elif [ -n "$synth" ]; then
         sed 's/<[^>]*>//g' <<< "${trgt}." |${synth}; [ $? != 0 ] && msg_err1
     else
@@ -86,7 +86,7 @@ play_list() {
         n=0
         while [ ${n} -le 4 ]; do
             arr="in${n}"
-            [[ ${!arr} -lt 1 ]] && echo "$DS/images/addi.png" || echo "$DS/images/add.png"
+            [[ ${!arr} -lt 1 ]] && echo "$DS/images/ai.png" || echo "$DS/images/a.png"
             echo ${!psets[${n}]}
             echo "  $(gettext "${lbls[$n]}")"
             let n++

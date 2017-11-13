@@ -36,11 +36,11 @@ elif [ "${act}: " = "$l4" ]; then
 elif [ "${act}: " = "$l7" ]; then
 	modmenu "$arg"; chngtpt "$tpt"
 elif [ "${act}: " = "$l5" ]; then
-	modmenu "$arg"; chngtpt "$tpt" 1
-	"$DS/practice/strt.sh" &
+	modmenu "$arg"
+	"$DS/practice/strt.sh" "$tpt" &
 elif [ "${act}: " = "$l6" ]; then
-	modmenu "$arg"; chngtpt "$tpt" 1
-	"$DS/practice/strt.sh" &
+	modmenu "$arg"
+	"$DS/practice/strt.sh" "$tpt" &
 else
 	while read -r addon; do
 		if [ -e "$DC_a/$addon.tasks" ]; then

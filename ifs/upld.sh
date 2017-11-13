@@ -217,7 +217,7 @@ function upld() {
     linkc="http://idiomind.net/${tlng,,}"
     linkac='http://idiomind.net/community/?q=user/register'
     ctgy="$(grep -o 'ctgy="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-    text_upld="<span font_desc='Arial 12'>$(gettext "Share online with other $LANGUAGE_TO_LEARN learners!")</span>\n<a href='$linkc'>$(gettext "Topics shared")</a> Beta"
+    text_upld="<span font_desc='Arial 12'><b>$(gettext "Share online with other learners!")</b></span>\n<a href='$linkc'>$(gettext "Topics library")</a>"
     _Categories="${ctgy}${list}"
     _levels="!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")"
     note=$(< "${DC_tlt}/info")

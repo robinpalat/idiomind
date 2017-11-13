@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-du=$(du -b -h "$DM" |tail -1 |awk '{print ($1)}')
+du=$(du -csh "$DM" |sort -hr |head -n1 |awk '{print ($1)}')
 if [ ! -e "$DC_a/user_data.cfg" ]; then
     echo -e "backup=\"FALSE\"
     path=\"$HOME\"

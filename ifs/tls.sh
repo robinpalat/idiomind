@@ -166,7 +166,6 @@ check_index() {
     }
     
     _newformat() {
-		
 		get_item() {
 			export item="$(sed 's/},/}\n/g' <<< "${1}")"
 			export type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
@@ -182,7 +181,6 @@ check_index() {
 			export tags="$(grep -oP '(?<=tag={).*(?=})' <<<"${item}")"
 			export cdid="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
 		}
-		 
         rm -f "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"
         while read -r _item; do
             get_item "${_item}"
@@ -203,7 +201,6 @@ check_index() {
         "$(gettext "Convert to new format...")" -t 3000) &
         _newformat
     fi
-    
     if [[ ${f} = 1 ]]; then
         > "$DT/ps_lk"; mkmn=1
         if [[ ${r} = 0 ]]; then
@@ -343,7 +340,7 @@ addFiles() {
 	yad --form --title="$(gettext "Attached Files")" \
 	--name=Idiomind --class=Idiomind \
 	---window-icon=idiomind --center \
-	--width=350 --height=100 --borders=5 \
+	--width=320 --height=100 --borders=5 \
 	--field="$(gettext "Add files")":FBTN "$DS/ifs/tls.sh 'add_file'" \
 	--field="$(gettext "YouTube URL")":FBTN "$DS/ifs/tls.sh 'videourl'" \
 	--button="$(gettext "Cancel")":1 \
@@ -485,7 +482,7 @@ _translation() {
 _help() {
     sz=(540 500); [[ ${swind} = TRUE ]] && sz=(520 420)
     _url='http://idiomind.sourceforge.net/doc/help.html'
-    yad --html --title="$(gettext "Reference")" \
+    yad --html --title="$(gettext "Get started")" \
     --name=Idiomind --class=Idiomind \
     --uri="${_url}" \
     --window-icon=idiomind \

@@ -4,8 +4,14 @@
 source /usr/share/idiomind/default/c.conf
 sz=(500 470); [[ ${swind} = TRUE ]] && sz=(420 410)
 source "$DS/ifs/cmns.sh"
+if [[ -n "$1" ]]; then
+tpc="$1"
+DM_tlt="$DM_tl/$1"
+DC_tlt="$DM_tlt/.conf"
+fi
 pdir="${DC_tlt}/practice"
 pdirs="$DS/practice"
+
 declare -A prcts=( ['a']='Flashcards' ['b']='Multiple-choice'\
  ['c']='Recognize Pronunciation' ['d']='Images' ['e']='Listen and Writing Sentences')
 if [ -e "${DC_tlt}/translations/active" ]; then
@@ -49,7 +55,7 @@ function score() {
     rm ./*.tmp
     [ ! -e ./${pr}.l ] && touch ./${pr}.l
     if [[ $(($(< ./${pr}.l)+easy)) -ge ${all} ]]; then
-        _log ${pr}; mplayer "$pdirs/all.mp3" &
+        _log ${pr}; play "$pdirs/all.mp3" &
         date "+%a %d %B" > ./${pr}.lock
         save_gains 0 & echo 21 > .${icon}
         strt 1
@@ -99,7 +105,7 @@ function _log() {
     fi
 }
     
-#////////////////////////////////// practice A
+# practice A
 function practice_a() {
     fonts() {
         _item="$(grep -F -m 1 "trgt{${item}}" "${cfg0}" |sed 's/}/}\n/g')"
@@ -190,7 +196,7 @@ function practice_a() {
     fi
 }
 
-#////////////////////////////////// practice B
+# practice B
 function practice_b(){
     snd="$pdirs/no.mp3"
     fonts() {
@@ -239,7 +245,7 @@ function practice_b(){
                 echo "${item}" >> b.1
                 easy=$((easy+1))
             else
-                (mplayer "$snd" & echo "${item}" >> b.2)
+                (play "$snd" & echo "${item}" >> b.2)
                 hard=$((hard+1))
             fi
         elif [ $ret = 1 ]; then
@@ -261,7 +267,7 @@ function practice_b(){
                     hard=$((hard-1))
                     ling=$((ling+1))
                 else
-                    mplayer "$snd" &
+                    play "$snd" &
                     echo "${item}" >> b.3
                 fi
             elif [ $? = 1 ]; then
@@ -274,7 +280,7 @@ function practice_b(){
     fi
 }
 
-#////////////////////////////////// practice C
+# practice C
 function practice_c() {
 
     fonts() {
@@ -357,7 +363,7 @@ function practice_c() {
     fi
 }
 
-#////////////////////////////////// practice D
+# practice D
 function practice_d() {
 
     fonts() {
@@ -446,7 +452,7 @@ function practice_d() {
     fi
 }
 
-#////////////////////////////////// practice E
+# practice E
 function practice_e() {
     
     dialog2() {
@@ -476,7 +482,7 @@ function practice_e() {
         --buttons-layout=end --skip-taskbar \
         --undecorated --center --on-top \
         --align=center --image-on-top \
-        --width=550 --height=220 --borders=8 \
+        --width=550 --height=220 --borders=10 \
         --field="" "" \
         --button="[$(gettext "Exit")]":1 \
         --button="!$DS/images/listen.png":"$cmd_play" \
@@ -486,14 +492,14 @@ function practice_e() {
     check() {
         sz=$((sz+3))
         yad --form --title=" " \
-        --text="<span font_desc='Free Sans 12'>${wes^}</span>\\n" \
+        --text="<span font_desc='Arial 12'>${wes^}</span>\\n" \
         --name=Idiomind --class=Idiomind \
         --window-icon=idiomind \
         --skip-taskbar --wrap --image-on-top --center --on-top \
         --undecorated --buttons-layout=end \
-        --width=530 --height=220 --borders=14 \
+        --width=530 --height=220 --borders=15 \
         --field="":lbl "" \
-        --field="<span font_desc='Free Sans 9'>$OK\n\n$prc $hits</span>":lbl \
+        --field="<span font_desc='Arial 9'>$OK\n\n$prc $hits</span>":lbl \
         --button="    $(gettext "Continue")    ":2
     }
     
@@ -573,23 +579,22 @@ function practice_e() {
         ret=$?
         if [ $ret = 1 ]; then
             break &
-            if ps -A |pgrep -f 'mplayer'; then killall mplayer & fi
+            if ps -A |pgrep -f 'play'; then killall play & fi
             export hard ling
             score && return
-            
         else
-            if ps -A |pgrep -f 'mplayer'; then killall mplayer & fi
+            if ps -A |pgrep -f 'play'; then killall play & fi
             result "${trgt}"
             check "${trgt}"
             ret=$?
             if [ $ret = 1 ]; then
                 break &
-                if ps -A |pgrep -f 'mplayer'; then killall mplayer & fi
+                if ps -A |pgrep -f 'play'; then killall play & fi
                 rm -f ./mtch.tmp ./words.tmp
                 export hard ling
                 score && return
             elif [ $ret -eq 2 ]; then
-                if ps -A |pgrep -f 'mplayer'; then killall mplayer & fi
+                if ps -A |pgrep -f 'play'; then killall play & fi
                 rm -f ./mtch.tmp ./words.tmp &
             fi
         fi
@@ -698,14 +703,14 @@ function lock() {
 function decide_group() {
     [ -e ./${pr}.l ] && learnt=$(($(< ./${pr}.l)+easy)) || learnt=${easy}
     preeasy=$((learnt+easy)); left=$((all-learnt))
-    info="$(gettext "Left") <b>$left</b>   $(gettext "Learnt") <b><span color='#548F55'>$learnt</span></b>   $(gettext "Easy") <b>$easy</b>   $(gettext "Learning") <b>$ling</b>   $(gettext "Difficult") <b>$hard</b>"
+    info="$(gettext "Left") <b>$left</b>   $(gettext "Learnt") <b>$learnt</b>   $(gettext "Easy") <b>$easy</b>   $(gettext "Learning") <b>$ling</b>   $(gettext "Difficult") <b>$hard</b>"
     optns=$(yad --form --title="$(gettext "Continue")" \
     --window-icon=idiomind \
     --always-print-result \
     --skip-taskbar --buttons-layout=spread \
     --text-align=center --align=center --center --on-top \
     --text="${info}" "" \
-    --width=450 --height=85 --borders=8 \
+    --width=500 --height=85 --borders=8 \
     --button="[$(gettext "Exit")]":5 \
     --button="$(gettext "Again")!view-refresh!$(gettext "Go back to practice the above items")":1 \
     --button="$(gettext "Continue")!go-next!$(gettext "Practice the next group")":0); ret="$?"
@@ -762,6 +767,7 @@ function practices() {
     if [ -e "${pdir}/${pr}.0" -a -e "${pdir}/${pr}.1" ]; then
     
         export all=$(egrep -cv '#|^$' "${pdir}/${pr}.0")
+        export all=$(egrep -cv '#|^$' "$DC_tlt/4.cfg")
     
         if [[ ${group} = 1 ]]; then
             head -n ${split} "${pdir}/${pr}.group" \
@@ -811,9 +817,17 @@ function practices() {
         fi
         export all=$(egrep -cv '#|^$' "${pdir}/${pr}.0")
     fi
-    if [[ ${all} -lt 2 ]]; then \
-        msg "$(gettext "Insufficient number of items to start")\n" \
+    if [[ ${all} -lt 2 ]]; then
+		sentcount=$(grep -Fxvf "${cfg3}" "${cfg1}" |wc -l)
+		wordcount=$(grep -Fxvf "${cfg4}" "${cfg1}" |wc -l)
+		if grep -o -E 'a|b|c|d' <<< ${pr}; then
+        msg "$(gettext "Insufficient number of words to start"):\n$(gettext "Words") $wordcount / $(gettext "Sentences") $sentcount" \
         dialog-information " " "$(gettext "OK")"
+        elif grep -o 'e' <<< ${pr}; then
+        msg "$(gettext "Insufficient number of sentences to start"):\n$(gettext "Words") $wordcount / $(gettext "Sentences") $sentcount" \
+        dialog-information " " "$(gettext "OK")"
+        fi
+        
         strt 0 & return
     else
         cleanups "${pdir}/${pr}.2" "${pdir}/${pr}.3"

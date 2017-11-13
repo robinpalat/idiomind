@@ -96,9 +96,9 @@ function sentence_p() {
     cdb="$DM_tls/data/${tlng}.db"
     table="T`date +%m%y`"
     echo -n "create table if not exists ${table} \
-    (Word TEXT, ${slng^} TEXT);" |sqlite3 ${cdb}
-    if ! grep -q ${slng} <<< "$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
-        sqlite3 ${cdb} "alter table ${table} add column ${slng} TEXT;"
+    (Word TEXT, "${slng^}" TEXT);" |sqlite3 ${cdb}
+    if ! grep -q "${slng}" <<< "$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
+        sqlite3 ${cdb} "alter table ${table} add column '${slng}' TEXT;"
     fi
     r=$((RANDOM%10000))
     touch "$DT_r/swrd.$r" "$DT_r/twrd.$r"
@@ -154,13 +154,12 @@ function sentence_p() {
         echo "${t}_${s}" >> "$DT_r/B.$r"
         t="${t//\'/\'\'}"
         s="${s//\'/\'\'}"
-        
         if ! [[ "${t}" =~ [0-9] ]] && [ -n "${t}" ] && [ -n "${s}" ]; then
             if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]]; then
-                sqlite3 ${cdb} "insert into Words (Word,${slng^},Example) values ('${t}','${s}','${trgt_q}');"
-                sqlite3 ${cdb} "insert into ${table} (Word,${slng^}) values ('${t}','${s}');"
-            elif ! [[ `sqlite3 ${cdb} "select ${slng^} from Words where Word is '${t}';"` ]]; then
-                sqlite3 ${cdb} "update Words set ${slng^}='${s}' where Word='${t}';"
+                sqlite3 ${cdb} "insert into Words (Word,'${slng^}',Example) values ('${t}','${s}','${trgt_q}');"
+                sqlite3 ${cdb} "insert into ${table} (Word,'${slng^}') values ('${t}','${s}');"
+            elif ! [[ `sqlite3 ${cdb} "select "${slng^}" from Words where Word is '${t}';"` ]]; then
+                sqlite3 ${cdb} "update Words set '${slng^}'='${s}' where Word='${t}';"
             elif ! [[ `sqlite3 ${cdb} "select Example from Words where Word is '${t}';"` ]]; then
                 sqlite3 ${cdb} "update Words set Example='${trgt_q}' where Word='${t}';"
             fi
@@ -174,13 +173,12 @@ function sentence_p() {
         echo "${t}_${s}" >> "$DT_r/B.$r"
         t="${t//\'/\'\'}"
         s="${s//\'/\'\'}"
-        
         if ! [[ "${t}" =~ [0-9] ]] && [ -n "${t}" ] && [ -n "${s}" ]; then
             if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]]; then
-                sqlite3 ${cdb} "insert into Words (Word,${slng^},Example) values ('${t}','${s}','${trgt_q}');" 
-                sqlite3 ${cdb} "insert into ${table} (Word,${slng^}) values ('${t}','${s}');"
-            elif ! [[ `sqlite3 ${cdb} "select ${slng^} from Words where Word is '${t}';"` ]]; then
-                sqlite3 ${cdb} "update Words set ${slng^}='${s}' where Word='${t}';"
+                sqlite3 ${cdb} "insert into Words (Word,'${slng^}',Example) values ('${t}','${s}','${trgt_q}');" 
+                sqlite3 ${cdb} "insert into ${table} (Word,'${slng^}') values ('${t}','${s}');"
+            elif ! [[ `sqlite3 ${cdb} "select "${slng^}" from Words where Word is '${t}';"` ]]; then
+                sqlite3 ${cdb} "update Words set '${slng^}'='${s}' where Word='${t}';"
             elif ! [[ `sqlite3 ${cdb} "select Example from Words where Word is '${t}';"` ]]; then
                 sqlite3 ${cdb} "update Words set Example='${trgt_q}' where Word='${t}';"
             fi
@@ -204,16 +202,16 @@ function word_p() {
     srce_q="${srce//\'/\'\'}"
     
     echo -n "create table if not exists ${table} \
-    (Word TEXT, ${slng^} TEXT);" |sqlite3 ${cdb}
-    if ! grep -q ${slng} <<< "$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
-        sqlite3 ${cdb} "alter table ${table} add column ${slng} TEXT;"
+    (Word TEXT, '${slng^}' TEXT);" |sqlite3 ${cdb}
+    if ! grep -q "${slng}" <<< "$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
+        sqlite3 ${cdb} "alter table ${table} add column '${slng}' TEXT;"
     fi
     if ! [[ "${trgt}" =~ [0-9] ]] && [ -n "${trgt}" ] && [ -n "${srce}" ]; then
         if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${trgt}';"` ]]; then
-            sqlite3 ${cdb} "insert into ${table} (Word,${slng^}) values ('${trgt_q}','${srce_q}');"
-            sqlite3 ${cdb} "insert into Words (Word,${slng^}) values ('${trgt_q}','${srce_q}');"
-        elif ! [[ `sqlite3 ${cdb} "select ${slng^} from Words where Word is '${trgt}';"` ]]; then
-            sqlite3 ${cdb} "update Words set ${slng^}='${srce_q}' where Word='${trgt}';"
+            sqlite3 ${cdb} "insert into ${table} (Word,'${slng^}') values ('${trgt_q}','${srce_q}');"
+            sqlite3 ${cdb} "insert into Words (Word,'${slng^}') values ('${trgt_q}','${srce_q}');"
+        elif ! [[ `sqlite3 ${cdb} "select "${slng^}" from Words where Word is '${trgt}';"` ]]; then
+            sqlite3 ${cdb} "update Words set '${slng^}'='${srce_q}' where Word='${trgt}';"
         fi
     fi
 }
@@ -355,8 +353,8 @@ function set_image_2() {
 function translate() {
     cdb="$DM_tls/data/${tlng}.db"; stop=0
     if [[ $(wc -w <<< ${1}) = 1 ]] && [[ "${ttrgt}" != TRUE ]] && \
-    [[ `sqlite3 ${cdb} "select ${slng} from Words where Word is '${1}';"` ]]; then
-        sqlite3 ${cdb} "select ${slng} from Words where Word is '${1}';"
+    [[ `sqlite3 ${cdb} "select "${slng}" from Words where Word is "${1}";"` ]]; then
+        sqlite3 ${cdb} "select '${slng}' from Words where Word is '${1}';"
     else
         if ! ls "$DC_d"/*."Traslator online.Translator".* 1> /dev/null 2>&1; then
             "$DS_a/Dics/cnfg.sh" 2
@@ -376,8 +374,8 @@ dwld1() {
             mv -f "$audio_dwld.$ex" "$audio_dwld.mp3"
         fi
     fi
-    if file -b --mime-type "$audio_file" |grep -E 'audio\/mpeg|mp3|' >/dev/null 2>&1 \
-    && [[ $(du -b "$audio_file" |cut -f1) -gt 100 ]]; then
+    if file -b --mime-type "$audio_file" |grep -E 'mpeg|mp3|' >/dev/null 2>&1 \
+    && [[ $(du -b "$audio_file" |cut -f1) -gt 120 ]]; then
         return 5
     else
         [ -e "$audio_file" ] && rm "$audio_file"
@@ -389,8 +387,8 @@ dwld2() {
     if [ "${LINK}" -a ! -e "${audio_file}" ]; then
         wget -T 51 -q -U "$useragent" -O "$DT_r/audio.mp3" "${LINK}"
     fi
-    if file -b --mime-type "$DT_r/audio.mp3" |grep -E 'audio\/mpeg|mp3|' >/dev/null 2>&1 \
-    && [[ $(du -b "$DT_r/audio.mp3" |cut -f1) -gt 100 ]]; then
+    if file -b --mime-type "$DT_r/audio.mp3" |grep -E 'mpeg|mp3|' >/dev/null 2>&1 \
+    && [[ $(du -b "$DT_r/audio.mp3" |cut -f1) -gt 120 ]]; then
         mv -f "$DT_r/audio.mp3" "${audio_file}"; return 5
     else 
         [ -e "$DT_r/audio.mp3" ] && rm "$DT_r/audio.mp3"

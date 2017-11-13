@@ -157,11 +157,12 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
     }
     
     export swind=$(grep -oP '(?<=swind=\").*(?=\")' "$DC_s/1.cfg")
-    sz=(600 560); [[ ${swind} = TRUE ]] && sz=(480 440)
+    sz=(580 560 540); [[ ${swind} = TRUE ]] && sz=(480 460 440)
     _lst | yad --list --title="Idiomind" \
     --text="${itxt}" \
     --name=Idiomind --class=Idiomind \
     --no-click --print-column=0 --hide-column=2 --tooltip-column=2 \
+    --ellipsize=end --wrap-width=${sz[2]} --ellipsize-cols=0 \
     --dclick-action="${dclk}" \
     --window-icon=idiomind \
     --hide-column=2 --tooltip-column=2 \
@@ -454,17 +455,15 @@ ipanel() {
     
     export swind=$(grep -oP '(?<=swind=\").*(?=\")' "$DC_s/1.cfg")
 
-    ( yad --fixed --form --title="Idiomind" \
+    ( yad --fixed --form --title="Panel" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
-    --window-icon=idiomind \
-    --gtkrc="$DS/default/gtkrc.cfg" \
+    --window-icon=idiomind --columns=1 \
     --on-top --no-buttons --align=center \
-    --width=140 --height=160 --borders=0 ${geometry} \
-    --field="$(gettext "New")"!'document-new':btn "$DS/add.sh 'new_items'" \
-    --field="$(gettext "Home")"!'go-home':btn "idiomind 'topic'" \
-    --field="$(gettext "Index")"!'gtk-index':btn "$DS/chng.sh" \
-    --field="$(gettext "Options")"!'gtk-preferences':btn "$DS/cnfg.sh"
+    --width=100 --height=130 ${geometry} --borders=2 \
+    --field=""!"$DS/images/add.png"!"$(gettext "Add")":btn "$DS/add.sh 'new_items'" \
+    --field=""!"$DS/images/home.png"!"$(gettext "Home")":btn "idiomind 'topic'" \
+    --field=""!"$DS/images/index.png"!"$(gettext "Index")":btn "$DS/chng.sh"
     if [ $? != 0 ] && ! pgrep -f "$DS/ifs/tls.sh itray"; then \
     "$DS/stop.sh" 1 & fi; exit ) & set_geom
 }

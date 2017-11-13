@@ -62,7 +62,7 @@ set_lang() {
         mkdir -p "$DM_tls/data"
         cdb="$DM_tls/data/${tlng}.db"
         echo -n "create table if not exists Words \
-        (Word TEXT, ${slng^} TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${cdb}
+        (Word TEXT, '${slng^}' TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${cdb}
         echo -n "create table if not exists Config \
         (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
         echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${cdb}
@@ -112,13 +112,12 @@ config_dlg() {
     --field="$(gettext "Adjust windows size to small screens")":CHK "$swind" \
     --field="$(gettext "Run at startup")":CHK "$stsks" \
     --field=" :LBL" " " --field=":LBL" " " \
-    --field="$(gettext "I'm learning")":CB "$(gettext ${tlng})$list1" \
-    --field="$(gettext "My language is")":CB "$(gettext ${slng})$list2" \
+    --field="$(gettext "I'm learning")":CB "$(gettext "${tlng}")$list1" \
+    --field="$(gettext "My language is")":CB "$(gettext "${slng}")$list2" \
     --field=" :LBL" " " --field=":LBL" " " \
     --field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
     --field="<small>$(gettext "Program to convert text to WAV file")</small>" "$txaud" \
     --field="$(gettext "Interface language")":CB "$lst" \
-    --field="<a href=\"$lk\">$(gettext "Join Idiomind translation")</a>\t":LBL " " \
     --field=" :LBL" " " --field=":LBL" " " \
     --field="$(gettext "Get started")":BTN "$DS/ifs/tls.sh help" \
     --field="$(gettext "Report a problem")":BTN "$DS/ifs/tls.sh fback" \
@@ -205,15 +204,15 @@ config_dlg() {
         fi
         
         nslang=$(cut -d "|" -f14 < "$cnf1")
-        if [[ ${slng} != ${nslang} ]]; then
-            slng=${nslang}
-            confirm "$info2" dialog-question ${slng}
+        if [[ "${slng}" != "${nslang}" ]]; then
+            slng="${nslang}"
+            confirm "$info2" dialog-question "${slng}"
             if [ $? -eq 0 ]; then
-                echo ${tlng} > "$DC_s/6.cfg"
-                echo ${slng} >> "$DC_s/6.cfg"
+                echo "${tlng}" > "$DC_s/6.cfg"
+                echo "${slng}" >> "$DC_s/6.cfg"
                 cdb="$DM_tls/data/${tlng}.db"
-                if ! grep -q ${slng} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
-                    sqlite3 ${cdb} "alter table Words add column ${slng} TEXT;"
+                if ! grep -q "${slng}" <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
+                    sqlite3 ${cdb} "alter table Words add column '${slng}' TEXT;"
                 fi
             fi
         fi

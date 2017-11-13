@@ -81,9 +81,9 @@ dlg=$(yad --form --title="Idiomind" \
 --class=Idiomind --name=Idiomind \
 --window-icon=idiomind \
 --image-on-top --buttons-layout=end --align=right --fixed --center --on-top \
---width=450 --height=250 --borders=12 \
---field="$(gettext "Select foreign language"):CB" "$list1" \
---field="$(gettext "Select native language"):CB" "$list2" \
+--width=460 --height=260 --borders=12 \
+--field="	 	$(gettext "Select foreign language"):CB" "$list1" \
+--field="	 	$(gettext "Select native language"):CB" "$list2" \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "OK")":0)
 ret=$?
@@ -97,11 +97,11 @@ elif [ $ret -eq 0 ]; then
     
     if [ -z "$dlg" ]; then
     /usr/share/idiomind/ifs/1u.sh & exit 1
-    elif [ -z $source ]; then
+    elif [ -z "$source" ]; then
     /usr/share/idiomind/ifs/1u.sh & exit 1
-    elif [ -z $target ]; then
+    elif [ -z "$target" ]; then
     /usr/share/idiomind/ifs/1u.sh t & exit 1
-    elif [ $target = $source ]; then
+    elif [ "$target" = "$source" ]; then
     /usr/share/idiomind/ifs/1u.sh t & exit 1
     fi
     mkdir "$HOME/.idiomind"
@@ -121,16 +121,16 @@ elif [ $ret -eq 0 ]; then
     DC_s="$HOME/.config/idiomind"
 
     for val in "${lt[@]}"; do
-        if [[ ${target} = $(gettext ${val}) ]]; then
+        if [[ "${target}" = $(gettext ${val}) ]]; then
             export tlng=$val
         fi
     done
-    export slng=${source}
-    set_lang ${tlng}
-    if ! grep -q ${slng} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
-        sqlite3 ${cdb} "alter table Words add column ${slng} TEXT;"
+    export slng="${source}"
+    set_lang "${tlng}"
+    if ! grep -q "${slng}" <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
+        sqlite3 ${cdb} "alter table Words add column '${slng}' TEXT;"
     fi
-    echo ${slng} >> "$DC_s/6.cfg"
+    echo "${slng}" >> "$DC_s/6.cfg"
     if echo "$target" |grep -oE 'Chinese|Japanese|Russian'; then _info; fi
     > "$DC_s/1.cfg"
     for n in {0..12}; do echo -e "${csets[$n]}=\"\"" >> "$DC_s/1.cfg"; done
