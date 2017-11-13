@@ -562,11 +562,11 @@ function dlg_form_1() {
     --skip-taskbar --fixed --center --on-top \
     --align=right --image="${img}" \
     --window-icon=idiomind \
-    --width=450 --height=120 --borders=5 \
+    --width=450 --borders=5 \
     --field="" "$txt" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
-    --button=!'format-justify-left'!"$(gettext "List words")":"$cmd_words" \
-    --button=!'image-x-generic'!"$(gettext "Add an image file by screen")":3 \
+    --button=!'format-justify-left'!"$(gettext "List words (only for copied-pasted text)")":"$cmd_words" \
+    --button=!'image-x-generic'!"$(gettext "Add an image by screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an Audio file")":2 \
     --button=!'gtk-apply'!"$(gettext "Add")":0
 }
@@ -580,14 +580,14 @@ function dlg_form_2() {
     --skip-taskbar --fixed --center --on-top \
     --align=right --image="${img}" \
     --window-icon=idiomind \
-    --width=450 --height=160 --borders=5 \
+    --width=450 --borders=5 \
     --field="" "$txt" \
     --field="" "$srce" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
-    --button=!'format-justify-left'!"$(gettext "List words")":"$cmd_words" \
-    --button=!'image-x-generic'!"$(gettext "Add an image file")":3 \
+    --button=!'format-justify-left'!"$(gettext "List words (only for copied-pasted text)")":"$cmd_words" \
+    --button=!'image-x-generic'!"$(gettext "Add an image by screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an Audio file")":2 \
-    --button="$(gettext "Add")"!'list-add':0
+    --button=!'gtk-apply'!"$(gettext "Add")":0
 }
 
 function dlg_checklist_3() {

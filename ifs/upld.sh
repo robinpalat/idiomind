@@ -164,8 +164,8 @@ function upld() {
         trad="$(grep -o 'slng="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         fsize="$(grep -o 'nsze="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
-        info="<b>$(gettext "Downloadable content available")</b>"
-        info2="$(gettext "Audio files:") $naud\n$(gettext "Images:") $nimg\n$(gettext "Translations:") $trad\n$(gettext "Size:") $fsize"
+        info="<b>$(gettext "Downloadable content")</b>"
+        info2="<small>$(gettext "Audio files:") $naud\n$(gettext "Images:") $nimg\n$(gettext "Translations:") $trad\n$(gettext "Total size:") $fsize</small>"
         yad --form --columns=1 --title="$(gettext "Share")" \
         --name=Idiomind --class=Idiomind \
         --always-print-result \
@@ -217,7 +217,7 @@ function upld() {
     linkc="http://idiomind.net/${tlng,,}"
     linkac='http://idiomind.net/community/?q=user/register'
     ctgy="$(grep -o 'ctgy="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-    text_upld="<span font_desc='Arial 12'><b>$(gettext "Share online with other learners!")</b></span>\n<a href='$linkc'>$(gettext "Topics library")</a>"
+    text_upld="<span font_desc='Arial 12'><b>$(gettext "Share online with other learners!")</b></span>\n$(gettext "Go to") <a href='$linkc'>$(gettext "Topics library")</a> $(gettext "website")"
     _Categories="${ctgy}${list}"
     _levels="!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")"
     note=$(< "${DC_tlt}/info")

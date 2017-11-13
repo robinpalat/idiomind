@@ -767,7 +767,6 @@ function practices() {
     if [ -e "${pdir}/${pr}.0" -a -e "${pdir}/${pr}.1" ]; then
     
         export all=$(egrep -cv '#|^$' "${pdir}/${pr}.0")
-        export all=$(egrep -cv '#|^$' "$DC_tlt/4.cfg")
     
         if [[ ${group} = 1 ]]; then
             head -n ${split} "${pdir}/${pr}.group" \
