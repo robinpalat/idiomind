@@ -84,6 +84,9 @@ function save_gains() {
         > ./${pr}.2
         > ./${pr}.3
     fi
+    
+    cat ./${pr}.2 ./${pr}.3 |sed -e ':a;N;$!ba;s/\n/, /g' > ./${pr}.df
+    
     cat ./*.1 > ./log1
     if [ ${step} = 1 ]; then
         cat ./*.2 > ./log2
@@ -95,13 +98,21 @@ function save_gains() {
 
 function _log() { 
     if [ ${1} != 'e' ]; then
-        [ -e ./${1}.1 ] && echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1" |sed '/\.\./d' >> "$log"
-        [ -e ./${1}.2 ] && echo "w2.$(tr -s '\n' '|' < ./${1}.2).w2" |sed '/\.\./d' >> "$log"
-        [ -e ./${1}.3 ] && echo "w3.$(tr -s '\n' '|' < ./${1}.3).w3" |sed '/\.\./d' >> "$log"
+		 if [ -e ./${1}.1 ]; then
+		 echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1" |sed '/\.\./d' >> "$log"; fi
+		 if [ -e ./${1}.2 ]; then
+         echo -n "$(head -n5 < ./${1}.2 |sed -e ':a;N;$!ba;s/\n/, /g')" > ./${1}.df
+         echo "w2.$(tr -s '\n' '|' < ./${1}.2).w2" |sed '/\.\./d' >> "$log"; fi
+		 if [ -e ./${1}.3 ]; then
+         echo -n "$(head -n5 < ./${1}.3 |sed -e ':a;N;$!ba;s/\n/, /g')" > ./${1}.df
+         echo "w3.$(tr -s '\n' '|' < ./${1}.3).w3" |sed '/\.\./d' >> "$log"; fi
     elif [ ${1} = 'e' ]; then
-        [ -e ./${1}.1 ] && echo "s1.$(tr -s '\n' '|' < ./${1}.1).s1" |sed '/\.\./d' >> "$log"
-        [ -e ./${1}.2 ] && echo "s2.$(tr -s '\n' '|' < ./${1}.2).s2" |sed '/\.\./d' >> "$log"
-        [ -e ./${1}.3 ] && echo "s3.$(tr -s '\n' '|' < ./${1}.3).s3" |sed '/\.\./d' >> "$log"
+         if [ -e ./${1}.1 ]; then
+         echo "s1.$(tr -s '\n' '|' < ./${1}.1).s1" |sed '/\.\./d' >> "$log"; fi
+         if [ -e ./${1}.2 ]; then
+         echo "s2.$(tr -s '\n' '|' < ./${1}.2).s2" |sed '/\.\./d' >> "$log"; fi
+         if [ -e ./${1}.3 ]; then
+         echo "s3.$(tr -s '\n' '|' < ./${1}.3).s3" |sed '/\.\./d' >> "$log"; fi
     fi
 }
     
@@ -122,14 +133,14 @@ function practice_a() {
         [ ${trgt_f_c} -lt 12 ] && trgt_f_c=12
         [ ${trgt_f_a} -lt 12 ] && trgt_f_a=12
         [ ${srce_f_a} -lt 12 ] && srce_f_a=12
-        question="\n<span font_desc='Free Sans Bold ${trgt_f_c}'>${trgt}</span>"
-        answer1="\n<span font_desc='Free Sans ${trgt_f_a}'>${trgt}</span>"
-        answer2="<span font_desc='Free Sans Bold ${srce_f_a}'><i>${srce}</i></span>"
+        question="\n<span font_desc='Comic Sans MS Bold ${trgt_f_c}'>${trgt}</span>"
+        answer1="\n<span font_desc='Comic Sans MS ${trgt_f_a}'>${trgt}</span>"
+        answer2="<span font_desc='Comic Sans MS Bold ${srce_f_a}'><i>${srce}</i></span>"
     }
 
     question() {
         yad --form --title=" " \
-        --no-focus --skip-taskbar --text-align=center --center --on-top \
+        --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
         --width=400 --height=255 --borders=8 \
         --field="\n$question":lbl "" \
@@ -140,7 +151,6 @@ function practice_a() {
 
     answer() {
         yad --form --title=" " \
-        --no-focus \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
         --width=400 --height=255 --borders=8 \
@@ -207,14 +217,14 @@ function practice_b(){
             ras=$(sort -Ru b.srces |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt}));  [ ${srce_s} -lt 12 ] && srce_s=12
-            question="\n<span font_desc='Free Sans ${srce_s}'><b>${trgt}</b></span>\n\n"
+            question="\n<span font_desc='Comic Sans MS ${srce_s}'><b>${trgt}</b></span>\n\n"
         else
             srce="${item}"
             trgt=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
             ras=$(sort -Ru "${cfg3}" |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt})); [ ${srce_s} -lt 12 ] && srce_s=12
-            question="\n<span font_desc='Free Sans ${srce_s}'><b>${trgt}</b></span>\n\n"
+            question="\n<span font_desc='Comic Sans MS ${srce_s}'><b>${trgt}</b></span>\n\n"
         fi
     }
 
@@ -379,8 +389,8 @@ function practice_d() {
             srce=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
         fi
         [ ! -e "$img" ] && img="$DS/images/imgmiss.jpg"
-        cuest="<span font_desc='Arial Bold 12'>${trgt}</span>"
-        aswer="<span font_desc='Arial Bold 12'>${srce}</span>"
+        cuest="<span font_desc='Comic Sans MS Bold 13'>${trgt}</span>"
+        aswer="<span font_desc='Comic Sans MS Bold 13'>${srce}</span>"
     }
 
     question() {
@@ -691,7 +701,7 @@ function lock() {
         fi
         if [ $ret -eq 0 ]; then
             cleanups "${lock}" ./${pr}.0 ./${pr}.1 \
-            ./${pr}.2 ./${pr}.3 ./${pr}.srces ./${pr}
+            ./${pr}.2 ./${pr}.3 ./${pr}.srces ./${pr} ./${pr}.df
             echo 1 > ./.${icon}; echo 0 > ./${pr}.l
         elif [ $ret -eq 4 ]; then
             cleanups "${lock}"; return 0
@@ -851,6 +861,12 @@ function strt() {
     if [[ ${step} -gt 1 ]] && [[ ${ling} -ge 1 ]] && [[ ${hard} = 0 ]]; then
     echo -e "wait=\"$(date +%d)\"" > ./${pr}.lock; fi
     
+    for i in a b c d; do
+		if [[ -s ./${i}.df ]]; then
+		declare plus${i}=" | <span font_desc='Verdana 8'>$(< ./${i}.df)</span>"
+		fi
+	done
+
     include "$DS/ifs/mods/practice"
     
     if [[ "${1}" = 1 ]]; then
@@ -858,9 +874,9 @@ function strt() {
         [[ "${pr}" = e ]] && \
         info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed this test of") $NUMBER $(gettext "sentences")</span>\n" \
         || info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed this test of") $NUMBER $(gettext "words")</span>\n"
-        echo 21 > .${icon}
+        echo 21 > .${icon}; export plus${pr}=""; [ -e ./${pr}.df ] && rm ./${pr}.df
     elif [[ "${1}" = 2 ]]; then
-        learnt=$(< ./${pr}.l); declare info${icon}="* "
+        learnt=$(< ./${pr}.l); declare info${icon}="*  "
         info="<small>$(gettext "Total")</small> <b><big>$all</big></b>    <small>$(gettext "Learnt")</small> <b><big>$learnt</big></b>    <small>$(gettext "Easy")</small> <b><big>$easy</big></b>    <small>$(gettext "Learning")</small> <b><big>$ling</big></b>    <small>$(gettext "Difficult")</small> <b><big>$hard</big></b>\n"
     fi
 
@@ -870,14 +886,15 @@ function strt() {
     --print-column=1 --separator="" \
     --window-icon=idiomind \
     --buttons-layout=edge --image-on-top --center --on-top --text-align=center \
-    --ellipsize=NONE --no-headers --expand-column=3 --hide-column=1 \
+    --no-headers --expand-column=3 --hide-column=1 \
     --width=${sz[0]} --height=${sz[1]} --borders=10 \
+    --ellipsize=end --wrap-width=200 --ellipsize-cols=1 \
     --column="Action" --column="Pick":IMG --column="Label" \
-    "a" "$pdirs/images/$(< ./.1).png" "   $info1  $(gettext "Flashcards")"  \
-    "b" "$pdirs/images/$(< ./.2).png" "   $info2  $(gettext "Multiple-choice")" \
-    "c" "$pdirs/images/$(< ./.3).png" "   $info3  $(gettext "Recognize Pronunciation")" \
-    "d" "$pdirs/images/$(< ./.4).png" "   $info4  $(gettext "Images")" \
-    "e" "$pdirs/images/$(< ./.5).png" "   $info5  $(gettext "Listen and Writing Sentences")" \
+    "a" "$pdirs/images/$(< ./.1).png" "$info1$(gettext "Flashcards") $plusa"  \
+    "b" "$pdirs/images/$(< ./.2).png" "$info2$(gettext "Multiple-choice") $plusb" \
+    "c" "$pdirs/images/$(< ./.3).png" "$info3$(gettext "Recognize Pronunciation") $plusc" \
+    "d" "$pdirs/images/$(< ./.4).png" "$info4$(gettext "Images") $plusd" \
+    "e" "$pdirs/images/$(< ./.5).png" "$info5$(gettext "Listen and Writing Sentences")" \
     --button="$(gettext "Restart")":3 \
     --button="$(gettext "Start")":0)"
     ret=$?
@@ -892,6 +909,7 @@ function strt() {
         fi
     elif [ $ret -eq 3 ]; then
         if [ -d "${pdir}" ]; then
+			unset plusa plusb plusc plusd
             cd "${pdir}"/; rm ./.[^.]; rm ./*
             touch ./log1 ./log2 ./log3
         fi
