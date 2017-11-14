@@ -1143,7 +1143,7 @@ class IdiomindIndicator:
     def on_Task(self, widget):
         t = widget.get_child()
         t = t.get_label()
-        os.system("/usr/share/idiomind/ifs/tasks.sh '%s'" % (t))
+        os.system("/usr/share/idiomind/ifs/tasks.sh \"%s\"" % (str(t)))
     def on_Home(self, widget):
         os.system("idiomind topic &")
     def on_Add_click(self, widget):
