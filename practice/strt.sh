@@ -84,15 +84,12 @@ function save_gains() {
         > ./${pr}.2
         > ./${pr}.3
     fi
-    
-    cat ./${pr}.2 ./${pr}.3 |sed -e ':a;N;$!ba;s/\n/, /g' > ./${pr}.df
-    
-    cat ./*.1 > ./log1
+    [ -f ./*.1 ] && cat ./*.1 > ./log1
     if [ ${step} = 1 ]; then
-        cat ./*.2 > ./log2
+        [ -f ./*.2 ] && cat ./*.2 > ./log2
     elif [ ${step} = 2 ]; then
-        cat ./*.2 > ./log2
-        cat ./*.3 > ./log3
+        [ -f ./*.2 ] && cat ./*.2 > ./log2
+        [ -f ./*.3 ] && cat ./*.3 > ./log3
     fi
 }
 
@@ -101,10 +98,10 @@ function _log() {
 		 if [ -e ./${1}.1 ]; then
 		 echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1" |sed '/\.\./d' >> "$log"; fi
 		 if [ -e ./${1}.2 ]; then
-         echo -n "$(head -n5 < ./${1}.2 |sed -e ':a;N;$!ba;s/\n/, /g')" > ./${1}.df
+         [ ! -e ./${1}.3 ] && echo -n "$(head -n10 < ./${1}.2 |sed -e ':a;N;$!ba;s/\n/, /g')" > ./${1}.df
          echo "w2.$(tr -s '\n' '|' < ./${1}.2).w2" |sed '/\.\./d' >> "$log"; fi
 		 if [ -e ./${1}.3 ]; then
-         echo -n "$(head -n5 < ./${1}.3 |sed -e ':a;N;$!ba;s/\n/, /g')" > ./${1}.df
+         echo -n "$(head -n10 < ./${1}.3 |sed -e ':a;N;$!ba;s/\n/, /g')" > ./${1}.df
          echo "w3.$(tr -s '\n' '|' < ./${1}.3).w3" |sed '/\.\./d' >> "$log"; fi
     elif [ ${1} = 'e' ]; then
          if [ -e ./${1}.1 ]; then
@@ -237,7 +234,7 @@ function practice_b(){
     mchoise() {
         dlg="$(ofonts | yad --list --title=" " \
         --text="${question}" \
-        --no-focus --separator=" " --always-print-result \
+        --separator=" " --always-print-result \
         --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --undecorated \
         --no-headers \
@@ -324,7 +321,7 @@ function practice_c() {
 
         yad --form --title=" " \
         --text="$lquestion" \
-        --no-focus --skip-taskbar --text-align=center --center --on-top \
+        --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --image-on-top --undecorated \
         --width=390 --height=220 --borders=8 \
         --field="!$DS/images/listen.png":BTN "$cmd_play" \
@@ -396,7 +393,7 @@ function practice_d() {
     question() {
         yad --form --title=" " \
         --image="$img" \
-        --no-focus \ --skip-taskbar --text-align=center \
+        --skip-taskbar --text-align=center \
         --skip-taskbar --align=center --center --on-top \
         --image-on-top --undecorated --buttons-layout=spread \
         --width=418 --height=360 --borders=8 \
@@ -408,7 +405,7 @@ function practice_d() {
     answer() {
         yad --form --title=" " \
         --image="$img" \
-        --no-focus --skip-taskbar --text-align=center \
+        --skip-taskbar --text-align=center \
         --align=center --center --on-top \
         --image-on-top --undecorated --buttons-layout=spread \
         --width=418 --height=360 --borders=8 \
@@ -712,6 +709,8 @@ function lock() {
 
 function decide_group() {
     [ -e ./${pr}.l ] && learnt=$(($(< ./${pr}.l)+easy)) || learnt=${easy}
+    if [ ! -e ./${pr}.2 ] && [ ! -e ./${pr}.3 ]; then
+    cleanups ./${pr}.df; export plus${pr}=""; fi
     preeasy=$((learnt+easy)); left=$((all-learnt))
     info="$(gettext "Left") <b>$left</b>   $(gettext "Learnt") <b>$learnt</b>   $(gettext "Easy") <b>$easy</b>   $(gettext "Learning") <b>$ling</b>   $(gettext "Difficult") <b>$hard</b>"
     optns=$(yad --form --title="$(gettext "Continue")" \
@@ -858,7 +857,8 @@ function strt() {
     [ ! -e ./.5 ] && echo 1 > .5
     [[ ${hard} -lt 0 ]] && hard=0
     
-    if [[ ${step} -gt 1 ]] && [[ ${ling} -ge 1 ]] && [[ ${hard} = 0 ]]; then
+    if [[ ${step} -gt 1 ]] && [[ ${ling} -ge 1 ]] && \
+    [[ ${hard} = 0 ]] && [[ ${group} != 1 ]]; then
     echo -e "wait=\"$(date +%d)\"" > ./${pr}.lock; fi
     
     for i in a b c d; do
@@ -870,7 +870,7 @@ function strt() {
     include "$DS/ifs/mods/practice"
     
     if [[ "${1}" = 1 ]]; then
-        NUMBER="<span color='#6E6E6E'><b><big>$(wc -l < ${pr}.0)</big></b></span>"; declare info${icon}="<span font_desc='Arial Bold 12'>$(gettext "Test completed") </span> —"
+        NUMBER="<span color='#6E6E6E'><b><big>$(wc -l < ${pr}.0)</big></b></span>"; declare info${icon}="<span font_desc='Arial Bold 12'>$(gettext "Test completed") </span> — "
         [[ "${pr}" = e ]] && \
         info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed this test of") $NUMBER $(gettext "sentences")</span>\n" \
         || info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed this test of") $NUMBER $(gettext "words")</span>\n"
