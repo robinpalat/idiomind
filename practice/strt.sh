@@ -80,16 +80,16 @@ function score() {
 }
     
 function save_gains() {
-    if [ ${1} = 0 ]; then
+    if [[ ${1} = 0 ]]; then
         > ./${pr}.2
         > ./${pr}.3
     fi
-    [ -f ./*.1 ] && cat ./*.1 > ./log1
-    if [ ${step} = 1 ]; then
-        [ -f ./*.2 ] && cat ./*.2 > ./log2
-    elif [ ${step} = 2 ]; then
-        [ -f ./*.2 ] && cat ./*.2 > ./log2
-        [ -f ./*.3 ] && cat ./*.3 > ./log3
+    [[ -f ./*.1 ]] && cat ./*.1 > ./log1
+    if [[ ${step} = 1 ]]; then
+        [[ -f ./*.2 ]] && cat ./*.2 > ./log2
+    elif [[ ${step} = 2 ]]; then
+        [[ -f ./*.2 ]] && cat ./*.2 > ./log2
+        [[ -f ./*.3 ]] && cat ./*.3 > ./log3
     fi
 }
 
@@ -709,11 +709,13 @@ function lock() {
 
 function decide_group() {
     [ -e ./${pr}.l ] && learnt=$(($(< ./${pr}.l)+easy)) || learnt=${easy}
-    if [ ! -e ./${pr}.2 ] && [ ! -e ./${pr}.3 ]; then
-    cleanups ./${pr}.df; export plus${pr}=""; fi
     preeasy=$((learnt+easy)); left=$((all-learnt))
+    if [[ ${easy} = 10 ]]; then
+		cleanups ./${pr}.df; export plus${pr}=""
+		good="$(gettext "Good!")   "
+    fi
     info="$(gettext "Left") <b>$left</b>   $(gettext "Learnt") <b>$learnt</b>   $(gettext "Easy") <b>$easy</b>   $(gettext "Learning") <b>$ling</b>   $(gettext "Difficult") <b>$hard</b>"
-    optns=$(yad --form --title="$(gettext "Continue")" \
+    optns=$(yad --form --title="$good$(gettext "Continue")..." \
     --window-icon=idiomind \
     --always-print-result \
     --skip-taskbar --buttons-layout=spread \
@@ -723,6 +725,7 @@ function decide_group() {
     --button="[$(gettext "Exit")]":5 \
     --button="$(gettext "Again")!view-refresh!$(gettext "Go back to practice the above items")":1 \
     --button="$(gettext "Continue")!go-next!$(gettext "Practice the next group")":0); ret="$?"
+    unset good
 
     if [ $ret -eq 0 ]; then
         grep -Fxvf "${pdir}/${pr}.1" "${pdir}/${pr}.group" \
@@ -872,8 +875,8 @@ function strt() {
     if [[ "${1}" = 1 ]]; then
         NUMBER="<span color='#6E6E6E'><b><big>$(wc -l < ${pr}.0)</big></b></span>"; declare info${icon}="<span font_desc='Arial Bold 12'>$(gettext "Test completed") </span> — "
         [[ "${pr}" = e ]] && \
-        info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed this test of") $NUMBER $(gettext "sentences")</span>\n" \
-        || info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed this test of") $NUMBER $(gettext "words")</span>\n"
+        info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed a test of") $NUMBER $(gettext "sentences")</span>\n" \
+        || info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed a test of") $NUMBER $(gettext "words")</span>\n"
         echo 21 > .${icon}; export plus${pr}=""; [ -e ./${pr}.df ] && rm ./${pr}.df
     elif [[ "${1}" = 2 ]]; then
         learnt=$(< ./${pr}.l); declare info${icon}="*  "
