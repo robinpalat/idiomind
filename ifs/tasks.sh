@@ -2,15 +2,15 @@
 
 source /usr/share/idiomind/default/c.conf
 arg="$1"
-l1="$(gettext "To Review (new):") "
-l2="$(gettext "To Review (overdue) (new):") "
-l3="$(gettext "To Review:") "
-l4="$(gettext "To Review (overdue):") "
-l5="$(gettext "Practice:") "
-l6="$(gettext "Back to Practice:") "
-l7="$(gettext "Finalize Review (overdue):") "
-tpt="${arg#*: }"
-act="${arg%%:*}"
+l1="$(gettext "To Review (new):")"
+l2="$(gettext "To Review (overdue) (new):")"
+l3="$(gettext "To Review:")"
+l4="$(gettext "To Review (overdue):")"
+l5="$(gettext "Practice:")"
+l6="$(gettext "Back to Practice:")"
+l7="$(gettext "Finalize Review (overdue):")"
+tpt="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg#*:})"
+act="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg%%:*})"
 
 chngtpt(){
 	mode="$(< "$DM_tl/${1}/.conf/8.cfg")"
@@ -25,20 +25,20 @@ modmenu() {
     rm -f "$DT/tasks"; echo "$tpc" > "$DC_s/4.cfg"; fi
 }
 
-if [ "${act}" = "$l1" ]; then
+if [ "${act}:" = "$l1" ]; then
 	modmenu "$arg"; chngtpt "$tpt"
-elif [ "${act}: " = "$l2" ]; then
+elif [ "${act}:" = "$l2" ]; then
 	modmenu "$arg"; chngtpt "$tpt"
-elif [ "${act}: " = "$l3" ]; then
+elif [ "${act}:" = "$l3" ]; then
 	modmenu "$arg"; chngtpt "$tpt"
-elif [ "${act}: " = "$l4" ]; then
+elif [ "${act}:" = "$l4" ]; then
 	modmenu "$arg"; chngtpt "$tpt"
-elif [ "${act}: " = "$l7" ]; then
+elif [ "${act}:" = "$l7" ]; then
 	modmenu "$arg"; chngtpt "$tpt"
-elif [ "${act}: " = "$l5" ]; then
+elif [ "${act}:" = "$l5" ]; then
 	modmenu "$arg"
 	"$DS/practice/strt.sh" "$tpt" &
-elif [ "${act}: " = "$l6" ]; then
+elif [ "${act}:" = "$l6" ]; then
 	modmenu "$arg"
 	"$DS/practice/strt.sh" "$tpt" &
 else

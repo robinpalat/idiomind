@@ -8,7 +8,7 @@
 # 5 to practice | update_lists.sh
 # 6 back to practice | update_lists.sh
 
-[ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
+source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 echo -e "\n------------- updating tasks..."
 l1="$(gettext "To Review (new):") "
@@ -19,7 +19,6 @@ l5="$(gettext "Practice:") "
 l6="$(gettext "Back to Practice:") "
 l7="$(gettext "Finalize Review (overdue):") "
 f="$DT/tasks"; cleanups "$f"
-
 
 ## topics 
 if [ -e "$DM_tls/5.cfg" ]; then

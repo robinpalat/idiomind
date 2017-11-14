@@ -157,8 +157,9 @@ config_dlg() {
         [[ "$val" != "$txaud" ]] && \
         sed -i "s/${csets[12]}=.*/${csets[12]}=\"$(sed 's|/|\\/|g' <<< "$val")\"/g" "$DC_s/1.cfg"
         val=$(cut -d "|" -f19 < "$cnf1")
-        [[ "$val" != "$intrf" ]] && \
+        if [[ "$val" != "$intrf" ]]; then
         sed -i "s/${csets[13]}=.*/${csets[13]}=\"$val\"/g" "$DC_s/1.cfg"
+        "$DS/ifs/mods/start/update_tasks.sh" & fi
         
         if [[ $(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && [ ! -e $DT/clipw ]; then
             "$DS/ifs/clipw.sh" &
