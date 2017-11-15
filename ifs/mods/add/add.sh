@@ -565,7 +565,7 @@ function dlg_form_1() {
     --gtkrc="$DS/default/gtkrc.cfg" \
     --always-print-result --separator="|" \
     --skip-taskbar --fixed --center --on-top \
-    --align=right --image="${img}" \
+    --buttons-layout=spread --align=right --image="${img}" \
     --window-icon=idiomind \
     --width=470 --borders=5 \
     --field="" "$txt" \
@@ -589,16 +589,16 @@ function dlg_form_2() {
     --gtkrc="$DS/default/gtkrc.cfg" \
     --always-print-result --separator="|" \
     --skip-taskbar --fixed --center --on-top \
-    --align=right --image="${img}" \
+    --buttons-layout=spread --align=right --image="${img}" \
     --window-icon=idiomind \
     --width=470 --borders=5 \
     --field="" "$txt" \
     --field="" "$srce" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
     --button=!'edit-paste'!"$(gettext "Enable clipboard watcher")":"$cmd_clipw" \
-    --button=!'format-justify-left'!"$(gettext "List words (only for copied-pasted text)")":"$cmd_words" \
     --button=!'image-x-generic'!"$(gettext "Add an image by screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an Audio file")":2 \
+    --button=!'format-justify-left'!"$(gettext "List words (only for copied-pasted text)")":"$cmd_words" \
     --button=!'gtk-apply'!"$(gettext "Add")":0
 }
 
