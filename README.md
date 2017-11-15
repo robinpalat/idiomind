@@ -1,14 +1,22 @@
 
+Idiomind mainly focus on vocabulary, have a couple of simple quiz and other usefull features.
 
+# System Requirment #
 
+Debian based system
+bash (>=4.1)
+yad (>=0.37)
+mplayer
+imagemagick
+wkhtmltopdf
+curl
+html2text
+xclip
+python
+espeak
+sqlite3
 
-<b>Dependencies:</b>
-
-bash (>=4.1), yad (>=0.37), mplayer, imagemagick, wkhtmltopdf, curl, html2text, xdg-utils, xclip, python, espeak, sqlite3
-
-
-
-<b>Installing in Debian, Ubuntu, and derivatives:</b>
+# Installing in Debian, Ubuntu, and derivatives: #
 
 
       sudo add-apt-repository ppa:robinpalat/idiomind
