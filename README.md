@@ -1,7 +1,7 @@
 
 Idiomind mainly focus on vocabulary, have a couple of simple quiz and other usefull features.
 
-# System Requirment #
+# System Requirement #
 
 Debian based system
 bash (>=4.1)
