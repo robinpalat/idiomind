@@ -554,7 +554,12 @@ function dlg_form_0() {
 }
 
 function dlg_form_1() {
-	cmd_words="$DS/add.sh 'list_words_dclik' TRUE "\"${txt}\"""
+	if [ -n "${txt}" ]; then
+	cmd_words="$DS/add.sh list_words_dclik  TRUE "\"${txt}\"""
+	else
+	cmd_words=4
+	fi
+	cmd_clipw="$DS/ifs/tls.sh 'clipw'"
     yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
@@ -562,17 +567,23 @@ function dlg_form_1() {
     --skip-taskbar --fixed --center --on-top \
     --align=right --image="${img}" \
     --window-icon=idiomind \
-    --width=450 --borders=5 \
+    --width=470 --borders=5 \
     --field="" "$txt" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
-    --button=!'format-justify-left'!"$(gettext "List words (only for copied-pasted text)")":"$cmd_words" \
+    --button=!'edit-paste'!"$(gettext "Enable clipboard watcher")":"$cmd_clipw" \
     --button=!'image-x-generic'!"$(gettext "Add an image by screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an Audio file")":2 \
+    --button=!'format-justify-left'!"$(gettext "List words (only for copied-pasted text)")":"$cmd_words" \
     --button=!'gtk-apply'!"$(gettext "Add")":0
 }
 
 function dlg_form_2() {
-	cmd_words="$DS/add.sh list_words_dclik "\"${txt}\"""
+	if [ -n "${txt}" ]; then
+	cmd_words="$DS/add.sh list_words_dclik TRUE "\"${txt}\"""
+	else
+	cmd_words=4
+	fi
+	cmd_clipw="$DS/ifs/tls.sh 'clipw'"
     yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
@@ -580,10 +591,11 @@ function dlg_form_2() {
     --skip-taskbar --fixed --center --on-top \
     --align=right --image="${img}" \
     --window-icon=idiomind \
-    --width=450 --borders=5 \
+    --width=470 --borders=5 \
     --field="" "$txt" \
     --field="" "$srce" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
+    --button=!'edit-paste'!"$(gettext "Enable clipboard watcher")":"$cmd_clipw" \
     --button=!'format-justify-left'!"$(gettext "List words (only for copied-pasted text)")":"$cmd_words" \
     --button=!'image-x-generic'!"$(gettext "Add an image by screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an Audio file")":2 \

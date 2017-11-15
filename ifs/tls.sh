@@ -1238,6 +1238,19 @@ if __name__ == "__main__":
 ABOUT
 } >/dev/null 2>&1
 
+clipw() {
+		if [[ ! -e $DT/clipw ]]; then
+            "$DS/ifs/clipw.sh" &
+            sleep 1
+            notify-send -i idiomind "$(gettext "Clipboard watcher active")" \
+            "$(gettext "Disable in 5 minutes...")" -t 10000
+        else 
+			"$DS/ifs/clipw.sh" 1
+        fi
+
+}>/dev/null 2>&1
+
+
 gtext() {
 $(gettext "Marked items")
 $(gettext "Difficult words")
@@ -1293,4 +1306,6 @@ case "$1" in
     itray ;;
     about)
     about ;;
+    clipw)
+    clipw "$@" ;;
 esac

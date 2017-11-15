@@ -785,8 +785,9 @@ new_items() {
         "$DS/ifs/tls.sh" add_audio "$DT_r"
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
     
-    elif [ $ret -eq 0 ]; then
-    
+    elif [ $ret -eq 0 -o $ret -eq 4 ]; then
+		
+		[ $ret -eq 4 ] && export wlist='TRUE'
         [ -z "${tpe}" ] && check_s "${tpe}" && exit 1
         if [ "${tpe}" = "$(gettext "New") *" ]; then
             "$DS/add.sh" new_topic

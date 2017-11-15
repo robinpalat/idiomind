@@ -1,39 +1,42 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+source /usr/share/idiomind/default/c.conf
+source "$DS/ifs/cmns.sh"
+
 cbwatch() {
     while [ 1 ]; do
-        [ ! -e $DT/clipw ] && break
+        [[ ! -e $DT/clipw ]] && break
         xclip -selection clipboard /dev/null
         sleep 0.5
         if [[ -n "$(xclip -selection clipboard -o)" ]]; then
-            idiomind add "$(xclip -selection clipboard -o)"
+			if [[ "$(xclip -selection clipboard -o)" -gt 120 ]]; then
+				notify-send -i idiomind "$(gettext "Text is too long")" \
+				"$(gettext "The copied text is too long to be added")" -t 10000
+			else
+				idiomind add "$(xclip -selection clipboard -o)"
+            fi
             xclip -selection clipboard /dev/null
         fi
-    done
-    return 0
+    done & pid=$!
+	sleep 300 && kill -TERM $pid
+	[[ -f $DT/clipw ]] && rm -f $DT/clipw
+	return 0
 }
 
 DT="/tmp/.idiomind-$USER"
 
-if [[ $1 =  1 ]]; then
-    yad --form --title="$(gettext "Clipboard watcher")" \
-    --name=Idiomind --class=Idiomind \
-    --text="$(gettext "Deactivate Clipboard watcher?")" \
-    --window-icon=idiomind \
-    --fixed --skip-taskbar --center --on-top \
-    --width=270 --height=90 --borders=8 \
-    --button="$(gettext "No")":2 \
-    --button="$(gettext "Yes")":1
+if [[ "$1" =  1 ]]; then
+    msg_2 "$(gettext "Deactivate Clipboard watcher?")\n" \
+    'edit-paste' "$(gettext "Yes")" "$(gettext "No")"
     ret="$?"
-    if [ $ret = 1 ]; then
+    if [ $ret = 0 ]; then
         source /usr/share/idiomind/default/c.conf
         sed -i "s/clipw=.*/clipw=\"FALSE\"/g" "$DC_s/1.cfg"
-        [ -f $DT/clipw ] && rm -f $DT/clipw
-        exit 1 & "$DS/add.sh" new_items
+        [[ -f $DT/clipw ]] && rm -f $DT/clipw
+        exit 1
     fi
 else
-    #notify-send -i idiomind "$(gettext "Clipboard watcher active")" " " -t 10000
     echo $$ > $DT/clipw
     cbwatch
 fi
