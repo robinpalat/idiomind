@@ -498,12 +498,12 @@ edit_list_more() {
     fi
     
     more="$(echo -e "${cols1}${cols2}" |sed '/^$/d' \
-    |yad --list --title="$(gettext "More options")" \
+    |yad --list --title="" \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --name=Idiomind --class=Idiomind \
     --expand-column=2 --no-click --no-headers\
     --window-icon=idiomind --on-top --center \
-    --width=400 --height=350 --borders=3 \
+    --width=350 --height=300 --borders=5 \
     --column="":TXT \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0)"

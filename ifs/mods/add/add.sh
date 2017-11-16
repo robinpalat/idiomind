@@ -572,7 +572,7 @@ function dlg_form_1() {
     --button=!'edit-paste'!"$(gettext "Enable clipboard watcher")":5 \
     --button=!'image-x-generic'!"$(gettext "Add an image by screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an Audio file")":2 \
-    --button=!'format-justify-left'!"$(gettext "List words")":"$cmd_words" \
+    --button=!'format-justify-left'!"$(gettext "Options for copy-pasted text / List words")":"$cmd_words" \
     --button=!'gtk-apply'!"$(gettext "Add")":0
 }
 
@@ -596,7 +596,7 @@ function dlg_form_2() {
     --button=!'edit-paste'!"$(gettext "Enable clipboard watcher")":5 \
     --button=!'image-x-generic'!"$(gettext "Add an image by screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an Audio file")":2 \
-    --button=!'format-justify-left'!"$(gettext "List words")":"$cmd_words" \
+    --button=!'format-justify-left'!"$(gettext "Options for copy-pasted text / List words")":"$cmd_words" \
     --button=!'gtk-apply'!"$(gettext "Add")":0
 }
 

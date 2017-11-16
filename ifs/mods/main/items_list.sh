@@ -249,3 +249,31 @@ function dialog_1() {
     --button=" $(gettext "Not Yet") ":1 \
     --button=" $(gettext "Yes") ":2
 }
+
+function tpc_view() {
+	yad --list --title="Idiomind" \
+    --text="${itxt}" \
+    --name=Idiomind --class=Idiomind \
+    --no-click --print-column=0 --hide-column=2 --tooltip-column=2 \
+    --ellipsize=end --wrap-width=${sz[2]} --ellipsize-cols=0 \
+    --dclick-action="${dclk}" \
+    --window-icon=idiomind \
+    --hide-column=2 --tooltip-column=2 \
+    --no-headers --ellipsize=END --center \
+    --width=${sz[0]} --height=${sz[1]} --borders=8 \
+    --column=" " --column=" " \
+    --button="$(gettext "Install")":0
+}
+
+function panelini() {
+	yad --fixed --form --title="Idiomind" \
+    --name=Idiomind --class=Idiomind \
+    --always-print-result \
+    --window-icon=idiomind \
+    --on-top --no-buttons --text-align=left --align=left \
+    --width=140 --height=150 ${geometry} --borders=10 \
+    --field="$(gettext "New")"!'list-add':btn "$DS/add.sh 'new_items'" \
+    --field="$(gettext "Home")"!'go-home':btn "idiomind 'topic'" \
+    --field="$(gettext "Index")"!'gtk-index':btn "$DS/chng.sh" \
+    --field="$(gettext "Options")"!'gtk-preferences':btn "$DS/cnfg.sh"
+}

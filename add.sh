@@ -130,7 +130,7 @@ function new_sentence() {
        if [ -e "$DT_r/__opts__" ]; then
 			opts="$(< "$DT_r/__opts__")"
 			export note="$(clean_2 "$(cut -d "|" -f1 <<< "${opts}")")"
-			export expl="$(clean_2 "$(cut -d "|" -f2 <<< "${opts}")")"
+			export exmp="$(clean_2 "$(cut -d "|" -f2 <<< "${opts}")")"
 			export mark="$(clean_2 "$(cut -d "|" -f3 <<< "${opts}")")"
 		fi
         index 2
@@ -192,7 +192,7 @@ function new_word() {
 		if [ -e "$DT_r/__opts__" ]; then
 			opts="$(< "$DT_r/__opts__")"
 			export note="$(clean_2 "$(cut -d "|" -f1 <<< "${opts}")")"
-			export expl="$(clean_2 "$(cut -d "|" -f2 <<< "${opts}")")"
+			export exmp="$(clean_2 "$(cut -d "|" -f2 <<< "${opts}")")"
 			export mark="$(clean_2 "$(cut -d "|" -f3 <<< "${opts}")")"
 		fi
         index 1

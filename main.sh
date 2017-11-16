@@ -51,9 +51,7 @@ function new_session() {
     fi
     
     f_lock "$DT/ps_lk"
-    
     check_list > "$DM_tl/.share/2.cfg"
-    
     if ls "$DC_s"/*.p 1> /dev/null 2>&1; then
     cd "$DC_s"/; rename 's/\.p$//' *.p; fi; cd /
 
@@ -73,7 +71,7 @@ function new_session() {
     fi
     
     # update the topics
-    echo -e "\n------------- updating topics status..."
+    echo -e "\n--- updating topics status..."
     cleanups "$DM_tls/3.cfg" "$DM_tls/4.cfg"
     tdate=$(date +%Y%m%d)
 	while read -r line; do
@@ -84,7 +82,6 @@ function new_session() {
 		stts=$(sed -n 1p "${dir}/8.cfg")
 		! [[ ${stts} =~ $numer ]] && stts=1
 		[[ ${stts} = 12 ]] && continue
-		
 		if [ $((stts+stts%2)) = 4 -o $((stts+stts%2)) = 8 ]; then
 			calculate_review "${line}"
 			if [[ $((stts%2)) = 0 ]]; then
@@ -121,7 +118,6 @@ function new_session() {
 		fi
 	done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
 	-not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
-
     rm -f "$DT/ps_lk"
     
     # run startups scripts
@@ -130,7 +126,7 @@ function new_session() {
     
     # make menu index
     "$DS/mngr.sh" mkmn 0 &
-    echo -e "------------- topics updated\n"
+    echo -e "--- topics updated\n"
     
     # statistics
     ( source "$DS/ifs/stats.sh"; sleep 5; pre_comp ) &
@@ -149,6 +145,7 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
 $(gettext "Sentences") $nsnt  $(gettext "Images") $nimg \n$(gettext "Level:") \
 $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(gettext "$slng")$otranslations</sup>" 
     dclk="$DS/play.sh play_word"
+    source "$DS/ifs/mods/main/items_list.sh"
     _lst() {
         while read -r line; do
         cut -d ':' -f1 <<< "${line}" |sed 's/\"*//;s/\"$//'
@@ -158,18 +155,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
     
     export swind=$(grep -oP '(?<=swind=\").*(?=\")' "$DC_s/1.cfg")
     sz=(580 560 540); [[ ${swind} = TRUE ]] && sz=(480 460 440)
-    _lst | yad --list --title="Idiomind" \
-    --text="${itxt}" \
-    --name=Idiomind --class=Idiomind \
-    --no-click --print-column=0 --hide-column=2 --tooltip-column=2 \
-    --ellipsize=end --wrap-width=${sz[2]} --ellipsize-cols=0 \
-    --dclick-action="${dclk}" \
-    --window-icon=idiomind \
-    --hide-column=2 --tooltip-column=2 \
-    --no-headers --ellipsize=END --center \
-    --width=${sz[0]} --height=${sz[1]} --borders=8 \
-    --column=" " --column=" " \
-    --button="$(gettext "Install")":0
+    _lst | tpc_view
     ret=$?
         if [ $ret -eq 0 ]; then
             listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
@@ -432,6 +418,7 @@ bground_session() {
 }
 
 ipanel() {
+	source "$DS/ifs/mods/main/items_list.sh"
     set_geom(){
         sleep 1
         [ ! -e "$DC_s/5.cfg" ] && > "$DC_s/5.cfg"
@@ -452,19 +439,10 @@ ipanel() {
     if [ -n "$geometry" ]; then
     geometry="--geometry=$geometry"
     else geometry="--mouse"; fi
-    
+
     export swind=$(grep -oP '(?<=swind=\").*(?=\")' "$DC_s/1.cfg")
 
-    ( yad --fixed --form --title="Idiomind" \
-    --name=Idiomind --class=Idiomind \
-    --always-print-result \
-    --window-icon=idiomind --columns=1 \
-    --on-top --no-buttons --align=center \
-    --width=100 --height=130 ${geometry} --borders=2 \
-    --field=""!"$DS/images/add.png"!"$(gettext "Add")":btn "$DS/add.sh 'new_items'" \
-    --field=""!"$DS/images/home.png"!"$(gettext "Home")":btn "idiomind 'topic'" \
-    --field=""!"$DS/images/index.png"!"$(gettext "Index")":btn "$DS/chng.sh"
-    if [ $? != 0 ] && ! pgrep -f "$DS/ifs/tls.sh itray"; then \
+    (panelini; if [ $? != 0 ] && ! pgrep -f "$DS/ifs/tls.sh itray"; then \
     "$DS/stop.sh" 1 & fi; exit ) & set_geom
 }
 
@@ -472,7 +450,6 @@ idiomind_start() {
     if [ ! -d "$DT" ]; then 
         new_session; cu=TRUE
     fi
-    
     if [ ! -e "$DT/tpe" ]; then
         cu=TRUE; tpe="$(sed -n 1p "$DC_s/4.cfg")"
         if ! ls -1a "$DS/addons/" |grep -Fxo "${tpe}" >/dev/null 2>&1; then
