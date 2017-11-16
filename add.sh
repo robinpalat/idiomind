@@ -771,6 +771,9 @@ new_items() {
         srce=$(cut -d "|" -f2 <<< "${lzgplr}")
         tpe=$(cut -d "|" -f3 <<< "${lzgplr}")
     fi
+    
+
+		
     if [ $ret -eq 3 ]; then
     
         [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
@@ -785,8 +788,9 @@ new_items() {
         "$DS/ifs/tls.sh" add_audio "$DT_r"
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
     
-    elif [ $ret -eq 0 -o $ret -eq 4 ]; then
-		
+    elif [ $ret -eq 0 -o $ret -eq 4 -o  $ret -eq 5 ]; then
+    
+        if [ $ret -eq 5 ]; then "$DS/ifs/tls.sh" clipw & return; fi
 		[ $ret -eq 4 ] && export wlist='TRUE'
         [ -z "${tpe}" ] && check_s "${tpe}" && exit 1
         if [ "${tpe}" = "$(gettext "New") *" ]; then

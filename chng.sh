@@ -104,7 +104,7 @@ if [[ ${1} = 0 ]]; then
 
 elif [[ ${1} != 0 ]]; then
     source /usr/share/idiomind/default/c.conf
-    sz=(580 560); [[ ${swind} = TRUE ]] && sz=(450 420)
+    sz=(560 560); [[ ${swind} = TRUE ]] && sz=(450 420)
     remove_d() {
         source "$DS/ifs/cmns.sh"
         ins="$(cd "/usr/share/idiomind/addons/"; set -- */; printf "%s\n" "${@%/}")"
@@ -150,7 +150,7 @@ elif [[ ${1} != 0 ]]; then
     --always-print-result --print-column=2 --separator="" \
     --window-icon=idiomind \
     --text-align=left $var2 --image-on-top \
-    --no-headers --ellipsize=END --expand-column=2 \
+    --buttons-layout=spread --no-headers --ellipsize=END --expand-column=2 \
     --search-column=2 --regex-search --center \
     --width=${sz[0]} --height=${sz[1]} --borders=5 \
     --column=img:IMG \

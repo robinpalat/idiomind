@@ -244,7 +244,7 @@ function dialog_1() {
     --text="$(gettext "<b>Would you like to review it?</b>\n The waiting period already has been completed.")" \
     --image='view-refresh' \
     --window-icon=idiomind \
-    --buttons-layout=edge --fixed --center --on-top \
+    --buttons-layout=spread --fixed --center --on-top \
     --width=440 --height=115 --borders=8 \
     --button=" $(gettext "Not Yet") ":1 \
     --button=" $(gettext "Yes") ":2

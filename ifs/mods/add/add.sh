@@ -559,7 +559,6 @@ function dlg_form_1() {
 	else
 	cmd_words=4
 	fi
-	cmd_clipw="$DS/ifs/tls.sh 'clipw'"
     yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
@@ -570,7 +569,7 @@ function dlg_form_1() {
     --width=470 --borders=5 \
     --field="" "$txt" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
-    --button=!'edit-paste'!"$(gettext "Enable clipboard watcher")":"$cmd_clipw" \
+    --button=!'edit-paste'!"$(gettext "Enable clipboard watcher")":5 \
     --button=!'image-x-generic'!"$(gettext "Add an image by screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an Audio file")":2 \
     --button=!'format-justify-left'!"$(gettext "List words (only for copied-pasted text)")":"$cmd_words" \
@@ -583,7 +582,6 @@ function dlg_form_2() {
 	else
 	cmd_words=4
 	fi
-	cmd_clipw="$DS/ifs/tls.sh 'clipw'"
     yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
@@ -595,7 +593,7 @@ function dlg_form_2() {
     --field="" "$txt" \
     --field="" "$srce" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
-    --button=!'edit-paste'!"$(gettext "Enable clipboard watcher")":"$cmd_clipw" \
+    --button=!'edit-paste'!"$(gettext "Enable clipboard watcher")":5 \
     --button=!'image-x-generic'!"$(gettext "Add an image by screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an Audio file")":2 \
     --button=!'format-justify-left'!"$(gettext "List words (only for copied-pasted text)")":"$cmd_words" \
