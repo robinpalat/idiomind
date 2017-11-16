@@ -555,7 +555,7 @@ function dlg_form_0() {
 
 function dlg_form_1() {
 	if [ -n "${txt}" ]; then
-	cmd_words="$DS/add.sh list_words_dclik  '__opts__' "\"${txt}\"""
+	cmd_words="$DS/add.sh list_words_dclik $DT_r "\"${txt}\"""
 	else
 	cmd_words=4
 	fi
@@ -578,7 +578,7 @@ function dlg_form_1() {
 
 function dlg_form_2() {
 	if [ -n "${txt}" ]; then
-	cmd_words="$DS/add.sh list_words_dclik '__opts__' "\"${txt}\"""
+	cmd_words="$DS/add.sh list_words_dclik $DT_r "\"${txt}\"""
 	else
 	cmd_words=4
 	fi
@@ -660,13 +660,13 @@ function dlg_checklist_2() {
         done
     }
     list "${1}" | yad --list --checklist --tabnum=1 --plug="$fkey" \
-    --no-headers --text-align=right \
+    --no-headers --text-align=left --text="$(gettext "Words list")" \
     --column=" " --column=" " |sed '/^$/d' > "$slts" &
     yad --form --tabnum=2 --plug="$fkey" \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --separator="|" \
     --field="$(gettext "Note")":TXT "${note}" \
-    --field="$(gettext "Example")":TXT "${exmp}" \
+    --field="$(gettext "Example for words")":TXT "${exmp}" \
     --field="$(gettext "Mark")":CHK  &
     yad --paned --orient=hor --key="$fkey" \
     --title="$(gettext "Options")" \

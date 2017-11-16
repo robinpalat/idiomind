@@ -68,7 +68,7 @@ function new_item() {
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
     if [ ! -d "$DT_r" ]; then
-        export DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
+		mkdir "$DT_r"; cd "$DT_r"
     fi
     check_s "${tpe}"
     if [ -z "${trgt}" ]; then trgt="${3}"; fi
@@ -78,6 +78,7 @@ function new_item() {
         msg "$(gettext "You need to fill text fields.")\n" \
         dialog-information "$(gettext "Information")" & exit 1
     fi
+    
     if grep -o -E 'ja|zh-cn|ru' <<< "$lgt" >/dev/null 2>&1 ; then
         srce=$(translate "${trgt}" auto $lgs)
         [ -z "${srce}" ] && internet
@@ -125,7 +126,13 @@ function new_sentence() {
         echo -e "${trgt}" >> "${DC_tlt}/note_err"
         cleanups "$DT_r"; exit 1
     else
-        notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
+        notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000 &
+       if [ -e "$DT_r/__opts__" ]; then
+			opts="$(< "$DT_r/__opts__")"
+			export note="$(clean_2 "$(cut -d "|" -f1 <<< "${opts}")")"
+			export expl="$(clean_2 "$(cut -d "|" -f2 <<< "${opts}")")"
+			export mark="$(clean_2 "$(cut -d "|" -f3 <<< "${opts}")")"
+		fi
         index 2
         if [ -e "$DT_r/img.jpg" ]; then
             set_image_2 "$DT_r/img.jpg" "${DM_tlt}/images/${trgt,,}.jpg"
@@ -182,6 +189,12 @@ function new_word() {
         echo -e "${trgt}" >> "${DC_tlt}/note_err"
         cleanups "$DT_r"; exit 1
     else
+		if [ -e "$DT_r/__opts__" ]; then
+			opts="$(< "$DT_r/__opts__")"
+			export note="$(clean_2 "$(cut -d "|" -f1 <<< "${opts}")")"
+			export expl="$(clean_2 "$(cut -d "|" -f2 <<< "${opts}")")"
+			export mark="$(clean_2 "$(cut -d "|" -f3 <<< "${opts}")")"
+		fi
         index 1
         notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
         if [ -e "$DT_r/img.jpg" ]; then
@@ -321,16 +334,16 @@ function list_words_sentence() {
 function list_words_dclik() {
     source "$DS/ifs/mods/add/add.sh"
     words="$(sed 's/<[^>]*>//g' <<< "${3}")"
-    if [ ! -d "$DT_r" ]; then
-		export DT_r=$(mktemp -d "$DT/XXXXXX")
-    fi
+    [[ -d "$2"  ]] && DT_r="$2"
+    [ ! -d "$DT_r" ] && mkdir "$DT_r"
+    export DT_r
 
 	if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then
 		( echo "#"
 		echo "# $(gettext "Processing")..." ;
 		export srce="$(translate "${words}" $lgt $lgs)"
 		[ -z "${srce}" ] && internet
-		export $DT_r; sentence_p 1
+		sentence_p 1
 		echo "$wrds"
 		list_words_3 "${words}" "${wrds}"
 		) | dlg_progress_1
@@ -338,20 +351,18 @@ function list_words_dclik() {
 		list_words_3 "${words}"
 	fi
 	export wrds="$(< "$DT_r/lst")"
+	[ $(wc -l <<< "$wrds") = 1 ] && wrds=""
 
-    if [[ "$2" = "__opts__" ]]; then
-		if [[ -n "$wrds" ]]; then
+    if [[ -d "$2"  ]]; then
+		if [[ -n "$words" ]]; then
 			slts=$(mktemp "$DT/cnf1.XXXXXX")
 			opts="$(dlg_checklist_2 "${wrds}")"
-            export note="$(clean_2 "$(cut -d "|" -f1 <<< "${opts}")")"
-            export expl="$(clean_2 "$(cut -d "|" -f2 <<< "${opts}")")"
-            export mark="$(clean_2 "$(cut -d "|" -f3 <<< "${opts}")")"
-
 			if [ $? -eq 0 ]; then
+				echo "$opts" > "$DT_r/__opts__"
 				while read -r chkst; do
 					if [ -n "$chkst" ]; then
 					sed 's/TRUE//;s/<[^>]*>//g;s/|//g' <<< "${chkst}" >> "$DT_r/wrds"
-					[ -z "$expl" ] && echo "${words}" >> "$DT_r/wrdsls"
+					echo "${words}" >> "$DT_r/wrdsls"
 					fi
 				done < "${slts}"
 				cleanups "${slts}"
@@ -376,15 +387,13 @@ function list_words_dclik() {
 } >/dev/null 2>&1
 
 function process() {
+	 if [ ! -d "$DT_r" ] ; then
+		mkdir "$DT_r"; cd "$DT_r"
+    fi
     echo "${tpe}" > "$DT/n_s_pr"
     export ns=$(wc -l < "${DC_tlt}/0.cfg")
     export db="$DS/default/dicts/$lgt"
     export cdb="$DM_tls/data/${tlng}.db"
-    
-    if [ ! -d "$DT_r" ] ; then
-        export DT_r=$(mktemp -d "$DT/XXXXXX")
-        cd "$DT_r"
-    fi
 
     if [ -n "${trgt}" ]; then
         conten="${trgt}"
@@ -535,7 +544,8 @@ function process() {
             "$(gettext "Adding $number_items notes")" \
             "$(gettext "Please wait till the process is completed")" )
         else
-            cleanups "$DT_r" "$DT/n_s_pr" "$slt" & exit 1
+			[[ $conten != '__words__' ]] && cleanups "$DT_r"
+            cleanups "$DT/n_s_pr" "$slt" & exit 1
         fi
         
         if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then c=c; else c=w; fi
@@ -681,7 +691,8 @@ function process() {
         
         [ -n "$log" ] && echo "$log" >> "${DC_tlt}/note_err"
     fi
-    cleanups "$DT/n_s_pr" "$DT_r" & exit 0
+    [[ ! -f "$DT_r/__opts__" ]] && cleanups "$DT_r"
+    cleanups "$DT/n_s_pr" & return 0
 }
 
 fetch_content() {
@@ -751,6 +762,8 @@ fetch_content() {
 } 
 
 new_items() {
+	itemdir=$(cat /dev/urandom |tr -cd 'a-f0-9' |head -c 10)
+	export DT_r="$DT/$itemdir"
     if [ -f "$DT/clipw" ]; then 
         "$DS/ifs/clipw.sh" 1 & exit 1
     fi
@@ -791,19 +804,17 @@ new_items() {
         srce=$(cut -d "|" -f2 <<< "${lzgplr}")
         tpe=$(cut -d "|" -f3 <<< "${lzgplr}")
     fi
-    
 
-		
     if [ $ret -eq 3 ]; then
     
-        [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
+        [ -d "$2" ] && DT_r="$2" || mkdir "$DT_r"
         echo "${tpe}" > "$DT/tpe"
         cd "$DT_r"; set_image_1
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
     
     elif [ $ret -eq 2 ]; then
     
-        [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
+        [ -d "$2" ] && DT_r="$2" || mkdir "$DT_r"
         echo "${tpe}" > "$DT/tpe"
         "$DS/ifs/tls.sh" add_audio "$DT_r"
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
@@ -820,9 +831,9 @@ new_items() {
             echo "${tpe}" > "$DT/tpe"
         fi
         if [ "$3" = 2 ]; then
-            [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
+            [ -d "$2" ] && DT_r="$2" || mkdir "$DT_r"
         else 
-            DT_r=$(mktemp -d "$DT/XXXXXX")
+            mkdir "$DT_r"
         fi
         export DT_r; cd "$DT_r"
         xclip -i /dev/null
