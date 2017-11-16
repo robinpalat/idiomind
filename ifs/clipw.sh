@@ -12,7 +12,7 @@ cbwatch() {
         if [[ -n "$(xclip -selection clipboard -o)" ]]; then
 			if [[ "$(xclip -selection clipboard -o)" -gt 120 ]]; then
 				notify-send -i idiomind "$(gettext "Text is too long")" \
-				"$(gettext "The copied text is too long to be added")" -t 10000
+				"$(gettext "The copied text cannot be added because it is too long")" -t 10000
 			else
 				idiomind add "$(xclip -selection clipboard -o)"
             fi

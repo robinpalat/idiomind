@@ -555,7 +555,7 @@ function dlg_form_0() {
 
 function dlg_form_1() {
 	if [ -n "${txt}" ]; then
-	cmd_words="$DS/add.sh list_words_dclik  TRUE "\"${txt}\"""
+	cmd_words="$DS/add.sh list_words_dclik  '__opts__' "\"${txt}\"""
 	else
 	cmd_words=4
 	fi
@@ -572,13 +572,13 @@ function dlg_form_1() {
     --button=!'edit-paste'!"$(gettext "Enable clipboard watcher")":5 \
     --button=!'image-x-generic'!"$(gettext "Add an image by screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an Audio file")":2 \
-    --button=!'format-justify-left'!"$(gettext "List words (only for copied-pasted text)")":"$cmd_words" \
+    --button=!'format-justify-left'!"$(gettext "List words")":"$cmd_words" \
     --button=!'gtk-apply'!"$(gettext "Add")":0
 }
 
 function dlg_form_2() {
 	if [ -n "${txt}" ]; then
-	cmd_words="$DS/add.sh list_words_dclik TRUE "\"${txt}\"""
+	cmd_words="$DS/add.sh list_words_dclik '__opts__' "\"${txt}\"""
 	else
 	cmd_words=4
 	fi
@@ -596,7 +596,7 @@ function dlg_form_2() {
     --button=!'edit-paste'!"$(gettext "Enable clipboard watcher")":5 \
     --button=!'image-x-generic'!"$(gettext "Add an image by screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an Audio file")":2 \
-    --button=!'format-justify-left'!"$(gettext "List words (only for copied-pasted text)")":"$cmd_words" \
+    --button=!'format-justify-left'!"$(gettext "List words")":"$cmd_words" \
     --button=!'gtk-apply'!"$(gettext "Add")":0
 }
 
@@ -650,6 +650,33 @@ function dlg_checklist_1() {
     --button="  $(gettext "Close")  ":0
 }
 
+function dlg_checklist_2() {
+	fkey=$((RANDOM*$$))
+    list() {
+        echo "${1}" | while read -r word; do
+        if [ -n "$word" ]; then
+            echo; echo "<span font_desc='Droid Sans 12'>$word</span>"
+        fi
+        done
+    }
+    list "${1}" | yad --list --checklist --tabnum=1 --plug="$fkey" \
+    --no-headers --text-align=right \
+    --column=" " --column=" " |sed '/^$/d' > "$slts" &
+    yad --form --tabnum=2 --plug="$fkey" \
+    --gtkrc="$DS/default/gtkrc.cfg" \
+    --separator="|" \
+    --field="$(gettext "Note")":TXT "${note}" \
+    --field="$(gettext "Example")":TXT "${exmp}" \
+    --field="$(gettext "Mark")":CHK  &
+    yad --paned --orient=hor --key="$fkey" \
+    --title="$(gettext "Options")" \
+    --name=Idiomind --class=Idiomind \
+    --skip-taskbar --orient=vert --window-icon=idiomind --center --on-top \
+    --gtkrc="$DS/default/gtkrc.cfg" \
+    --width=400 --height=260 --borders=5 --splitter=200 \
+    --button="  $(gettext "Close")  ":0
+}
+
 function dlg_text_info_1() {
     cat "${1}" |awk '{print "\n"$0}' | \
     yad --text-info --title="$(gettext "Edit")" \
@@ -698,7 +725,7 @@ function dlg_form_3() {
     --buttons-layout=spread --skip-taskbar --image-on-top \
     --align=center --text-align=center --center --on-top \
     --width=420 --height=320 --borders=5 \
-    "${btn2}" --button=" $(gettext "Close") ":1
+    "${btn2}" --button="!gtk-close!$(gettext "Close") ":1
 }
 
 function dlg_progress_1() {

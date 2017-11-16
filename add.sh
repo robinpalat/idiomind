@@ -320,36 +320,56 @@ function list_words_sentence() {
 
 function list_words_dclik() {
     source "$DS/ifs/mods/add/add.sh"
-    p=0
     words="$(sed 's/<[^>]*>//g' <<< "${3}")"
     if [ ! -d "$DT_r" ]; then
 		export DT_r=$(mktemp -d "$DT/XXXXXX")
-		p=1
     fi
-    if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then
-        ( echo "#"
-        echo "# $(gettext "Processing")..." ;
-        export srce="$(translate "${words}" $lgt $lgs)"
-        [ -z "${srce}" ] && internet
-        export $DT_r; sentence_p 1
-        echo "$wrds"
-        list_words_3 "${words}" "${wrds}"
-        ) | dlg_progress_1
-    else
-        list_words_3 "${words}"
-    fi
-    export wrds="$(< "$DT_r/lst")"
-    if [[ -n "$wrds" ]]; then
-		slt="$(dlg_checklist_1 "${wrds}")"
-		if [ $? -eq 0 ]; then
-			while read -r chkst; do
-				if [ -n "$chkst" ]; then
-				sed 's/TRUE//;s/<[^>]*>//g;s/|//g' <<< "${chkst}" >> "$DT_r/wrds"
-				echo "${words}" >> "$DT_r/wrdsls"
-				fi
-			done <<< "${slt}"
+
+	if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then
+		( echo "#"
+		echo "# $(gettext "Processing")..." ;
+		export srce="$(translate "${words}" $lgt $lgs)"
+		[ -z "${srce}" ] && internet
+		export $DT_r; sentence_p 1
+		echo "$wrds"
+		list_words_3 "${words}" "${wrds}"
+		) | dlg_progress_1
+	else
+		list_words_3 "${words}"
+	fi
+	export wrds="$(< "$DT_r/lst")"
+
+    if [[ "$2" = "__opts__" ]]; then
+		if [[ -n "$wrds" ]]; then
+			slts=$(mktemp "$DT/cnf1.XXXXXX")
+			opts="$(dlg_checklist_2 "${wrds}")"
+            export note="$(clean_2 "$(cut -d "|" -f1 <<< "${opts}")")"
+            export expl="$(clean_2 "$(cut -d "|" -f2 <<< "${opts}")")"
+            export mark="$(clean_2 "$(cut -d "|" -f3 <<< "${opts}")")"
+
+			if [ $? -eq 0 ]; then
+				while read -r chkst; do
+					if [ -n "$chkst" ]; then
+					sed 's/TRUE//;s/<[^>]*>//g;s/|//g' <<< "${chkst}" >> "$DT_r/wrds"
+					[ -z "$expl" ] && echo "${words}" >> "$DT_r/wrdsls"
+					fi
+				done < "${slts}"
+				cleanups "${slts}"
+			fi
+			process '__words__'
 		fi
-		[ ${p} = 1 ] && process '__words__'
+    else
+		if [[ -n "$wrds" ]]; then
+			slt="$(dlg_checklist_1 "${wrds}")"
+			if [ $? -eq 0 ]; then
+				while read -r chkst; do
+					if [ -n "$chkst" ]; then
+					sed 's/TRUE//;s/<[^>]*>//g;s/|//g' <<< "${chkst}" >> "$DT_r/wrds"
+					echo "${words}" >> "$DT_r/wrdsls"
+					fi
+				done <<< "${slt}"
+			fi
+		fi
     fi
     exit 0
     

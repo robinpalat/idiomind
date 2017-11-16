@@ -627,10 +627,10 @@ set_image() {
         if [ $? -eq 1 ]; then rm -f "$DT/$trgt".img; else return 1 ; fi
     fi
     if [ -e "$ifile" ]; then
-        btn2="--button=$(gettext "Remove")!edit-delete:2"
+        btn2="--button=!edit-delete!$(gettext "Remove image"):2"
         image="--image=$ifile"
     else
-        btn2="--button="$(gettext "+ Screen clipping")":0"
+        btn2="--button=!image-x-generic!"$(gettext "Add an image by screen clipping")":0"
         image="--image=$DS/images/bar.png"
     fi
     export btn2 image
@@ -1242,8 +1242,8 @@ clipw() {
 		if [[ ! -e $DT/clipw ]]; then
             "$DS/ifs/clipw.sh" &
             sleep 1
-            notify-send -i idiomind "$(gettext "Clipboard watcher active")" \
-            "$(gettext "Disable in 5 minutes...")" -t 10000
+            notify-send -i info "$(gettext "Information")" \
+            "$(gettext "The clipboard watcher is enabled for 5 minutes...")" -t 5000
         else 
 			"$DS/ifs/clipw.sh" 1
         fi
