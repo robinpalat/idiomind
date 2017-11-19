@@ -67,13 +67,17 @@ function check_format_1() {
 }
 
 check_index() {
+	
+	id_lines=18
+    cnfg10_lines=12
+    
     [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/cmns.sh"
     DC_tlt="$DM_tl/${2}/.conf"
     DM_tlt="$DM_tl/${2}"
     tpc="${2}"; mkmn=0; f=0; c=0
     [[ ${3} = 1 ]] && r=1 || r=0
-    
+
     _check() {
         if [ ! -f "${DC_tlt}/0.cfg" ]; then export f=1; fi
         
@@ -90,7 +94,7 @@ check_index() {
             fi
         done
         cfg="${DC_tlt}/10.cfg"
-        if [[ $(wc -l < "${cfg}") != 12 ]]; then
+        if [[ $(wc -l < "${cfg}") != ${cnfg10_lines} ]]; then
             source "$DS/default/sets.cfg"; > "${cfg}"
             for n in ${psets[@]}; do
                 echo -e "${n}=\"FALSE\"" >> "${cfg}"
@@ -102,7 +106,7 @@ check_index() {
         fi
         id=1
         [ ! -e "${DC_tlt}/id.cfg" ] && touch "${DC_tlt}/id.cfg" && id=0
-        [[ $(egrep -cv '#|^$' < "${DC_tlt}/id.cfg") != 17 ]] && id=0
+        [[ $(egrep -cv '#|^$' < "${DC_tlt}/id.cfg") != ${id_lines} ]] && id=0
         if [ ${id} != 1 ]; then
             dtec=$(date +%F)
             eval vls="$(sed -n 4p $DS/default/vars)"

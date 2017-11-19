@@ -4,7 +4,7 @@
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 check_list > "$DM_tl/.share/2.cfg"
-echo -e "\n------------- updating lists..."
+echo -e "\n--- updating lists..."
 
 while read -r tpc; do
 	dir="$DM_tl/${tpc}/.conf"; unset stts tpc
@@ -160,5 +160,5 @@ PY
 [ $(date +%d) = 1 -o $(date +%d) = 14 ] && rm "$log"; touch "$log"
 "$DS/mngr.sh" mkmn 1 &
 cleanups "$items" "$DT/co_lk"
-echo -e "------------- lists updated\n"
+echo -e "--- lists updated\n"
 exit

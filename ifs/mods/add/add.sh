@@ -673,7 +673,7 @@ function dlg_checklist_2() {
     --name=Idiomind --class=Idiomind \
     --skip-taskbar --orient=vert --window-icon=idiomind --center --on-top \
     --gtkrc="$DS/default/gtkrc.cfg" \
-    --width=400 --height=260 --borders=5 --splitter=200 \
+    --width=450 --height=260 --borders=5 --splitter=200 \
     --button="  $(gettext "Close")  ":0
 }
 

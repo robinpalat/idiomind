@@ -3,7 +3,7 @@
 
 if [ -e "$DM_tl/.share/2.cfg" ]; then
     sleep 20
-    echo -e "\n------------- updating rss..."
+    echo -e "\n--- updating rss..."
     if curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1; then
         ( while read -r item; do
             if [ -e "$DM_tl/${item}/.conf/feeds" -a ! -e "$DM_tl/${item}/.conf/lk" ]; then
@@ -11,6 +11,6 @@ if [ -e "$DM_tl/.share/2.cfg" ]; then
             fi
         done < "$DM_tl/.share/2.cfg" ) &
     fi
-    echo -e "------------- rss updated\n"
+    echo -e "--- rss updated\n"
 fi
 

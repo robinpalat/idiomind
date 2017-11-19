@@ -10,7 +10,7 @@
 
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
-echo -e "\n------------- updating tasks..."
+echo -e "\n--- updating tasks..."
 l1="$(gettext "To Review (new):") "
 l2="$(gettext "To Review (overdue) (new):") "
 l3="$(gettext "To Review:") "
@@ -67,5 +67,5 @@ while read -r addon; do
 	fi
 done < "$DS_a/menu_list"
 
-echo -e "------------- tasks updated\n"
+echo -e "--- tasks updated\n"
 exit

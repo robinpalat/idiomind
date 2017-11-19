@@ -289,7 +289,7 @@ function chktb() {
 }
 
 function pre_comp() {
-	echo -e "\n------------- updating statistics..."
+	echo -e "\n--- updating statistics..."
     f_lock "$DT/p_stats"
     val1=0; val2=0
     echo -n "create table if not exists 'expire_month' (date TEXT);" |sqlite3 "${db}"
@@ -307,7 +307,7 @@ function pre_comp() {
         save_topic_stats 0
     fi
     
-	echo -e "------------- statistics updated\n"
+	echo -e "--- statistics updated\n"
     rm -f "$DT/p_stats"
 }
 

@@ -9,7 +9,7 @@ activ="${3}"
 DC_tlt="$DM_tl/${topic}/.conf"
 DM_tlt="$DM_tl/${topic}"
 export mode
-mode2=$((mode+mode%2))
+export mode2=$((mode+mode%2))
 
 chek_topic() {
     if [ ! -d "${DC_tlt}" -o ! -e "${DC_tlt}/id.cfg" ]; then

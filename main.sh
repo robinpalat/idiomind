@@ -63,14 +63,14 @@ function new_session() {
     echo -n "create table if not exists Config (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
     fi
 
-    # log of practices
+    # log- practice
     if [ -f "$DC_s/log" ]; then
         if [[ "$(du -sb "$DC_s/log" |awk '{ print $1 }')" -gt 100000 ]]; then
         tail -n2000 < "$DC_s/log" > "$DT/log"
         mv -f "$DT/log" "$DC_s/log"; fi
     fi
     
-    # update the topics
+    # update - topics
     echo -e "\n--- updating topics status..."
     cleanups "$DM_tls/3.cfg" "$DM_tls/4.cfg"
     tdate=$(date +%Y%m%d)
@@ -414,7 +414,7 @@ bground_session() {
     fi &
     if [[ $(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && \
     ! pgrep -f "$DS/ifs/tls.sh itray"; then
-    idiomind_start; fi
+    _start; fi
 }
 
 ipanel() {
@@ -446,7 +446,7 @@ ipanel() {
     "$DS/stop.sh" 1 & fi; exit ) & set_geom
 }
 
-idiomind_start() {
+_start() {
     if [ ! -d "$DT" ]; then 
         new_session; cu=TRUE
     fi
@@ -512,5 +512,5 @@ case "$1" in
     update_menu)
     "$DS/ifs/tls.sh" "${@}" ;;
     *)
-    idiomind_start ;;
+    _start ;;
 esac

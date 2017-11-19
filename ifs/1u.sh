@@ -10,6 +10,10 @@ lang1="${!tlangs[@]}"; declare lt=( $lang1 )
 lang2="${!slangs[@]}"; declare ls=( $lang2 )
 text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") ${USER^} </span>
 \n      $(gettext "To get started, please configure the following:")\n"
+sx=$(xrandr -q |grep -w Screen |sed 's/.*current //;s/,.*//' |awk '{print $1}')
+sy=$(xrandr -q |grep -w Screen |sed 's/.*current //;s/,.*//' |awk '{print $3}')
+sx=$(echo $((($sx-500)/2)))
+sy=$(echo $((($sy-500)/2)))
 
 if [[ ! $(which yad) ]]; then
 zenity --info --title="$(gettext "Installing YAD")" \
@@ -80,7 +84,8 @@ dlg=$(yad --form --title="Idiomind" \
 --text="$text" \
 --class=Idiomind --name=Idiomind \
 --window-icon=idiomind \
---image-on-top --buttons-layout=end --align=right --fixed --center --on-top \
+--image-on-top --buttons-layout=end --align=right \
+--fixed --geometry="+$sx+$sy" --center --on-top \
 --width=460 --height=260 --borders=12 \
 --field="	 	$(gettext "Select foreign language"):CB" "$list1" \
 --field="	 	$(gettext "Select native language"):CB" "$list2" \
