@@ -5,13 +5,12 @@ source /usr/share/idiomind/default/c.conf
 sz=(500 470); [[ ${swind} = TRUE ]] && sz=(420 410)
 source "$DS/ifs/cmns.sh"
 if [[ -n "$1" ]]; then
-tpc="$1"
-DM_tlt="$DM_tl/$1"
-DC_tlt="$DM_tlt/.conf"
+	tpc="$1"
+	DM_tlt="$DM_tl/$1"
+	DC_tlt="$DM_tlt/.conf"
 fi
 pdir="${DC_tlt}/practice"
 pdirs="$DS/practice"
-
 declare -A prcts=( ['a']='Flashcards' ['b']='Multiple-choice'\
  ['c']='Recognize Pronunciation' ['d']='Images' ['e']='Listen and Writing Sentences')
 if [ -e "${DC_tlt}/translations/active" ]; then
@@ -57,7 +56,7 @@ function score() {
     if [[ $(($(< ./${pr}.l)+easy)) -ge ${all} ]]; then
         _log ${pr}; play "$pdirs/all.mp3" &
         date "+%a %d %B" > ./${pr}.lock
-        save_gains 0 & echo 21 > .${icon}
+        save_score 0 & echo 21 > .${icon}
         strt 1
     else
         [ -e ./${pr}.l ] && \
@@ -75,21 +74,19 @@ function score() {
             ((c=c+5))
             let n++
         done
-        save_gains 1 & stats; strt 2
+        save_score 1 & stats; strt 2
     fi
 }
     
-function save_gains() {
-    if [[ ${1} = 0 ]]; then
-        > ./${pr}.2
-        > ./${pr}.3
-    fi
-    [[ -f ./*.1 ]] && cat ./*.1 > ./log1
+function save_score() {
+	
+    if [[ ${1} = 0 ]]; then > ./${pr}.2; > ./${pr}.3; fi
+    [ -f ./*.1 ] && cat ./*.1 > ./log1
     if [[ ${step} = 1 ]]; then
-        [[ -f ./*.2 ]] && cat ./*.2 > ./log2
+        [ -f ./*.2 ] && cat ./*.2 > ./log2
     elif [[ ${step} = 2 ]]; then
-        [[ -f ./*.2 ]] && cat ./*.2 > ./log2
-        [[ -f ./*.3 ]] && cat ./*.3 > ./log3
+        [ -f ./*.2 ] && cat ./*.2 > ./log2
+        [ -f ./*.3 ] && cat ./*.3 > ./log3
     fi
 }
 
@@ -176,7 +173,6 @@ function practice_a() {
             fi
         fi
     done < ./a.tmp
-
     if [ ! -e ./a.2 ]; then
         export hard ling
         scoreschk
@@ -261,7 +257,6 @@ function practice_b(){
             break & score & return
         fi
     done < ./b.tmp
-        
     if [ ! -e ./b.2 ]; then
         export hard ling
         scoreschk
@@ -346,7 +341,6 @@ function practice_c() {
             break & score && return
         fi
     done < ./c.tmp
-
     if [ ! -e ./c.2 ]; then
         export hard ling
         scoreschk
@@ -432,7 +426,6 @@ function practice_d() {
             fi
         fi
     done < ./d.tmp
-
     if [ ! -e ./d.2 ]; then
         export hard ling
         scoreschk
@@ -530,7 +523,6 @@ function practice_e() {
             out=$(awk '{print tolower($0)}' <<< "${entry}" |_clean)
             in=$(awk '{print tolower($0)}' <<< "${chk}" |_clean)
         fi
-        
         echo "${chk}" > ./chk.tmp; touch ./words.tmp
         for line in `sed 's/ /\n/g' <<< "$out"`; do
             if grep -Fxq "${line}" <<< "$in"; then
@@ -543,7 +535,6 @@ function practice_e() {
                 "<span color='#984C42'><b>${line^}</b></span>  " >> ./words.tmp
             fi
         done
-        
         OK=$(tr '\n' ' ' < ./words.tmp)
         sed 's/ /\n/g' < ./chk.tmp > ./all.tmp; touch ./mtch.tmp
         val1=$(cat ./mtch.tmp |wc -l)
@@ -621,7 +612,6 @@ function get_list() {
         else
             sed '/^$/d' < "${cfg1}" > "${pdir}/${pr}.0"
         fi
-    
         if [ ${pr} = b ]; then
             if [ ! -e "${pdir}/b.srces" ]; then
             (echo "#"
@@ -633,7 +623,6 @@ function get_list() {
             --skip-taskbar --center --no-buttons
             fi
         fi
-    
     elif [ ${pr} = d ]; then
         > "$DT/images"
         if [[ $(wc -l < "${cfg4}") -gt 0 ]]; then
@@ -654,7 +643,6 @@ function get_list() {
         --undecorated --pulsate --auto-close \
         --skip-taskbar --center --no-buttons
         cleanups "$DT/images"
-    
     elif [ ${pr} = e ]; then
         if [[ $(wc -l < "${cfg3}") -gt 0 ]]; then
             grep -Fxvf "${cfg3}" "${cfg1}" > "$DT/slist"
@@ -734,7 +722,6 @@ function decide_group() {
         head -n ${split} "${pdir}/${pr}.group" > "${pdir}/${pr}.tmp"
         sed '/^$/d' "${pdir}/${pr}.1" \
         |awk '!a[$0]++' |wc -l > "${pdir}/${pr}.l"
-        
     elif [ $ret -eq 1 ]; then
         head -n ${split} "${pdir}/${pr}.group" > "${pdir}/${pr}.tmp"
         grep -Fxvf "${pdir}/${pr}.tmp" "${pdir}/${pr}.1" \
@@ -744,7 +731,6 @@ function decide_group() {
         |awk '!a[$0]++' |wc -l > "${pdir}/${pr}.l"
         easy=0; hard=0; ling=0; step=1
         export easy hard ling step
-        
     elif [ $ret -gt 1 ]; then
         score && return
     fi
@@ -851,19 +837,17 @@ function practices() {
 
 
 function strt() {
-    [ ! -d "${pdir}" ] && mkdir -p "${pdir}"
-    cd "${pdir}"
-    [ ! -e ./.1 ] && echo 1 > .1
-    [ ! -e ./.2 ] && echo 1 > .2
-    [ ! -e ./.3 ] && echo 1 > .3
-    [ ! -e ./.4 ] && echo 1 > .4
-    [ ! -e ./.5 ] && echo 1 > .5
+    check_dir "${pdir}"; cd "${pdir}"
+    for i in {1..5}; do
+		if [[ ! -e ./.${i} ]]; then
+		echo 1 > ./.${i}
+		fi
+	done
     [[ ${hard} -lt 0 ]] && hard=0
-    
     if [[ ${step} -gt 1 ]] && [[ ${ling} -ge 1 ]] && \
     [[ ${hard} = 0 ]] && [[ ${group} != 1 ]]; then
-    echo -e "wait=\"$(date +%d)\"" > ./${pr}.lock; fi
-    
+		echo -e "wait=\"$(date +%d)\"" > ./${pr}.lock
+    fi
     for i in a b c d; do
 		if [[ -s ./${i}.df ]]; then
 		declare plus${i}=" | <span font_desc='Verdana 8'>$(< ./${i}.df)</span>"
@@ -911,12 +895,12 @@ function strt() {
             practices ${pr}
         fi
     elif [ $ret -eq 3 ]; then
+		unset plusa plusb plusc plusd pr
         if [ -d "${pdir}" ]; then
-			unset plusa plusb plusc plusd
             cd "${pdir}"/; rm ./.[^.]; rm ./*
             touch ./log1 ./log2 ./log3
         fi
-        unset pr; strt 0
+        strt 0
     else
         "$DS/ifs/tls.sh" colorize 1 & exit 0
     fi

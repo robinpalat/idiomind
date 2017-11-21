@@ -30,7 +30,6 @@ img3="$DS/images/3.png"
 img0="$DS/images/0.png"
 dir="$DM_tl/"
 
-
 for n in {1..100}; do
     if [[ $(sed -n ${n}p <<<"${words}" |awk '{print ($1)}') -ge 3 ]]; then
         fwk=$(sed -n ${n}p <<<"${words}" |awk '{print ($2)}')
@@ -76,7 +75,6 @@ for tpc in topics:
             log3 = [line.strip() for line in open(cnfg_dir+"practice/log3")]
             cfg = [line.strip() for line in open(cnfg_dir+"10.cfg")]
             items = [line.strip() for line in open(cnfg_dir+"0.cfg")]
-
             try:
                 auto_mrk = (cfg[9].split('acheck="'))[1].split('"')[0]
             except:
@@ -97,7 +95,6 @@ for tpc in topics:
             else:
                 steps = []
             steps=len(steps)
-            
             f = open(cnfg_dir+"/8.cfg")
             stts = [line.rstrip('\n') for line in f]
             topractice = open(dir+"/.share/5.cfg", "a")
@@ -118,7 +115,6 @@ for tpc in topics:
                     topractice.write(tpc+"|5\n")
                     print "- to practice: "+tpc
             topractice.close()
-
             cfg1len = 0
             if cont == True:
                 cfg1 = [line.strip() for line in open(cfg1)]
