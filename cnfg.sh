@@ -83,12 +83,10 @@ config_dlg() {
             echo -e "$_set=\"\"" >> "$DC_s/1.cfg"
         done
     fi
-
     if [ -z "$intrf" ]; then intrf=Default; fi
     lst="$intrf"$(sed "s/\!$intrf//g" <<<"!Default!en!es!fr!it!pt")""
     if [ "$ntosd" != TRUE ]; then audio=TRUE; fi
     if [ "$trans" != TRUE ]; then ttrgt=FALSE; fi
-    
     emrk='!'
     for val in "${!tlangs[@]}"; do
         declare clocal="$(gettext "${val}")"
@@ -166,7 +164,6 @@ config_dlg() {
         else 
             if [ -e $DT/clipw ]; then kill $(cat $DT/clipw); rm -f $DT/clipw; fi
         fi
-        
         if [[ $(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && \
 		[[ ! -f "$DT/tray.pid" ]]; then
 			$DS/ifs/tls.sh itray &
@@ -176,7 +173,6 @@ config_dlg() {
 			kill -9 $(pgrep -f "$DS/ifs/tls.sh itray")
 			rm -f "$DT/tray.pid"
 		fi
-        
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
@@ -189,7 +185,6 @@ config_dlg() {
             rm "$config_dir/idiomind.desktop"
             fi
         fi
-
         ntlang=$(cut -d "|" -f13 < "$cnf1")
         if [[ $(gettext ${tlng}) != ${ntlang} ]]; then
             for val in "${lt[@]}"; do
@@ -203,7 +198,6 @@ config_dlg() {
             confirm "$info2$info3" dialog-question ${tlng}
             [ $? -eq 0 ] && set_lang ${tlng}
         fi
-        
         nslang=$(cut -d "|" -f14 < "$cnf1")
         if [[ "${slng}" != "${nslang}" ]]; then
             slng="${nslang}"

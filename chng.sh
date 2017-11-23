@@ -43,7 +43,7 @@ if [[ ${1} = 0 ]]; then
         [[ ${stnrd} = 1 ]] && sleep ${l}
     }
     export -f _play
-    
+
     getitem() {
         if [ ${f} -gt 5 -o ! -d "${DC_tlt}" ]; then
             msg "$(gettext "An error has occurred. Playback stopped")" dialog-information &
@@ -100,7 +100,6 @@ if [[ ${1} = 0 ]]; then
     fi
     include "$DS/ifs/mods/chng"
     echo ${_stop} > $DT/playlck
-
 
 elif [[ ${1} != 0 ]]; then
     source /usr/share/idiomind/default/c.conf

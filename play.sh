@@ -66,7 +66,6 @@ play_list() {
     in4="$(egrep -cv '#|^$' "${DC_tlt}/practice/log3")"
     [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
     [ ! -e $DT/playlck ] && echo 0 > $DT/playlck
-
     if [ ${cfg} = 1 ]; then
         n=0
         while [ ${n} -le 9 ]; do
@@ -101,7 +100,6 @@ play_list() {
             unset items
         done
     }
-
     btn1="$(gettext "Play"):0"
     if [ "$(< $DT/playlck)" = 0 ]; then
         title="$(gettext "Play")"
@@ -120,7 +118,6 @@ play_list() {
     tab2=$(mktemp "$DT/XXXXXX")
     c=$((RANDOM%100000)); KEY=$c
     [ ${ntosd} != TRUE -a ${audio} != TRUE ] && audio=TRUE
-    
     setting_1 | yad --plug=$KEY --tabnum=1 --list \
     --print-all --always-print-result --separator="|" \
     --center --expand-column=3 --no-headers \
@@ -170,12 +167,10 @@ play_list() {
             [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
             let f++
         done
-        
         pval="$(cut -d "|" -f5 <<< "${out2}")"
         if [[ "$pval" = "$(gettext "Words")" ]]; then  val=1
         elif [[ "$pval" = "$(gettext "Sentences")" ]]; then  val=2
         else  val=0; fi
-        
         [ -n "${val}" ] && sed -i "s/rword=.*/rword=\"$val\"/g" "${DC_tlt}/10.cfg"
  
         # cmd play
@@ -184,7 +179,6 @@ play_list() {
                 notify-send "$(gettext "Nothing to play")" "$(gettext "Exiting...")" -t 3000 &
                 echo 0 > "$DT/playlck"
                 "$DS/stop.sh" 2 & exit 1; fi
-                
             if [ -d "${DM_tlt}" ] && [ -n "${tpc}" ]; then
                     if grep TRUE <<<"$words$sntcs$marks$wprct"; then
                         echo -e "${tpc}" > "$DT/playlck"

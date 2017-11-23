@@ -14,7 +14,6 @@ mkmn() {
     cleanups "$DM_tl/images" "$DM_tl/.conf"
     dirimg='/usr/share/idiomind/images'
 	cfg0="$DM_tl/.share/0.cfg"; > "$cfg0"
-
     while read -r tpc; do
         dir="$DM_tl/${tpc}/.conf"; unset stts
         [ ! -d "${dir}" ] && mkdir -p "${dir}"
@@ -25,14 +24,11 @@ mkmn() {
             ! [[ ${stts} =~ $numer ]] && stts=13
         fi
 		echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$cfg0"
-
     done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
     -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d'; \
     find ./ -maxdepth 1 -mtime +79 -type d -not -path '*/\.*' \
     -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
-
     [[ "$2" = 1 ]] && (source "$DS/ifs/stats.sh"; save_topic_stats 0) &
-
     cleanups "$DT/mn_lk"; exit 0
 }
 
@@ -45,7 +41,6 @@ delete_item_ok() {
     if [ -n "${trgt}" ]; then
         cleanups "${DM_tlt}/$cdid.mp3" "${DM_tlt}/images/${trgt,,}.jpg"
         sed -i "/trgt{${trgt}}/d" "${DC_tlt}/0.cfg"
-
         if [ -d "${DC_tlt}/practice" ]; then
             cd "${DC_tlt}/practice"
             while read -r file_pr; do
@@ -62,7 +57,6 @@ delete_item_ok() {
                 sed '/^$/d' "${DC_tlt}/${n}.cfg.tmp" > "${DC_tlt}/${n}.cfg"
             fi
         done
-        
         cleanups "${DC_tlt}/lst"
         rm "${DC_tlt}"/*.tmp
     fi
@@ -84,7 +78,6 @@ delete_item() {
             (sleep 0.1 && kill -9 $(pgrep -f "yad --form "))
             cleanups "${DM_tlt}/$cdid.mp3" "${DM_tlt}/images/${trgt,,}.jpg"
             sed -i "/trgt{${trgt}}/d" "${DC_tlt}/0.cfg"
-            
             if [ -d "${DC_tlt}/practice" ]; then
                 cd "${DC_tlt}/practice"
                 while read file_pr; do
@@ -237,7 +230,6 @@ edit_item() {
             if [ ${tomodify} = 1 ]; then
             
             ( if [ ${mod_index} = 1 ]; then
-                
                     DT_r=$(mktemp -d "$DT/XXXXXX"); > "$DT/${trgt_mod}.edit"
                     
                     if [ ${type_mod} = 1 ]; then
@@ -426,12 +418,10 @@ edit_list_cmds() {
                 fi
             done < <(find "$DM_tl/${2}/images"/*.jpg)
         fi
-        
         if [[ "$(cat "${direc}/1.cfg" "${direc}/2.cfg" |wc -l)" -lt 1 ]]; then
         > "${direc}/0.cfg"; fi
         "$DS/ifs/tls.sh" colorize 1
         rm -f "$DT/el_lk"
-
         if [ -e "$DT/items_to_add" ]; then
             invrt_msg=FALSE
             export DT_r=$(mktemp -d "$DT/XXXXXX")
@@ -462,7 +452,6 @@ edit_list_cmds() {
                     export DT_r; sentence_p 2
                     [[ ${dlaud} = TRUE ]] && fetch_audio "${aw}" "${bw}"
                 fi
-                
                 cdid_mod="$(set_name_file ${type} "${trgt}" "${srce_mod}" \
                 "${exmp}" "${defn}" "${note}" "${wrds_mod}" "${grmr_mod}")"
                 
@@ -496,7 +485,6 @@ edit_list_more() {
     else
         cols2=""
     fi
-    
     more="$(echo -e "${cols1}${cols2}" |sed '/^$/d' \
     |yad --list --title="" \
     --gtkrc="$DS/default/gtkrc.cfg" \
@@ -508,7 +496,6 @@ edit_list_more() {
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0)"
     ret="$?"
-    
     if [ $ret = 0 ]; then
         _war(){ msg_2 "$(gettext "Confirm")\n" \
         dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"; }
@@ -543,7 +530,6 @@ edit_list_more() {
             fi
         elif grep "$(gettext "Manage feeds")" <<< "${more}"; then
             idiomind feeds
-            
         elif grep "$(gettext "Show short sentences in word's view")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
                 yad_kill "yad --list --title="
@@ -592,7 +578,6 @@ edit_list_dlg() {
     if [ -e "$DC_s/elist_first_run" ]; then 
         "$DS/ifs/tls.sh" first_run edit_list &
     fi
-
     cleanups "$DT/list_output"; > "$DT/list_input"
     
     lns=$(cat "${direc}/0.cfg" |wc -l)
@@ -633,7 +618,7 @@ edit_feeds() {
             touch "$DM_tl/${2}/.conf/exclude"
             echo "${mods}" |sed -e '/^$/d' > "${file}"
         fi
-        if  [ $ret = 2 ]; then
+        if [ $ret = 2 ]; then
             "$DS/add.sh" fetch_content "${tpc}" &
         fi
     fi
@@ -651,7 +636,6 @@ delete_topic() {
     ret="$?"
     if [ ${ret} -eq 0 ]; then
         f_lock "$DT/rm_lk"
-        
         if [ -f "$DT/n_s_pr" ]; then
             if [ "$(sed -n 1p "$DT/n_s_pr")" = "${tpc}" ]; then
             "$DS/stop.sh" 5; fi
@@ -661,14 +645,12 @@ delete_topic() {
             "$DS/stop.sh" 2; fi
         fi
         cleanups "$DM/backup/${tpc}.bk"
-
         if [ -d "$DM_tl/${tpc}" ]; then cleanups "$DM_tl/${tpc}"; fi
      
         if [ -d "$DM_tl/${tpc}" ]; then sleep 0.5
             msg "$(gettext "Could not remove the directory:")\n$DM_tl/${tpc}\n$(gettext "You must manually remove it.")" \
             dialog-information "$(gettext "Information")"
         fi
-        
         rm -f "$DT/tpe"; > "$DC_s/4.cfg"
         for n in {0..6}; do
             if [ -e "$DM_tl/.share/${n}.cfg" ]; then
@@ -676,10 +658,8 @@ delete_topic() {
                 sed '/^$/d' "$DM_tl/.share/${n}.cfg.tmp" > "$DM_tl/.share/${n}.cfg"
             fi
         done
-        
         yad_kill "yad --list " "yad --text-info " \
         "yad --form " "yad --notebook "
-        
         "$DS/mngr.sh" mkmn 1 &
     fi
     rm -f "$DT/rm_lk" "$DM_tl/.share"/*.tmp & exit 1
@@ -690,7 +670,6 @@ rename_topic() {
     source "$DS/ifs/mods/add/add.sh"
     listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
     ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
-
     name="$(clean_3 "${2}")"
     
     if grep -Fxo "${name}" < <(ls "$DS/addons/"); then name="${name} (1)"; fi
@@ -731,7 +710,6 @@ rename_topic() {
                 echo "${name}" >> "$DM_tl/.share/${n}.cfg"
             fi
         done
-        
         check_list > "$DM_tl/.share/2.cfg"
         rm "$DM_tl/.share"/*.tmp
         cleanups "$DM_tl/${tpc}" "$DM/backup/${tpc}.bk" "$DT/rm_lk"
@@ -755,9 +733,7 @@ mark_to_learn_topic() {
     (echo "#"
     stts=$(sed -n 1p "${DC_tlt}/8.cfg")
     ! [[ ${stts} =~ ${numer} ]] && stts=1
-    
     calculate_review "${tpc}"
-    
     if [ $((stts%2)) = 0 ]; then
         echo 6 > "${DC_tlt}/8.cfg"
     else
@@ -767,7 +743,6 @@ mark_to_learn_topic() {
             echo 1 > "${DC_tlt}/8.cfg"
         fi
     fi
-
     for i in {1..4}; do rm "${DC_tlt}/${i}.cfg"; done
     rm "${DC_tlt}/7.cfg"; touch "${DC_tlt}/5.cfg" "${DC_tlt}/2.cfg"
     steps=$(egrep -cv '#|^$' < "${DC_tlt}/9.cfg")
@@ -786,21 +761,15 @@ mark_to_learn_topic() {
             echo "${trgt}" >> "${DC_tlt}/1.cfg"
         fi
     done < "${DC_tlt}/0.cfg" ) | progr_3 "pulsate"
-
     if [ -e "${DC_tlt}/lk" ]; then rm "${DC_tlt}/lk"; fi
-    
     cp -f "${DC_tlt}/info" "${DC_tlt}/info.bk"
-        
     if [[ ${3} = 1 ]]; then
         yad_kill "yad --form " "yad --multi-progress " "yad --list " \
         "yad --text-info " "yad --notebook "
     fi
     touch "${DM_tlt}"
-    
     ( sleep 1; mv -f "${DC_tlt}/info.bk" "${DC_tlt}/info" ) &
-
     "$DS/mngr.sh" mkmn 1 &
-    
     [[ ${3} = 1 ]] && idiomind topic &
 }
 
@@ -821,10 +790,8 @@ mark_as_learned_topic() {
         [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
         calculate_review "${tpc}"
         steps=$(egrep -cv '#|^$' < "${DC_tlt}/9.cfg")
-        
         if [ -s "${DC_tlt}/9.cfg" ]; then
             ! [[ ${steps} =~ ${numer} ]] && steps=1
-            
             if [ ${steps} -eq 4 ]; then
                 stts=$((stts+1))
             fi
@@ -842,11 +809,9 @@ mark_as_learned_topic() {
         else
             date +%m/%d/%Y > "${DC_tlt}/9.cfg"
         fi
-        
         if [ -d "${DC_tlt}/practice" ]; then
             (cd "${DC_tlt}/practice"; rm ./.*; rm ./*
             touch ./log1 ./log2 ./log3); fi
-
         > "${DC_tlt}/7.cfg"
         if [[ $((stts%2)) = 0 ]]; then
             echo 4 > "${DC_tlt}/8.cfg"
@@ -856,23 +821,18 @@ mark_as_learned_topic() {
     fi
     cleanups "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"
     touch "${DC_tlt}/1.cfg"
-    
     while read -r item_; do
         item="$(sed 's/}/}\n/g' <<< "${item_}")"
         trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
         [ -n "${trgt}" ] && echo "${trgt}" >> "${DC_tlt}/2.cfg"
     done < "${DC_tlt}/0.cfg" ) | progr_3 "pulsate"
-    
     cp -f "${DC_tlt}/info" "${DC_tlt}/info.bk"
-
     if [[ ${3} = 1 ]]; then
         yad_kill "yad --form " "yad --list " \
         "yad --text-info " "yad --notebook "
     fi
     "$DS/mngr.sh" mkmn 1 &
-    
     ( sleep 1; mv -f "${DC_tlt}/info.bk" "${DC_tlt}/info" ) &
-    
     [[ ${3} = 1 ]] && idiomind topic &
     ( sleep 1; "$DS/ifs/tls.sh" colorize 0 ) &
     exit
@@ -891,7 +851,6 @@ mark_to_learnt_topic_ok() {
             steps=$(egrep -cv '#|^$' < "${DC_tlt}/9.cfg")
             if [ -s "${DC_tlt}/9.cfg" ]; then
                 ! [[ ${steps} =~ ${numer} ]] && steps=1
-                
                 if [ ${steps} -eq 4 ]; then
                     stts=$((stts+1))
                 fi
@@ -928,7 +887,6 @@ mark_to_learnt_topic_ok() {
             trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
             [ -n "${trgt}" ] && echo "${trgt}" >> "${DC_tlt}/2.cfg"
         done < "${DC_tlt}/0.cfg"
-
         cp -f "${DC_tlt}/info" "${DC_tlt}/info.bk"
         ( sleep 1; mv -f "${DC_tlt}/info.bk" "${DC_tlt}/info" ) &
 }

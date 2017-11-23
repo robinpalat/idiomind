@@ -117,7 +117,6 @@ function new_sentence() {
         msg "$(gettext "You need to fill text fields.")\n" \
         dialog-information "$(gettext "Information")" & exit; fi
     fi
-    
     sentence_p 1
     export cdid="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
     mksure "${trgt}" "${srce}" "${grmr}" "${wrds}"
@@ -236,7 +235,6 @@ function list_words_edit() {
     DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
     words="$(list_words_2 "${2}")"
     slt="$(dlg_checklist_1 "${words}")"
-    
     if [ $? -eq 0 ]; then
         while read -r chkst; do
             if [ -n "$chkst" ]; then
@@ -273,7 +271,6 @@ function list_words_edit() {
         fi
         let n++
     done < <(head -200 < "$DT_r/select_lines")
-
     cleanups "${DT_r}"; exit 0
     
 } >/dev/null 2>&1
@@ -327,7 +324,6 @@ function list_words_sentence() {
         fi
         let n++
     done < <(head -200 < "$DT_r/select_lines")
-
     cleanups "$DT_r"; exit 0
 }
 
@@ -481,7 +477,6 @@ function process() {
                     lenght "${l}"
                 fi
             done < "$DT_r/xxlines"
-
         else 
             mv "$DT_r/xxlines" "$DT_r/xlines"
             sed -i '/^$/d' "$DT_r/xlines"
@@ -490,7 +485,6 @@ function process() {
         echo "${2}" > "$DT_r/xlines"
         sed -i '/^$/d' "$DT_r/xlines"
     fi
-
     if [ -z "$(< "$DT_r/xlines")" ] && [[ $conten != '__words__' ]]; then
         msg "$(gettext "Failed to get text.")\n" \
         dialog-information "$(gettext "Information")"
@@ -641,7 +635,6 @@ function process() {
                     [ -z "${srce}" ] && internet
                     export cdid="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
                     mksure "${trgt}" "${srce}"
-                    
                     if [ $? = 0 ]; then
                         index 1
                         if [ ! -e "${DM_tls}/audio/$audio.mp3" ]; then
@@ -729,7 +722,6 @@ fetch_content() {
         </xsl:for-each>
       </xsl:template>
     </xsl:stylesheet>"
-    
     while read -r _feed; do
         if [ -n "${_feed}" ]; then
             feed_items="$(xsltproc - "${_feed}" <<< "${tmplitem}" 2> /dev/null)"
@@ -757,8 +749,7 @@ fetch_content() {
             done <<< "${feed_items}"
         fi
     done < "${feeds}"
-    rm -f "$DT/updating_feeds"; exit 0
-    
+    cleanups "$DT/updating_feeds"; exit 0
 } 
 
 new_items() {
@@ -804,23 +795,17 @@ new_items() {
         srce=$(cut -d "|" -f2 <<< "${lzgplr}")
         tpe=$(cut -d "|" -f3 <<< "${lzgplr}")
     fi
-
     if [ $ret -eq 3 ]; then
-    
         [ -d "$2" ] && DT_r="$2" || mkdir "$DT_r"
         echo "${tpe}" > "$DT/tpe"
         cd "$DT_r"; set_image_1
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
-    
     elif [ $ret -eq 2 ]; then
-    
         [ -d "$2" ] && DT_r="$2" || mkdir "$DT_r"
         echo "${tpe}" > "$DT/tpe"
         "$DS/ifs/tls.sh" add_audio "$DT_r"
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
-    
     elif [ $ret -eq 0 -o $ret -eq 4 -o  $ret -eq 5 ]; then
-    
         if [ $ret -eq 5 ]; then "$DS/ifs/tls.sh" clipw & return; fi
 		[ $ret -eq 4 ] && export wlist='TRUE'
         [ -z "${tpe}" ] && check_s "${tpe}" && exit 1
@@ -837,23 +822,17 @@ new_items() {
         fi
         export DT_r; cd "$DT_r"
         xclip -i /dev/null
-    
         if [ -z "${tpe}" ] && [[ ${3} != 3 ]]; then cleanups "$DT_r"
             msg "$(gettext "No topic is active")\n" \
             "face-worried" "$(gettext "Information")" & exit 1; fi
-
         if [ -z "${trgt}" ]; then
             cleanups "$DT_r"; exit 1; fi
-
         if [[ ${trgt,,} = ocr ]] || [[ ${trgt^} = I ]]; then
             unset trgt; process image
-
         elif [[ ${#trgt} = 1 ]]; then
             process ${trgt:0:2}
-
         elif [[ ${#trgt} -gt ${sentence_chars} ]]; then #TODO
             process
-            
         else
             new_item
         fi
