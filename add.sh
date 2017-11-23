@@ -20,7 +20,6 @@ new_topic() {
     [ -n "$4" ] && name="${4}"
     listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
     ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
-    
     if [[ $(wc -l <<< "${listt}") -ge 120 ]]; then
         msg "$(gettext "Maximum number of topics reached.")" \
         dialog-information "$(gettext "Information")" & exit 1
@@ -44,7 +43,6 @@ new_topic() {
     if [[ ${#name} -gt 55 ]]; then name="Untitled"; fi
     if grep -Fxo "${name}" < <(ls "$DS/addons/"); then name="${name} (1)"; fi
     chck=$(grep -Fxo "${name}" <<< "${listt}" |wc -l)
-    
     if [[ ${chck} -ge 1 ]]; then
         for i in {1..50}; do
         chck=$(grep -Fxo "${name} ($i)" <<< "${listt}")
@@ -78,7 +76,6 @@ function new_item() {
         msg "$(gettext "You need to fill text fields.")\n" \
         dialog-information "$(gettext "Information")" & exit 1
     fi
-    
     if grep -o -E 'ja|zh-cn|ru' <<< "$lgt" >/dev/null 2>&1 ; then
         srce=$(translate "${trgt}" auto $lgs)
         [ -z "${srce}" ] && internet
@@ -797,23 +794,25 @@ new_items() {
     fi
     if [ $ret -eq 3 ]; then
         [ -d "$2" ] && DT_r="$2" || mkdir "$DT_r"
-        echo "${tpe}" > "$DT/tpe"
+        ! grep '*' <<< "${tpe}" >/dev/null 2>&1 && echo "${tpe}" > "$DT/tpe"
         cd "$DT_r"; set_image_1
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
     elif [ $ret -eq 2 ]; then
         [ -d "$2" ] && DT_r="$2" || mkdir "$DT_r"
-        echo "${tpe}" > "$DT/tpe"
+        ! grep '*' <<< "${tpe}" >/dev/null 2>&1 && echo "${tpe}" > "$DT/tpe"
         "$DS/ifs/tls.sh" add_audio "$DT_r"
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
     elif [ $ret -eq 0 -o $ret -eq 4 -o  $ret -eq 5 ]; then
         if [ $ret -eq 5 ]; then "$DS/ifs/tls.sh" clipw & return; fi
 		[ $ret -eq 4 ] && export wlist='TRUE'
-        [ -z "${tpe}" ] && check_s "${tpe}" && exit 1
+        if [ -z "${tpe}" ]; then
+			check_s "${tpe}" && exit 1
+        fi
         if [ "${tpe}" = "$(gettext "New") *" ]; then
             "$DS/add.sh" new_topic
             source $DS/default/c.conf
         else
-            echo "${tpe}" > "$DT/tpe"
+            ! grep '*' <<< "${tpe}" >/dev/null 2>&1 && echo "${tpe}" > "$DT/tpe"
         fi
         if [ "$3" = 2 ]; then
             [ -d "$2" ] && DT_r="$2" || mkdir "$DT_r"
