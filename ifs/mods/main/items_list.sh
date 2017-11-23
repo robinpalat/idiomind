@@ -31,7 +31,7 @@ function vwr() {
     export tags="$(grep -oP '(?<=tags{).*(?=})' <<< "${item}")"
     export wrds="$(grep -oP '(?<=wrds{).*(?=})' <<< "${item}")"
     export cdid="$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")"
-    export exmp="$(sed "s|${trgt,,}|<span background='#FDFBCF'>${trgt,,}<\/\span>|g" <<< "${exmp}")"
+    export exmp="$(sed "s|${trgt,,}|<span color='#404040' background='#FDFBCF'>${trgt,,}<\/\span>|g" <<< "${exmp}")"
     text_missing=0
 
     if [ ${type} = 1 ]; then
@@ -74,8 +74,8 @@ function word_view() {
     font_size=25; [ ${#trgt} -gt 20 ] && font_size=18
     [ -n "${tags}" ] && field_tag="--field=<small>$tags</small>:lbl"
     [ -n "${defn}" ] && field_defn="--field=$defn:lbl"
-    [ -n "${note}" ] && field_note="--field=<span font_desc='Arial 9'>$note</span>\n:lbl"
-    [ -n "${exmp}" ] && field_exmp="--field=<span font_desc='Verdana 10'>$exmp\n</span>:lbl"
+    [ -n "${note}" ] && field_note="--field=<span font_desc='Arial 9'>$note</span>:lbl"
+    [ -n "${exmp}" ] && field_exmp="--field=<span font_desc='Verdana 10 Italic'>\"$exmp\"</span>:lbl"
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free ${font_size}'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>$link\n\n"
    
