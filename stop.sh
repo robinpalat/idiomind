@@ -58,6 +58,7 @@ on_lang() {
     killall bcle.sh &
     if ps -A |pgrep -f "/usr/share/idiomind/bcle.sh"; then killall bcle.sh & fi
     if ps -A |pgrep -f "/usr/share/idiomind/chng.sh"; then killall chng.sh; fi
+    if ps -A |pgrep -f "yad --list --title"; then kill -9 $(pgrep -f "yad --list --title") & fi
     if ps -A |pgrep -f "notify-osd"; then killall notify-osd & fi
     if ps -A |pgrep -f "play"; then killall play & fi
     if ps -A |pgrep -f "mplayer"; then killall mplayer & fi

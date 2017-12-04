@@ -54,7 +54,7 @@ function new_session() {
     check_list > "$DM_tl/.share/2.cfg"
     if ls "$DC_s"/*.p 1> /dev/null 2>&1; then
     cd "$DC_s"/; rename 's/\.p$//' *.p; fi; cd /
-
+    
     # check database
     cdb="$DM_tls/data/${tlng}.db"
     if [ ! -e ${cdb} ]; then

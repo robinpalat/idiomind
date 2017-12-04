@@ -37,15 +37,12 @@ set_lang() {
     language="$1"
     source "$DS/ifs/cmns.sh"
     check_dir "$DM_t/$language/.share/images" "$DM_t/$language/.share/audio"
-    kill -9 $(cat $DT/tray.pid)
-    kill -9 $(pgrep -f "$DS/ifs/tls.sh itray")
     echo -e "$language\n$slng" > "$DC_s/6.cfg"
-    if [[ $(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && \
-    ! pgrep -f "$DS/ifs/tls.sh itray"; then
-        $DS/ifs/tls.sh itray &
-    fi
     "$DS/stop.sh" 4
     source $DS/default/c.conf
+    source "$DS/default/sets.cfg"
+    lgt=${tlangs[$tlng]}
+    ln -sf "$DS/images/flags/${lgt}.png" "$DT/icon"
     last="$(cd "$DM_tl"/; ls -tNd */ |cut -f1 -d'/' |head -n1)"
     if [ -n "${last}" ]; then
         mode="$(< "$DM_tl/${last}/.conf/8.cfg")"
@@ -67,6 +64,7 @@ set_lang() {
         (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
         echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${cdb}
     fi
+    "$DS/ifs/mods/start/update_tasks.sh"
     "$DS/mngr.sh" mkmn 1 &
 }
 

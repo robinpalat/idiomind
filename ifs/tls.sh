@@ -747,13 +747,13 @@ translate_to() {
         --text="$(gettext "The current Native language of this topic is") <b>$active_trans</b>" \
         --text-align=center --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top \
-        --width=390 --height=300 --borders=10 \
+        --width=390 --height=350 --borders=12 \
         --field="":LBL " " \
-        --field="<b>$(gettext "Verified translations") </b> ":LBL " " \
+        --field="\n<b>$(gettext "Verified translations") </b> ":LBL " " \
         --field="$active_trans — $(gettext "The  accuracy of this translation was verified")":CHK "$chk" \
         --field="<small>$(gettext "This topic has no verified translations.")</small>":LBL " " \
         --field=" ":LBL " " \
-        --field="":LBL " " \
+        --field=" ":LBL " " \
         --field="<b>$(gettext "Automatic translation")</b> ":LBL " " \
         --field="$(gettext "Select Native language to translate automaticly:")":CB "${list_transl}" \
         --field="<small>$(gettext "Note that translation from google translate service sometimes is inaccurate especially in complex frases.")</small>":LBL " " \
@@ -765,14 +765,14 @@ translate_to() {
         --text="$(gettext "The current Native language of this topic is") <b>$active_trans</b>" \
         --text-align=center --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top \
-        --width=390 --height=300 --borders=10 \
+        --width=390 --height=350 --borders=12 \
         --field="":LBL " " \
-        --field="<b>$(gettext "Verified translations") </b> ":LBL " " \
+        --field="\n<b>$(gettext "Verified translations") </b> ":LBL " " \
         --field="$active_trans — $(gettext "The  accuracy of this translation was verified")":CHK "$chk" \
         --field="$(gettext "Change the Native language:")":CB "!${list_transl_saved}" \
-        --field="":LBL " " \
+        --field=" ":LBL " " \
         --field="<b>$(gettext "Automatic translation")</b> ":LBL " " \
-        --field="$(gettext "Select Native language to translate automaticly:")":CB "${list_transl}" \
+        --field="$(gettext "Select Native language:")":CB "${list_transl}" \
         --field="<small>$(gettext "Note that translation from google translate service sometimes is inaccurate especially in complex frases.")</small>":LBL " " \
         --button="$(gettext "Apply")"!gtk-apply:0 \
         --button="$(gettext "Cancel")":1)"; ret="$?"
@@ -1016,6 +1016,8 @@ itray() {
     [ ! -e "$HOME/.config/idiomind/4.cfg" ] && \
     touch "$HOME/.config/idiomind/4.cfg"
     source "$DS/default/sets.cfg"
+    lgt=${tlangs[$tlng]}
+    ln -sf "$DS/images/flags/${lgt}.png" "$DT/icon"
     export lbl1="$(gettext "Add")"
     export lbl2="$(gettext "Play")"
     export lbl3="$(gettext "Stop playback")"
@@ -1028,7 +1030,6 @@ itray() {
     python <<PY
 import time, os, os.path, gtk, gio, signal, appindicator
 lgt = os.environ['lgt']
-icon = '/usr/share/idiomind/images/flags/'+lgt+'.png'
 HOME = os.getenv('HOME')
 add = os.environ['lbl1']
 play = os.environ['lbl2']
@@ -1038,6 +1039,7 @@ topics = os.environ['lbl5']
 tasks = os.environ['lbl9']
 quit = os.environ['lbl8']
 quit = os.environ['lbl8']
+icon = os.environ['dirt']+'icon'
 my_pid = os.getpid()
 f_pid = open(os.environ['dirt']+'tray.pid', 'w')
 f_pid.write(str(my_pid))
