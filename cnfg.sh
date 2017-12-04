@@ -39,7 +39,7 @@ set_lang() {
     check_dir "$DM_t/$language/.share/images" "$DM_t/$language/.share/audio"
     echo -e "$language\n$slng" > "$DC_s/6.cfg"
     "$DS/stop.sh" 4
-    source $DS/default/c.conf
+    source "$DS/default/c.conf"
     source "$DS/default/sets.cfg"
     lgt=${tlangs[$tlng]}
     ln -sf "$DS/images/flags/${lgt}.png" "$DT/icon"
