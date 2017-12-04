@@ -1,5 +1,5 @@
 
-Idiomind mainly focus on vocabulary, have a couple of simple quiz and other usefull features.
+Idiomind mainly focus on vocabulary, have a couple of simple quiz and others extra features.
 
 # System Requirement #
 
@@ -15,6 +15,7 @@ xclip
 python
 espeak
 sqlite3
+sox
 
 # Installing in Debian, Ubuntu, and derivatives: #
 
