@@ -98,7 +98,7 @@ function dlg() {
     }
 
     if [ -e "$DC_s/dics_first_run" ]; then
-        plus="$(gettext "To start is okay select all, later, according to your preferences or to gain performance you can testing to disable some of they that perform the same function.\nPlease note: by activating \"Google images\", occasionally you might fetch images that can be result disturbing for certain people or out of topic.")\n\n"
+        plus="$(gettext "To start is okay select all, later, according to your preferences or to gain performance, you can disable some.")\n\n"
         rm "$DC_s/dics_first_run"
     fi
     inf="$plus<b>$(gettext "Please, select at least one script for each task:")</b>"

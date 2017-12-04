@@ -2,13 +2,13 @@
 
 source /usr/share/idiomind/default/c.conf
 arg="$1"
-l1="$(gettext "To Review (new):")"
-l2="$(gettext "To Review (overdue) (new):")"
+l1="$(gettext "To Review [new]:")"
+l2="$(gettext "To Review [new] [overdue]:")"
 l3="$(gettext "To Review:")"
-l4="$(gettext "To Review (overdue):")"
+l4="$(gettext "To Review [overdue]:")"
 l5="$(gettext "Practice:")"
 l6="$(gettext "Back to Practice:")"
-l7="$(gettext "Finalize Review (overdue):")"
+l7="$(gettext "Finalize Review [overdue]:")"
 tpt="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg#*:})"
 act="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg%%:*})"
 

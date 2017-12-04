@@ -59,8 +59,11 @@ function new_session() {
     cdb="$DM_tls/data/${tlng}.db"
     if [ ! -e ${cdb} ]; then
     [ ! -d "$DM_tls/data" ] && mkdir -p "$DM_tls/data" 
-    echo -n "create table if not exists Words (Word TEXT);" |sqlite3 ${cdb}
+    echo -n "create table if not exists Words \
+    (Word TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${cdb}
     echo -n "create table if not exists Config (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
+    echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${cdb}
+    sqlite3 ${cdb} "alter table Words add column '${slng}' TEXT;"
     fi
 
     # log- practice

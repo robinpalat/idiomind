@@ -73,7 +73,6 @@ mkhtml() {
         get_item "${_item}"
         
         if [ -n "${trgt}" -a -n "${srce}" -a -n "${type}" ]; then
-        
             fimg="${DM_tlt}/images/${trgt,,}.jpg"
             [ ! -e "$fimg" ] && fimg="$imagesdir/${trgt,,}-1.jpg"
             if [ -e "$fimg" ]; then

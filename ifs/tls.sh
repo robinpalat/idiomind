@@ -121,14 +121,12 @@ check_index() {
             echo 1 > "${DC_tlt}/8.cfg"
             export f=1
         fi
-        
         stts=$(sed -n 1p "${DC_tlt}/8.cfg")
         ! [[ ${stts} =~ $numer ]] && stts=13
 
         if [ $stts = 13 ]; then
             echo 1 > "${DC_tlt}/8.cfg"; export mkmn=1; export f=1
         fi
-        
         export stts
         cnt0=$(wc -l < "${DC_tlt}/0.cfg" |sed '/^$/d')
         cnt1=$(wc -l < "${DC_tlt}/1.cfg" |sed '/^$/d')
@@ -278,7 +276,6 @@ _restore_backup() {
         |grep -v '\----- oldest' |grep -v '\----- end' > \
         "${DM_tl}/${2}/.conf/0.cfg"
     fi
-    
     cleanups "${DM_tl}/${2}/.conf/1.cfg"
     $DS/ifs/tls.sh check_index "${2}" 1
     
@@ -591,7 +588,7 @@ first_run() {
         --button="$(gettext "OK")":0
         [ $? = 1 ] && rm -f "${file}" "${file}".p
     }
-    NOTE2="$(gettext "Note: if you modify the text of an item, its audio file can be overwritten by another one, to avoid this you can edit it individually through its edit dialog.\nClose and reopen the main window to see any changes.")"
+    NOTE2="$(gettext "Close and reopen the main window to see any changes.")"
     NOTE3="$(gettext "To start adding notes you need to have a Topic.\nCreate one using the "New" button...")"
 
     if [[ ${2} = edit_list ]]; then
@@ -1054,7 +1051,7 @@ class IdiomindIndicator:
         self.tasks = os.environ['dirt'] + 'tasks'
         self.menu_items = []
         self.stts = 1
-        self.change_label()
+        self.change_topic()
         self._on_menu_update()
     def _on_menu_update(self):
         time.sleep(0.5)
@@ -1068,7 +1065,7 @@ class IdiomindIndicator:
                     self.stts = 0
         else:
             self.stts = 1
-        self.change_label()
+        self.change_topic()
     def create_menu_label(self, label):
         item = gtk.ImageMenuItem()
         item.set_label(label)
@@ -1089,7 +1086,7 @@ class IdiomindIndicator:
         else:
             menu_items.append((play, self.on_play))
         return menu_items
-    def change_label(self):
+    def change_topic(self):
         menu_items = self.make_menu_items()
         popup_menu = gtk.Menu()
         for label, callback in menu_items:

@@ -824,7 +824,6 @@ function practices() {
         msg "$(gettext "Insufficient number of sentences to start"):\n$(gettext "Words") $wordcount / $(gettext "Sentences") $sentcount" \
         dialog-information " " "$(gettext "OK")"
         fi
-        
         strt 0 & return
     else
         cleanups "${pdir}/${pr}.2" "${pdir}/${pr}.3"
@@ -907,4 +906,4 @@ function strt() {
 }
 
 touch "${DM_tlt}"
-strt 0
+strt 0 & exit 0

@@ -25,6 +25,10 @@ function mksure() {
     for str in "${@}"; do
     if [ -z "${str##+([[:space:]])}" ]; then
     e=1; break; fi
+    if grep -o "nullnull" <<< "${str}" >/dev/null 2>&1; then
+    msg "$(gettext "Something Unexpected Happened.\nPlease add manually the note"): \"$str\"\n" \
+    info "$(gettext "Information")"
+    e=1; break; fi
     done
     return $e
 }
@@ -38,7 +42,7 @@ function index() {
     if [[ ${1} = edit ]]; then
         DC_tlt="$DM_tl/${2}/.conf"
         sust(){
-            if grep -Fxo "${trgt}" "${1}" 1> /dev/null 2>&1; then
+            if grep -Fxo "${trgt}" "${1}" >/dev/null 2>&1; then
                 sed -i "s|^${trgt}$|${trgt_mod}|" "${1}"
             fi
         }
@@ -120,7 +124,6 @@ function sentence_p() {
     translate "$(sed '/^$/d' "${aw}")" auto "$lg" singleline |tr -d '!?¿,;.' \
     |sed -e 's/ \+/ /g' |sed -e 's/.*\]\[\"//g' |sed -e 's/ *$//; /^$/d' > "${bw}"
     
-
     while read -r wrd; do
         w="$(tr -d '\.,;“”"' <<< "${wrd,,}")"
         if [[ `sqlite3 $db "select items from pronouns where items is '${w}';"` ]]; then
@@ -351,10 +354,10 @@ function set_image_2() {
 }
 
 function translate() {
-    cdb="$DM_tls/data/${tlng}.db"; stop=0
+    cdb="$DM_tls/data/${tlng}.db"; stop=0; t="${1}"
     if [[ $(wc -w <<< ${1}) = 1 ]] && [[ "${ttrgt}" != TRUE ]] && \
-    [[ `sqlite3 ${cdb} "select "${slng}" from Words where Word is "${1}";"` ]]; then
-        sqlite3 ${cdb} "select '${slng}' from Words where Word is '${1}';"
+    [[ "$(sqlite3 ${cdb} "select "${slng}" from Words where Word is '${t}';")" ]]; then
+        sqlite3 ${cdb} "select "${slng}" from Words where Word is '${t}';"
     else
         if ! ls "$DC_d"/*."Traslator online.Translator".* 1> /dev/null 2>&1; then
             "$DS_a/Dics/cnfg.sh" 2
@@ -572,7 +575,7 @@ function dlg_form_1() {
     --button=!'edit-paste'!"$(gettext "Enable clipboard watcher")":5 \
     --button=!'image-x-generic'!"$(gettext "Add an image by screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an Audio file")":2 \
-    --button=!'format-justify-left'!"$(gettext "Options for copy-pasted text / List words")":"$cmd_words" \
+    --button=!'format-justify-left'!"$(gettext "Options for copy-pasted text")":"$cmd_words" \
     --button=!'gtk-apply'!"$(gettext "Add")":0
 }
 
@@ -596,7 +599,7 @@ function dlg_form_2() {
     --button=!'edit-paste'!"$(gettext "Enable clipboard watcher")":5 \
     --button=!'image-x-generic'!"$(gettext "Add an image by screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an Audio file")":2 \
-    --button=!'format-justify-left'!"$(gettext "Options for copy-pasted text / List words")":"$cmd_words" \
+    --button=!'format-justify-left'!"$(gettext "Options for copy-pasted text")":"$cmd_words" \
     --button=!'gtk-apply'!"$(gettext "Add")":0
 }
 
@@ -666,7 +669,7 @@ function dlg_checklist_2() {
     --gtkrc="$DS/default/gtkrc.cfg" \
     --separator="|" \
     --field="$(gettext "Note")":TXT "${note}" \
-    --field="$(gettext "Example for words")":TXT "${exmp}" \
+    --field="$(gettext "Example")":TXT "${exmp}" \
     --field="$(gettext "Mark")":CHK  &
     yad --paned --orient=hor --key="$fkey" \
     --title="$(gettext "Options")" \
