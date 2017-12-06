@@ -7,10 +7,11 @@ source "$DS/default/sets.cfg"
 lgt=${tlangs[$tlng]}
 lgs=${slangs[$slng]}
 include "$DS/ifs/mods/add"
-wlist=$(grep -oP '(?<=wlist=\").*(?=\")' "$DC_s/1.cfg")
-trans=$(grep -oP '(?<=trans=\").*(?=\")' "$DC_s/1.cfg")
-ttrgt=$(grep -oP '(?<=ttrgt=\").*(?=\")' "$DC_s/1.cfg")
-dlaud=$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")
+wlist=$(read_val opts wlist)
+trans=$(read_val opts trans)
+ttrgt=$(read_val opts ttrgt)
+dlaud=$(read_val opts dlaud)
+
 [ -z "$trans" ] && trans='FALSE'
 export ttrgt trans lgt lgs
 
@@ -756,7 +757,7 @@ new_items() {
         "$DS/ifs/clipw.sh" 1 & exit 1
     fi
     if [ ! -e "$DT/tpe" ]; then
-        tpc="$(sed -n 1p "$DC_s/4.cfg")"
+        tpc="$(sed -n 1p "$DC_s/tpc")"
         if ! ls -1a "$DS/addons/" |grep -Fxo "${tpc}" >/dev/null 2>&1; then
             [ ! -L "$DM_tl/${tpc}" ] && echo "${tpc}" > "$DT/tpe"
         fi

@@ -67,7 +67,6 @@ function check_format_1() {
 }
 
 check_index() {
-	
 	id_lines=18
     cnfg10_lines=12
     
@@ -132,8 +131,6 @@ check_index() {
         cnt1=$(wc -l < "${DC_tlt}/1.cfg" |sed '/^$/d')
         cnt2=$(wc -l < "${DC_tlt}/2.cfg" |sed '/^$/d')
         if [ $((cnt1+cnt2)) != ${cnt0} ]; then export f=1; fi
-        
-        if grep '},' "${DC_tlt}/0.cfg"; then export c=1; fi
     }
     
     _restore() {
@@ -166,43 +163,9 @@ check_index() {
         > "${DC_tlt}/2.cfg"; mv -f "$DT/0.cfg" "${DC_tlt}/0.cfg"
         sed -i '/^$/d' "${DC_tlt}/0.cfg"
     }
-    
-    _newformat() {
-		get_item() {
-			export item="$(sed 's/},/}\n/g' <<< "${1}")"
-			export type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
-			export trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-			export srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
-			export exmp="$(grep -oP '(?<=exmp={).*(?=})' <<<"${item}")"
-			export defn="$(grep -oP '(?<=defn={).*(?=})' <<<"${item}")"
-			export note="$(grep -oP '(?<=note={).*(?=})' <<<"${item}")"
-			export wrds="$(grep -oP '(?<=wrds={).*(?=})' <<<"${item}")"
-			export grmr="$(grep -oP '(?<=grmr={).*(?=})' <<<"${item}")"
-			export mark="$(grep -oP '(?<=mark={).*(?=})' <<<"${item}")"
-			export link="$(grep -oP '(?<=link={).*(?=})' <<<"${item}")"
-			export tags="$(grep -oP '(?<=tag={).*(?=})' <<<"${item}")"
-			export cdid="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
-		}
-        rm -f "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"
-        while read -r _item; do
-            get_item "${_item}"
-            eval line="$(sed -n 2p $DS/default/vars)"
-            echo -e "${line}" >> "${DC_tlt}/cfg"
-            echo "${trgt}" >> "${DC_tlt}/1.cfg"
-        done < <(tac "${DC_tlt}/0.cfg")
-        mv -f "${DC_tlt}/cfg" "${DC_tlt}/0.cfg"
-        touch "${DC_tlt}/2.cfg"
-        "$DS/ifs/tls.sh" colorize 1
-    }
-    
+
     _check
-    
-    if [[ ${c} = 1 ]]; then
-        > "$DT/ps_lk"
-        (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
-        "$(gettext "Convert to new format...")" -t 3000) &
-        _newformat
-    fi
+
     if [[ ${f} = 1 ]]; then
         > "$DT/ps_lk"; mkmn=1
         if [[ ${r} = 0 ]]; then
@@ -216,6 +179,34 @@ check_index() {
     fi
     cleanups "$DT/ps_lk"
 }
+
+create_cfgfile() {
+	db="$HOME/.config/idiomind/config"
+	echo -n "create table if not exists opts \
+	(gramr TEXT, wlist TEXT, trans TEXT, dlaud TEXT, ttrgt TEXT, clipw TEXT, itray TEXT, \
+	swind TEXT, stsks TEXT, tlang TEXT, slang TEXT, synth TEXT, txaud TEXT, intrf TEXT);" |sqlite3 "${db}"
+	echo -n "create table if not exists lang \
+	(tlng TEXT, slng TEXT);" |sqlite3 "${db}"
+	echo -n "create table if not exists geom \
+	(vals TEXT);" |sqlite3 "${db}"
+	echo -n "create table if not exists user \
+	(autr TEXT, pass TEXT);" |sqlite3 "${db}"
+	echo -n "create table if not exists sess \
+	(date TEXT);" |sqlite3 "${db}"
+	echo -n "create table if not exists updt \
+	(date TEXT);" |sqlite3 "${db}"
+	sqlite3 "${db}" "insert into opts (gramr,wlist,trans,dlaud,ttrgt,\
+	clipw,itray,swind,stsks,tlang,slang,synth,txaud,intrf) \
+	values ('FALSE','FALSE','FALSE','FALSE','FALSE','FALSE','FALSE',\
+	'FALSE','FALSE','','','','','default');"
+	sqlite3 "${db}" "insert into lang (tlng,slng) values ('','');"
+	sqlite3 "${db}" "insert into user (authr,pass) values ('','');"
+	sqlite3 "${db}" "insert into geom (vals) values ('');"
+	v=$(date +%d)
+	sqlite3 "${db}" "insert into sess (date) values ('${v}');"
+	sqlite3 "${db}" "insert into updt (date) values ('${v}');"
+}
+
 
 add_audio() {
     cd "$HOME"
@@ -493,12 +484,11 @@ _help() {
 } >/dev/null 2>&1
 
 check_updates() {
-    source "$DS/ifs/cmns.sh"
-    internet
+    source "$DS/ifs/cmns.sh"; internet
     link='http://idiomind.sourceforge.net/doc/checkversion'
     nver=$(wget --user-agent "$useragent" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g')
     pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
-    date "+%d" > "$DC_s/9.cfg"
+    d2=$(date +%Y%m%d); mod_val updt date ${d2}
     if [ ${#nver} -lt 9 ] && [ ${#_version} -lt 9 ] \
     && [ ${#nver} -ge 3 ] && [ ${#_version} -ge 3 ] \
     && [[ ${nver} != ${_version} ]]; then
@@ -515,22 +505,20 @@ check_updates() {
 a_check_updates() {
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
-    if [ ! -e "$DC_s/9.cfg" ]; then
-        date "+%d" > "$DC_s/9.cfg"; exit 1
-    fi
-    d1=$(< "$DC_s/9.cfg"); d2=$(date +%d)
-    if [ $(sed -n 1p "$DC_s/9.cfg") = 1 ] \
-    && [ $(wc -l < "$DC_s/9.cfg") -gt 1 ]; then
-        rm -f "$DC_s/9.cfg"; exit 1
-    fi
-    [[ $(wc -l < "$DC_s/9.cfg") -gt 1 ]] && exit 1
-    if [ ${d1} != ${d2} ]; then
+    link='http://idiomind.sourceforge.net/doc/checkversion'
+    nver=$(wget --user-agent "$useragent" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g')
+    pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
+    d1=$(read_val updt date)
+    d2=$(date +%Y%m%d)
+    ig=$(read_val updt ignr)
+	if [[ $((d1-d2)) -gt 30 ]]; then
+		mod_val updt ignr FALSE & return
+	fi
+	if [[ $ig = TRUE ]]; then return; fi
+    if [[ ${d1} != ${d2} ]]; then
         sleep 5; curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
-        echo ${d2} > "$DC_s/9.cfg"
-        link='http://idiomind.sourceforge.net/doc/checkversion'
-        nver=$(wget --user-agent "$useragent" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g')
-        pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
+        mod_val updt date ${d2}
         if [ ${#nver} -lt 9 ] && [ ${#_version} -lt 9 ] \
         && [ ${#nver} -ge 3 ] && [ ${#_version} -ge 3 ] \
         && [[ ${nver} != ${_version} ]]; then
@@ -540,12 +528,12 @@ a_check_updates() {
             if [ $ret -eq 0 ]; then
                 xdg-open "$pkg"
             elif [ $ret -eq 2 ]; then
-                echo ${d2} >> "$DC_s/9.cfg"
+                mod_val updt ignr TRUE
             fi
         fi
     fi
-    exit 0
-} >/dev/null 2>&1
+   return 0
+} 
 
 promp_topic_info() {
     [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
@@ -1013,8 +1001,8 @@ PY
 
 itray() {
 	
-    [ ! -e "$HOME/.config/idiomind/4.cfg" ] && \
-    touch "$HOME/.config/idiomind/4.cfg"
+    [ ! -e "$HOME/.config/idiomind/tpc" ] && \
+    touch "$HOME/.config/idiomind/tpc"
     source "$DS/default/sets.cfg"
     lgt=${tlangs[$tlng]}
     ln -sf "$DS/images/flags/${lgt}.png" "$DT/icon"
@@ -1048,7 +1036,7 @@ class IdiomindIndicator:
     def __init__(self):
         self.indicator = appindicator.Indicator(icon, icon, appindicator.CATEGORY_APPLICATION_STATUS)
         self.indicator.set_status(appindicator.STATUS_ACTIVE)
-        self.cfg = os.getenv('HOME') + '/.config/idiomind/4.cfg'
+        self.cfg = os.getenv('HOME') + '/.config/idiomind/tpc'
         self.playlck = os.environ['dirt'] + 'playlck'
         self.tasks = os.environ['dirt'] + 'tasks'
         self.menu_items = []
@@ -1267,6 +1255,8 @@ case "$1" in
     _restore_backup "$@" ;;
     check_index)
     check_index "$@" ;;
+    create_cfg)
+    create_cfgfile ;;
     addFiles)
     addFiles "$@" ;;
     videourl)

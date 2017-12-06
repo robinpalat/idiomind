@@ -2,6 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/default/c.conf
+source "$DS/ifs/cmns.sh"
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
 info2="$(gettext "Switch Language")?"
 cd "$DS/addons"
@@ -9,8 +10,11 @@ cnf1=$(mktemp "$DT/cnf1.XXXXXX")
 source $DS/default/sets.cfg
 lang1="${!tlangs[@]}"; lt=( $lang1 )
 lang2="${!slangs[@]}"; ls=( $lang2 )
-if [[ $(egrep -cv '#|^$' "$DC_s/1.cfg") = ${#csets[*]} ]]; then
-cfg=1; else > "$DC_s/1.cfg"; fi
+
+export db="$DC_s/config"
+if [ ! -e "${db}" ]; then
+	"$DS/ifs/tls.sh" create_cfg
+fi
 
 desktopfile="[Desktop Entry]
 Name=Idiomind
@@ -35,9 +39,9 @@ confirm() {
 
 set_lang() {
     language="$1"
-    source "$DS/ifs/cmns.sh"
     check_dir "$DM_t/$language/.share/images" "$DM_t/$language/.share/audio"
-    echo -e "$language\n$slng" > "$DC_s/6.cfg"
+    sqlite3 ${db} "update lang set tlng='${language}';"
+    sqlite3 ${db} "update lang set slng='${slng}';"
     "$DS/stop.sh" 4
     source "$DS/default/c.conf"
     source "$DS/default/sets.cfg"
@@ -50,7 +54,7 @@ set_lang() {
             "$DS/ifs/tpc.sh" "${last}" ${mode} 1 &
         fi
     else
-        > "$DT/tpe"; > "$DC_s/4.cfg"
+        > "$DT/tpe"; > "$DC_s/tpc"
     fi
     
     check_list > "$DM_tl/.share/2.cfg"
@@ -70,17 +74,12 @@ set_lang() {
 
 config_dlg() {
     sz=(510 350); [[ ${swind} = TRUE ]] && sz=(460 320)
-    if [ ${cfg} = 1 ]; then
-        for get in ${csets[@]}; do
-            val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
-            declare "$get"="$val"
-        done
-    else
-        n=0; > "$DC_s/1.cfg"
-        for _set in ${csets[@]}; do
-            echo -e "$_set=\"\"" >> "$DC_s/1.cfg"
-        done
-    fi
+	opts="$(sqlite3 "$db" "select * FROM opts" |tr -s '|' '\n')"
+	v=1; for get in ${csets[@]}; do
+		val=$(sed -n ${v}p <<< "$opts")
+		declare "$get"="$val"; let v++
+	done
+    
     if [ -z "$intrf" ]; then intrf=Default; fi
     lst="$intrf"$(sed "s/\!$intrf//g" <<<"!Default!en!es!fr!it!pt")""
     if [ "$ntosd" != TRUE ]; then audio=TRUE; fi
@@ -141,32 +140,32 @@ config_dlg() {
         while [ ${n} -le 16 ]; do
             val=$(cut -d "|" -f$n < "$cnf1")
             if [ -n "$val" ]; then
-                sed -i "s/${csets[$v]}=.*/${csets[$v]}=\"$val\"/g" "$DC_s/1.cfg"
+                sqlite3 ${db} "update opts set ${csets[$v]}='${val}';"
                 ((v=v+1))
             fi
             ((n=n+1))
         done
         val=$(cut -d "|" -f17 < "$cnf1")
-        [[ "$val" != "$synth" ]] && \
-        sed -i "s/${csets[11]}=.*/${csets[11]}=\"$(sed 's|/|\\/|g' <<< "$val")\"/g" "$DC_s/1.cfg"
+        [[ "$val" != "$synth" ]] && sqlite3 ${db} "update opts set synth='${val}';"
+        
         val=$(cut -d "|" -f18 < "$cnf1")
-        [[ "$val" != "$txaud" ]] && \
-        sed -i "s/${csets[12]}=.*/${csets[12]}=\"$(sed 's|/|\\/|g' <<< "$val")\"/g" "$DC_s/1.cfg"
+        [[ "$val" != "$txaud" ]] && sqlite3 ${db} "update opts set txaud='${val}';"
+      
         val=$(cut -d "|" -f19 < "$cnf1")
         if [[ "$val" != "$intrf" ]]; then
-        sed -i "s/${csets[13]}=.*/${csets[13]}=\"$val\"/g" "$DC_s/1.cfg"
+        sqlite3 ${db} "update opts set intrf='${val}';"
         "$DS/ifs/mods/start/update_tasks.sh" & fi
         
-        if [[ $(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && [ ! -e $DT/clipw ]; then
+        if [[ $(read_val opts clipw) = TRUE ]] && [ ! -e $DT/clipw ]; then
+        yad
             "$DS/ifs/clipw.sh" &
         else 
             if [ -e $DT/clipw ]; then kill $(cat $DT/clipw); rm -f $DT/clipw; fi
         fi
-        if [[ $(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && \
-		[[ ! -f "$DT/tray.pid" ]]; then
+        
+        if [[ $(read_val opts itray) = TRUE ]] && [[ ! -f "$DT/tray.pid" ]]; then
 			$DS/ifs/tls.sh itray &
-		elif [[ $(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg") = FALSE ]] && \
-		[[ -f "$DT/tray.pid" ]]; then
+		elif [[ $(read_val opts itray) = FALSE ]] && [[ -f "$DT/tray.pid" ]]; then
 			kill -9 $(cat $DT/tray.pid)
 			kill -9 $(pgrep -f "$DS/ifs/tls.sh itray")
 			rm -f "$DT/tray.pid"
@@ -174,13 +173,13 @@ config_dlg() {
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
-        if cut -d "|" -f10 < "$cnf1" | grep "TRUE"; then
+        if cut -d "|" -f10 < "$cnf1" |grep "TRUE"; then
             if [ ! -f "$config_dir/idiomind.desktop" ]; then
-            echo "$desktopfile" > "$config_dir/idiomind.desktop"
+				echo "$desktopfile" > "$config_dir/idiomind.desktop"
             fi
         else
             if [ -f "$config_dir/idiomind.desktop" ]; then
-            rm "$config_dir/idiomind.desktop"
+				rm "$config_dir/idiomind.desktop"
             fi
         fi
         ntlang=$(cut -d "|" -f13 < "$cnf1")
@@ -201,8 +200,8 @@ config_dlg() {
             slng="${nslang}"
             confirm "$info2" dialog-question "${slng}"
             if [ $? -eq 0 ]; then
-                echo "${tlng}" > "$DC_s/6.cfg"
-                echo "${slng}" >> "$DC_s/6.cfg"
+                sqlite3 ${db} "update lang set tlng='${tlng}';"
+                sqlite3 ${db} "update lang set slng='${slng}';"
                 cdb="$DM_tls/data/${tlng}.db"
                 if ! grep -q "${slng}" <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
                     sqlite3 ${cdb} "alter table Words add column '${slng}' TEXT;"

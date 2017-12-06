@@ -31,7 +31,6 @@ function create_db() {
         echo -n "create table if not exists 'expire_week' (date TEXT);" |sqlite3 "${db}"
         touch "${no_data}"
     fi
-
 }
 
 function save_topic_stats() {

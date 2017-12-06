@@ -506,7 +506,7 @@ function img_word() {
 }
 
 function voice() {
-    txaud="$(grep -o txaud=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')"
+    txaud="$(read_val txaud)"
     if [ -n "${txaud}" ]; then
         echo "${1}" |sed 's/<[^>]*>//g' |$txaud "$DT_r/f.wav"
         if [ $? != 0 ]; then

@@ -40,8 +40,9 @@ fi
 
 function new_session() {
     echo "-- new session"
-    date "+%d" > "$DC_s/10.cfg"
     source "$DS/ifs/cmns.sh"
+    d=$(date +%d)
+    mod_val sess date ${d}
     
     # mkdir tmp dir
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
@@ -155,8 +156,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
         cut -d ':' -f3 <<< "${line}" |sed 's/\"*//;s/\"$//;s/\",\"slch//'
         done < <(sed -n 2p "${file}"|sed 's/},/\n/g'|tr -d '\\'|sed '/^$/d')
     }
-    
-    export swind=$(grep -oP '(?<=swind=\").*(?=\")' "$DC_s/1.cfg")
+    export swind=$(read_val opts swind)
     sz=(580 560 540); [[ ${swind} = TRUE ]] && sz=(480 460 440)
     _lst | tpc_view
     ret=$?
@@ -217,7 +217,8 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             
             "$DS/ifs/tls.sh" colorize 1
             slngtopic="$slng"; slng="$slngcurrent"
-            echo -e "$tlng\n$slng" > "$DC_s/6.cfg"
+            sqlite3 ${db} "update lang set tlng='${tlng}';"
+			sqlite3 ${db} "update lang set slng='${slng}';"
             if [[ "$slngtopic" != "$slng" ]]; then
                 mkdir "${DC_tlt}/translations/"
                 echo "$slngtopic" > "${DC_tlt}/translations/active"
@@ -302,7 +303,7 @@ function topic() {
             fi
             ntpc=$(cut -d '|' -f 1 < "${cnf4}")
             if [ "${tpc}" != "${ntpc}" -a -n "$ntpc" ]; then
-            if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/4.cfg")" ]]; then
+            if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/tpc")" ]]; then
             msg "$(gettext "Sorry, this topic is currently not active.")\n" dialog-information "$(gettext "Information")"
             else "$DS/mngr.sh" rename_topic "${ntpc}"; fi; fi
         }
@@ -404,7 +405,7 @@ function topic() {
         echo 1 > "${DC_tlt}/8.cfg"
 
     else
-        tpa="$(sed -n 1p "$DC_s/4.cfg")"
+        tpa="$(sed -n 1p "$DC_s/tpc")"
         source "$DS/ifs/mods/main/${tpa}.sh"; ${tpa} &
     fi
     
@@ -415,7 +416,7 @@ bground_session() {
     if [ ! -e "$DT/ps_lk" -a ! -d "$DT" ]; then
         sleep 20; new_session
     fi &
-    if [[ $(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && \
+    if [[ $(read_val opts itray) = TRUE ]] && \
     ! pgrep -f "$DS/ifs/tls.sh itray"; then
     _start; fi
 }
@@ -424,37 +425,37 @@ ipanel() {
 	source "$DS/ifs/mods/main/items_list.sh"
     set_geom(){
         sleep 1
-        [ ! -e "$DC_s/5.cfg" ] && > "$DC_s/5.cfg"
         spost=$(xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4)
-        echo -e "\"${spost}\"" > "$DC_s/5.cfg"
+        sqlite3 "$DC_s/config" "update geom set vals='${cpost}';"
         for n in {1..10}; do
             sleep 1
             cpost=$(xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4)
             if [ -z ${cpost} ]; then break; return 1; fi
             if [ ${spost} != ${cpost} ]; then
-                echo -e "\"${cpost}\"" > "$DC_s/5.cfg"; spost=${cpost}
+				spost=${cpost}
+                sqlite3 "$DC_s/config" "update geom set vals='${cpost}';"
             fi
         done
     } >/dev/null 2>&1
     
-    if [ -e "$DC_s/5.cfg" ]; then
-    geometry=$(grep -o \"[^\"]* "$DC_s/5.cfg" |grep -o '[^"]*$'); fi
+    geometry=$(read_val geom vals)
     if [ -n "$geometry" ]; then
     geometry="--geometry=$geometry"
     else geometry="--mouse"; fi
 
-    export swind=$(grep -oP '(?<=swind=\").*(?=\")' "$DC_s/1.cfg")
+    export swind=$(read_val opts swind)
 
     (panelini; if [ $? != 0 ] && ! pgrep -f "$DS/ifs/tls.sh itray"; then \
     "$DS/stop.sh" 1 & fi; exit ) & set_geom
 }
 
 _start() {
+	source "$DS/ifs/cmns.sh"
     if [ ! -d "$DT" ]; then 
         new_session; cu=TRUE
     fi
     if [ ! -e "$DT/tpe" ]; then
-        cu=TRUE; tpe="$(sed -n 1p "$DC_s/4.cfg")"
+        cu=TRUE; tpe="$(sed -n 1p "$DC_s/tpc")"
         if ! ls -1a "$DS/addons/" |grep -Fxo "${tpe}" >/dev/null 2>&1; then
             [ ! -L "$DM_tl/${tpe}" ] && echo "${tpe}" > "$DT/tpe"
         fi
@@ -464,21 +465,20 @@ _start() {
             [ ! -L "$DM_tl/${tpe}" ] && echo "${tpc}" > "$DT/tpe"
         fi
     fi
-    [ -e "$DC_s/10.cfg" ] && date=$(sed -n 1p "$DC_s/10.cfg")
-    if [[ "$(date +%d)" != "$date" ]] || [ ! -e "$DC_s/10.cfg" ]; then
+    date=$(read_val sess date)
+    if [[ "$(date +%d)" != "$date" ]]; then
         new_session; cu=TRUE
     fi
     ( if [[ "${cu}" = TRUE ]]; then
     "$DS/ifs/tls.sh" a_check_updates; fi ) &
 
-    if [[ $(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && \
-    [ ! -e $DT/clipw ]; then
-        sed -i "s/clipw=.*/clipw=\"FALSE\"/g" "$DC_s/1.cfg"
+    if [[ $(read_val opts clipw) = TRUE ]] && [ ! -e $DT/clipw ]; then
+        mod_val clipw FALSE
     fi
     
-    export swind=$(grep -oP '(?<=swind=\").*(?=\")' "$DC_s/1.cfg")
+    export swind=$(read_val opts swind)
     
-    if [[ $(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && \
+    if [[ $(read_val opts itray) = TRUE ]] && \
     ! pgrep -f "$DS/ifs/tls.sh itray"; then
         $DS/ifs/tls.sh itray &
     else

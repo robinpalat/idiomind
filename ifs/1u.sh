@@ -59,6 +59,11 @@ for val in "${!slangs[@]}"; do
     list2="${list2}${emrk}${clocal}"
 done
 
+db="$HOME/.config/idiomind/config"
+if [ ! -e "${db}" ]; then
+	"$DS/ifs/tls.sh" create_cfg
+fi
+ 
 function set_lang() {
     lang="$1"
     if [ ! -d "$DM_t/$lang/.share/images" ]; then
@@ -77,7 +82,7 @@ function set_lang() {
         echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${cdb}
     fi
     for n in {0..3}; do touch "$DM_t/$lang/.share/$n.cfg"; done
-    echo "$lang" > "$DC_s/6.cfg"
+	sqlite3 ${db} "update lang set tlng='${lang}';"
 }
 
 dlg=$(yad --form --title="Idiomind" \
@@ -135,12 +140,10 @@ elif [ $ret -eq 0 ]; then
     if ! grep -q "${slng}" <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
         sqlite3 ${cdb} "alter table Words add column '${slng}' TEXT;"
     fi
-    echo "${slng}" >> "$DC_s/6.cfg"
+    sqlite3 ${db} "update lang set slng='${slng}';"
     if echo "$target" |grep -oE 'Chinese|Japanese|Russian'; then _info; fi
-    > "$DC_s/1.cfg"
-    for n in {0..12}; do echo -e "${csets[$n]}=\"\"" >> "$DC_s/1.cfg"; done
-    touch "$DC_s/4.cfg"
-    echo -e "authr=\"\"\npass=\"\"\ncntt=\"\"" > "$DC_s/3.cfg"
+    touch "$DC_s/tpc"
+
     /usr/share/idiomind/ifs/tls.sh first_run
     export u=1
     idiomind -s

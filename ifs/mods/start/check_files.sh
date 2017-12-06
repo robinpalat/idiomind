@@ -20,8 +20,8 @@ if [ ! -d "$DC" ]; then
     mkdir -p "$DC/addons"
 
 fi
-for n in {1..6}; do
-    if [ ! -e "$DC/${n}.cfg" ]; then
-        touch "$DC/${n}.cfg"
-    fi
-done
+
+export db="$DC_s/config"
+if [ ! -e "${db}" ]; then
+	"$DS/ifs/tls.sh" create_cfg
+fi

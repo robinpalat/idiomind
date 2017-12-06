@@ -54,6 +54,13 @@ function progress() {
 
 export numer='^[0-9]+$'
 
+function read_val() {
+	ta=$1; va=$2; sqlite3 "$DC_s/config" "select $va from $ta;"
+}
+function mod_val() {
+	ta=$1; va=$2; md=$3; sqlite3 "$DC_s/config" "update $ta set ${va}='${md}';"
+}
+
 function nmfile() {
     echo -n "${1}" |md5sum |rev |cut -c 4- |rev
 }
@@ -129,7 +136,6 @@ function cleanups() {
         fi
     done
 }
-
 
 function get_item() {
     export item="$(sed 's/}/}\n/g' <<< "${1}")"

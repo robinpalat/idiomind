@@ -92,7 +92,7 @@ function word_view() {
 } >/dev/null 2>&1
 
 function sentence_view() {
-    if [ $(grep -oP '(?<=gramr=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]; then
+    if [ `sqlite3 "$DC_s/config" "select gramr from opts;"` = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
     [ -n "${note}" ] && field_note="💬  <span font_desc='Arial 9'>$note</span>\n"
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""

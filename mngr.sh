@@ -174,7 +174,8 @@ edit_item() {
         if [ ${ret} -eq 0 -o ${ret} -eq 2 ]; then
         
             include "$DS/ifs/mods/add"
-            dlaud="$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")"
+            dlaud="$(read_val dlaud)"
+
             if [ ${type} = 1 ]; then
                 edit_dlg="${edit_dlg1}"
                 trgt_mod="$(clean_9 "$(cut -d "|" -f1 <<< "${edit_dlg}")")"
@@ -364,8 +365,8 @@ edit_list_cmds() {
             mv -f "$DT/list_input" "$DT/list_output"
         fi
         
-        dlaud="$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")"
         include "$DS/ifs/mods/add"
+        dlaud="$(read_val dlaud)"
         n=1; f_lock "$DT/el_lk"
         cleanups "${direc}/1.cfg" "${direc}/3.cfg" "${direc}/4.cfg"
 
@@ -651,7 +652,7 @@ delete_topic() {
             msg "$(gettext "Could not remove the directory:")\n$DM_tl/${tpc}\n$(gettext "You must manually remove it.")" \
             dialog-information "$(gettext "Information")"
         fi
-        rm -f "$DT/tpe"; > "$DC_s/4.cfg"
+        rm -f "$DT/tpe"; > "$DC_s/tpc"
         for n in {0..6}; do
             if [ -e "$DM_tl/.share/${n}.cfg" ]; then
                 grep -vxF "${tpc}" "$DM_tl/.share/${n}.cfg" > "$DM_tl/.share/${n}.cfg.tmp"
@@ -699,7 +700,7 @@ rename_topic() {
         f_lock "$DT/rm_lk"
         mv -f "$DM_tl/${tpc}" "$DM_tl/${name}"
         sed -i "s/name=.*/name=\"${name}\"/g" "$DM_tl/${name}/.conf/id.cfg"
-        echo "${name}" > "$DC_s/4.cfg"
+        echo "${name}" > "$DC_s/tpc"
         
         echo "${name}" > "$DT/tpe"; echo 0 > "$DC_s/5.cfg"
         

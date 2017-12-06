@@ -30,40 +30,30 @@ chek_topic() {
 active_topic() {
     if [[ ${activ} = 0 ]]; then
         :
-        
     elif [[ ${activ} = 1 ]]; then
-        echo "${topic}" > "$DC_s/4.cfg"
+        echo "${topic}" > "$DC_s/tpc"
         ( sleep 1; notify-send -i idiomind \
         "${topic}" "$(gettext "Is now your topic")" -t 4000 ) & exit
-        
     elif [[ -z "$activ" ]]; then
-        echo "${topic}" > "$DC_s/4.cfg"
+        echo "${topic}" > "$DC_s/tpc"
         idiomind topic & exit
     fi
 }
 
 if [ -d "${DM_tlt}" ]; then
-
     if ((mode>=1 && mode<=10)); then
-    
         chek_topic
         if [ ! -e "${DC_tlt}/feeds" ]; then
             echo "${topic}" > "$DT/tpe"
         fi
-        
         ( sleep 10 && "$DS/ifs/tls.sh" backup "${topic}" ) &
-
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
-        
         active_topic
         
      elif [ ${mode} = 12 ]; then
-     
         msg_2 "$(gettext "Topic inactive. Do you want to enable it now?") " \
         dialog-question "$(gettext "Yes")" "$(gettext "Just open it")"
-        
         if [ $? = 0 ]; then
-        
             export mode="$(< "${DC_tlt}/8.bk")"
             rm "${DC_tlt}/8.bk"; echo ${mode} > "${DC_tlt}/8.cfg"
             touch "${DM_tlt}"
@@ -89,38 +79,29 @@ if [ -d "${DM_tlt}" ]; then
                     fi
                 fi
             fi
-            
             if echo "$stts" |grep -E '3|4|7|8|9|10'; \
             then > "${DC_tlt}/7.cfg"; fi
-            
             chek_topic
             "$DS/mngr.sh" mkmn 1
             ( sleep 10 && "$DS/ifs/tls.sh" backup "${topic}" ) &
-            
             active_topic
         else
             active_topic
             idiomind topic & exit 0
         fi
-
     elif [ ${mode} = 13 ]; then
-    
         chek_topic
         active_topic
-    
     elif [ ${mode} = 14 ]; then
-    
         chek_topic
         active_topic
-        
     else
         if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
             source "$DS/ifs/mods/main/${topic}.sh"
-            echo "${tpc}" > "$DC_s/4.cfg"
+            echo "${tpc}" > "$DC_s/tpc"
             active_topic
         fi
     fi
-    
 else
     [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
     "$DS/mngr.sh" mkmn 0
