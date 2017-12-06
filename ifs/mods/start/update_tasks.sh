@@ -10,6 +10,7 @@
 
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
+db="$DM_tls/data/config"
 echo -e "\n--- updating tasks..."
 l1="$(gettext "To Review [new]:") "
 l2="$(gettext "To Review [new] [overdue]:") "
@@ -21,44 +22,27 @@ l7="$(gettext "Finalize Review [overdue]:") "
 f="$DT/tasks"; cleanups "$f"
 
 ## topics 
-if [ -e "$DM_tls/5.cfg" ]; then
-	while read -r line; do
-		tpc="$(cut -d '|' -f1 <<< "${line}")"
-		cdg="$(cut -d '|' -f2 <<< "${line}")"
-		if [ $cdg = 5 ]; then
-			echo "$l5$tpc" >> "$f"
-		elif [ $cdg = 6 ]; then
-			echo "$l6$tpc" >> "$f"
-		fi
-	done < <(tac "$DM_tls/5.cfg")
-fi
-
-if [ -e "$DM_tls/4.cfg" ]; then
-	while read -r line; do
-		tpc="$(cut -d '|' -f1 <<< "${line}")"
-		cdg="$(cut -d '|' -f2 <<< "${line}")"
-		if [ $cdg = 2 ]; then
-			echo "$l2$tpc" >> "$f"
-		elif [ $cdg = 4 ]; then
-			echo "$l4$tpc" >> "$f"
-		elif [ $cdg = 7 ]; then
-			echo "$l7$tpc" >> "$f"
-		fi
-	done < <(tac "$DM_tls/4.cfg")
-fi
-
-## practice 
-if [ -e "$DM_tls/3.cfg" ]; then
-	while read -r line; do
-		tpc="$(cut -d '|' -f1 <<< "${line}")"
-		cdg="$(cut -d '|' -f2 <<< "${line}")"
-		if [ $cdg = 1 ]; then
-			echo "$l1$tpc" >> "$f"
-		elif [ $cdg = 3 ]; then
-			echo "$l3$tpc" >> "$f"
-		fi
-	done < <(tac "$DM_tls/3.cfg")
-fi
+while read -r tpc; do
+    echo "$l1$tpc" >> "$f"
+done < <(sqlite3 "$db" "select * FROM T1" |tr -s '|' '\n' |tac)
+while read -r tpc; do
+    echo "$l2$tpc" >> "$f"
+done < <(sqlite3 "$db" "select * FROM T2" |tr -s '|' '\n' |tac)
+while read -r tpc; do
+    echo "$l3$tpc" >> "$f"
+done < <(sqlite3 "$db" "select * FROM T3" |tr -s '|' '\n' |tac)
+while read -r tpc; do
+    echo "$l4$tpc" >> "$f"
+done < <(sqlite3 "$db" "select * FROM T4" |tr -s '|' '\n' |tac)
+while read -r tpc; do
+    echo "$l5$tpc" >> "$f"
+done < <(sqlite3 "$db" "select * FROM T5" |tr -s '|' '\n' |tac)
+while read -r tpc; do
+    echo "$l6$tpc" >> "$f"
+done < <(sqlite3 "$db" "select * FROM T6" |tr -s '|' '\n' |tac)
+while read -r tpc; do
+    echo "$l7$tpc" >> "$f"
+done < <(sqlite3 "$db" "select * FROM T7" |tr -s '|' '\n' |tac)
 
 ## addons 
 while read -r addon; do

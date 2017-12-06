@@ -10,11 +10,6 @@ if [ ! -d "$DM_tls" ]; then
     mkdir -p "$DM_tls/data"
 
 fi
-for n in {0..6}; do
-    if [ ! -e "$DM_tls/${n}.cfg" ]; then
-        touch "$DM_tls/${n}.cfg"
-    fi
-done
 
 if [ ! -d "$DC" ]; then
     mkdir -p "$DC/addons"

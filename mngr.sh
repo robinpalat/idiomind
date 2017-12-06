@@ -8,12 +8,13 @@ lgt=${tlangs[$tlng]}
 lgs=${slangs[$slng]}
 export lgt lgs
 include "$DS/ifs/mods/mngr"
+export sdb="$DM_tls/data/config"
 
 mkmn() {
     f_lock "$DT/mn_lk"
     cleanups "$DM_tl/images" "$DM_tl/.conf"
     dirimg='/usr/share/idiomind/images'
-	cfg0="$DM_tl/.share/0.cfg"; > "$cfg0"
+	index="$DM_tl/.share/index"; > "$index"
     while read -r tpc; do
         dir="$DM_tl/${tpc}/.conf"; unset stts
         [ ! -d "${dir}" ] && mkdir -p "${dir}"
@@ -23,7 +24,7 @@ mkmn() {
             stts=$(sed -n 1p "${dir}/8.cfg")
             ! [[ ${stts} =~ $numer ]] && stts=13
         fi
-		echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$cfg0"
+		echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$index"
     done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
     -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d'; \
     find ./ -maxdepth 1 -mtime +79 -type d -not -path '*/\.*' \
@@ -130,7 +131,8 @@ edit_item() {
     export query="$(sed "s/'/ /g" <<< "${trgt}")"
     mod_index=0; tomodify=0; colorize_run=0; transl_mark=0
     if ((mode>=1 && mode<=10)); then
-    tpcs="$(egrep -v "${tpc}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
+    tpcs="$(sqlite3 "$sdb" "select * FROM topics" |tr -s '|' '\n')"
+    tpcs="$(egrep -v "${tpc}" <<< "$tpcs" |tr "\\n" '!' |sed 's/!\+$//g')"
     export tpc_list="${tpc}!${tpcs}"
     fi
     export cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"""
@@ -711,7 +713,7 @@ rename_topic() {
                 echo "${name}" >> "$DM_tl/.share/${n}.cfg"
             fi
         done
-        check_list > "$DM_tl/.share/2.cfg"
+        check_list
         rm "$DM_tl/.share"/*.tmp
         cleanups "$DM_tl/${tpc}" "$DM/backup/${tpc}.bk" "$DT/rm_lk"
         "$DS/mngr.sh" mkmn 0 & exit 1

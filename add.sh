@@ -11,6 +11,7 @@ wlist=$(read_val opts wlist)
 trans=$(read_val opts trans)
 ttrgt=$(read_val opts ttrgt)
 dlaud=$(read_val opts dlaud)
+export sdb="$DM_tls/data/config"
 
 [ -z "$trans" ] && trans='FALSE'
 export ttrgt trans lgt lgs
@@ -56,7 +57,7 @@ new_topic() {
         return 1
     else
         mkdir -p "$DM_tl/${name}"
-        check_list > "$DM_tl/.share/2.cfg"
+        check_list
         "$DS/ifs/tpc.sh" "${name}" "$mode" "$activ"
         "$DS/mngr.sh" mkmn 0
     fi
@@ -490,7 +491,8 @@ function process() {
     elif [[ $conten != '__words__' ]]; then
         xclip -i /dev/null
         export slt=$(mktemp $DT/slt.XXXXXX.x)
-        export tpcs="$(grep -vFx "${tpe}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
+        tpcs="$(sqlite3 "$sdb" "select * FROM topics" |tr -s '|' '\n')"
+        export tpcs="$(grep -vFx "${tpe}" <<< "$tpcs" |tr "\\n" '!' |sed 's/\!*$//g')"
         [ -n "$tpcs" ] && export e='!'
         tpe="$(dlg_checklist_3 "$DT_r/xlines" "${tpe}")"
         ret="$?"
@@ -779,8 +781,8 @@ new_items() {
 
     [ -e "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" || img="$DS/images/nw.png"
     export img
-    
-    tpcs="$(grep -vFx "${tpe}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
+    tpcs="$(sqlite3 "$sdb" "select * FROM topics" |tr -s '|' '\n')"
+    tpcs="$(grep -vFx "${tpe}" <<< "$tpcs" |tr "\\n" '!' |sed 's/\!*$//g')"
     [ -n "$tpcs" ] && e='!'
 
     if [[ ${trans} = TRUE ]]; then

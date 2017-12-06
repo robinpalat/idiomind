@@ -207,6 +207,17 @@ create_cfgfile() {
 	sqlite3 "${db}" "insert into updt (date) values ('${v}');"
 }
 
+create_sharecfg() {
+	db="$DM_tls/data/config"
+	echo -n "create table if not exists topics (list TEXT);" |sqlite3 "${db}"
+	echo -n "create table if not exists T1 (list TEXT);" |sqlite3 "${db}"
+	echo -n "create table if not exists T2 (list TEXT);" |sqlite3 "${db}"
+	echo -n "create table if not exists T3 (list TEXT);" |sqlite3 "${db}"
+	echo -n "create table if not exists T4 (list TEXT);" |sqlite3 "${db}"
+	echo -n "create table if not exists T5 (list TEXT);" |sqlite3 "${db}"
+	echo -n "create table if not exists T6 (list TEXT);" |sqlite3 "${db}"
+	echo -n "create table if not exists T7 (list TEXT);" |sqlite3 "${db}"
+}
 
 add_audio() {
     cd "$HOME"

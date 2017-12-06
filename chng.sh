@@ -51,7 +51,7 @@ if [[ ${1} = 0 ]]; then
         fi
         if [ -n "${item}" ]; then
             unset file icon
-            _item="$(grep -F -m 1 "trgt{${item}}" "${DC_tlt}/0.cfg" |sed 's/}/}\n/g')"
+            _item="$(grep -F -m 1 "trgt{${item}}" "${DC_tlt}/index" |sed 's/}/}\n/g')"
             type="$(grep -oP '(?<=type{).*(?=})' <<<"${_item}")"
             export trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${_item}")"
             srce="$(grep -oP '(?<=srce{).*(?=})' <<<"${_item}")"
@@ -126,7 +126,7 @@ elif [[ ${1} != 0 ]]; then
         echo "${ins}" > "$DC_a/menu_list"
     fi
     
-    [ ! -e "$DM_tl/.share/0.cfg" ] && > "$DM_tl/.share/0.cfg"
+    [ ! -e "$DM_tl/.share/index" ] && > "$DM_tl/.share/index"
 
     if [[ -n "$1" ]]; then
     var1="--text=$1\n"
@@ -138,12 +138,12 @@ elif [[ ${1} != 0 ]]; then
     chk_list_addons2=$(($(wc -l < "$DC_a/menu_list")*2))
     if [[ ${chk_list_addons1} != ${chk_list_addons2} ]]; then remove_d; fi
     
-    chk_list_topics1=$(wc -l < "$DM_tl/.share/0.cfg" |sed '/^$/d')
+    chk_list_topics1=$(wc -l < "$DM_tl/.share/index" |sed '/^$/d')
     if [[ $((chk_list_topics1%2)) != 0 ]]; then "$DS/mngr.sh" mkmn 0; fi
     
     if [ -e "$DC_s/topics_first_run" -a -z "${1}" ]; then exit 1; fi
 
-    tpc=$(cat "$DM_tl/.share/0.cfg" | \
+    tpc=$(cat "$DM_tl/.share/index" | \
     yad --list --title="$(gettext "My topics")" "${var1}" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-column=2 --separator="" \

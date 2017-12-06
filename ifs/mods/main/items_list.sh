@@ -178,7 +178,7 @@ function notebook_1() {
     --tab="  $(gettext "Learning") ($cfg1) " \
     --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
-    --tab="  $(gettext "Edit")  " \
+    --tab="  $(gettext "Manage")  " \
     --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=0 \
     --button="$(gettext "Play")":"$cmd_play" \
     --button="$(gettext "Practice")":3 \
@@ -231,7 +231,7 @@ function notebook_2() {
     --tab="  $(gettext "Review")  " \
     --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
-    --tab="  $(gettext "Edit")  " \
+    --tab="  $(gettext "Manage")  " \
     --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=0 \
     --button="$(gettext "Close")"!'window-close':2
 } >/dev/null 2>&1

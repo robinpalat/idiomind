@@ -60,6 +60,12 @@ function read_val() {
 function mod_val() {
 	ta=$1; va=$2; md=$3; sqlite3 "$DC_s/config" "update $ta set ${va}='${md}';"
 }
+#function ins_val() {
+	#ta=$1; va=$2; md=$3; sqlite3 "$DC_s/config" "update $ta set ${va}='${md}';"
+	
+	#sqlite3 ${db} "insert into ${mtable} (month) values ('${m}');"
+#}
+
 
 function nmfile() {
     echo -n "${1}" |md5sum |rev |cut -c 4- |rev
@@ -100,11 +106,15 @@ function check_index1() {
 }
 
 function check_list() {
+	db="$DM_tls/data/config"
+	sqlite3 ${db} "delete from topics;"
     if ls -tNd "$DM_tl"/*/ 1> /dev/null 2>&1; then
         while read -r topic; do
             if ! echo -e "$(ls -1a "$DS/addons/")" \
             |grep -Fxo "${topic}" >/dev/null 2>&1; then
-                [ ! -L "$DM_tl/${topic}" ] && echo "${topic}"
+                if [ ! -L "$DM_tl/${topic}" ]; then
+                 sqlite3 ${db} "insert into topics (list) values ('${topic}');"
+                fi
             fi
         done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
         -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')

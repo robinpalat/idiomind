@@ -52,7 +52,7 @@ function new_session() {
     fi
     
     f_lock "$DT/ps_lk"
-    check_list > "$DM_tl/.share/2.cfg"
+    check_list
     if ls "$DC_s"/*.p 1> /dev/null 2>&1; then
     cd "$DC_s"/; rename 's/\.p$//' *.p; fi; cd /
     
@@ -74,6 +74,15 @@ function new_session() {
         mv -f "$DT/log" "$DC_s/log"; fi
     fi
     
+    db="$DM_tls/data/config"
+    for m in {1..7}; do 
+    sqlite3 ${db} "delete from 'T${m}';"; done
+    
+    ins_val() {
+		ta=$1; va=$2
+		sqlite3 ${db} "insert into ${ta} (list) values ('${va}');"
+	}
+	
     # update - topics
     echo -e "\n--- updating topics status..."
     cleanups "$DM_tls/3.cfg" "$DM_tls/4.cfg"
@@ -91,33 +100,33 @@ function new_session() {
 			if [[ $((stts%2)) = 0 ]]; then
 				if [ ${RM} -ge 180 -a ${stts} = 8 ]; then
 					echo 10 > "${dir}/8.cfg"; touch "${dim}"
-					echo "${line}|2" >> "$DM_tls/4.cfg"
+					ins_val T2 "${line}"
 				elif [ ${RM} -ge 100 -a ${stts} -lt 8 ]; then
 					echo 8 > "${dir}/8.cfg"; touch "${dim}"
-					echo "${line}|1" >> "$DM_tls/3.cfg"
+					ins_val T1 "${line}"
 				elif [ ${stts} = 8 ]; then
-					echo "${line}|3" >> "$DM_tls/3.cfg"
+					ins_val T3 "${line}"
 				elif [ ${stts} = 10 ]; then
-					echo "${line}|4" >> "$DM_tls/4.cfg"
+					ins_val T4 "${line}"
 				fi
 			elif [[ $((stts%2)) = 1 ]]; then
 				if [ ${RM} -ge 180 -a ${stts} = 7 ]; then
 					echo 9 > "${dir}/8.cfg"; touch "${dim}"
-					echo "${line}|2" >> "$DM_tls/4.cfg"
+					ins_val T2 "${line}"
 				elif [ ${RM} -ge 100 -a ${stts} -lt 7 ]; then
 					echo 7 > "${dir}/8.cfg"; touch "${dim}"
-					echo "${line}|1" >> "$DM_tls/3.cfg"
+					ins_val T1 "${line}"
 				elif [ ${stts} = 7 ]; then
-					echo "${line}|3" >> "$DM_tls/3.cfg"
+					ins_val T3 "${line}"
 				elif [ ${stts} = 9 ]; then
-					echo "${line}|4" >> "$DM_tls/4.cfg"
+					ins_val T4 "${line}"
 				fi
 			fi
 		elif [[ $((stts+stts%2)) = 6 ]]; then
 			datedir=$(stat -c %y "$dir" |cut -d ' ' -f1)
 			cdate=$(date -d $datedir +"%Y%m%d")
 			if [ $((tdate-cdate)) -gt 20 ]; then
-				echo "${line}|7" >> "$DM_tls/4.cfg"
+				ins_val T7 "${line}"
 			fi
 		fi
 	done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
@@ -413,6 +422,7 @@ function topic() {
 }
 
 bground_session() {
+	source "$DS/ifs/cmns.sh"
     if [ ! -e "$DT/ps_lk" -a ! -d "$DT" ]; then
         sleep 20; new_session
     fi &
@@ -442,9 +452,7 @@ ipanel() {
     if [ -n "$geometry" ]; then
     geometry="--geometry=$geometry"
     else geometry="--mouse"; fi
-
     export swind=$(read_val opts swind)
-
     (panelini; if [ $? != 0 ] && ! pgrep -f "$DS/ifs/tls.sh itray"; then \
     "$DS/stop.sh" 1 & fi; exit ) & set_geom
 }
@@ -475,9 +483,7 @@ _start() {
     if [[ $(read_val opts clipw) = TRUE ]] && [ ! -e $DT/clipw ]; then
         mod_val clipw FALSE
     fi
-    
     export swind=$(read_val opts swind)
-    
     if [[ $(read_val opts itray) = TRUE ]] && \
     ! pgrep -f "$DS/ifs/tls.sh itray"; then
         $DS/ifs/tls.sh itray &

@@ -3,7 +3,7 @@
 
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
-check_list > "$DM_tl/.share/2.cfg"
+Sharedb="$DM_tls/data/config"
 echo -e "\n--- updating lists..."
 
 while read -r tpc; do
@@ -21,7 +21,8 @@ words=$(grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' \
 |sort |uniq -dc |sort -n -r |sed 's/ \+/ /g')
 sentences=$(grep -o -P '(?<=s1.).*(?=\.s1)' "${log}" |tr '|' '\n' \
 |sort |uniq -dc |sort -n -r |sed 's/ \+/ /g')
-topics="$(cat "$DM_tl/.share/2.cfg"|head -n20)"
+
+topics="$(sqlite3 "$Sharedb" "select * FROM topics" |tr -s '|' '\n' |head -n20)"
 check_file "${DC_tlt}/1.cfg" "${DC_tlt}/6.cfg" "${DC_tlt}/9.cfg"
 # grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' |sort |uniq
 img1="$DS/images/1.png"
@@ -44,11 +45,12 @@ done
 if grep '^$' "${items}"; then sed -i '/^$/d' "${items}"; fi
 f_lock "$DT/co_lk"
 lstp="${items}"
-export dir topics lstp img0 img1 img2 img3
+
+export dir topics lstp img0 img1 img2 img3 Sharedb
 cleanups "$DM_tl/.share/5.cfg"
 
 python <<PY
-import os, re, subprocess
+import os, re, subprocess, sqlite3
 from os import path
 from datetime import datetime, timedelta
 topics = os.environ['topics']
@@ -58,9 +60,13 @@ img1 = os.environ['img1']
 img2 = os.environ['img2']
 img3 = os.environ['img3']
 lstp = os.environ['lstp']
+shdb = os.environ['Sharedb']
 lstp = [line.strip() for line in open(lstp)]
 topics = topics.split('\n')
 days_ago = datetime.now() - timedelta(days=10)
+sharedb = sqlite3.connect(shdb)
+sharedb.text_factory = str
+cur_edt = sharedb.cursor()
 for tpc in topics:
     cnfg_dir = dir + tpc + "/.conf/"
     cfg1 = cnfg_dir + "1.cfg"
@@ -97,7 +103,7 @@ for tpc in topics:
             steps=len(steps)
             f = open(cnfg_dir+"/8.cfg")
             stts = [line.rstrip('\n') for line in f]
-            topractice = open(dir+"/.share/5.cfg", "a")
+
             l1m = False
             l2m = False
             l3m = False
@@ -109,12 +115,13 @@ for tpc in topics:
                 l3m = True
             if (int(stts[0]) == 5 or int(stts[0]) == 6):
                 if (len(log3) > 0 or len(log2) > 0):
-                    topractice.write(tpc+"|6\n")
+                    cur_edt.execute("insert into T6 values (?)", (tpc,))
+                    sharedb.commit()
                     print "- back to practice: "+tpc
                 elif l3m == True and l2m == True and l1m == True:
-                    topractice.write(tpc+"|5\n")
+                    cur_edt.execute("insert into T5 values (?)", (tpc,))
+                    sharedb.commit()
                     print "- to practice: "+tpc
-            topractice.close()
             cfg1len = 0
             if cont == True:
                 cfg1 = [line.strip() for line in open(cfg1)]
@@ -151,6 +158,7 @@ for tpc in topics:
                     print 'mark_as_learnt -> ' + tpc
         except:
             print 'err -> ' + tpc
+sharedb.close()      
 PY
 
 [ $(date +%d) = 1 -o $(date +%d) = 14 ] && rm "$log"; touch "$log"
