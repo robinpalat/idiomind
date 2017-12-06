@@ -10,12 +10,10 @@ cnf1=$(mktemp "$DT/cnf1.XXXXXX")
 source $DS/default/sets.cfg
 lang1="${!tlangs[@]}"; lt=( $lang1 )
 lang2="${!slangs[@]}"; ls=( $lang2 )
-
 export db="$DC_s/config"
 if [ ! -e "${db}" ]; then
 	"$DS/ifs/tls.sh" create_cfg
 fi
-
 desktopfile="[Desktop Entry]
 Name=Idiomind
 GenericName=Learning Tool
@@ -40,8 +38,8 @@ confirm() {
 set_lang() {
     language="$1"
     check_dir "$DM_t/$language/.share/images" "$DM_t/$language/.share/audio"
-    sqlite3 ${db} "update lang set tlng='${language}';"
-    sqlite3 ${db} "update lang set slng='${slng}';"
+    mod_val lang tlng "${language}"
+    mod_val lang slng "${slng}"
     "$DS/stop.sh" 4
     source "$DS/default/c.conf"
     source "$DS/default/sets.cfg"
@@ -75,11 +73,15 @@ set_lang() {
 config_dlg() {
     sz=(510 350); [[ ${swind} = TRUE ]] && sz=(460 320)
 	opts="$(sqlite3 "$db" "select * FROM opts" |tr -s '|' '\n')"
+	csets=( 'gramr' 'wlist' 'trans' 'dlaud' \
+	'ttrgt' 'clipw' 'itray' 'swind' 'stsks' 'tlang' 'slang' )
 	v=1; for get in ${csets[@]}; do
 		val=$(sed -n ${v}p <<< "$opts")
 		declare "$get"="$val"; let v++
 	done
-    
+	synth="$(read_val opts synth)"
+    txaud="$(read_val opts txaud)"
+    intrf="$(read_val opts intrf)"
     if [ -z "$intrf" ]; then intrf=Default; fi
     lst="$intrf"$(sed "s/\!$intrf//g" <<<"!Default!en!es!fr!it!pt")""
     if [ "$ntosd" != TRUE ]; then audio=TRUE; fi
@@ -134,30 +136,28 @@ config_dlg() {
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0
     ret=$?
-
+	cp "$cnf1" $HOME/cnf1
     if [ $ret -eq 0 ]; then
         n=1; v=0
-        while [ ${n} -le 16 ]; do
-            val=$(cut -d "|" -f$n < "$cnf1")
+        while [ ${n} -le 14 ]; do
+            val=$(cut -d "|" -f${n} < "$cnf1")
             if [ -n "$val" ]; then
-                sqlite3 ${db} "update opts set ${csets[$v]}='${val}';"
-                ((v=v+1))
+                mod_val opts ${csets[$v]} "${val}"; ((v=v+1))
             fi
             ((n=n+1))
         done
         val=$(cut -d "|" -f17 < "$cnf1")
-        [[ "$val" != "$synth" ]] && sqlite3 ${db} "update opts set synth='${val}';"
-        
+        [[ "$val" != "$synth" ]] && mod_val opts synth ${val}
+
         val=$(cut -d "|" -f18 < "$cnf1")
-        [[ "$val" != "$txaud" ]] && sqlite3 ${db} "update opts set txaud='${val}';"
-      
+        [[ "$val" != "$txaud" ]] && mod_val opts txaud ${val}
+
         val=$(cut -d "|" -f19 < "$cnf1")
         if [[ "$val" != "$intrf" ]]; then
-        sqlite3 ${db} "update opts set intrf='${val}';"
+        mod_val opts intrf ${val}
         "$DS/ifs/mods/start/update_tasks.sh" & fi
         
         if [[ $(read_val opts clipw) = TRUE ]] && [ ! -e $DT/clipw ]; then
-        yad
             "$DS/ifs/clipw.sh" &
         else 
             if [ -e $DT/clipw ]; then kill $(cat $DT/clipw); rm -f $DT/clipw; fi
@@ -200,8 +200,8 @@ config_dlg() {
             slng="${nslang}"
             confirm "$info2" dialog-question "${slng}"
             if [ $? -eq 0 ]; then
-                sqlite3 ${db} "update lang set tlng='${tlng}';"
-                sqlite3 ${db} "update lang set slng='${slng}';"
+                mod_val lang tlng "${tlng}"
+                mod_val lang slng "${slng}"
                 cdb="$DM_tls/data/${tlng}.db"
                 if ! grep -q "${slng}" <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
                     sqlite3 ${cdb} "alter table Words add column '${slng}' TEXT;"

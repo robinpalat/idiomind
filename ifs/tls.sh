@@ -200,7 +200,7 @@ create_cfgfile() {
 	values ('FALSE','FALSE','FALSE','FALSE','FALSE','FALSE','FALSE',\
 	'FALSE','FALSE','','','','','default');"
 	sqlite3 "${db}" "insert into lang (tlng,slng) values ('','');"
-	sqlite3 "${db}" "insert into user (authr,pass) values ('','');"
+	sqlite3 "${db}" "insert into user (autr,pass) values ('','');"
 	sqlite3 "${db}" "insert into geom (vals) values ('');"
 	v=$(date +%d)
 	sqlite3 "${db}" "insert into sess (date) values ('${v}');"

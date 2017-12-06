@@ -59,11 +59,6 @@ for val in "${!slangs[@]}"; do
     list2="${list2}${emrk}${clocal}"
 done
 
-db="$HOME/.config/idiomind/config"
-if [ ! -e "${db}" ]; then
-	"$DS/ifs/tls.sh" create_cfg
-fi
- 
 function set_lang() {
     lang="$1"
     if [ ! -d "$DM_t/$lang/.share/images" ]; then
@@ -91,9 +86,9 @@ dlg=$(yad --form --title="Idiomind" \
 --window-icon=idiomind \
 --image-on-top --buttons-layout=end --align=right \
 --fixed --geometry="+$sx+$sy" --center --on-top \
---width=460 --height=260 --borders=12 \
---field="	 	$(gettext "Select foreign language"):CB" "$list1" \
---field="	 	$(gettext "Select native language"):CB" "$list2" \
+--width=460 --height=260 --borders=15 \
+--field="	 		$(gettext "Select foreign language"):CB" "$list1" \
+--field="	 		$(gettext "Select native language"):CB" "$list2" \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "OK")":0)
 ret=$?
@@ -129,6 +124,10 @@ elif [ $ret -eq 0 ]; then
     [ ! -d  "$HOME/.config" ] && mkdir "$HOME/.config"
     mkdir -p "$HOME/.config/idiomind/addons"
     DC_s="$HOME/.config/idiomind"
+    db="$DC_s/config"
+	if [ ! -e "${db}" ]; then
+		"/usr/share/idiomind/ifs/tls.sh" create_cfg
+	fi
 
     for val in "${lt[@]}"; do
         if [[ "${target}" = $(gettext ${val}) ]]; then
