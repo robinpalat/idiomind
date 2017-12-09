@@ -3,14 +3,13 @@
 
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
-Sharedb="$DM_tls/data/config"
 echo -e "\n--- updating lists..."
 
 while read -r tpc; do
 	dir="$DM_tl/${tpc}/.conf"; unset stts tpc
-	stts=$(sed -n 1p "${dir}/8.cfg")
+	stts=$(sed -n 1p "${dir}/stts")
 	if [ ${stts} != 12 ]; then
-		mv -f "${dir}/8.cfg"  "${dir}/8.bk"; echo 12 > "${dir}/8.cfg"
+		mv -f "${dir}/stts"  "${dir}/8.bk"; echo 12 > "${dir}/stts"
 	fi
 done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime +80 -type d \
 -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
@@ -22,13 +21,11 @@ words=$(grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' \
 sentences=$(grep -o -P '(?<=s1.).*(?=\.s1)' "${log}" |tr '|' '\n' \
 |sort |uniq -dc |sort -n -r |sed 's/ \+/ /g')
 
-topics="$(sqlite3 "$Sharedb" "select * FROM topics" |tr -s '|' '\n' |head -n20)"
+topics="$(sqlite3 "$shr_db" "select * FROM topics" |tr -s '|' '\n' |head -n20)"
 check_file "${DC_tlt}/1.cfg" "${DC_tlt}/6.cfg" "${DC_tlt}/9.cfg"
 # grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' |sort |uniq
-img1="$DS/images/1.png"
-img2="$DS/images/2.png"
-img3="$DS/images/3.png"
-img0="$DS/images/0.png"
+img1="$DS/images/1.png"; img2="$DS/images/2.png"
+img3="$DS/images/3.png"; img0="$DS/images/0.png"
 dir="$DM_tl/"
 
 for n in {1..100}; do
@@ -46,13 +43,15 @@ if grep '^$' "${items}"; then sed -i '/^$/d' "${items}"; fi
 f_lock "$DT/co_lk"
 lstp="${items}"
 
-export dir topics lstp img0 img1 img2 img3 Sharedb
+export dir topics lstp img0 img1 img2 img3 shr_db
 cleanups "$DM_tl/.share/5.cfg"
 
 python <<PY
-import os, re, subprocess, sqlite3
+import os, re, subprocess, sqlite3, sys
 from os import path
 from datetime import datetime, timedelta
+reload(sys)
+sys.setdefaultencoding('utf8')
 topics = os.environ['topics']
 dir = os.environ['dir']
 img0 = os.environ['img0']
@@ -60,13 +59,13 @@ img1 = os.environ['img1']
 img2 = os.environ['img2']
 img3 = os.environ['img3']
 lstp = os.environ['lstp']
-shdb = os.environ['Sharedb']
+shr_db = os.environ['shr_db']
 lstp = [line.strip() for line in open(lstp)]
 topics = topics.split('\n')
 days_ago = datetime.now() - timedelta(days=10)
-sharedb = sqlite3.connect(shdb)
-sharedb.text_factory = str
-cur_edt = sharedb.cursor()
+dbshare = sqlite3.connect(shr_db)
+dbshare.text_factory = str
+cur_edt = dbshare.cursor()
 for tpc in topics:
     cnfg_dir = dir + tpc + "/.conf/"
     cfg1 = cnfg_dir + "1.cfg"
@@ -80,7 +79,7 @@ for tpc in topics:
             log3m = datetime.fromtimestamp(path.getctime(cnfg_dir+"practice/log3"))
             log3 = [line.strip() for line in open(cnfg_dir+"practice/log3")]
             cfg = [line.strip() for line in open(cnfg_dir+"10.cfg")]
-            items = [line.strip() for line in open(cnfg_dir+"0.cfg")]
+            items = [line.strip() for line in open(cnfg_dir+"data")]
             try:
                 auto_mrk = (cfg[9].split('acheck="'))[1].split('"')[0]
             except:
@@ -101,9 +100,8 @@ for tpc in topics:
             else:
                 steps = []
             steps=len(steps)
-            f = open(cnfg_dir+"/8.cfg")
+            f = open(cnfg_dir+"/stts")
             stts = [line.rstrip('\n') for line in f]
-
             l1m = False
             l2m = False
             l3m = False
@@ -116,11 +114,11 @@ for tpc in topics:
             if (int(stts[0]) == 5 or int(stts[0]) == 6):
                 if (len(log3) > 0 or len(log2) > 0):
                     cur_edt.execute("insert into T6 values (?)", (tpc,))
-                    sharedb.commit()
+                    dbshare.commit()
                     print "- back to practice: "+tpc
                 elif l3m == True and l2m == True and l1m == True:
                     cur_edt.execute("insert into T5 values (?)", (tpc,))
-                    sharedb.commit()
+                    dbshare.commit()
                     print "- to practice: "+tpc
             cfg1len = 0
             if cont == True:
@@ -153,12 +151,12 @@ for tpc in topics:
                         if chk == 'TRUE':
                             cfg1len=cfg1len+1
                 f.close()
-                if len(cfg1) == cfg1len and len(cnfg_dir+"0.cfg") > 15:
+                if len(cfg1) == cfg1len and len(cnfg_dir+"data") > 15:
                     subprocess.Popen(['/usr/share/idiomind/mngr.sh %s %s' % ('mark_to_learnt_ok', '"'+tpc+'"')], shell=True)
                     print 'mark_as_learnt -> ' + tpc
         except:
             print 'err -> ' + tpc
-sharedb.close()      
+dbshare.close()      
 PY
 
 [ $(date +%d) = 1 -o $(date +%d) = 14 ] && rm "$log"; touch "$log"

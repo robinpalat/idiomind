@@ -140,8 +140,8 @@ if [[ $ret -eq 0 ]]; then
                     fi
                     if [ ! -d "$DM_t/$language/${topic}/.conf" ]; then
                         mkdir "$DM_t/$language/${topic}/.conf"; fi
-                    if [ ! -f "$DM_t/$language/${topic}/.conf/8.cfg" ]; then
-                        echo 1 > "$DM_t/$language/${topic}/.conf/8.cfg"; fi
+                    if [ ! -f "$DM_t/$language/${topic}/.conf/stts" ]; then
+                        echo 1 > "$DM_t/$language/${topic}/.conf/stts"; fi
                     if [ -d "$DT/import/topics/$language/${topic}" ]; then
                         echo "${topic}" >> "$DM_t/$language/.share/3.cfg"; fi
                     cd "$DT/import/topics"

@@ -172,7 +172,7 @@ function upld() {
         --window-icon=idiomind --buttons-layout=end \
         --align=left --center --on-top \
         --width=${sz[0]} --height=170 --borders=10 \
-        --text="$info" \
+        --text="$note" \
         --field="$info2:lbl" " " \
         --button="$(gettext "Export")":2 \
         --button="$(gettext "Download")":"${cmd_dwl}" \
@@ -201,9 +201,9 @@ function upld() {
             fi
             if [ "${note}" != "${note_mod}"  ]; then
                 if ! grep '^$' <<< "${note_mod}"; then 
-                    echo -e "\n${note_mod}" > "${DC_tlt}/info.tmp"
+                    echo -e "\n${note_mod}" > "${DC_tlt}/note.tmp"
                 else 
-                    echo "${note_mod}" > "${DC_tlt}/info.tmp"
+                    echo "${note_mod}" > "${DC_tlt}/note.tmp"
                 fi
             fi
         fi
@@ -221,7 +221,7 @@ function upld() {
     text_upld="<span font_desc='Arial 12'><b>$(gettext "Share online with other learners!")</b></span>\n$(gettext "Go to") <a href='$linkc'>$(gettext "Topics library")</a> $(gettext "website")"
     _Categories="${ctgy}${list}"
     _levels="!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")"
-    note=$(< "${DC_tlt}/info")
+    note=$(< "${DC_tlt}/note")
     autr="$(read_val user autr)"
     pass="$(read_val user pass)"
 
@@ -291,7 +291,7 @@ function upld() {
         pre=$(sed "s/ /_/g;s/'//g" <<< "${orig:0:15}" |iconv -c -f utf8 -t ascii)
         export autr="${autr_mod}"
         export pass="${pass_mod}"
-        export rand=$(md5sum "${DC_tlt}/0.cfg" |cut -d' ' -f1)
+        export rand=$(md5sum "${DC_tlt}/data" |cut -d' ' -f1)
         ilnk="$(grep -o 'ilnk="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         if [ -z "$ilnk" ]; then ilnk="${pre,,}${rand:0:20}"; fi
         export ilnk
@@ -332,7 +332,7 @@ function upld() {
                     "$DT_u/files/share/${trgt,,}.mp3"
                 fi
             fi
-        done < "${DC_tlt}/0.cfg"
+        done < "${DC_tlt}/data"
 
         cleanups "$DT_u/files/share/.mp3"
         
@@ -361,14 +361,14 @@ function upld() {
         cp "${DC_tlt}/6.cfg" "$DT_u/files/conf/6.cfg"
         
         ### Get text for info variable
-        if [ -e "${DC_tlt}/info.tmp" ]; then
-            mv "${DC_tlt}/info.tmp" "${DC_tlt}/info"
+        if [ -e "${DC_tlt}/note.tmp" ]; then
+            mv "${DC_tlt}/note.tmp" "${DC_tlt}/note"
         fi
-        cp "${DC_tlt}/info" "$DT_u/files/conf/info"
-		sed -i 's|\"|\\"|g' "$DT_u/files/conf/info"
-		sed -i ':a;N;$!ba;s/\n/<br><br>/g;s/\&/&amp;/g' "$DT_u/files/conf/info"
-        export info="$(sed '/^$/d' "$DT_u/files/conf/info")"
-		cleanups "$DT_u/files/conf/info"
+        cp "${DC_tlt}/note" "$DT_u/files/conf/note"
+		sed -i 's|\"|\\"|g' "$DT_u/files/conf/note"
+		sed -i ':a;N;$!ba;s/\n/<br><br>/g;s/\&/&amp;/g' "$DT_u/files/conf/note"
+        export note="$(sed '/^$/d' "$DT_u/files/conf/note")"
+		cleanups "$DT_u/files/conf/note"
 		
         ### get data for html
         body="$(echo -e "$note_mod" |sed 's/\&/&amp;/g')"
@@ -397,7 +397,7 @@ function upld() {
             fi
             eval item="$(sed -n 1p "$DS/default/vars")"
             [ -n "${trgt}" ] && echo -en "${item}" >> "${idmnd}"
-        done < <(sed 's|"|\\"|g' < "${DC_tlt}/0.cfg")
+        done < <(sed 's|"|\\"|g' < "${DC_tlt}/data")
         export nimg=$(cd "$DT_u/files/images"/; ls *.jpg |wc -l)
         
         ### set head info

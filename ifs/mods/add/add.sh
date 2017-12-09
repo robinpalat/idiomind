@@ -13,7 +13,7 @@ function check_s() {
         dialog-information "$(gettext "Information")" & exit 1
     fi
     DC_tlt="$DM_tl/${1}/.conf"
-    if [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then
+    if [[ $(wc -l < "${DC_tlt}/data") -ge 200 ]]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "You've reached the maximum number of notes for this topic. Max allowed (200)")" \
         dialog-information "$(gettext "Information")" & exit
@@ -46,11 +46,12 @@ function index() {
                 sed -i "s|^${trgt}$|${trgt_mod}|" "${1}"
             fi
         }
-        s=1
-        while [ ${s} -le 6 ]; do
-            sust "${DC_tlt}/${s}.cfg"
-            let s++
+        Trgt_mod="$(echo "${trgt_mod}" |sed "s|'|''|g")"
+        tas=('learning' 'learnt' 'words' 'sentences' 'marks')
+        for ta in ${tas[@]}; do
+			tpc_db 3 "$ta" "${trgt}" "${Trgt_mod}"
         done
+
         if [ -d "${DC_tlt}/practice" ]; then
             cd "${DC_tlt}/practice"
             while read -r file_pr; do
@@ -59,6 +60,7 @@ function index() {
             rm ./*.tmp
             cd /
         fi
+        
     else
         DC_tlt="${DM_tl}/${tpe}/.conf"; type=${1}
         if [ ! -n "${trgt}" ]; then return 1; fi
@@ -66,22 +68,22 @@ function index() {
         img0='/usr/share/idiomind/images/0.png'
         #
         if [ ! -z "${trgt}" ]; then
-            if ! grep -Fxq "${trgt}" < <(cat "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg") >/dev/null 2>&1; then
+            if ! grep -Fo "trgt{${trgt}}" "${DC_tlt}/data" >/dev/null 2>&1; then
+				Trgt="$(echo "${trgt}" |sed "s|'|''|g")"
                 if [[ ${1} = 1 ]]; then
                     unset wrds grmr
-                    echo "${trgt}" >> "${DC_tlt}/1.cfg"
-                    echo "${trgt}" >> "${DC_tlt}/3.cfg"
-                    echo -e "$img0\n${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/5.cfg"
+                    tpc_db 2 learning list "${Trgt}"
+                    tpc_db 2 words list "${Trgt}"
+                    echo -e "$img0\n${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
                 elif [[ ${1} = 2 ]]; then
-                    echo "${trgt}" >> "${DC_tlt}/1.cfg"
-                    echo "${trgt}" >> "${DC_tlt}/4.cfg"
-                    echo -e "$img0\n${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/5.cfg"
+                    tpc_db 2 learning list "${Trgt}"
+                    tpc_db 2 sentences list "${Trgt}"
+                    echo -e "$img0\n${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
                 fi
-            fi
-            if ! grep -Fo "trgt{${trgt}}" "${DC_tlt}/0.cfg"; then
+
 				[[ ${1} = 1 ]] && unset link
                 eval newline="$(sed -n 2p $DS/default/vars)"
-                echo "${newline}" >> "${DC_tlt}/0.cfg"
+                echo "${newline}" >> "${DC_tlt}/data"
             fi
         fi
     fi
@@ -97,12 +99,11 @@ function sentence_p() {
         trgt_p="${trgt_mod}"
         srce_p="${srce_mod}"
     fi
-    cdb="$DM_tls/data/${tlng}.db"
     table="T`date +%m%y`"
     echo -n "create table if not exists ${table} \
-    (Word TEXT, "${slng^}" TEXT);" |sqlite3 ${cdb}
-    if ! grep -q "${slng}" <<< "$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
-        sqlite3 ${cdb} "alter table ${table} add column '${slng}' TEXT;"
+    (Word TEXT, "${slng^}" TEXT);" |sqlite3 ${tlng_db}
+    if ! grep -q "${slng}" <<< "$(sqlite3 ${tlng_db} "PRAGMA table_info(${table});")"; then
+        sqlite3 ${tlng_db} "alter table ${table} add column '${slng}' TEXT;"
     fi
     r=$((RANDOM%10000))
     touch "$DT_r/swrd.$r" "$DT_r/twrd.$r"
@@ -158,13 +159,13 @@ function sentence_p() {
         t="${t//\'/\'\'}"
         s="${s//\'/\'\'}"
         if ! [[ "${t}" =~ [0-9] ]] && [ -n "${t}" ] && [ -n "${s}" ]; then
-            if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]]; then
-                sqlite3 ${cdb} "insert into Words (Word,'${slng^}',Example) values ('${t}','${s}','${trgt_q}');"
-                sqlite3 ${cdb} "insert into ${table} (Word,'${slng^}') values ('${t}','${s}');"
-            elif ! [[ `sqlite3 ${cdb} "select "${slng^}" from Words where Word is '${t}';"` ]]; then
-                sqlite3 ${cdb} "update Words set '${slng^}'='${s}' where Word='${t}';"
-            elif ! [[ `sqlite3 ${cdb} "select Example from Words where Word is '${t}';"` ]]; then
-                sqlite3 ${cdb} "update Words set Example='${trgt_q}' where Word='${t}';"
+            if ! [[ `sqlite3 ${tlng_db} "select Word from Words where Word is '${t}';"` ]]; then
+                sqlite3 ${tlng_db} "insert into Words (Word,'${slng^}',Example) values ('${t}','${s}','${trgt_q}');"
+                sqlite3 ${tlng_db} "insert into ${table} (Word,'${slng^}') values ('${t}','${s}');"
+            elif ! [[ `sqlite3 ${tlng_db} "select "${slng^}" from Words where Word is '${t}';"` ]]; then
+                sqlite3 ${tlng_db} "update Words set '${slng^}'='${s}' where Word='${t}';"
+            elif ! [[ `sqlite3 ${tlng_db} "select Example from Words where Word is '${t}';"` ]]; then
+                sqlite3 ${tlng_db} "update Words set Example='${trgt_q}' where Word='${t}';"
             fi
         fi
         let bcle++
@@ -177,13 +178,13 @@ function sentence_p() {
         t="${t//\'/\'\'}"
         s="${s//\'/\'\'}"
         if ! [[ "${t}" =~ [0-9] ]] && [ -n "${t}" ] && [ -n "${s}" ]; then
-            if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]]; then
-                sqlite3 ${cdb} "insert into Words (Word,'${slng^}',Example) values ('${t}','${s}','${trgt_q}');" 
-                sqlite3 ${cdb} "insert into ${table} (Word,'${slng^}') values ('${t}','${s}');"
-            elif ! [[ `sqlite3 ${cdb} "select "${slng^}" from Words where Word is '${t}';"` ]]; then
-                sqlite3 ${cdb} "update Words set '${slng^}'='${s}' where Word='${t}';"
-            elif ! [[ `sqlite3 ${cdb} "select Example from Words where Word is '${t}';"` ]]; then
-                sqlite3 ${cdb} "update Words set Example='${trgt_q}' where Word='${t}';"
+            if ! [[ `sqlite3 ${tlng_db} "select Word from Words where Word is '${t}';"` ]]; then
+                sqlite3 ${tlng_db} "insert into Words (Word,'${slng^}',Example) values ('${t}','${s}','${trgt_q}');" 
+                sqlite3 ${tlng_db} "insert into ${table} (Word,'${slng^}') values ('${t}','${s}');"
+            elif ! [[ `sqlite3 ${tlng_db} "select "${slng^}" from Words where Word is '${t}';"` ]]; then
+                sqlite3 ${tlng_db} "update Words set '${slng^}'='${s}' where Word='${t}';"
+            elif ! [[ `sqlite3 ${tlng_db} "select Example from Words where Word is '${t}';"` ]]; then
+                sqlite3 ${tlng_db} "update Words set Example='${trgt_q}' where Word='${t}';"
             fi
         fi
         let bcle++
@@ -199,22 +200,21 @@ function sentence_p() {
 }
 
 function word_p() {
-    cdb="$DM_tls/data/${tlng}.db"
     table="T`date +%m%y`"
     trgt_q="${trgt//\'/\'\'}"
     srce_q="${srce//\'/\'\'}"
     
     echo -n "create table if not exists ${table} \
-    (Word TEXT, '${slng^}' TEXT);" |sqlite3 ${cdb}
-    if ! grep -q "${slng}" <<< "$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
-        sqlite3 ${cdb} "alter table ${table} add column '${slng}' TEXT;"
+    (Word TEXT, '${slng^}' TEXT);" |sqlite3 ${tlng_db}
+    if ! grep -q "${slng}" <<< "$(sqlite3 ${tlng_db} "PRAGMA table_info(${table});")"; then
+        sqlite3 ${tlng_db} "alter table ${table} add column '${slng}' TEXT;"
     fi
     if ! [[ "${trgt}" =~ [0-9] ]] && [ -n "${trgt}" ] && [ -n "${srce}" ]; then
-        if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${trgt}';"` ]]; then
-            sqlite3 ${cdb} "insert into ${table} (Word,'${slng^}') values ('${trgt_q}','${srce_q}');"
-            sqlite3 ${cdb} "insert into Words (Word,'${slng^}') values ('${trgt_q}','${srce_q}');"
-        elif ! [[ `sqlite3 ${cdb} "select "${slng^}" from Words where Word is '${trgt}';"` ]]; then
-            sqlite3 ${cdb} "update Words set '${slng^}'='${srce_q}' where Word='${trgt}';"
+        if ! [[ `sqlite3 ${tlng_db} "select Word from Words where Word is '${trgt}';"` ]]; then
+            sqlite3 ${tlng_db} "insert into ${table} (Word,'${slng^}') values ('${trgt_q}','${srce_q}');"
+            sqlite3 ${tlng_db} "insert into Words (Word,'${slng^}') values ('${trgt_q}','${srce_q}');"
+        elif ! [[ `sqlite3 ${tlng_db} "select "${slng^}" from Words where Word is '${trgt}';"` ]]; then
+            sqlite3 ${tlng_db} "update Words set '${slng^}'='${srce_q}' where Word='${trgt}';"
         fi
     fi
 }
@@ -354,10 +354,10 @@ function set_image_2() {
 }
 
 function translate() {
-    cdb="$DM_tls/data/${tlng}.db"; stop=0; t="${1}"
+    stop=0; t="${1}"
     if [[ $(wc -w <<< ${1}) = 1 ]] && [[ "${ttrgt}" != TRUE ]] && \
-    [[ "$(sqlite3 ${cdb} "select "${slng}" from Words where Word is '${t}';")" ]]; then
-        sqlite3 ${cdb} "select "${slng}" from Words where Word is '${t}';"
+    [[ "$(sqlite3 ${tlng_db} "select "${slng}" from Words where Word is '${t}';")" ]]; then
+        sqlite3 ${tlng_db} "select "${slng}" from Words where Word is '${t}';"
     else
         if ! ls "$DC_d"/*."Traslator online.Translator".* 1> /dev/null 2>&1; then
             "$DS_a/Dics/cnfg.sh" 2

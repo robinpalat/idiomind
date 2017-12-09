@@ -10,7 +10,6 @@
 
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
-db="$DM_tls/data/config"
 echo -e "\n--- updating tasks..."
 l1="$(gettext "To Review [new]:") "
 l2="$(gettext "To Review [new] [overdue]:") "
@@ -24,25 +23,25 @@ f="$DT/tasks"; cleanups "$f"
 ## topics 
 while read -r tpc; do
     echo "$l1$tpc" >> "$f"
-done < <(sqlite3 "$db" "select * FROM T1" |tr -s '|' '\n' |tac)
+done < <(sqlite3 "$shr_db" "select * FROM T1" |tr -s '|' '\n' |tac)
 while read -r tpc; do
     echo "$l2$tpc" >> "$f"
-done < <(sqlite3 "$db" "select * FROM T2" |tr -s '|' '\n' |tac)
+done < <(sqlite3 "$shr_db" "select * FROM T2" |tr -s '|' '\n' |tac)
 while read -r tpc; do
     echo "$l3$tpc" >> "$f"
-done < <(sqlite3 "$db" "select * FROM T3" |tr -s '|' '\n' |tac)
+done < <(sqlite3 "$shr_db" "select * FROM T3" |tr -s '|' '\n' |tac)
 while read -r tpc; do
     echo "$l4$tpc" >> "$f"
-done < <(sqlite3 "$db" "select * FROM T4" |tr -s '|' '\n' |tac)
+done < <(sqlite3 "$shr_db" "select * FROM T4" |tr -s '|' '\n' |tac)
 while read -r tpc; do
     echo "$l5$tpc" >> "$f"
-done < <(sqlite3 "$db" "select * FROM T5" |tr -s '|' '\n' |tac)
+done < <(sqlite3 "$shr_db" "select * FROM T5" |tr -s '|' '\n' |tac)
 while read -r tpc; do
     echo "$l6$tpc" >> "$f"
-done < <(sqlite3 "$db" "select * FROM T6" |tr -s '|' '\n' |tac)
+done < <(sqlite3 "$shr_db" "select * FROM T6" |tr -s '|' '\n' |tac)
 while read -r tpc; do
     echo "$l7$tpc" >> "$f"
-done < <(sqlite3 "$db" "select * FROM T7" |tr -s '|' '\n' |tac)
+done < <(sqlite3 "$shr_db" "select * FROM T7" |tr -s '|' '\n' |tac)
 
 ## addons 
 while read -r addon; do

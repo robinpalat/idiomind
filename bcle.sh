@@ -4,8 +4,7 @@
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 source "$DS/default/sets.cfg"
-cfg="${DC_tlt}/10.cfg"
-rplay="$(grep -o rplay=\"[^\"]* "${cfg}" |grep -o '[^"]*$')"
+rplay=$(tpc_db 1 config rplay)
 ritem=0; stnrd=0; f=0
 echo 0 > "$DT/playlck"
 touch "${DM_tlt}"
@@ -13,7 +12,7 @@ touch "${DM_tlt}"
 [ -z "${tpc}" -a ! -d "${DC_tlt}" ] && exit 1
 export tpc DC_tlt cfg f ritem stnrd numer
 export word_rep sentence_rep pause_osd
-export -f include msg
+export -f include msg tpc_db
 sleep 1
 
 if [[ "$rplay" = TRUE ]]; then

@@ -56,12 +56,12 @@ mkhtml() {
     
     if [ $f -eq 2 ]; then
         while read -r word; do
-            item="$(grep -F -m 1 "trgt{${word}}" "${DC_tlt}/0.cfg" |sed 's/}/}\n/g')"
+            item="$(grep -F -m 1 "trgt{${word}}" "${DC_tlt}/data" |sed 's/}/}\n/g')"
             grep -oP '(?<=srce{).*(?=})' <<< "${item}" >> "$DT/export/b.srces"
         done < "${DC_tlt}/3.cfg"
     fi
     _head > "$file"
-    note="$(sed '/^$/d' "${DC_tlt}/info" |sed ':a;N;$!ba;s/\n/<br>/g;s/\&/&amp;/g')"
+    note="$(sed '/^$/d' "${DC_tlt}/note" |sed ':a;N;$!ba;s/\n/<br>/g;s/\&/&amp;/g')"
     [ -n "${note}" ] && _note >> "$file" || echo "<br>" >> "$file"
     
     tr=1; n=1
@@ -123,7 +123,7 @@ mkhtml() {
             echo -e "</td></table>" >> "$file.words2"
         fi
         let tr++
-    done < "${DC_tlt}/0.cfg"
+    done < "${DC_tlt}/data"
     
     echo -e "$(< "$file.words2")\n<br>" >> "$file"
     echo -e "$(< "$file.words0")" >> "$file"

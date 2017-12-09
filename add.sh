@@ -11,7 +11,6 @@ wlist=$(read_val opts wlist)
 trans=$(read_val opts trans)
 ttrgt=$(read_val opts ttrgt)
 dlaud=$(read_val opts dlaud)
-export sdb="$DM_tls/data/config"
 
 [ -z "$trans" ] && trans='FALSE'
 export ttrgt trans lgt lgs
@@ -161,7 +160,6 @@ function new_sentence() {
 function new_word() {
     export trgt="$(clean_1 "${trgt}")"
     export srce="$(clean_0 "${srce}")"
-    export cdb="$DM_tls/data/${tlng}.db"
 
     if [[ ${trans} = TRUE ]]; then
         if [[ ${ttrgt} = TRUE ]]; then
@@ -180,7 +178,7 @@ function new_word() {
 
     audio="${trgt,,}"
     export cdid="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
-    export exmp="$(sqlite3 ${cdb} "select Example from Words where Word is '${trgt}';")"
+    export exmp="$(sqlite3 "$tlng_db" "select Example from Words where Word is '${trgt}';")"
     mksure "${trgt}" "${srce}"
     
     if [ $? = 1 ]; then
@@ -244,7 +242,7 @@ function list_words_edit() {
     
     n=1
     while read -r trgt; do
-        if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
+        if [ "$(wc -l < "${DC_tlt}/data")" -ge 200 ]; then
             echo -e "\n\n$n) [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> "${DC_tlt}/note_err"
         elif [ -z "$(< "$DT_r/select_lines")" ]; then
             cleanups "${DT_r}"; exit 0
@@ -298,7 +296,7 @@ function list_words_sentence() {
     [ ! -e "$DT_r/select_lines" ] && return 1
     n=1
     while read -r trgt; do
-        if [ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]; then
+        if [ $(wc -l < "${DC_tlt}/data") -ge 200 ]; then
             echo -e "\n$trgt" >> "${DC_tlt}/note_err"
         elif [ -z "$(< "$DT_r/select_lines")" ]; then
             cleanups "${DT_r}"; exit 0
@@ -386,9 +384,8 @@ function process() {
 		mkdir "$DT_r"; cd "$DT_r"
     fi
     echo "${tpe}" > "$DT/n_s_pr"
-    export ns=$(wc -l < "${DC_tlt}/0.cfg")
+    export ns=$(wc -l < "${DC_tlt}/data")
     export db="$DS/default/dicts/$lgt"
-    export cdb="$DM_tls/data/${tlng}.db"
 
     if [ -n "${trgt}" ]; then
         conten="${trgt}"
@@ -491,7 +488,7 @@ function process() {
     elif [[ $conten != '__words__' ]]; then
         xclip -i /dev/null
         export slt=$(mktemp $DT/slt.XXXXXX.x)
-        tpcs="$(sqlite3 "$sdb" "select * FROM topics" |tr -s '|' '\n')"
+        tpcs="$(sqlite3 "$shr_db" "select * FROM topics" |tr -s '|' '\n')"
         export tpcs="$(grep -vFx "${tpe}" <<< "$tpcs" |tr "\\n" '!' |sed 's/\!*$//g')"
         [ -n "$tpcs" ] && export e='!'
         tpe="$(dlg_checklist_3 "$DT_r/xlines" "${tpe}")"
@@ -557,12 +554,12 @@ function process() {
             export cdid="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "" "")"
 
             if [[ $(wc -$c <<< "${trgt}") = 1 ]]; then
-                if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
+                if [ "$(wc -l < "${DC_tlt}/data")" -ge 200 ]; then
                     echo -e "\n\n$n) [$(gettext "Maximum number of notes has been exceeded")] ${trgt}" >> "$DT_r/wlog"
                 else
                     export trgt="$(clean_1 "${trgt}")"
                     export srce="$(clean_0 "${srce}")"
-                    exmp="$(sqlite3 ${cdb} "select Example from Words where Word is '${trgt}';")"
+                    exmp="$(sqlite3 "$tlng_db" "select Example from Words where Word is '${trgt}';")"
                     export exmp="$(echo "$exmp" |tr '\n' ' ')"
                     export cdid="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "" "")"
                     audio="${trgt,,}"
@@ -587,7 +584,7 @@ function process() {
                 fi
             elif [[ $(wc -$c <<< "${trgt}") -ge 1 ]]; then
                 
-                if [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then
+                if [[ $(wc -l < "${DC_tlt}/data") -ge 200 ]]; then
                     echo -e "\n\n$n) [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> "$DT_r/slog"
                 else
                     if [ ${#trgt} -ge ${sentence_chars} ]; then
@@ -628,7 +625,7 @@ function process() {
                 export trgt=$(echo "${trgt,,}" |sed 's/^\s*./\U&\E/g')
                 audio="${trgt,,}"
                 
-                if [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then
+                if [[ $(wc -l < "${DC_tlt}/data") -ge 200 ]]; then
                     echo -e "\n\n$n) [$(gettext "Maximum number of notes has been exceeded")] ${trgt}" >> "$DT_r/wlog"
                 else
                     export srce="$(translate "${trgt}" auto $lgs)"
@@ -658,11 +655,9 @@ function process() {
         if  [ $? != 0 ]; then
             "$DS/stop.sh" 5
         fi
-        
         a=$(sed '/^$/d' "$DT_r/addw" |wc -l)
         b=$(sed '/^$/d' "$DT_r/wlog" |wc -l)
         wadds=" $((a-b))"
-        
         W=" $(gettext "words")"
         if [[ ${wadds} = 1 ]]; then
             W=" $(gettext "word")"
@@ -691,7 +686,7 @@ function process() {
 fetch_content() {
     export tpe="${2}"
     DC_tlt="$DM_tl/${tpe}/.conf"
-    if [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then exit 1; fi
+    if [[ $(wc -l < "${DC_tlt}/data") -ge 200 ]]; then exit 1; fi
     if [ -e "$DT/updating_feeds" ]; then
         exit 1
     else
@@ -729,7 +724,7 @@ fetch_content() {
             feed_items="$(echo "${feed_items}" |tr '\n' '*' |tr -s '[:space:]' |sed 's/EOL/\n/g' |head -n2)"
             feed_items="$(echo "${feed_items}" |sed '/^$/d')"
             while read -r item; do
-                if [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then exit 1; fi
+                if [[ $(wc -l < "${DC_tlt}/data") -ge 200 ]]; then exit 1; fi
                 fields="$(echo "${item}" |sed -r 's|-\!-|\n|g')"
                 title=$(echo "${fields}" |sed -n 3p \
                 |iconv -c -f utf8 -t ascii |sed 's/\://g' \
@@ -739,7 +734,7 @@ fetch_content() {
                 |sed 's|/|\\/|g' |sed 's/\&/\&amp\;/g')"
 
                 if [ -n "${title}" ]; then
-                    if ! grep -Fo "trgt{${title^}}" "${DC_tlt}/0.cfg" >/dev/null 2>&1 && \
+                    if ! grep -Fo "trgt{${title^}}" "${DC_tlt}/data" >/dev/null 2>&1 && \
                     ! grep -Fxq "${title^}" "${DC_tlt}/exclude" >/dev/null 2>&1; then
                         export wlist='FALSE'; export trans='TRUE'
                         export trgt="${title^}"
@@ -781,7 +776,7 @@ new_items() {
 
     [ -e "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" || img="$DS/images/nw.png"
     export img
-    tpcs="$(sqlite3 "$sdb" "select * FROM topics" |tr -s '|' '\n')"
+    tpcs="$(sqlite3 "$shr_db" "select * FROM topics" |tr -s '|' '\n')"
     tpcs="$(grep -vFx "${tpe}" <<< "$tpcs" |tr "\\n" '!' |sed 's/\!*$//g')"
     [ -n "$tpcs" ] && e='!'
 
@@ -800,11 +795,13 @@ new_items() {
         ! grep '*' <<< "${tpe}" >/dev/null 2>&1 && echo "${tpe}" > "$DT/tpe"
         cd "$DT_r"; set_image_1
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
+        
     elif [ $ret -eq 2 ]; then
         [ -d "$2" ] && DT_r="$2" || mkdir "$DT_r"
         ! grep '*' <<< "${tpe}" >/dev/null 2>&1 && echo "${tpe}" > "$DT/tpe"
         "$DS/ifs/tls.sh" add_audio "$DT_r"
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
+        
     elif [ $ret -eq 0 -o $ret -eq 4 -o  $ret -eq 5 ]; then
         if [ $ret -eq 5 ]; then "$DS/ifs/tls.sh" clipw & return; fi
 		[ $ret -eq 4 ] && export wlist='TRUE'
@@ -822,6 +819,7 @@ new_items() {
         else 
             mkdir "$DT_r"
         fi
+        
         export DT_r; cd "$DT_r"
         xclip -i /dev/null
         if [ -z "${tpe}" ] && [[ ${3} != 3 ]]; then cleanups "$DT_r"

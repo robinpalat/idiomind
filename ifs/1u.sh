@@ -69,15 +69,15 @@ function set_lang() {
     fi
     if [ ! -d "$DM_t/$lang/.share/data" ]; then
         mkdir -p "$DM_t/$lang/.share/data"
-        cdb="$DM_t/$lang/.share/data/$lang.db"
+        tlng_db="$DM_t/$lang/.share/data/$lang.db"
         echo -n "create table if not exists Words \
-        (Word TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${cdb}
+        (Word TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${tlng_db}
         echo -n "create table if not exists Config \
-        (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
-        echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${cdb}
+        (Study TEXT, Expire INTEGER);" |sqlite3 ${tlng_db}
+        echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${tlng_db}
     fi
     for n in {0..3}; do touch "$DM_t/$lang/.share/$n.cfg"; done
-	sqlite3 ${db} "update lang set tlng='${lang}';"
+	sqlite3 ${tlng_db} "update lang set tlng='${lang}';"
 }
 
 dlg=$(yad --form --title="Idiomind" \
@@ -124,8 +124,8 @@ elif [ $ret -eq 0 ]; then
     [ ! -d  "$HOME/.config" ] && mkdir "$HOME/.config"
     mkdir -p "$HOME/.config/idiomind/addons"
     DC_s="$HOME/.config/idiomind"
-    db="$DC_s/config"
-	if [ ! -e "${db}" ]; then
+    cfg_db="$DC_s/config"
+	if [ ! -e "${cfg_db}" ]; then
 		"/usr/share/idiomind/ifs/tls.sh" create_cfg
 	fi
 
@@ -136,10 +136,10 @@ elif [ $ret -eq 0 ]; then
     done
     export slng="${source}"
     set_lang "${tlng}"
-    if ! grep -q "${slng}" <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
-        sqlite3 ${cdb} "alter table Words add column '${slng}' TEXT;"
+    if ! grep -q "${slng}" <<<"$(sqlite3 ${tlng_db} "PRAGMA table_info(Words);")"; then
+        sqlite3 ${tlng_db} "alter table Words add column '${slng}' TEXT;"
     fi
-    sqlite3 ${db} "update lang set slng='${slng}';"
+    sqlite3 ${cfg_db} "update lang set slng='${slng}';"
     if echo "$target" |grep -oE 'Chinese|Japanese|Russian'; then _info; fi
     touch "$DC_s/tpc"
 

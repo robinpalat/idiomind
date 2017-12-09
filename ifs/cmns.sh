@@ -55,16 +55,77 @@ function progress() {
 export numer='^[0-9]+$'
 
 function read_val() {
-	ta=$1; va=$2; sqlite3 "$DC_s/config" "select $va from $ta;"
+	ta=$1; va=$2; sqlite3 \
+	"$DC_s/config" "select $va from $ta;"
 }
+
 function mod_val() {
-	ta=$1; va=$2; md=$3; sqlite3 "$DC_s/config" "update $ta set ${va}='${md}';"
+	ta=$1; va=$2; md=$3; sqlite3 \
+	"$DC_s/config" "update $ta set ${va}='${md}';"
 }
-#function ins_val() {
-	#ta=$1; va=$2; md=$3; sqlite3 "$DC_s/config" "update $ta set ${va}='${md}';"
-	
-	#sqlite3 ${db} "insert into ${mtable} (month) values ('${m}');"
-#}
+
+
+function sharel_db() {
+	ta="$2"; co="$3"; va="$4"
+	if [ $1 = 1 ]; then # read
+		sqlite3 "$DM_tls/data/config" "select ${co} from '${ta}';"
+	elif [ $1 = 2 ]; then # insert
+		sqlite3 "$DM_tls/data/config" "pragma busy_timeout=2000;\
+		 insert into ${ta} (${co}) values ('${va}');"
+	elif [ $1 = 3 ]; then # mod
+		sqlite3 "$DM_tls/data/config" "pragma busy_timeout=2000;\
+		update ${ta} set ${co}='${va}';"
+	elif [ $1 = 4 ]; then # delete
+		sqlite3 "$DM_tls/data/config" "pragma busy_timeout=2000;\
+		delete from ${ta} where ${co}='${va}';"
+	elif [ $1 = 5 ]; then # select all
+		sqlite3 "$DM_tls/data/config" "select * FROM '${ta}';" |tr -s '|' '\n'
+	elif [ $1 = 6 ]; then # delet all
+		sqlite3 "$DM_tls/data/config" "pragma busy_timeout=4000;\
+		delete from '${ta}';"
+	fi
+}
+
+function config_db() {
+	ta="$2"; co="$3"; va="$4"
+	if [ $1 = 1 ]; then # read
+		sqlite3 "$DC_s/config" "select ${co} from '${ta}';"
+	elif [ $1 = 2 ]; then # insert
+		sqlite3 "$DC_s/config" "pragma busy_timeout=2000;\
+		insert into ${ta} (${co}) values ('${va}');"
+	elif [ $1 = 3 ]; then # mod
+		sqlite3 "$DC_s/config" "pragma busy_timeout=2000;\
+		update ${ta} set ${co}='${va}';"
+	elif [ $1 = 4 ]; then # delete
+		sqlite3 "$DC_s/config" "pragma busy_timeout=2000;\
+		delete from ${ta} where ${co}='${va}';"
+	elif [ $1 = 5 ]; then # select all
+		sqlite3 "$DC_s/config" "select * FROM '${ta}';" |tr -s '|' '\n'
+	elif [ $1 = 6 ]; then # delet all
+		sqlite3 "$DC_s/config" "pragma busy_timeout=5000;\
+		delete from '${ta}';"
+	fi
+}
+
+function tpc_db() {
+	ta="$2"; co="$3"; va="$4"
+	if [ $1 = 1 ]; then # read
+		sqlite3 "$DC_tlt/tpc" "select ${co} from '${ta}';"
+	elif [ $1 = 2 ]; then # insert
+		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=2000; insert or replace into ${ta} (${co}) values ('${va}');"
+	elif [ $1 = 3 ]; then # mod
+		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=2000;\
+		update ${ta} set ${co}='${va}';"
+	elif [ $1 = 4 ]; then # delete
+		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=2000;\
+		delete from ${ta} where ${co}='${va}';"
+	elif [ $1 = 5 ]; then # select all
+		sqlite3 "$DC_tlt/tpc" "select * FROM '${ta}';" |tr -s '|' '\n'
+	elif [ $1 = 6 ]; then # delet all
+		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=5000;\
+		delete from '${ta}';"
+	fi
+}
 
 
 function nmfile() {
@@ -174,52 +235,53 @@ function unset_item() {
 function calculate_review() {
     [ -z ${notice1} ] && source "$DS/default/sets.cfg"
     DC_tlt="$DM_tl/${1}/.conf"
-    dts=$(sed '/^$/d' < "${DC_tlt}/9.cfg" | wc -l)
+    dates="$(tpc_db 5 reviews)"
+    dts=$(wc -l <<< "$dates")
 
     if [ ${dts} = 1 ]; then
-        dte=$(sed -n 1p "${DC_tlt}/9.cfg")
+        dte=$(tpc_db 1 reviews date1)
         adv="<b>  ${notice1} $cuestion_review </b>"
         TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
         RM=$((100*TM/notice1))
         tdays=${notice1}
     elif [ ${dts} = 2 ]; then
-        dte=$(sed -n 2p "${DC_tlt}/9.cfg")
+        dte=$(tpc_db 1 reviews date2)
         adv="<b>  ${notice2} $cuestion_review </b>"
         TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
         RM=$((100*TM/notice2))
         tdays=${notice2}
     elif [ ${dts} = 3 ]; then
-        dte=$(sed -n 3p "${DC_tlt}/9.cfg")
+        dte=$(tpc_db 1 reviews date3)
         adv="<b>  ${notice3} $cuestion_review </b>"
         TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
         RM=$((100*TM/notice3))
         tdays=${notice3}
     elif [ ${dts} = 4 ]; then
-        dte=$(sed -n 4p "${DC_tlt}/9.cfg")
+        dte=$(tpc_db 1reviews date4)
         adv="<b>  ${notice4} $cuestion_review </b>"
         TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
         RM=$((100*TM/notice4))
         tdays=${notice4}
     elif [ ${dts} = 5 ]; then
-        dte=$(sed -n 5p "${DC_tlt}/9.cfg")
+        dte=$(tpc_db 1reviews date5)
         adv="<b>  ${notice5} $cuestion_review </b>"
         TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
         RM=$((100*TM/notice5))
         tdays=${notice5}
     elif [ ${dts} = 6 ]; then
-        dte=$(sed -n 6p "${DC_tlt}/9.cfg")
+        dte=$(tpc_db 1 reviews date6)
         adv="<b>  ${notice6} $cuestion_review </b>"
         TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
         RM=$((100*TM/notice6))
         tdays=${notice6}
     elif [ ${dts} = 7 ]; then
-        dte=$(sed -n 7p "${DC_tlt}/9.cfg")
+        dte=$(tpc_db 1 reviews date7)
         adv="<b>  ${notice7} $cuestion_review </b>"
         TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
         RM=$((100*TM/notice7))
         tdays=${notice7}
     elif [ ${dts} = 8 ]; then
-        dte=$(sed -n 8p "${DC_tlt}/9.cfg")
+        dte=$(tpc_db 1 reviews date8)
         adv="<b>  ${notice8} $cuestion_review </b>"
         TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
         RM=$((100*TM/notice8))

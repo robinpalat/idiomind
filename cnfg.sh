@@ -10,8 +10,7 @@ cnf1=$(mktemp "$DT/cnf1.XXXXXX")
 source $DS/default/sets.cfg
 lang1="${!tlangs[@]}"; lt=( $lang1 )
 lang2="${!slangs[@]}"; ls=( $lang2 )
-export db="$DC_s/config"
-if [ ! -e "${db}" ]; then
+if [ ! -e "${cfg_db}" ]; then
 	"$DS/ifs/tls.sh" create_cfg
 fi
 desktopfile="[Desktop Entry]
@@ -47,7 +46,7 @@ set_lang() {
     ln -sf "$DS/images/flags/${lgt}.png" "$DT/icon"
     last="$(cd "$DM_tl"/; ls -tNd */ |cut -f1 -d'/' |head -n1)"
     if [ -n "${last}" ]; then
-        mode="$(< "$DM_tl/${last}/.conf/8.cfg")"
+        mode="$(< "$DM_tl/${last}/.conf/stts")"
         if [[ ${mode} =~ $numer ]]; then
             "$DS/ifs/tpc.sh" "${last}" ${mode} 1 &
         fi
@@ -55,16 +54,16 @@ set_lang() {
         > "$DT/tpe"; > "$DC_s/tpc"
     fi
     
-    check_list > "$DM_tl/.share/2.cfg"
+    check_list
     
     if [ ! -d "$DM_tl/.share/data" ]; then
         mkdir -p "$DM_tls/data"
-        cdb="$DM_tls/data/${tlng}.db"
+        tlng_db="$DM_tls/data/${tlng}.db"
         echo -n "create table if not exists Words \
-        (Word TEXT, '${slng^}' TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${cdb}
+        (Word TEXT, '${slng^}' TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${tlng_db}
         echo -n "create table if not exists Config \
-        (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
-        echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${cdb}
+        (Study TEXT, Expire INTEGER);" |sqlite3 ${tlng_db}
+        echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${tlng_db}
     fi
     "$DS/ifs/mods/start/update_tasks.sh"
     "$DS/mngr.sh" mkmn 1 &
@@ -72,7 +71,7 @@ set_lang() {
 
 config_dlg() {
     sz=(510 350); [[ ${swind} = TRUE ]] && sz=(460 320)
-	opts="$(sqlite3 "$db" "select * FROM opts" |tr -s '|' '\n')"
+	opts="$(sqlite3 "$cfg_db" "select * FROM opts" |tr -s '|' '\n')"
 	csets=( 'gramr' 'wlist' 'trans' 'dlaud' \
 	'ttrgt' 'clipw' 'itray' 'swind' 'stsks' 'tlang' 'slang' )
 	v=1; for get in ${csets[@]}; do
@@ -202,9 +201,9 @@ config_dlg() {
             if [ $? -eq 0 ]; then
                 mod_val lang tlng "${tlng}"
                 mod_val lang slng "${slng}"
-                cdb="$DM_tls/data/${tlng}.db"
-                if ! grep -q "${slng}" <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
-                    sqlite3 ${cdb} "alter table Words add column '${slng}' TEXT;"
+                tlng_db="$DM_tls/data/${tlng}.db"
+                if ! grep -q "${slng}" <<<"$(sqlite3 ${tlng_db} "PRAGMA table_info(Words);")"; then
+                    sqlite3 ${tlng_db} "alter table Words add column '${slng}' TEXT;"
                 fi
             fi
         fi

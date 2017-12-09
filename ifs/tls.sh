@@ -67,105 +67,173 @@ function check_format_1() {
 }
 
 check_index() {
-	id_lines=18
-    cnfg10_lines=12
-    
     [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
+    if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1
+    then c=c; else c=w; fi
     source "$DS/ifs/cmns.sh"
     DC_tlt="$DM_tl/${2}/.conf"
     DM_tlt="$DM_tl/${2}"
-    tpc="${2}"; mkmn=0; f=0; c=0
+    tpc="${2}"; mkmn=0; f=0; c=0; oldf=0
     [[ ${3} = 1 ]] && r=1 || r=0
 
     _check() {
-        if [ ! -f "${DC_tlt}/0.cfg" ]; then export f=1; fi
+        learn="$(tpc_db 5 learning)"
+		leart="$(tpc_db 5 learnt)"
+		cnt0=$(grep -c '[^[:space:]]' < "${DC_tlt}/data")
+        cnt1="$(grep -c '[^[:space:]]' <<< "$learn")"
+        cnt2="$(grep -c '[^[:space:]]' <<< "$leart")"
+        if [ $((cnt1+cnt2)) != ${cnt0} ]; then export f=1; fi
         
         check_dir "${DC_tlt}" "${DC_tlt}" "${DM_tlt}/images" "${DC_tlt}/practice"
-        check_file "${DC_tlt}/practice/log1" "${DC_tlt}/practice/log2" "${DC_tlt}/practice/log3" \
-        "${DC_tlt}/9.cfg" "${DC_tlt}/10.cfg" "${DC_tlt}/info"
+        check_file "${DC_tlt}/practice/log1" "${DC_tlt}/practice/log2" \
+        "${DC_tlt}/practice/log3" "${DC_tlt}/note"
         
-        for n in {0..4}; do
-            if [ ! -e "${DC_tlt}/${n}.cfg" ]; then 
-                touch "${DC_tlt}/${n}.cfg"; export f=1
-            fi
-            if grep '^$' "${DC_tlt}/${n}.cfg"; then
-                sed -i '/^$/d' "${DC_tlt}/${n}.cfg"
-            fi
-        done
-        cfg="${DC_tlt}/10.cfg"
-        if [[ $(wc -l < "${cfg}") != ${cnfg10_lines} ]]; then
-            source "$DS/default/sets.cfg"; > "${cfg}"
-            for n in ${psets[@]}; do
-                echo -e "${n}=\"FALSE\"" >> "${cfg}"
-            done
-            sed -i "s/acheck=.*/acheck=\"TRUE\"/g" "${cfg}"
-            sed -i "s/repass=.*/repass=\"0\"/g" "${cfg}"
-            sed -i "s/words=.*/words=\"TRUE\"/g" "${cfg}"
-            sed -i "s/sntcs=.*/sntcs=\"TRUE\"/g" "${cfg}"
-        fi
-        id=1
-        [ ! -e "${DC_tlt}/id.cfg" ] && touch "${DC_tlt}/id.cfg" && id=0
-        [[ $(egrep -cv '#|^$' < "${DC_tlt}/id.cfg") != ${id_lines} ]] && id=0
-        if [ ${id} != 1 ]; then
-            dtec=$(date +%F)
-            eval vls="$(sed -n 4p $DS/default/vars)"
-            echo -e "${vls}" > "${DC_tlt}/id.cfg"
-        fi
         if ls "${DM_tlt}"/*.mp3 1> /dev/null 2>&1; then
             for au in "${DM_tlt}"/*.mp3 ; do 
                 [ ! -s "${au}" ] && rm "${au}"
             done
         fi
-        if [ ! -e "${DC_tlt}/8.cfg" ]; then
-            echo 1 > "${DC_tlt}/8.cfg"
+        if [ ! -e "${DC_tlt}/stts" ]; then
+            echo 1 > "${DC_tlt}/stts"
             export f=1
         fi
-        stts=$(sed -n 1p "${DC_tlt}/8.cfg")
+        stts=$(sed -n 1p "${DC_tlt}/stts")
         ! [[ ${stts} =~ $numer ]] && stts=13
 
         if [ $stts = 13 ]; then
-            echo 1 > "${DC_tlt}/8.cfg"; export mkmn=1; export f=1
+            echo 1 > "${DC_tlt}/stts"; export mkmn=1; export f=1
         fi
         export stts
-        cnt0=$(wc -l < "${DC_tlt}/0.cfg" |sed '/^$/d')
-        cnt1=$(wc -l < "${DC_tlt}/1.cfg" |sed '/^$/d')
-        cnt2=$(wc -l < "${DC_tlt}/2.cfg" |sed '/^$/d')
-        if [ $((cnt1+cnt2)) != ${cnt0} ]; then export f=1; fi
     }
     
+    _newformat() {
+		if [ -f "${DC_tlt}/id.cfg" ]; then
+			(sleep 1; notify-send -i idiomind "$(gettext "Old configuration")" \
+            "$(gettext "Moving to the new format...")" -t 3000) &
+
+			if [ -f "${DC_tlt}/0.cfg" ]; then 
+				mv "${DC_tlt}/0.cfg" "${DC_tlt}/data"
+			fi
+			if [ -f "${DC_tlt}/8.cfg" ]; then 
+				mv "${DC_tlt}/8.cfg" "${DC_tlt}/stts"
+			fi
+			if [ -f "${DC_tlt}/5.cfg" ]; then 
+				mv "${DC_tlt}/5.cfg" "${DC_tlt}/index"
+			fi
+			if [ -f "${DC_tlt}/info" ]; then 
+				mv "${DC_tlt}/info" "${DC_tlt}/note"
+			fi
+			if [ -e "${DC_tlt}/10.cfg" ]; then
+				source "${DC_tlt}/10.cfg"
+				tpc_db 3 config repass "$repass"
+			fi
+			n=1; while read -r d; do
+				tpc_db 3 reviews date${n} "$d"; let n++
+			done < "${DC_tlt}/9.cfg"
+			
+			tpc_db 6 'sentences'; tpc_db 6 'words'
+			tpc_db 6 'learning'; tpc_db 6 'learnt'
+			tpc_db 6 'marks'
+			
+			echo -n "PRAGMA foreign_keys=ON" |sqlite3 "${tpcdb}"
+			touch "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg" \
+			"${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg" \
+			"${DC_tlt}/6.cfg"
+			if [ -e "${DC_tlt}/id.cfg" ]; then 
+				source "${DC_tlt}/id.cfg"
+				tpc_db 3 id slng "$slng"
+				tpc_db 3 id tlng "$tlng"
+				tpc_db 3 id autr "$autr"
+				tpc_db 3 id ctgy "$ctgy"
+				tpc_db 3 id ilnk "$ilnk"
+				tpc_db 3 id orig "$orig"
+				tpc_db 3 id dtec "$dtec"
+				tpc_db 3 id levl "$levl"
+			else
+				dtec=$(date +%F)
+				tpc_db 3 id dtec "$dtec"
+			fi
+
+			stts=$(sed -n 1p "${DC_tlt}/stts")
+			! [[ ${stts} =~ $numer ]] && stts=13
+
+			while read -r item_; do
+				item="$(sed 's/}/}\n/g' <<< "${item_}")"
+				type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
+				if [[ ! "${type}" =~ $numer ]]; then
+					[[ $(wc -$c <<< "${trgt}") = 1 ]] && type=1 || type=2
+                fi
+				trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
+				if [ -n "${trgt}" -a -n ${type} ]; then
+					Trgt="$(echo "${trgt}" |sed "s|'|''|g")"
+					if grep -Fxo "${trgt}" "${DC_tlt}/6.cfg" >/dev/null 2>&1; then
+						tpc_db 2 marks list "$Trgt"
+					fi
+					if echo "$stts" |grep -E '3|4|7|8|9|10'>/dev/null 2>&1; then
+						tpc_db 2 learnt list "$Trgt"
+					elif grep -Fxo "${trgt}" "${DC_tlt}/1.cfg" >/dev/null 2>&1; then
+						tpc_db 2 learning list "$Trgt"
+					elif grep -Fxo "${trgt}" "${DC_tlt}/2.cfg">/dev/null 2>&1 ; then
+						tpc_db 2 learnt list "$Trgt"
+					else
+						tpc_db 2 learning list "$Trgt"
+					fi
+					if [ ${type} = 1 ]; then
+						tpc_db 2 words list "$Trgt"
+					elif [ ${type} = 2 ]; then
+						tpc_db 2 sentences list "$Trgt"
+					fi
+					echo "${item_}" >> "$DT/data"
+			fi
+			done < "${DC_tlt}/data"
+				
+			cleanups "${DC_tlt}/10.cfg" "${DC_tlt}/7.cfg" \
+			"${DC_tlt}/9.cfg" "${DC_tlt}/id.cfg" \
+			"${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg" \
+			"${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg" "${DC_tlt}/6.cfg"
+			mv -f "$DT/data" "${DC_tlt}/data"
+			sed -i '/^$/d' "${DC_tlt}/data"
+		fi
+	}
+
     _restore() {
-        if [ ! -e "${DC_tlt}/0.cfg" ]; then
+		if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then c=c; else c=w; fi
+        if [ ! -e "${DC_tlt}/data" ]; then
             if [ -e "$DM/backup/${tpc}.bk" ]; then
-                cp -f "$DM/backup/${tpc}.bk" "${DC_tlt}/0.cfg"
+                cp -f "$DM/backup/${tpc}.bk" "${DC_tlt}/data"
             else
                 msg "$(gettext "No such file or directory")\n${topic}\n" error & exit 1
             fi
         fi
-        rm "${DC_tlt}/1.cfg" "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg"
+		tpc_db 6 'sentences'; tpc_db 6 'words'
+		tpc_db 6 'learning'; tpc_db 6 'learnt'
+		tpc_db 6 'marks'
+		echo -n "PRAGMA foreign_keys=ON" |sqlite3 "${tpcdb}"
         while read -r item_; do
             item="$(sed 's/}/}\n/g' <<< "${item_}")"
-            type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
             trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
-            if [ -n "${trgt}" -a -n ${type} ]; then
-                if ! grep -Fxq "${trgt}" "${DC_tlt}/1.cfg"; then
-                    if [ ${type} = 1 ]; then
-                        echo "${trgt}" >> "${DC_tlt}/3.cfg"
-                        echo "${trgt}" >> "${DC_tlt}/1.cfg"
-                        echo "${item_}" >> "$DT/0.cfg"
-                    elif [ ${type} = 2 ]; then
-                        echo "${trgt}" >> "${DC_tlt}/4.cfg"
-                        echo "${trgt}" >> "${DC_tlt}/1.cfg"
-                        echo "${item_}" >> "$DT/0.cfg"
-                    fi
-                fi
+            type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
+            if [[ ! "${type}" =~ $numer ]]; then
+				[[ $(wc -$c <<< "${trgt}") = 1 ]] && type=1 || type=2
             fi
-        done < "${DC_tlt}/0.cfg"
-        > "${DC_tlt}/2.cfg"; mv -f "$DT/0.cfg" "${DC_tlt}/0.cfg"
-        sed -i '/^$/d' "${DC_tlt}/0.cfg"
+            Tgt="$(echo "${trgt}" |sed "s|'|''|g")"
+            if [ -n "${trgt}" -a -n ${type} ]; then
+				if [ ${type} = 1 ]; then
+					tpc_db 2 words list "$Trgt"
+				elif [ ${type} = 2 ]; then
+					tpc_db 2 sentences list "$Trgt"
+				fi
+				tpc_db 2 learning list "$Trgt"
+				echo "${item_}" >> "$DT/data"
+            fi
+        done < "${DC_tlt}/data"
+        mv -f "$DT/data" "${DC_tlt}/data"
+        sed -i '/^$/d' "${DC_tlt}/data"
+        export mkmn=1
     }
-
+	_newformat
     _check
-
+    
     if [[ ${f} = 1 ]]; then
         > "$DT/ps_lk"; mkmn=1
         if [[ ${r} = 0 ]]; then
@@ -181,42 +249,42 @@ check_index() {
 }
 
 create_cfgfile() {
-	db="$HOME/.config/idiomind/config"
+	cfg_db="$HOME/.config/idiomind/config"
 	echo -n "create table if not exists opts \
 	(gramr TEXT, wlist TEXT, trans TEXT, dlaud TEXT, ttrgt TEXT, clipw TEXT, itray TEXT, \
-	swind TEXT, stsks TEXT, tlang TEXT, slang TEXT, synth TEXT, txaud TEXT, intrf TEXT);" |sqlite3 "${db}"
+	swind TEXT, stsks TEXT, tlang TEXT, slang TEXT, synth TEXT, txaud TEXT, intrf TEXT);" |sqlite3 "${cfg_db}"
 	echo -n "create table if not exists lang \
-	(tlng TEXT, slng TEXT);" |sqlite3 "${db}"
+	(tlng TEXT, slng TEXT);" |sqlite3 "${cfg_db}"
 	echo -n "create table if not exists geom \
-	(vals TEXT);" |sqlite3 "${db}"
+	(vals TEXT);" |sqlite3 "${cfg_db}"
 	echo -n "create table if not exists user \
-	(autr TEXT, pass TEXT);" |sqlite3 "${db}"
+	(autr TEXT, pass TEXT);" |sqlite3 "${cfg_db}"
 	echo -n "create table if not exists sess \
-	(date TEXT);" |sqlite3 "${db}"
+	(date TEXT);" |sqlite3 "${cfg_db}"
 	echo -n "create table if not exists updt \
-	(date TEXT);" |sqlite3 "${db}"
-	sqlite3 "${db}" "insert into opts (gramr,wlist,trans,dlaud,ttrgt,\
+	(date TEXT);" |sqlite3 "${cfg_db}"
+	sqlite3 "${cfg_db}" "insert into opts (gramr,wlist,trans,dlaud,ttrgt,\
 	clipw,itray,swind,stsks,tlang,slang,synth,txaud,intrf) \
 	values ('FALSE','FALSE','FALSE','FALSE','FALSE','FALSE','FALSE',\
 	'FALSE','FALSE','','','','','default');"
-	sqlite3 "${db}" "insert into lang (tlng,slng) values ('','');"
-	sqlite3 "${db}" "insert into user (autr,pass) values ('','');"
-	sqlite3 "${db}" "insert into geom (vals) values ('');"
+	sqlite3 "${cfg_db}" "insert into lang (tlng,slng) values ('','');"
+	sqlite3 "${cfg_db}" "insert into user (autr,pass) values ('','');"
+	sqlite3 "${cfg_db}" "insert into geom (vals) values ('');"
 	v=$(date +%d)
-	sqlite3 "${db}" "insert into sess (date) values ('${v}');"
-	sqlite3 "${db}" "insert into updt (date) values ('${v}');"
+	sqlite3 "${cfg_db}" "insert into sess (date) values ('${v}');"
+	sqlite3 "${cfg_db}" "insert into updt (date) values ('${v}');"
 }
 
 create_sharecfg() {
-	db="$DM_tls/data/config"
-	echo -n "create table if not exists topics (list TEXT);" |sqlite3 "${db}"
-	echo -n "create table if not exists T1 (list TEXT);" |sqlite3 "${db}"
-	echo -n "create table if not exists T2 (list TEXT);" |sqlite3 "${db}"
-	echo -n "create table if not exists T3 (list TEXT);" |sqlite3 "${db}"
-	echo -n "create table if not exists T4 (list TEXT);" |sqlite3 "${db}"
-	echo -n "create table if not exists T5 (list TEXT);" |sqlite3 "${db}"
-	echo -n "create table if not exists T6 (list TEXT);" |sqlite3 "${db}"
-	echo -n "create table if not exists T7 (list TEXT);" |sqlite3 "${db}"
+	shr_db="$DM_tls/data/config"
+	echo -n "create table if not exists topics (list TEXT);" |sqlite3 "${shr_db}"
+	echo -n "create table if not exists T1 (list TEXT);" |sqlite3 "${shr_db}"
+	echo -n "create table if not exists T2 (list TEXT);" |sqlite3 "${shr_db}"
+	echo -n "create table if not exists T3 (list TEXT);" |sqlite3 "${shr_db}"
+	echo -n "create table if not exists T4 (list TEXT);" |sqlite3 "${shr_db}"
+	echo -n "create table if not exists T5 (list TEXT);" |sqlite3 "${shr_db}"
+	echo -n "create table if not exists T6 (list TEXT);" |sqlite3 "${shr_db}"
+	echo -n "create table if not exists T7 (list TEXT);" |sqlite3 "${shr_db}"
 }
 
 add_audio() {
@@ -246,13 +314,13 @@ _backup() {
     
     if ! grep "${2}.bk" < <(cd "$HOME/.idiomind/backup"/; \
     find . -maxdepth 1 -name '*.bk' -mtime -2); then
-        if [ -s "$DM_tl/${2}/.conf/0.cfg" ]; then
+        if [ -s "$DM_tl/${2}/.conf/data" ]; then
             if [ -e "${file}" ]; then
                 dt2=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
                 old="$(sed -n '/----- newest/,/----- oldest/p' "${file}" \
                 |grep -v '\----- newest' |grep -v '\----- oldest')"
             fi
-            new="$(cat "$DM_tl/${2}/.conf/0.cfg")"
+            new="$(cat "$DM_tl/${2}/.conf/data")"
             echo "----- newest $dt" > "${file}"
             echo "${new}" >> "${file}"
             echo "----- oldest $dt2" >> "${file}"
@@ -271,19 +339,19 @@ _restore_backup() {
     if [[ ${3} = 1 ]]; then
         sed -n '/----- newest/,/----- oldest/p' "${file}" \
         |grep -v '\----- newest' |grep -v '\----- oldest' > \
-        "${DM_tl}/${2}/.conf/0.cfg"
+        "${DM_tl}/${2}/.conf/data"
     
     elif [[ ${3} = 2 ]]; then
         sed -n '/----- oldest/,/----- end/p' "${file}" \
         |grep -v '\----- oldest' |grep -v '\----- end' > \
-        "${DM_tl}/${2}/.conf/0.cfg"
+        "${DM_tl}/${2}/.conf/data"
     fi
     cleanups "${DM_tl}/${2}/.conf/1.cfg"
     $DS/ifs/tls.sh check_index "${2}" 1
     
-    mode="$(< "$DM_tl/${2}/.conf/8.cfg")"
+    mode="$(< "$DM_tl/${2}/.conf/stts")"
     if ! [[ ${mode} =~ $num ]]; then
-        echo 13 > "$DM_tl/${2}/.conf/8.cfg"; mode=13
+        echo 13 > "$DM_tl/${2}/.conf/stts"; mode=13
     fi
     
     "$DS/ifs/tpc.sh" "${2}" ${mode} 0 &
@@ -676,7 +744,7 @@ function transl_batch() {
     fi
     touch "${DC_tlt}/translations/active"
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
-    lns=$(cat "${DC_tlt}/0.cfg" |wc -l)
+    lns=$(cat "${DC_tlt}/data" |wc -l)
     if [ -z "$active_trans" ]; then active_trans="$slng"; fi
 
 echo -e "yad --form --title=\"$(gettext "$tlng") / $active_trans\" \\
@@ -696,32 +764,32 @@ echo -e "yad --form --title=\"$(gettext "$tlng") / $active_trans\" \\
         echo -e "--field=\"  $trgt\":lbl \"\" --field=\"\" \"$srce\" --field=\" \":lbl \"\" \\" >> "$DT/dlg"
         let n++
         echo $((100*n/lns-1))
-    done < "${DC_tlt}/0.cfg") |progress "progress"
+    done < "${DC_tlt}/data") |progress "progress"
     sed -i 's/\*/\\\"/g' "$DT/dlg"
     
     dlg="$(cat "$DT/dlg")"; eval "${dlg}" > "$DT/transl_batch_out"; ret="$?"
     
     if [ $ret = 0 ]; then
-        cp -f "${DC_tlt}/0.cfg" "$DT/0.cfg"
+        cp -f "${DC_tlt}/data" "$DT/data"
         while read -r item_; do
             item="$(sed 's/}/}\n/g' <<< "${item_}")"
             trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
             srce="$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")"
-            edit_pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
+            edit_pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${DC_tlt}/data" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
             if ! [[ ${edit_pos} =~ ${numer} ]]; then
-                edit_pos="$(awk 'match($0,v){print NR; exit}' v="trgt{${trgt}}" "${DC_tlt}/0.cfg")"
+                edit_pos="$(awk 'match($0,v){print NR; exit}' v="trgt{${trgt}}" "${DC_tlt}/data")"
             fi
             if [ -n "${trgt}" ]; then
                 srce_pos=$((edit_pos*3-1))
                 srce_mod="$(sed -n ${srce_pos}p "$DT/transl_batch_out" |tr -d '|')"
                 if [ "${srce}" != "${srce_mod}" ]; then
-                    sed -i "${edit_pos}s|srce{$srce}|srce{${srce_mod^}}|g" "$DT/0.cfg"
+                    sed -i "${edit_pos}s|srce{$srce}|srce{${srce_mod^}}|g" "$DT/data"
                 fi
             fi
-        done < "${DC_tlt}/0.cfg"
+        done < "${DC_tlt}/data"
     fi
     
-    mv -f "$DT/0.cfg" "${DC_tlt}/0.cfg"
+    mv -f "$DT/data" "${DC_tlt}/data"
     cleanups "$DT/dlg" "$DT/transl_batch_out" \
     "$DT/transl_batch_lk"
 } >/dev/null 2>&1
@@ -784,7 +852,7 @@ translate_to() {
     
         [ -e "${DC_tlt}/slng_err" ] && mv "${DC_tlt}/slng_err" "${DC_tlt}/slng_err.bk"
         if [ "$review_chek" = TRUE ]; then
-            cp -f "${DC_tlt}/0.cfg" "${DC_tlt}/translations/$active_trans.tra"
+            cp -f "${DC_tlt}/data" "${DC_tlt}/translations/$active_trans.tra"
             echo "$active_trans" > "${DC_tlt}/translations/active"
         elif [ "$review_chek" = FALSE ]; then
             cleanups "${DC_tlt}/translations/$active_trans.tra"
@@ -792,7 +860,7 @@ translate_to() {
         if [ "$review_trans" != "$active_trans" -a -n "$review_trans" -a "$review_trans" != "(null)" ]; then
             if [ -e "${DC_tlt}/translations/$review_trans.tra" ]; then
                 yad_kill "yad --form --title="
-                cp -f "${DC_tlt}/translations/$review_trans.tra" "${DC_tlt}/0.cfg"
+                cp -f "${DC_tlt}/translations/$review_trans.tra" "${DC_tlt}/data"
                 echo "$review_trans" > "${DC_tlt}/translations/active"
             fi
         elif [ -n "$autom_trans" -a "$autom_trans" != "(null)" ]; then
@@ -800,7 +868,7 @@ translate_to() {
             if grep "$autom_trans" <<< "$(cd "$DC_tlt/translations"; ls *.bk)"; then
                 msg_2 "$(gettext "Exist a copy of this translation. Do you want to restore the copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
                 if [ $? = 0 ]; then
-                    mv -f "$DC_tlt/translations/$autom_trans.bk" "${DC_tlt}/0.cfg"
+                    mv -f "$DC_tlt/translations/$autom_trans.bk" "${DC_tlt}/data"
                     cleanups "$DT/translation" "$DT/transl_batch_lk" \
                     "$DT/translate_to" "${DC_tlt}/slng_err.bk"
                     echo "$autom_trans" > "${DC_tlt}/translations/active"
@@ -812,7 +880,7 @@ translate_to() {
             if grep "$autom_trans" <<< "$(cd "$DC_tlt/translations"; ls *.tra)"; then
                 msg_2 "$(gettext "Exist a Verified translation for this language. Do you want to use this copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
                 if [ $? = 0 ]; then
-                    cp -f "$DC_tlt/translations/$autom_trans.tra" "${DC_tlt}/0.cfg"
+                    cp -f "$DC_tlt/translations/$autom_trans.tra" "${DC_tlt}/data"
                     echo "$autom_trans" > "${DC_tlt}/translations/active"
                     cleanups "$DT/translation" "$DT/transl_batch_lk" \
                     "$DT/translate_to" "${DC_tlt}/slng_err.bk"
@@ -827,7 +895,7 @@ translate_to() {
             if [ -n "$l" ]; then lgt=${tlangs[$l]}; else lgt=${tlangs[$tlng]}; fi
             tl=${slangs[$autom_trans]}
             include "$DS/ifs/mods/add"
-            c1=$(cat "${DC_tlt}/0.cfg" |wc -l)
+            c1=$(cat "${DC_tlt}/data" |wc -l)
 			
 			pretrans() {
 				while read -r item_; do
@@ -846,7 +914,7 @@ translate_to() {
 						echo "|" >> "$DT/words.trad_tmp"
 						echo "${trgt} ${del}" >> "$DT/index.trad_tmp"
 					fi
-				done < "${DC_tlt}/0.cfg"
+				done < "${DC_tlt}/data"
            
 				sed -i ':a;N;$!ba;s/\n/\. /g' "$DT/words.trad_tmp"
 				sed -i 's/|/|\n/g' "$DT/words.trad_tmp"
@@ -912,13 +980,13 @@ translate_to() {
                 eval line="$(sed -n 2p $DS/default/vars)"
                 echo -e "${line}" >> "$DT/translation"
             let n++
-            done < "${DC_tlt}/0.cfg"
+            done < "${DC_tlt}/data"
             unset item type trgt srce exmp defn note grmr mark link tag cdid
             if [ -n "$DT" ]; then rm -f "$DT"/*.tmp "$DT"/*.trad "$DT"/*.trad_tmp; fi
 
             if [ -e "$DT/translation" ]; then
-                mv -f "${DC_tlt}/0.cfg" "${DC_tlt}/translations/$active_trans.bk"
-                mv -f "$DT/translation" "${DC_tlt}/0.cfg"
+                mv -f "${DC_tlt}/data" "${DC_tlt}/translations/$active_trans.bk"
+                mv -f "$DT/translation" "${DC_tlt}/data"
                 echo "$autom_trans" > "${DC_tlt}/translations/active"
             fi
         fi
@@ -948,34 +1016,44 @@ stats_dlg() {
 }
 
 colorize() {
-    source "$DS/ifs/cmns.sh"
-    f_lock "$DT/co_lk"
-    rm "${DC_tlt}/5.cfg"
-    touch "${DM_tlt}"
-    check_file "${DC_tlt}/1.cfg" "${DC_tlt}/6.cfg" "${DC_tlt}/9.cfg"
-    if [[ $(egrep -cv '#|^$' < "${DC_tlt}/9.cfg") -ge 4 ]] \
-    && [[ $(grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg") = TRUE ]] \
-    && [[ ${2} = 1 ]]; then chk=TRUE; else chk=FALSE; fi
-    img1="$DS/images/1.png"
-    img2="$DS/images/2.png"
-    img3="$DS/images/3.png"
-    img0="$DS/images/0.png"
-    cfg0="${DC_tlt}/0.cfg"
-    cfg1="${DC_tlt}/1.cfg"
-    cfg5="${DC_tlt}/5.cfg"
-    cfg6="${DC_tlt}/6.cfg"
-    log3="$(cat "${DC_tlt}/practice"/log3)"
-    log2="$(cat "${DC_tlt}/practice"/log2)"
-    log1="$(cat "${DC_tlt}/practice"/log1)"
-    export chk cfg0 cfg1 cfg5 cfg6 log1 \
-    log2 log3 img0 img1 img2 img3
-    python <<PY
-import os, re
+	source "$DS/ifs/cmns.sh"
+	f_lock "$DT/co_lk"
+	rm "${DC_tlt}/index"
+	touch "${DM_tlt}"
+
+	reviews=$(tpc_db 1 reviews date); reviews=2 # FIX
+	acheck=$(tpc_db 1 config acheck)
+
+	marks="$(tpc_db 5 marks)"
+	learning="$(tpc_db 5 learning)"
+	
+
+
+	# check_file MAKE SURE
+	if [[ "$reviews" -ge 4 ]] && [[ "$acheck" = TRUE ]] && [[ 1 = 1 ]]; 
+	then chk=TRUE; else chk=FALSE; fi
+	img1="$DS/images/1.png"
+	img2="$DS/images/2.png"
+	img3="$DS/images/3.png"
+	img0="$DS/images/0.png"
+	data="${DC_tlt}/data"
+	#cfg1="${DC_tlt}/1.cfg"
+	index="${DC_tlt}/index"
+	#cfg6="${DC_tlt}/6.cfg"
+	log3="$(cat "${DC_tlt}/practice"/log3)"
+	log2="$(cat "${DC_tlt}/practice"/log2)"
+	log1="$(cat "${DC_tlt}/practice"/log1)"
+	export chk data learning index marks log1 \
+	log2 log3 img0 img1 img2 img3
+python <<PY
+import os, re, locale, sys
+reload(sys)
+sys.setdefaultencoding('utf8')
 chk = os.environ['chk']
-cfg0 = os.environ['cfg0']
-cfg1 = os.environ['cfg1']
-cfg5 = os.environ['cfg5']
-cfg6 = os.environ['cfg6']
+data = os.environ['data']
+learning = os.environ['learning']
+index = os.environ['index']
+marks = os.environ['marks']
 log1 = os.environ['log1']
 log2 = os.environ['log2']
 log3 = os.environ['log3']
@@ -983,15 +1061,21 @@ img0 = os.environ['img0']
 img1 = os.environ['img1']
 img2 = os.environ['img2']
 img3 = os.environ['img3']
-items = [line.strip() for line in open(cfg0)]
-cfg1 = [line.strip() for line in open(cfg1)]
-marks = [line.strip() for line in open(cfg6)]
-f = open(cfg5, "w")
-for item in items:
+ENC = locale.getpreferredencoding()
+learning.encode(ENC)
+marks.encode(ENC)
+learning = learning.split('\n')
+marks = marks.split('\n')
+data = [line.strip() for line in open(data)]
+
+f = open(index, "w")
+for item in data:
+
     item = item.replace('}', '}\n')
+    
     fields = re.split('\n',item)
     item = (fields[0].split('trgt{'))[1].split('}')[0]
-    if item in cfg1:
+    if item in learning:
         srce = (fields[1].split('srce{'))[1].split('}')[0]
         if item in marks:
             i="<b><big>"+item+"</big></b>"

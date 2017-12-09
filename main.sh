@@ -57,14 +57,13 @@ function new_session() {
     cd "$DC_s"/; rename 's/\.p$//' *.p; fi; cd /
     
     # check database
-    cdb="$DM_tls/data/${tlng}.db"
-    if [ ! -e ${cdb} ]; then
+    if [ ! -e ${tlng_db} ]; then
     [ ! -d "$DM_tls/data" ] && mkdir -p "$DM_tls/data" 
     echo -n "create table if not exists Words \
-    (Word TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${cdb}
-    echo -n "create table if not exists Config (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
-    echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${cdb}
-    sqlite3 ${cdb} "alter table Words add column '${slng}' TEXT;"
+    (Word TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${tlng_db}
+    echo -n "create table if not exists Config (Study TEXT, Expire INTEGER);" |sqlite3 ${tlng_db}
+    echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${tlng_db}
+    sqlite3 ${tlng_db} "alter table Words add column '${slng}' TEXT;"
     fi
 
     # log- practice
@@ -74,13 +73,12 @@ function new_session() {
         mv -f "$DT/log" "$DC_s/log"; fi
     fi
     
-    db="$DM_tls/data/config"
     for m in {1..7}; do 
-    sqlite3 ${db} "delete from 'T${m}';"; done
+    sqlite3 "${shr_db}" "delete from 'T${m}';"; done
     
     ins_val() {
 		ta=$1; va=$2
-		sqlite3 ${db} "insert into ${ta} (list) values ('${va}');"
+		sqlite3 ${shr_db} "insert into ${ta} (list) values ('${va}');"
 	}
 	
     # update - topics
@@ -92,17 +90,17 @@ function new_session() {
 		dir="$DM_tl/${line}/.conf"
 		dim="$DM_tl/${line}"
 		[ ! -d "${dir}" ] && continue
-		stts=$(sed -n 1p "${dir}/8.cfg")
+		stts=$(sed -n 1p "${dir}/stts")
 		! [[ ${stts} =~ $numer ]] && stts=1
 		[[ ${stts} = 12 ]] && continue
 		if [ $((stts+stts%2)) = 4 -o $((stts+stts%2)) = 8 ]; then
 			calculate_review "${line}"
 			if [[ $((stts%2)) = 0 ]]; then
 				if [ ${RM} -ge 180 -a ${stts} = 8 ]; then
-					echo 10 > "${dir}/8.cfg"; touch "${dim}"
+					echo 10 > "${dir}/stts"; touch "${dim}"
 					ins_val T2 "${line}"
 				elif [ ${RM} -ge 100 -a ${stts} -lt 8 ]; then
-					echo 8 > "${dir}/8.cfg"; touch "${dim}"
+					echo 8 > "${dir}/stts"; touch "${dim}"
 					ins_val T1 "${line}"
 				elif [ ${stts} = 8 ]; then
 					ins_val T3 "${line}"
@@ -111,10 +109,10 @@ function new_session() {
 				fi
 			elif [[ $((stts%2)) = 1 ]]; then
 				if [ ${RM} -ge 180 -a ${stts} = 7 ]; then
-					echo 9 > "${dir}/8.cfg"; touch "${dim}"
+					echo 9 > "${dir}/stts"; touch "${dim}"
 					ins_val T2 "${line}"
 				elif [ ${RM} -ge 100 -a ${stts} -lt 7 ]; then
-					echo 7 > "${dir}/8.cfg"; touch "${dim}"
+					echo 7 > "${dir}/stts"; touch "${dim}"
 					ins_val T1 "${line}"
 				elif [ ${stts} = 7 ]; then
 					ins_val T3 "${line}"
@@ -206,9 +204,9 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
 
             > "${DC_tlt}/download"
             
-            sed -n 2p "${file}" |tr -d '\\' > "${DC_tlt}/0.cfg"
-            sed -i 's/},/}\n/g;s|","|}|g;s|":"|{|g;s|":{"|}|g;s/"}/}/g' "${DC_tlt}/0.cfg"
-            sed -i 's/^\s*./trgt{/g' "${DC_tlt}/0.cfg"
+            sed -n 2p "${file}" |tr -d '\\' > "${DC_tlt}/data"
+            sed -i 's/},/}\n/g;s|","|}|g;s|":"|{|g;s|":{"|}|g;s/"}/}/g' "${DC_tlt}/data"
+            sed -i 's/^\s*./trgt{/g' "${DC_tlt}/data"
             
             while read item_; do
                 item="$(sed 's/}/}\n/g' <<< "${item_}")"
@@ -222,18 +220,18 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
                     fi
                     echo "${trgt}" >> "${DC_tlt}/1.cfg"
                 fi
-            done < "${DC_tlt}/0.cfg"
+            done < "${DC_tlt}/data"
             
             "$DS/ifs/tls.sh" colorize 1
             slngtopic="$slng"; slng="$slngcurrent"
-            sqlite3 ${db} "update lang set tlng='${tlng}';"
-			sqlite3 ${db} "update lang set slng='${slng}';"
+            sqlite3 ${cfg_db} "update lang set tlng='${tlng}';"
+			sqlite3 ${cfg_db} "update lang set slng='${slng}';"
             if [[ "$slngtopic" != "$slng" ]]; then
                 mkdir "${DC_tlt}/translations/"
                 echo "$slngtopic" > "${DC_tlt}/translations/active"
                 touch "${DC_tlt}/slng_err"
             fi
-            echo 1 > "${DC_tlt}/8.cfg"
+            echo 1 > "${DC_tlt}/stts"
             source /usr/share/idiomind/default/c.conf
             "$DS/mngr.sh" mkmn 1
             "$DS/ifs/tpc.sh" "${name}" 1 &
@@ -243,24 +241,30 @@ fi
 
 function topic() {
     source "$DS/ifs/cmns.sh"
-    [ -e "${DC_tlt}/8.cfg" ] && export mode=$(sed -n 1p "${DC_tlt}/8.cfg")
-    if ! [[ ${mode} =~ $numer ]]; then return 1; fi
+    export -f tpc_db
+    [ -e "${DC_tlt}/stts" ] && export stts=$(sed -n 1p "${DC_tlt}/stts")
+    if ! [[ ${stts} =~ $numer ]]; then return 1; fi
 
     readd(){
         [ -z "${tpc}" ] && return 1
         source "$DS/ifs/mods/main/items_list.sh"
-        for n in {0..4}; do
-            [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg"
-            export ls${n}="${DC_tlt}/${n}.cfg"
-            export cfg${n}=$(wc -l < "${DC_tlt}/${n}.cfg")
+        n=1; tas=('learning' 'learnt' 'words' 'sentences')
+        for ta in ${tas[@]}; do
+			export ls${n}="$(tpc_db 5 "$ta")"; cnt="ls${n}"
+			let n++
         done
-        nt="${DC_tlt}/info"
-        inf="$(< "${DC_tlt}/id.cfg")"
-        autr=$(grep -oP '(?<=autr=\").*(?=\")' <<< "${inf}")
-        dtec=$(grep -oP '(?<=dtec=\").*(?=\")' <<< "${inf}")
-        dtei=$(grep -oP '(?<=dtei=\").*(?=\")' <<< "${inf}")
-        repass=$(grep -oP '(?<=repass=\").*(?=\")' "${DC_tlt}/10.cfg")
-        acheck=$(grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg")
+        cfg0=$(wc -l < "${DC_tlt}/data")
+        export cfg1="$(grep -c '[^[:space:]]' <<< "$ls1")"
+        export cfg2="$(grep -c '[^[:space:]]' <<< "$ls2")"
+        export cfg3="$(grep -c '[^[:space:]]' <<< "$ls3")"
+        export cfg4="$(grep -c '[^[:space:]]' <<< "$ls4")"
+        note="${DC_tlt}/note"
+        autr=$(tpc_db 1 id autr)
+        dtec=$(tpc_db 1 id dtec)
+        dtei=$(tpc_db 1 id dtei)
+        repass=$(tpc_db 1 config repass)
+        acheck=$(tpc_db 1 config acheck)
+
         [ -z $repass ] && repass=0; export repass acheck
         ( sleep 3 && "$DS/ifs/tls.sh" promp_topic_info ) &
         c=$((RANDOM%100000)); export KEY=$c
@@ -280,36 +284,30 @@ function topic() {
     
     apply() {
             note_mod="$(< "${cnf3}")"
-            if [ "${note_mod}" != "$(< "${nt}")" ]; then
+            if [ "${note_mod}" != "$(< "${note}")" ]; then
                 if ! grep '^$' < <(sed -n '1p' "${cnf3}")
-                then echo -e "\n${note_mod}" > "${nt}"
-                else echo "${note_mod}" > "${nt}"; fi
+                then echo -e "\n${note_mod}" > "${note}"
+                else echo "${note_mod}" > "${note}"; fi
             fi
             acheck_mod=$(cut -d '|' -f 3 < "${cnf4}")
             if [[ $acheck_mod != $acheck ]] && [ -n "$acheck_mod" ]; then
-            sed -i "s/acheck=.*/acheck=\"$acheck_mod\"/g" "${DC_tlt}/10.cfg"; fi
-            
+            tpc_db 3 config acheck "$acheck_mod"; fi
             if [[ $acheck_mod = FALSE ]] && [[ $acheck != FALSE ]]; then
                 "$DS/ifs/tls.sh" colorize 1; rm "${cnf1}"; fi
 
-            if grep TRUE "${cnf1}"; then
-                grep -Rl "|FALSE|" "${cnf1}" |while read tab1; do
-                     sed '/|FALSE|/d' "${cnf1}" > "$DT/tmpf1"
-                     mv "$DT/tmpf1" "$tab1"
-                done
-                sed -i 's/|TRUE|//;s/|//;s/<[^>]*>//g' "${cnf1}"
-                cat "${cnf1}" >> "${ls2}"
-
-                grep -Fxvf "${cnf1}" "${ls1}" > "$DT/ls1.x"
-                mv -f "$DT/ls1.x" "${ls1}"
-                if [ -n "$(< "${ls1}" |sort -n |uniq -dc)" ]; then
-                    awk '!array_temp[$0]++' < "${ls1}" > "$DT/ls1.x"
-                    sed '/^$/d' "$DT/ls1.x" > "${ls1}"
-                fi
+            if grep TRUE "${cnf1}" >/dev/null 2>&1; then
+				while read item; do
+					if grep '|TRUE|' <<<"${item}" >/dev/null 2>&1; then
+					trgt="$(sed -e 's/|TRUE|//;s/|//;s/<[^>]*>//g' <<< "$item")"
+					tpc_db 4 learning list "${trgt}"
+					tpc_db 2 learnt list "${trgt}"
+					fi
+				done < "${cnf1}"
                 "$DS/ifs/tls.sh" colorize 1
                 source "$DS/ifs/stats.sh"
                 save_topic_stats 0
             fi
+            
             ntpc=$(cut -d '|' -f 1 < "${cnf4}")
             if [ "${tpc}" != "${ntpc}" -a -n "$ntpc" ]; then
             if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/tpc")" ]]; then
@@ -317,32 +315,40 @@ function topic() {
             else "$DS/mngr.sh" rename_topic "${ntpc}"; fi; fi
         }
         
-    if ((mode>=1 && mode<=10)); then
-        
+    if ((stts>=1 && stts<=10)); then
         readd
         
         if [ ${cfg0} -lt 1 ]; then
-            
-            notebook_1; ret=$?
-                
-            if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
 
+            notebook_1; ret=$?
+            
+            if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
+            
             if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
 
         elif [ ${cfg1} -ge 1 ] || [ ${cfg1} -ge 0 -a ${cfg0} -lt 15 ]; then
-        
-            if [ -e "${DC_tlt}/9.cfg" -a -e "${DC_tlt}/7.cfg" ]; then
+      
+            #if [ -e "${DC_tlt}/9.cfg" -a -e "${DC_tlt}/7.cfg" ]; then
+            if echo "$stts" |grep -E '3|4|7|8|9|10'; then
             
-                calculate_review "${tpc}"; if [[ ${RM} -ge 100 ]]; then
+                calculate_review "${tpc}"; 
+					
+				if [[ ${RM} -ge 100 ]]; then
+				
                     RM=100; dialog_1; ret=$?
+                    
                     if [ $ret -eq 2 ]; then
+                    
                         "$DS/mngr.sh" mark_to_learn "${tpc}" 0
+                        
                         idiomind topic & oclean; return 1
+                        
                     elif [ $ret -eq 3 ]; then
+                    
                        oclean & return 1
                     fi
                 fi
-
+                
                 pres="<u><b>$(gettext "Topic learnt")</b></u>  $(gettext "* however you have new notes") ($cfg1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
                 notebook_2
             else
@@ -351,47 +357,60 @@ function topic() {
                 ret=$?
                 
                 if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
-
+                
                 if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
 
         elif [ ${cfg1} -eq 0 -a ${cfg0} -ge 15 ]; then
         
-            if [ ! -e "${DC_tlt}/7.cfg" -o ! -e "${DC_tlt}/9.cfg" ]; then
-                "$DS/mngr.sh" mark_as_learned "${tpc}" 0
-            fi
+             if  ! echo "$stts" |grep -E '3|4|7|8|9|10'; then
             
-            calculate_review "${tpc}"; if [[ ${RM} -ge 100 ]]; then
+                "$DS/mngr.sh" mark_as_learned "${tpc}" 0
+                
+            fi
+            calculate_review "${tpc}"
+            
+            if [[ ${RM} -ge 100 ]]; then
+            
                 RM=100; dialog_1; ret=$?
+                
                 if [ $ret -eq 2 ]; then
+                
                     "$DS/mngr.sh" mark_to_learn "${tpc}" 0
+                    
                     idiomind topic & oclean; return 1
+                    
                 elif [ $ret -eq 3 ]; then
+                
                     oclean & return 1
                 fi 
             fi
             
             pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
+            
             notebook_2; ret=$?
             
             if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
 
         fi
 
-    elif [[ ${mode} = 12 ]]; then
+    elif [[ ${stts} = 12 ]]; then
     
         readd
-
+        
         if [ ${cfg0} -lt 1 ]; then
-            
+        
             notebook_1; ret=$?
-                
+            
             if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
-
+            
             if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
 
         elif [ ${cfg1} -ge 1 ]; then
         
-            if [ -e "${DC_tlt}/9.cfg" -a -e "${DC_tlt}/7.cfg" ]; then
+            #if [ -e "${DC_tlt}/9.cfg" -a -e "${DC_tlt}/7.cfg" ]; then
+            
+            if echo "$stts" |grep -E '3|4|7|8|9|10'; then
+            
                 notebook_2
             else
                 notebook_1
@@ -399,19 +418,20 @@ function topic() {
             ret=$?
             
             if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
-
+            
             if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
-
+            
         elif [[ ${cfg1} -eq 0 ]]; then
-
+        
             calculate_review "${tpc}"
+            
             pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
             notebook_2; ret=$?
         fi
         
-    elif [[ ${mode} = 14 ]]; then
+    elif [[ ${stts} = 14 ]]; then
     
-        echo 1 > "${DC_tlt}/8.cfg"
+        echo 1 > "${DC_tlt}/stts"
 
     else
         tpa="$(sed -n 1p "$DC_s/tpc")"

@@ -13,7 +13,7 @@ tpt="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg#*:})"
 act="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg%%:*})"
 
 chngtpt(){
-	mode="$(< "$DM_tl/${1}/.conf/8.cfg")"
+	mode="$(< "$DM_tl/${1}/.conf/stts")"
 	"$DS/ifs/tpc.sh" "${1}" ${mode} ${2}
 }
 

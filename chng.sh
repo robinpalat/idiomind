@@ -2,19 +2,19 @@
 # -*- ENCODING: UTF-8 -*-
 
 if [[ ${1} = 0 ]]; then
-    W="$(grep -oP '(?<=words=\").*(?=\")' "${cfg}")"
-    S="$(grep -oP '(?<=sntcs=\").*(?=\")' "${cfg}")"
-    M="$(grep -oP '(?<=marks=\").*(?=\")' "${cfg}")"
-    L="$(grep -oP '(?<=learn=\").*(?=\")' "${cfg}")"
-    D="$(grep -oP '(?<=diffi=\").*(?=\")' "${cfg}")"
+    W=$(tpc_db 1 config words)
+    S=$(tpc_db 1 config sntcs)
+    M=$(tpc_db 1 config marks)
+    L=$(tpc_db 1 config learn)
+    D=$(tpc_db 1 config diffi)
     _stop=0
 
     _play() {
         if [[ ${stnrd} = 1 ]]; then
-            a="$(grep -oP '(?<=audio=\").*(?=\")' "${cfg}")"
-            n="$(grep -oP '(?<=ntosd=\").*(?=\")' "${cfg}")"
-            l="$(grep -oP '(?<=loop=\").*(?=\")' "${cfg}")"; ! [[ ${l} =~ $numer ]] && l=0
-            rw="$(grep -oP '(?<=rword=\").*(?=\")' "${cfg}")"; ! [[ ${rw} =~ $numer ]] && rw=0
+            a=$(tpc_db 1 config audio)
+            n=$(tpc_db 1 config ntosd)
+            l=$(tpc_db 1 config loop); ! [[ ${l} =~ $numer ]] && l=0
+            rw=$(tpc_db 1 config rword); ! [[ ${rw} =~ $numer ]] && rw=0
             [ ! -e "$DT"/playlck ] && echo 0 > "$DT"/playlck
 
             if [ ${n} != TRUE -a ${a} != TRUE -a ${stnrd} = 1 ]; then a=TRUE; fi
@@ -51,7 +51,7 @@ if [[ ${1} = 0 ]]; then
         fi
         if [ -n "${item}" ]; then
             unset file icon
-            _item="$(grep -F -m 1 "trgt{${item}}" "${DC_tlt}/index" |sed 's/}/}\n/g')"
+            _item="$(grep -F -m 1 "trgt{${item}}" "${DC_tlt}/data" |sed 's/}/}\n/g')"
             type="$(grep -oP '(?<=type{).*(?=})' <<<"${_item}")"
             export trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${_item}")"
             srce="$(grep -oP '(?<=srce{).*(?=})' <<<"${_item}")"
@@ -64,27 +64,33 @@ if [[ ${1} = 0 ]]; then
             let f++
         fi
     }
-	
+    
+	sents="$(tpc_db 5 sents)"
+	words="$(tpc_db 5 words)"
+	marks="$(tpc_db 5 marks)"
+	learn="$(tpc_db 5 learning)"
+	leart="$(tpc_db 5 learnt)"
+
 	if [ ! -e "$DT/play2lck" ]; then
 		if [[ ${W} = TRUE ]] && [[ ${S} = TRUE ]]; then
 			echo -e "${tpc}" > "$DT/playlck"
 			while read item; do _stop=1; getitem; _play
-			done < "${DC_tlt}/1.cfg"
+			done <<< "$learn"
 		fi
 		if [[ ${W} = TRUE ]] && [[ ${S} = FALSE ]]; then
 			echo -e "${tpc}" > "$DT/playlck"
 			while read item; do _stop=1; getitem; _play
-			done < <(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg")
+			done < <(grep -Fxv "${sents}" <<< "${learn}")
 		fi
 		if [[ ${W} = FALSE ]] && [[ ${S} = TRUE ]]; then
 			echo -e "${tpc}" > "$DT/playlck"
 			while read item; do _stop=1; getitem; _play
-			done < <(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg")
+			done < <(grep -Fxv "${words}" <<< "${learn}")
 		fi
 		if [[ ${M} = TRUE ]]; then
 			echo -e "${tpc}" > "$DT/playlck"
 			while read item; do _stop=1; getitem; _play
-			done < "${DC_tlt}/6.cfg"
+			done <<< "${marks}"
 		fi
 		if [[ ${L} = TRUE ]]; then
 			echo -e "${tpc}" > "$DT/playlck"
@@ -163,10 +169,10 @@ elif [[ ${1} != 0 ]]; then
     if [ $ret -eq 3 ]; then
             "$DS/add.sh" new_topic
     elif [ -n "${tpc}" ]; then
-        mode="$(< "$DM_tl/${tpc}/.conf/8.cfg")"
+        mode="$(< "$DM_tl/${tpc}/.conf/stts")"
         numer='^[0-9]+$'
         ! [[ ${mode} =~ $num ]] && echo 13 > \
-        "$DM_tl/${tpc}/.conf/8.cfg" && mode=13
+        "$DM_tl/${tpc}/.conf/stts" && mode=13
         if ((mode>=0 && mode<=20)); then
             if [ $ret -eq 2 ]; then
                 "$DS/ifs/tpc.sh" "${tpc}" ${mode} 1 &

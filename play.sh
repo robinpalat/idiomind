@@ -53,33 +53,39 @@ play_list() {
     if [ -z "${tpc}" ]; then source "$DS/ifs/cmns.sh"
     msg "$(gettext "No topic is active")\n" dialog-information & exit 1; fi
     tpc="$(sed -n 1p "$HOME/.config/idiomind/tpc")"
-    DC_tlt="${DM_tl}/${tpc}/.conf"; cfg=0
-    [[ $(wc -l < "${DC_tlt}/10.cfg") = ${#psets[*]} ]] && cfg=1
+    DC_tlt="${DM_tl}/${tpc}/.conf"
+	tpcdb="$DC_tlt/tpc"
+	[ ! -e "$tpcdb" ] && : # MAKE SURE
     ntosd=""; audio=""
     lbls=( 'Words' 'Sentences' 'Marked items' 'Learning' 'Difficult' )
     in=( 'in0' 'in1' 'in2' 'in3' 'in4' )
     iteml=( "$(gettext "No repeat")" "$(gettext "Words")" "$(gettext "Sentences")" )
-    in0="$(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg" |wc -l)"
-    in1="$(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg" |wc -l)"
-    in2="$(grep -Fxvf "${DC_tlt}/2.cfg" "${DC_tlt}/6.cfg" |wc -l)"
+    
+	sents="$(tpc_db 5 sents)"
+	words="$(tpc_db 5 words)"
+	marks="$(tpc_db 5 marks)"
+	learn="$(tpc_db 5 learning)"
+	leart="$(tpc_db 5 learnt)"
+
+    in0="$(grep -Fxv "${sents}" <<< "${learn}" |wc -l)"
+    in1="$(grep -Fxv "${words}" <<< "${learn}" |wc -l)"
+    in2="$(grep -Fxv "${leart}" <<< "${marks}" |wc -l)"
     in3="$(egrep -cv '#|^$' "${DC_tlt}/practice/log2")"
     in4="$(egrep -cv '#|^$' "${DC_tlt}/practice/log3")"
     [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
     [ ! -e $DT/playlck ] && echo 0 > $DT/playlck
+    
+    opts="$(tpc_db 5 config |head -n9)"
+	cfg=1
     if [ ${cfg} = 1 ]; then
-        n=0
+        n=0; v=1
         while [ ${n} -le 9 ]; do
-            get="${psets[$n]}"
-            cfg="${DC_tlt}/10.cfg"
-            val=$(grep -o "$get"=\"[^\"]* "${cfg}" |grep -o '[^"]*$')
+            val=$(sed -n ${v}p <<< "$opts")
             declare ${psets[$n]}="$val"
-            let n++
+            let n++ v++
         done
     else
-        n=0; > "${DC_tlt}/10.cfg"
-        for s in "${psets[@]}"; do
-            echo -e "${s}=\"0\"" >> "${DC_tlt}/10.cfg"
-        done
+		: # make sure....
     fi
     setting_1() {
         n=0
@@ -146,32 +152,38 @@ play_list() {
         out1=$(< $tab1); out2=$(< $tab2)
         [ -f "$tab1" ] && rm -f "$tab1"; [ -f "$tab2" ] && rm -f "$tab2"
         f=1; n=0; count=0
-        for item in "${psets[@]:0:5}"; do
+        for co in "${psets[@]:0:5}"; do
             val=$(sed -n $((n+1))p <<< "${out1}" |cut -d "|" -f2)
-            [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
+            [ -n "${val}" ] && tpc_db 3 config "${co}" "${val}"
+
             [ "$val" = TRUE ] && count=$((count+$(wc -l |sed '/^$/d' <<< "${!in[${n}]}")))
             let n++
         done
         for ad in "$DS/ifs/mods/play"/*; do
             source "${ad}"
-            for item in "${!items[@]}"; do
+            for co in "${!items[@]}"; do
                 val=$(sed -n $((n+1))p <<< "${out1}" |cut -d "|" -f2)
-                [ -n "${val}" ] && sed -i "s/${items[$item]}=.*/${items[$item]}=\"$val\"/g" "${file_cfg}"
+                co="${items[$co]}"
+                [ -n "${val}" ] && tpc_db 3 config "${co}" "${val}"
+                
                 [ "$val" = TRUE ] && count=$((count+1))
                 let n++
             done
             unset items
         done
-        for item in "${psets[@]:5:9}"; do
+        for co in "${psets[@]:5:9}"; do
             val="$(cut -d "|" -f${f} <<< "${out2}")"
-            [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
+            [ -n "${val}" ] && tpc_db 3 config "${co}" "${val}"
+            
             let f++
         done
         pval="$(cut -d "|" -f5 <<< "${out2}")"
         if [[ "$pval" = "$(gettext "Words")" ]]; then  val=1
         elif [[ "$pval" = "$(gettext "Sentences")" ]]; then  val=2
         else  val=0; fi
-        [ -n "${val}" ] && sed -i "s/rword=.*/rword=\"$val\"/g" "${DC_tlt}/10.cfg"
+        [ -n "${val}" ] && tpc_db 3 config "rword" "${val}"
+        
+       
  
         # cmd play
         if [ $ret -eq 0 ]; then
@@ -180,7 +192,7 @@ play_list() {
                 echo 0 > "$DT/playlck"
                 "$DS/stop.sh" 2 & exit 1; fi
             if [ -d "${DM_tlt}" ] && [ -n "${tpc}" ]; then
-                    if grep TRUE <<<"$words$sntcs$marks$wprct"; then
+                    if grep TRUE <<< "$words$sntcs$marks$wprct"; then
                         echo -e "${tpc}" > "$DT/playlck"
                     else 
                         echo 0 > "$DT/playlck"

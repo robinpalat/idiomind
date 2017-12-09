@@ -3,22 +3,28 @@
 
 sz=(580 560 480); [[ ${swind} = TRUE ]] && sz=(480 460 400)
 function vwr() {
-    [ ${1} = 1 ] && index="${DC_tlt}/1.cfg" && item_name="$(sed 's/<[^>]*>//g' <<< "${3}")"
-    [ ${1} = 2 ] && index="${DC_tlt}/2.cfg" && item_name="$(sed 's/<[^>]*>//g' <<< "${2}")"
+	
+    if [ ${1} = 1 ]; then 
+		index="$(tpc_db 5 learning)"
+		item_name="$(sed 's/<[^>]*>//g' <<< "${3}")"
+    elif [ ${1} = 2 ]; then
+		index="$(tpc_db 5 learnt)"
+		item_name="$(sed 's/<[^>]*>//g' <<< "${2}")"
+    fi
     re='^[0-9]+$'; index_pos="$3"
     
     if ! [[ ${index_pos} =~ $re ]]; then
-        index_pos=`grep -Fxon -m 1 "${item_name}" "${index}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+        index_pos=`grep -Fxon -m 1 "${item_name}" <<< "${index}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
         if ! [[ ${index_pos} =~ $re ]]; then
-            index_pos="$(awk 'match($0,v){print NR; exit}' v="${item_name}" "${index}")"
+            index_pos="$(awk 'match($0,v){print NR; exit}' v="${item_name}" <<< "${index}")"
         fi
         nll=""
     fi
-    _item="$(sed -n ${index_pos}p "${index}")"
+    _item="$(sed -n ${index_pos}p <<< "${index}")"
     if [ -z "${_item}" ]; then
-        _item="$(sed -n 1p "${index}")"; export index_pos=1
+        _item="$(sed -n 1p <<< "${index}")"; export index_pos=1
     fi
-    item="$(grep -F -m 1 "trgt{${_item}}" "$DC_tlt/0.cfg" |sed 's/}/}\n/g')"
+    item="$(grep -F -m 1 "trgt{${_item}}" "$DC_tlt/data" |sed 's/}/}\n/g')"
     type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
     export trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
     export srce="$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")"
@@ -92,7 +98,7 @@ function word_view() {
 } >/dev/null 2>&1
 
 function sentence_view() {
-    if [ `sqlite3 "$DC_s/config" "select gramr from opts;"` = TRUE ]; then
+    if [ `sqlite3 "$cfg_db" "select gramr from opts;"` = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
     [ -n "${note}" ] && field_note="💬  <span font_desc='Arial 9'>$note</span>\n"
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
@@ -131,12 +137,12 @@ function notebook_1() {
     cmd2="'$DS/ifs/tls.sh' attatchs"
     cmd3="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd4="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
-    
-    chk1=$(($(wc -l < "${DC_tlt}/1.cfg")*4))
-    chk5=$(wc -l < "${DC_tlt}/5.cfg")
+    chk1=$(($(grep -c '[^[:space:]]' <<< "${ls1}")*4))
+    chk5=$(grep -c '[^[:space:]]' < "${DC_tlt}/index")
+
     list() { if [[ ${chk1} = ${chk5} ]]; then
-    cat "${DC_tlt}/5.cfg"; else cat "${ls1}" | \
-    awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE\n"$0""}'; fi; }
+    cat "${DC_tlt}/index"; else echo -e "${ls1}" | \
+    awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE\n"""}'; fi; }
 
     list | yad --list --tabnum=1 \
     --plug=$KEY --print-all --separator='|' \
@@ -146,7 +152,7 @@ function notebook_1() {
     --search-column=2 --regex-search --hide-column=4 --tooltip-column=4 \
     --column=Name:IMG --column=Name:TEXT \
     --column=Learned:CHK --column=@back@:TIP > "$cnf1" &
-    cat "${ls2}" | yad --list --tabnum=2 \
+    echo "${ls2}" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2"  \
     --expand-column=0 --no-headers \
@@ -156,7 +162,7 @@ function notebook_1() {
     --plug=$KEY \
     --always-print-result \
     --show-uri --uri-color="#6591AA" \
-    --filename="${nt}" --editable --wrap \
+    --filename="${note}" --editable --wrap \
     --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 \
     --plug=$KEY \
@@ -200,7 +206,7 @@ function notebook_2() {
     --text="$pres" \
     --plug=$KEY \
     --align=center --borders=80 --bar="":NORM $RM &
-    cat "${ls2}" | yad --list --tabnum=2 \
+    echo "${ls2}" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2" --grid-lines=hor \
     --expand-column=0 --no-headers --ellipsize=end \
@@ -209,7 +215,7 @@ function notebook_2() {
     yad --text-info --tabnum=3 \
     --plug=$KEY \
     --show-uri --uri-color="#6591AA" \
-    --filename="${nt}" --editable --wrap \
+    --filename="${note}" --editable --wrap \
     --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 \
     --plug=$KEY \

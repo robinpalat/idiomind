@@ -13,7 +13,7 @@ while read -r _item; do
     if [ -n "${trgt}" -a -n "${srce}" ]; then
         echo -e "\"$trgt\",\"$srce\"" >> "$DT/export/txt"
     fi
-done < "${DC_tlt}/0.cfg"
+done < "${DC_tlt}/data"
 
 sed -i 's/\*/\\"/g' "$DT/export/txt"
 if [ -e "$DT/export/txt" ]; then

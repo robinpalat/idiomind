@@ -8,7 +8,6 @@ lgt=${tlangs[$tlng]}
 lgs=${slangs[$slng]}
 export lgt lgs
 include "$DS/ifs/mods/mngr"
-export sdb="$DM_tls/data/config"
 
 mkmn() {
     f_lock "$DT/mn_lk"
@@ -18,10 +17,10 @@ mkmn() {
     while read -r tpc; do
         dir="$DM_tl/${tpc}/.conf"; unset stts
         [ ! -d "${dir}" ] && mkdir -p "${dir}"
-        if [ ! -e "$dir/8.cfg" ]; then
-            stts=13; echo ${stts} > "$dir/8.cfg"
+        if [ ! -e "$dir/stts" ]; then
+            stts=13; echo ${stts} > "$dir/stts"
         else
-            stts=$(sed -n 1p "${dir}/8.cfg")
+            stts=$(sed -n 1p "${dir}/stts")
             ! [[ ${stts} =~ $numer ]] && stts=13
         fi
 		echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$index"
@@ -36,12 +35,12 @@ mkmn() {
 delete_item_ok() {
     f_lock "$DT/ps_lk"
     trgt="${3}"; DM_tlt="$DM_tl/${2}"; DC_tlt="$DM_tl/${2}/.conf"
-    item="$(grep -F -m 1 "trgt{${trgt}}" "$DC_tlt/0.cfg" |sed 's/}/}\n/g')"
+    item="$(grep -F -m 1 "trgt{${trgt}}" "$DC_tlt/data" |sed 's/}/}\n/g')"
     cdid=$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")
 
     if [ -n "${trgt}" ]; then
         cleanups "${DM_tlt}/$cdid.mp3" "${DM_tlt}/images/${trgt,,}.jpg"
-        sed -i "/trgt{${trgt}}/d" "${DC_tlt}/0.cfg"
+        sed -i "/trgt{${trgt}}/d" "${DC_tlt}/data"
         if [ -d "${DC_tlt}/practice" ]; then
             cd "${DC_tlt}/practice"
             while read -r file_pr; do
@@ -61,7 +60,7 @@ delete_item_ok() {
         cleanups "${DC_tlt}/lst"
         rm "${DC_tlt}"/*.tmp
     fi
-    if [[ $(wc -l < "${DC_tlt}/0.cfg") -lt 200 ]] && [ -e "${DC_tlt}/lk" ]; then
+    if [[ $(wc -l < "${DC_tlt}/data") -lt 200 ]] && [ -e "${DC_tlt}/lk" ]; then
         cleanups "${DC_tlt}/lk"
     fi
     "$DS/ifs/tls.sh" colorize 1 &
@@ -78,7 +77,7 @@ delete_item() {
         if [ $ret -eq 0 ]; then
             (sleep 0.1 && kill -9 $(pgrep -f "yad --form "))
             cleanups "${DM_tlt}/$cdid.mp3" "${DM_tlt}/images/${trgt,,}.jpg"
-            sed -i "/trgt{${trgt}}/d" "${DC_tlt}/0.cfg"
+            sed -i "/trgt{${trgt}}/d" "${DC_tlt}/data"
             if [ -d "${DC_tlt}/practice" ]; then
                 cd "${DC_tlt}/practice"
                 while read file_pr; do
@@ -94,7 +93,7 @@ delete_item() {
                     sed '/^$/d' "${DC_tlt}/${n}.cfg.tmp" > "${DC_tlt}/${n}.cfg"
                 fi
             done
-            if [[ $(wc -l < "${DC_tlt}/0.cfg") -lt 200 ]] \
+            if [[ $(wc -l < "${DC_tlt}/data") -lt 200 ]] \
             && [ -e "${DC_tlt}/lk" ]; then
                 rm -f "${DC_tlt}/lk"; fi
             if [ -e "${DC_tlt}/feeds" ]; then
@@ -111,27 +110,27 @@ edit_item() {
     [ -z ${2} -o -z ${3} ] && exit 1
     list="${2}"; item_pos=${3}; text_missing=${4}
     if [ ${list} = 1 ]; then
-        index_1="${DC_tlt}/1.cfg"
-        index_2="${DC_tlt}/2.cfg"
+        index_1="$(tpc_db 5 learning)"
+		index_2="$(tpc_db 5 learnt)"
         [ ${item_pos} -lt 1 ] && item_pos=${cfg1}
     elif [ ${list} = 2 ]; then
-        index_1="${DC_tlt}/2.cfg"
-        index_2="${DC_tlt}/1.cfg"
+        index_1="$(tpc_db 5 learnt)"
+		index_2="$(tpc_db 5 learning)"
         [ ${item_pos} -lt 1 ] && item_pos=${cfg2}
     fi
-    item_trgt="$(sed -n ${item_pos}p "${index_1}")"
-    edit_pos=$(grep -Fon -m 1 "trgt{${item_trgt}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
+    item_trgt="$(sed -n ${item_pos}p <<< "${index_1}")"
+    edit_pos=$(grep -Fon -m 1 "trgt{${item_trgt}}" "${DC_tlt}/data" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
     if ! [[ ${edit_pos} =~ ${numer} ]]; then
-        edit_pos="$(awk 'match($0,v){print NR; exit}' v="trgt{${item_trgt}}" "${DC_tlt}/0.cfg")"
+        edit_pos="$(awk 'match($0,v){print NR; exit}' v="trgt{${item_trgt}}" "${DC_tlt}/data")"
     fi
     if ! [[ ${edit_pos} =~ ${numer} ]]; then $DS/vwr.sh ${list} "${trgt}" 1 & exit; fi
-    get_item "$(sed -n ${edit_pos}p "${DC_tlt}/0.cfg")"
+    get_item "$(sed -n ${edit_pos}p "${DC_tlt}/data")"
 
     [ -z "${cdid}" ] && cdid=""
     export query="$(sed "s/'/ /g" <<< "${trgt}")"
     mod_index=0; tomodify=0; colorize_run=0; transl_mark=0
     if ((mode>=1 && mode<=10)); then
-    tpcs="$(sqlite3 "$sdb" "select * FROM topics" |tr -s '|' '\n')"
+    tpcs="$(sqlite3 "$shr_db" "select * FROM topics" |tr -s '|' '\n')"
     tpcs="$(egrep -v "${tpc}" <<< "$tpcs" |tr "\\n" '!' |sed 's/!\+$//g')"
     export tpc_list="${tpc}!${tpcs}"
     fi
@@ -210,7 +209,7 @@ edit_item() {
                 index edit "${tpc}"
                 sed -i "${edit_pos}s|trgt{${trgt}}|trgt{${trgt_mod}}|;
                 ${edit_pos}s|grmr{${grmr}}|grmr{${trgt_mod}}|;
-                ${edit_pos}s|srce{${srce}}|srce{$temp}|g" "${DC_tlt}/0.cfg"
+                ${edit_pos}s|srce{${srce}}|srce{$temp}|g" "${DC_tlt}/data"
                 mod_index=1; colorize_run=1; tomodify=1
             fi
             if [ "${mark}" != "${mark_mod}" ]; then
@@ -276,7 +275,7 @@ edit_item() {
                     mark="${mark_mod}"; link="${link_mod}"; cdid="${cdid_mod}"
                     index ${type_mod}; unset type trgt srce exmp defn note wrds grmr mark cdid
                 elif [ "${tpc}" = "${tpc_mod}" ]; then
-                    cfg0="${DC_tlt}/0.cfg"
+                    cfg0="${DC_tlt}/data"
                     edit_pos=$(grep -Fon -m 1 "trgt{${trgt_mod}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
                     if ! [[ ${edit_pos} =~ ${numer} ]]; then 
                         edit_pos="$(awk 'match($0,v){print NR; exit}' v="trgt{${trgt_mod}}" "${cfg0}")"
@@ -373,8 +372,8 @@ edit_list_cmds() {
         cleanups "${direc}/1.cfg" "${direc}/3.cfg" "${direc}/4.cfg"
 
         $cmd "$DT/list_output" |sed '/^$/d;/(null)/d' |while read -r trgt; do
-            if grep -F -m 1 "trgt{${trgt}}" "${direc}/0.cfg"; then
-                item="$(grep -F -m 1 "trgt{${trgt}}" "${direc}/0.cfg" |sed 's/}/}\n/g')"
+            if grep -F -m 1 "trgt{${trgt}}" "${direc}/data"; then
+                item="$(grep -F -m 1 "trgt{${trgt}}" "${direc}/data" |sed 's/}/}\n/g')"
                 get_item "${item}"
                 if [ $1 -eq 4 ]; then
                     [ $(wc -$c <<< "${trgt}") -lt 5 ] && type=1
@@ -405,24 +404,24 @@ edit_list_cmds() {
         done
 
         touch "${direc}/3.cfg" "${direc}/4.cfg"
-        mv -f "$DT/new_data" "${direc}/0.cfg"
+        mv -f "$DT/new_data" "${direc}/data"
 
-        if [ -d "$DM_tl/${2}" -a $(wc -l < "${direc}/0.cfg") -ge 1 ]; then
+        if [ -d "$DM_tl/${2}" -a $(wc -l < "${direc}/data") -ge 1 ]; then
             while read -r fname; do
                 cdid=$(basename "${fname}" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.')
-                if ! grep "${cdid}" "${direc}/0.cfg"; then
+                if ! grep "${cdid}" "${direc}/data"; then
                     cleanups "${fname}"
                 fi
             done < <(find "$DM_tl/${2}"/*.mp3)
             while read -r fname; do
                 trgt=$(basename "${fname}" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.')
-                if ! grep "trgt{${trgt^}}" "${direc}/0.cfg"; then
+                if ! grep "trgt{${trgt^}}" "${direc}/data"; then
                     cleanups "${fname}"
                 fi
             done < <(find "$DM_tl/${2}/images"/*.jpg)
         fi
         if [[ "$(cat "${direc}/1.cfg" "${direc}/2.cfg" |wc -l)" -lt 1 ]]; then
-        > "${direc}/0.cfg"; fi
+        > "${direc}/data"; fi
         "$DS/ifs/tls.sh" colorize 1
         rm -f "$DT/el_lk"
         if [ -e "$DT/items_to_add" ]; then
@@ -431,12 +430,12 @@ edit_list_cmds() {
             temp="...."
             
             while read -r trgt; do
-                pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${direc}/0.cfg" \
+                pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${direc}/data" \
                 |sed -n 's/^\([0-9]*\)[:].*/\1/p')
                 if ! [[ ${pos} =~ ${numer} ]]; then
-                    pos="$(awk 'match($0,v){print NR; exit}' v="trgt{${trgt}}" "${direc}/0.cfg")"
+                    pos="$(awk 'match($0,v){print NR; exit}' v="trgt{${trgt}}" "${direc}/data")"
                 fi
-                item="$(sed -n ${pos}p "${direc}/0.cfg" |sed 's/}/}\n/g')"
+                item="$(sed -n ${pos}p "${direc}/data" |sed 's/}/}\n/g')"
                 type=$(grep -oP '(?<=type{).*(?=})' <<< "${item}")
                 cdid=$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")
                 trgt_mod="${trgt}"; grmr="${trgt}"; srce="$temp"
@@ -464,7 +463,7 @@ edit_list_cmds() {
                 sed -i "${pos}s|srce{$srce}|srce{$srce_mod}|;
                 ${pos}s|wrds{$wrds}|wrds{$wrds_mod}|;
                 ${pos}s|grmr{$trgt}|grmr{$grmr_mod}|;
-                ${pos}s|cdid{$cdid}|cdid{$cdid_mod}|g" "${direc}/0.cfg"
+                ${pos}s|cdid{$cdid}|cdid{$cdid_mod}|g" "${direc}/data"
                 cleanups "$DT/${trgt}.edit"
             done < "$DT/items_to_add"
         fi
@@ -512,7 +511,7 @@ edit_list_more() {
             _war; if [ $? = 0 ]; then
                 yad_kill "yad --list --title="
                 cleanups "$DT/list_output" "$DT/list_input"
-                cleanups "${DC_tlt}/0.cfg" "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg" \
+                cleanups "${DC_tlt}/data" "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg" \
                 "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg" "${DC_tlt}/5.cfg" "${DC_tlt}/6.cfg"
                 [ -d "${DM_tlt}" -a -n "$tpc" ] && rm "$DM_tlt"/*.mp3
             fi
@@ -520,13 +519,17 @@ edit_list_more() {
             _war; if [ $? = 0 ]; then
                 yad_kill "yad --list --title="
                 cleanups "$DT/list_output" "$DT/list_input"
-                cleanups "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg" "${DC_tlt}/7.cfg" 
-                echo 1 > "${DC_tlt}/8.cfg"; > "${DC_tlt}/9.cfg"
+                echo 1 > "${DC_tlt}/stts"
+                tpc_db 6 'reviews'
+                tpc_db 6 'learnt'
+                tpc_db 6 'learning'
                 while read -r item_; do
                     item="$(sed 's/}/}\n/g' <<< "${item_}")"
                     trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
-                    [ -n "${trgt}" ] && echo "${trgt}" >> "${DC_tlt}/1.cfg"
-                done < "${DC_tlt}/0.cfg"
+                    if [ -n "${trgt}" ]; then
+						tpc_db 2 learning list "${trgt}"
+					fi
+                done < "${DC_tlt}/data"
                 
                 sed -i "s/repass=.*/repass=\"0\"/g" "${DC_tlt}/10.cfg"
                 "$DS/mngr.sh" mkmn 1; "$DS/ifs/tls.sh" colorize 0
@@ -583,8 +586,8 @@ edit_list_dlg() {
     fi
     cleanups "$DT/list_output"; > "$DT/list_input"
     
-    lns=$(cat "${direc}/0.cfg" |wc -l)
-    (n=1; echo "#"; cat "${direc}/0.cfg" | while read -r item_; do
+    lns=$(cat "${direc}/data" |wc -l)
+    (n=1; echo "#"; cat "${direc}/data" | while read -r item_; do
         item="$(sed 's/}/}\n/g' <<< "${item_}")"
         trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
         [ -n "${trgt}" ] && echo "${trgt}" >> "$DT/list_input"
@@ -722,8 +725,7 @@ rename_topic() {
 
 
 mark_to_learn_topic() {
-    [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
-    
+    [ ! -s "${DC_tlt}/data" ] && exit 1
     if [ "${tpc}" != "${2}" ]; then
         msg "$(gettext "Sorry, this topic is currently not active.")\n " \
         dialog-information "$(gettext "Information")" & exit
@@ -732,24 +734,24 @@ mark_to_learn_topic() {
         msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
         dialog-information "$(gettext "Information")" & exit
     fi
-
     (echo "#"
-    stts=$(sed -n 1p "${DC_tlt}/8.cfg")
+    stts=$(sed -n 1p "${DC_tlt}/stts")
     ! [[ ${stts} =~ ${numer} ]] && stts=1
+    
     calculate_review "${tpc}"
     if [ $((stts%2)) = 0 ]; then
-        echo 6 > "${DC_tlt}/8.cfg"
+        echo 6 > "${DC_tlt}/stts"
     else
         if [ ${RM} -ge 50 ]; then
-            echo 5 > "${DC_tlt}/8.cfg"
+            echo 5 > "${DC_tlt}/stts"
         else
-            echo 1 > "${DC_tlt}/8.cfg"
+            echo 1 > "${DC_tlt}/stts"
         fi
     fi
-    for i in {1..4}; do rm "${DC_tlt}/${i}.cfg"; done
-    rm "${DC_tlt}/7.cfg"; touch "${DC_tlt}/5.cfg" "${DC_tlt}/2.cfg"
-    steps=$(egrep -cv '#|^$' < "${DC_tlt}/9.cfg")
-    sed -i "s/repass=.*/repass=\"${steps}\"/g" "${DC_tlt}/10.cfg"
+	tpc_db 6 'learnt'; tpc_db 6 'learning';
+	tpc_db 6 'words'; tpc_db 6 'sentences';
+    steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
+    tpc_db 3 config repass ${steps}
     
     while read -r item_; do
         item="$(sed 's/}/}\n/g' <<< "${item_}")"
@@ -757,18 +759,18 @@ mark_to_learn_topic() {
         trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
         if [ -n "${trgt}" ]; then
             if [ ${type} -eq 1 ]; then
-                echo "${trgt}" >> "${DC_tlt}/3.cfg"
+                tpc_db 2 words list "${trgt}"
             else 
-                echo "${trgt}" >> "${DC_tlt}/4.cfg"
+                tpc_db 2 sentences list "${trgt}"
             fi
-            echo "${trgt}" >> "${DC_tlt}/1.cfg"
+			tpc_db 2 learning list "${trgt}"
         fi
-    done < "${DC_tlt}/0.cfg" ) | progr_3 "pulsate"
+    done < "${DC_tlt}/data" ) | progr_3 "pulsate"
     if [ -e "${DC_tlt}/lk" ]; then rm "${DC_tlt}/lk"; fi
     cp -f "${DC_tlt}/info" "${DC_tlt}/info.bk"
     if [[ ${3} = 1 ]]; then
-        yad_kill "yad --form " "yad --multi-progress " "yad --list " \
-        "yad --text-info " "yad --notebook "
+        yad_kill "yad --form " "yad --multi-progress "\
+         "yad --list " "yad --text-info " "yad --notebook "
     fi
     touch "${DM_tlt}"
     ( sleep 1; mv -f "${DC_tlt}/info.bk" "${DC_tlt}/info" ) &
@@ -779,56 +781,60 @@ mark_to_learn_topic() {
 mark_as_learned_topic() {
     if [[ "${3}" != 0 ]]; then
         if [ "${tpc}" != "${2}" ]; then
-        msg "$(gettext "Sorry, this topic is currently not active.")\n " dialog-information "$(gettext "Information")" & exit; fi
+        msg "$(gettext "Sorry, this topic is currently not active.")\n " \
+        dialog-information "$(gettext "Information")" & exit; fi
         if [ $((cfg3+cfg4)) -le 11 ]; then
         msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
         dialog-information "$(gettext "Information")" & exit; fi
     fi
-    [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
+    [ ! -s "${DC_tlt}/data" ] && exit 1
     (echo "#"
-    stts=$(sed -n 1p "${DC_tlt}/8.cfg")
+    stts=$(sed -n 1p "${DC_tlt}/stts")
+    
     ! [[ ${stts} =~ ${numer} ]] && stts=1
 
-    if [ ! -e "${DC_tlt}/7.cfg" ]; then
-        [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
+    if ! echo "$stts" |grep -E '3|4|7|8|9|10'; then
+
         calculate_review "${tpc}"
-        steps=$(egrep -cv '#|^$' < "${DC_tlt}/9.cfg")
-        if [ -s "${DC_tlt}/9.cfg" ]; then
+        steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
+        d=$(date +%m/%d/%Y)
+        if [ "${steps}" -gt 0 ]; then
             ! [[ ${steps} =~ ${numer} ]] && steps=1
             if [ ${steps} -eq 4 ]; then
                 stts=$((stts+1))
             fi
             if [ ${RM} -ge 50 ]; then
                 if [ ${steps} -eq 8 ]; then
-                    sed -i '$ d' "${DC_tlt}/9.cfg"
-                    date "+%m/%d/%Y" >> "${DC_tlt}/9.cfg"
+                    tpc_db 3 reviews date8 "$d"
                 elif [ ${steps} -gt 8 ]; then
-                    dts="$(head -7 < "${DC_tlt}/9.cfg")"
-                    echo -e "${dts}\n$(date +%m/%d/%Y)" > "${DC_tlt}/9.cfg"
+                    tpc_db 3 reviews date8 "$d"
                 else
-                    date "+%m/%d/%Y" >> "${DC_tlt}/9.cfg"
+                    tpc_db 2 reviews date${steps} "$d" # FIX 
                 fi
             fi
         else
-            date +%m/%d/%Y > "${DC_tlt}/9.cfg"
+            tpc_db 2 reviews date1 "$d"
         fi
         if [ -d "${DC_tlt}/practice" ]; then
             (cd "${DC_tlt}/practice"; rm ./.*; rm ./*
-            touch ./log1 ./log2 ./log3); fi
-        > "${DC_tlt}/7.cfg"
+            touch ./log1 ./log2 ./log3)
+        fi
         if [[ $((stts%2)) = 0 ]]; then
-            echo 4 > "${DC_tlt}/8.cfg"
+            echo 4 > "${DC_tlt}/stts"
         else
-            echo 3 > "${DC_tlt}/8.cfg"
+            echo 3 > "${DC_tlt}/stts"
         fi
     fi
-    cleanups "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"
-    touch "${DC_tlt}/1.cfg"
+	
+	tpc_db 6 'learning'
     while read -r item_; do
         item="$(sed 's/}/}\n/g' <<< "${item_}")"
         trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
-        [ -n "${trgt}" ] && echo "${trgt}" >> "${DC_tlt}/2.cfg"
-    done < "${DC_tlt}/0.cfg" ) | progr_3 "pulsate"
+        if [ -n "${trgt}" ]; then
+			tpc_db 2 learnt list "${trgt}"
+		fi
+    done < "${DC_tlt}/data" ) | progr_3 "pulsate"
+    
     cp -f "${DC_tlt}/info" "${DC_tlt}/info.bk"
     if [[ ${3} = 1 ]]; then
         yad_kill "yad --form " "yad --list " \
@@ -841,55 +847,57 @@ mark_as_learned_topic() {
     exit
 }
 
-mark_to_learnt_topic_ok() {
+mark_as_learnt_topic_ok() {
         tpc="${2}"
         DM_tlt="$DM_tl/${tpc}"
         DC_tlt="$DM_tl/${tpc}/.conf"
-        [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
-        stts=$(sed -n 1p "${DC_tlt}/8.cfg")
+        [ ! -s "${DC_tlt}/data" ] && exit 1
+        stts=$(sed -n 1p "${DC_tlt}/stts")
         ! [[ ${stts} =~ ${numer} ]] && stts=1
-        if [ ! -e "${DC_tlt}/7.cfg" ]; then
-            [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
+        
+        if ! echo "$stts" |grep -E '3|4|7|8|9|10'; then
             calculate_review "${tpc}"
-            steps=$(egrep -cv '#|^$' < "${DC_tlt}/9.cfg")
-            if [ -s "${DC_tlt}/9.cfg" ]; then
+            steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
+            d=$(date +%m/%d/%Y)
+            if [ "${steps}" -gt 0 ]; then
                 ! [[ ${steps} =~ ${numer} ]] && steps=1
                 if [ ${steps} -eq 4 ]; then
                     stts=$((stts+1))
                 fi
                 if [ ${RM} -ge 50 ]; then
+					
                     if [ ${steps} -eq 8 ]; then
-                        sed -i '$ d' "${DC_tlt}/9.cfg"
-                        date "+%m/%d/%Y" >> "${DC_tlt}/9.cfg"
+                        tpc_db 3 reviews date8 "$d"
                     elif [ ${steps} -gt 8 ]; then
-                        dts="$(head -7 < "${DC_tlt}/9.cfg")"
-                        echo -e "${dts}\n$(date +%m/%d/%Y)" > "${DC_tlt}/9.cfg"
+                        tpc_db 3 reviews date8 "$d"
                     else
-                        date "+%m/%d/%Y" >> "${DC_tlt}/9.cfg"
+                        tpc_db 2 reviews date${steps} "$d" # FIX 
                     fi
                 fi
             else
-                date +%m/%d/%Y > "${DC_tlt}/9.cfg"
+                tpc_db 2 reviews date1 "$d"
             fi
             
             if [ -d "${DC_tlt}/practice" ]; then
                 (cd "${DC_tlt}/practice"; rm ./.*; rm ./*
                 touch ./log1 ./log2 ./log3)
             fi
-            > "${DC_tlt}/7.cfg"
             if [[ $((stts%2)) = 0 ]]; then
-                echo 4 > "${DC_tlt}/8.cfg"
+                echo 4 > "${DC_tlt}/stts"
             else
-                echo 3 > "${DC_tlt}/8.cfg"
+                echo 3 > "${DC_tlt}/stts"
             fi
         fi
-        cleanups "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"
-        touch "${DC_tlt}/1.cfg"; > "${DC_tlt}/2.cfg"
+		
+		tpc_db 6 'learning'
         while read -r item_; do
             item="$(sed 's/}/}\n/g' <<< "${item_}")"
             trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
-            [ -n "${trgt}" ] && echo "${trgt}" >> "${DC_tlt}/2.cfg"
-        done < "${DC_tlt}/0.cfg"
+            if [ -n "${trgt}" ]; then
+				tpc_db 2 learnt list "${trgt}"
+			fi
+		done < "${DC_tlt}/data"
+        
         cp -f "${DC_tlt}/info" "${DC_tlt}/info.bk"
         ( sleep 1; mv -f "${DC_tlt}/info.bk" "${DC_tlt}/info" ) &
 }
@@ -922,5 +930,5 @@ case "$1" in
     mark_to_learn)
     mark_to_learn_topic "$@" ;;
     mark_to_learnt_ok)
-    mark_to_learnt_topic_ok "$@" ;;
+    mark_as_learnt_topic_ok "$@" ;;
 esac

@@ -739,7 +739,7 @@ function decide_group() {
 function practices() {
     pr=${1}
     log="$DC_s/log"
-    cfg0="$DC_tlt/0.cfg"
+    cfg0="$DC_tlt/data"
     cfg1="$DC_tlt/1.cfg"
     cfg3="$DC_tlt/3.cfg"
     cfg4="$DC_tlt/4.cfg"

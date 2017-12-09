@@ -42,7 +42,7 @@ function save_topic_stats() {
         -type d -not -path '*/\.*' |sed 's|\./||g;/^$/d'); do
             C0=0; C1=0; C2=0; C3=0; C4=0; G1=0; G2=0
             dir1="$DM_tl/${tpc}/.conf"
-            stts=""; stts=$(sed -n 1p "$dir1/8.cfg")
+            stts=""; stts=$(sed -n 1p "$dir1/stts")
 
             if [ -e "$dir1/1.cfg" ]; then
                 G1=$(egrep -cv '#|^$' "$dir1/1.cfg"); fi
@@ -106,7 +106,7 @@ function save_word_stats() {
             C1=0; C2=0; C3=0; C4=0; C5=0
             dir1="$DM_tl/${tpc}/.conf"
             dir2="$dir1/practice"
-            stts=""; stts=$(sed -n 1p "$dir1/8.cfg")
+            stts=""; stts=$(sed -n 1p "$dir1/stts")
             
             if [ -f "$dir1/3.cfg" ]; then
                 G0=$(egrep -cv '#|^$' "$dir1/3.cfg"); fi
