@@ -68,61 +68,65 @@ function check_format_1() {
 
 check_index() {
     [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
-    if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1
-    then c=c; else c=w; fi
+    if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} \
+    >/dev/null 2>&1; then c=c; else c=w; fi
     source "$DS/ifs/cmns.sh"
     DC_tlt="$DM_tl/${2}/.conf"
     DM_tlt="$DM_tl/${2}"
-    tpc="${2}"; mkmn=0; f=0; c=0; oldf=0
+    tpc="${2}"; mkmn=0; fix=0; c=0; s=0
     [[ ${3} = 1 ]] && r=1 || r=0
 
     _check() {
+        check_dir "${DM_tlt}" "${DC_tlt}" \
+        "${DM_tlt}/images" "${DC_tlt}/practice"
+        check_file "${DC_tlt}/practice/log1" "${DC_tlt}/practice/log2" \
+        "${DC_tlt}/practice/log3" "${DC_tlt}/note"
+        
+        if ls "${DM_tlt}"/*.mp3 1> /dev/null 2>&1; then
+            for mp3 in "${DM_tlt}"/*.mp3 ; do 
+                [ ! -s "${mp3}" ] && rm "${mp3}"
+            done
+        fi
+        if [ ! -e "${DC_tlt}/stts" ]; then
+            echo 1 > "${DC_tlt}/stts"; export fix=1
+        fi
+        if [ ! -e "${DC_tlt}/data" ]; then
+            export fix=1
+        fi
+        stts=$(sed -n 1p "${DC_tlt}/stts")
+        ! [[ ${stts} =~ $numer ]] && stts=13
+
+        if [ ${stts} = 13 ]; then
+			if [ -e "${DC_tlt}/stts.bk" ]; then
+				stts="$(< "${DC_tlt}/stts.bk")"
+				cleanups "${DC_tlt}/stts.bk"
+            else
+				stts=1
+            fi
+            ! [[ ${stts} =~ $numer ]] && stts=1
+            echo ${stts} > "${DC_tlt}/stts"
+            export mkmn=1; export fix=1
+        fi
+        
         learn="$(tpc_db 5 learning)"
 		leart="$(tpc_db 5 learnt)"
 		cnt0=$(grep -c '[^[:space:]]' < "${DC_tlt}/data")
         cnt1="$(grep -c '[^[:space:]]' <<< "$learn")"
         cnt2="$(grep -c '[^[:space:]]' <<< "$leart")"
-        if [ $((cnt1+cnt2)) != ${cnt0} ]; then export f=1; fi
-        
-        check_dir "${DC_tlt}" "${DC_tlt}" "${DM_tlt}/images" "${DC_tlt}/practice"
-        check_file "${DC_tlt}/practice/log1" "${DC_tlt}/practice/log2" \
-        "${DC_tlt}/practice/log3" "${DC_tlt}/note"
-        
-        if ls "${DM_tlt}"/*.mp3 1> /dev/null 2>&1; then
-            for au in "${DM_tlt}"/*.mp3 ; do 
-                [ ! -s "${au}" ] && rm "${au}"
-            done
-        fi
-        if [ ! -e "${DC_tlt}/stts" ]; then
-            echo 1 > "${DC_tlt}/stts"
-            export f=1
-        fi
-        stts=$(sed -n 1p "${DC_tlt}/stts")
-        ! [[ ${stts} =~ $numer ]] && stts=13
-
-        if [ $stts = 13 ]; then
-            echo 1 > "${DC_tlt}/stts"; export mkmn=1; export f=1
-        fi
+        if [ $((cnt1+cnt2)) != ${cnt0} ]; then export fix=1; fi
+		if [ $? != 0 ]; then export fix=1; fi
         export stts
     }
     
     _newformat() {
 		if [ -f "${DC_tlt}/id.cfg" ]; then
 			(sleep 1; notify-send -i idiomind "$(gettext "Old configuration")" \
-            "$(gettext "Moving to the new format...")" -t 3000) &
+            "$(gettext "Updating...")" -t 3000) &
 
-			if [ -f "${DC_tlt}/0.cfg" ]; then 
-				mv "${DC_tlt}/0.cfg" "${DC_tlt}/data"
-			fi
-			if [ -f "${DC_tlt}/8.cfg" ]; then 
-				mv "${DC_tlt}/8.cfg" "${DC_tlt}/stts"
-			fi
-			if [ -f "${DC_tlt}/5.cfg" ]; then 
-				mv "${DC_tlt}/5.cfg" "${DC_tlt}/index"
-			fi
-			if [ -f "${DC_tlt}/info" ]; then 
-				mv "${DC_tlt}/info" "${DC_tlt}/note"
-			fi
+			[ -f "${DC_tlt}/0.cfg" ] && mv "${DC_tlt}/0.cfg" "${DC_tlt}/data"
+			[ -f "${DC_tlt}/8.cfg" ] && mv "${DC_tlt}/8.cfg" "${DC_tlt}/stts"
+			[ -f "${DC_tlt}/5.cfg" ] && mv "${DC_tlt}/5.cfg" "${DC_tlt}/index"
+			[ -f "${DC_tlt}/info" ] && mv "${DC_tlt}/info" "${DC_tlt}/note"
 			if [ -e "${DC_tlt}/10.cfg" ]; then
 				source "${DC_tlt}/10.cfg"
 				tpc_db 3 config repass "$repass"
@@ -165,23 +169,22 @@ check_index() {
                 fi
 				trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
 				if [ -n "${trgt}" -a -n ${type} ]; then
-					Trgt="$(echo "${trgt}" |sed "s|'|''|g")"
 					if grep -Fxo "${trgt}" "${DC_tlt}/6.cfg" >/dev/null 2>&1; then
-						tpc_db 2 marks list "$Trgt"
+						tpc_db 2 marks list "$trgt"
 					fi
 					if echo "$stts" |grep -E '3|4|7|8|9|10'>/dev/null 2>&1; then
-						tpc_db 2 learnt list "$Trgt"
+						tpc_db 2 learnt list "$trgt"
 					elif grep -Fxo "${trgt}" "${DC_tlt}/1.cfg" >/dev/null 2>&1; then
-						tpc_db 2 learning list "$Trgt"
+						tpc_db 2 learning list "$trgt"
 					elif grep -Fxo "${trgt}" "${DC_tlt}/2.cfg">/dev/null 2>&1 ; then
-						tpc_db 2 learnt list "$Trgt"
+						tpc_db 2 learnt list "$trgt"
 					else
-						tpc_db 2 learning list "$Trgt"
+						tpc_db 2 learning list "$trgt"
 					fi
 					if [ ${type} = 1 ]; then
-						tpc_db 2 words list "$Trgt"
+						tpc_db 2 words list "$trgt"
 					elif [ ${type} = 2 ]; then
-						tpc_db 2 sentences list "$Trgt"
+						tpc_db 2 sentences list "$trgt"
 					fi
 					echo "${item_}" >> "$DT/data"
 			fi
@@ -194,13 +197,20 @@ check_index() {
 			mv -f "$DT/data" "${DC_tlt}/data"
 			sed -i '/^$/d' "${DC_tlt}/data"
 		fi
+		 export mkmn=1
 	}
 
     _restore() {
-		if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then c=c; else c=w; fi
+		if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} \
+		>/dev/null 2>&1; then c=c; else c=w; fi
+		if echo "$stts" |grep -E '3|4|7|8|9|10'\
+		>/dev/null 2>&1; then s=1; fi
         if [ ! -e "${DC_tlt}/data" ]; then
             if [ -e "$DM/backup/${tpc}.bk" ]; then
-                cp -f "$DM/backup/${tpc}.bk" "${DC_tlt}/data"
+                sed -n '/----- newest/,/----- oldest/p' \
+                "$DM/backup/${tpc}.bk" \
+				|grep -v '\----- newest' \
+				|grep -v '\----- oldest' |head -n200 > "${DC_tlt}/data"
             else
                 msg "$(gettext "No such file or directory")\n${topic}\n" error & exit 1
             fi
@@ -208,24 +218,28 @@ check_index() {
 		tpc_db 6 'sentences'; tpc_db 6 'words'
 		tpc_db 6 'learning'; tpc_db 6 'learnt'
 		tpc_db 6 'marks'
-		echo -n "PRAGMA foreign_keys=ON" |sqlite3 "${tpcdb}"
-        while read -r item_; do
+		echo -n "pragma foreign_keys=ON" |sqlite3 "${tpcdb}"
+        n=1; while read -r item_; do
             item="$(sed 's/}/}\n/g' <<< "${item_}")"
             trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
             type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
             if [[ ! "${type}" =~ $numer ]]; then
 				[[ $(wc -$c <<< "${trgt}") = 1 ]] && type=1 || type=2
             fi
-            Tgt="$(echo "${trgt}" |sed "s|'|''|g")"
-            if [ -n "${trgt}" -a -n ${type} ]; then
+            if [ -n "${trgt}" ]; then
 				if [ ${type} = 1 ]; then
-					tpc_db 2 words list "$Trgt"
+					tpc_db 2 words list "$trgt"
 				elif [ ${type} = 2 ]; then
-					tpc_db 2 sentences list "$Trgt"
+					tpc_db 2 sentences list "$trgt"
 				fi
-				tpc_db 2 learning list "$Trgt"
+				if [ "$s" = 1 ]; then
+					tpc_db 2 learnt list "$trgt"
+				else
+					tpc_db 2 learning list "$trgt"
+				fi
 				echo "${item_}" >> "$DT/data"
             fi
+            [ ${n} -gt 200 ] && break || let n++
         done < "${DC_tlt}/data"
         mv -f "$DT/data" "${DC_tlt}/data"
         sed -i '/^$/d' "${DC_tlt}/data"
@@ -234,10 +248,10 @@ check_index() {
 	_newformat
     _check
     
-    if [[ ${f} = 1 ]]; then
-        > "$DT/ps_lk"; mkmn=1
+    if [[ ${fix} = 1 ]]; then
+        > "$DT/ps_lk"
         if [[ ${r} = 0 ]]; then
-            (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
+            (sleep 1; notify-send -i idiomind "$(gettext "Index error")" \
             "$(gettext "Fixing...")" -t 3000) &
         fi
         _restore
@@ -338,12 +352,11 @@ _restore_backup() {
     touch "$DT/act_restfile"; check_dir "${DM_tl}/${2}/.conf"
     if [[ ${3} = 1 ]]; then
         sed -n '/----- newest/,/----- oldest/p' "${file}" \
-        |grep -v '\----- newest' |grep -v '\----- oldest' > \
+        |grep -v '\----- newest' |grep -v '\----- oldest' |head -n200 > \
         "${DM_tl}/${2}/.conf/data"
-    
     elif [[ ${3} = 2 ]]; then
         sed -n '/----- oldest/,/----- end/p' "${file}" \
-        |grep -v '\----- oldest' |grep -v '\----- end' > \
+        |grep -v '\----- oldest' |grep -v '\----- end' |head -n200 > \
         "${DM_tl}/${2}/.conf/data"
     fi
     cleanups "${DM_tl}/${2}/.conf/1.cfg"
@@ -1018,28 +1031,21 @@ stats_dlg() {
 colorize() {
 	source "$DS/ifs/cmns.sh"
 	f_lock "$DT/co_lk"
-	rm "${DC_tlt}/index"
+	cleanups "${DC_tlt}/index"
 	touch "${DM_tlt}"
-
-	reviews=$(tpc_db 1 reviews date); reviews=2 # FIX
-	acheck=$(tpc_db 1 config acheck)
-
+	reviews="$(tpc_db 5 reviews |wc -l)"
+	acheck="$(tpc_db 1 config acheck)"
 	marks="$(tpc_db 5 marks)"
 	learning="$(tpc_db 5 learning)"
-	
-
-
-	# check_file MAKE SURE
-	if [[ "$reviews" -ge 4 ]] && [[ "$acheck" = TRUE ]] && [[ 1 = 1 ]]; 
+	if [[ "$reviews" -ge 4 ]] && \
+	[[ "$acheck" = TRUE ]] && [[ ${2} = 1 ]]; 
 	then chk=TRUE; else chk=FALSE; fi
 	img1="$DS/images/1.png"
 	img2="$DS/images/2.png"
 	img3="$DS/images/3.png"
 	img0="$DS/images/0.png"
 	data="${DC_tlt}/data"
-	#cfg1="${DC_tlt}/1.cfg"
 	index="${DC_tlt}/index"
-	#cfg6="${DC_tlt}/6.cfg"
 	log3="$(cat "${DC_tlt}/practice"/log3)"
 	log2="$(cat "${DC_tlt}/practice"/log2)"
 	log1="$(cat "${DC_tlt}/practice"/log1)"
@@ -1067,12 +1073,9 @@ marks.encode(ENC)
 learning = learning.split('\n')
 marks = marks.split('\n')
 data = [line.strip() for line in open(data)]
-
 f = open(index, "w")
 for item in data:
-
     item = item.replace('}', '}\n')
-    
     fields = re.split('\n',item)
     item = (fields[0].split('trgt{'))[1].split('}')[0]
     if item in learning:

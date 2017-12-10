@@ -77,7 +77,7 @@ function new_session() {
     sqlite3 "${shr_db}" "delete from 'T${m}';"; done
     
     ins_val() {
-		ta=$1; va=$2
+		ta=$1; va="$(sed "s|'|''|g" <<< "${2}")"
 		sqlite3 ${shr_db} "insert into ${ta} (list) values ('${va}');"
 	}
 	
@@ -291,10 +291,11 @@ function topic() {
             fi
             acheck_mod=$(cut -d '|' -f 3 < "${cnf4}")
             if [[ $acheck_mod != $acheck ]] && [ -n "$acheck_mod" ]; then
-            tpc_db 3 config acheck "$acheck_mod"; fi
+				tpc_db 3 config acheck "$acheck_mod"
+            fi
             if [[ $acheck_mod = FALSE ]] && [[ $acheck != FALSE ]]; then
-                "$DS/ifs/tls.sh" colorize 1; rm "${cnf1}"; fi
-
+                "$DS/ifs/tls.sh" colorize 1; rm "${cnf1}"
+            fi
             if grep TRUE "${cnf1}" >/dev/null 2>&1; then
 				while read item; do
 					if grep '|TRUE|' <<<"${item}" >/dev/null 2>&1; then
@@ -311,7 +312,8 @@ function topic() {
             ntpc=$(cut -d '|' -f 1 < "${cnf4}")
             if [ "${tpc}" != "${ntpc}" -a -n "$ntpc" ]; then
             if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/tpc")" ]]; then
-            msg "$(gettext "Sorry, this topic is currently not active.")\n" dialog-information "$(gettext "Information")"
+            msg "$(gettext "Sorry, this topic is currently not active.")\n" \
+            dialog-information "$(gettext "Information")"
             else "$DS/mngr.sh" rename_topic "${ntpc}"; fi; fi
         }
         

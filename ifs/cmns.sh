@@ -64,7 +64,6 @@ function mod_val() {
 	"$DC_s/config" "update $ta set ${va}='${md}';"
 }
 
-
 function sharel_db() {
 	ta="$2"; co="$3"; va="$4"
 	if [ $1 = 1 ]; then # read
@@ -108,11 +107,14 @@ function config_db() {
 }
 
 function tpc_db() {
-	ta="$2"; co="$3"; va="$4"
+	ta="$2"; 
+	co="$(sed "s|'|''|g" <<< "${3}")"
+	va="$(sed "s|'|''|g" <<< "${4}")"
 	if [ $1 = 1 ]; then # read
 		sqlite3 "$DC_tlt/tpc" "select ${co} from '${ta}';"
 	elif [ $1 = 2 ]; then # insert
-		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=2000; insert or replace into ${ta} (${co}) values ('${va}');"
+		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=2000;\
+		insert into ${ta} (${co}) values ('${va}');"
 	elif [ $1 = 3 ]; then # mod
 		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=2000;\
 		update ${ta} set ${co}='${va}';"
@@ -124,9 +126,11 @@ function tpc_db() {
 	elif [ $1 = 6 ]; then # delet all
 		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=5000;\
 		delete from '${ta}';"
+	elif [ $1 = 7 ]; then # mod especific
+		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=2000;\
+		update '${ta}' set list='${co}' where list='${va}';"
 	fi
 }
-
 
 function nmfile() {
     echo -n "${1}" |md5sum |rev |cut -c 4- |rev

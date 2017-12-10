@@ -4,16 +4,16 @@
 if [ -z "${1}" ]; then exit 1; fi
 source "$DS/ifs/cmns.sh"
 topic="${1}"
-mode="${2}"
-[[ ! ${mode} =~ $numer ]] && mode=13
+stts="${2}"
+[[ ! ${stts} =~ $numer ]] && stts=13
 activ="${3}"
 DC_tlt="$DM_tl/${topic}/.conf"
 DM_tlt="$DM_tl/${topic}"
-export mode
-export mode2=$((mode+mode%2))
+export stts
+export stts2=$((stts+stts%2))
 tpcdb="${DC_tlt}/tpc"
 
-create_cfgfile() {
+create_tpcdb() {
 	echo -n "create table if not exists id \
 	(name TEXT, slng TEXT, tlng TEXT, autr TEXT, cntt TEXT, ctgy TEXT, ilnk TEXT, \
 	orig TEXT, dtec TEXT, dteu TEXT, dtei TEXT, nwrd TEXT, nsnt TEXT, nimg TEXT, \
@@ -44,22 +44,22 @@ create_cfgfile() {
 	diffi,rplay,audio,ntosd,loop,rword,acheck,repass) \
 	values ('TRUE','TRUE','FALSE','FALSE','FALSE','FALSE',\
 	'FALSE','FALSE','FALSE','FALSE','TRUE','0');"
-	
 	sqlite3 "${tpcdb}" "pragma busy_timeout=2000;\
 	insert into reviews (date1) values ('');"
-	
-	echo -n "PRAGMA foreign_keys=ON" |sqlite3 "${tpcdb}"
+	echo -n "pragma foreign_keys=ON" |sqlite3 "${tpcdb}"
 }
 
 chek_topic() {
-    if [ ! -d "${DC_tlt}"  ]; then
-        mkdir -p "${DM_tlt}/images"
-        mkdir "${DC_tlt}"; cd "${DC_tlt}"
-        [ ! -e "${DC_tlt}/note" ] && echo " " > "note"
-        echo ${mode} > ./"stts"; cd /
+    if [ ! -d "${DM_tlt}" -o ! -d "${DC_tlt}" ]; then
+        check_dir "${DM_tlt}/images" "${DC_tlt}"
+        echo " " > "${DC_tlt}/note"
+        echo ${stts} > "${DC_tlt}/stts"
     fi
     if [ ! -e "$tpcdb" ]; then
-		create_cfgfile
+		create_tpcdb
+    fi
+	if [ -z "$(sqlite3 "${tpcdb}" "pragma table_info(id);")" ]; then
+		create_tpcdb
     fi
     if [ ! -e "$DT/n_s_pr" ]; then
         "$DS/ifs/tls.sh" check_index "${topic}"
@@ -81,7 +81,7 @@ active_topic() {
 
 if [ -d "${DM_tlt}" ]; then
 
-    if ((mode>=1 && mode<=10)); then
+    if ((stts>=1 && stts<=10)); then
         chek_topic
         if [ ! -e "${DC_tlt}/feeds" ]; then
             echo "${topic}" > "$DT/tpe"
@@ -90,15 +90,14 @@ if [ -d "${DM_tlt}" ]; then
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
         active_topic
         
-     elif [ ${mode} = 12 ]; then
+     elif [ ${stts} = 12 ]; then
         msg_2 "$(gettext "Topic inactive. Do you want to enable it now?") " \
         dialog-question "$(gettext "Yes")" "$(gettext "Just open it")"
         if [ $? = 0 ]; then
-            export mode="$(< "${DC_tlt}/stts.bk")"
-            rm "${DC_tlt}/stts.bk"; echo ${mode} > "${DC_tlt}/stts"
+            export stts="$(< "${DC_tlt}/stts.bk")"
+            cleanups "${DC_tlt}/stts.bk"; echo ${stts} > "${DC_tlt}/stts"
             touch "${DM_tlt}"
             
-            export stts=${mode}
             if echo "$stts" |grep -E '3|4|7|8|9|10'; then
                 calculate_review "${topic}"
                 if [[ $((stts%2)) = 0 ]]; then
@@ -127,10 +126,10 @@ if [ -d "${DM_tlt}" ]; then
             active_topic
             idiomind topic & exit 0
         fi
-    elif [ ${mode} = 13 ]; then
+    elif [ ${stts} = 13 ]; then
         chek_topic
         active_topic
-    elif [ ${mode} = 14 ]; then
+    elif [ ${stts} = 14 ]; then
         chek_topic
         active_topic
     else

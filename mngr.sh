@@ -129,11 +129,13 @@ edit_item() {
     [ -z "${cdid}" ] && cdid=""
     export query="$(sed "s/'/ /g" <<< "${trgt}")"
     mod_index=0; tomodify=0; colorize_run=0; transl_mark=0
-    if ((mode>=1 && mode<=10)); then
+    if ((stts>=1 && stts<=10)); then
     tpcs="$(sqlite3 "$shr_db" "select * FROM topics" |tr -s '|' '\n')"
-    tpcs="$(egrep -v "${tpc}" <<< "$tpcs" |tr "\\n" '!' |sed 's/!\+$//g')"
+    tpcs="$(grep -vFx "${tpe}" <<< "$tpcs" |tr "\\n" '!' |sed 's/\!*$//g')"
     export tpc_list="${tpc}!${tpcs}"
     fi
+
+    
     export cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"""
     export cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" ${cdid}"
     export cmd_def="'$DS/ifs/tls.sh' 'find_def' "\"${trgt}\"""
@@ -214,8 +216,8 @@ edit_item() {
             fi
             if [ "${mark}" != "${mark_mod}" ]; then
                 if [ "${mark_mod}" = "TRUE" ]; then
-                    tomodify=1; echo "${trgt}" >> "${DC_tlt}/6.cfg"; else
-                    sed -i "/${trgt}/d" "${DC_tlt}/6.cfg"
+                    tomodify=1; tpc_db 2 marks list "${trgt}"; else
+                    tpc_db 4 marks "${trgt}"
                 fi
                 colorize_run=1; tomodify=1
             fi
@@ -267,7 +269,8 @@ edit_item() {
                             mv -f "${DM_tlt}/$cdid.mp3" "$DM_tl/${tpc_mod}/$cdid_mod.mp3"; fi
                     fi
                     [ -e "${DM_tlt}/images/${trgt,,}.jpg" ] && \
-                    mv -f "${DM_tlt}/images/${trgt,,}.jpg" "$DM_tl/${tpc_mod}/images/${trgt_mod,,}.jpg"
+                    mv -f "${DM_tlt}/images/${trgt,,}.jpg" \
+                    "$DM_tl/${tpc_mod}/images/${trgt_mod,,}.jpg"
                     "$DS/mngr.sh" delete_item_ok "${tpc}" "${trgt}"
                     trgt="${trgt_mod}"; srce="${srce_mod}"; tpe="${tpc_mod}"
                     exmp="${exmp_mod}"; defn="${defn_mod}"; note="${note_mod}"
@@ -303,27 +306,21 @@ edit_item() {
                         elif [ ${type_mod} = 1 ]; then
                             [ -e "${DM_tlt}/$cdid.mp3" ] && \
                             mv -f "${DM_tlt}/$cdid.mp3" "${DM_tlt}/$cdid_mod.mp3"; fi
-                    fi
-                fi
+					fi
+				fi
                 if [ "$type" != "$type_mod" ]; then
                     if [ ${type_mod} = 1 ]; then
-                        if grep -Fxq "${trgt_mod}" "${DC_tlt}/4.cfg"; then
-                            grep -vxF "${trgt_mod}" "${DC_tlt}/4.cfg" > "${DC_tlt}/4.cfg.tmp"
-                            sed '/^$/d' "${DC_tlt}/4.cfg.tmp" > "${DC_tlt}/4.cfg"
-                        fi
-                        echo "${trgt_mod}" >> "${DC_tlt}/3.cfg"
-                        rm "${DC_tlt}"/*.tmp
+						tpc_db 4 sentences "${trgt_mod}"
+                        tpc_db 2 words list "${trgt_mod}"
+
                     elif [ ${type_mod} = 2 ]; then
-                        if grep -Fxq "${trgt_mod}" "${DC_tlt}/3.cfg"; then
-                            grep -vxF "${trgt_mod}" "${DC_tlt}/3.cfg" > "${DC_tlt}/3.cfg.tmp"
-                            sed '/^$/d' "${DC_tlt}/3.cfg.tmp" > "${DC_tlt}/3.cfg"
-                        fi
-                        echo "${trgt_mod}" >> "${DC_tlt}/4.cfg"
-                        rm "${DC_tlt}"/*.tmp
+						tpc_db 4 words "${trgt_mod}"
+                        tpc_db 2 sentences list "${trgt_mod}"
                     fi
                 fi
                 [ -e "${DM_tlt}/images/${trgt,,}.jpg" ] && \
-                mv -f "${DM_tlt}/images/${trgt,,}.jpg" "${DM_tlt}/images/${trgt_mod,,}.jpg"
+                mv -f "${DM_tlt}/images/${trgt,,}.jpg" \
+                "${DM_tlt}/images/${trgt_mod,,}.jpg"
                 cleanups "$DT_r" "$DT/${trgt_mod}.edit"
             ) &
             fi
@@ -767,13 +764,13 @@ mark_to_learn_topic() {
         fi
     done < "${DC_tlt}/data" ) | progr_3 "pulsate"
     if [ -e "${DC_tlt}/lk" ]; then rm "${DC_tlt}/lk"; fi
-    cp -f "${DC_tlt}/info" "${DC_tlt}/info.bk"
+    cp -f "${DC_tlt}/note" "${DC_tlt}/note.bk"
     if [[ ${3} = 1 ]]; then
         yad_kill "yad --form " "yad --multi-progress "\
          "yad --list " "yad --text-info " "yad --notebook "
     fi
     touch "${DM_tlt}"
-    ( sleep 1; mv -f "${DC_tlt}/info.bk" "${DC_tlt}/info" ) &
+    ( sleep 1; mv -f "${DC_tlt}/note.bk" "${DC_tlt}/note" ) &
     "$DS/mngr.sh" mkmn 1 &
     [[ ${3} = 1 ]] && idiomind topic &
 }
@@ -835,13 +832,13 @@ mark_as_learned_topic() {
 		fi
     done < "${DC_tlt}/data" ) | progr_3 "pulsate"
     
-    cp -f "${DC_tlt}/info" "${DC_tlt}/info.bk"
+    cp -f "${DC_tlt}/note" "${DC_tlt}/note.bk"
     if [[ ${3} = 1 ]]; then
         yad_kill "yad --form " "yad --list " \
         "yad --text-info " "yad --notebook "
     fi
     "$DS/mngr.sh" mkmn 1 &
-    ( sleep 1; mv -f "${DC_tlt}/info.bk" "${DC_tlt}/info" ) &
+    ( sleep 1; mv -f "${DC_tlt}/note.bk" "${DC_tlt}/note" ) &
     [[ ${3} = 1 ]] && idiomind topic &
     ( sleep 1; "$DS/ifs/tls.sh" colorize 0 ) &
     exit
@@ -898,8 +895,8 @@ mark_as_learnt_topic_ok() {
 			fi
 		done < "${DC_tlt}/data"
         
-        cp -f "${DC_tlt}/info" "${DC_tlt}/info.bk"
-        ( sleep 1; mv -f "${DC_tlt}/info.bk" "${DC_tlt}/info" ) &
+        cp -f "${DC_tlt}/note" "${DC_tlt}/note.bk"
+        ( sleep 1; mv -f "${DC_tlt}/note.bk" "${DC_tlt}/note" ) &
 }
 
 case "$1" in

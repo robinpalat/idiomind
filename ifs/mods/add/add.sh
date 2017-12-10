@@ -46,10 +46,9 @@ function index() {
                 sed -i "s|^${trgt}$|${trgt_mod}|" "${1}"
             fi
         }
-        Trgt_mod="$(echo "${trgt_mod}" |sed "s|'|''|g")"
         tas=('learning' 'learnt' 'words' 'sentences' 'marks')
         for ta in ${tas[@]}; do
-			tpc_db 3 "$ta" "${trgt}" "${Trgt_mod}"
+			tpc_db 7 "$ta" "${trgt_mod}" "${trgt}"
         done
 
         if [ -d "${DC_tlt}/practice" ]; then
@@ -69,15 +68,14 @@ function index() {
         #
         if [ ! -z "${trgt}" ]; then
             if ! grep -Fo "trgt{${trgt}}" "${DC_tlt}/data" >/dev/null 2>&1; then
-				Trgt="$(echo "${trgt}" |sed "s|'|''|g")"
                 if [[ ${1} = 1 ]]; then
                     unset wrds grmr
-                    tpc_db 2 learning list "${Trgt}"
-                    tpc_db 2 words list "${Trgt}"
+                    tpc_db 2 learning list "${trgt}"
+                    tpc_db 2 words list "${trgt}"
                     echo -e "$img0\n${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
                 elif [[ ${1} = 2 ]]; then
-                    tpc_db 2 learning list "${Trgt}"
-                    tpc_db 2 sentences list "${Trgt}"
+                    tpc_db 2 learning list "${trgt}"
+                    tpc_db 2 sentences list "${trgt}"
                     echo -e "$img0\n${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
                 fi
 
