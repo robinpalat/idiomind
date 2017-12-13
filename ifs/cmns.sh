@@ -54,60 +54,33 @@ function progress() {
 
 export numer='^[0-9]+$'
 
-function read_val() {
-	ta=$1; va=$2; sqlite3 \
-	"$DC_s/config" "select $va from $ta;"
-}
 
-function mod_val() {
-	ta=$1; va=$2; md=$3; sqlite3 \
-	"$DC_s/config" "update $ta set ${va}='${md}';"
-}
-
-function sharel_db() {
-	ta="$2"; co="$3"; va="$4"
-	if [ $1 = 1 ]; then # read
-		sqlite3 "$DM_tls/data/config" "select ${co} from '${ta}';"
-	elif [ $1 = 2 ]; then # insert
-		sqlite3 "$DM_tls/data/config" "pragma busy_timeout=2000;\
-		 insert into ${ta} (${co}) values ('${va}');"
-	elif [ $1 = 3 ]; then # mod
-		sqlite3 "$DM_tls/data/config" "pragma busy_timeout=2000;\
-		update ${ta} set ${co}='${va}';"
-	elif [ $1 = 4 ]; then # delete
-		sqlite3 "$DM_tls/data/config" "pragma busy_timeout=2000;\
-		delete from ${ta} where ${co}='${va}';"
-	elif [ $1 = 5 ]; then # select all
-		sqlite3 "$DM_tls/data/config" "select * FROM '${ta}';" |tr -s '|' '\n'
-	elif [ $1 = 6 ]; then # delet all
-		sqlite3 "$DM_tls/data/config" "pragma busy_timeout=4000;\
-		delete from '${ta}';"
-	fi
-}
-
-function config_db() {
-	ta="$2"; co="$3"; va="$4"
-	if [ $1 = 1 ]; then # read
-		sqlite3 "$DC_s/config" "select ${co} from '${ta}';"
-	elif [ $1 = 2 ]; then # insert
-		sqlite3 "$DC_s/config" "pragma busy_timeout=2000;\
-		insert into ${ta} (${co}) values ('${va}');"
-	elif [ $1 = 3 ]; then # mod
-		sqlite3 "$DC_s/config" "pragma busy_timeout=2000;\
-		update ${ta} set ${co}='${va}';"
-	elif [ $1 = 4 ]; then # delete
-		sqlite3 "$DC_s/config" "pragma busy_timeout=2000;\
-		delete from ${ta} where ${co}='${va}';"
-	elif [ $1 = 5 ]; then # select all
-		sqlite3 "$DC_s/config" "select * FROM '${ta}';" |tr -s '|' '\n'
-	elif [ $1 = 6 ]; then # delet all
-		sqlite3 "$DC_s/config" "pragma busy_timeout=5000;\
-		delete from '${ta}';"
+function cdb() {
+	ta="${3}"
+	co="$(sed "s|'|''|g" <<< "${4}")"
+	va="$(sed "s|'|''|g" <<< "${5}")"
+	db="${1}"
+	if [ $2 = 1 ]; then # read
+		sqlite3 "$db" "select ${co} from ${ta};"
+		
+	elif [ $2 = 2 ]; then # insert
+		sqlite3 "$db" "insert into ${ta} (${co}) values ('${va}');"
+		
+	elif [ $2 = 3 ]; then # mod
+	
+		sqlite3 "$db" "update $ta set ${co}='${va}';"
+		
+	elif [ $2 = 4 ]; then # delete
+		sqlite3 "$db" "delete from ${ta} where ${co}='${va}';"
+	elif [ $2 = 5 ]; then # select all
+		sqlite3 "$db" "select * FROM ${ta};" |tr -s '|' '\n'
+	elif [ $2 = 6 ]; then # delet all
+		sqlite3 "$db" "delete from '${ta}';"
 	fi
 }
 
 function tpc_db() {
-	ta="$2"; 
+	ta="${2}"
 	co="$(sed "s|'|''|g" <<< "${3}")"
 	va="$(sed "s|'|''|g" <<< "${4}")"
 	if [ $1 = 1 ]; then # read

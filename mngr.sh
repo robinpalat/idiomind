@@ -40,7 +40,9 @@ delete_item_ok() {
 
     if [ -n "${trgt}" ]; then
         cleanups "${DM_tlt}/$cdid.mp3" "${DM_tlt}/images/${trgt,,}.jpg"
+        
         sed -i "/trgt{${trgt}}/d" "${DC_tlt}/data"
+        
         if [ -d "${DC_tlt}/practice" ]; then
             cd "${DC_tlt}/practice"
             while read -r file_pr; do
@@ -51,14 +53,12 @@ delete_item_ok() {
             done < <(ls ./*)
             rm ./*.tmp; cd /
         fi
-        for n in {1..6}; do
-            if [ -f "${DC_tlt}/${n}.cfg" ]; then
-                grep -vxF "${trgt}" "${DC_tlt}/${n}.cfg" > "${DC_tlt}/${n}.cfg.tmp"
-                sed '/^$/d' "${DC_tlt}/${n}.cfg.tmp" > "${DC_tlt}/${n}.cfg"
-            fi
+        
+        tas=('learning' 'learnt' 'words' 'sentences' 'marks')
+		for ta in ${tas[@]}; do
+			tpc_db 4 $ta list "${trgt}"
         done
         cleanups "${DC_tlt}/lst"
-        rm "${DC_tlt}"/*.tmp
     fi
     if [[ $(wc -l < "${DC_tlt}/data") -lt 200 ]] && [ -e "${DC_tlt}/lk" ]; then
         cleanups "${DC_tlt}/lk"
@@ -70,14 +70,18 @@ delete_item_ok() {
 delete_item() {
     f_lock "$DT/ps_lk"
     DM_tlt="$DM_tl/${2}"; DC_tlt="$DM_tl/${2}/.conf"
+    
     if [ -n "${trgt}" ]; then
         msg_2 "$(gettext "Are you sure you want to delete this item?")\n" \
         edit-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
         ret="$?"
+        
         if [ $ret -eq 0 ]; then
             (sleep 0.1 && kill -9 $(pgrep -f "yad --form "))
+            
             cleanups "${DM_tlt}/$cdid.mp3" "${DM_tlt}/images/${trgt,,}.jpg"
             sed -i "/trgt{${trgt}}/d" "${DC_tlt}/data"
+            
             if [ -d "${DC_tlt}/practice" ]; then
                 cd "${DC_tlt}/practice"
                 while read file_pr; do
@@ -87,28 +91,28 @@ delete_item() {
                 done < <(ls ./*)
                 rm ./*.tmp; cd /
             fi
-            for n in {1..6}; do
-                if [ -f "${DC_tlt}/${n}.cfg" ]; then
-                    grep -vxF "${trgt}" "${DC_tlt}/${n}.cfg" > "${DC_tlt}/${n}.cfg.tmp"
-                    sed '/^$/d' "${DC_tlt}/${n}.cfg.tmp" > "${DC_tlt}/${n}.cfg"
-                fi
+
+            tas=('learning' 'learnt' 'words' 'sentences' 'marks')
+			for ta in ${tas[@]}; do
+				tpc_db 4 $ta list "${trgt}"
             done
+            
             if [[ $(wc -l < "${DC_tlt}/data") -lt 200 ]] \
             && [ -e "${DC_tlt}/lk" ]; then
                 rm -f "${DC_tlt}/lk"; fi
             if [ -e "${DC_tlt}/feeds" ]; then
                 echo "${trgt}" >> "${DC_tlt}/exclude"
             fi
+            
             "$DS/ifs/tls.sh" colorize 1 &
-            rm "${DC_tlt}"/*.tmp
         fi
     fi
-    cleanups "$DT/ps_lk" & exit 1
+    cleanups "$DT/ps_lk" & return 0
 }
 
 edit_item() {
     [ -z ${2} -o -z ${3} ] && exit 1
-    list="${2}"; item_pos=${3}; text_missing=${4}
+    list=${2}; item_pos=${3}; text_missing=${4}
     if [ ${list} = 1 ]; then
         index_1="$(tpc_db 5 learning)"
 		index_2="$(tpc_db 5 learnt)"
@@ -130,12 +134,11 @@ edit_item() {
     export query="$(sed "s/'/ /g" <<< "${trgt}")"
     mod_index=0; tomodify=0; colorize_run=0; transl_mark=0
     if ((stts>=1 && stts<=10)); then
-    tpcs="$(sqlite3 "$shr_db" "select * FROM topics" |tr -s '|' '\n')"
+
+    tpcs="$(cdb "${shrdb}" 5 topics)"
     tpcs="$(grep -vFx "${tpe}" <<< "$tpcs" |tr "\\n" '!' |sed 's/\!*$//g')"
     export tpc_list="${tpc}!${tpcs}"
     fi
-
-    
     export cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"""
     export cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" ${cdid}"
     export cmd_def="'$DS/ifs/tls.sh' 'find_def' "\"${trgt}\"""
@@ -177,7 +180,7 @@ edit_item() {
         if [ ${ret} -eq 0 -o ${ret} -eq 2 ]; then
         
             include "$DS/ifs/mods/add"
-            dlaud="$(read_val dlaud)"
+            dlaud=$(cdb ${cfgdb} 1 opts dlaud) 
 
             if [ ${type} = 1 ]; then
                 edit_dlg="${edit_dlg1}"
@@ -333,7 +336,7 @@ edit_item() {
                 $DS/vwr.sh ${list} "${trgt}" ${item_pos} & 
             fi
         else
-            "$DS/vwr.sh" ${list} "${trgt}" $((item_pos+1)) &
+            "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} &
         fi
         exit 0
 } >/dev/null 2>&1
@@ -364,10 +367,12 @@ edit_list_cmds() {
         fi
         
         include "$DS/ifs/mods/add"
-        dlaud="$(read_val dlaud)"
+        dlaud=$(cdb ${cfgdb} 1 opts dlaud) 
         n=1; f_lock "$DT/el_lk"
-        cleanups "${direc}/1.cfg" "${direc}/3.cfg" "${direc}/4.cfg"
-
+        
+        learn="$(tpc_db 5 learning)"; leart="$(tpc_db 5 learnt)"
+		tpc_db 6 'learning'; tpc_db 6 'words'; tpc_db 6 'sentences'
+        
         $cmd "$DT/list_output" |sed '/^$/d;/(null)/d' |while read -r trgt; do
             if grep -F -m 1 "trgt{${trgt}}" "${direc}/data"; then
                 item="$(grep -F -m 1 "trgt{${trgt}}" "${direc}/data" |sed 's/}/}\n/g')"
@@ -375,22 +380,23 @@ edit_list_cmds() {
                 if [ $1 -eq 4 ]; then
                     [ $(wc -$c <<< "${trgt}") -lt 5 ] && type=1
                 fi
+
                 if [ ${type} = 1 ]; then
-                    echo "${trgt}" >> "${direc}/3.cfg"
+                    tpc_db 2 words list "$trgt"
                 elif [ ${type} = 2 ]; then
-                    echo "${trgt}" >> "${direc}/4.cfg"
+                    tpc_db 2 sentences list "$trgt"
                 fi
-                if ! grep -Fxo "${trgt}" "${direc}/2.cfg"; then
-                    echo "${trgt}" >> "${direc}/1.cfg"
+                if ! grep -Fxo "${trgt}" <<< "${leart}"; then
+                    tpc_db 2 learning list "$trgt"
                 fi
             else
                 unset_item
                 if [[ $(wc -$c <<< "${trgt}") = 1 ]]; then
-                    echo "${trgt}" >> "${direc}/3.cfg"; type=1
+                    tpc_db 2 words list "$trgt"; type=1
                 else 
-                    echo "${trgt}" >> "${direc}/4.cfg"; type=2
+                    tpc_db 2 sentences list "$trgt"; type=2
                 fi
-                echo "${trgt}" >> "${direc}/1.cfg"
+                tpc_db 2 learning list "$trgt"
                 temp="...."; grmr="${trgt}"; srce="${temp}"
                 echo "${trgt}" >> "$DT/items_to_add"
             fi
@@ -400,7 +406,6 @@ edit_list_cmds() {
             let n++
         done
 
-        touch "${direc}/3.cfg" "${direc}/4.cfg"
         mv -f "$DT/new_data" "${direc}/data"
 
         if [ -d "$DM_tl/${2}" -a $(wc -l < "${direc}/data") -ge 1 ]; then
@@ -417,7 +422,7 @@ edit_list_cmds() {
                 fi
             done < <(find "$DM_tl/${2}/images"/*.jpg)
         fi
-        if [[ "$(cat "${direc}/1.cfg" "${direc}/2.cfg" |wc -l)" -lt 1 ]]; then
+        if [[ "$(echo "${learnt}${learn}" |wc -l)" -lt 1 ]]; then
         > "${direc}/data"; fi
         "$DS/ifs/tls.sh" colorize 1
         rm -f "$DT/el_lk"
@@ -508,8 +513,11 @@ edit_list_more() {
             _war; if [ $? = 0 ]; then
                 yad_kill "yad --list --title="
                 cleanups "$DT/list_output" "$DT/list_input"
-                cleanups "${DC_tlt}/data" "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg" \
-                "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg" "${DC_tlt}/5.cfg" "${DC_tlt}/6.cfg"
+                cleanups "${DC_tlt}/data" "${DC_tlt}/index"
+                tpc_db 6 'sentences'; tpc_db 6 'words'
+				tpc_db 6 'learning'; tpc_db 6 'learnt'
+				tpc_db 6 'marks'
+                
                 [ -d "${DM_tlt}" -a -n "$tpc" ] && rm "$DM_tlt"/*.mp3
             fi
         elif grep "$(gettext "Restart topic status")" <<< "${more}"; then
@@ -517,9 +525,9 @@ edit_list_more() {
                 yad_kill "yad --list --title="
                 cleanups "$DT/list_output" "$DT/list_input"
                 echo 1 > "${DC_tlt}/stts"
-                tpc_db 6 'reviews'
-                tpc_db 6 'learnt'
+                tpc_db 6 'reviews'; tpc_db 6 'learnt'
                 tpc_db 6 'learning'
+                
                 while read -r item_; do
                     item="$(sed 's/}/}\n/g' <<< "${item_}")"
                     trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
@@ -527,8 +535,7 @@ edit_list_more() {
 						tpc_db 2 learning list "${trgt}"
 					fi
                 done < "${DC_tlt}/data"
-                
-                sed -i "s/repass=.*/repass=\"0\"/g" "${DC_tlt}/10.cfg"
+                tpc_db 3 config repass 0
                 "$DS/mngr.sh" mkmn 1; "$DS/ifs/tls.sh" colorize 0
             fi
         elif grep "$(gettext "Manage feeds")" <<< "${more}"; then
@@ -802,15 +809,15 @@ mark_as_learned_topic() {
             fi
             if [ ${RM} -ge 50 ]; then
                 if [ ${steps} -eq 8 ]; then
-                    tpc_db 3 reviews date8 "$d"
+                    tpc_db 3 reviews date8 ${d}
                 elif [ ${steps} -gt 8 ]; then
-                    tpc_db 3 reviews date8 "$d"
+                    tpc_db 3 reviews date8 ${d}
                 else
-                    tpc_db 2 reviews date${steps} "$d" # FIX 
+                    tpc_db 2 reviews date${steps} ${d} # FIX 
                 fi
             fi
         else
-            tpc_db 2 reviews date1 "$d"
+            tpc_db 2 reviews date1 ${d}
         fi
         if [ -d "${DC_tlt}/practice" ]; then
             (cd "${DC_tlt}/practice"; rm ./.*; rm ./*
@@ -864,15 +871,15 @@ mark_as_learnt_topic_ok() {
                 if [ ${RM} -ge 50 ]; then
 					
                     if [ ${steps} -eq 8 ]; then
-                        tpc_db 3 reviews date8 "$d"
+                        tpc_db 3 reviews date8 ${d}
                     elif [ ${steps} -gt 8 ]; then
-                        tpc_db 3 reviews date8 "$d"
+                        tpc_db 3 reviews date8 ${d}
                     else
-                        tpc_db 2 reviews date${steps} "$d" # FIX 
+                        tpc_db 2 reviews date${steps} ${d} # FIX 
                     fi
                 fi
             else
-                tpc_db 2 reviews date1 "$d"
+                tpc_db 2 reviews date1 ${d}
             fi
             
             if [ -d "${DC_tlt}/practice" ]; then

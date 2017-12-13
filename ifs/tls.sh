@@ -107,7 +107,7 @@ check_index() {
             echo ${stts} > "${DC_tlt}/stts"
             export mkmn=1; export fix=1
         fi
-        
+
         learn="$(tpc_db 5 learning)"
 		leart="$(tpc_db 5 learnt)"
 		cnt0=$(grep -c '[^[:space:]]' < "${DC_tlt}/data")
@@ -262,43 +262,44 @@ check_index() {
     cleanups "$DT/ps_lk"
 }
 
-create_cfgfile() {
-	cfg_db="$HOME/.config/idiomind/config"
-	echo -n "create table if not exists opts \
+create_cfgdb() {
+	cfgdb="$HOME/.config/idiomind/config"
+	echo -n "pragma busy_timeout=2000;create table if not exists opts \
 	(gramr TEXT, wlist TEXT, trans TEXT, dlaud TEXT, ttrgt TEXT, clipw TEXT, itray TEXT, \
-	swind TEXT, stsks TEXT, tlang TEXT, slang TEXT, synth TEXT, txaud TEXT, intrf TEXT);" |sqlite3 "${cfg_db}"
-	echo -n "create table if not exists lang \
-	(tlng TEXT, slng TEXT);" |sqlite3 "${cfg_db}"
-	echo -n "create table if not exists geom \
-	(vals TEXT);" |sqlite3 "${cfg_db}"
-	echo -n "create table if not exists user \
-	(autr TEXT, pass TEXT);" |sqlite3 "${cfg_db}"
-	echo -n "create table if not exists sess \
-	(date TEXT);" |sqlite3 "${cfg_db}"
-	echo -n "create table if not exists updt \
-	(date TEXT);" |sqlite3 "${cfg_db}"
-	sqlite3 "${cfg_db}" "insert into opts (gramr,wlist,trans,dlaud,ttrgt,\
+	swind TEXT, stsks TEXT, tlang TEXT, slang TEXT, synth TEXT, txaud TEXT, intrf TEXT);" |sqlite3 "${cfgdb}"
+	echo -n "pragma busy_timeout=2000;create table if not exists lang \
+	(tlng TEXT, slng TEXT);" |sqlite3 "${cfgdb}"
+	echo -n "pragma busy_timeout=2000; create table if not exists geom \
+	(vals TEXT);" |sqlite3 "${cfgdb}"
+	echo -n "pragma busy_timeout=2000; create table if not exists user \
+	(autr TEXT, pass TEXT);" |sqlite3 "${cfgdb}"
+	echo -n "pragma busy_timeout=2000; create table if not exists sess \
+	(date TEXT);" |sqlite3 "${cfgdb}"
+	echo -n "pragma busy_timeout=2000; create table if not exists updt \
+	(date TEXT);" |sqlite3 "${cfgdb}"
+	sqlite3 "${cfgdb}" "pragma busy_timeout=2000;\
+	insert into opts (gramr,wlist,trans,dlaud,ttrgt,\
 	clipw,itray,swind,stsks,tlang,slang,synth,txaud,intrf) \
 	values ('FALSE','FALSE','FALSE','FALSE','FALSE','FALSE','FALSE',\
 	'FALSE','FALSE','','','','','default');"
-	sqlite3 "${cfg_db}" "insert into lang (tlng,slng) values ('','');"
-	sqlite3 "${cfg_db}" "insert into user (autr,pass) values ('','');"
-	sqlite3 "${cfg_db}" "insert into geom (vals) values ('');"
+	sqlite3 "${cfgdb}" "insert into lang (tlng,slng) values ('','');"
+	sqlite3 "${cfgdb}" "insert into user (autr,pass) values ('','');"
+	sqlite3 "${cfgdb}" "insert into geom (vals) values ('');"
 	v=$(date +%d)
-	sqlite3 "${cfg_db}" "insert into sess (date) values ('${v}');"
-	sqlite3 "${cfg_db}" "insert into updt (date) values ('${v}');"
+	sqlite3 "${cfgdb}" "insert into sess (date) values ('${v}');"
+	sqlite3 "${cfgdb}" "insert into updt (date) values ('${v}');"
 }
 
-create_sharecfg() {
-	shr_db="$DM_tls/data/config"
-	echo -n "create table if not exists topics (list TEXT);" |sqlite3 "${shr_db}"
-	echo -n "create table if not exists T1 (list TEXT);" |sqlite3 "${shr_db}"
-	echo -n "create table if not exists T2 (list TEXT);" |sqlite3 "${shr_db}"
-	echo -n "create table if not exists T3 (list TEXT);" |sqlite3 "${shr_db}"
-	echo -n "create table if not exists T4 (list TEXT);" |sqlite3 "${shr_db}"
-	echo -n "create table if not exists T5 (list TEXT);" |sqlite3 "${shr_db}"
-	echo -n "create table if not exists T6 (list TEXT);" |sqlite3 "${shr_db}"
-	echo -n "create table if not exists T7 (list TEXT);" |sqlite3 "${shr_db}"
+create_shrdb() {
+	shrdb="$DM_tls/data/config"
+	echo -n "create table if not exists topics (list TEXT);" |sqlite3 "${shrdb}"
+	echo -n "create table if not exists T1 (list TEXT);" |sqlite3 "${shrdb}"
+	echo -n "create table if not exists T2 (list TEXT);" |sqlite3 "${shrdb}"
+	echo -n "create table if not exists T3 (list TEXT);" |sqlite3 "${shrdb}"
+	echo -n "create table if not exists T4 (list TEXT);" |sqlite3 "${shrdb}"
+	echo -n "create table if not exists T5 (list TEXT);" |sqlite3 "${shrdb}"
+	echo -n "create table if not exists T6 (list TEXT);" |sqlite3 "${shrdb}"
+	echo -n "create table if not exists T7 (list TEXT);" |sqlite3 "${shrdb}"
 }
 
 add_audio() {
@@ -359,7 +360,7 @@ _restore_backup() {
         |grep -v '\----- oldest' |grep -v '\----- end' |head -n200 > \
         "${DM_tl}/${2}/.conf/data"
     fi
-    cleanups "${DM_tl}/${2}/.conf/1.cfg"
+    tpc_db 6 'learning'
     $DS/ifs/tls.sh check_index "${2}" 1
     
     mode="$(< "$DM_tl/${2}/.conf/stts")"
@@ -445,7 +446,6 @@ content=\"text/html; charset=UTF-8\" />
 <link rel=\"stylesheet\" \
 href=\"/usr/share/idiomind/default/attch.css\">\
 <body>" > "${DC_tlt}/att.html"
-
 while read -r file; do
 if grep ".mp3" <<<"${file: -4}"; then
 echo "${file::-4}<br><br><audio controls>
@@ -456,7 +456,6 @@ echo "${file::-4}<audio controls>
 <source src=\"../files/$file\" type=\"audio/mpeg\">
 </audio><br><br>" >> "${DC_tlt}/att.html"; fi
 done <<<"$(ls "${DM_tlt}/files")"
-
 while read -r file; do
 if grep ".txt" <<<"${file: -4}"; then
 txto=$(sed ':a;N;$!ba;s/\n/<br>/g' \
@@ -466,7 +465,6 @@ echo "<div class=\"summary\">
 <h2>${file::-4}</h2><br>$txto \
 <br><br><br></div>" >> "${DC_tlt}/att.html"; fi
 done <<<"$(ls "${DM_tlt}/files")"
-
 while read -r file; do
 if grep ".mp4" <<<"${file: -4}"; then
 echo "${file::-4}<br><br>
@@ -580,7 +578,7 @@ check_updates() {
     link='http://idiomind.sourceforge.net/doc/checkversion'
     nver=$(wget --user-agent "$useragent" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g')
     pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
-    d2=$(date +%Y%m%d); mod_val updt date ${d2}
+    d2=$(date +%Y%m%d); cdb ${cfgdb} 3 updt date ${d2}
     if [ ${#nver} -lt 9 ] && [ ${#_version} -lt 9 ] \
     && [ ${#nver} -ge 3 ] && [ ${#_version} -ge 3 ] \
     && [[ ${nver} != ${_version} ]]; then
@@ -600,17 +598,17 @@ a_check_updates() {
     link='http://idiomind.sourceforge.net/doc/checkversion'
     nver=$(wget --user-agent "$useragent" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g')
     pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
-    d1=$(read_val updt date)
+    d1=$(cdb ${cfgdb} 1 updt date)
     d2=$(date +%Y%m%d)
-    ig=$(read_val updt ignr)
+    ig=$(cdb ${cfgdb} 1 updt ignr) 
 	if [[ $((d1-d2)) -gt 30 ]]; then
-		mod_val updt ignr FALSE & return
+		cdb ${cfgdb} 3 updt ignr FALSE & return
 	fi
 	if [[ $ig = TRUE ]]; then return; fi
     if [[ ${d1} != ${d2} ]]; then
         sleep 5; curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
-        mod_val updt date ${d2}
+        cdb ${cfgdb} 3 updt date ${d2}
         if [ ${#nver} -lt 9 ] && [ ${#_version} -lt 9 ] \
         && [ ${#nver} -ge 3 ] && [ ${#_version} -ge 3 ] \
         && [[ ${nver} != ${_version} ]]; then
@@ -620,7 +618,7 @@ a_check_updates() {
             if [ $ret -eq 0 ]; then
                 xdg-open "$pkg"
             elif [ $ret -eq 2 ]; then
-                mod_val updt ignr TRUE
+                cdb ${cfgdb} 3 updt ignr TRUE
             fi
         fi
     fi
@@ -819,7 +817,8 @@ translate_to() {
     list_transl_saved_WC="$(cd "$DC_tlt/translations"; ls *.tra |wc -l)"
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
     if [ -z "$active_trans" ]; then active_trans="$slng"; fi
-    if grep "$active_trans" <<< "${list_transl_saved}"; then chk=TRUE; else chk=FALSE; fi
+    if grep "$active_trans" <<< "${list_transl_saved}"; then 
+    chk=TRUE; else chk=FALSE; fi
     
     if [ ${list_transl_saved_WC} -lt 1 ]; then
         ldgl="$(yad --form --title="$(gettext "Native Language Settings")" \
@@ -832,7 +831,6 @@ translate_to() {
         --field="\n<b>$(gettext "Verified translations") </b> ":LBL " " \
         --field="$active_trans — $(gettext "The  accuracy of this translation was verified")":CHK "$chk" \
         --field="<small>$(gettext "This topic has no verified translations.")</small>":LBL " " \
-        --field=" ":LBL " " \
         --field=" ":LBL " " \
         --field="<b>$(gettext "Automatic translation")</b> ":LBL " " \
         --field="$(gettext "Select Native language to translate automaticly:")":CB "${list_transl}" \
@@ -860,9 +858,8 @@ translate_to() {
     review_trans="$(cut -f4 -d'|' <<< "$ldgl")"
     review_chek="$(cut -f3 -d'|' <<< "$ldgl")"
     autom_trans="$(cut -f7 -d'|' <<< "$ldgl")"
-    
+
     if [ "$ret" = 0 ]; then
-    
         [ -e "${DC_tlt}/slng_err" ] && mv "${DC_tlt}/slng_err" "${DC_tlt}/slng_err.bk"
         if [ "$review_chek" = TRUE ]; then
             cp -f "${DC_tlt}/data" "${DC_tlt}/translations/$active_trans.tra"
@@ -877,6 +874,7 @@ translate_to() {
                 echo "$review_trans" > "${DC_tlt}/translations/active"
             fi
         elif [ -n "$autom_trans" -a "$autom_trans" != "(null)" ]; then
+        
             yad_kill "yad --form --title="
             if grep "$autom_trans" <<< "$(cd "$DC_tlt/translations"; ls *.bk)"; then
                 msg_2 "$(gettext "Exist a copy of this translation. Do you want to restore the copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
@@ -903,8 +901,7 @@ translate_to() {
             > "$DT/words.trad_tmp"; > "$DT/index.trad_tmp"; > "$DT/translation"
             del='~~'
             internet
-            if [ ! -e "${DC_tlt}/id.cfg" ]; then return 1; fi
-            l="$(grep -o 'tlng="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+            l=$(tpc_db 1 lang tlng)
             if [ -n "$l" ]; then lgt=${tlangs[$l]}; else lgt=${tlangs[$tlng]}; fi
             tl=${slangs[$autom_trans]}
             include "$DS/ifs/mods/add"
@@ -1098,7 +1095,6 @@ PY
 }
 
 itray() {
-	
     [ ! -e "$HOME/.config/idiomind/tpc" ] && \
     touch "$HOME/.config/idiomind/tpc"
     source "$DS/default/sets.cfg"
@@ -1134,7 +1130,7 @@ class IdiomindIndicator:
     def __init__(self):
         self.indicator = appindicator.Indicator(icon, icon, appindicator.CATEGORY_APPLICATION_STATUS)
         self.indicator.set_status(appindicator.STATUS_ACTIVE)
-        self.cfg = os.getenv('HOME') + '/.config/idiomind/tpc'
+        self.tpc = os.getenv('HOME') + '/.config/idiomind/tpc'
         self.playlck = os.environ['dirt'] + 'playlck'
         self.tasks = os.environ['dirt'] + 'tasks'
         self.menu_items = []
@@ -1185,7 +1181,7 @@ class IdiomindIndicator:
                 item.connect('activate', callback)
             popup_menu.append(item)
         try:
-            m = open(self.cfg).readlines()
+            m = open(self.tpc).readlines()
         except:
             m = []
         for bm in m:
@@ -1263,7 +1259,7 @@ class IdiomindIndicator:
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, lambda signal, frame: gtk.main_quit())
     i = IdiomindIndicator()
-    file = gio.File(i.cfg)
+    file = gio.File(i.tpc)
     monitor = file.monitor_file()
     monitor.connect("changed", i.on_Topic_Changed)
     file2 = gio.File(i.playlck)
@@ -1353,8 +1349,8 @@ case "$1" in
     _restore_backup "$@" ;;
     check_index)
     check_index "$@" ;;
-    create_cfg)
-    create_cfgfile ;;
+    create_cfgdb)
+    create_cfgdb ;;
     addFiles)
     addFiles "$@" ;;
     videourl)

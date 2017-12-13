@@ -10,8 +10,8 @@ cnf1=$(mktemp "$DT/cnf1.XXXXXX")
 source $DS/default/sets.cfg
 lang1="${!tlangs[@]}"; lt=( $lang1 )
 lang2="${!slangs[@]}"; ls=( $lang2 )
-if [ ! -e "${cfg_db}" ]; then
-	"$DS/ifs/tls.sh" create_cfg
+if [ ! -e "${cfgdb}" ]; then
+	"$DS/ifs/tls.sh" create_cfgdb
 fi
 desktopfile="[Desktop Entry]
 Name=Idiomind
@@ -37,8 +37,8 @@ confirm() {
 set_lang() {
     language="$1"
     check_dir "$DM_t/$language/.share/images" "$DM_t/$language/.share/audio"
-    mod_val lang tlng "${language}"
-    mod_val lang slng "${slng}"
+    cdb "${cfgdb}" 3 lang tlng "${language}"
+    cdb "${cfgdb}" 3 lang slng "${slng}"
     "$DS/stop.sh" 4
     source "$DS/default/c.conf"
     source "$DS/default/sets.cfg"
@@ -58,12 +58,12 @@ set_lang() {
     
     if [ ! -d "$DM_tl/.share/data" ]; then
         mkdir -p "$DM_tls/data"
-        tlng_db="$DM_tls/data/${tlng}.db"
+        tlngdb="$DM_tls/data/${tlng}.db"
         echo -n "create table if not exists Words \
-        (Word TEXT, '${slng^}' TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${tlng_db}
+        (Word TEXT, '${slng^}' TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${tlngdb}
         echo -n "create table if not exists Config \
-        (Study TEXT, Expire INTEGER);" |sqlite3 ${tlng_db}
-        echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${tlng_db}
+        (Study TEXT, Expire INTEGER);" |sqlite3 ${tlngdb}
+        echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${tlngdb}
     fi
     "$DS/ifs/mods/start/update_tasks.sh"
     "$DS/mngr.sh" mkmn 1 &
@@ -71,16 +71,16 @@ set_lang() {
 
 config_dlg() {
     sz=(510 350); [[ ${swind} = TRUE ]] && sz=(460 320)
-	opts="$(sqlite3 "$cfg_db" "select * FROM opts" |tr -s '|' '\n')"
+	opts="$(cdb "${cfgdb}" 5 opts)"
 	csets=( 'gramr' 'wlist' 'trans' 'dlaud' \
 	'ttrgt' 'clipw' 'itray' 'swind' 'stsks' 'tlang' 'slang' )
 	v=1; for get in ${csets[@]}; do
 		val=$(sed -n ${v}p <<< "$opts")
 		declare "$get"="$val"; let v++
 	done
-	synth="$(read_val opts synth)"
-    txaud="$(read_val opts txaud)"
-    intrf="$(read_val opts intrf)"
+	synth="$(cdb "${cfgdb}" 1 opts synth)"
+    txaud="$(cdb "${cfgdb}" 1 opts txaud)"
+    intrf="$(cdb "${cfgdb}" 1 opts intrf)"
     if [ -z "$intrf" ]; then intrf=Default; fi
     lst="$intrf"$(sed "s/\!$intrf//g" <<<"!Default!en!es!fr!it!pt")""
     if [ "$ntosd" != TRUE ]; then audio=TRUE; fi
@@ -135,36 +135,36 @@ config_dlg() {
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0
     ret=$?
-	cp "$cnf1" $HOME/cnf1
+
     if [ $ret -eq 0 ]; then
         n=1; v=0
         while [ ${n} -le 14 ]; do
             val=$(cut -d "|" -f${n} < "$cnf1")
-            if [ -n "$val" ]; then
-                mod_val opts ${csets[$v]} "${val}"; ((v=v+1))
+            if [ "$val" = TRUE -o "$val" = FALSE ]; then
+                cdb "${cfgdb}" 3 opts "${csets[$v]}" "${val}"; ((v=v+1))
             fi
             ((n=n+1))
         done
+        
         val=$(cut -d "|" -f17 < "$cnf1")
-        [[ "$val" != "$synth" ]] && mod_val opts synth ${val}
-
+        [[ "$val" != "$synth" ]] && cdb "${cfgdb}" 3 opts synth "${val}"
+        
         val=$(cut -d "|" -f18 < "$cnf1")
-        [[ "$val" != "$txaud" ]] && mod_val opts txaud ${val}
+        [[ "$val" != "$txaud" ]] && cdb "${cfgdb}" 3 opts txaud "${val}"
 
         val=$(cut -d "|" -f19 < "$cnf1")
         if [[ "$val" != "$intrf" ]]; then
-        mod_val opts intrf ${val}
-        "$DS/ifs/mods/start/update_tasks.sh" & fi
-        
-        if [[ $(read_val opts clipw) = TRUE ]] && [ ! -e $DT/clipw ]; then
+			cdb "${cfgdb}" 3 opts intrf ${val}
+			"$DS/ifs/mods/start/update_tasks.sh" &
+        fi
+        if [[ $(cdb ${cfgdb} 1 opts clipw)  = TRUE ]] && [ ! -e $DT/clipw ]; then
             "$DS/ifs/clipw.sh" &
         else 
             if [ -e $DT/clipw ]; then kill $(cat $DT/clipw); rm -f $DT/clipw; fi
         fi
-        
-        if [[ $(read_val opts itray) = TRUE ]] && [[ ! -f "$DT/tray.pid" ]]; then
+        if [[ $(cdb ${cfgdb} 1 opts itray)  = TRUE ]] && [[ ! -f "$DT/tray.pid" ]]; then
 			$DS/ifs/tls.sh itray &
-		elif [[ $(read_val opts itray) = FALSE ]] && [[ -f "$DT/tray.pid" ]]; then
+		elif [[ $(cdb ${cfgdb} 1 opts itray)  = FALSE ]] && [[ -f "$DT/tray.pid" ]]; then
 			kill -9 $(cat $DT/tray.pid)
 			kill -9 $(pgrep -f "$DS/ifs/tls.sh itray")
 			rm -f "$DT/tray.pid"
@@ -199,11 +199,11 @@ config_dlg() {
             slng="${nslang}"
             confirm "$info2" dialog-question "${slng}"
             if [ $? -eq 0 ]; then
-                mod_val lang tlng "${tlng}"
-                mod_val lang slng "${slng}"
-                tlng_db="$DM_tls/data/${tlng}.db"
-                if ! grep -q "${slng}" <<<"$(sqlite3 ${tlng_db} "PRAGMA table_info(Words);")"; then
-                    sqlite3 ${tlng_db} "alter table Words add column '${slng}' TEXT;"
+                cdb "${cfgdb}" 3 lang tlng "${tlng}"
+				cdb "${cfgdb}" 3 lang slng "${slng}"
+                tlngdb="$DM_tls/data/${tlng}.db"
+                if ! grep -q "${slng}" <<<"$(sqlite3 ${tlngdb} "PRAGMA table_info(Words);")"; then
+                    sqlite3 ${tlngdb} "alter table Words add column '${slng}' TEXT;"
                 fi
             fi
         fi

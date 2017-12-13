@@ -196,8 +196,8 @@ function upld() {
     sv_data() {
         if [ $sv = TRUE ]; then
             if [ "${autr}" != "${autr_mod}" -o "${pass}" != "${pass_mod}" ]; then
-                mod_val user autr "${autr_mod}"
-                mod_val user pass "${pass_mod}"
+                cdb ${cfgdb} 3 user autr "${autr_mod}"
+                cdb ${cfgdb} 3 user pass "${pass_mod}"
             fi
             if [ "${note}" != "${note_mod}"  ]; then
                 if ! grep '^$' <<< "${note_mod}"; then 
@@ -222,8 +222,8 @@ function upld() {
     _Categories="${ctgy}${list}"
     _levels="!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")"
     note=$(< "${DC_tlt}/note")
-    autr="$(read_val user autr)"
-    pass="$(read_val user pass)"
+    autr=$(cdb ${cfgdb} 1 user autr) 
+    pass=$(cdb ${cfgdb} 1 user pass) 
 
     # dialogs
     if [[ -e "${DC_tlt}/download" ]]; then

@@ -201,7 +201,6 @@ function word_p() {
     table="T`date +%m%y`"
     trgt_q="${trgt//\'/\'\'}"
     srce_q="${srce//\'/\'\'}"
-    
     echo -n "create table if not exists ${table} \
     (Word TEXT, '${slng^}' TEXT);" |sqlite3 ${tlng_db}
     if ! grep -q "${slng}" <<< "$(sqlite3 ${tlng_db} "PRAGMA table_info(${table});")"; then
@@ -504,7 +503,7 @@ function img_word() {
 }
 
 function voice() {
-    txaud="$(read_val txaud)"
+    txaud="$(cdb "${cfgdb}" 1 opts txaud)"
     if [ -n "${txaud}" ]; then
         echo "${1}" |sed 's/<[^>]*>//g' |$txaud "$DT_r/f.wav"
         if [ $? != 0 ]; then

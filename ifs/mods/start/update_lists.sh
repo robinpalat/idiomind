@@ -9,7 +9,7 @@ while read -r tpc; do
 	dir="$DM_tl/${tpc}/.conf"; unset stts tpc
 	stts=$(sed -n 1p "${dir}/stts")
 	if [ ${stts} != 12 ]; then
-		mv -f "${dir}/stts"  "${dir}/8.bk"; echo 12 > "${dir}/stts"
+		mv -f "${dir}/stts"  "${dir}/stts.bk"; echo 12 > "${dir}/stts"
 	fi
 done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime +80 -type d \
 -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
@@ -20,9 +20,9 @@ words=$(grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' \
 |sort |uniq -dc |sort -n -r |sed 's/ \+/ /g')
 sentences=$(grep -o -P '(?<=s1.).*(?=\.s1)' "${log}" |tr '|' '\n' \
 |sort |uniq -dc |sort -n -r |sed 's/ \+/ /g')
+topics="$(cdb "${shrdb}" 5 topics|head -n30)"
+echo 
 
-topics="$(sqlite3 "$shr_db" "select * FROM topics" |tr -s '|' '\n' |head -n20)"
-check_file "${DC_tlt}/1.cfg" "${DC_tlt}/6.cfg" "${DC_tlt}/9.cfg"
 # grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' |sort |uniq
 img1="$DS/images/1.png"; img2="$DS/images/2.png"
 img3="$DS/images/3.png"; img0="$DS/images/0.png"
@@ -43,8 +43,8 @@ if grep '^$' "${items}"; then sed -i '/^$/d' "${items}"; fi
 f_lock "$DT/co_lk"
 lstp="${items}"
 
-export dir topics lstp img0 img1 img2 img3 shr_db
-cleanups "$DM_tl/.share/5.cfg"
+export dir topics lstp img0 img1 img2 img3 shrdb
+cleanups "$DM_tl/.share/index"
 
 python <<PY
 import os, re, subprocess, sqlite3, sys
@@ -59,104 +59,106 @@ img1 = os.environ['img1']
 img2 = os.environ['img2']
 img3 = os.environ['img3']
 lstp = os.environ['lstp']
-shr_db = os.environ['shr_db']
+shrdb = os.environ['shrdb']
 lstp = [line.strip() for line in open(lstp)]
 topics = topics.split('\n')
 days_ago = datetime.now() - timedelta(days=10)
-dbshare = sqlite3.connect(shr_db)
-dbshare.text_factory = str
-cur_edt = dbshare.cursor()
+shr_db = sqlite3.connect(shrdb)
+shr_db.text_factory = str
+cur_shr_db = shr_db.cursor()
 for tpc in topics:
     cnfg_dir = dir + tpc + "/.conf/"
-    cfg1 = cnfg_dir + "1.cfg"
-    if os.path.exists(cfg1):
-        try:
-            cont = str
-            log1m = datetime.fromtimestamp(path.getctime(cnfg_dir+"practice/log1"))
-            log1 = [line.strip() for line in open(cnfg_dir+"practice/log1")]
-            log2m = datetime.fromtimestamp(path.getctime(cnfg_dir+"practice/log2"))
-            log2 = [line.strip() for line in open(cnfg_dir+"practice/log2")]
-            log3m = datetime.fromtimestamp(path.getctime(cnfg_dir+"practice/log3"))
-            log3 = [line.strip() for line in open(cnfg_dir+"practice/log3")]
-            cfg = [line.strip() for line in open(cnfg_dir+"10.cfg")]
-            items = [line.strip() for line in open(cnfg_dir+"data")]
-            try:
-                auto_mrk = (cfg[9].split('acheck="'))[1].split('"')[0]
-            except:
-                try:
-                    auto_mrk = (cfg[10].split('acheck="'))[1].split('"')[0]
-                except:
-                    pass
-            if auto_mrk == 'TRUE':
-                auto_mrk = True
-            else:
-                auto_mrk = False
-            if os.path.exists(cfg1) and not os.path.exists(cnfg_dir+"7.cfg"):
-                cont = True
-            if not os.path.exists(dir + tpc + "/.conf/practice"):
-                cont = False
-            if os.path.exists(cnfg_dir+"9.cfg"):
-                steps = [line.strip() for line in open(cnfg_dir+"9.cfg")]
-            else:
-                steps = []
-            steps=len(steps)
-            f = open(cnfg_dir+"/stts")
-            stts = [line.rstrip('\n') for line in f]
-            l1m = False
-            l2m = False
-            l3m = False
-            if log1m < days_ago:
-                l1m = True
-            if log2m < days_ago:
-                l2m = True
-            if log3m < days_ago:
-                l3m = True
-            if (int(stts[0]) == 5 or int(stts[0]) == 6):
-                if (len(log3) > 0 or len(log2) > 0):
-                    cur_edt.execute("insert into T6 values (?)", (tpc,))
-                    dbshare.commit()
-                    print "- back to practice: "+tpc
-                elif l3m == True and l2m == True and l1m == True:
-                    cur_edt.execute("insert into T5 values (?)", (tpc,))
-                    dbshare.commit()
-                    print "- to practice: "+tpc
-            cfg1len = 0
-            if cont == True:
-                cfg1 = [line.strip() for line in open(cfg1)]
-                marks = [line.strip() for line in open(cnfg_dir+"6.cfg")]
-                f = open(cnfg_dir+"5.cfg", "w")
-                for item in items:
-                    item = item.replace('}', '}\n')
-                    fields = re.split('\n',item)
-                    item = (fields[0].split('trgt{'))[1].split('}')[0]
-                    if item in cfg1:
-                        srce = (fields[1].split('srce{'))[1].split('}')[0]
-                        if item in marks:
-                            i="<b><big>"+item+"</big></b>"
-                        else:
-                            i=item
-                        if item in lstp and auto_mrk == True and steps > 3:
-                            chk = 'TRUE'
-                        else:
-                            chk = 'FALSE'
-                        if item in log3:
-                            f.write(img3+"\n"+i+"\nFALSE\n"+srce+"\n")
-                        elif item in log2:
-                            f.write(img2+"\n"+i+"\nFALSE\n"+srce+"\n")
-                        elif item in log1:
-                            print chk + ' -> ' + item
-                            f.write(img1+"\n"+i+"\n"+chk+"\n"+srce+"\n")
-                        else:
-                            f.write(img0+"\n"+i+"\nFALSE\n"+srce+"\n")
-                        if chk == 'TRUE':
-                            cfg1len=cfg1len+1
-                f.close()
-                if len(cfg1) == cfg1len and len(cnfg_dir+"data") > 15:
-                    subprocess.Popen(['/usr/share/idiomind/mngr.sh %s %s' % ('mark_to_learnt_ok', '"'+tpc+'"')], shell=True)
-                    print 'mark_as_learnt -> ' + tpc
-        except:
-            print 'err -> ' + tpc
-dbshare.close()      
+    tpcdb = cnfg_dir + "tpc"
+    tpc_db = sqlite3.connect(tpcdb)
+    tpc_db.text_factory = str
+    cur_tpc_db = tpc_db.cursor()
+    auto_mrk = cur_tpc_db.execute("select acheck from config")
+    auto_mrk = [i[0] for i in auto_mrk]
+    marks = cur_tpc_db.execute("select list from marks")
+    marks = cur_tpc_db.fetchall()
+    marks = [i[0] for i in marks]
+    learn = cur_tpc_db.execute("select list from learning")
+    learn = cur_tpc_db.fetchall()
+    learn = [i[0] for i in learn]
+    reviews = cur_tpc_db.execute("select * from reviews")
+    reviews = cur_tpc_db.fetchall()
+    reviews = [i[0] for i in reviews]
+    try:
+        cont = str
+        f = open(cnfg_dir+"/stts")
+        stts = [line.rstrip('\n') for line in f]
+        stts = stts[0]
+        log1m = datetime.fromtimestamp(path.getctime(cnfg_dir+"practice/log1"))
+        log1 = [line.strip() for line in open(cnfg_dir+"practice/log1")]
+        log2m = datetime.fromtimestamp(path.getctime(cnfg_dir+"practice/log2"))
+        log2 = [line.strip() for line in open(cnfg_dir+"practice/log2")]
+        log3m = datetime.fromtimestamp(path.getctime(cnfg_dir+"practice/log3"))
+        log3 = [line.strip() for line in open(cnfg_dir+"practice/log3")]
+        items = [line.strip() for line in open(cnfg_dir+"data")]
+        reviews = len(reviews)
+        if auto_mrk[0] == 'TRUE':
+            auto_mrk = True
+        else:
+            auto_mrk = False
+        if (stts == '3' or stts == '4' or stts == '7' \
+        or stts == '8' or stts == '9' or stts == '10' ):
+            cont = True
+        if not os.path.exists(dir + tpc + "/.conf/practice"):
+            cont = False
+        l1m = False
+        l2m = False
+        l3m = False
+        if log1m < days_ago:
+            l1m = True
+        if log2m < days_ago:
+            l2m = True
+        if log3m < days_ago:
+            l3m = True
+        if (stts == '5' or stts == '6'):
+            if (len(log3) > 0 or len(log2) > 0):
+                cur_shr_db.execute("insert into T6 values (?)", (tpc,))
+                shr_db.commit()
+                print "- back to practice: "+tpc
+            elif l3m == True and l2m == True and l1m == True:
+                cur_shr_db.execute("insert into T5 values (?)", (tpc,))
+                shr_db.commit()
+                print "- to practice: "+tpc
+
+		cfg1len = 0
+		if cont == True:
+			index = open(cnfg_dir+"index", "w")
+			for item in items:
+				item = item.replace('}', '}\n')
+				fields = re.split('\n',item)
+				item = (fields[0].split('trgt{'))[1].split('}')[0]
+				if item in learn:
+					srce = (fields[1].split('srce{'))[1].split('}')[0]
+					if item in marks:
+						i="<b><big>"+item+"</big></b>"
+					else:
+						i=item
+					if item in lstp and auto_mrk == True and reviews > 3:
+						chk = 'TRUE'
+					else:
+						chk = 'FALSE'
+					if item in log3:
+						index.write(img3+"\n"+i+"\nFALSE\n"+srce+"\n")
+					elif item in log2:
+						index.write(img2+"\n"+i+"\nFALSE\n"+srce+"\n")
+					elif item in log1:
+						print chk + ' -> ' + item
+						index.write(img1+"\n"+i+"\n"+chk+"\n"+srce+"\n")
+					else:
+						index.write(img0+"\n"+i+"\nFALSE\n"+srce+"\n")
+					if chk == 'TRUE':
+						cfg1len=cfg1len+1
+			index.close()
+			if len(learn) == cfg1len and len(cnfg_dir+"data") > 15:
+				subprocess.Popen(['/usr/share/idiomind/mngr.sh %s %s' % ('mark_to_learnt_ok', '"'+tpc+'"')], shell=True)
+				print 'mark_as_learnt -> ' + tpc
+    except:
+        print 'err -> ' + tpc
+shr_db.close()      
 PY
 
 [ $(date +%d) = 1 -o $(date +%d) = 14 ] && rm "$log"; touch "$log"

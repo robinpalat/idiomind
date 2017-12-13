@@ -23,25 +23,25 @@ f="$DT/tasks"; cleanups "$f"
 ## topics 
 while read -r tpc; do
     echo "$l1$tpc" >> "$f"
-done < <(sqlite3 "$shr_db" "select * FROM T1" |tr -s '|' '\n' |tac)
+done < <(cdb "${shrdb}" 5 T1 |tac)
 while read -r tpc; do
     echo "$l2$tpc" >> "$f"
-done < <(sqlite3 "$shr_db" "select * FROM T2" |tr -s '|' '\n' |tac)
+done < <(cdb "${shrdb}" 5 T2 |tac)
 while read -r tpc; do
     echo "$l3$tpc" >> "$f"
-done < <(sqlite3 "$shr_db" "select * FROM T3" |tr -s '|' '\n' |tac)
+done < <(cdb "${shrdb}" 5 T3 |tac)
 while read -r tpc; do
     echo "$l4$tpc" >> "$f"
-done < <(sqlite3 "$shr_db" "select * FROM T4" |tr -s '|' '\n' |tac)
+done < <(cdb "${shrdb}" 5 T4 |tac)
 while read -r tpc; do
     echo "$l5$tpc" >> "$f"
-done < <(sqlite3 "$shr_db" "select * FROM T5" |tr -s '|' '\n' |tac)
+done < <(cdb "${shrdb}" 5 T5 |tac)
 while read -r tpc; do
     echo "$l6$tpc" >> "$f"
-done < <(sqlite3 "$shr_db" "select * FROM T6" |tr -s '|' '\n' |tac)
+done < <(cdb "${shrdb}" 5 T6 |tac)
 while read -r tpc; do
     echo "$l7$tpc" >> "$f"
-done < <(sqlite3 "$shr_db" "select * FROM T7" |tr -s '|' '\n' |tac)
+done < <(cdb "${shrdb}" 5 T7 |tac)
 
 ## addons 
 while read -r addon; do

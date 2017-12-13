@@ -3,7 +3,6 @@
 
 sz=(580 560 480); [[ ${swind} = TRUE ]] && sz=(480 460 400)
 function vwr() {
-	
     if [ ${1} = 1 ]; then 
 		index="$(tpc_db 5 learning)"
 		item_name="$(sed 's/<[^>]*>//g' <<< "${3}")"
@@ -98,7 +97,7 @@ function word_view() {
 } >/dev/null 2>&1
 
 function sentence_view() {
-    if [ `sqlite3 "$cfg_db" "select gramr from opts;"` = TRUE ]; then
+    if [ `sqlite3 "$cfgdb" "select gramr from opts;"` = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
     [ -n "${note}" ] && field_note="💬  <span font_desc='Arial 9'>$note</span>\n"
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""

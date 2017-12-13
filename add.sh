@@ -7,10 +7,10 @@ source "$DS/default/sets.cfg"
 lgt=${tlangs[$tlng]}
 lgs=${slangs[$slng]}
 include "$DS/ifs/mods/add"
-wlist=$(read_val opts wlist)
-trans=$(read_val opts trans)
-ttrgt=$(read_val opts ttrgt)
-dlaud=$(read_val opts dlaud)
+wlist="$(cdb "${cfgdb}" 1 opts wlist)"
+trans="$(cdb "${cfgdb}" 1 opts trans)"
+ttrgt="$(cdb "${cfgdb}" 1 opts ttrgt)"
+dlaud="$(cdb "${cfgdb}" 1 opts dlaud)"
 
 [ -z "$trans" ] && trans='FALSE'
 export ttrgt trans lgt lgs
@@ -488,7 +488,7 @@ function process() {
     elif [[ $conten != '__words__' ]]; then
         xclip -i /dev/null
         export slt=$(mktemp $DT/slt.XXXXXX.x)
-        tpcs="$(sqlite3 "$shr_db" "select * FROM topics" |tr -s '|' '\n')"
+        tpcs="$(cdb "${shrdb}" 5 topics)"
         export tpcs="$(grep -vFx "${tpe}" <<< "$tpcs" |tr "\\n" '!' |sed 's/\!*$//g')"
         [ -n "$tpcs" ] && export e='!'
         tpe="$(dlg_checklist_3 "$DT_r/xlines" "${tpe}")"
@@ -776,7 +776,7 @@ new_items() {
 
     [ -e "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" || img="$DS/images/nw.png"
     export img
-    tpcs="$(sqlite3 "$shr_db" "select * FROM topics" |tr -s '|' '\n')"
+    tpcs="$(cdb "${shrdb}" 5 topics)"
     tpcs="$(grep -vFx "${tpe}" <<< "$tpcs" |tr "\\n" '!' |sed 's/\!*$//g')"
     [ -n "$tpcs" ] && e='!'
 

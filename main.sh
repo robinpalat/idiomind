@@ -28,10 +28,12 @@ source /usr/share/idiomind/default/c.conf
 
 if [ -z "${tlng}" -o -z "${slng}" ]; then
     source "$DS/ifs/cmns.sh"
+    if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     msg_2 "$(gettext "Please check the language settings in the preferences dialog")\n" \
     error "$(gettext "Open")" "$(gettext "Cancel")"
-    [ $? = 0 ] && "$DS/cnfg.sh"; exit 1
+    if [ $? = 0 ]; then "$DS/cnfg.sh" 1; else exit 1; fi
 fi
+
 if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
     source "$DS/ifs/cmns.sh"
     msg "$(gettext "Please wait until the current actions are finished")\n" dialog-information
@@ -42,8 +44,8 @@ function new_session() {
     echo "-- new session"
     source "$DS/ifs/cmns.sh"
     d=$(date +%d)
-    mod_val sess date ${d}
-    
+    cdb ${cfgdb} 3 sess date ${d}
+
     # mkdir tmp dir
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     if [ $? -ne 0 ]; then
@@ -52,36 +54,28 @@ function new_session() {
     fi
     
     f_lock "$DT/ps_lk"
+    # list topics
     check_list
+    # 
     if ls "$DC_s"/*.p 1> /dev/null 2>&1; then
     cd "$DC_s"/; rename 's/\.p$//' *.p; fi; cd /
-    
     # check database
-    if [ ! -e ${tlng_db} ]; then
+    if [ ! -e ${tlngdb} ]; then
     [ ! -d "$DM_tls/data" ] && mkdir -p "$DM_tls/data" 
     echo -n "create table if not exists Words \
-    (Word TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${tlng_db}
-    echo -n "create table if not exists Config (Study TEXT, Expire INTEGER);" |sqlite3 ${tlng_db}
-    echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${tlng_db}
-    sqlite3 ${tlng_db} "alter table Words add column '${slng}' TEXT;"
+    (Word TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${tlngdb}
+    echo -n "create table if not exists Config (Study TEXT, Expire INTEGER);" |sqlite3 ${tlngdb}
+    echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${tlngdb}
+    sqlite3 ${tlngdb} "alter table Words add column '${slng}' TEXT;"
     fi
-
     # log- practice
     if [ -f "$DC_s/log" ]; then
         if [[ "$(du -sb "$DC_s/log" |awk '{ print $1 }')" -gt 100000 ]]; then
         tail -n2000 < "$DC_s/log" > "$DT/log"
         mv -f "$DT/log" "$DC_s/log"; fi
     fi
-    
-    for m in {1..7}; do 
-    sqlite3 "${shr_db}" "delete from 'T${m}';"; done
-    
-    ins_val() {
-		ta=$1; va="$(sed "s|'|''|g" <<< "${2}")"
-		sqlite3 ${shr_db} "insert into ${ta} (list) values ('${va}');"
-	}
-	
     # update - topics
+    for m in {1..7}; do cdb ${shrdb} 6 T${m}; done
     echo -e "\n--- updating topics status..."
     cleanups "$DM_tls/3.cfg" "$DM_tls/4.cfg"
     tdate=$(date +%Y%m%d)
@@ -98,33 +92,33 @@ function new_session() {
 			if [[ $((stts%2)) = 0 ]]; then
 				if [ ${RM} -ge 180 -a ${stts} = 8 ]; then
 					echo 10 > "${dir}/stts"; touch "${dim}"
-					ins_val T2 "${line}"
+					cdb ${shrdb} 2 T2 list "${line}"
 				elif [ ${RM} -ge 100 -a ${stts} -lt 8 ]; then
 					echo 8 > "${dir}/stts"; touch "${dim}"
-					ins_val T1 "${line}"
+					cdb ${shrdb} 2 T1 list "${line}"
 				elif [ ${stts} = 8 ]; then
-					ins_val T3 "${line}"
+					cdb ${shrdb} 2 T3 list "${line}"
 				elif [ ${stts} = 10 ]; then
-					ins_val T4 "${line}"
+					cdb ${shrdb} 2 T4 list "${line}"
 				fi
 			elif [[ $((stts%2)) = 1 ]]; then
 				if [ ${RM} -ge 180 -a ${stts} = 7 ]; then
 					echo 9 > "${dir}/stts"; touch "${dim}"
-					ins_val T2 "${line}"
+					cdb ${shrdb} 2 T2 list "${line}"
 				elif [ ${RM} -ge 100 -a ${stts} -lt 7 ]; then
 					echo 7 > "${dir}/stts"; touch "${dim}"
-					ins_val T1 "${line}"
+					cdb ${shrdb} 2 T1 list "${line}"
 				elif [ ${stts} = 7 ]; then
-					ins_val T3 "${line}"
+					cdb ${shrdb} 2 T3 list "${line}"
 				elif [ ${stts} = 9 ]; then
-					ins_val T4 "${line}"
+					cdb ${shrdb} 2 T4 list "${line}"
 				fi
 			fi
 		elif [[ $((stts+stts%2)) = 6 ]]; then
 			datedir=$(stat -c %y "$dir" |cut -d ' ' -f1)
 			cdate=$(date -d $datedir +"%Y%m%d")
 			if [ $((tdate-cdate)) -gt 20 ]; then
-				ins_val T7 "${line}"
+				cdb ${shrdb} 2 T7 list "${line}"
 			fi
 		fi
 	done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
@@ -163,7 +157,8 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
         cut -d ':' -f3 <<< "${line}" |sed 's/\"*//;s/\"$//;s/\",\"slch//'
         done < <(sed -n 2p "${file}"|sed 's/},/\n/g'|tr -d '\\'|sed '/^$/d')
     }
-    export swind=$(read_val opts swind)
+
+    export swind=$(cdb ${cfgdb} 1 opts swind) 
     sz=(580 560 540); [[ ${swind} = TRUE ]] && sz=(480 460 440)
     _lst | tpc_view
     ret=$?
@@ -224,8 +219,8 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             
             "$DS/ifs/tls.sh" colorize 1
             slngtopic="$slng"; slng="$slngcurrent"
-            sqlite3 ${cfg_db} "update lang set tlng='${tlng}';"
-			sqlite3 ${cfg_db} "update lang set slng='${slng}';"
+            sqlite3 ${cfgdb} "update lang set tlng='${tlng}';"
+			sqlite3 ${cfgdb} "update lang set slng='${slng}';"
             if [[ "$slngtopic" != "$slng" ]]; then
                 mkdir "${DC_tlt}/translations/"
                 echo "$slngtopic" > "${DC_tlt}/translations/active"
@@ -448,7 +443,7 @@ bground_session() {
     if [ ! -e "$DT/ps_lk" -a ! -d "$DT" ]; then
         sleep 20; new_session
     fi &
-    if [[ $(read_val opts itray) = TRUE ]] && \
+    if [[ $(cdb ${cfgdb} 1 opts itray) = TRUE ]] && \
     ! pgrep -f "$DS/ifs/tls.sh itray"; then
     _start; fi
 }
@@ -458,23 +453,23 @@ ipanel() {
     set_geom(){
         sleep 1
         spost=$(xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4)
-        sqlite3 "$DC_s/config" "update geom set vals='${cpost}';"
+        cdb ${cfgdb} 3 geom vals ${cpost}
         for n in {1..10}; do
             sleep 1
             cpost=$(xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4)
             if [ -z ${cpost} ]; then break; return 1; fi
             if [ ${spost} != ${cpost} ]; then
 				spost=${cpost}
-                sqlite3 "$DC_s/config" "update geom set vals='${cpost}';"
+                cdb ${cfgdb} 3 geom vals ${cpost}
             fi
         done
     } >/dev/null 2>&1
     
-    geometry=$(read_val geom vals)
+    geometry=$(cdb ${cfgdb} 1 geom vals)
     if [ -n "$geometry" ]; then
     geometry="--geometry=$geometry"
     else geometry="--mouse"; fi
-    export swind=$(read_val opts swind)
+    export swind=$(cdb ${cfgdb} 1 opts swind)
     (panelini; if [ $? != 0 ] && ! pgrep -f "$DS/ifs/tls.sh itray"; then \
     "$DS/stop.sh" 1 & fi; exit ) & set_geom
 }
@@ -495,18 +490,18 @@ _start() {
             [ ! -L "$DM_tl/${tpe}" ] && echo "${tpc}" > "$DT/tpe"
         fi
     fi
-    date=$(read_val sess date)
+    date=$(cdb ${cfgdb} 1 sess date)
     if [[ "$(date +%d)" != "$date" ]]; then
         new_session; cu=TRUE
     fi
     ( if [[ "${cu}" = TRUE ]]; then
     "$DS/ifs/tls.sh" a_check_updates; fi ) &
 
-    if [[ $(read_val opts clipw) = TRUE ]] && [ ! -e $DT/clipw ]; then
-        mod_val clipw FALSE
+    if [[ $(cdb ${cfgdb} 1 opts clipw) = TRUE ]] && [ ! -e $DT/clipw ]; then
+        cdb ${cfgdb} 3 opts clipw FALSE
     fi
-    export swind=$(read_val opts swind)
-    if [[ $(read_val opts itray) = TRUE ]] && \
+    export swind=$(cdb ${cfgdb} 1 opts swind) 
+    if [[ $(cdb ${cfgdb} 1 opts itray) = TRUE ]] && \
     ! pgrep -f "$DS/ifs/tls.sh itray"; then
         $DS/ifs/tls.sh itray &
     else
