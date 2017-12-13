@@ -75,11 +75,16 @@ function new_session() {
         mv -f "$DT/log" "$DC_s/log"; fi
     fi
     # update - topics
-    for m in {1..7}; do cdb ${shrdb} 6 T${m}; done
+    if [ ! -e "${shrdb}" ]; then
+		"$DS/ifs/tls.sh" create_shrdb
+	else
+		for m in {1..7}; do cdb ${shrdb} 6 T${m}; done
+    fi
     echo -e "\n--- updating topics status..."
     cleanups "$DM_tls/3.cfg" "$DM_tls/4.cfg"
     tdate=$(date +%Y%m%d)
 	while read -r line; do
+		if [ -n "$line" ]; then
 		unset stts
 		dir="$DM_tl/${line}/.conf"
 		dim="$DM_tl/${line}"
@@ -120,6 +125,7 @@ function new_session() {
 			if [ $((tdate-cdate)) -gt 20 ]; then
 				cdb ${shrdb} 2 T7 list "${line}"
 			fi
+		fi
 		fi
 	done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
 	-not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')

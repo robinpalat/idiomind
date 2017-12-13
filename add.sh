@@ -178,7 +178,7 @@ function new_word() {
 
     audio="${trgt,,}"
     export cdid="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
-    export exmp="$(sqlite3 "$tlng_db" "select Example from Words where Word is '${trgt}';")"
+    export exmp="$(sqlite3 "$tlngdb" "select Example from Words where Word is '${trgt}';")"
     mksure "${trgt}" "${srce}"
     
     if [ $? = 1 ]; then
@@ -559,7 +559,7 @@ function process() {
                 else
                     export trgt="$(clean_1 "${trgt}")"
                     export srce="$(clean_0 "${srce}")"
-                    exmp="$(sqlite3 "$tlng_db" "select Example from Words where Word is '${trgt}';")"
+                    exmp="$(sqlite3 "$tlngdb" "select Example from Words where Word is '${trgt}';")"
                     export exmp="$(echo "$exmp" |tr '\n' ' ')"
                     export cdid="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "" "")"
                     audio="${trgt,,}"

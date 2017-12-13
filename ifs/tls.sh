@@ -291,6 +291,7 @@ create_cfgdb() {
 }
 
 create_shrdb() {
+    source /usr/share/idiomind/default/c.conf
 	shrdb="$DM_tls/data/config"
 	echo -n "create table if not exists topics (list TEXT);" |sqlite3 "${shrdb}"
 	echo -n "create table if not exists T1 (list TEXT);" |sqlite3 "${shrdb}"
@@ -1351,6 +1352,8 @@ case "$1" in
     check_index "$@" ;;
     create_cfgdb)
     create_cfgdb ;;
+    create_shrdb)
+    create_shrdb ;;
     addFiles)
     addFiles "$@" ;;
     videourl)

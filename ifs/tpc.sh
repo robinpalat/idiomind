@@ -54,6 +54,7 @@ chek_topic() {
         check_dir "${DM_tlt}/images" "${DC_tlt}"
         echo " " > "${DC_tlt}/note"
         echo ${stts} > "${DC_tlt}/stts"
+        touch "${DC_tlt}/data"
     fi
     if [ ! -e "$tpcdb" ]; then
 		create_tpcdb

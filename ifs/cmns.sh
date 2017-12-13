@@ -145,17 +145,19 @@ function check_index1() {
 
 function check_list() {
 	db="$DM_tls/data/config"
-	sqlite3 ${db} "delete from topics;"
-    if ls -tNd "$DM_tl"/*/ 1> /dev/null 2>&1; then
-        while read -r topic; do
-            if ! echo -e "$(ls -1a "$DS/addons/")" \
-            |grep -Fxo "${topic}" >/dev/null 2>&1; then
-                if [ ! -L "$DM_tl/${topic}" ]; then
-                 sqlite3 ${db} "insert into topics (list) values ('${topic}');"
-                fi
-            fi
-        done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
-        -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
+	if [ -e ${db} ]; then
+		sqlite3 ${db} "delete from topics;"
+		if ls -tNd "$DM_tl"/*/ 1> /dev/null 2>&1; then
+			while read -r topic; do
+				if ! echo -e "$(ls -1a "$DS/addons/")" \
+				|grep -Fxo "${topic}" >/dev/null 2>&1; then
+					if [ ! -L "$DM_tl/${topic}" ]; then
+					 sqlite3 ${db} "insert into topics (list) values ('${topic}');"
+					fi
+				fi
+			done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
+			-not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
+		fi
     fi
 }
 
