@@ -36,7 +36,7 @@ fi
 
 if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
     source "$DS/ifs/cmns.sh"
-    msg "$(gettext "Please wait until the current actions are finished")\n" dialog-information
+    msg "$(gettext "Please wait until the current actions are finished")...\n" dialog-information
     sleep 15; cleanups "$DT/ps_lk" "$DT/el_lk"; exit 1
 fi
 
@@ -169,6 +169,11 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
     _lst | tpc_view
     ret=$?
         if [ $ret -eq 0 ]; then
+			if [ -e "$DT/in_lk" ]; then
+				msg "$(gettext "Please wait until the current actions are finished")...\n" dialog-information
+				sleep 15; cleanups "$DT/in_lk"; exit 1
+			fi
+			f_lock "$DT/in_lk"
             listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
             ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
             if [ $(wc -l <<< "$listt") -ge 120 ]; then
@@ -189,44 +194,56 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             "$DM_t/$tlng/${name}/.conf/practice"
             DM_tlt="$DM_t/$tlng/${name}"
             DC_tlt="$DM_t/$tlng/${name}/.conf"
-            
-            for i in {1..6}; do > "${DC_tlt}/${i}.cfg"; done
-            for i in {1..3}; do > "${DC_tlt}/practice/log${i}"; done
+			tpcdb="$DC_tlt/tpc"
+			
+			cp -f "$DS/default/tpc" "$tpcdb"
+			tpc_db 9 id name "${name}"
+			tpc_db 9 id slng "$slng"
+			tpc_db 9 id tlng "$tlng"
+			tpc_db 9 id autr "$autr"
+			tpc_db 9 id ctgy "$ctgy"
+			tpc_db 9 id ilnk "$ilnk"
+			tpc_db 9 id orig "$orig"
+			tpc_db 9 id dtec "$dtec"
+			tpc_db 9 id dtei "$(date +%F)"
+			tpc_db 9 id levl "$levl"
             sed -n 3p "${file}" \
             |sed 's/,"/\n/g;s/":/=/g;s/^\s*.//g' > "${DC_tlt}/id_temp.cfg"
-            sed -n 1,17p "${DC_tlt}/id_temp.cfg" > "${DC_tlt}/id.cfg"
             sed -n 18p "${DC_tlt}/id_temp.cfg" \
-            |sed -e 's/info\=\"//;s/<br>/ /g' |sed 's/.$//' > "${DC_tlt}/info"
+            |sed -e 's/info\=\"//;s/<br>/ /g' |sed 's/.$//' > "${DC_tlt}/note"
             cleanups "${DC_tlt}/id_temp.cfg"
-            
-            if [ ${cn} = 1 ]; then
-            sed -i "s/name=.*/name=\"${name}\"/g" "${DC_tlt}/id.cfg"; fi
-            sed -i "s/dtei=.*/dtei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
-
+            check_file "${DC_tlt}/practice/log1" \
+            "${DC_tlt}/practice/log2" "${DC_tlt}/practice/log3"
             > "${DC_tlt}/download"
             
             sed -n 2p "${file}" |tr -d '\\' > "${DC_tlt}/data"
             sed -i 's/},/}\n/g;s|","|}|g;s|":"|{|g;s|":{"|}|g;s/"}/}/g' "${DC_tlt}/data"
             sed -i 's/^\s*./trgt{/g' "${DC_tlt}/data"
-            
-            while read item_; do
+			sed -i '/^$/d' "${DC_tlt}/data"
+
+			while read item_; do
                 item="$(sed 's/}/}\n/g' <<< "${item_}")"
                 type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
                 trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
+                mark="$(grep -oP '(?<=mark{).*(?=})' <<< "${item}")"
                 if [ -n "${trgt}" ]; then
                     if [[ ${type} = 1 ]]; then
-                        echo "${trgt}" >> "${DC_tlt}/3.cfg"
+                        tpc_db 8 words list "${trgt}"
                     else
-                        echo "${trgt}" >> "${DC_tlt}/4.cfg"
+                        tpc_db 8 sentences list "${trgt}"
                     fi
-                    echo "${trgt}" >> "${DC_tlt}/1.cfg"
+                    tpc_db 8 learning list "${trgt}"
+                    if [[ ${mark} = 'TRUE' ]]; then
+						tpc_db 8 marks list "${trgt}"
+					fi
                 fi
-            done < "${DC_tlt}/data"
-            
+            done < "${DC_tlt}/data" 
             "$DS/ifs/tls.sh" colorize 1
+            cleanups "$DT/ps_lk"
+            
             slngtopic="$slng"; slng="$slngcurrent"
-            sqlite3 ${cfgdb} "update lang set tlng='${tlng}';"
-			sqlite3 ${cfgdb} "update lang set slng='${slng}';"
+			cdb "${cfgdb}" 3 lang tlng "${tlng}"
+			cdb "${cfgdb}" 3 lang slng "${slng}"
             if [[ "$slngtopic" != "$slng" ]]; then
                 mkdir "${DC_tlt}/translations/"
                 echo "$slngtopic" > "${DC_tlt}/translations/active"

@@ -8,6 +8,7 @@ if [[ -n "$1" ]]; then
 	tpc="$1"
 	DM_tlt="$DM_tl/$1"
 	DC_tlt="$DM_tlt/.conf"
+    tpcdb="$DC_tlt/tpc"
 fi
 pdir="${DC_tlt}/practice"
 pdirs="$DS/practice"
@@ -79,14 +80,13 @@ function score() {
 }
     
 function save_score() {
-	
     if [[ ${1} = 0 ]]; then > ./${pr}.2; > ./${pr}.3; fi
-    [ -f ./*.1 ] && cat ./*.1 > ./log1
+    [[ -e ./*.1 ]] && cat ./*.1 > ./log1
     if [[ ${step} = 1 ]]; then
-        [ -f ./*.2 ] && cat ./*.2 > ./log2
+        [[ -e ./*.2 ]] && cat ./*.2 > ./log2
     elif [[ ${step} = 2 ]]; then
-        [ -f ./*.2 ] && cat ./*.2 > ./log2
-        [ -f ./*.3 ] && cat ./*.3 > ./log3
+        [[ -e ./*.2 ]] && cat ./*.2 > ./log2
+        [[ -e ./*.3 ]] && cat ./*.3 > ./log3
     fi
 }
 
@@ -214,7 +214,7 @@ function practice_b(){
         else
             srce="${item}"
             trgt=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
-            ras=$(sort -Ru "${cfg3}" |egrep -v "$srce" |head -${P})
+            ras=$(sort -Ru <<< "${cfg3}" |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt})); [ ${srce_s} -lt 12 ] && srce_s=12
             question="\n<span font_desc='Comic Sans MS ${srce_s}'><b>${trgt}</b></span>\n\n"
@@ -605,12 +605,12 @@ function get_list() {
     
     if grep -o -E 'a|b|c' <<< ${pr}; then
         > "${pdir}/${pr}.0"
-        if [[ $(wc -l < "${cfg4}") -gt 0 ]]; then
-            grep -Fvx -f "${cfg4}" "${cfg1}" > "$DT/${pr}.0"
+        if [[ $(wc -l <<< "${cfg4}") -gt 0 ]]; then
+            grep -Fvx "${cfg4}" <<< "${cfg1}" > "$DT/${pr}.0"
             sed '/^$/d' < "$DT/${pr}.0" > "${pdir}/${pr}.0"
             rm -f "$DT/${pr}.0"
         else
-            sed '/^$/d' < "${cfg1}" > "${pdir}/${pr}.0"
+            sed '/^$/d' <<< "${cfg1}" > "${pdir}/${pr}.0"
         fi
         if [ ${pr} = b ]; then
             if [ ! -e "${pdir}/b.srces" ]; then
@@ -625,10 +625,10 @@ function get_list() {
         fi
     elif [ ${pr} = d ]; then
         > "$DT/images"
-        if [[ $(wc -l < "${cfg4}") -gt 0 ]]; then
-            grep -Fxvf "${cfg4}" "${cfg1}" > "$DT/images"
+        if [[ $(wc -l <<< "${cfg4}") -gt 0 ]]; then
+            grep -Fxv "${cfg4}" <<< "${cfg1}" > "$DT/images"
         else
-            cat "${cfg1}" > "$DT/images"
+            echo "${cfg1}" > "$DT/images"
         fi
         > "${pdir}/${pr}.0"
     
@@ -644,12 +644,12 @@ function get_list() {
         --skip-taskbar --center --no-buttons
         cleanups "$DT/images"
     elif [ ${pr} = e ]; then
-        if [[ $(wc -l < "${cfg3}") -gt 0 ]]; then
-            grep -Fxvf "${cfg3}" "${cfg1}" > "$DT/slist"
+        if [[ $(wc -l <<< "${cfg3}") -gt 0 ]]; then
+            grep -Fxv "${cfg3}" <<< "${cfg1}" > "$DT/slist"
             sed '/^$/d' < "$DT/slist" > "${pdir}/${pr}.0.tmp"
             rm -f "$DT/slist"
         else
-            sed '/^$/d' < "${cfg1}" > "${pdir}/${pr}.0.tmp"
+            sed '/^$/d' <<< "${cfg1}" > "${pdir}/${pr}.0.tmp"
             
         fi
          inf=0; while read -r itm; do
@@ -740,9 +740,9 @@ function practices() {
     pr=${1}
     log="$DC_s/log"
     cfg0="$DC_tlt/data"
-    cfg1="$DC_tlt/1.cfg"
-    cfg3="$DC_tlt/3.cfg"
-    cfg4="$DC_tlt/4.cfg"
+    cfg4="$(tpc_db 5 sentences)"
+	cfg3="$(tpc_db 5 words)"
+	cfg1="$(tpc_db 5 learning)"
     hits="$(gettext "hits")"
     touch "${pdir}/log1" "${pdir}/log2" "${pdir}/log3"
     easy=0; hard=0; ling=0; step=1
@@ -815,8 +815,8 @@ function practices() {
         export all=$(egrep -cv '#|^$' "${pdir}/${pr}.0")
     fi
     if [[ ${all} -lt 2 ]]; then
-		sentcount=$(grep -Fxvf "${cfg3}" "${cfg1}" |wc -l)
-		wordcount=$(grep -Fxvf "${cfg4}" "${cfg1}" |wc -l)
+		sentcount=$(grep -Fxv "${cfg3}" <<< "${cfg1}" |wc -l)
+		wordcount=$(grep -Fxv "${cfg4}" <<< "${cfg1}" |wc -l)
 		if grep -o -E 'a|b|c|d' <<< ${pr}; then
         msg "$(gettext "Insufficient number of words to start"):\n$(gettext "Words") $wordcount / $(gettext "Sentences") $sentcount" \
         dialog-information " " "$(gettext "OK")"

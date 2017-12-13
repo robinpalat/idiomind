@@ -61,7 +61,7 @@ play_list() {
     in=( 'in0' 'in1' 'in2' 'in3' 'in4' )
     iteml=( "$(gettext "No repeat")" "$(gettext "Words")" "$(gettext "Sentences")" )
     
-	sents="$(tpc_db 5 sents)"
+	sents="$(tpc_db 5 sentences)"
 	words="$(tpc_db 5 words)"
 	marks="$(tpc_db 5 marks)"
 	learn="$(tpc_db 5 learning)"

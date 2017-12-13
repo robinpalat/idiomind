@@ -54,22 +54,17 @@ function progress() {
 
 export numer='^[0-9]+$'
 
-
-function cdb() {
+function cdb () {
+	db="${1}"
 	ta="${3}"
 	co="$(sed "s|'|''|g" <<< "${4}")"
 	va="$(sed "s|'|''|g" <<< "${5}")"
-	db="${1}"
 	if [ $2 = 1 ]; then # read
 		sqlite3 "$db" "select ${co} from ${ta};"
-		
 	elif [ $2 = 2 ]; then # insert
 		sqlite3 "$db" "insert into ${ta} (${co}) values ('${va}');"
-		
 	elif [ $2 = 3 ]; then # mod
-	
 		sqlite3 "$db" "update $ta set ${co}='${va}';"
-		
 	elif [ $2 = 4 ]; then # delete
 		sqlite3 "$db" "delete from ${ta} where ${co}='${va}';"
 	elif [ $2 = 5 ]; then # select all
@@ -86,22 +81,27 @@ function tpc_db() {
 	if [ $1 = 1 ]; then # read
 		sqlite3 "$DC_tlt/tpc" "select ${co} from '${ta}';"
 	elif [ $1 = 2 ]; then # insert
-		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=2000;\
+		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=1000;\
 		insert into ${ta} (${co}) values ('${va}');"
 	elif [ $1 = 3 ]; then # mod
-		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=2000;\
+		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=1000;\
 		update ${ta} set ${co}='${va}';"
 	elif [ $1 = 4 ]; then # delete
-		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=2000;\
+		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=1000;\
 		delete from ${ta} where ${co}='${va}';"
 	elif [ $1 = 5 ]; then # select all
 		sqlite3 "$DC_tlt/tpc" "select * FROM '${ta}';" |tr -s '|' '\n'
 	elif [ $1 = 6 ]; then # delet all
-		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=5000;\
+		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=2000;\
 		delete from '${ta}';"
 	elif [ $1 = 7 ]; then # mod especific
-		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=2000;\
+		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=1000;\
 		update '${ta}' set list='${co}' where list='${va}';"
+	elif [ $1 = 8 ]; then # insert fast
+		sqlite3 "$DC_tlt/tpc" \
+		"insert into ${ta} (${co}) values ('${va}');"
+	elif [ $1 = 9 ]; then # mod fast
+		sqlite3 "$DC_tlt/tpc" "update ${ta} set ${co}='${va}';"
 	fi
 }
 

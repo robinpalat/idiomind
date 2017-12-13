@@ -196,8 +196,8 @@ check_index() {
 			"${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg" "${DC_tlt}/6.cfg"
 			mv -f "$DT/data" "${DC_tlt}/data"
 			sed -i '/^$/d' "${DC_tlt}/data"
+            export mkmn=1
 		fi
-		 export mkmn=1
 	}
 
     _restore() {
@@ -247,7 +247,7 @@ check_index() {
     }
 	_newformat
     _check
-    
+
     if [[ ${fix} = 1 ]]; then
         > "$DT/ps_lk"
         if [[ ${r} = 0 ]]; then
@@ -350,7 +350,6 @@ _restore_backup() {
     [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/cmns.sh"
     file="$HOME/.idiomind/backup/${2}.bk"
-    
     touch "$DT/act_restfile"; check_dir "${DM_tl}/${2}/.conf"
     if [[ ${3} = 1 ]]; then
         sed -n '/----- newest/,/----- oldest/p' "${file}" \
@@ -504,8 +503,8 @@ echo "${file::-4}<br><br>
 style=\"width:100%;height:100%\"><br><br><br>" \
 >> "${DC_tlt}/att.html"; fi
 done <<<"$(ls "${DM_tlt}/files")"
-
 echo "</body></html>" >> "${DC_tlt}/att.html"
+
 } >/dev/null 2>&1
     [ ! -d "${DM_tlt}/files" ] && mkdir "${DM_tlt}/files"
     ch1="$(ls -A "${DM_tlt}/files")"

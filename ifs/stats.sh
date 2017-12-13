@@ -1,6 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/default/c.conf
+source "$DS/ifs/cmns.sh"
 
 function f_lock() {
     brk=0
@@ -43,12 +44,10 @@ function save_topic_stats() {
             C0=0; C1=0; C2=0; C3=0; C4=0; G1=0; G2=0
             dir1="$DM_tl/${tpc}/.conf"
             stts=""; stts=$(sed -n 1p "$dir1/stts")
-
-            if [ -e "$dir1/1.cfg" ]; then
-                G1=$(egrep -cv '#|^$' "$dir1/1.cfg"); fi
-            if [ -e "$dir1/2.cfg" ]; then
-                G2=$(egrep -cv '#|^$' "$dir1/2.cfg"); fi
-
+            tpcdb="$dir1/tpc"
+            G1="$(grep -c '[^[:space:]]' <<< "$(tpc_db 5 learning)")"
+            G2="$(grep -c '[^[:space:]]' <<< "$(tpc_db 5 learnt)")"
+            
             if [[ ${stts} =~ $int ]]; then
                 if [ ${stts} -le 10 -a ${stts} -ge 7 ]; then
                     C3=${G2}
@@ -107,9 +106,9 @@ function save_word_stats() {
             dir1="$DM_tl/${tpc}/.conf"
             dir2="$dir1/practice"
             stts=""; stts=$(sed -n 1p "$dir1/stts")
-            
-            if [ -f "$dir1/3.cfg" ]; then
-                G0=$(egrep -cv '#|^$' "$dir1/3.cfg"); fi
+            tpcdb="$dir1/tpc"
+            G0="$(grep -c '[^[:space:]]' <<< "$(tpc_db 5 words)")"
+
             if [ -f "$dir2/log1" ]; then
                 G1=$(egrep -cv '#|^$' "$dir2/log1"); fi
             if [ -f "$dir2/log2" ]; then

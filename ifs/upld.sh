@@ -19,10 +19,9 @@ function dwld() {
     dialog-information "$(gettext "Downloading")"
     kill -9 $(pgrep -f "yad --form --columns=1")
     mkdir "$DT/download"
-    ilnk=$(grep -o 'ilnk="[^"]*' "$DM_tl/${2}/.conf/id.cfg" |grep -o '[^"]*$')
-    tlng=$(grep -o 'tlng="[^"]*' "$DM_tl/${2}/.conf/id.cfg" |grep -o '[^"]*$')
+    ilnk=$(tpc_db 1 id ilnk)
+    tlng=$(tpc_db 1 id tlng)
     [ -z "${ilnk}" ] && err
-
     url1="http://idiomind.sourceforge.net/dl.php/?fl=${tlng,,}/${ilnk}"
     if wget -S --spider "${url1}" 2>&1 |grep 'HTTP/1.1 200 OK'; then 
     URL="${url1}"; else err & exit 1; fi
@@ -57,7 +56,7 @@ function dwld() {
                     fi
                     mv -f "${tmp}/images/${img,,}.jpg" "${img_path}"
                 fi
-            done < "${DC_tlt}/3.cfg"
+            done < <(tpc_db 5 words)
             rm -fr "${tmp}/share" "${tmp}/conf" "${tmp}/images"
             mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
             cleanups "$DM_t/$tlng/.share/audio/.mp3" "$DM_t/$tlng/.share/images/.jpg"
@@ -159,10 +158,10 @@ function upld() {
     }
 
     dlg_dwld_content() {
-        naud="$(grep -o 'naud="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        nimg="$(grep -o 'nimg="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        trad="$(grep -o 'slng="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        fsize="$(grep -o 'nsze="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        naud="$(tpc_db 1 id naud)"
+        nimg="$(tpc_db 1 id nimg)"
+        trad="$(tpc_db 1 id slng)"
+        fsize="$(tpc_db 1 id fsize)"
         cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
         info="<b>$(gettext "Downloadable content")</b>"
         info2="<small>$(gettext "Audio files:") $naud\n$(gettext "Images:") $nimg\n$(gettext "Translations:") $trad\n$(gettext "Total size:") $fsize</small>"
@@ -217,7 +216,7 @@ function upld() {
     LANGUAGE_TO_LEARN="${tlng^}"
     linkc="http://idiomind.net/${tlng,,}"
     linkac='http://idiomind.net/community/?q=user/register'
-    ctgy="$(grep -o 'ctgy="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+    ctgy=$(tpc_db 1 id ctgy)
     text_upld="<span font_desc='Arial 12'><b>$(gettext "Share online with other learners!")</b></span>\n$(gettext "Go to") <a href='$linkc'>$(gettext "Topics library")</a> $(gettext "website")"
     _Categories="${ctgy}${list}"
     _levels="!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")"
@@ -292,11 +291,11 @@ function upld() {
         export autr="${autr_mod}"
         export pass="${pass_mod}"
         export rand=$(md5sum "${DC_tlt}/data" |cut -d' ' -f1)
-        ilnk="$(grep -o 'ilnk="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        ilnk=$(tpc_db 1 id ilnk)
         if [ -z "$ilnk" ]; then ilnk="${pre,,}${rand:0:20}"; fi
         export ilnk
-        export dtec="$(grep -o 'dtec="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        export dtei="$(grep -o 'dtei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        export dtec=$(tpc_db 1 id dtec)
+        export dtei=$(tpc_db 1 id dtei)
         export dteu=$(date +%F)
         export nwrd=${cfg3}
         export nsnt=${cfg4}
@@ -311,7 +310,8 @@ function upld() {
         [ ! -d "$DT_u/files/images" ] && mkdir "$DT_u/files/images"
         
         ###  copying audio words
-        uniq < "${DC_tlt}/4.cfg" \
+        sents="$(tpc_db 5 sentences)"
+        uniq <<< "${sents}" \
         |sed 's/\n/ /; s/ /\n/g' \
         |grep -v '^.$' |grep -v '^..$' \
         |sed 's/&//; s/,//; s/\?//; s/\¿//; s/;//g' \
@@ -333,7 +333,6 @@ function upld() {
                 fi
             fi
         done < "${DC_tlt}/data"
-
         cleanups "$DT_u/files/share/.mp3"
         
         ### copying translations
@@ -354,12 +353,10 @@ function upld() {
             fi
             cp -r "$DC_tlt/translations" "$DT_u/files/translations"
         fi
+        
 		export slng
-		
         export naud=$(find "$DT_u/files" -maxdepth 5 -name '*.mp3' |wc -l)
-        
-        cp "${DC_tlt}/6.cfg" "$DT_u/files/conf/6.cfg"
-        
+
         ### Get text for info variable
         if [ -e "${DC_tlt}/note.tmp" ]; then
             mv "${DC_tlt}/note.tmp" "${DC_tlt}/note"
@@ -369,11 +366,16 @@ function upld() {
 		sed -i ':a;N;$!ba;s/\n/<br><br>/g;s/\&/&amp;/g' "$DT_u/files/conf/note"
         export note="$(sed '/^$/d' "$DT_u/files/conf/note")"
 		cleanups "$DT_u/files/conf/note"
-		
+
+        tpc_db 9 id autr "$autr"
+        tpc_db 9 id ctgy "$ctgy"
+        tpc_db 9 id ilnk "$ilnk"
+        tpc_db 9 id orig "$orig"
+        tpc_db 9 id dteu "$(date +%F)"
+        tpc_db 9 id levl "$levl"
+        
         ### get data for html
         body="$(echo -e "$note_mod" |sed 's/\&/&amp;/g')"
-        eval c="$(sed -n 4p "$DS/default/vars")"
-        echo -e "${c}" > "${DC_tlt}/id.cfg"
         eval body="$(sed -n 5p "$DS/default/vars")"
         body="${body}<blockquote>$body</blockquote>"
         export tpc DT_u body
@@ -453,7 +455,7 @@ END
         return 0
     fi
     
-} >/dev/null 2>&1
+} #>/dev/null 2>&1
 
 fdlg() {
     tpcs="$(cd "$DS/ifs/mods/export"; ls \
