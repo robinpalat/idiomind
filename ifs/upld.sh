@@ -455,7 +455,7 @@ END
         return 0
     fi
     
-} #>/dev/null 2>&1
+} >/dev/null 2>&1
 
 fdlg() {
     tpcs="$(cd "$DS/ifs/mods/export"; ls \

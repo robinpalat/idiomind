@@ -78,7 +78,6 @@ function index() {
                     tpc_db 2 sentences list "${trgt}"
                     echo -e "$img0\n${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
                 fi
-
 				[[ ${1} = 1 ]] && unset link
                 eval newline="$(sed -n 2p $DS/default/vars)"
                 echo "${newline}" >> "${DC_tlt}/data"
@@ -434,7 +433,7 @@ function fetch_audio() {
     words_list="${2}"; else words_list="${1}"; fi
     
     while read -r Word; do
-        word="${Word,,}"; audio_file="$DM_tls/audio/$word.mp3"
+        word="${Word,,}"; export audio_file="$DM_tls/audio/$word.mp3"
         audio_dwld="$DM_tls/audio/$word"
         if [ ! -e "$audio_file" ]; then
             if ls "$DC_d"/*."TTS online.Word pronunciation".$lgt 1> /dev/null 2>&1; then
@@ -626,7 +625,7 @@ function dlg_checklist_3() {
     --title="$(gettext "Found") $(wc -l < "${1}") $(gettext "notes")" \
     --name=Idiomind --class=Idiomind \
     --skip-taskbar --orient=vert --window-icon=idiomind --center --on-top \
-    --gtkrc="$DS/default/gtkrc.cfg" \
+    --gtkrc="$DS/default/gtkrc.cfg" --buttons-layout=edge \
     --width=${sz[0]} --height=${sz[1]} --borders=5 --splitter=${sz[2]} \
     --button=!'gtk-edit'!"$(gettext "Edit")":2 \
     --button=!'gtk-apply'!"$(gettext "Add")":0

@@ -11,7 +11,6 @@ wlist="$(cdb "${cfgdb}" 1 opts wlist)"
 trans="$(cdb "${cfgdb}" 1 opts trans)"
 ttrgt="$(cdb "${cfgdb}" 1 opts ttrgt)"
 dlaud="$(cdb "${cfgdb}" 1 opts dlaud)"
-
 [ -z "$trans" ] && trans='FALSE'
 export ttrgt trans lgt lgs
 
@@ -552,11 +551,12 @@ function process() {
             [ -z "${srce}" ] && internet
             export srce="$(clean_2 "${srce}")"
             export cdid="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "" "")"
-
-            if [[ $(wc -$c <<< "${trgt}") = 1 ]]; then
-                if [ "$(wc -l < "${DC_tlt}/data")" -ge 200 ]; then
-                    echo -e "\n\n$n) [$(gettext "Maximum number of notes has been exceeded")] ${trgt}" >> "$DT_r/wlog"
-                else
+            
+            
+            if [[ $(wc -l < "${DC_tlt}/data") -ge 200 ]]; then
+                echo -e "\n\n$n) [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> "$DT_r/slog"
+            else
+                if [[ $(wc -$c <<< "${trgt}") = 1 ]]; then
                     export trgt="$(clean_1 "${trgt}")"
                     export srce="$(clean_0 "${srce}")"
                     exmp="$(sqlite3 "$tlngdb" "select Example from Words where Word is '${trgt}';")"
@@ -581,12 +581,8 @@ function process() {
                         echo -e "\n\n$n) ${trgt}" >> "$DT_r/wlog"
                         rm "${DM_tlt}/$cdid.mp3"
                     fi
-                fi
-            elif [[ $(wc -$c <<< "${trgt}") -ge 1 ]]; then
-                
-                if [[ $(wc -l < "${DC_tlt}/data") -ge 200 ]]; then
-                    echo -e "\n\n$n) [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> "$DT_r/slog"
-                else
+                elif [[ $(wc -$c <<< "${trgt}") -ge 1 ]]; then
+                    
                     if [ ${#trgt} -ge ${sentence_chars} ]; then
                         echo -e "\n\n$n) [$(gettext "Sentence too long")] $trgt" >> "$DT_r/slog"
                     else
@@ -613,8 +609,6 @@ function process() {
                     fi
                 fi
             fi
-            prg=$((100*n/lns-1))
-            echo "$prg"; echo "# ${trgt:0:35}... " ;
             let n++
         done < <(head -200 < "$DT_r/select_lines")
         
@@ -643,11 +637,6 @@ function process() {
                         cleanups "${DM_tlt}/$cdid.mp3"
                     fi
                 fi
-                nn=$((n+$(wc -l < "$DT_r/select_lines")-1))
-                prg=$((100*nn/lns))
-                echo "$prg"
-                echo "# ${trgt:0:35}... " ;
-                
                 let n++
             done < <(head -200 < "$DT_r/wrds")
         fi

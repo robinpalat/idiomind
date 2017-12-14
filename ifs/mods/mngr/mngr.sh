@@ -88,7 +88,7 @@ function edit_feeds_list() {
 }
 
 function progr_3() {
-    yad --progress \
+    yad --progress  \
     --name=Idiomind --class=Idiomind \
     --undecorated --${1} --auto-close \
     --skip-taskbar --center --on-top --no-buttons

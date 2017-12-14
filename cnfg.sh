@@ -65,8 +65,7 @@ set_lang() {
         (Study TEXT, Expire INTEGER);" |sqlite3 ${tlngdb}
         echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${tlngdb}
     fi
-    "$DS/ifs/mods/start/update_tasks.sh"
-    "$DS/mngr.sh" mkmn 1 &
+    idiomind tasks; "$DS/mngr.sh" mkmn 1 &
 }
 
 config_dlg() {

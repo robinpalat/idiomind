@@ -348,7 +348,6 @@ function topic() {
 
         elif [ ${cfg1} -ge 1 ] || [ ${cfg1} -ge 0 -a ${cfg0} -lt 15 ]; then
       
-            #if [ -e "${DC_tlt}/9.cfg" -a -e "${DC_tlt}/7.cfg" ]; then
             if echo "$stts" |grep -E '3|4|7|8|9|10'; then
             
                 calculate_review "${tpc}"; 
@@ -427,8 +426,6 @@ function topic() {
 
         elif [ ${cfg1} -ge 1 ]; then
         
-            #if [ -e "${DC_tlt}/9.cfg" -a -e "${DC_tlt}/7.cfg" ]; then
-            
             if echo "$stts" |grep -E '3|4|7|8|9|10'; then
             
                 notebook_2

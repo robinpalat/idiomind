@@ -517,6 +517,7 @@ edit_list_more() {
                 tpc_db 6 'sentences'; tpc_db 6 'words'
 				tpc_db 6 'learning'; tpc_db 6 'learnt'
 				tpc_db 6 'marks'
+                touch "${DC_tlt}/data"
                 
                 [ -d "${DM_tlt}" -a -n "$tpc" ] && rm "$DM_tlt"/*.mp3
             fi
@@ -600,10 +601,8 @@ edit_list_dlg() {
 
     edit_list_list < "$DT/list_input" > "$DT/list_output"
     ret=$?
-    
     if [ $ret = 0 ]; then
         edit_list_cmds 0 "${tpc}"
-     
     elif [ $ret = 2 ]; then
         "$DS/ifs/tls.sh" transl_batch
     else
@@ -654,25 +653,25 @@ delete_topic() {
             if [ "$(sed -n 1p "$DT/playlck")" = "${tpc}" ]; then 
             "$DS/stop.sh" 2; fi
         fi
-        cleanups "$DM/backup/${tpc}.bk"
+        cleanups "$DM/backup/${tpc}.bk" "$DT/tpe"
         if [ -d "$DM_tl/${tpc}" ]; then cleanups "$DM_tl/${tpc}"; fi
-     
         if [ -d "$DM_tl/${tpc}" ]; then sleep 0.5
             msg "$(gettext "Could not remove the directory:")\n$DM_tl/${tpc}\n$(gettext "You must manually remove it.")" \
             dialog-information "$(gettext "Information")"
         fi
-        rm -f "$DT/tpe"; > "$DC_s/tpc"
-        for n in {0..6}; do
-            if [ -e "$DM_tl/.share/${n}.cfg" ]; then
-                grep -vxF "${tpc}" "$DM_tl/.share/${n}.cfg" > "$DM_tl/.share/${n}.cfg.tmp"
-                sed '/^$/d' "$DM_tl/.share/${n}.cfg.tmp" > "$DM_tl/.share/${n}.cfg"
-            fi
+        > "$DC_s/tpc"
+        
+        tas=( 'topics' 'T1' 'T2' 'T3' 'T4' 'T5' 'T6' 'T7' )
+        for ta in ${tas[@]}; do
+			cdb "${shrdb}" 4 "${ta}" list "${tpc}"
         done
+        idiomind tasks
+        
         yad_kill "yad --list " "yad --text-info " \
         "yad --form " "yad --notebook "
         "$DS/mngr.sh" mkmn 1 &
     fi
-    rm -f "$DT/rm_lk" "$DM_tl/.share"/*.tmp & exit 1
+    rm -f "$DT/rm_lk" & exit 1
 }
 
 
@@ -705,23 +704,19 @@ rename_topic() {
         [ -z "${chck}" ] && break; done
         name="${name} ($i)"
     fi
-    if [ -n "${name}" ]; then
+    if [ -n "${name##+([[:space:]])}" ]; then
         f_lock "$DT/rm_lk"
         mv -f "$DM_tl/${tpc}" "$DM_tl/${name}"
-        sed -i "s/name=.*/name=\"${name}\"/g" "$DM_tl/${name}/.conf/id.cfg"
+        export DC_tlt="$DM_tl/${name}/.conf"
+        tpc_db 3 id name "${name}"
         echo "${name}" > "$DC_s/tpc"
-        
-        echo "${name}" > "$DT/tpe"; echo 0 > "$DC_s/5.cfg"
-        
-        for n in {1..6}; do
-            if grep -Fxq "${tpc}" "$DM_tl/.share/${n}.cfg"; then
-                grep -vxF "${tpc}" "$DM_tl/.share/${n}.cfg" > "$DM_tl/.share/${n}.cfg.tmp"
-                sed '/^$/d' "$DM_tl/.share/${n}.cfg.tmp" > "$DM_tl/.share/${n}.cfg"
-                echo "${name}" >> "$DM_tl/.share/${n}.cfg"
-            fi
+        echo "${name}" > "$DT/tpe"
+        tas=( 'T1' 'T2' 'T3' 'T4' 'T5' 'T6' 'T7' )
+        for ta in ${tas[@]}; do
+			cdb "${shrdb}" 7 "${ta}" "${name}" "${tpc}"
         done
+        idiomind tasks
         check_list
-        rm "$DM_tl/.share"/*.tmp
         cleanups "$DM_tl/${tpc}" "$DM/backup/${tpc}.bk" "$DT/rm_lk"
         "$DS/mngr.sh" mkmn 0 & exit 1
     fi
@@ -770,6 +765,7 @@ mark_to_learn_topic() {
 			tpc_db 2 learning list "${trgt}"
         fi
     done < "${DC_tlt}/data" ) | progr_3 "pulsate"
+    
     if [ -e "${DC_tlt}/lk" ]; then rm "${DC_tlt}/lk"; fi
     cp -f "${DC_tlt}/note" "${DC_tlt}/note.bk"
     if [[ ${3} = 1 ]]; then
@@ -835,7 +831,7 @@ mark_as_learned_topic() {
         item="$(sed 's/}/}\n/g' <<< "${item_}")"
         trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
         if [ -n "${trgt}" ]; then
-			tpc_db 2 learnt list "${trgt}"
+			tpc_db 8 learnt list "${trgt}"
 		fi
     done < "${DC_tlt}/data" ) | progr_3 "pulsate"
     
@@ -898,7 +894,7 @@ mark_as_learnt_topic_ok() {
             item="$(sed 's/}/}\n/g' <<< "${item_}")"
             trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
             if [ -n "${trgt}" ]; then
-				tpc_db 2 learnt list "${trgt}"
+				tpc_db 8 learnt list "${trgt}"
 			fi
 		done < "${DC_tlt}/data"
         

@@ -71,6 +71,9 @@ function cdb () {
 		sqlite3 "$db" "select * FROM ${ta};" |tr -s '|' '\n'
 	elif [ $2 = 6 ]; then # delet all
 		sqlite3 "$db" "delete from '${ta}';"
+    elif [ $2 = 7 ]; then # mod especific
+		sqlite3 "$db" "pragma busy_timeout=200;\
+		update '${ta}' set list='${co}' where list='${va}';"
 	fi
 }
 
