@@ -276,7 +276,7 @@ create_cfgdb() {
 	echo -n "pragma busy_timeout=2000; create table if not exists sess \
 	(date TEXT);" |sqlite3 "${cfgdb}"
 	echo -n "pragma busy_timeout=2000; create table if not exists updt \
-	(date TEXT);" |sqlite3 "${cfgdb}"
+	(date TEXT,ignr TEXT);" |sqlite3 "${cfgdb}"
 	sqlite3 "${cfgdb}" "pragma busy_timeout=2000;\
 	insert into opts (gramr,wlist,trans,dlaud,ttrgt,\
 	clipw,itray,swind,stsks,tlang,slang,synth,txaud,intrf) \

@@ -382,21 +382,21 @@ edit_list_cmds() {
                 fi
 
                 if [ ${type} = 1 ]; then
-                    tpc_db 2 words list "$trgt"
+                    tpc_db 8 words list "$trgt"
                 elif [ ${type} = 2 ]; then
-                    tpc_db 2 sentences list "$trgt"
+                    tpc_db 8 sentences list "$trgt"
                 fi
                 if ! grep -Fxo "${trgt}" <<< "${leart}"; then
-                    tpc_db 2 learning list "$trgt"
+                    tpc_db 8 learning list "$trgt"
                 fi
             else
                 unset_item
                 if [[ $(wc -$c <<< "${trgt}") = 1 ]]; then
-                    tpc_db 2 words list "$trgt"; type=1
+                    tpc_db 8 words list "$trgt"; type=1
                 else 
-                    tpc_db 2 sentences list "$trgt"; type=2
+                    tpc_db 8 sentences list "$trgt"; type=2
                 fi
-                tpc_db 2 learning list "$trgt"
+                tpc_db 8 learning list "$trgt"
                 temp="...."; grmr="${trgt}"; srce="${temp}"
                 echo "${trgt}" >> "$DT/items_to_add"
             fi
@@ -733,10 +733,11 @@ mark_to_learn_topic() {
         msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
         dialog-information "$(gettext "Information")" & exit
     fi
-    (echo "#"
+    
+    export lns=$(cat "${DC_tlt}/data" |wc -l)
     stts=$(sed -n 1p "${DC_tlt}/stts")
     ! [[ ${stts} =~ ${numer} ]] && stts=1
-    
+
     calculate_review "${tpc}"
     if [ $((stts%2)) = 0 ]; then
         echo 6 > "${DC_tlt}/stts"
@@ -748,23 +749,17 @@ mark_to_learn_topic() {
         fi
     fi
 	tpc_db 6 'learnt'; tpc_db 6 'learning';
-	tpc_db 6 'words'; tpc_db 6 'sentences';
     steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
     tpc_db 3 config repass ${steps}
     
+    (echo "#"; n=1
     while read -r item_; do
         item="$(sed 's/}/}\n/g' <<< "${item_}")"
         type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
         trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
-        if [ -n "${trgt}" ]; then
-            if [ ${type} -eq 1 ]; then
-                tpc_db 2 words list "${trgt}"
-            else 
-                tpc_db 2 sentences list "${trgt}"
-            fi
-			tpc_db 2 learning list "${trgt}"
-        fi
-    done < "${DC_tlt}/data" ) | progr_3 "pulsate"
+        [ -n "${trgt}" ] && tpc_db 8 learning list "${trgt}"
+        let n++; echo $((100*n/lns-1))
+    done < "${DC_tlt}/data" ) |progress "progress"
     
     if [ -e "${DC_tlt}/lk" ]; then rm "${DC_tlt}/lk"; fi
     cp -f "${DC_tlt}/note" "${DC_tlt}/note.bk"
@@ -788,9 +783,9 @@ mark_as_learned_topic() {
         dialog-information "$(gettext "Information")" & exit; fi
     fi
     [ ! -s "${DC_tlt}/data" ] && exit 1
-    (echo "#"
-    stts=$(sed -n 1p "${DC_tlt}/stts")
+    export lns=$(cat "${DC_tlt}/data" |wc -l)
     
+    stts=$(sed -n 1p "${DC_tlt}/stts")
     ! [[ ${stts} =~ ${numer} ]] && stts=1
 
     if ! echo "$stts" |grep -E '3|4|7|8|9|10'; then
@@ -825,15 +820,15 @@ mark_as_learned_topic() {
             echo 3 > "${DC_tlt}/stts"
         fi
     fi
-	
 	tpc_db 6 'learning'
+    
+    (echo "#"; n=1
     while read -r item_; do
         item="$(sed 's/}/}\n/g' <<< "${item_}")"
         trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
-        if [ -n "${trgt}" ]; then
-			tpc_db 8 learnt list "${trgt}"
-		fi
-    done < "${DC_tlt}/data" ) | progr_3 "pulsate"
+        [ -n "${trgt}" ] && tpc_db 8 learnt list "${trgt}"
+        let n++; echo $((100*n/lns-1))
+    done < "${DC_tlt}/data") |progress "progress"
     
     cp -f "${DC_tlt}/note" "${DC_tlt}/note.bk"
     if [[ ${3} = 1 ]]; then
@@ -893,9 +888,7 @@ mark_as_learnt_topic_ok() {
         while read -r item_; do
             item="$(sed 's/}/}\n/g' <<< "${item_}")"
             trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
-            if [ -n "${trgt}" ]; then
-				tpc_db 8 learnt list "${trgt}"
-			fi
+            [ -n "${trgt}" ] && tpc_db 8 learnt list "${trgt}"
 		done < "${DC_tlt}/data"
         
         cp -f "${DC_tlt}/note" "${DC_tlt}/note.bk"

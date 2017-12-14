@@ -206,6 +206,11 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
 			tpc_db 9 id orig "$orig"
 			tpc_db 9 id dtec "$dtec"
 			tpc_db 9 id dtei "$(date +%F)"
+			tpc_db 9 id nwrd "$nwrd"
+			tpc_db 9 id nsnt "$nsnt"
+			tpc_db 9 id nimg "$nimg"
+			tpc_db 9 id naud "$naud"
+			tpc_db 9 id nsze "$nsze"
 			tpc_db 9 id levl "$levl"
             sed -n 3p "${file}" \
             |sed 's/,"/\n/g;s/":/=/g;s/^\s*.//g' > "${DC_tlt}/id_temp.cfg"
@@ -239,7 +244,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
                 fi
             done < "${DC_tlt}/data" 
             "$DS/ifs/tls.sh" colorize 1
-            cleanups "$DT/ps_lk"
+            cleanups "$DT/in_lk"
             
             slngtopic="$slng"; slng="$slngcurrent"
 			cdb "${cfgdb}" 3 lang tlng "${tlng}"
@@ -291,7 +296,7 @@ function topic() {
         export cnf4=$(mktemp "$DT/cnf4.XXXXXX")
         if [ ! -z "$dtei" ]; then 
             export infolbl="$(gettext "Review") $repass  $(gettext "Installed on") $dtei\n$(gettext "created by") $autr"
-            [ -e "${DC_tlt}/download" ] && export plusinfo="- $(gettext "Downloadable content available")."
+            [ -e "${DC_tlt}/download" ] && export plusinfo=" <b>$(gettext "Downloadable content available")</b>"
         elif [ ! -z "$dtec" ]; then 
             export infolbl="$(gettext "Review") $repass  $(gettext "Created on") $dtec"
         fi

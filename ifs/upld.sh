@@ -59,10 +59,11 @@ function dwld() {
             done < <(tpc_db 5 words)
             rm -fr "${tmp}/share" "${tmp}/conf" "${tmp}/images"
             mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
-            cleanups "$DM_t/$tlng/.share/audio/.mp3" "$DM_t/$tlng/.share/images/.jpg"
-            echo -e "$total_lbl $total\n$audio_lbl $naud\n$image_lbl $nimg\n$trans_lbl $tran" > "${DC_tlt}/download"
+            cleanups "$DM_t/$tlng/.share/audio/.mp3" \
+            "$DM_t/$tlng/.share/images/.jpg" \
+            "$DT/download" "${DC_tlt}/download"
+
             "$DS/ifs/tls.sh" colorize 0
-            cleanups "$DT/download"
         else
             err & exit 1
         fi
@@ -126,13 +127,13 @@ function upld() {
         --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
-        --width=${sz[0]} --height=${sz[1]} --borders=15 \
+        --width=${sz[0]} --height=${sz[1]} --borders=18 \
         --field=" :LBL" "" \
         --field="$(gettext "Category"):CB" "" \
         --field="$(gettext "Skill Level"):CB" "" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
         --field="$(gettext "Author")" "$autr" \
-        --field="\t\t$(gettext "Password")" "$pass" \
+        --field="\t\t\t\t\t\t$(gettext "Password")" "$pass" \
         --field="<a href='$linkac'>$(gettext "Get account to share")</a> \n":LBL \
         --button="$(gettext "Export")":2 \
         --button="$(gettext "Close")":4
@@ -145,12 +146,12 @@ function upld() {
         --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
-        --width=${sz[0]} --height=${sz[1]} --borders=15 --field=" :LBL" "" \
+        --width=${sz[0]} --height=${sz[1]} --borders=18 --field=" :LBL" "" \
         --field="$(gettext "Category"):CBE" "$_Categories" \
         --field="$(gettext "Skill Level"):CB" "$_levels" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
         --field="$(gettext "Author")" "$autr" \
-        --field="\t\t$(gettext "Password")" "$pass" \
+        --field="\t\t\t\t\t\t$(gettext "Password")" "$pass" \
         --field=" ":LBL "" \
         --button="$(gettext "Export")":2 \
         --button="$(gettext "Upload")":0 \
@@ -161,7 +162,7 @@ function upld() {
         naud="$(tpc_db 1 id naud)"
         nimg="$(tpc_db 1 id nimg)"
         trad="$(tpc_db 1 id slng)"
-        fsize="$(tpc_db 1 id fsize)"
+        fsize="$(tpc_db 1 id nsze)"
         cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
         info="<b>$(gettext "Downloadable content")</b>"
         info2="<small>$(gettext "Audio files:") $naud\n$(gettext "Images:") $nimg\n$(gettext "Translations:") $trad\n$(gettext "Total size:") $fsize</small>"
@@ -171,7 +172,7 @@ function upld() {
         --window-icon=idiomind --buttons-layout=end \
         --align=left --center --on-top \
         --width=${sz[0]} --height=170 --borders=10 \
-        --text="$note" \
+        --text="$info" \
         --field="$info2:lbl" " " \
         --button="$(gettext "Export")":2 \
         --button="$(gettext "Download")":"${cmd_dwl}" \
@@ -179,14 +180,15 @@ function upld() {
     } 
     
     dlg_export() {
+        fsize="$(tpc_db 1 id nsze)"
         yad --form --title="$(gettext "Share")" \
         --separator="|" \
         --name=Idiomind --class=Idiomind \
         --window-icon=idiomind --buttons-layout=end \
         --align=left --center --on-top \
         --width=${sz[0]} --height=140 --borders=10 \
-        --field="<b>$(gettext "Downloaded files"):</b>:lbl" " " \
-        --field="$(< "${DC_tlt}/download"):lbl" " " \
+        --field="<b>$(gettext "Downloaded files")</b>:lbl" " " \
+        --field="$(gettext "Total size:") ${fsize}":lbl " " \
         --field=" :lbl" " " \
         --button="$(gettext "Export")":2 \
         --button="$(gettext "Cancel")":4
@@ -217,7 +219,7 @@ function upld() {
     linkc="http://idiomind.net/${tlng,,}"
     linkac='http://idiomind.net/community/?q=user/register'
     ctgy=$(tpc_db 1 id ctgy)
-    text_upld="<span font_desc='Arial 12'><b>$(gettext "Share online with other learners!")</b></span>\n$(gettext "Go to") <a href='$linkc'>$(gettext "Topics library")</a> $(gettext "website")"
+    text_upld="<span font_desc='Arial 12'><b>$(gettext "Share online with other learners!")</b></span>\n<a href='$linkc'>$(gettext "Visit topics library")</a>"
     _Categories="${ctgy}${list}"
     _levels="!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")"
     note=$(< "${DC_tlt}/note")
@@ -225,8 +227,8 @@ function upld() {
     pass=$(cdb ${cfgdb} 1 user pass) 
 
     # dialogs
-    if [[ -e "${DC_tlt}/download" ]]; then
-        if [[ ! -s "${DC_tlt}/download" ]]; then
+    if [[ -n "$(tpc_db 1 id naud)" ]]; then
+        if [[ -e "${DC_tlt}/download" ]]; then
             dlg="$(dlg_dwld_content)"
             ret=$?
         else
@@ -455,7 +457,7 @@ END
         return 0
     fi
     
-} >/dev/null 2>&1
+} #>/dev/null 2>&1
 
 fdlg() {
     tpcs="$(cd "$DS/ifs/mods/export"; ls \
