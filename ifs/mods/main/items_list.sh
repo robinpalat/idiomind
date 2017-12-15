@@ -140,7 +140,7 @@ function notebook_1() {
     chk5=$(grep -c '[^[:space:]]' < "${DC_tlt}/index")
 
     list() { if [[ ${chk1} = ${chk5} ]]; then
-    cat "${DC_tlt}/index"; else echo -e "${ls1}" | \
+    cat "${DC_tlt}/index"; else [ -n "${ls1}" ] && echo -e "${ls1}" | \
     awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE\n"""}'; fi; }
 
     list | yad --list --tabnum=1 \
@@ -151,7 +151,7 @@ function notebook_1() {
     --search-column=2 --regex-search --hide-column=4 --tooltip-column=4 \
     --column=Name:IMG --column=Name:TEXT \
     --column=Learned:CHK --column=@back@:TIP > "$cnf1" &
-    echo "${ls2}" | yad --list --tabnum=2 \
+    ([ -n "${ls2}" ] && echo "${ls2}") |yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2"  \
     --expand-column=0 --no-headers \
@@ -205,7 +205,7 @@ function notebook_2() {
     --text="$pres" \
     --plug=$KEY \
     --align=center --borders=80 --bar="":NORM $RM &
-    echo "${ls2}" | yad --list --tabnum=2 \
+    ([ -n "${ls2}" ] && echo "${ls2}") |yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2" --grid-lines=hor \
     --expand-column=0 --no-headers --ellipsize=end \

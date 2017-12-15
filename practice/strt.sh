@@ -80,13 +80,15 @@ function score() {
 }
     
 function save_score() {
-    if [[ ${1} = 0 ]]; then > ./${pr}.2; > ./${pr}.3; fi
-    [[ -e ./*.1 ]] && cat ./*.1 > ./log1
+    if [[ ${1} = 0 ]]; then 
+        > ./${pr}.2; > ./${pr}.3
+    fi
+    [ -f ./*.1 ] && cat ./*.1 > ./log1
     if [[ ${step} = 1 ]]; then
-        [[ -e ./*.2 ]] && cat ./*.2 > ./log2
+        [ -f ./*.2 ] && cat ./*.2 > ./log2
     elif [[ ${step} = 2 ]]; then
-        [[ -e ./*.2 ]] && cat ./*.2 > ./log2
-        [[ -e ./*.3 ]] && cat ./*.3 > ./log3
+        [ -f ./*.2 ] && cat ./*.2 > ./log2
+        [ -f ./*.3 ] && cat ./*.3 > ./log3
     fi
 }
 

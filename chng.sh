@@ -110,6 +110,11 @@ if [[ ${1} = 0 ]]; then
 elif [[ ${1} != 0 ]]; then
     source /usr/share/idiomind/default/c.conf
     sz=(560 560); [[ ${swind} = TRUE ]] && sz=(450 420)
+    if [ -e "$DT/mn_lk" ]; then
+        source "$DS/ifs/cmns.sh"
+        msg "$(gettext "Please wait until the current actions are finished")...\n" dialog-information
+        exit 1
+    fi
     remove_d() {
         source "$DS/ifs/cmns.sh"
         ins="$(cd "/usr/share/idiomind/addons/"; set -- */; printf "%s\n" "${@%/}")"

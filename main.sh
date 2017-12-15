@@ -80,7 +80,8 @@ function new_session() {
     if [ ! -f "${shrdb}" ]; then
 		"$DS/ifs/tls.sh" create_shrdb
 	else
-		for n in {1..4} 7; do cdb ${shrdb} 6 T${n}; done
+		for n in {1..4} 7; do 
+		cdb ${shrdb} 6 T${n}; done
     fi
     echo -e "\n--- updating topics status..."
     tdate=$(date +%Y%m%d)
@@ -458,12 +459,14 @@ function topic() {
 
 bground_session() {
 	source "$DS/ifs/cmns.sh"
+	sleep 5
     if [ ! -e "$DT/ps_lk" -a ! -d "$DT" ]; then
-        sleep 20; new_session
-    fi &
+         new_session
+    fi
     if [[ $(cdb ${cfgdb} 1 opts itray) = TRUE ]] && \
     ! pgrep -f "$DS/ifs/tls.sh itray"; then
-    _start; fi
+    export cu=TRUE
+    _start 0; fi
 }
 
 ipanel() {
@@ -494,8 +497,8 @@ ipanel() {
 
 _start() {
 	source "$DS/ifs/cmns.sh"
-    if [ ! -d "$DT" ]; then 
-        new_session; cu=TRUE
+    if [ ! -d "$DT" ] && [[ -z "$1" ]]; then 
+        new_session
     fi
     if [ ! -e "$DT/tpe" ]; then
         cu=TRUE; tpe="$(sed -n 1p "$DC_s/tpc")"
@@ -509,7 +512,7 @@ _start() {
         fi
     fi
     date=$(cdb ${cfgdb} 1 sess date)
-    if [[ "$(date +%d)" != "$date" ]]; then
+    if [[ "$(date +%d)" != "$date" ]] && [[ -z "$1" ]]; then
         new_session; cu=TRUE
     fi
     ( if [[ "${cu}" = TRUE ]]; then

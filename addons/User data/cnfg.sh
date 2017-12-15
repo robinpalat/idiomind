@@ -142,8 +142,6 @@ if [[ $ret -eq 0 ]]; then
                         mkdir "$DM_t/$language/${topic}/.conf"; fi
                     if [ ! -f "$DM_t/$language/${topic}/.conf/stts" ]; then
                         echo 1 > "$DM_t/$language/${topic}/.conf/stts"; fi
-                    if [ -d "$DT/import/topics/$language/${topic}" ]; then
-                        echo "${topic}" >> "$DM_t/$language/.share/3.cfg"; fi
                     cd "$DT/import/topics"
                 done < "$DT/import/topics/$language/.topics"
                 
