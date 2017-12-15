@@ -98,7 +98,7 @@ function upld() {
             exit 1
         fi
     fi
-
+    
     conds_upload() {
         if [ $((cfg3+cfg4)) -lt 8 ]; then
             msg "$(gettext "Insufficient number of items")." \
@@ -222,12 +222,18 @@ function upld() {
     linkc="http://idiomind.net/${tlng,,}"
     linkac='http://idiomind.net/community/?q=user/register'
     ctgy=$(tpc_db 1 id ctgy)
+    levl=$(tpc_db 1 id levl)
     text_upld="<span font_desc='Arial 12'><b>$(gettext "Share online with other learners!")</b></span>\n<a href='$linkc'>$(gettext "Visit topics library")</a>"
     _Categories="${ctgy}${list}"
+    lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
     _levels="!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")"
+    if [ -n "$levl" ]; then 
+        level="${lv[${levl}]}"
+        _levels="$level"$(sed "s/\!$level//g" <<< "$_levels")""
+    fi
     note=$(< "${DC_tlt}/note")
     autr=$(cdb ${cfgdb} 1 user autr) 
-    pass=$(cdb ${cfgdb} 1 user pass) 
+    pass=$(cdb ${cfgdb} 1 user pass)
 
     # dialogs
     if [[ -n "$(tpc_db 1 id naud)" ]]; then
@@ -305,14 +311,12 @@ function upld() {
         export nsnt=${cfg4}
         export orig levl
         export stts=0
-        
         ### copying files
         cd "${DM_tlt}"/
         cp -r ./* "$DT_u/files/"
         cleanups "$DT_u/files/.mp3"
         mkdir "$DT_u/files/share"
         [ ! -d "$DT_u/files/images" ] && mkdir "$DT_u/files/images"
-        
         ###  copying audio words
         sents="$(tpc_db 5 sentences)"
         uniq <<< "${sents}" \
@@ -338,8 +342,7 @@ function upld() {
             fi
         done < "${DC_tlt}/data"
         cleanups "$DT_u/files/share/.mp3"
-        
-        ### copying translations
+        ### translations
         if [ -d "$DC_tlt/translations" ]; then
             act="$(< "$DC_tlt/translations/active")"
             if [ -z "$act" ] && grep -Fo "${act}" <<< "${!slangs[@]}" >/dev/null 2>&1; then
@@ -357,19 +360,16 @@ function upld() {
             fi
             cp -r "$DC_tlt/translations" "$DT_u/files/translations"
         fi
-        
 		export slng
         export naud=$(find "$DT_u/files" -maxdepth 5 -name '*.mp3' |wc -l)
-
-        ### Get text for info variable
+        ###
         if [ -e "${DC_tlt}/note.tmp" ]; then
             mv "${DC_tlt}/note.tmp" "${DC_tlt}/note"
         fi
         cp "${DC_tlt}/note" "$DT_u/files/note"
-		sed -i 's|\"|\\"|g' "$DT_u/files/note"
-        sed -i 's|\:|\\:|g' "$DT_u/files/note"
-        export note="$(sed '/^$/d' "$DT_u/files/note" |sed ':a;N;$!ba;s/\n/<br><br>/g;s/\&/&amp;/g')"
-
+        export info="$(cat "$DT_u/files/note" |sed '/^$/d' \
+        |sed ':a;N;$!ba;s/\n/<br><br>/g;s/\&/&amp;/g' \
+        |sed 's|\"|\\"|g;s|\/|\\/|g')"
         tpc_db 9 id autr "$autr"
         tpc_db 9 id ctgy "$ctgy"
         tpc_db 9 id ilnk "$ilnk"
@@ -378,10 +378,10 @@ function upld() {
         tpc_db 9 id levl "$levl"
         
         ### get data for html
-        bnote="$(echo -e "$note_mod" \
+        htmlnote="$(sed '/^$/d' "$DT_u/files/note" \
         |sed ':a;N;$!ba;s/\n/<br><br>/g;s/\&/&amp;/g')"
         eval body="$(sed -n 5p "$DS/default/vars")"
-        body="${body}<blockquote>$bnote</blockquote>"
+        body="${body}<blockquote>$htmlnote</blockquote>"
         export tpc DT_u body
         
         ###  convert to json format and copy images

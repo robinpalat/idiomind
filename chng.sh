@@ -160,7 +160,7 @@ elif [[ ${1} != 0 ]]; then
     --always-print-result --print-column=2 --separator="" \
     --window-icon=idiomind \
     --text-align=left $var2 --image-on-top \
-    --buttons-layout=spread --no-headers --ellipsize=END --expand-column=2 \
+    --no-headers --ellipsize=END --expand-column=2 \
     --search-column=2 --regex-search --center \
     --width=${sz[0]} --height=${sz[1]} --borders=5 \
     --column=img:IMG \

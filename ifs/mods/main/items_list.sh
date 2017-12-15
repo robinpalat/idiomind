@@ -75,7 +75,7 @@ function vwr() {
 } >/dev/null 2>&1
 
 function word_view() {
-    font_size=25; [ ${#trgt} -gt 20 ] && font_size=18
+    font_size=27; [ ${#trgt} -gt 20 ] && font_size=20
     [ -n "${tags}" ] && field_tag="--field=<small>$tags</small>:lbl"
     [ -n "${defn}" ] && field_defn="--field=$defn:lbl"
     [ -n "${note}" ] && field_note="--field=<span font_desc='Arial 9'>$note</span>:lbl"

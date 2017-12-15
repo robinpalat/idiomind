@@ -56,6 +56,15 @@ play_list() {
     DC_tlt="${DM_tl}/${tpc}/.conf"
 	tpcdb="$DC_tlt/tpc"
 	[ ! -e "$tpcdb" ] && : # MAKE SURE
+    btn1="$(gettext "Play"):0"
+    if [ "$(< $DT/playlck)" = 0 ]; then
+        title="$(gettext "Play")"
+        [ ${mode} -ge 1 -a -n "${tpc}" ] && title="${tpc}"
+    else
+        tpp="$(gettext "Playing:") $(sed -n 1p "$DT/playlck") ..."
+        title="${tpp}"
+        btn1="$(gettext "Stop"):2"
+    fi
     ntosd=""; audio=""
     lbls=( 'Words' 'Sentences' 'Marked items' 'Learning' 'Difficult' )
     in=( 'in0' 'in1' 'in2' 'in3' 'in4' )
@@ -104,15 +113,7 @@ play_list() {
             unset items
         done
     }
-    btn1="$(gettext "Play"):0"
-    if [ "$(< $DT/playlck)" = 0 ]; then
-        title="$(gettext "Play")"
-        [ ${mode} -ge 1 -a -n "${tpc}" ] && title="${tpc}"
-    else
-        tpp="$(gettext "Playing:") $(sed -n 1p "$DT/playlck") ..."
-        title="${tpp}"
-        btn1="$(gettext "Stop"):2"
-    fi
+
     [ -z "$rword" ] && rword=0
     set="$(echo "${iteml[${rword}]}")"
     unset iteml[${rword}]
@@ -147,13 +148,14 @@ play_list() {
     --width=400 --height=260 --borders=5 \
     --button="$btn1" --button="$(gettext "Close")":1
     ret=$?
+        [ $ret -eq 0 ] && echo "${tpc}" > "$DT/playlck"
+        [ $ret -eq 2 ] && echo "0" > "$DT/playlck"
         out1=$(< $tab1); out2=$(< $tab2)
         [ -f "$tab1" ] && rm -f "$tab1"; [ -f "$tab2" ] && rm -f "$tab2"
         f=1; n=0; count=0
         for co in "${psets[@]:0:5}"; do
             val=$(sed -n $((n+1))p <<< "${out1}" |cut -d "|" -f2)
             [ -n "${val}" ] && tpc_db 9 config "${co}" "${val}"
-
             [ "$val" = TRUE ] && count=$((count+$(wc -l |sed '/^$/d' <<< "${!in[${n}]}")))
             let n++
         done
@@ -163,7 +165,6 @@ play_list() {
                 val=$(sed -n $((n+1))p <<< "${out1}" |cut -d "|" -f2)
                 co="${items[$co]}"
                 [ -n "${val}" ] && tpc_db 9 config "${co}" "${val}"
-                
                 [ "$val" = TRUE ] && count=$((count+1))
                 let n++
             done
@@ -172,7 +173,6 @@ play_list() {
         for co in "${psets[@]:5:9}"; do
             val="$(cut -d "|" -f${f} <<< "${out2}")"
             [ -n "${val}" ] && tpc_db 9 config "${co}" "${val}"
-            
             let f++
         done
         pval="$(cut -d "|" -f5 <<< "${out2}")"
