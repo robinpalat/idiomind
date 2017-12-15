@@ -66,6 +66,8 @@ days_ago = datetime.now() - timedelta(days=10)
 shr_db = sqlite3.connect(shrdb)
 shr_db.text_factory = str
 cur_shr_db = shr_db.cursor()
+cur_shr_db.execute("delete from T5")
+cur_shr_db.execute("delete from T6")
 for tpc in topics:
     cnfg_dir = dir + tpc + "/.conf/"
     tpcdb = cnfg_dir + "tpc"

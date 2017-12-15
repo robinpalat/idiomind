@@ -84,21 +84,21 @@ function tpc_db() {
 	if [ $1 = 1 ]; then # read
 		sqlite3 "$DC_tlt/tpc" "select ${co} from '${ta}';"
 	elif [ $1 = 2 ]; then # insert
-		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=1000;\
+		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500;\
 		insert into ${ta} (${co}) values ('${va}');"
 	elif [ $1 = 3 ]; then # mod
-		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=1000;\
+		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500;\
 		update ${ta} set ${co}='${va}';"
 	elif [ $1 = 4 ]; then # delete
-		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=1000;\
+		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500;\
 		delete from ${ta} where ${co}='${va}';"
 	elif [ $1 = 5 ]; then # select all
 		sqlite3 "$DC_tlt/tpc" "select * FROM '${ta}';" |tr -s '|' '\n'
 	elif [ $1 = 6 ]; then # delet all
-		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=2000;\
+		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=1000;\
 		delete from '${ta}';"
 	elif [ $1 = 7 ]; then # mod especific
-		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=1000;\
+		sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500;\
 		update '${ta}' set list='${co}' where list='${va}';"
 	elif [ $1 = 8 ]; then # insert fast
 		sqlite3 "$DC_tlt/tpc" \

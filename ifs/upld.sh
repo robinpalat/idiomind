@@ -57,11 +57,14 @@ function dwld() {
                     mv -f "${tmp}/images/${img,,}.jpg" "${img_path}"
                 fi
             done < <(tpc_db 5 words)
-            rm -fr "${tmp}/share" "${tmp}/conf" "${tmp}/images"
+            
+            [ -f "${tmp}/note" ] && cat "${tmp}/note" >> "${DM_tlt}/note"
+            [ -f "${tmp}/conf/info" ] && cat "${tmp}/conf/info" >> "${DM_tlt}/note"
+            rm -fr "${tmp}/share" "${tmp}/images" "${tmp}/note"
             mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
             cleanups "$DM_t/$tlng/.share/audio/.mp3" \
             "$DM_t/$tlng/.share/images/.jpg" \
-            "$DT/download" "${DC_tlt}/download"
+            "$DT/download" "${DC_tlt}/download" 
 
             "$DS/ifs/tls.sh" colorize 0
         else
@@ -245,7 +248,6 @@ function upld() {
             dlg="$(dlg_upload)"
             ret=$?
         fi
-        
         dlg="$(grep -oP '(?<=|).*(?=\|)' <<< "$dlg")"
         ctgy=$(echo "${dlg}" |cut -d "|" -f2)
         levl=$(echo "${dlg}" |cut -d "|" -f3)
@@ -286,7 +288,7 @@ function upld() {
         "$DS/ifs/tls.sh" check_index "${tpc}" 1
         ( sleep 1; notify-send -i dialog-information "$(gettext "Upload in progress")" \
         "$(gettext "This can take a while...")" -t 6000 ) &
-        mkdir -p "$DT/upload/files/conf"
+        mkdir -p "$DT/upload/files"
         DT_u="$DT/upload/"
         orig="${tpc}"
         pre=$(sed "s/ /_/g;s/'//g" <<< "${orig:0:15}" |iconv -c -f utf8 -t ascii)
@@ -363,11 +365,10 @@ function upld() {
         if [ -e "${DC_tlt}/note.tmp" ]; then
             mv "${DC_tlt}/note.tmp" "${DC_tlt}/note"
         fi
-        cp "${DC_tlt}/note" "$DT_u/files/conf/note"
-		sed -i 's|\"|\\"|g' "$DT_u/files/conf/note"
-		sed -i ':a;N;$!ba;s/\n/<br><br>/g;s/\&/&amp;/g' "$DT_u/files/conf/note"
-        export note="$(sed '/^$/d' "$DT_u/files/conf/note")"
-		cleanups "$DT_u/files/conf/note"
+        cp "${DC_tlt}/note" "$DT_u/files/note"
+		sed -i 's|\"|\\"|g' "$DT_u/files/note"
+        sed -i 's|\:|\\:|g' "$DT_u/files/note"
+        export note="$(sed '/^$/d' "$DT_u/files/note" |sed ':a;N;$!ba;s/\n/<br><br>/g;s/\&/&amp;/g')"
 
         tpc_db 9 id autr "$autr"
         tpc_db 9 id ctgy "$ctgy"
@@ -377,9 +378,10 @@ function upld() {
         tpc_db 9 id levl "$levl"
         
         ### get data for html
-        body="$(echo -e "$note_mod" |sed 's/\&/&amp;/g')"
+        bnote="$(echo -e "$note_mod" \
+        |sed ':a;N;$!ba;s/\n/<br><br>/g;s/\&/&amp;/g')"
         eval body="$(sed -n 5p "$DS/default/vars")"
-        body="${body}<blockquote>$body</blockquote>"
+        body="${body}<blockquote>$bnote</blockquote>"
         export tpc DT_u body
         
         ###  convert to json format and copy images
@@ -457,7 +459,7 @@ END
         return 0
     fi
     
-} #>/dev/null 2>&1
+} >/dev/null 2>&1
 
 fdlg() {
     tpcs="$(cd "$DS/ifs/mods/export"; ls \

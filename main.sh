@@ -29,7 +29,7 @@ source /usr/share/idiomind/default/c.conf
 if [ -z "${tlng}" -o -z "${slng}" ]; then
     source "$DS/ifs/cmns.sh"
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
-    msg_2 "$(gettext "Please check the language settings in the preferences dialog")\n" \
+    msg_2 "$(gettext "Please check language settings in the preferences dialog")\n" \
     error "$(gettext "Open")" "$(gettext "Cancel")"
     if [ $? = 0 ]; then "$DS/cnfg.sh" 1; else exit 1; fi
 fi
@@ -43,6 +43,7 @@ fi
 function new_session() {
     echo "-- new session"
     source "$DS/ifs/cmns.sh"
+    export -f cdb
     d=$(date +%d)
     cdb ${cfgdb} 3 sess date ${d}
 
@@ -61,12 +62,13 @@ function new_session() {
     cd "$DC_s"/; rename 's/\.p$//' *.p; fi; cd /
     # check database
     if [ ! -e ${tlngdb} ]; then
-    [ ! -d "$DM_tls/data" ] && mkdir -p "$DM_tls/data" 
-    echo -n "create table if not exists Words \
-    (Word TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${tlngdb}
-    echo -n "create table if not exists Config (Study TEXT, Expire INTEGER);" |sqlite3 ${tlngdb}
-    echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${tlngdb}
-    sqlite3 ${tlngdb} "alter table Words add column '${slng}' TEXT;"
+		[ ! -d "$DM_tls/data" ] && mkdir -p "$DM_tls/data" 
+		echo -n "create table if not exists Words \
+		(Word TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${tlngdb}
+		echo -n "create table if not exists Config \
+		(Study TEXT, Expire INTEGER);" |sqlite3 ${tlngdb}
+		echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${tlngdb}
+		sqlite3 ${tlngdb} "alter table Words add column '${slng}' TEXT;"
     fi
     # log- practice
     if [ -f "$DC_s/log" ]; then
@@ -75,13 +77,12 @@ function new_session() {
         mv -f "$DT/log" "$DC_s/log"; fi
     fi
     # update - topics
-    if [ ! -e "${shrdb}" ]; then
+    if [ ! -f "${shrdb}" ]; then
 		"$DS/ifs/tls.sh" create_shrdb
 	else
-		for m in {1..7}; do cdb ${shrdb} 6 T${m}; done
+		for n in {1..4} 7; do cdb ${shrdb} 6 T${n}; done
     fi
     echo -e "\n--- updating topics status..."
-    cleanups "$DM_tls/3.cfg" "$DM_tls/4.cfg"
     tdate=$(date +%Y%m%d)
 	while read -r line; do
 		if [ -n "$line" ]; then
@@ -135,7 +136,7 @@ function new_session() {
     for strt in "$DS/ifs/mods/start"/*; do
     ( sleep 5 && "${strt}" ); done &
     
-    # make menu index
+    # make index
     "$DS/mngr.sh" mkmn 0 &
     echo -e "--- topics updated\n"
     
@@ -212,20 +213,12 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
 			tpc_db 9 id naud "$naud"
 			tpc_db 9 id nsze "$nsze"
 			tpc_db 9 id levl "$levl"
-            sed -n 3p "${file}" \
-            |sed 's/,"/\n/g;s/":/=/g;s/^\s*.//g' > "${DC_tlt}/id_temp.cfg"
-            sed -n 18p "${DC_tlt}/id_temp.cfg" \
-            |sed -e 's/info\=\"//;s/<br>/ /g' |sed 's/.$//' > "${DC_tlt}/note"
-            cleanups "${DC_tlt}/id_temp.cfg"
-            check_file "${DC_tlt}/practice/log1" \
-            "${DC_tlt}/practice/log2" "${DC_tlt}/practice/log3"
-            > "${DC_tlt}/download"
-            
+            check_file "${DC_tlt}/practice/log1" "${DC_tlt}/practice/log2" \
+            "${DC_tlt}/practice/log3" "${DC_tlt}/note" "${DC_tlt}/download"
             sed -n 2p "${file}" |tr -d '\\' > "${DC_tlt}/data"
             sed -i 's/},/}\n/g;s|","|}|g;s|":"|{|g;s|":{"|}|g;s/"}/}/g' "${DC_tlt}/data"
             sed -i 's/^\s*./trgt{/g' "${DC_tlt}/data"
 			sed -i '/^$/d' "${DC_tlt}/data"
-
 			while read item_; do
                 item="$(sed 's/}/}\n/g' <<< "${item_}")"
                 type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
@@ -535,17 +528,17 @@ _start() {
 }
 
 case "$1" in
-    topic)
-    topic ;;
-    first_run)
-    "$DS/ifs/tls.sh" "$@" ;;
-    translate)
-    "$DS/ifs/tls.sh" "$@" ;;
     -v|--version)
     source $DS/default/sets.cfg
     echo -n "$_version" ;;
     -s)
     new_session; idiomind ;;
+    topic)
+    topic ;;
+    first_run)
+    "$DS/ifs/tls.sh" "$@" ;;
+    index)
+    "$DS/mngr.sh" mkmn 0 ;;
     autostart)
     bground_session ;;
     --add)
@@ -560,7 +553,7 @@ case "$1" in
     ipanel ;;
     stop)
     "$DS/stop.sh" 2 ;;
-    update_menu)
+    update_addons)
     "$DS/ifs/tls.sh" "${@}" ;;
     *)
     _start ;;

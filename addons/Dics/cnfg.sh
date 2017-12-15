@@ -116,7 +116,7 @@ function dlg() {
     --window-icon=idiomind \
     --expand-column=2 --hide-column=3 \
     --search-column=4 --regex-search \
-    --center \
+    --center --on-top \
     --width=600 --height=370 --borders=8 \
     --column="$(gettext "Enable")":CHK \
     --column="$(gettext "Resource")":TEXT \

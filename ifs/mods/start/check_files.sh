@@ -17,3 +17,8 @@ fi
 if [ ! -e "${cfg_db}" ]; then
 	"$DS/ifs/tls.sh" create_cfg
 fi
+
+if [ "$(cdb "${cfgdb}" 1 opts clipw)" = 'TRUE' ]; then
+	cdb "${cfgdb}" 3 opts clipw 'FALSE'
+fi
+

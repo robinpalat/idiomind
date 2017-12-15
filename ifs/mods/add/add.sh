@@ -59,7 +59,6 @@ function index() {
             rm ./*.tmp
             cd /
         fi
-        
     else
         DC_tlt="${DM_tl}/${tpe}/.conf"; type=${1}
         if [ ! -n "${trgt}" ]; then return 1; fi
@@ -119,11 +118,12 @@ function sentence_p() {
     |sed 's/\.//;s/  / /;s/ /\. /;s/-$//;s/^-//;s/"//g' \
     |tr -d '.' |sed 's/^ *//; s/ *$//; /^$/d' \
     |sed 's/ \+/ /g' |sed -e ':a;N;$!ba;s/\n/\n/g' > "${aw}"
+    # TODO
     translate "$(sed '/^$/d' "${aw}")" auto "$lg" singleline |tr -d '!?¿,;.' \
     |sed -e 's/ \+/ /g' |sed -e 's/.*\]\[\"//g' |sed -e 's/ *$//; /^$/d' > "${bw}"
     
     while read -r wrd; do
-        w="$(tr -d '\.,;“”"' <<< "${wrd,,}")"
+        w="$(tr -d '\.,;“”"' <<< "${wrd,,}" |sed "s|'|''|g")"
         if [[ `sqlite3 $db "select items from pronouns where items is '${w}';"` ]]; then
             echo "<span color='#3E539A'>${wrd}</span>" >> "$DT_r/g.$r"
         elif [[ `sqlite3 $db "select items from nouns_adjetives where items is '${w}';"` ]]; then
@@ -146,22 +146,22 @@ function sentence_p() {
     done < <(sed 's/ /\n/g' <<< "${trgt_p}")
     
     touch "$DT_r/A.$r" "$DT_r/B.$r" "$DT_r/g.$r"; bcle=1
-    trgt_q="${trgt//\'/\'\'}"
+    trgt_q="$(sed "s|'|''|g" <<< "${trgt}")"
     
     if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then
         while [[ ${bcle} -le $(wc -l < "${aw}") ]]; do
         s=$(sed -n ${bcle}p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         t=$(sed -n ${bcle}p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         echo "${t}_${s}" >> "$DT_r/B.$r"
-        t="${t//\'/\'\'}"
-        s="${s//\'/\'\'}"
+        t="$(sed "s|'|''|g" <<< "${t}")"
+        s="$(sed "s|'|''|g" <<< "${s}")"
         if ! [[ "${t}" =~ [0-9] ]] && [ -n "${t}" ] && [ -n "${s}" ]; then
-            if ! [[ `sqlite3 ${tlngdb} "select Word from Words where Word is '${t}';"` ]]; then
+            if [[ -z "$(sqlite3 ${tlngdb} "select Word from Words where Word is '${t}';")" ]]; then
                 sqlite3 ${tlngdb} "insert into Words (Word,'${slng^}',Example) values ('${t}','${s}','${trgt_q}');"
                 sqlite3 ${tlngdb} "insert into ${table} (Word,'${slng^}') values ('${t}','${s}');"
-            elif ! [[ `sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${t}';"` ]]; then
+            elif [[ -z "$(sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${t}';")" ]]; then
                 sqlite3 ${tlngdb} "update Words set '${slng^}'='${s}' where Word='${t}';"
-            elif ! [[ `sqlite3 ${tlngdb} "select Example from Words where Word is '${t}';"` ]]; then
+            elif [[ -z "$(sqlite3 ${tlngdb} "select Example from Words where Word is '${t}';")" ]]; then
                 sqlite3 ${tlngdb} "update Words set Example='${trgt_q}' where Word='${t}';"
             fi
         fi
@@ -172,15 +172,16 @@ function sentence_p() {
         t=$(sed -n ${bcle}p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         s=$(sed -n ${bcle}p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         echo "${t}_${s}" >> "$DT_r/B.$r"
-        t="${t//\'/\'\'}"
-        s="${s//\'/\'\'}"
+        t="$(sed "s|'|''|g" <<< "${t}")"
+        s="$(sed "s|'|''|g" <<< "${s}")"
+        
         if ! [[ "${t}" =~ [0-9] ]] && [ -n "${t}" ] && [ -n "${s}" ]; then
-            if ! [[ `sqlite3 ${tlngdb} "select Word from Words where Word is '${t}';"` ]]; then
+            if [[ -z "$(sqlite3 ${tlngdb} "select Word from Words where Word is '${t}';")" ]]; then
                 sqlite3 ${tlngdb} "insert into Words (Word,'${slng^}',Example) values ('${t}','${s}','${trgt_q}');" 
                 sqlite3 ${tlngdb} "insert into ${table} (Word,'${slng^}') values ('${t}','${s}');"
-            elif ! [[ `sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${t}';"` ]]; then
+            elif [[ -z "$(sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${t}';")" ]]; then
                 sqlite3 ${tlngdb} "update Words set '${slng^}'='${s}' where Word='${t}';"
-            elif ! [[ `sqlite3 ${tlngdb} "select Example from Words where Word is '${t}';"` ]]; then
+            elif [[ -z "$(sqlite3 ${tlngdb} "select Example from Words where Word is '${t}';")" ]]; then
                 sqlite3 ${tlngdb} "update Words set Example='${trgt_q}' where Word='${t}';"
             fi
         fi
@@ -198,18 +199,18 @@ function sentence_p() {
 
 function word_p() {
     table="T`date +%m%y`"
-    trgt_q="${trgt//\'/\'\'}"
-    srce_q="${srce//\'/\'\'}"
+    trgt_q="$(sed "s|'|''|g" <<< "${trgt}")"
+    srce_q="$(sed "s|'|''|g" <<< "${srce}")"
     echo -n "create table if not exists ${table} \
     (Word TEXT, '${slng^}' TEXT);" |sqlite3 ${tlngdb}
     if ! grep -q "${slng}" <<< "$(sqlite3 ${tlngdb} "PRAGMA table_info(${table});")"; then
         sqlite3 ${tlngdb} "alter table ${table} add column '${slng}' TEXT;"
     fi
     if ! [[ "${trgt}" =~ [0-9] ]] && [ -n "${trgt}" ] && [ -n "${srce}" ]; then
-        if ! [[ `sqlite3 ${tlngdb} "select Word from Words where Word is '${trgt}';"` ]]; then
+        if [[ -z "$(sqlite3 ${tlngdb} "select Word from Words where Word is '${trgt}';")" ]]; then
             sqlite3 ${tlngdb} "insert into ${table} (Word,'${slng^}') values ('${trgt_q}','${srce_q}');"
             sqlite3 ${tlngdb} "insert into Words (Word,'${slng^}') values ('${trgt_q}','${srce_q}');"
-        elif ! [[ `sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${trgt}';"` ]]; then
+        elif [[ -z "$(sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${trgt}';")" ]]; then
             sqlite3 ${tlngdb} "update Words set '${slng^}'='${srce_q}' where Word='${trgt}';"
         fi
     fi
@@ -221,7 +222,7 @@ function clean_0() {
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g' |sed 's/^\s*./\U&\E/g' \
     |tr -d ':*|;!¿?[]&:<>+'  |sed 's/\¡//g' \
-    |sed 's/<[^>]*>//g; s/ \+/ /g'
+    |sed 's/<[^>]*>//g; s/ \+/ /; s|/|-|g'
 }
 
 function clean_1() {
@@ -230,7 +231,7 @@ function clean_1() {
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g' |sed 's/^\s*./\U&\E/g' \
     |tr -d '*|",;!¿?()[]&:.<>+'  |sed 's/\¡//g' \
-    |sed 's/<[^>]*>//g; s/ \+/ /g'
+    |sed 's/<[^>]*>//g; s/ \+/ /g; s|/|-|g'
 }
 
 function clean_2() {
@@ -350,10 +351,10 @@ function set_image_2() {
 }
 
 function translate() {
-    stop=0; t="${1}"
+    stop=0; t="$(sed "s|'|''|g" <<< "${1}")"
     if [[ $(wc -w <<< ${1}) = 1 ]] && [[ "${ttrgt}" != TRUE ]] && \
-    [[ "$(sqlite3 ${tlngdb} "select "${slng}" from Words where Word is '${t}';")" ]]; then
-        sqlite3 ${tlngdb} "select "${slng}" from Words where Word is '${t}';"
+    [[ -n "$(sqlite3 ${tlngdb} "select "${slng}" from Words where Word is '${t}';")" ]]; then
+        sqlite3 ${tlngdb} "select "${slng}" from Words where Word is '${t}' limit 1;"
     else
         if ! ls "$DC_d"/*."Traslator online.Translator".* 1> /dev/null 2>&1; then
             "$DS_a/Dics/cnfg.sh" 2
@@ -373,11 +374,13 @@ dwld1() {
             mv -f "$audio_dwld.$ex" "$audio_dwld.mp3"
         fi
     fi
-    if file -b --mime-type "$audio_file" |grep -E 'mpeg|mp3|' >/dev/null 2>&1 \
-    && [[ $(du -b "$audio_file" |cut -f1) -gt 120 ]]; then
-        return 5
-    else
-        [ -e "$audio_file" ] && rm "$audio_file"
+    if [ -f "$audio_file" ]; then
+        if file -b --mime-type "$audio_file" |grep -E 'mpeg|mp3|' >/dev/null 2>&1 \
+        && [[ $(du -b "$audio_file" |cut -f1) -gt 120 ]]; then
+            return 5
+        else
+            cleanups "$audio_file"
+        fi
     fi
 }
 
@@ -386,11 +389,13 @@ dwld2() {
     if [ "${LINK}" -a ! -e "${audio_file}" ]; then
         wget -T 51 -q -U "$useragent" -O "$DT_r/audio.mp3" "${LINK}"
     fi
-    if file -b --mime-type "$DT_r/audio.mp3" |grep -E 'mpeg|mp3|' >/dev/null 2>&1 \
-    && [[ $(du -b "$DT_r/audio.mp3" |cut -f1) -gt 120 ]]; then
-        mv -f "$DT_r/audio.mp3" "${audio_file}"; return 5
-    else 
-        [ -e "$DT_r/audio.mp3" ] && rm "$DT_r/audio.mp3"
+    if [ -f "$audio_file" ]; then
+        if file -b --mime-type "$DT_r/audio.mp3" |grep -E 'mpeg|mp3|' >/dev/null 2>&1 \
+        && [[ $(du -b "$DT_r/audio.mp3" |cut -f1) -gt 120 ]]; then
+            mv -f "$DT_r/audio.mp3" "${audio_file}"; return 5
+        else 
+            cleanups "$DT_r/audio.mp3"
+        fi
     fi
 }
 
@@ -459,7 +464,7 @@ function img_word() {
             for Script in "$DC_d"/*."Script.Download image".*; do
                 Script="$DS_a/Dics/dicts/$(basename "${Script}")"
                 [ -e "${Script}" ] && "${Script}" "${1}"
-                if [ -e "$DT/${1}.jpg" ]; then
+                if [ -f "$DT/${1}.jpg" ]; then
                     if [[ $(du "$DT/${1}.jpg" |cut -f1) -gt 10 ]]; then
                         break
                     else 

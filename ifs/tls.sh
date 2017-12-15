@@ -1095,6 +1095,7 @@ PY
 }
 
 itray() {
+    source /usr/share/idiomind/default/c.conf
     [ ! -e "$HOME/.config/idiomind/tpc" ] && \
     touch "$HOME/.config/idiomind/tpc"
     source "$DS/default/sets.cfg"

@@ -508,6 +508,7 @@ edit_list_more() {
             _war; if [ $? = 0 ]; then
                 yad_kill "yad --list --title="
                 edit_list_cmds 2 "${tpc}"
+                cleanups "$DT/edit_list_more"
             fi
         elif grep "$(gettext "Remove all items")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
@@ -518,13 +519,13 @@ edit_list_more() {
 				tpc_db 6 'learning'; tpc_db 6 'learnt'
 				tpc_db 6 'marks'
                 touch "${DC_tlt}/data"
-                
+                cleanups "$DT/edit_list_more"
                 [ -d "${DM_tlt}" -a -n "$tpc" ] && rm "$DM_tlt"/*.mp3
             fi
         elif grep "$(gettext "Restart topic status")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
-                yad_kill "yad --list --title="
                 cleanups "$DT/list_output" "$DT/list_input"
+                yad_kill "yad --list --title="
                 echo 1 > "${DC_tlt}/stts"
                 tpc_db 6 'reviews'; tpc_db 6 'learnt'
                 tpc_db 6 'learning'
@@ -538,25 +539,31 @@ edit_list_more() {
                 done < "${DC_tlt}/data"
                 tpc_db 3 config repass 0
                 "$DS/mngr.sh" mkmn 1; "$DS/ifs/tls.sh" colorize 0
+                cleanups "$DT/edit_list_more"
             fi
         elif grep "$(gettext "Manage feeds")" <<< "${more}"; then
             idiomind feeds
+            cleanups "$DT/edit_list_more"
         elif grep "$(gettext "Show short sentences in word's view")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
                 yad_kill "yad --list --title="
                 edit_list_cmds 4 "${tpc}"
+                cleanups "$DT/edit_list_more"
             fi
         elif grep "$(gettext "Restore backup:")" <<< "${more}"; then
              _war; if [ $? = 0 ]; then
-                yad_kill "yad --list --title="
                 cleanups "$DT/list_output" "$DT/list_input"
+                yad_kill "yad --list --title="
                 if grep ${dt1} <<< "${more}"; then
                     export line=1
                 elif grep ${dt2} <<< "${more}"; then
                     export line=2
                 fi
                 "$DS/ifs/tls.sh" restore "${tpc}" ${line}
+                cleanups "$DT/edit_list_more"
             fi
+        else
+            cleanups "$DT/edit_list_more"
         fi
     else
         cleanups "$DT/items_to_add"  \

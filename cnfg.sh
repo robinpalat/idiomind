@@ -70,6 +70,7 @@ set_lang() {
 
 config_dlg() {
     sz=(510 350); [[ ${swind} = TRUE ]] && sz=(460 320)
+    show_icon=0; kill_icon=0
 	opts="$(cdb "${cfgdb}" 5 opts)"
 	csets=( 'gramr' 'wlist' 'trans' 'dlaud' \
 	'ttrgt' 'clipw' 'itray' 'swind' 'stsks' 'tlang' 'slang' )
@@ -154,20 +155,28 @@ config_dlg() {
         val=$(cut -d "|" -f19 < "$cnf1")
         if [[ "$val" != "$intrf" ]]; then
 			cdb "${cfgdb}" 3 opts intrf ${val}
-			"$DS/ifs/mods/start/update_tasks.sh" &
+            kill_icon=1; show_icon=1; export intrf=$val
+			idiomind tasks &
         fi
         if [[ $(cdb ${cfgdb} 1 opts clipw)  = TRUE ]] && [ ! -e $DT/clipw ]; then
-            "$DS/ifs/clipw.sh" &
+            "$DS/ifs/tls.sh" clipw &
         else 
             if [ -e $DT/clipw ]; then kill $(cat $DT/clipw); rm -f $DT/clipw; fi
         fi
         if [[ $(cdb ${cfgdb} 1 opts itray)  = TRUE ]] && [[ ! -f "$DT/tray.pid" ]]; then
-			$DS/ifs/tls.sh itray &
+			show_icon=1
 		elif [[ $(cdb ${cfgdb} 1 opts itray)  = FALSE ]] && [[ -f "$DT/tray.pid" ]]; then
-			kill -9 $(cat $DT/tray.pid)
+			kill_icon=1
+		fi
+        if [ $kill_icon = 1 ]; then
+            kill -9 $(cat $DT/tray.pid)
 			kill -9 $(pgrep -f "$DS/ifs/tls.sh itray")
 			rm -f "$DT/tray.pid"
-		fi
+        fi
+        if [ $show_icon = 1 ]; then
+            $DS/ifs/tls.sh itray &
+        fi
+        
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"

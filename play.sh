@@ -60,13 +60,11 @@ play_list() {
     lbls=( 'Words' 'Sentences' 'Marked items' 'Learning' 'Difficult' )
     in=( 'in0' 'in1' 'in2' 'in3' 'in4' )
     iteml=( "$(gettext "No repeat")" "$(gettext "Words")" "$(gettext "Sentences")" )
-    
 	sents="$(tpc_db 5 sentences)"
 	words="$(tpc_db 5 words)"
 	marks="$(tpc_db 5 marks)"
 	learn="$(tpc_db 5 learning)"
 	leart="$(tpc_db 5 learnt)"
-
     in0="$(grep -Fxv "${sents}" <<< "${learn}" |wc -l)"
     in1="$(grep -Fxv "${words}" <<< "${learn}" |wc -l)"
     in2="$(grep -Fxv "${leart}" <<< "${marks}" |wc -l)"
@@ -85,7 +83,7 @@ play_list() {
             let n++ v++
         done
     else
-		: # make sure....
+		: # TODO
     fi
     setting_1() {
         n=0
@@ -154,7 +152,7 @@ play_list() {
         f=1; n=0; count=0
         for co in "${psets[@]:0:5}"; do
             val=$(sed -n $((n+1))p <<< "${out1}" |cut -d "|" -f2)
-            [ -n "${val}" ] && tpc_db 3 config "${co}" "${val}"
+            [ -n "${val}" ] && tpc_db 9 config "${co}" "${val}"
 
             [ "$val" = TRUE ] && count=$((count+$(wc -l |sed '/^$/d' <<< "${!in[${n}]}")))
             let n++
@@ -164,7 +162,7 @@ play_list() {
             for co in "${!items[@]}"; do
                 val=$(sed -n $((n+1))p <<< "${out1}" |cut -d "|" -f2)
                 co="${items[$co]}"
-                [ -n "${val}" ] && tpc_db 3 config "${co}" "${val}"
+                [ -n "${val}" ] && tpc_db 9 config "${co}" "${val}"
                 
                 [ "$val" = TRUE ] && count=$((count+1))
                 let n++
@@ -173,7 +171,7 @@ play_list() {
         done
         for co in "${psets[@]:5:9}"; do
             val="$(cut -d "|" -f${f} <<< "${out2}")"
-            [ -n "${val}" ] && tpc_db 3 config "${co}" "${val}"
+            [ -n "${val}" ] && tpc_db 9 config "${co}" "${val}"
             
             let f++
         done
@@ -181,15 +179,13 @@ play_list() {
         if [[ "$pval" = "$(gettext "Words")" ]]; then  val=1
         elif [[ "$pval" = "$(gettext "Sentences")" ]]; then  val=2
         else  val=0; fi
-        [ -n "${val}" ] && tpc_db 3 config "rword" "${val}"
-        
-       
- 
+        [ -n "${val}" ] && tpc_db 9 config "rword" "${val}"
+
         # cmd play
         if [ $ret -eq 0 ]; then
             if [ ${count} -lt 1 ]; then
-                notify-send "$(gettext "Nothing to play")" "$(gettext "Exiting...")" -t 3000 &
                 echo 0 > "$DT/playlck"
+                notify-send "$(gettext "Nothing to play")" "$(gettext "Exiting...")" -t 3000 &
                 "$DS/stop.sh" 2 & exit 1; fi
             if [ -d "${DM_tlt}" ] && [ -n "${tpc}" ]; then
                     if grep TRUE <<< "$words$sntcs$marks$wprct"; then
