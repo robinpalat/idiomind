@@ -56,6 +56,8 @@ play_list() {
     DC_tlt="${DM_tl}/${tpc}/.conf"
 	tpcdb="$DC_tlt/tpc"
 	[ ! -e "$tpcdb" ] && : # MAKE SURE
+    [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
+    [ ! -e $DT/playlck ] && echo 0 > $DT/playlck
     btn1="$(gettext "Play"):0"
     if [ "$(< $DT/playlck)" = 0 ]; then
         title="$(gettext "Play")"
@@ -79,8 +81,6 @@ play_list() {
     in2="$(grep -Fxv "${leart}" <<< "${marks}" |wc -l)"
     in3="$(egrep -cv '#|^$' "${DC_tlt}/practice/log2")"
     in4="$(egrep -cv '#|^$' "${DC_tlt}/practice/log3")"
-    [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
-    [ ! -e $DT/playlck ] && echo 0 > $DT/playlck
     
     opts="$(tpc_db 5 config |head -n9)"
 	cfg=1

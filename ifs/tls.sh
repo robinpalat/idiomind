@@ -1325,7 +1325,8 @@ clipw() {
             "$DS/ifs/clipw.sh" &
             sleep 1
             notify-send -i info "$(gettext "Information")" \
-            "$(gettext "The clipboard watcher is enabled for 5 minutes...")" -t 5000
+"$(gettext "The clipboard watcher is enabled for 5 minutes...")
+$(gettext "Topic:") \"$tpc\"" -t 5000
         else 
 			"$DS/ifs/clipw.sh" 1
         fi
