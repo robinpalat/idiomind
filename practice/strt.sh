@@ -816,15 +816,16 @@ function practices() {
         fi
         export all=$(egrep -cv '#|^$' "${pdir}/${pr}.0")
     fi
-    if [[ ${all} -lt 2 ]]; then
-		sentcount=$(grep -Fxv "${cfg3}" <<< "${cfg1}" |wc -l)
-		wordcount=$(grep -Fxv "${cfg4}" <<< "${cfg1}" |wc -l)
-		if grep -o -E 'a|b|c|d' <<< ${pr}; then
-        msg "$(gettext "Insufficient number of words to start"):\n$(gettext "Words") $wordcount / $(gettext "Sentences") $sentcount" \
-        dialog-information " " "$(gettext "OK")"
+    if [[ ${all} -lt 1 ]]; then
+        if [ "$(egrep -cv '#|^$' <<< "${cfg1}")" -lt 1 ]; then
+            msg "$(gettext "There are not enough items to practice") \n" \
+            dialog-information " " "$(gettext "OK")"
+		elif grep -o -E 'a|b|c|d' <<< ${pr}; then
+            msg "$(gettext "There are no words on the \"Learning\" list, but there are still sentences") \n" \
+            dialog-information " " "$(gettext "OK")"
         elif grep -o 'e' <<< ${pr}; then
-        msg "$(gettext "Insufficient number of sentences to start"):\n$(gettext "Words") $wordcount / $(gettext "Sentences") $sentcount" \
-        dialog-information " " "$(gettext "OK")"
+            msg "$(gettext "There are no sentences on the \"Learning\" list, but there are still words") \n" \
+            dialog-information " " "$(gettext "OK")"
         fi
         strt 0 & return
     else

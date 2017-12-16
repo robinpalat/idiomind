@@ -292,8 +292,8 @@ function upld() {
         sv_data
         conds_upload "${2}"
         "$DS/ifs/tls.sh" check_index "${tpc}" 1
-        ( sleep 1; notify-send -i dialog-information "$(gettext "Upload in progress")" \
-        "$(gettext "This can take a while...")" -t 6000 ) &
+        ( sleep 1; notify-send -i dialog-information "$(gettext "Uploading")" \
+        "$(gettext "Please wait, it may take a while")" -t 6000 ) &
         mkdir -p "$DT/upload/files"
         DT_u="$DT/upload/"
         orig="${tpc}"
