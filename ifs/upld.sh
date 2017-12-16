@@ -223,7 +223,7 @@ function upld() {
     linkac='http://idiomind.net/community/?q=user/register'
     ctgy=$(tpc_db 1 id ctgy)
     levl=$(tpc_db 1 id levl)
-    text_upld="<span font_desc='Arial 12'><b>$(gettext "Share online with other learners!")</b></span>\n<a href='$linkc'>$(gettext "Visit topics library")</a>"
+    text_upld="<span font_desc='Arial 12'><b>$(gettext "Share online with other learners!")</b></span>\n<a href='$linkc'>$(gettext "Visit the topics library")</a>"
     _Categories="${ctgy}${list}"
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
     _levels="!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")"

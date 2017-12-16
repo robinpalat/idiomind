@@ -630,7 +630,7 @@ promp_topic_info() {
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
-    slng_err_lbl="$(gettext "You may need to translate this topic to your language: click \"Edit\" tab on the main window, click \"Translate\" button, and then in \"Automatic Translation\" select from the list of languages:") \"$slng\""
+    slng_err_lbl="$(gettext "You may need to translate this topic to your language: click \"Manage\" tab on the main window, click \"Edit\" -> \"Translate\" buttons, and from \"Automatic Translation\" select:") \"$slng\""
     slng_err_lbl="$(printf '%s\n' "$slng_err_lbl"| fold -s -w80)"
     
     if [ -e "${DC_tlt}/note_err" ]; then
@@ -738,7 +738,7 @@ function transl_batch() {
     sz=(580 450); [[ ${swind} = TRUE ]] && sz=(480 440)
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
-    if [ -e "$DT/transl_batch_lk" -o -e "$DT/translate_to" ]; then
+    if [ -e "$DT/transl_batch_lk" ]; then
         msg_4 "$(gettext "Please wait until the current actions are finished")" \
         "face-worried" "$(gettext "OK")" "$(gettext "Stop")" \
         "$(gettext "Wait")" "$DT/translation"
@@ -763,7 +763,6 @@ echo -e "yad --form --title=\"$(gettext "$tlng") / $active_trans\" \\
 --always-print-result --print-all \\
 --width=${sz[0]} --height=${sz[1]} --borders=5 \\
 --on-top --scroll --center --separator='|\n' \\
---button=\!'gtk-preferences':\"idiomind translate\" \\
 --button=$(gettext \"Save\")!document-save:0 \\
 --button=$(gettext \"Cancel\"):1 \\" > "$DT/dlg"
 
@@ -823,35 +822,41 @@ translate_to() {
     if [ ${list_transl_saved_WC} -lt 1 ]; then
         ldgl="$(yad --form --title="$(gettext "Native Language Settings")" \
         --class=Idiomind --name=Idiomind \
-        --text="$(gettext "The current Native language of this topic is") <b>$active_trans</b>" \
+        --text="$(gettext "The current Native language of this topic is")  <b>$active_trans</b>" \
         --text-align=center --always-print-result --window-icon=idiomind \
-        --buttons-layout=end --center --on-top \
-        --width=390 --height=350 --borders=12 \
+        --buttons-layout=end --center --on-top --align=right \
+        --width=380 --height=420 --borders=12 \
         --field="":LBL " " \
-        --field="\n<b>$(gettext "Verified translations") </b> ":LBL " " \
+        --field="\n<b>$(gettext "Verified Translations") </b> ":LBL " " \
         --field="$active_trans — $(gettext "The  accuracy of this translation was verified")":CHK "$chk" \
         --field="<small>$(gettext "This topic has no verified translations.")</small>":LBL " " \
         --field=" ":LBL " " \
-        --field="<b>$(gettext "Automatic translation")</b> ":LBL " " \
-        --field="$(gettext "Select Native language:")":CB "${list_transl}" \
+        --field="<b>$(gettext "Automatic Translation")</b> ":LBL " " \
+        --field="$(gettext "Select native language:")":CB "${list_transl}" \
         --field="<small>$(gettext "Note that translation from google translate service sometimes is inaccurate especially in complex frases.")</small>":LBL " " \
+        --field=" ":LBL " " \
+        --field="<b>$(gettext "Manually Translation")</b> ":LBL " " \
+        --field="$(gettext "Open")":fbtn "$DS/ifs/tls.sh transl_batch" \
         --button="$(gettext "Apply")"!gtk-apply:0 \
         --button="$(gettext "Cancel")":1)"; ret="$?"
     else
         ldgl="$(yad --form --title="$(gettext "Native Language Settings")" \
         --class=Idiomind --name=Idiomind \
-        --text="$(gettext "The current Native language of this topic is") <b>$active_trans</b>" \
+        --text="$(gettext "The current Native language of this topic is")  <b>$active_trans</b>" \
         --text-align=center --always-print-result --window-icon=idiomind \
-        --buttons-layout=end --center --on-top \
-        --width=390 --height=350 --borders=12 \
+        --buttons-layout=end --center --on-top --align=right \
+        --width=380 --height=420 --borders=12 \
         --field="":LBL " " \
-        --field="\n<b>$(gettext "Verified translations") </b> ":LBL " " \
+        --field="\n<b>$(gettext "Verified Translations") </b> ":LBL " " \
         --field="$active_trans — $(gettext "The  accuracy of this translation was verified")":CHK "$chk" \
-        --field="$(gettext "Change the Native language:")":CB "!${list_transl_saved}" \
+        --field="$(gettext "Change native language:")":CB "!${list_transl_saved}" \
         --field=" ":LBL " " \
-        --field="<b>$(gettext "Automatic translation")</b> ":LBL " " \
-        --field="$(gettext "Select Native language:")":CB "${list_transl}" \
+        --field="<b>$(gettext "Automatic Translation")</b> ":LBL " " \
+        --field="$(gettext "Select native language:")":CB "${list_transl}" \
         --field="<small>$(gettext "Note that translation from google translate service sometimes is inaccurate especially in complex frases.")</small>":LBL " " \
+        --field=" ":LBL " " \
+        --field="<b>$(gettext "Manually Translation")</b> ":LBL " " \
+        --field="$(gettext "Open")":fbtn "$DS/ifs/tls.sh transl_batch" \
         --button="$(gettext "Apply")"!gtk-apply:0 \
         --button="$(gettext "Cancel")":1)"; ret="$?"
     fi
@@ -1006,7 +1011,7 @@ translate_to() {
         fi
     fi
     cleanups "$DT/translate_to" "${DC_tlt}/slng_err.bk"
-}
+} >/dev/null 2>&1
 
 menu_addons() {
     > /usr/share/idiomind/addons/menu_list
@@ -1083,7 +1088,7 @@ for item in data:
 f.close()
 PY
     rm -f "$DT/co_lk"
-}
+} >/dev/null 2>&1
 
 itray() {
     source /usr/share/idiomind/default/c.conf
@@ -1325,7 +1330,7 @@ clipw() {
 			"$DS/ifs/clipw.sh" 1
         fi
 
-}>/dev/null 2>&1
+} >/dev/null 2>&1
 
 
 gtext() {
@@ -1382,7 +1387,7 @@ case "$1" in
     transl_batch)
     transl_batch ;;
     translate)
-    translate_to "$@" ;;
+    translate_to ;;
     itray)
     itray ;;
     about)

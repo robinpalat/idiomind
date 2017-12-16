@@ -544,8 +544,6 @@ case "$1" in
     "$DS/mngr.sh" mkmn 0 ;;
     autostart)
     bground_session ;;
-    translate)
-    "$DS/ifs/tls.sh" "$@" ;;
     --add)
    "$DS/add.sh" new_items "${dir}" 2 "${2}" ;;
     add)
