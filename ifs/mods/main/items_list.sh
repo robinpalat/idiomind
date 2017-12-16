@@ -5,7 +5,7 @@ sz=(580 560 480); [[ ${swind} = TRUE ]] && sz=(480 460 400)
 function vwr() {
     if [ ${1} = 1 ]; then 
 		index="$(tpc_db 5 learning)"
-		item_name="$(sed 's/<[^>]*>//g' <<< "${3}")"
+		item_name="$(sed 's/<[^>]*>//g' <<< "${2}")"
     elif [ ${1} = 2 ]; then
 		index="$(tpc_db 5 learnt)"
 		item_name="$(sed 's/<[^>]*>//g' <<< "${2}")"
@@ -136,20 +136,20 @@ function notebook_1() {
     cmd2="'$DS/ifs/tls.sh' attatchs"
     cmd3="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd4="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
-    chk1=$(($(grep -c '[^[:space:]]' <<< "${ls1}")*4))
+    chk1=$(($(grep -c '[^[:space:]]' <<< "${ls1}")*3))
     chk5=$(grep -c '[^[:space:]]' < "${DC_tlt}/index")
 
     list() { if [[ ${chk1} = ${chk5} ]]; then
     cat "${DC_tlt}/index"; else [ -n "${ls1}" ] && echo -e "${ls1}" | \
-    awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE\n"""}'; fi; }
+    awk '{print ""$0"\nFALSE\n"""}'; fi; }
 
     list | yad --list --tabnum=1 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 1" --grid-lines=hor \
-    --print-column=2 --expand-column=2 --no-headers \
-    --ellipsize=end --wrap-width=${sz[2]} --ellipsize-cols=1 \
-    --search-column=2 --regex-search --hide-column=4 --tooltip-column=4 \
-    --column=Name:IMG --column=Name:TEXT \
+    --print-column=1 --expand-column=1 --no-headers \
+    --ellipsize=end --wrap-width=${sz[2]} --ellipsize-cols=2 \
+    --search-column=1 --regex-search --hide-column=3 --tooltip-column=3 \
+    --column=Name:TEXT \
     --column=Learned:CHK --column=@back@:TIP > "$cnf1" &
     ([ -n "${ls2}" ] && echo "${ls2}") |yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
@@ -259,13 +259,14 @@ function tpc_view() {
     --name=Idiomind --class=Idiomind \
     --no-click --print-column=0 --hide-column=2 --tooltip-column=2 \
     --ellipsize=end --wrap-width=${sz[2]} --ellipsize-cols=0 \
-    --dclick-action="${dclk}" \
+    --dclick-action=":" \
     --window-icon=idiomind \
     --hide-column=2 --tooltip-column=2 \
     --no-headers --ellipsize=END --center \
     --width=${sz[0]} --height=${sz[1]} --borders=8 \
     --column=" " --column=" " \
-    --button="$(gettext "Install")":0
+    --button="$(gettext "Install")":0 \
+    --button="$(gettext "Close")":1
 }
 
 function panelini() {

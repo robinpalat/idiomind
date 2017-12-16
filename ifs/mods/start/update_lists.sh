@@ -24,8 +24,6 @@ topics="$(cdb "${shrdb}" 5 topics|head -n30)"
 echo 
 
 # grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' |sort |uniq
-img1="$DS/images/1.png"; img2="$DS/images/2.png"
-img3="$DS/images/3.png"; img0="$DS/images/0.png"
 dir="$DM_tl/"
 
 for n in {1..100}; do
@@ -43,7 +41,7 @@ if grep '^$' "${items}"; then sed -i '/^$/d' "${items}"; fi
 f_lock "$DT/co_lk"
 lstp="${items}"
 
-export dir topics lstp img0 img1 img2 img3 shrdb
+export dir topics lstp shrdb
 cleanups "$DM_tl/.share/index"
 
 python <<PY
@@ -54,10 +52,6 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 topics = os.environ['topics']
 dir = os.environ['dir']
-img0 = os.environ['img0']
-img1 = os.environ['img1']
-img2 = os.environ['img2']
-img3 = os.environ['img3']
 lstp = os.environ['lstp']
 shrdb = os.environ['shrdb']
 lstp = [line.strip() for line in open(lstp)]
@@ -144,14 +138,14 @@ for tpc in topics:
 					else:
 						chk = 'FALSE'
 					if item in log3:
-						index.write(img3+"\n"+i+"\nFALSE\n"+srce+"\n")
+						index.write("<span color='#AB5E7A'>"+i+"</span>\nFALSE\n"+srce+"\n")
 					elif item in log2:
-						index.write(img2+"\n"+i+"\nFALSE\n"+srce+"\n")
+						index.write("<span color='#C17C43'>"+i+"</span>\nFALSE\n"+srce+"\n")
 					elif item in log1:
 						print chk + ' -> ' + item
-						index.write(img1+"\n"+i+"\n"+chk+"\n"+srce+"\n")
+						index.write("<span color='#76AC44'>"+i+"</span>\n"+chk+"\n"+srce+"\n")
 					else:
-						index.write(img0+"\n"+i+"\nFALSE\n"+srce+"\n")
+						index.write(i+"\nFALSE\n"+srce+"\n")
 					if chk == 'TRUE':
 						cfg1len=cfg1len+1
 			index.close()
