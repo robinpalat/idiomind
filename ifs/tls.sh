@@ -1055,7 +1055,6 @@ marks = os.environ['marks']
 log1 = os.environ['log1']
 log2 = os.environ['log2']
 log3 = os.environ['log3']
-img0 = os.environ['img0']
 ENC = locale.getpreferredencoding()
 learning.encode(ENC)
 marks.encode(ENC)
@@ -1074,11 +1073,11 @@ for item in data:
         else:
             i=item
         if item in log3:
-            f.write("<span color='#AB5E7A'>"+i+"</span>\nFALSE\n"+srce+"\n")
+            f.write("<span color='#AE3259'>"+i+"</span>\nFALSE\n"+srce+"\n")
         elif item in log2:
-            f.write("<span color='#C17C43'>"+i+"</span>\nFALSE\n"+srce+"\n")
+            f.write("<span color='#C15F27'>"+i+"</span>\nFALSE\n"+srce+"\n")
         elif item in log1:
-            f.write("<span color='#76AC44'>"+i+"</span>\n"+chk+"\n"+srce+"\n")
+            f.write("<span color='#4C8C12'>"+i+"</span>\n"+chk+"\n"+srce+"\n")
         else:
             f.write(i+"\nFALSE\n"+srce+"\n")
 f.close()

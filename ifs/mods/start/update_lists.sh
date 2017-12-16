@@ -138,12 +138,12 @@ for tpc in topics:
 					else:
 						chk = 'FALSE'
 					if item in log3:
-						index.write("<span color='#AB5E7A'>"+i+"</span>\nFALSE\n"+srce+"\n")
+						index.write("<span color='#AE3259'>"+i+"</span>\nFALSE\n"+srce+"\n")
 					elif item in log2:
-						index.write("<span color='#C17C43'>"+i+"</span>\nFALSE\n"+srce+"\n")
+						index.write("<span color='#C15F27'>"+i+"</span>\nFALSE\n"+srce+"\n")
 					elif item in log1:
 						print chk + ' -> ' + item
-						index.write("<span color='#76AC44'>"+i+"</span>\n"+chk+"\n"+srce+"\n")
+						index.write("<span color='#4C8C12'>"+i+"</span>\n"+chk+"\n"+srce+"\n")
 					else:
 						index.write(i+"\nFALSE\n"+srce+"\n")
 					if chk == 'TRUE':
