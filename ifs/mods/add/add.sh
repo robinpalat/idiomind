@@ -8,7 +8,7 @@ fi
 
 function check_s() {
     if [ -z "${1}" ]; then
-        [ -d "$DT_r" ] && rm -fr "$DT_r" &
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "No topic selected")\n" \
         dialog-information "$(gettext "Information")" & exit 1
     fi

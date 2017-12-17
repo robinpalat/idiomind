@@ -264,20 +264,20 @@ check_index() {
 
 create_cfgdb() {
 	cfgdb="$HOME/.config/idiomind/config"
-	echo -n "pragma busy_timeout=2000;create table if not exists opts \
+	echo -n "pragma busy_timeout=800;create table if not exists opts \
 	(gramr TEXT, wlist TEXT, trans TEXT, dlaud TEXT, ttrgt TEXT, clipw TEXT, itray TEXT, \
 	swind TEXT, stsks TEXT, tlang TEXT, slang TEXT, synth TEXT, txaud TEXT, intrf TEXT);" |sqlite3 "${cfgdb}"
-	echo -n "pragma busy_timeout=2000;create table if not exists lang \
+	echo -n "pragma busy_timeout=500;create table if not exists lang \
 	(tlng TEXT, slng TEXT);" |sqlite3 "${cfgdb}"
-	echo -n "pragma busy_timeout=2000; create table if not exists geom \
+	echo -n "pragma busy_timeout=500; create table if not exists geom \
 	(vals TEXT);" |sqlite3 "${cfgdb}"
-	echo -n "pragma busy_timeout=2000; create table if not exists user \
+	echo -n "pragma busy_timeout=500; create table if not exists user \
 	(autr TEXT, pass TEXT);" |sqlite3 "${cfgdb}"
-	echo -n "pragma busy_timeout=2000; create table if not exists sess \
+	echo -n "pragma busy_timeout=500; create table if not exists sess \
 	(date TEXT);" |sqlite3 "${cfgdb}"
-	echo -n "pragma busy_timeout=2000; create table if not exists updt \
+	echo -n "pragma busy_timeout=500; create table if not exists updt \
 	(date TEXT,ignr TEXT);" |sqlite3 "${cfgdb}"
-	sqlite3 "${cfgdb}" "pragma busy_timeout=2000;\
+	sqlite3 "${cfgdb}" "pragma busy_timeout=500;\
 	insert into opts (gramr,wlist,trans,dlaud,ttrgt,\
 	clipw,itray,swind,stsks,tlang,slang,synth,txaud,intrf) \
 	values ('FALSE','FALSE','FALSE','FALSE','FALSE','FALSE','FALSE',\
@@ -630,25 +630,11 @@ promp_topic_info() {
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
-    slng_err_lbl="$(gettext "You may need to translate this topic to your language: click \"Manage\" tab on the main window, click \"Edit\" -> \"Translate\" buttons, and from \"Automatic Translation\" select:") \"$slng\""
-    slng_err_lbl="$(printf '%s\n' "$slng_err_lbl"| fold -s -w80)"
-    
-    if [ -e "${DC_tlt}/note_err" ]; then
-        include "$DS/ifs/mods/add"
-        dlg_text_info_3 "$(cat "${DC_tlt}/note_err")"
-        cleanups "${DC_tlt}/note_err"
+    if [ -n "$active_trans" -a "$active_trans" != "$slng" ]; then
+        slng_err_lbl="$(gettext "You may need to translate this topic to your language: click \"Manage\" tab on the main window, click \"Edit\" -> \"Translate\" buttons, and from \"Automatic Translation\" select:") \"$slng\""
+        echo "$slng_err_lbl" > "${DC_tlt}/slng.err"
     fi
-    if [ -e "${DC_tlt}/slng_err" ]; then
-        msg "$slng_err_lbl" "face-worried" \
-        "$(gettext "Languages")" \
-        "$(gettext "OK")"
-        cleanups "${DC_tlt}/slng_err"
-        
-    elif [ -n "$active_trans" -a "$active_trans" != "$slng" ]; then
-        msg "$slng_err_lbl" "face-worried" \
-        "$(gettext "Languages")" \
-        "$(gettext "OK")"
-    fi
+    check_err "${DC_tlt}/slng.err" "${DC_tlt}/note.err"
     
 } >/dev/null 2>&1
 
@@ -1039,7 +1025,7 @@ colorize() {
 	acheck="$(tpc_db 1 config acheck)"
 	marks="$(tpc_db 5 marks)"
 	learning="$(tpc_db 5 learning)"
-	if [[ "$reviews" -ge 4 ]] && \
+	if [[ "$reviews" -ge 2 ]] && \
 	[[ "$acheck" = TRUE ]] && [[ ${2} = 1 ]]; 
 	then chk=TRUE; else chk=FALSE; fi
 	data="${DC_tlt}/data"
@@ -1320,16 +1306,24 @@ if __name__ == "__main__":
 ABOUT
 } >/dev/null 2>&1
 
+
 clipw() {
-		if [[ ! -e $DT/clipw ]]; then
+    if [ -n "${tpc}" ]; then
+        if [[ ! -e $DT/clipw  ]]; then
             "$DS/ifs/clipw.sh" &
             sleep 1
             notify-send -i info "$(gettext "Information")" \
 "$(gettext "The clipboard watcher is enabled for 5 minutes...")
-$(gettext "Topic:") \"$tpc\"" -t 5000
+($tpc)" -t 5000
         else 
-			"$DS/ifs/clipw.sh" 1
+            "$DS/ifs/clipw.sh" 1
         fi
+    else
+        source "$DS/ifs/cmns.sh"
+        cdb ${cfgdb} 3 opts clipw FALSE &
+        notify-send -i info "$(gettext "Information")" \
+"$(gettext "Clipboard watcher: No topic selected or active, exiting...")" -t 10000
+    fi
 
 } >/dev/null 2>&1
 

@@ -107,7 +107,7 @@ function dlg() {
     else 
         text="--center"; n=6
     fi
-
+    check_err "$DC_a/dicts.err"
     sel="$(dict_list ${n} |yad --list \
     --title="$(gettext "Dictionaries")" \
     --name=Idiomind --class=Idiomind "${text}" \
@@ -193,6 +193,8 @@ case "$1" in
     dclk "$@" ;;
     cpfile)
     cpfile "$@" ;;
+    errors)
+    dlg_text_info_3 ;;
     updt_dicts)
     update_config_dir "$@" ;;
     *)

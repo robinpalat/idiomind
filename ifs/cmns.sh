@@ -214,6 +214,23 @@ function unset_item() {
     export grmr tags mark link cdid
 }
 
+function check_err() {
+    for filerr in "$@"; do
+        if [ -f "$filerr" ]; then
+            sleep 2; echo "$(< "$filerr")" |yad --text-info \
+            --title="$(gettext "Errors found")" \
+            --name=Idiomind --class=Idiomind \
+            --window-icon=idiomind \
+            --image="face-worried" \
+            --wrap --margins=5 \
+            --fixed --center --on-top \
+            --width=450 --height=150 --borders=5 \
+            --button="$(gettext "Close")":1
+            cleanups "$filerr"
+        fi
+    done &
+}
+
 function calculate_review() {
     [ -z ${notice1} ] && source "$DS/default/sets.cfg"
     DC_tlt="$DM_tl/${1}/.conf"
