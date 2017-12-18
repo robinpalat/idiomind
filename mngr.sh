@@ -780,10 +780,7 @@ mark_to_learn_topic() {
 
     steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
     tpc_db 7 config repass ${steps}
-
-
-    export data="${DC_tlt}/data" 
-    export tpcdb
+    export data="${DC_tlt}/data" tpcdb
     
 python <<PY
 import os, re, locale, sqlite3
@@ -803,7 +800,8 @@ for item in data:
     item = item.replace('}', '}\n')
     fields = re.split('\n',item)
     trgt = (fields[0].split('trgt{'))[1].split('}')[0]
-    cur.execute("insert into learning (list) values (?)", (trgt,))
+    if trgt and trgt != ' ':
+        cur.execute("insert into learning (list) values (?)", (trgt,))
 db.commit()
 db.close()
 PY
@@ -867,7 +865,6 @@ mark_as_learned_topic() {
         yad_kill "yad --form " "yad --list " \
         "yad --text-info " "yad --notebook "
     fi
-    
     export data="${DC_tlt}/data" tpcdb
 
 python <<PY
@@ -888,7 +885,7 @@ for item in data:
     item = item.replace('}', '}\n')
     fields = re.split('\n',item)
     trgt = (fields[0].split('trgt{'))[1].split('}')[0]
-    if trgt:
+    if trgt and trgt != ' ':
         cur.execute("insert into learnt (list) values (?)", (trgt,))
 db.commit()
 db.close()
@@ -942,7 +939,6 @@ mark_as_learnt_topic_ok() {
             echo 3 > "${DC_tlt}/stts"
         fi
     fi
-
     export data="${DC_tlt}/data" tpcdb
 
 python <<PY
@@ -963,7 +959,7 @@ for item in data:
     item = item.replace('}', '}\n')
     fields = re.split('\n',item)
     trgt = (fields[0].split('trgt{'))[1].split('}')[0]
-    if trgt:
+    if trgt and trgt != ' ':
         cur.execute("insert into learnt (list) values (?)", (trgt,))
 db.commit()
 db.close()

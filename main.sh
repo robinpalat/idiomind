@@ -63,12 +63,12 @@ function new_session() {
     # check database
     if [ ! -e ${tlngdb} ]; then
 		[ ! -d "$DM_tls/data" ] && mkdir -p "$DM_tls/data" 
-		echo -n "create table if not exists Words \
-		(Word TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${tlngdb}
-		echo -n "create table if not exists Config \
-		(Study TEXT, Expire INTEGER);" |sqlite3 ${tlngdb}
-		echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${tlngdb}
-		sqlite3 ${tlngdb} "alter table Words add column '${slng}' TEXT;"
+        echo -n "create table if not exists Words \
+        (Word TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${tlngdb}
+        echo -n "create table if not exists Config \
+        (Study TEXT, Expire INTEGER);" |sqlite3 ${tlngdb}
+        echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${tlngdb}
+        sqlite3 ${tlngdb} "alter table Words add column '${slng}' TEXT;"
     fi
     # log- practice
     if [ -f "$DC_s/log" ]; then
@@ -78,10 +78,10 @@ function new_session() {
     fi
     # update - topics
     if [ ! -f "${shrdb}" ]; then
-		"$DS/ifs/tls.sh" create_shrdb
+        "$DS/ifs/tls.sh" create_shrdb
 	else
-		for n in {1..4} 7; do 
-		cdb ${shrdb} 6 T${n}; done
+        for n in {1..4} 7; do 
+        cdb ${shrdb} 6 T${n}; done
     fi
     echo -e "\n--- updating topics status..."
     tdate=$(date +%Y%m%d)
@@ -196,31 +196,30 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             "$DM_t/$tlng/${name}/.conf/practice"
             DM_tlt="$DM_t/$tlng/${name}"
             DC_tlt="$DM_t/$tlng/${name}/.conf"
-			tpcdb="$DC_tlt/tpc"
-			
-			cp -f "$DS/default/tpc" "$tpcdb"
-			tpc_db 9 id name "${name}"
-			tpc_db 9 id slng "$slng"
-			tpc_db 9 id tlng "$tlng"
-			tpc_db 9 id autr "$autr"
-			tpc_db 9 id ctgy "$ctgy"
-			tpc_db 9 id ilnk "$ilnk"
-			tpc_db 9 id orig "$orig"
-			tpc_db 9 id dtec "$dtec"
-			tpc_db 9 id dtei "$(date +%F)"
-			tpc_db 9 id nwrd "$nwrd"
-			tpc_db 9 id nsnt "$nsnt"
-			tpc_db 9 id nimg "$nimg"
-			tpc_db 9 id naud "$naud"
-			tpc_db 9 id nsze "$nsze"
-			tpc_db 9 id levl "$levl"
+            tpcdb="$DC_tlt/tpc"
+            cp -f "$DS/default/tpc" "$tpcdb"
+            tpc_db 9 id name "${name}"
+            tpc_db 9 id slng "$slng"
+            tpc_db 9 id tlng "$tlng"
+            tpc_db 9 id autr "$autr"
+            tpc_db 9 id ctgy "$ctgy"
+            tpc_db 9 id ilnk "$ilnk"
+            tpc_db 9 id orig "$orig"
+            tpc_db 9 id dtec "$dtec"
+            tpc_db 9 id dtei "$(date +%F)"
+            tpc_db 9 id nwrd "$nwrd"
+            tpc_db 9 id nsnt "$nsnt"
+            tpc_db 9 id nimg "$nimg"
+            tpc_db 9 id naud "$naud"
+            tpc_db 9 id nsze "$nsze"
+            tpc_db 9 id levl "$levl"
             check_file "${DC_tlt}/practice/log1" "${DC_tlt}/practice/log2" \
             "${DC_tlt}/practice/log3" "${DC_tlt}/note" "${DC_tlt}/download"
             sed -n 2p "${file}" |tr -d '\\' > "${DC_tlt}/data"
             sed -i 's/},/}\n/g;s|","|}|g;s|":"|{|g;s|":{"|}|g;s/"}/}/g' "${DC_tlt}/data"
             sed -i 's/^\s*./trgt{/g' "${DC_tlt}/data"
 			sed -i '/^$/d' "${DC_tlt}/data"
-			while read item_; do
+            while read item_; do
                 item="$(sed 's/}/}\n/g' <<< "${item_}")"
                 type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
                 trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
@@ -241,8 +240,8 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             cleanups "$DT/in_lk"
             
             slngtopic="$slng"; slng="$slngcurrent"
-			cdb "${cfgdb}" 3 lang tlng "${tlng}"
-			cdb "${cfgdb}" 3 lang slng "${slng}"
+            cdb "${cfgdb}" 3 lang tlng "${tlng}"
+            cdb "${cfgdb}" 3 lang slng "${slng}"
             if [[ "$slngtopic" != "$slng" ]]; then
                 mkdir "${DC_tlt}/translations/"
                 echo "$slngtopic" > "${DC_tlt}/translations/active"
@@ -267,8 +266,8 @@ function topic() {
         source "$DS/ifs/mods/main/items_list.sh"
         n=1; tas=('learning' 'learnt' 'words' 'sentences')
         for ta in ${tas[@]}; do
-			export ls${n}="$(tpc_db 5 "$ta")"; cnt="ls${n}"
-			let n++
+            export ls${n}="$(tpc_db 5 "$ta")"; cnt="ls${n}"
+            let n++
         done
         cfg0=$(wc -l < "${DC_tlt}/data")
         export cfg1="$(grep -c '[^[:space:]]' <<< "$ls1")"
@@ -314,13 +313,13 @@ function topic() {
                 "$DS/ifs/tls.sh" colorize 1; rm "${cnf1}"
             fi
             if grep TRUE "${cnf1}" >/dev/null 2>&1; then
-				while read item; do
-					if grep '|TRUE|' <<<"${item}" >/dev/null 2>&1; then
-					trgt="$(sed -e 's/|TRUE|//;s/|//;s/<[^>]*>//g' <<< "$item")"
-					tpc_db 4 learning list "${trgt}"
-					tpc_db 2 learnt list "${trgt}"
-					fi
-				done < "${cnf1}"
+                while read item; do
+                    if grep '|TRUE|' <<<"${item}" >/dev/null 2>&1; then
+                    trgt="$(sed -e 's/|TRUE|//;s/|//;s/<[^>]*>//g' <<< "$item")"
+                    tpc_db 4 learning list "${trgt}"
+                    tpc_db 2 learnt list "${trgt}"
+                    fi
+                done < "${cnf1}"
                 "$DS/ifs/tls.sh" colorize 1
                 source "$DS/ifs/stats.sh"
                 save_topic_stats 0
@@ -351,7 +350,7 @@ function topic() {
             
                 calculate_review "${tpc}"; 
 					
-				if [[ ${RM} -ge 100 ]]; then
+                if [[ ${RM} -ge 100 ]]; then
 				
                     RM=100; dialog_1; ret=$?
                     

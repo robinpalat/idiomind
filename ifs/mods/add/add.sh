@@ -582,7 +582,7 @@ function dlg_form_1() {
     --button=!'edit-paste'!"$(gettext "Enable clipboard watcher")":5 \
     --button=!'image-x-generic'!"$(gettext "Screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an audio file")":2 \
-    --button=!'format-justify-left'!"$(gettext "Options for copy-pasted text")":"$cmd_words" \
+    --button=!'gtk-edit'!"$(gettext "Options for copy-pasted text")":"$cmd_words" \
     --button=!'gtk-apply'!"$(gettext "Add")":0
 }
 
@@ -606,7 +606,7 @@ function dlg_form_2() {
     --button=!'edit-paste'!"$(gettext "Enable clipboard watcher")":5 \
     --button=!'image-x-generic'!"$(gettext "Screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an audio file")":2 \
-    --button=!'format-justify-left'!"$(gettext "Options for copy-pasted text")":"$cmd_words" \
+    --button=!'gtk-edit'!"$(gettext "Options for copy-pasted text")":"$cmd_words" \
     --button=!'gtk-apply'!"$(gettext "Add")":0
 }
 
@@ -669,6 +669,7 @@ function dlg_checklist_2() {
         fi
         done
     }
+    if [ "${#1}" -gt 15 ]; then
     list "${1}" | yad --list --checklist --tabnum=1 --plug="$fkey" \
     --no-headers --text-align=left --text="$(gettext "Words list")" \
     --column=" " --column=" " |sed '/^$/d' > "$slts" &
@@ -676,15 +677,36 @@ function dlg_checklist_2() {
     --gtkrc="$DS/default/gtkrc.cfg" \
     --separator="|" \
     --field="$(gettext "Note")":TXT "${note}" \
-    --field="$(gettext "Example")":TXT "${exmp}" \
+    --field="$(gettext "Example (just for word)")":TXT "${exmp}" \
     --field="$(gettext "Mark")":CHK  &
     yad --paned --orient=hor --key="$fkey" \
     --title="$(gettext "Options")" \
     --name=Idiomind --class=Idiomind \
     --skip-taskbar --orient=vert --window-icon=idiomind --center --on-top \
     --gtkrc="$DS/default/gtkrc.cfg" \
-    --width=450 --height=260 --borders=5 --splitter=200 \
+    --width=480 --height=280 --borders=5 --splitter=200 \
     --button="  $(gettext "Close")  ":0
+    else
+    
+    list "${1}" | yad --form --tabnum=1 --plug="$fkey" \
+    --text-align=left  \
+    --field="$(gettext "Mark")":CHK \
+    --field="$(gettext "Mark")":CHK |sed '/^$/d' > "$slts" &
+    yad --form --tabnum=2 --plug="$fkey" \
+    --gtkrc="$DS/default/gtkrc.cfg" \
+    --separator="|" \
+    --field="$(gettext "Note")":TXT "${note}" \
+    --field="$(gettext "Example (just for word)")":TXT "${exmp}" \
+    --field="$(gettext "Mark")":CHK  &
+    yad --paned --orient=hor --key="$fkey" \
+    --title="$(gettext "Options")" \
+    --name=Idiomind --class=Idiomind \
+    --skip-taskbar --orient=vert --window-icon=idiomind --center --on-top \
+    --gtkrc="$DS/default/gtkrc.cfg" \
+    --width=480 --height=280 --borders=5 --splitter=200 \
+    --button="  $(gettext "Close")  ":0
+
+    fi
 }
 
 function dlg_text_info_1() {
