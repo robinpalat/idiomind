@@ -62,7 +62,7 @@ function new_session() {
     cd "$DC_s"/; rename 's/\.p$//' *.p; fi; cd /
     # check database
     if [ ! -e ${tlngdb} ]; then
-		[ ! -d "$DM_tls/data" ] && mkdir -p "$DM_tls/data" 
+        [ ! -d "$DM_tls/data" ] && mkdir -p "$DM_tls/data" 
         echo -n "create table if not exists Words \
         (Word TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${tlngdb}
         echo -n "create table if not exists Config \
@@ -85,51 +85,51 @@ function new_session() {
     fi
     echo -e "\n--- updating topics status..."
     tdate=$(date +%Y%m%d)
-	while read -r line; do
-		if [ -n "$line" ]; then
-		unset stts
-		dir="$DM_tl/${line}/.conf"
-		dim="$DM_tl/${line}"
-		[ ! -d "${dir}" ] && continue
-		stts=$(sed -n 1p "${dir}/stts")
-		! [[ ${stts} =~ $numer ]] && stts=1
-		[[ ${stts} = 12 ]] && continue
-		if [ $((stts+stts%2)) = 4 -o $((stts+stts%2)) = 8 ]; then
-			calculate_review "${line}"
-			if [[ $((stts%2)) = 0 ]]; then
-				if [ ${RM} -ge 180 -a ${stts} = 8 ]; then
-					echo 10 > "${dir}/stts"; touch "${dim}"
-					cdb ${shrdb} 2 T2 list "${line}"
-				elif [ ${RM} -ge 100 -a ${stts} -lt 8 ]; then
-					echo 8 > "${dir}/stts"; touch "${dim}"
-					cdb ${shrdb} 2 T1 list "${line}"
-				elif [ ${stts} = 8 ]; then
-					cdb ${shrdb} 2 T3 list "${line}"
-				elif [ ${stts} = 10 ]; then
-					cdb ${shrdb} 2 T4 list "${line}"
-				fi
-			elif [[ $((stts%2)) = 1 ]]; then
-				if [ ${RM} -ge 180 -a ${stts} = 7 ]; then
-					echo 9 > "${dir}/stts"; touch "${dim}"
-					cdb ${shrdb} 2 T2 list "${line}"
-				elif [ ${RM} -ge 100 -a ${stts} -lt 7 ]; then
-					echo 7 > "${dir}/stts"; touch "${dim}"
-					cdb ${shrdb} 2 T1 list "${line}"
-				elif [ ${stts} = 7 ]; then
-					cdb ${shrdb} 2 T3 list "${line}"
-				elif [ ${stts} = 9 ]; then
-					cdb ${shrdb} 2 T4 list "${line}"
-				fi
-			fi
-		elif [[ $((stts+stts%2)) = 6 ]]; then
-			datedir=$(stat -c %y "$dir" |cut -d ' ' -f1)
-			cdate=$(date -d $datedir +"%Y%m%d")
-			if [ $((tdate-cdate)) -gt 20 ]; then
-				cdb ${shrdb} 2 T7 list "${line}"
-			fi
-		fi
-		fi
-	done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
+    while read -r line; do
+        if [ -n "$line" ]; then
+        unset stts
+        dir="$DM_tl/${line}/.conf"
+        dim="$DM_tl/${line}"
+        [ ! -d "${dir}" ] && continue
+        stts=$(sed -n 1p "${dir}/stts")
+        ! [[ ${stts} =~ $numer ]] && stts=1
+        [[ ${stts} = 12 ]] && continue
+        if [ $((stts+stts%2)) = 4 -o $((stts+stts%2)) = 8 ]; then
+            calculate_review "${line}"
+            if [[ $((stts%2)) = 0 ]]; then
+                if [ ${RM} -ge 180 -a ${stts} = 8 ]; then
+                    echo 10 > "${dir}/stts"; touch "${dim}"
+                    cdb ${shrdb} 2 T2 list "${line}"
+                elif [ ${RM} -ge 100 -a ${stts} -lt 8 ]; then
+                    echo 8 > "${dir}/stts"; touch "${dim}"
+                    cdb ${shrdb} 2 T1 list "${line}"
+                elif [ ${stts} = 8 ]; then
+                    cdb ${shrdb} 2 T3 list "${line}"
+                elif [ ${stts} = 10 ]; then
+                    cdb ${shrdb} 2 T4 list "${line}"
+                fi
+            elif [[ $((stts%2)) = 1 ]]; then
+                if [ ${RM} -ge 180 -a ${stts} = 7 ]; then
+                    echo 9 > "${dir}/stts"; touch "${dim}"
+                    cdb ${shrdb} 2 T2 list "${line}"
+                elif [ ${RM} -ge 100 -a ${stts} -lt 7 ]; then
+                    echo 7 > "${dir}/stts"; touch "${dim}"
+                    cdb ${shrdb} 2 T1 list "${line}"
+                elif [ ${stts} = 7 ]; then
+                    cdb ${shrdb} 2 T3 list "${line}"
+                elif [ ${stts} = 9 ]; then
+                    cdb ${shrdb} 2 T4 list "${line}"
+                fi
+            fi
+        elif [[ $((stts+stts%2)) = 6 ]]; then
+            datedir=$(stat -c %y "$dir" |cut -d ' ' -f1)
+            cdate=$(date -d $datedir +"%Y%m%d")
+            if [ $((tdate-cdate)) -gt 20 ]; then
+                cdb ${shrdb} 2 T7 list "${line}"
+            fi
+        fi
+        fi
+    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
 	-not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
     rm -f "$DT/ps_lk"
     
@@ -171,11 +171,11 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
     _lst | tpc_view
     ret=$?
         if [ $ret -eq 0 ]; then
-			if [ -e "$DT/in_lk" ]; then
-				msg "$(gettext "Please wait until the current actions are finished")...\n" dialog-information
-				sleep 15; cleanups "$DT/in_lk"; exit 1
-			fi
-			f_lock "$DT/in_lk"
+            if [ -e "$DT/in_lk" ]; then
+                msg "$(gettext "Please wait until the current actions are finished")...\n" dialog-information
+                sleep 15; cleanups "$DT/in_lk"; exit 1
+            fi
+            f_lock "$DT/in_lk"
             listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
             ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
             if [ $(wc -l <<< "$listt") -ge 120 ]; then
@@ -457,8 +457,8 @@ function topic() {
 }
 
 bground_session() {
-	source "$DS/ifs/cmns.sh"
-	sleep 5
+    source "$DS/ifs/cmns.sh"
+    sleep 5
     if [ ! -e "$DT/ps_lk" -a ! -d "$DT" ]; then
          new_session
     fi
@@ -469,7 +469,7 @@ bground_session() {
 }
 
 ipanel() {
-	source "$DS/ifs/mods/main/items_list.sh"
+    source "$DS/ifs/mods/main/items_list.sh"
     set_geom(){
         sleep 1
         spost=$(xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4)
@@ -495,7 +495,7 @@ ipanel() {
 }
 
 _start() {
-	source "$DS/ifs/cmns.sh"
+    source "$DS/ifs/cmns.sh"
     if [ ! -d "$DT" ] && [[ -z "$1" ]]; then 
         new_session
     fi
