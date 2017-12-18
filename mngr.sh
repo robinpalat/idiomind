@@ -321,12 +321,29 @@ edit_item() {
                         tpc_db 2 sentences list "${trgt_mod}"
                     fi
                 fi
+                
                 [ -e "${DM_tlt}/images/${trgt,,}.jpg" ] && \
                 mv -f "${DM_tlt}/images/${trgt,,}.jpg" \
                 "${DM_tlt}/images/${trgt_mod,,}.jpg"
                 cleanups "$DT_r" "$DT/${trgt_mod}.edit"
             ) &
             fi
+            
+            if [ "$defn" != "$defn_mod" ]; then
+                if [ -n "${defn}" ]; then
+                    sqlite3 ${tlngdb} \
+                    "update Words set Definition='${defn}'\
+                     where Word='${trgt}';"
+                fi
+            fi
+            if [ "$exmp" != "$exmp_mod" ]; then
+                if [ -n "${exmp}" ]; then
+                    sqlite3 ${tlngdb} \
+                    "update Words set Example='${exmp}'\
+                     where Word='${trgt}';"
+                fi
+            fi
+            
             [ ${type} != ${type_mod} -a ${type_mod} = 1 ] && ( img_word "${trgt}" "${srce}" ) &
             [ ${colorize_run} = 1 ] && "$DS/ifs/tls.sh" colorize 1 &
 
@@ -755,25 +772,43 @@ mark_to_learn_topic() {
             echo 1 > "${DC_tlt}/stts"
         fi
     fi
-	tpc_db 6 'learnt'; tpc_db 6 'learning';
-    steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
-    tpc_db 3 config repass ${steps}
     
-    (echo "#"; n=1
-    while read -r item_; do
-        item="$(sed 's/}/}\n/g' <<< "${item_}")"
-        type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
-        trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
-        [ -n "${trgt}" ] && tpc_db 8 learning list "${trgt}"
-        let n++; echo $((100*n/lns-1))
-    done < "${DC_tlt}/data" ) |progress "progress"
-    
-    if [ -e "${DC_tlt}/lk" ]; then rm "${DC_tlt}/lk"; fi
-    cp -f "${DC_tlt}/note" "${DC_tlt}/note.bk"
     if [[ ${3} = 1 ]]; then
         yad_kill "yad --form " "yad --multi-progress "\
          "yad --list " "yad --text-info " "yad --notebook "
     fi
+
+    steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
+    tpc_db 7 config repass ${steps}
+
+
+    export data="${DC_tlt}/data" 
+    export tpcdb
+    
+python <<PY
+import os, re, locale, sqlite3
+en = locale.getpreferredencoding()
+data = os.environ['data']
+data.encode(en)
+tpcdb = os.environ['tpcdb']
+tpcdb.encode(en)
+db = sqlite3.connect(tpcdb)
+db.text_factory = str
+cur = db.cursor()
+cur.execute("delete from learnt")
+cur.execute("delete from learning")
+db.commit()
+data = [line.strip() for line in open(data)]
+for item in data:
+    item = item.replace('}', '}\n')
+    fields = re.split('\n',item)
+    trgt = (fields[0].split('trgt{'))[1].split('}')[0]
+    cur.execute("insert into learning (list) values (?)", (trgt,))
+db.commit()
+db.close()
+PY
+
+    if [ -e "${DC_tlt}/lk" ]; then rm "${DC_tlt}/lk"; fi
     touch "${DM_tlt}"
     ( sleep 1; mv -f "${DC_tlt}/note.bk" "${DC_tlt}/note" ) &
     "$DS/mngr.sh" mkmn 1 &
@@ -807,15 +842,15 @@ mark_as_learned_topic() {
             fi
             if [ ${RM} -ge 50 ]; then
                 if [ ${steps} -eq 8 ]; then
-                    tpc_db 3 reviews date8 ${d}
+                    tpc_db 7 reviews date8 ${d}
                 elif [ ${steps} -gt 8 ]; then
-                    tpc_db 3 reviews date8 ${d}
+                    tpc_db 7 reviews date8 ${d}
                 else
-                    tpc_db 2 reviews date${steps} ${d} # FIX 
+                    tpc_db 7 reviews date${steps} ${d} # FIX 
                 fi
             fi
         else
-            tpc_db 2 reviews date1 ${d}
+            tpc_db 7 reviews date1 ${d}
         fi
         if [ -d "${DC_tlt}/practice" ]; then
             (cd "${DC_tlt}/practice"; rm ./.*; rm ./*
@@ -827,21 +862,38 @@ mark_as_learned_topic() {
             echo 3 > "${DC_tlt}/stts"
         fi
     fi
-	tpc_db 6 'learning'
     
-    (echo "#"; n=1
-    while read -r item_; do
-        item="$(sed 's/}/}\n/g' <<< "${item_}")"
-        trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
-        [ -n "${trgt}" ] && tpc_db 8 learnt list "${trgt}"
-        let n++; echo $((100*n/lns-1))
-    done < "${DC_tlt}/data") |progress "progress"
-    
-    cp -f "${DC_tlt}/note" "${DC_tlt}/note.bk"
     if [[ ${3} = 1 ]]; then
         yad_kill "yad --form " "yad --list " \
         "yad --text-info " "yad --notebook "
     fi
+    
+    export data="${DC_tlt}/data" tpcdb
+
+python <<PY
+import os, re, locale, sqlite3
+en = locale.getpreferredencoding()
+data = os.environ['data']
+data.encode(en)
+tpcdb = os.environ['tpcdb']
+tpcdb.encode(en)
+db = sqlite3.connect(tpcdb)
+db.text_factory = str
+cur = db.cursor()
+cur.execute("delete from learnt")
+cur.execute("delete from learning")
+db.commit()
+data = [line.strip() for line in open(data)]
+for item in data:
+    item = item.replace('}', '}\n')
+    fields = re.split('\n',item)
+    trgt = (fields[0].split('trgt{'))[1].split('}')[0]
+    if trgt:
+        cur.execute("insert into learnt (list) values (?)", (trgt,))
+db.commit()
+db.close()
+PY
+    cp -f "${DC_tlt}/note" "${DC_tlt}/note.bk"
     "$DS/mngr.sh" mkmn 1 &
     ( sleep 1; mv -f "${DC_tlt}/note.bk" "${DC_tlt}/note" ) &
     [[ ${3} = 1 ]] && idiomind topic &
@@ -850,56 +902,74 @@ mark_as_learned_topic() {
 }
 
 mark_as_learnt_topic_ok() {
-        tpc="${2}"
-        DM_tlt="$DM_tl/${tpc}"
-        DC_tlt="$DM_tl/${tpc}/.conf"
-        [ ! -s "${DC_tlt}/data" ] && exit 1
-        stts=$(sed -n 1p "${DC_tlt}/stts")
-        ! [[ ${stts} =~ ${numer} ]] && stts=1
-        
-        if ! echo "$stts" |grep -E '3|4|7|8|9|10'; then
-            calculate_review "${tpc}"
-            steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
-            d=$(date +%m/%d/%Y)
-            if [ "${steps}" -gt 0 ]; then
-                ! [[ ${steps} =~ ${numer} ]] && steps=1
-                if [ ${steps} -eq 4 ]; then
-                    stts=$((stts+1))
+    tpc="${2}"
+    DM_tlt="$DM_tl/${tpc}"
+    DC_tlt="$DM_tl/${tpc}/.conf"
+    [ ! -s "${DC_tlt}/data" ] && exit 1
+    stts=$(sed -n 1p "${DC_tlt}/stts")
+    ! [[ ${stts} =~ ${numer} ]] && stts=1
+
+    if ! echo "$stts" |grep -E '3|4|7|8|9|10'; then
+        calculate_review "${tpc}"
+        steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
+        d=$(date +%m/%d/%Y)
+        if [ "${steps}" -gt 0 ]; then
+            ! [[ ${steps} =~ ${numer} ]] && steps=1
+            if [ ${steps} -eq 4 ]; then
+                stts=$((stts+1))
+            fi
+            if [ ${RM} -ge 50 ]; then
+                
+                if [ ${steps} -eq 8 ]; then
+                    tpc_db 7 reviews date8 ${d}
+                elif [ ${steps} -gt 8 ]; then
+                    tpc_db 7 reviews date8 ${d}
+                else
+                    tpc_db 7 reviews date${steps} ${d} # FIX 
                 fi
-                if [ ${RM} -ge 50 ]; then
-					
-                    if [ ${steps} -eq 8 ]; then
-                        tpc_db 3 reviews date8 ${d}
-                    elif [ ${steps} -gt 8 ]; then
-                        tpc_db 3 reviews date8 ${d}
-                    else
-                        tpc_db 2 reviews date${steps} ${d} # FIX 
-                    fi
-                fi
-            else
-                tpc_db 2 reviews date1 ${d}
             fi
-            
-            if [ -d "${DC_tlt}/practice" ]; then
-                (cd "${DC_tlt}/practice"; rm ./.*; rm ./*
-                touch ./log1 ./log2 ./log3)
-            fi
-            if [[ $((stts%2)) = 0 ]]; then
-                echo 4 > "${DC_tlt}/stts"
-            else
-                echo 3 > "${DC_tlt}/stts"
-            fi
+        else
+            tpc_db 7 reviews date1 ${d}
         fi
-		
-		tpc_db 6 'learning'
-        while read -r item_; do
-            item="$(sed 's/}/}\n/g' <<< "${item_}")"
-            trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
-            [ -n "${trgt}" ] && tpc_db 8 learnt list "${trgt}"
-		done < "${DC_tlt}/data"
         
-        cp -f "${DC_tlt}/note" "${DC_tlt}/note.bk"
-        ( sleep 1; mv -f "${DC_tlt}/note.bk" "${DC_tlt}/note" ) &
+        if [ -d "${DC_tlt}/practice" ]; then
+            (cd "${DC_tlt}/practice"; rm ./.*; rm ./*
+            touch ./log1 ./log2 ./log3)
+        fi
+        if [[ $((stts%2)) = 0 ]]; then
+            echo 4 > "${DC_tlt}/stts"
+        else
+            echo 3 > "${DC_tlt}/stts"
+        fi
+    fi
+
+    export data="${DC_tlt}/data" tpcdb
+
+python <<PY
+import os, re, locale, sqlite3
+en = locale.getpreferredencoding()
+data = os.environ['data']
+data.encode(en)
+tpcdb = os.environ['tpcdb']
+tpcdb.encode(en)
+db = sqlite3.connect(tpcdb)
+db.text_factory = str
+cur = db.cursor()
+cur.execute("delete from learnt")
+cur.execute("delete from learning")
+db.commit()
+data = [line.strip() for line in open(data)]
+for item in data:
+    item = item.replace('}', '}\n')
+    fields = re.split('\n',item)
+    trgt = (fields[0].split('trgt{'))[1].split('}')[0]
+    if trgt:
+        cur.execute("insert into learnt (list) values (?)", (trgt,))
+db.commit()
+db.close()
+PY
+    cp -f "${DC_tlt}/note" "${DC_tlt}/note.bk"
+    ( sleep 1; mv -f "${DC_tlt}/note.bk" "${DC_tlt}/note" ) &
 }
 
 case "$1" in

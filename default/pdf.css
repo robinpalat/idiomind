@@ -1,8 +1,10 @@
+body {width:85%;height:85%;margin-top:50;margin-bottom:10;margin-right:auto;margin-left:auto;font-family:Helvetica,Verdana,Geneva;}
 w0 {color:#5B5F62;font-size:20px;font-weight:bold;line-height:1.8em;}
 w1 {color:#5D6164;font-size:20px;font-weight:bold;}
 w2 {color:#52524E;font-size:14px;font-style:normal;}
 s1 {color:#424242;font-size:18px;font-weight:normal;}
-s2 {color:#929292;font-size:13px;font-weight:normal;}
+s2 {color:#7A7A7A;font-size:13px;font-weight:normal;margin:20px;line-height:2.25;}
+s0 {background-color:#7089AA;margin:10px;line-height:2.25;}
 tw1 {margin-top:0;padding-right:0px;color:#5787B8;font-size:15px;font-weight:bold;font-family:sans-serif, Verdana, Geneva;}
 h2 {margin-top:10;padding-right:0px;color:#616161;font-size:20px;font-weight:bold;}
 mark {background-color:#F5F4F3;color:#5D6164;font-weight:bold;}
@@ -10,10 +12,12 @@ exmp {color:#5E5A54;font-size:14px;font-weight:italic;font-family:sans-serif, Ve
 texmp {color:#5E5A54;font-size:14px;font-weight:italic;}
 defn {color:#5E5A54;font-size:14px;font-weight:normal;}
 note {color:#696968;font-size:14px;font-weight:italic;}
-body {width:85%;height:85%;margin-top:50;margin-bottom:10;margin-right:auto;margin-left:auto;font-family:sans-serif, Verdana, Geneva;}
 .simg {-moz-border-radius:10px;-webkit-border-radius:10px;}
 .block0 {padding:0px;color:#4C4C4C;font-size:14px;line-height:1.45;}
 .block1 {position:relative;padding:0px;margin:15px 0 0.5em;color:#333;background:#F5F4F3;-webkit-border-radius:15px;-moz-border-radius:15px;border-radius:15px;}
 .block2 {position:left;padding:5px;background:#9A9A9A;}
 .block3 {position:left;padding:5px;background:#DFDBD7;}
 .dashed {border:none;border-top:1px solid #fff;color:#fff;background-color:#fff;height:1px;width:100%;line-height:0.1em;}
+
+
+

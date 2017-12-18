@@ -3,7 +3,7 @@
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 
-if [[ $(wc -l < "$DC_tlt/3.cfg") -lt 2 ]]; then
+if [[ $(wc -l <<< "$(tpc_db 5 words)") -lt 2 ]]; then
     msg "$(gettext "Not enough words")\n" dialog-warning "$(gettext "Information")" & exit 1
 fi
 
@@ -26,4 +26,4 @@ export _checkbox="<img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAA
 export f=2
 export -f word_examen
 
-"$(dirname "$0")/Portable document format (.pdf).sh" "$@"
+"$(dirname "$0")/PDF.sh" "$@"

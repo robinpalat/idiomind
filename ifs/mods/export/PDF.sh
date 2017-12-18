@@ -3,6 +3,8 @@
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 
+export s0="<img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAANCAYAAACkTj4ZAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4QwRFQkmJbvgUwAAAFdJREFUKM9j/Prlcx0DA0MjA/GgnpuHtwldkImBSmDUoFGDhqdBLMvWbJj6n4FhDyMDAw8DAwM7IyMDK8N/JBWMDIz/GRj+MPxn+PmfgeErIwPDfWwGAQCeGxFRLImsLwAAAABJRU5ErkJggg==\"/>"
+
 _head(){
     cat <<!EOF
 <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -20,7 +22,7 @@ _note(){
 sentence_normal() {
     cat <<!EOF
 <table style="vertical-align:top" width="100%" align="left" cellpadding="0" cellspacing="0">
-<td><s1>${trgt}</s1><br><s2>${srce}</s2><hr class="dashed"></td></table>
+<td>$s0<s1>${trgt}</s1><br><s2>${srce}</s2><hr class="dashed"></td></table>
 !EOF
 }
 
@@ -139,5 +141,5 @@ if [ $f = 2 ]; then
 else
     mv -f "$DT/export/tmp.pdf" "${1}.pdf"
 fi
-chmod 664 "${1}.pdf"
+
 cleanups "$DT/export"

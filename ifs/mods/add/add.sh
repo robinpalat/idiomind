@@ -213,6 +213,12 @@ function word_p() {
         elif [[ -z "$(sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${trgt}';")" ]]; then
             sqlite3 ${tlngdb} "update Words set '${slng^}'='${srce_q}' where Word='${trgt}';"
         fi
+        if [ -n "${exmp}" ]; then
+            sqlite3 ${tlngdb} "update Words set Example='${exmp}' where Word='${trgt}';"
+        fi
+        if [ -n "${defn}" ]; then
+            sqlite3 ${tlngdb} "update Words set Definition='${defn}' where Word='${trgt}';"
+        fi
     fi
 }
 
@@ -574,7 +580,7 @@ function dlg_form_1() {
     --field="" "$txt" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
     --button=!'edit-paste'!"$(gettext "Enable clipboard watcher")":5 \
-    --button=!'image-x-generic'!"$(gettext "Add an image by screen clipping")":3 \
+    --button=!'image-x-generic'!"$(gettext "Screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an audio file")":2 \
     --button=!'format-justify-left'!"$(gettext "Options for copy-pasted text")":"$cmd_words" \
     --button=!'gtk-apply'!"$(gettext "Add")":0
@@ -598,7 +604,7 @@ function dlg_form_2() {
     --field="" "$srce" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
     --button=!'edit-paste'!"$(gettext "Enable clipboard watcher")":5 \
-    --button=!'image-x-generic'!"$(gettext "Add an image by screen clipping")":3 \
+    --button=!'image-x-generic'!"$(gettext "Screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an audio file")":2 \
     --button=!'format-justify-left'!"$(gettext "Options for copy-pasted text")":"$cmd_words" \
     --button=!'gtk-apply'!"$(gettext "Add")":0
