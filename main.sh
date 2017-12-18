@@ -191,12 +191,13 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
                 done
                 name="${name} ($i)"
             fi
+            export tpc="${name}"
             check_dir "$DM_t/$tlng" "$DM_t/$tlng/.share/images" \
             "$DM_t/$tlng/.share/audio" "$DM_t/$tlng/.share/data" \
             "$DM_t/$tlng/${name}/.conf/practice"
             DM_tlt="$DM_t/$tlng/${name}"
             DC_tlt="$DM_t/$tlng/${name}/.conf"
-            tpcdb="$DC_tlt/tpc"
+            export tpcdb="$DC_tlt/tpc"
             cp -f "$DS/default/tpc" "$tpcdb"
             tpc_db 9 id name "${name}"
             tpc_db 9 id slng "$slng"
@@ -219,23 +220,34 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             sed -i 's/},/}\n/g;s|","|}|g;s|":"|{|g;s|":{"|}|g;s/"}/}/g' "${DC_tlt}/data"
             sed -i 's/^\s*./trgt{/g' "${DC_tlt}/data"
 			sed -i '/^$/d' "${DC_tlt}/data"
-            while read item_; do
-                item="$(sed 's/}/}\n/g' <<< "${item_}")"
-                type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
-                trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
-                mark="$(grep -oP '(?<=mark{).*(?=})' <<< "${item}")"
-                if [ -n "${trgt}" ]; then
-                    if [[ ${type} = 1 ]]; then
-                        tpc_db 8 words list "${trgt}"
-                    else
-                        tpc_db 8 sentences list "${trgt}"
-                    fi
-                    tpc_db 8 learning list "${trgt}"
-                    if [[ ${mark} = 'TRUE' ]]; then
-						tpc_db 8 marks list "${trgt}"
-					fi
-                fi
-            done < "${DC_tlt}/data" 
+            export data="${DC_tlt}/data"
+python <<PY
+import os, re, locale, sqlite3
+en = locale.getpreferredencoding()
+data = os.environ['data']
+data.encode(en)
+tpcdb = os.environ['tpcdb']
+tpcdb.encode(en)
+db = sqlite3.connect(tpcdb)
+db.text_factory = str
+cur = db.cursor()
+data = [line.strip() for line in open(data)]
+for item in data:
+    item = item.replace('}', '}\n')
+    fields = re.split('\n',item)
+    trgt = (fields[0].split('trgt{'))[1].split('}')[0]
+    type = (fields[23].split('type{'))[1].split('}')[0]
+    mark = (fields[18].split('mark{'))[1].split('}')[0]
+    if type == '1':
+        cur.execute("insert into words (list) values (?)", (trgt,))
+    elif type == '2':
+        cur.execute("insert into sentences (list) values (?)", (trgt,))
+    if mark == 'TRUE':
+        cur.execute("insert into learning (list) values (?)", (trgt,))
+    cur.execute("insert into learning (list) values (?)", (trgt,))
+db.commit()
+db.close()
+PY
             "$DS/ifs/tls.sh" colorize 1
             cleanups "$DT/in_lk"
             
@@ -307,7 +319,7 @@ function topic() {
             fi
             acheck_mod=$(cut -d '|' -f 3 < "${cnf4}")
             if [[ $acheck_mod != $acheck ]] && [ -n "$acheck_mod" ]; then
-				tpc_db 3 config acheck "$acheck_mod"
+                tpc_db 3 config acheck "$acheck_mod"
             fi
             if [[ $acheck_mod = FALSE ]] && [[ $acheck != FALSE ]]; then
                 "$DS/ifs/tls.sh" colorize 1; rm "${cnf1}"
