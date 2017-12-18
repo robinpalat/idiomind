@@ -56,14 +56,12 @@ function index() {
             while read -r file_pr; do
                 sust "${file_pr}"
             done < <(ls ./*)
-            rm ./*.tmp
             cd /
         fi
     else
         DC_tlt="${DM_tl}/${tpe}/.conf"; type=${1}
         if [ ! -n "${trgt}" ]; then return 1; fi
         if [ ! -d "${DC_tlt}" ]; then return 1; fi
-        img0='/usr/share/idiomind/images/0.png'
         #
         if [ ! -z "${trgt}" ]; then
             if ! grep -Fo "trgt{${trgt}}" "${DC_tlt}/data" >/dev/null 2>&1; then
@@ -71,11 +69,11 @@ function index() {
                     unset wrds grmr
                     tpc_db 2 learning list "${trgt}"
                     tpc_db 2 words list "${trgt}"
-                    echo -e "$img0\n${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
+                    echo -e "${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
                 elif [[ ${1} = 2 ]]; then
                     tpc_db 2 learning list "${trgt}"
                     tpc_db 2 sentences list "${trgt}"
-                    echo -e "$img0\n${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
+                    echo -e "${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
                 fi
 				[[ ${1} = 1 ]] && unset link
                 eval newline="$(sed -n 2p $DS/default/vars)"

@@ -327,23 +327,23 @@ edit_item() {
                 "${DM_tlt}/images/${trgt_mod,,}.jpg"
                 cleanups "$DT_r" "$DT/${trgt_mod}.edit"
             ) &
-            fi
             
-            if [ "$defn" != "$defn_mod" ]; then
-                if [ -n "${defn}" ]; then
-                    sqlite3 ${tlngdb} \
-                    "update Words set Definition='${defn}'\
-                     where Word='${trgt}';"
+                if [ "$defn" != "$defn_mod" ]; then
+                    if [ -n "${defn_mod}" ]; then
+                        sqlite3 ${tlngdb} \
+                        "update Words set Definition='${defn_mod}'\
+                         where Word='${trgt}';"
+                    fi
+                fi
+                if [ "$exmp" != "$exmp_mod" ]; then
+                    if [ -n "${exmp_mod}" ]; then
+                        sqlite3 ${tlngdb} \
+                        "update Words set Example='${exmp_mod}'\
+                         where Word='${trgt}';"
+                    fi
                 fi
             fi
-            if [ "$exmp" != "$exmp_mod" ]; then
-                if [ -n "${exmp}" ]; then
-                    sqlite3 ${tlngdb} \
-                    "update Words set Example='${exmp}'\
-                     where Word='${trgt}';"
-                fi
-            fi
-            
+
             [ ${type} != ${type_mod} -a ${type_mod} = 1 ] && ( img_word "${trgt}" "${srce}" ) &
             [ ${colorize_run} = 1 ] && "$DS/ifs/tls.sh" colorize 1 &
 
@@ -809,6 +809,7 @@ PY
     if [ -e "${DC_tlt}/lk" ]; then rm "${DC_tlt}/lk"; fi
     touch "${DM_tlt}"
     ( sleep 1; mv -f "${DC_tlt}/note.bk" "${DC_tlt}/note" ) &
+    "$DS/ifs/tls.sh" colorize 1
     "$DS/mngr.sh" mkmn 1 &
     [[ ${3} = 1 ]] && idiomind topic &
 }
