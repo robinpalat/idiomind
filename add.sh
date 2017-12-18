@@ -97,6 +97,7 @@ function new_sentence() {
     export db="$DS/default/dicts/$lgt"
     export trgt="$(clean_2 "${trgt}")"
     export srce="$(clean_2 "${srce}")"
+    type=2
 
     if [[ ${trans} = TRUE ]]; then
         if [[ ${ttrgt} = TRUE ]]; then
@@ -127,9 +128,11 @@ function new_sentence() {
 			opts="$(< "$DT_r/__opts__")"
 			export note="$(clean_2 "$(cut -d "|" -f1 <<< "${opts}")")"
 			export exmp="$(clean_2 "$(cut -d "|" -f2 <<< "${opts}")")"
-			export mark="$(clean_2 "$(cut -d "|" -f3 <<< "${opts}")")"
+			export mark="$(cut -d "|" -f3 <<< "${opts}")"
+            v="$(cut -d "|" -f4 <<< "${opts}")"
+            if [[ "$v" = 'TRUE' ]]; then type=1; fi
 		fi
-        index 2
+        export type; index ${type}
         if [ -e "$DT_r/img.jpg" ]; then
             set_image_2 "$DT_r/img.jpg" "${DM_tlt}/images/${trgt,,}.jpg"
         fi
@@ -148,10 +151,11 @@ function new_sentence() {
         else
             mv -f "$DT_r/audtm.mp3" "${DM_tlt}/$cdid.mp3"
         fi
-
-        ( if [[ ${wlist} = TRUE ]] && [ -n "${wrds}" ]; then
-            list_words_sentence; fi ) &
-        [[ ${dlaud} = TRUE ]] && fetch_audio "$aw" "$bw"
+        if [[ "$type" = 2 ]]; then
+            ( if [[ ${wlist} = TRUE ]] && [ -n "${wrds}" ]; then
+                list_words_sentence; fi ) &
+            [[ ${dlaud} = TRUE ]] && fetch_audio "$aw" "$bw"
+        fi
         cleanups "$DT_r"
     fi
 }
@@ -159,6 +163,7 @@ function new_sentence() {
 function new_word() {
     export trgt="$(clean_1 "${trgt}")"
     export srce="$(clean_0 "${srce}")"
+    type=1
 
     if [[ ${trans} = TRUE ]]; then
         if [[ ${ttrgt} = TRUE ]]; then
@@ -192,7 +197,7 @@ function new_word() {
 			export exmp="$(clean_2 "$(cut -d "|" -f2 <<< "${opts}")")"
 			export mark="$(clean_2 "$(cut -d "|" -f3 <<< "${opts}")")"
 		fi
-        index 1
+        export type; index ${type}
         notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
         if [ -e "$DT_r/img.jpg" ]; then
             if [ -e "${DM_tls}/images/${trgt,,}-1.jpg" ]; then
@@ -348,7 +353,6 @@ function list_words_dclik() {
 	[ $(wc -l <<< "$wrds") = 1 ] && wrds=""
 
     if [[ -d "$2"  ]]; then
-		if [[ -n "$words" ]]; then
 			slts=$(mktemp "$DT/cnf1.XXXXXX")
 			opts="$(dlg_checklist_2 "${wrds}")"
 			if [ $? -eq 0 ]; then
@@ -360,7 +364,7 @@ function list_words_dclik() {
 					fi
 				done < "${slts}"
 				cleanups "${slts}"
-			fi
+			
 			process '__words__'
 		fi
     else
