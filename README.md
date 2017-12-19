@@ -1,6 +1,4 @@
 
-Idiomind focuses mainly on vocabulary.
-
 # System Requirement #
 
 Debian based system, bash (>=4.1), yad (>=0.37), mplayer, imagemagick, wkhtmltopdf, curl, html2text, xclip, python, espeak, sqlite3, sox.
