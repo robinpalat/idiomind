@@ -3,19 +3,7 @@ Idiomind mainly focus on vocabulary, have a couple of simple quiz and others ext
 
 # System Requirement #
 
-Debian based system<br>
-bash (>=4.1)<br>
-yad (>=0.37)<br>
-mplayer<br>
-imagemagick<br>
-wkhtmltopdf<br>
-curl<br>
-html2text<br>
-xclip<br>
-python<br>
-espeak<br>
-sqlite3<br>
-sox<br>
+Debian based system, bash (>=4.1), yad (>=0.37), mplayer, imagemagick, wkhtmltopdf, curl, html2text, xclip, python, espeak, sqlite3, sox.
 
 # Installing in Debian, Ubuntu, and derivatives: #
 
