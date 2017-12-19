@@ -1,5 +1,5 @@
 
-Idiomind mainly focus on vocabulary, have a couple of simple quiz and others extra features.
+Idiomind focuses mainly on vocabulary.
 
 # System Requirement #
 
