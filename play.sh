@@ -5,7 +5,7 @@ source "$DS/default/sets.cfg"
 
 msg_err1() {
     local info="$(gettext "Please check about voice synthesizer configuration in the settings dialog.")"
-    source "$DS/ifs/cmns.sh"; msg "$info" error Info
+    msg "$info" error Info
 }
 
 play_word() {
@@ -50,7 +50,7 @@ play_file() {
 } >/dev/null 2>&1
 
 play_list() {
-    if [ -z "${tpc}" ]; then source "$DS/ifs/cmns.sh"
+    if [ -z "${tpc}" ]; then
     msg "$(gettext "No topic is active")\n" dialog-information & exit 1; fi
     tpc="$(sed -n 1p "$HOME/.config/idiomind/tpc")"
     DC_tlt="${DM_tl}/${tpc}/.conf"
@@ -148,6 +148,7 @@ play_list() {
     --width=400 --height=260 --borders=5 \
     --button="$btn1" --button="$(gettext "Close")":1
     ret=$?
+        [ $ret -eq 1 ] && exit 0
         [ $ret -eq 0 ] && echo "${tpc}" > "$DT/playlck"
         [ $ret -eq 2 ] && echo "0" > "$DT/playlck"
         out1=$(< $tab1); out2=$(< $tab2)
@@ -161,10 +162,9 @@ play_list() {
         done
         for ad in "$DS/ifs/mods/play"/*; do
             source "${ad}"
-            for co in "${!items[@]}"; do
+            for item in "${!items[@]}"; do
                 val=$(sed -n $((n+1))p <<< "${out1}" |cut -d "|" -f2)
-                co="${items[$co]}"
-                [ -n "${val}" ] && tpc_db 9 config "${co}" "${val}"
+                [ -n "${val}" ] && sed -i "s/${items[$item]}=.*/${items[$item]}=\"$val\"/g" "${file_cfg}"
                 [ "$val" = TRUE ] && count=$((count+1))
                 let n++
             done
