@@ -6,11 +6,11 @@ source "$DS/ifs/cmns.sh"
 echo -e "\n--- updating lists..."
 
 while read -r tpc; do
-	dir="$DM_tl/${tpc}/.conf"; unset stts tpc
-	stts=$(sed -n 1p "${dir}/stts")
-	if [ ${stts} != 12 ]; then
-		mv -f "${dir}/stts"  "${dir}/stts.bk"; echo 12 > "${dir}/stts"
-	fi
+    dir="$DM_tl/${tpc}/.conf"; unset stts tpc
+    stts=$(sed -n 1p "${dir}/stts")
+    if [ ${stts} != 12 ]; then
+        mv -f "${dir}/stts"  "${dir}/stts.bk"; echo 12 > "${dir}/stts"
+    fi
 done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime +80 -type d \
 -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
 
@@ -120,38 +120,38 @@ for tpc in topics:
                 shr_db.commit()
                 print "- to practice: "+tpc
 
-		cfg1len = 0
-		if cont == True:
-			index = open(cnfg_dir+"index", "w")
-			for item in items:
-				item = item.replace('}', '}\n')
-				fields = re.split('\n',item)
-				item = (fields[0].split('trgt{'))[1].split('}')[0]
-				if item in learn:
-					srce = (fields[1].split('srce{'))[1].split('}')[0]
-					if item in marks:
-						i="<b><big>"+item+"</big></b>"
-					else:
-						i=item
-					if item in lstp and auto_mrk == True and reviews > 3:
-						chk = 'TRUE'
-					else:
-						chk = 'FALSE'
-					if item in log3:
-						index.write("<span color='#AE3259'>"+i+"</span>\nFALSE\n"+srce+"\n")
-					elif item in log2:
-						index.write("<span color='#C15F27'>"+i+"</span>\nFALSE\n"+srce+"\n")
-					elif item in log1:
-						print chk + ' -> ' + item
-						index.write("<span color='#4C8C12'>"+i+"</span>\n"+chk+"\n"+srce+"\n")
-					else:
-						index.write(i+"\nFALSE\n"+srce+"\n")
-					if chk == 'TRUE':
-						cfg1len=cfg1len+1
-			index.close()
-			if len(learn) == cfg1len and len(cnfg_dir+"data") > 15:
-				subprocess.Popen(['/usr/share/idiomind/mngr.sh %s %s' % ('mark_to_learnt_ok', '"'+tpc+'"')], shell=True)
-				print 'mark_as_learnt -> ' + tpc
+        cfg1len = 0
+        if cont == True:
+            index = open(cnfg_dir+"index", "w")
+            for item in items:
+                item = item.replace('}', '}\n')
+                fields = re.split('\n',item)
+                item = (fields[0].split('trgt{'))[1].split('}')[0]
+                if item in learn:
+                    srce = (fields[1].split('srce{'))[1].split('}')[0]
+                    if item in marks:
+                        i="<b><big>"+item+"</big></b>"
+                    else:
+                        i=item
+                    if item in lstp and auto_mrk == True and reviews > 3:
+                        chk = 'TRUE'
+                    else:
+                        chk = 'FALSE'
+                    if item in log3:
+                        index.write("<span color='#AE3259'>"+i+"</span>\nFALSE\n"+srce+"\n")
+                    elif item in log2:
+                        index.write("<span color='#C15F27'>"+i+"</span>\nFALSE\n"+srce+"\n")
+                    elif item in log1:
+                        print chk + ' -> ' + item
+                        index.write("<span color='#4C8C12'>"+i+"</span>\n"+chk+"\n"+srce+"\n")
+                    else:
+                        index.write(i+"\nFALSE\n"+srce+"\n")
+                    if chk == 'TRUE':
+                        cfg1len=cfg1len+1
+            index.close()
+            if len(learn) == cfg1len and len(cnfg_dir+"data") > 15:
+                subprocess.Popen(['/usr/share/idiomind/mngr.sh %s %s' % ('mark_to_learnt_ok', '"'+tpc+'"')], shell=True)
+                print 'mark_as_learnt -> ' + tpc
     except:
         print 'err -> ' + tpc
 shr_db.close()      

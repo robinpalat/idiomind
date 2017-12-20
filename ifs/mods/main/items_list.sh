@@ -4,11 +4,11 @@
 sz=(580 560 480); [[ ${swind} = TRUE ]] && sz=(480 460 400)
 function vwr() {
     if [ ${1} = 1 ]; then 
-		index="$(tpc_db 5 learning)"
-		item_name="$(sed 's/<[^>]*>//g' <<< "${2}")"
+        index="$(tpc_db 5 learning)"
+        item_name="$(sed 's/<[^>]*>//g' <<< "${2}")"
     elif [ ${1} = 2 ]; then
-		index="$(tpc_db 5 learnt)"
-		item_name="$(sed 's/<[^>]*>//g' <<< "${2}")"
+        index="$(tpc_db 5 learnt)"
+        item_name="$(sed 's/<[^>]*>//g' <<< "${2}")"
     fi
     re='^[0-9]+$'; index_pos="$3"
     
@@ -254,7 +254,7 @@ function dialog_1() {
 }
 
 function tpc_view() {
-	yad --list --title="Idiomind" \
+    yad --list --title="Idiomind" \
     --text="${itxt}" \
     --name=Idiomind --class=Idiomind \
     --no-click --print-column=0 --hide-column=2 --tooltip-column=2 \
@@ -270,7 +270,7 @@ function tpc_view() {
 }
 
 function panelini() {
-	yad --fixed --form --title="Idiomind" \
+    yad --fixed --form --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
     --window-icon=idiomind \

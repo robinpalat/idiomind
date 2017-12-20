@@ -11,7 +11,7 @@ source $DS/default/sets.cfg
 lang1="${!tlangs[@]}"; lt=( $lang1 )
 lang2="${!slangs[@]}"; ls=( $lang2 )
 if [ ! -e "${cfgdb}" ]; then
-	"$DS/ifs/tls.sh" create_cfgdb
+    "$DS/ifs/tls.sh" create_cfgdb
 fi
 desktopfile="[Desktop Entry]
 Name=Idiomind
@@ -71,14 +71,14 @@ set_lang() {
 config_dlg() {
     sz=(510 350); [[ ${swind} = TRUE ]] && sz=(460 320)
     show_icon=0; kill_icon=0
-	opts="$(cdb "${cfgdb}" 5 opts)"
-	csets=( 'gramr' 'wlist' 'trans' 'dlaud' \
-	'ttrgt' 'clipw' 'itray' 'swind' 'stsks' 'tlang' 'slang' )
-	v=1; for get in ${csets[@]}; do
-		val=$(sed -n ${v}p <<< "$opts")
-		declare "$get"="$val"; let v++
-	done
-	synth="$(cdb "${cfgdb}" 1 opts synth)"
+    opts="$(cdb "${cfgdb}" 5 opts)"
+    csets=( 'gramr' 'wlist' 'trans' 'dlaud' \
+    'ttrgt' 'clipw' 'itray' 'swind' 'stsks' 'tlang' 'slang' )
+    v=1; for get in ${csets[@]}; do
+        val=$(sed -n ${v}p <<< "$opts")
+        declare "$get"="$val"; let v++
+    done
+    synth="$(cdb "${cfgdb}" 1 opts synth)"
     txaud="$(cdb "${cfgdb}" 1 opts txaud)"
     intrf="$(cdb "${cfgdb}" 1 opts intrf)"
     if [ -z "$intrf" ]; then intrf=Default; fi
@@ -154,9 +154,9 @@ config_dlg() {
 
         val=$(cut -d "|" -f19 < "$cnf1")
         if [[ "$val" != "$intrf" ]]; then
-			cdb "${cfgdb}" 3 opts intrf ${val}
+            cdb "${cfgdb}" 3 opts intrf ${val}
             kill_icon=1; show_icon=1; export intrf=$val
-			idiomind tasks &
+            idiomind tasks &
         fi
         if [[ $(cdb ${cfgdb} 1 opts clipw)  = TRUE ]] && [ ! -e $DT/clipw ]; then
             "$DS/ifs/tls.sh" clipw &
@@ -164,14 +164,14 @@ config_dlg() {
             if [ -e $DT/clipw ]; then kill $(cat $DT/clipw); rm -f $DT/clipw; fi
         fi
         if [[ $(cdb ${cfgdb} 1 opts itray)  = TRUE ]] && [[ ! -f "$DT/tray.pid" ]]; then
-			show_icon=1
-		elif [[ $(cdb ${cfgdb} 1 opts itray)  = FALSE ]] && [[ -f "$DT/tray.pid" ]]; then
-			kill_icon=1
-		fi
+            show_icon=1
+        elif [[ $(cdb ${cfgdb} 1 opts itray)  = FALSE ]] && [[ -f "$DT/tray.pid" ]]; then
+            kill_icon=1
+        fi
         if [ $kill_icon = 1 ]; then
             kill -9 $(cat $DT/tray.pid)
-			kill -9 $(pgrep -f "$DS/ifs/tls.sh itray")
-			rm -f "$DT/tray.pid"
+            kill -9 $(pgrep -f "$DS/ifs/tls.sh itray")
+            rm -f "$DT/tray.pid"
         fi
         if [ $show_icon = 1 ]; then
             $DS/ifs/tls.sh itray &
@@ -182,11 +182,11 @@ config_dlg() {
         config_dir="$HOME/.config/autostart"
         if cut -d "|" -f10 < "$cnf1" |grep "TRUE"; then
             if [ ! -f "$config_dir/idiomind.desktop" ]; then
-				echo "$desktopfile" > "$config_dir/idiomind.desktop"
+                echo "$desktopfile" > "$config_dir/idiomind.desktop"
             fi
         else
             if [ -f "$config_dir/idiomind.desktop" ]; then
-				rm "$config_dir/idiomind.desktop"
+                rm "$config_dir/idiomind.desktop"
             fi
         fi
         ntlang=$(cut -d "|" -f13 < "$cnf1")
@@ -208,7 +208,7 @@ config_dlg() {
             confirm "$info2" dialog-question "${slng}"
             if [ $? -eq 0 ]; then
                 cdb "${cfgdb}" 3 lang tlng "${tlng}"
-				cdb "${cfgdb}" 3 lang slng "${slng}"
+                cdb "${cfgdb}" 3 lang slng "${slng}"
                 tlngdb="$DM_tls/data/${tlng}.db"
                 if ! grep -q "${slng}" <<<"$(sqlite3 ${tlngdb} "PRAGMA table_info(Words);")"; then
                     sqlite3 ${tlngdb} "alter table Words add column '${slng}' TEXT;"

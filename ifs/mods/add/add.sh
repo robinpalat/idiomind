@@ -48,7 +48,7 @@ function index() {
         }
         tas=('learning' 'learnt' 'words' 'sentences' 'marks')
         for ta in ${tas[@]}; do
-			tpc_db 7 "$ta" "${trgt_mod}" "${trgt}"
+            tpc_db 7 "$ta" "${trgt_mod}" "${trgt}"
         done
 
         if [ -d "${DC_tlt}/practice" ]; then
@@ -75,7 +75,7 @@ function index() {
                     tpc_db 2 sentences list "${trgt}"
                     echo -e "${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
                 fi
-				[[ ${1} = 1 ]] && unset link
+                [[ ${1} = 1 ]] && unset link
                 eval newline="$(sed -n 2p $DS/default/vars)"
                 echo "${newline}" >> "${DC_tlt}/data"
             fi
@@ -562,7 +562,7 @@ function dlg_form_0() {
 }
 
 function dlg_form_1() {
-	cmd_words="$DS/add.sh list_words_dclik $DT_r "\"${txt}\"""
+    cmd_words="$DS/add.sh list_words_dclik $DT_r "\"${txt}\"""
     yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
@@ -581,7 +581,7 @@ function dlg_form_1() {
 }
 
 function dlg_form_2() {
-	cmd_words="$DS/add.sh list_words_dclik $DT_r "\"${txt}\"""
+    cmd_words="$DS/add.sh list_words_dclik $DT_r "\"${txt}\"""
     yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
@@ -600,16 +600,16 @@ function dlg_form_2() {
 }
 
 function dlg_checklist_3() {
-	sz=(700 400 300 350); [[ ${swind} = TRUE ]] && sz=(600 340 240 250)
+    sz=(700 400 300 350); [[ ${swind} = TRUE ]] && sz=(600 340 240 250)
     fkey=$((RANDOM*$$))
-	function _list_2() {
-		while read -r aitem; do
-			if [ "$(echo "$aitem" |wc -c)" -gt ${sentence_chars} ]; then
-				echo -e "FALSE\n<span color='#995B50'>$aitem</span>"
-			else
-				echo -e "TRUE\n$aitem"
-			fi
-		done < "${1}"
+    function _list_2() {
+        while read -r aitem; do
+            if [ "$(echo "$aitem" |wc -c)" -gt ${sentence_chars} ]; then
+                echo -e "FALSE\n<span color='#995B50'>$aitem</span>"
+            else
+                echo -e "TRUE\n$aitem"
+            fi
+        done < "${1}"
     }
     _list_2 "${1}" | yad --list --checklist --tabnum=1 --plug="$fkey" \
     --dclick-action="$DS/add.sh 'list_words_dclik'" --multiple \
@@ -650,7 +650,7 @@ function dlg_checklist_1() {
 }
 
 function dlg_checklist_2() {
-	fkey=$((RANDOM*$$))
+    fkey=$((RANDOM*$$))
     list() {
         echo "${1}" | while read -r word; do
         if [ -n "$word" ]; then

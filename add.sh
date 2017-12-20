@@ -24,22 +24,22 @@ new_topic() {
         msg "$(gettext "Maximum number of topics reached.")" \
         dialog-information "$(gettext "Information")" & exit 1
     fi
-	source "$DS/ifs/mods/add/add.sh"
+    source "$DS/ifs/mods/add/add.sh"
 
-	if [[ -z "$name" ]]; then
-		to=0; while [ ${to} -lt 4 ]; do
-			if [[ -z "$name" ]]; then add="$(dlg_form_0)"
-			else add="$(dlg_form_0 "$name")"; fi
-			name="$(clean_3 "$(cut -d "|" -f1 <<< "${add}")")"
-			if [[ ${#name} -gt 55 ]]; then
-				msg "$(gettext "Sorry, the name is too long.")\n" \
-				dialog-information "$(gettext "Information")"
-			else 
-				export name & break
-			fi
-			let to++
-		done
-	fi
+    if [[ -z "$name" ]]; then
+        to=0; while [ ${to} -lt 4 ]; do
+            if [[ -z "$name" ]]; then add="$(dlg_form_0)"
+            else add="$(dlg_form_0 "$name")"; fi
+            name="$(clean_3 "$(cut -d "|" -f1 <<< "${add}")")"
+            if [[ ${#name} -gt 55 ]]; then
+                msg "$(gettext "Sorry, the name is too long.")\n" \
+                dialog-information "$(gettext "Information")"
+            else 
+                export name & break
+            fi
+            let to++
+        done
+    fi
     if [[ ${#name} -gt 55 ]]; then name="Untitled"; fi
     if grep -Fxo "${name}" < <(ls "$DS/addons/"); then name="${name} (1)"; fi
     chck=$(grep -Fxo "${name}" <<< "${listt}" |wc -l)
@@ -66,7 +66,7 @@ function new_item() {
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
     if [ ! -d "$DT_r" ]; then
-		mkdir "$DT_r"; cd "$DT_r"
+        mkdir "$DT_r"; cd "$DT_r"
     fi
     check_s "${tpe}"
     if [ -z "${trgt}" ]; then trgt="${3}"; fi
@@ -125,13 +125,13 @@ function new_sentence() {
     else
         notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000 &
        if [ -e "$DT_r/__opts__" ]; then
-			opts="$(< "$DT_r/__opts__")"
-			export note="$(clean_2 "$(cut -d "|" -f1 <<< "${opts}")")"
-			export exmp="$(clean_2 "$(cut -d "|" -f2 <<< "${opts}")")"
-			export mark="$(cut -d "|" -f3 <<< "${opts}")"
+            opts="$(< "$DT_r/__opts__")"
+            export note="$(clean_2 "$(cut -d "|" -f1 <<< "${opts}")")"
+            export exmp="$(clean_2 "$(cut -d "|" -f2 <<< "${opts}")")"
+            export mark="$(cut -d "|" -f3 <<< "${opts}")"
             v="$(cut -d "|" -f4 <<< "${opts}")"
             if [[ "$v" = 'TRUE' ]]; then type=1; fi
-		fi
+        fi
         export type; index ${type}
         if [ -e "$DT_r/img.jpg" ]; then
             set_image_2 "$DT_r/img.jpg" "${DM_tlt}/images/${trgt,,}.jpg"
@@ -191,12 +191,12 @@ function new_word() {
         echo -e "${trgt}" >> "${DC_tlt}/note.err"
         cleanups "$DT_r"; exit 1
     else
-		if [ -e "$DT_r/__opts__" ]; then
-			opts="$(< "$DT_r/__opts__")"
-			export note="$(clean_2 "$(cut -d "|" -f1 <<< "${opts}")")"
-			export exmp="$(clean_2 "$(cut -d "|" -f2 <<< "${opts}")")"
-			export mark="$(clean_2 "$(cut -d "|" -f3 <<< "${opts}")")"
-		fi
+        if [ -e "$DT_r/__opts__" ]; then
+            opts="$(< "$DT_r/__opts__")"
+            export note="$(clean_2 "$(cut -d "|" -f1 <<< "${opts}")")"
+            export exmp="$(clean_2 "$(cut -d "|" -f2 <<< "${opts}")")"
+            export mark="$(clean_2 "$(cut -d "|" -f3 <<< "${opts}")")"
+        fi
         export type; index ${type}
         notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
         if [ -e "$DT_r/img.jpg" ]; then
@@ -337,56 +337,56 @@ function list_words_dclik() {
     [ ! -d "$DT_r" ] && mkdir "$DT_r"
     export DT_r
 
-	if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then
-		( echo "#"
-		echo "# $(gettext "Processing")..." ;
-		export srce="$(translate "${words}" $lgt $lgs)"
-		[ -z "${srce}" ] && internet
-		sentence_p 1
-		echo "$wrds"
-		list_words_3 "${words}" "${wrds}"
-		) | dlg_progress_1
-	else
-		list_words_3 "${words}"
-	fi
-	export wrds="$(< "$DT_r/lst")"
-	[ $(wc -l <<< "$wrds") = 1 ] && wrds=""
+    if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then
+        ( echo "#"
+        echo "# $(gettext "Processing")..." ;
+        export srce="$(translate "${words}" $lgt $lgs)"
+        [ -z "${srce}" ] && internet
+        sentence_p 1
+        echo "$wrds"
+        list_words_3 "${words}" "${wrds}"
+        ) | dlg_progress_1
+    else
+        list_words_3 "${words}"
+    fi
+    export wrds="$(< "$DT_r/lst")"
+    [ $(wc -l <<< "$wrds") = 1 ] && wrds=""
 
     if [[ -d "$2"  ]]; then
-			slts=$(mktemp "$DT/cnf1.XXXXXX")
-			opts="$(dlg_checklist_2 "${wrds}")"
-			if [ $? -eq 0 ]; then
-				echo "$opts" > "$DT_r/__opts__"
-				while read -r chkst; do
-					if [ -n "$chkst" ]; then
-					sed 's/TRUE//;s/<[^>]*>//g;s/|//g' <<< "${chkst}" >> "$DT_r/wrds"
-					echo "${words}" >> "$DT_r/wrdsls"
-					fi
-				done < "${slts}"
-				cleanups "${slts}"
-			
-			process '__words__'
-		fi
+            slts=$(mktemp "$DT/cnf1.XXXXXX")
+            opts="$(dlg_checklist_2 "${wrds}")"
+            if [ $? -eq 0 ]; then
+                echo "$opts" > "$DT_r/__opts__"
+                while read -r chkst; do
+                    if [ -n "$chkst" ]; then
+                    sed 's/TRUE//;s/<[^>]*>//g;s/|//g' <<< "${chkst}" >> "$DT_r/wrds"
+                    echo "${words}" >> "$DT_r/wrdsls"
+                    fi
+                done < "${slts}"
+                cleanups "${slts}"
+            
+            process '__words__'
+        fi
     else
-		if [[ -n "$wrds" ]]; then
-			slt="$(dlg_checklist_1 "${wrds}")"
-			if [ $? -eq 0 ]; then
-				while read -r chkst; do
-					if [ -n "$chkst" ]; then
-					sed 's/TRUE//;s/<[^>]*>//g;s/|//g' <<< "${chkst}" >> "$DT_r/wrds"
-					echo "${words}" >> "$DT_r/wrdsls"
-					fi
-				done <<< "${slt}"
-			fi
-		fi
+        if [[ -n "$wrds" ]]; then
+            slt="$(dlg_checklist_1 "${wrds}")"
+            if [ $? -eq 0 ]; then
+                while read -r chkst; do
+                    if [ -n "$chkst" ]; then
+                    sed 's/TRUE//;s/<[^>]*>//g;s/|//g' <<< "${chkst}" >> "$DT_r/wrds"
+                    echo "${words}" >> "$DT_r/wrdsls"
+                    fi
+                done <<< "${slt}"
+            fi
+        fi
     fi
     exit 0
-    
+
 } >/dev/null 2>&1
 
 function process() {
-	 if [ ! -d "$DT_r" ] ; then
-		mkdir "$DT_r"; cd "$DT_r"
+    if [ ! -d "$DT_r" ] ; then
+        mkdir "$DT_r"; cd "$DT_r"
     fi
     echo "${tpe}" > "$DT/n_s_pr"
     export ns=$(wc -l < "${DC_tlt}/data")
@@ -400,7 +400,7 @@ function process() {
     include "$DS/ifs/mods/add_process"
     
     if [[ "$1" = '__words__' ]]; then 
-		ret=0; conten="${1}"
+        ret=0; conten="${1}"
     elif [[ $conten != '__edit__' ]]; then
     
         if [[ $1 = image ]]; then
@@ -450,26 +450,26 @@ function process() {
             while read l; do
                 if [ $(wc -c <<< "${l}") -gt 140 ]; then
                     if grep -o -E '\,|\;' <<< "${l}" >/dev/null 2>&1; then
-						while read -r A; do
-							if [ $(wc -c <<< "${A}") -le 140 ]; then
-								lenght "${A}"
-							else									
-								while read -r B; do
-									if [ $(wc -c <<< "${B}") -le 140 ]; then
-										lenght "${B}"
-									else
-										while read -r C; do
-										  if [ $(wc -c <<< "${C}") -le 140 ]; then
-												lenght "${C}"
-											else
-												while read -r D; do
-													lenght "${D}"
-												done < <(sed 's/\—/\—\n/g' <<< "${C}")
-											fi
-										done < <(sed 's/\;/\;\n/g' <<< "${B}")
-									fi
-								done < <(sed 's/\,/\,\n/g' <<< "${A}")
-							fi
+                        while read -r A; do
+                            if [ $(wc -c <<< "${A}") -le 140 ]; then
+                                lenght "${A}"
+                            else
+                                while read -r B; do
+                                    if [ $(wc -c <<< "${B}") -le 140 ]; then
+                                        lenght "${B}"
+                                    else
+                                        while read -r C; do
+                                          if [ $(wc -c <<< "${C}") -le 140 ]; then
+                                                lenght "${C}"
+                                            else
+                                                while read -r D; do
+                                                    lenght "${D}"
+                                                done < <(sed 's/\—/\—\n/g' <<< "${C}")
+                                            fi
+                                        done < <(sed 's/\;/\;\n/g' <<< "${B}")
+                                    fi
+                                done < <(sed 's/\,/\,\n/g' <<< "${A}")
+                            fi
                         done < <(sed 's/\,"/\,"\n/g' <<< "${l}")
                     else
                         lenght "${l}"
@@ -512,7 +512,7 @@ function process() {
         unset link
         touch "$DT_r/select_lines"
         if [ "${tpe}" = "$(gettext "New") *" ]; then
-			new_topic
+            new_topic
             source $DS/default/c.conf
         else
             echo "${tpe}" > "$DT/tpe"
@@ -540,7 +540,7 @@ function process() {
             "$(gettext "Adding $number_items notes")" \
             "$(gettext "Please wait till the process is completed")" )
         else
-			[[ $conten != '__words__' ]] && cleanups "$DT_r"
+            [[ $conten != '__words__' ]] && cleanups "$DT_r"
             cleanups "$DT/n_s_pr" "$slt" & exit 1
         fi
         
@@ -745,8 +745,8 @@ fetch_content() {
 } 
 
 new_items() {
-	itemdir=$(cat /dev/urandom |tr -cd 'a-f0-9' |head -c 10)
-	export DT_r="$DT/$itemdir"
+    itemdir=$(cat /dev/urandom |tr -cd 'a-f0-9' |head -c 10)
+    export DT_r="$DT/$itemdir"
     if [ -f "$DT/clipw" ]; then 
         "$DS/ifs/clipw.sh" 1 & exit 1
     fi
@@ -801,9 +801,9 @@ new_items() {
         
     elif [ $ret -eq 0 -o $ret -eq 4 -o  $ret -eq 5 ]; then
         if [ $ret -eq 5 ]; then "$DS/ifs/tls.sh" clipw & return; fi
-		[ $ret -eq 4 ] && export wlist='TRUE'
+        [ $ret -eq 4 ] && export wlist='TRUE'
         if [ -z "${tpe}" ]; then
-			check_s "${tpe}" && exit 1
+            check_s "${tpe}" && exit 1
         fi
         if [ "${tpe}" = "$(gettext "New") *" ]; then
             "$DS/add.sh" new_topic

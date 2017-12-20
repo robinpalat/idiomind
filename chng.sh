@@ -65,44 +65,44 @@ if [[ ${1} = 0 ]]; then
         fi
     }
     
-	sents="$(tpc_db 5 sentences)"
-	words="$(tpc_db 5 words)"
-	marks="$(tpc_db 5 marks)"
-	learn="$(tpc_db 5 learning)"
-	leart="$(tpc_db 5 learnt)"
+    sents="$(tpc_db 5 sentences)"
+    words="$(tpc_db 5 words)"
+    marks="$(tpc_db 5 marks)"
+    learn="$(tpc_db 5 learning)"
+    leart="$(tpc_db 5 learnt)"
 
-	if [ ! -e "$DT/play2lck" ]; then
-		if [[ ${W} = TRUE ]] && [[ ${S} = TRUE ]]; then
-			echo -e "${tpc}" > "$DT/playlck"
-			while read item; do _stop=1; getitem; _play
-			done <<< "$learn"
-		fi
-		if [[ ${W} = TRUE ]] && [[ ${S} = FALSE ]]; then
-			echo -e "${tpc}" > "$DT/playlck"
-			while read item; do _stop=1; getitem; _play
-			done < <(grep -Fxv "${sents}" <<< "${learn}")
-		fi
-		if [[ ${W} = FALSE ]] && [[ ${S} = TRUE ]]; then
-			echo -e "${tpc}" > "$DT/playlck"
-			while read item; do _stop=1; getitem; _play
-			done < <(grep -Fxv "${words}" <<< "${learn}")
-		fi
-		if [[ ${M} = TRUE ]]; then
-			echo -e "${tpc}" > "$DT/playlck"
-			while read item; do _stop=1; getitem; _play
-			done <<< "${marks}"
-		fi
-		if [[ ${L} = TRUE ]]; then
-			echo -e "${tpc}" > "$DT/playlck"
-			while read item; do _stop=1; getitem; _play
-			done < <(grep -Fxvf "${DC_tlt}/practice/log3" \
-			"${DC_tlt}/practice/log2" |sort |uniq)
-		fi
-		if [[ ${D} = TRUE ]]; then
-			echo -e "${tpc}" > "$DT/playlck"
-			while read item; do _stop=1; getitem; _play
-			done < <(sort |uniq "${DC_tlt}/practice/log3")
-		fi
+    if [ ! -e "$DT/play2lck" ]; then
+        if [[ ${W} = TRUE ]] && [[ ${S} = TRUE ]]; then
+            echo -e "${tpc}" > "$DT/playlck"
+            while read item; do _stop=1; getitem; _play
+            done <<< "$learn"
+        fi
+        if [[ ${W} = TRUE ]] && [[ ${S} = FALSE ]]; then
+            echo -e "${tpc}" > "$DT/playlck"
+            while read item; do _stop=1; getitem; _play
+            done < <(grep -Fxv "${sents}" <<< "${learn}")
+        fi
+        if [[ ${W} = FALSE ]] && [[ ${S} = TRUE ]]; then
+            echo -e "${tpc}" > "$DT/playlck"
+            while read item; do _stop=1; getitem; _play
+            done < <(grep -Fxv "${words}" <<< "${learn}")
+        fi
+        if [[ ${M} = TRUE ]]; then
+            echo -e "${tpc}" > "$DT/playlck"
+            while read item; do _stop=1; getitem; _play
+            done <<< "${marks}"
+        fi
+        if [[ ${L} = TRUE ]]; then
+            echo -e "${tpc}" > "$DT/playlck"
+            while read item; do _stop=1; getitem; _play
+            done < <(grep -Fxvf "${DC_tlt}/practice/log3" \
+            "${DC_tlt}/practice/log2" |sort |uniq)
+        fi
+        if [[ ${D} = TRUE ]]; then
+            echo -e "${tpc}" > "$DT/playlck"
+            while read item; do _stop=1; getitem; _play
+            done < <(sort |uniq "${DC_tlt}/practice/log3")
+        fi
     fi
     include "$DS/ifs/mods/chng"
     echo ${_stop} > $DT/playlck

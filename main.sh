@@ -79,7 +79,7 @@ function new_session() {
     # update - topics
     if [ ! -f "${shrdb}" ]; then
         "$DS/ifs/tls.sh" create_shrdb
-	else
+    else
         for n in {1..4} 7; do 
         cdb ${shrdb} 6 T${n}; done
     fi
@@ -130,7 +130,7 @@ function new_session() {
         fi
         fi
     done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
-	-not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
+    -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
     rm -f "$DT/ps_lk"
     
     # run startups scripts
@@ -219,7 +219,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             sed -n 2p "${file}" |tr -d '\\' > "${DC_tlt}/data"
             sed -i 's/},/}\n/g;s|","|}|g;s|":"|{|g;s|":{"|}|g;s/"}/}/g' "${DC_tlt}/data"
             sed -i 's/^\s*./trgt{/g' "${DC_tlt}/data"
-			sed -i '/^$/d' "${DC_tlt}/data"
+            sed -i '/^$/d' "${DC_tlt}/data"
             export data="${DC_tlt}/data"
 python <<PY
 import os, re, locale, sqlite3
@@ -361,9 +361,9 @@ function topic() {
             if echo "$stts" |grep -E '3|4|7|8|9|10'; then
             
                 calculate_review "${tpc}"; 
-					
+
                 if [[ ${RM} -ge 100 ]]; then
-				
+
                     RM=100; dialog_1; ret=$?
                     
                     if [ $ret -eq 2 ]; then
@@ -491,7 +491,7 @@ ipanel() {
             cpost=$(xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4)
             if [ -z ${cpost} ]; then break; return 1; fi
             if [ ${spost} != ${cpost} ]; then
-				spost=${cpost}
+                spost=${cpost}
                 cdb ${cfgdb} 3 geom vals ${cpost}
             fi
         done

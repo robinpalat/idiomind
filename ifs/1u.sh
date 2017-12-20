@@ -77,13 +77,13 @@ function set_lang() {
         echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${tlngdb}
     fi
     
-	sqlite3 ${cfgdb} "update lang set tlng='${tlng}';"
+    sqlite3 ${cfgdb} "update lang set tlng='${tlng}';"
     sqlite3 ${cfgdb} "update lang set slng='${slng}';"
     
     shrdb="$DM_t/$tlng/.share/data/config"
     if [ ! -f "${shrdb}" ]; then
-		"/usr/share/idiomind/ifs/tls.sh" create_shrdb
-	fi
+        "/usr/share/idiomind/ifs/tls.sh" create_shrdb
+    fi
 }
 
 dlg=$(yad --form --title="Idiomind" \
@@ -132,9 +132,9 @@ elif [ $ret -eq 0 ]; then
     touch "$DC_s/tpc"
     
     export cfgdb="$DC_s/config"
-	if [ ! -f "${cfgdb}" ]; then
-		"/usr/share/idiomind/ifs/tls.sh" create_cfgdb
-	fi
+    if [ ! -f "${cfgdb}" ]; then
+        "/usr/share/idiomind/ifs/tls.sh" create_cfgdb
+    fi
 
     for val in "${lt[@]}"; do
         if [[ "${target}" = $(gettext ${val}) ]]; then

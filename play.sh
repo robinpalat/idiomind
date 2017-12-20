@@ -54,8 +54,8 @@ play_list() {
     msg "$(gettext "No topic is active")\n" dialog-information & exit 1; fi
     tpc="$(sed -n 1p "$HOME/.config/idiomind/tpc")"
     DC_tlt="${DM_tl}/${tpc}/.conf"
-	tpcdb="$DC_tlt/tpc"
-	[ ! -e "$tpcdb" ] && : # MAKE SURE
+    tpcdb="$DC_tlt/tpc"
+    [ ! -e "$tpcdb" ] && : # MAKE SURE
     [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
     [ ! -e $DT/playlck ] && echo 0 > $DT/playlck
     btn1="$(gettext "Play"):0"
@@ -71,19 +71,19 @@ play_list() {
     lbls=( 'Words' 'Sentences' 'Marked items' 'Orange items' 'Red items' )
     in=( 'in0' 'in1' 'in2' 'in3' 'in4' )
     iteml=( "$(gettext "No repeat")" "$(gettext "Words")" "$(gettext "Sentences")" )
-	sents="$(tpc_db 5 sentences)"
-	words="$(tpc_db 5 words)"
-	marks="$(tpc_db 5 marks)"
-	learn="$(tpc_db 5 learning)"
-	leart="$(tpc_db 5 learnt)"
+    sents="$(tpc_db 5 sentences)"
+    words="$(tpc_db 5 words)"
+    marks="$(tpc_db 5 marks)"
+    learn="$(tpc_db 5 learning)"
+    leart="$(tpc_db 5 learnt)"
     in0="$(grep -Fxv "${sents}" <<< "${learn}" |wc -l)"
     in1="$(grep -Fxv "${words}" <<< "${learn}" |wc -l)"
     in2="$(grep -Fxv "${leart}" <<< "${marks}" |wc -l)"
     in3="$(egrep -cv '#|^$' "${DC_tlt}/practice/log2")"
     in4="$(egrep -cv '#|^$' "${DC_tlt}/practice/log3")"
-    
+
     opts="$(tpc_db 5 config |head -n9)"
-	cfg=1
+    cfg=1
     if [ ${cfg} = 1 ]; then
         n=0; v=1
         while [ ${n} -le 9 ]; do
@@ -92,7 +92,7 @@ play_list() {
             let n++ v++
         done
     else
-		: # TODO
+        : # TODO
     fi
     setting_1() {
         n=0

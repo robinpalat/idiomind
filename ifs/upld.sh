@@ -360,7 +360,7 @@ function upld() {
             fi
             cp -r "$DC_tlt/translations" "$DT_u/files/translations"
         fi
-		export slng
+        export slng
         export naud=$(find "$DT_u/files" -maxdepth 5 -name '*.mp3' |wc -l)
         ###
         if [ -e "${DC_tlt}/note.tmp" ]; then
@@ -399,7 +399,7 @@ function upld() {
                     cp -f "${ipath}" "$DT_u/files/images/${trgt,,}-${imag}.jpg"
                 fi
              else
-				export imag=0
+                export imag=0
             fi
             eval item="$(sed -n 1p "$DS/default/vars")"
             [ -n "${trgt}" ] && echo -en "${item}" >> "${idmnd}"

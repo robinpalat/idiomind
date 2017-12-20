@@ -5,9 +5,9 @@ source /usr/share/idiomind/default/c.conf
 sz=(500 470); [[ ${swind} = TRUE ]] && sz=(420 410)
 source "$DS/ifs/cmns.sh"
 if [[ -n "$1" ]]; then
-	tpc="$1"
-	DM_tlt="$DM_tl/$1"
-	DC_tlt="$DM_tlt/.conf"
+    tpc="$1"
+    DM_tlt="$DM_tl/$1"
+    DC_tlt="$DM_tlt/.conf"
     tpcdb="$DC_tlt/tpc"
 fi
 pdir="${DC_tlt}/practice"
@@ -94,12 +94,12 @@ function save_score() {
 
 function _log() { 
     if [ ${1} != 'e' ]; then
-		 if [ -e ./${1}.1 ]; then
-		 echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1" |sed '/\.\./d' >> "$log"; fi
-		 if [ -e ./${1}.2 ]; then
+         if [ -e ./${1}.1 ]; then
+         echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1" |sed '/\.\./d' >> "$log"; fi
+         if [ -e ./${1}.2 ]; then
          [ ! -e ./${1}.3 ] && echo -n "$(head -n10 < ./${1}.2 |sed -e ':a;N;$!ba;s/\n/, /g')" > ./${1}.df
          echo "w2.$(tr -s '\n' '|' < ./${1}.2).w2" |sed '/\.\./d' >> "$log"; fi
-		 if [ -e ./${1}.3 ]; then
+         if [ -e ./${1}.3 ]; then
          echo -n "$(head -n10 < ./${1}.3 |sed -e ':a;N;$!ba;s/\n/, /g')" > ./${1}.df
          echo "w3.$(tr -s '\n' '|' < ./${1}.3).w3" |sed '/\.\./d' >> "$log"; fi
     elif [ ${1} = 'e' ]; then
@@ -655,17 +655,17 @@ function get_list() {
             
         fi
          inf=0; while read -r itm; do
-			cnt="$(echo "$itm" |wc -c)"
-			if [ ${cnt} -lt 90 ]; then
-				echo "$itm" >> "${pdir}/${pr}.0"
-			else
-				inf=1
-			fi
-		done < "${pdir}/${pr}.0.tmp"
+            cnt="$(echo "$itm" |wc -c)"
+            if [ ${cnt} -lt 90 ]; then
+                echo "$itm" >> "${pdir}/${pr}.0"
+            else
+                inf=1
+            fi
+        done < "${pdir}/${pr}.0.tmp"
         if [ ${inf} = 1 ]; then
-			msg "$(gettext "Some sentences could not be listed because they are too long")\n" info
-		fi
-		> "${pdir}/${pr}.1"
+            msg "$(gettext "Some sentences could not be listed because they are too long")\n" info
+        fi
+        > "${pdir}/${pr}.1"
     fi
 }
 
@@ -701,8 +701,8 @@ function decide_group() {
     [ -e ./${pr}.l ] && learnt=$(($(< ./${pr}.l)+easy)) || learnt=${easy}
     preeasy=$((learnt+easy)); left=$((all-learnt))
     if [[ ${easy} = 10 ]]; then
-		cleanups ./${pr}.df; export plus${pr}=""
-		good="$(gettext "Good!")   "
+        cleanups ./${pr}.df; export plus${pr}=""
+        good="$(gettext "Good!")   "
     fi
     info="$(gettext "Left") <b>$left</b>   $(gettext "Learnt") <b>$learnt</b>   $(gettext "Easy") <b>$easy</b>   $(gettext "Learning") <b>$ling</b>   $(gettext "Difficult") <b>$hard</b>"
     optns=$(yad --form --title="$good$(gettext "Continue")..." \
@@ -743,8 +743,8 @@ function practices() {
     log="$DC_s/log"
     cfg0="$DC_tlt/data"
     cfg4="$(tpc_db 5 sentences)"
-	cfg3="$(tpc_db 5 words)"
-	cfg1="$(tpc_db 5 learning)"
+    cfg3="$(tpc_db 5 words)"
+    cfg1="$(tpc_db 5 learning)"
     hits="$(gettext "hits")"
     touch "${pdir}/log1" "${pdir}/log2" "${pdir}/log3"
     easy=0; hard=0; ling=0; step=1
@@ -820,7 +820,7 @@ function practices() {
         if [ "$(egrep -cv '#|^$' <<< "${cfg1}")" -lt 1 ]; then
             msg "$(gettext "There are not enough items to practice") \n" \
             dialog-information " " "$(gettext "OK")"
-		elif grep -o -E 'a|b|c|d' <<< ${pr}; then
+        elif grep -o -E 'a|b|c|d' <<< ${pr}; then
             msg "$(gettext "There are no words on the \"Learning\" list, but there are still sentences") \n" \
             dialog-information " " "$(gettext "OK")"
         elif grep -o 'e' <<< ${pr}; then
@@ -841,20 +841,20 @@ function practices() {
 function strt() {
     check_dir "${pdir}"; cd "${pdir}"
     for i in {1..5}; do
-		if [[ ! -e ./.${i} ]]; then
-		echo 1 > ./.${i}
-		fi
-	done
+        if [[ ! -e ./.${i} ]]; then
+        echo 1 > ./.${i}
+        fi
+    done
     [[ ${hard} -lt 0 ]] && hard=0
     if [[ ${step} -gt 1 ]] && [[ ${ling} -ge 1 ]] && \
     [[ ${hard} = 0 ]] && [[ ${group} != 1 ]]; then
-		echo -e "wait=\"$(date +%d)\"" > ./${pr}.lock
+        echo -e "wait=\"$(date +%d)\"" > ./${pr}.lock
     fi
     for i in a b c d; do
-		if [[ -s ./${i}.df ]]; then
-		declare plus${i}=" | <span font_desc='Verdana 8'>$(< ./${i}.df)</span>"
-		fi
-	done
+        if [[ -s ./${i}.df ]]; then
+        declare plus${i}=" | <span font_desc='Verdana 8'>$(< ./${i}.df)</span>"
+        fi
+    done
 
     include "$DS/ifs/mods/practice"
     
@@ -897,7 +897,7 @@ function strt() {
             practices ${pr}
         fi
     elif [ $ret -eq 3 ]; then
-		unset plusa plusb plusc plusd pr
+        unset plusa plusb plusc plusd pr
         if [ -d "${pdir}" ]; then
             cd "${pdir}"/; rm ./.[^.]; rm ./*
             touch ./log1 ./log2 ./log3

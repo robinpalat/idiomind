@@ -21,7 +21,7 @@ chek_topic() {
         touch "${DC_tlt}/data"
     fi
     if [ ! -e "$tpcdb" ]; then
-		cp -f "$DS/default/tpc" "$tpcdb"
+        cp -f "$DS/default/tpc" "$tpcdb"
         tpc_db 3 id name "${tpc}"
         tpc_db 3 id slng "${slng}"
         tpc_db 3 id tlng "${tlng}"

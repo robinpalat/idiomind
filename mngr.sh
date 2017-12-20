@@ -13,7 +13,7 @@ mkmn() {
     f_lock "$DT/mn_lk"
     cleanups "$DM_tl/images" "$DM_tl/.conf"
     dirimg='/usr/share/idiomind/images'
-	index="$DM_tl/.share/index"; > "$index"
+    index="$DM_tl/.share/index"; > "$index"
     while read -r tpc; do
         dir="$DM_tl/${tpc}/.conf"; unset stts
         [ ! -d "${dir}" ] && mkdir -p "${dir}"
@@ -23,7 +23,7 @@ mkmn() {
             stts=$(sed -n 1p "${dir}/stts")
             ! [[ ${stts} =~ $numer ]] && stts=13
         fi
-		echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$index"
+        echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$index"
     done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
     -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d'; \
     find ./ -maxdepth 1 -mtime +79 -type d -not -path '*/\.*' \
@@ -55,8 +55,8 @@ delete_item_ok() {
         fi
         
         tas=('learning' 'learnt' 'words' 'sentences' 'marks')
-		for ta in ${tas[@]}; do
-			tpc_db 4 $ta list "${trgt}"
+        for ta in ${tas[@]}; do
+            tpc_db 4 $ta list "${trgt}"
         done
         cleanups "${DC_tlt}/lst"
     fi
@@ -93,8 +93,8 @@ delete_item() {
             fi
 
             tas=('learning' 'learnt' 'words' 'sentences' 'marks')
-			for ta in ${tas[@]}; do
-				tpc_db 4 $ta list "${trgt}"
+            for ta in ${tas[@]}; do
+                tpc_db 4 $ta list "${trgt}"
             done
             
             if [[ $(wc -l < "${DC_tlt}/data") -lt 200 ]] \
@@ -115,11 +115,11 @@ edit_item() {
     list=${2}; item_pos=${3}; text_missing=${4}
     if [ ${list} = 1 ]; then
         index_1="$(tpc_db 5 learning)"
-		index_2="$(tpc_db 5 learnt)"
+        index_2="$(tpc_db 5 learnt)"
         [ ${item_pos} -lt 1 ] && item_pos=${cfg1}
     elif [ ${list} = 2 ]; then
         index_1="$(tpc_db 5 learnt)"
-		index_2="$(tpc_db 5 learning)"
+        index_2="$(tpc_db 5 learning)"
         [ ${item_pos} -lt 1 ] && item_pos=${cfg2}
     fi
     item_trgt="$(sed -n ${item_pos}p <<< "${index_1}")"
@@ -309,15 +309,15 @@ edit_item() {
                         elif [ ${type_mod} = 1 ]; then
                             [ -e "${DM_tlt}/$cdid.mp3" ] && \
                             mv -f "${DM_tlt}/$cdid.mp3" "${DM_tlt}/$cdid_mod.mp3"; fi
-					fi
-				fi
+                    fi
+                fi
                 if [ "$type" != "$type_mod" ]; then
                     if [ ${type_mod} = 1 ]; then
-						tpc_db 4 sentences "${trgt_mod}"
+                        tpc_db 4 sentences "${trgt_mod}"
                         tpc_db 2 words list "${trgt_mod}"
 
                     elif [ ${type_mod} = 2 ]; then
-						tpc_db 4 words "${trgt_mod}"
+                        tpc_db 4 words "${trgt_mod}"
                         tpc_db 2 sentences list "${trgt_mod}"
                     fi
                 fi
@@ -388,7 +388,7 @@ edit_list_cmds() {
         n=1; f_lock "$DT/el_lk"
         
         learn="$(tpc_db 5 learning)"; leart="$(tpc_db 5 learnt)"
-		tpc_db 6 'learning'; tpc_db 6 'words'; tpc_db 6 'sentences'
+        tpc_db 6 'learning'; tpc_db 6 'words'; tpc_db 6 'sentences'
         
         $cmd "$DT/list_output" |sed '/^$/d;/(null)/d' |while read -r trgt; do
             if grep -F -m 1 "trgt{${trgt}}" "${direc}/data"; then
@@ -533,8 +533,8 @@ edit_list_more() {
                 cleanups "$DT/list_output" "$DT/list_input"
                 cleanups "${DC_tlt}/data" "${DC_tlt}/index"
                 tpc_db 6 'sentences'; tpc_db 6 'words'
-				tpc_db 6 'learning'; tpc_db 6 'learnt'
-				tpc_db 6 'marks'
+                tpc_db 6 'learning'; tpc_db 6 'learnt'
+                tpc_db 6 'marks'
                 touch "${DC_tlt}/data"
                 cleanups "$DT/edit_list_more"
                 [ -d "${DM_tlt}" -a -n "$tpc" ] && rm "$DM_tlt"/*.mp3
@@ -551,8 +551,8 @@ edit_list_more() {
                     item="$(sed 's/}/}\n/g' <<< "${item_}")"
                     trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
                     if [ -n "${trgt}" ]; then
-						tpc_db 2 learning list "${trgt}"
-					fi
+                        tpc_db 2 learning list "${trgt}"
+                    fi
                 done < "${DC_tlt}/data"
                 tpc_db 3 config repass 0
                 "$DS/mngr.sh" mkmn 1; "$DS/ifs/tls.sh" colorize 0
@@ -687,7 +687,7 @@ delete_topic() {
         
         tas=( 'topics' 'T1' 'T2' 'T3' 'T4' 'T5' 'T6' 'T7' )
         for ta in ${tas[@]}; do
-			cdb "${shrdb}" 4 "${ta}" list "${tpc}"
+            cdb "${shrdb}" 4 "${ta}" list "${tpc}"
         done
         idiomind tasks
         
@@ -737,7 +737,7 @@ rename_topic() {
         echo "${name}" > "$DT/tpe"
         tas=( 'T1' 'T2' 'T3' 'T4' 'T5' 'T6' 'T7' )
         for ta in ${tas[@]}; do
-			cdb "${shrdb}" 7 "${ta}" "${name}" "${tpc}"
+            cdb "${shrdb}" 7 "${ta}" "${name}" "${tpc}"
         done
         idiomind tasks
         check_list

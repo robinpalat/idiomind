@@ -10,18 +10,18 @@ cbwatch() {
         xclip -selection clipboard /dev/null
         sleep 0.5
         if [[ -n "$(xclip -selection clipboard -o)" ]]; then
-			if [[ "$(xclip -selection clipboard -o)" -gt 120 ]]; then
-				notify-send -i idiomind "$(gettext "Text is too long")" \
-				"$(gettext "The copied text cannot be added because it is too long")" -t 10000
-			else
-				idiomind add "$(xclip -selection clipboard -o)"
+            if [[ "$(xclip -selection clipboard -o)" -gt 120 ]]; then
+                notify-send -i idiomind "$(gettext "Text is too long")" \
+                "$(gettext "The copied text cannot be added because it is too long")" -t 10000
+            else
+                idiomind add "$(xclip -selection clipboard -o)"
             fi
             xclip -selection clipboard /dev/null
         fi
     done & pid=$!
-	sleep 300 && kill -TERM $pid
-	[[ -f $DT/clipw ]] && rm -f $DT/clipw
-	return 0
+    sleep 300 && kill -TERM $pid
+    [[ -f $DT/clipw ]] && rm -f $DT/clipw
+    return 0
 }
 
 DT="/tmp/.idiomind-$USER"

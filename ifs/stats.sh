@@ -35,7 +35,7 @@ function create_db() {
 }
 
 function save_topic_stats() {
-	
+    
     count() {
         n=1; f0=0; f1=0; f2=0; f3=0; f4=0
         old_IFS=$IFS; IFS=$'\n'
@@ -85,12 +85,12 @@ function save_topic_stats() {
         touch "${no_data}"
     fi
     if [[ "$1" = 1 ]]; then
-		dte=$(sqlite3 ${db} "select date from 'expire_month';")
-		sqlite3 ${db} "update ${mtable} set val0='${f0}' where month='${dmonth}';"
-		sqlite3 ${db} "update ${mtable} set val1='${f1}' where month='${dmonth}';"
-		sqlite3 ${db} "update ${mtable} set val2='${f2}' where month='${dmonth}';"
-		sqlite3 ${db} "update ${mtable} set val3='${f3}' where month='${dmonth}';"
-		sqlite3 ${db} "update ${mtable} set val4='${f4}' where month='${dmonth}';"
+        dte=$(sqlite3 ${db} "select date from 'expire_month';")
+        sqlite3 ${db} "update ${mtable} set val0='${f0}' where month='${dmonth}';"
+        sqlite3 ${db} "update ${mtable} set val1='${f1}' where month='${dmonth}';"
+        sqlite3 ${db} "update ${mtable} set val2='${f2}' where month='${dmonth}';"
+        sqlite3 ${db} "update ${mtable} set val3='${f3}' where month='${dmonth}';"
+        sqlite3 ${db} "update ${mtable} set val4='${f4}' where month='${dmonth}';"
     fi
     echo "${f0},${f1},${f2},${f3},${f4}" > "${pross}"
 }
@@ -282,7 +282,7 @@ function chktb() {
 }
 
 function pre_comp() {
-	echo -e "\n--- updating statistics..."
+    echo -e "\n--- updating statistics..."
     f_lock "$DT/p_stats"
     val1=0; val2=0
     echo -n "create table if not exists 'expire_month' (date TEXT);" |sqlite3 "${db}"
@@ -300,7 +300,7 @@ function pre_comp() {
         save_topic_stats 0
     fi
     
-	echo -e "--- statistics updated\n"
+    echo -e "--- statistics updated\n"
     rm -f "$DT/p_stats"
 }
 

@@ -58,7 +58,7 @@ function dlg_form_2() {
 }
 
 function edit_list_list() {
-	sz=(580 450); [[ ${swind} = TRUE ]] && sz=(480 440)
+    sz=(580 450); [[ ${swind} = TRUE ]] && sz=(480 440)
     yad --list --title="$(gettext "Edit list")" \
     --text="<small>$(gettext "Double click to edit. Drag and drop to move. Right-click to display menu.")</small>" \
     --name=Idiomind --class=Idiomind \
