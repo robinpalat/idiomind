@@ -154,7 +154,7 @@ function check_list() {
             while read -r topic; do
                 if ! echo -e "$(ls -1a "$DS/addons/")" \
                 |grep -Fxo "${topic}" >/dev/null 2>&1; then
-                    if [ ! -L "$DM_tl/${topic}" ]; then
+                    if [ -d "$DM_tl/${topic}" ]; then
                      sqlite3 ${db} "insert into topics (list) values ('${topic}');"
                     fi
                 fi

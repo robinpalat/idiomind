@@ -43,31 +43,33 @@ function save_topic_stats() {
         -type d -not -path '*/\.*' |sed 's|\./||g;/^$/d'); do
             C0=0; C1=0; C2=0; C3=0; C4=0; G1=0; G2=0
             dir1="$DM_tl/${tpc}/.conf"
-            stts=""; stts=$(sed -n 1p "$dir1/stts")
+            unset stts tpcdb
+            stts=$(sed -n 1p "$dir1/stts")
             tpcdb="$dir1/tpc"
-            G1="$(grep -c '[^[:space:]]' <<< "$(tpc_db 5 learning)")"
-            G2="$(grep -c '[^[:space:]]' <<< "$(tpc_db 5 learnt)")"
-            
-            if [[ ${stts} =~ $int ]]; then
-                if [ ${stts} -le 10 -a ${stts} -ge 7 ]; then
-                    C3=${G2}
-                elif [ ${stts} = 5 -o ${stts} = 6 ]; then
-                    C1=${G2}; C2=${G1}
-                elif [ ${stts} = 3 -o ${stts} = 4 ]; then
-                    C1=${G2}
-                elif [ ${stts} = 12 ]; then
-                    C4=$((G1+G2))
-                else
-                    C1=${G2}; C0=${G1}
+            if file "$tpcdb" | grep 'SQLite'; then
+                G1="$(grep -c '[^[:space:]]' <<< "$(tpc_db 5 learning)")"
+                G2="$(grep -c '[^[:space:]]' <<< "$(tpc_db 5 learnt)")"
+                
+                if [[ ${stts} =~ $int ]]; then
+                    if [ ${stts} -le 10 -a ${stts} -ge 7 ]; then
+                        C3=${G2}
+                    elif [ ${stts} = 5 -o ${stts} = 6 ]; then
+                        C1=${G2}; C2=${G1}
+                    elif [ ${stts} = 3 -o ${stts} = 4 ]; then
+                        C1=${G2}
+                    elif [ ${stts} = 12 ]; then
+                        C4=$((G1+G2))
+                    else
+                        C1=${G2}; C0=${G1}
+                    fi
                 fi
+                f0=$((f0+C0))
+                f1=$((f1+C1))
+                f2=$((f2+C2))
+                f3=$((f3+C3))
+                f4=$((f4+C4))
+                echo "${f0},${f1},${f2},${f3},${f4}"
             fi
-            f0=$((f0+C0))
-            f1=$((f1+C1))
-            f2=$((f2+C2))
-            f3=$((f3+C3))
-            f4=$((f4+C4))
-            echo "${f0},${f1},${f2},${f3},${f4}"
-            
         done |tail -n 1
         IFS=$old_IFS
     }
@@ -325,4 +327,3 @@ function stats() {
         --no-buttons
     fi
 } >/dev/null 2>&1
-

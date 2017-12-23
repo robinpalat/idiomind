@@ -21,7 +21,6 @@ words=$(grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' \
 sentences=$(grep -o -P '(?<=s1.).*(?=\.s1)' "${log}" |tr '|' '\n' \
 |sort |uniq -dc |sort -n -r |sed 's/ \+/ /g')
 topics="$(cdb "${shrdb}" 5 topics|head -n30)"
-echo 
 
 # grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' |sort |uniq
 dir="$DM_tl/"
@@ -119,8 +118,8 @@ for tpc in topics:
                 cur_shr_db.execute("insert into T5 values (?)", (tpc,))
                 shr_db.commit()
                 print "- to practice: "+tpc
-
-        cfg1len = 0
+                
+        len_learnt = 0
         if cont == True:
             index = open(cnfg_dir+"index", "w")
             for item in items:
@@ -147,11 +146,12 @@ for tpc in topics:
                     else:
                         index.write(i+"\nFALSE\n"+srce+"\n")
                     if chk == 'TRUE':
-                        cfg1len=cfg1len+1
+                        len_learnt = len_learnt+1
             index.close()
-            if len(learn) == cfg1len and len(cnfg_dir+"data") > 15:
-                subprocess.Popen(['/usr/share/idiomind/mngr.sh %s %s' % ('mark_to_learnt_ok', '"'+tpc+'"')], shell=True)
-                print 'mark_as_learnt -> ' + tpc
+            if (stts == '1' or stts == '2' or stts == '5' or stts == '6'):
+                if len(learn) == len_learnt and len(items) > 15:
+                    subprocess.Popen(['/usr/share/idiomind/mngr.sh %s %s' % ('mark_to_learnt_ok', '"'+tpc+'"')], shell=True)
+                    print 'mark_as_learnt -> ' + tpc
     except:
         print 'err -> ' + tpc
 shr_db.close()      
