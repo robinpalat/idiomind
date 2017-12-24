@@ -529,9 +529,6 @@ _start() {
     ( if [[ "${cu}" = TRUE ]]; then
     "$DS/ifs/tls.sh" a_check_updates; fi ) &
 
-    if [[ $(cdb ${cfgdb} 1 opts clipw) = TRUE ]] && [ ! -e $DT/clipw ]; then
-        cdb ${cfgdb} 3 opts clipw FALSE
-    fi
     export swind=$(cdb ${cfgdb} 1 opts swind) 
     if [[ $(cdb ${cfgdb} 1 opts itray) = TRUE ]] && \
     ! pgrep -f "$DS/ifs/tls.sh itray"; then
