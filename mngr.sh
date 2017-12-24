@@ -899,7 +899,7 @@ PY
     exit
 }
 
-mark_as_learnt_topic_ok() {
+mark_as_learned_topic_ok() {
     tpc="${2}"
     DM_tlt="$DM_tl/${tpc}"
     DC_tlt="$DM_tl/${tpc}/.conf"
@@ -994,8 +994,8 @@ case "$1" in
     rename_topic "$@" ;;
     mark_as_learned)
     mark_as_learned_topic "$@" ;;
+    mark_as_learned_ok)
+    mark_as_learned_topic_ok "$@" ;;
     mark_to_learn)
     mark_to_learn_topic "$@" ;;
-    mark_to_learnt_ok)
-    mark_as_learnt_topic_ok "$@" ;;
 esac

@@ -72,8 +72,8 @@ config_dlg() {
     sz=(510 350); [[ ${swind} = TRUE ]] && sz=(460 320)
     show_icon=0; kill_icon=0
     opts="$(cdb "${cfgdb}" 5 opts)"
-    csets=( 'gramr' 'wlist' 'trans' 'dlaud' \
-    'ttrgt' 'clipw' 'itray' 'swind' 'stsks' 'tlang' 'slang' )
+    csets=( 'gramr' 'trans' 'dlaud' 'ttrgt' \
+    'itray' 'swind' 'stsks' 'tlang' 'slang' )
     v=1; for get in ${csets[@]}; do
         val=$(sed -n ${v}p <<< "$opts")
         declare "$get"="$val"; let v++
@@ -99,11 +99,9 @@ config_dlg() {
     --separator='|' --always-print-result --print-all \
     --field=":LBL" " " \
     --field="$(gettext "Use color to highlight grammar")":CHK "$gramr" \
-    --field="$(gettext "List words after adding a sentence")":CHK "$wlist" \
     --field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
     --field="$(gettext "Download audio pronunciation")":CHK "$dlaud" \
     --field="$(gettext "Detect language of source text (slower)")":CHK "$ttrgt" \
-    --field="$(gettext "Clipboard watcher")":CHK "$clipw" \
     --field="$(gettext "Show icon in the notification area")":CHK "$itray" \
     --field="$(gettext "Adjust windows size to small screens")":CHK "$swind" \
     --field="$(gettext "Run at startup")":CHK "$stsks" \
@@ -138,7 +136,7 @@ config_dlg() {
 
     if [ $ret -eq 0 ]; then
         n=1; v=0
-        while [ ${n} -le 14 ]; do
+        while [ ${n} -le 12 ]; do
             val=$(cut -d "|" -f${n} < "$cnf1")
             if [ "$val" = TRUE -o "$val" = FALSE ]; then
                 cdb "${cfgdb}" 3 opts "${csets[$v]}" "${val}"; ((v=v+1))
@@ -146,23 +144,19 @@ config_dlg() {
             ((n=n+1))
         done
         
-        val=$(cut -d "|" -f17 < "$cnf1")
+        val=$(cut -d "|" -f15 < "$cnf1")
         [[ "$val" != "$synth" ]] && cdb "${cfgdb}" 3 opts synth "${val}"
         
-        val=$(cut -d "|" -f18 < "$cnf1")
+        val=$(cut -d "|" -f16 < "$cnf1")
         [[ "$val" != "$txaud" ]] && cdb "${cfgdb}" 3 opts txaud "${val}"
 
-        val=$(cut -d "|" -f19 < "$cnf1")
+        val=$(cut -d "|" -f17 < "$cnf1")
         if [[ "$val" != "$intrf" ]]; then
             cdb "${cfgdb}" 3 opts intrf ${val}
             kill_icon=1; show_icon=1; export intrf=$val
             idiomind tasks &
         fi
-        if [[ $(cdb ${cfgdb} 1 opts clipw)  = TRUE ]] && [ ! -e $DT/clipw ]; then
-            "$DS/ifs/tls.sh" clipw &
-        else 
-            if [ -e $DT/clipw ]; then kill $(cat $DT/clipw); rm -f $DT/clipw; fi
-        fi
+
         if [[ $(cdb ${cfgdb} 1 opts itray)  = TRUE ]] && [[ ! -f "$DT/tray.pid" ]]; then
             show_icon=1
         elif [[ $(cdb ${cfgdb} 1 opts itray)  = FALSE ]] && [[ -f "$DT/tray.pid" ]]; then
@@ -189,7 +183,7 @@ config_dlg() {
                 rm "$config_dir/idiomind.desktop"
             fi
         fi
-        ntlang=$(cut -d "|" -f13 < "$cnf1")
+        ntlang=$(cut -d "|" -f11 < "$cnf1")
         if [[ $(gettext ${tlng}) != ${ntlang} ]]; then
             for val in "${lt[@]}"; do
                 if [[ ${ntlang} = $(gettext ${val}) ]]; then
@@ -202,7 +196,7 @@ config_dlg() {
             confirm "$info2$info3" dialog-question ${tlng}
             [ $? -eq 0 ] && set_lang ${tlng}
         fi
-        nslang=$(cut -d "|" -f14 < "$cnf1")
+        nslang=$(cut -d "|" -f12 < "$cnf1")
         if [[ "${slng}" != "${nslang}" ]]; then
             slng="${nslang}"
             confirm "$info2" dialog-question "${slng}"
@@ -217,7 +211,7 @@ config_dlg() {
         fi
     fi
     rm -f "$cnf1" "$DT/.lc"
-     >/dev/null 2>&1
+
     exit
 
 }  >/dev/null 2>&1

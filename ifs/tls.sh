@@ -265,8 +265,9 @@ check_index() {
 create_cfgdb() {
     cfgdb="$HOME/.config/idiomind/config"
     echo -n "pragma busy_timeout=800;create table if not exists opts \
-    (gramr TEXT, wlist TEXT, trans TEXT, dlaud TEXT, ttrgt TEXT, clipw TEXT, itray TEXT, \
-    swind TEXT, stsks TEXT, tlang TEXT, slang TEXT, synth TEXT, txaud TEXT, intrf TEXT);" |sqlite3 "${cfgdb}"
+    (gramr TEXT, trans TEXT, dlaud TEXT, ttrgt TEXT, itray TEXT, \
+    swind TEXT, stsks TEXT, tlang TEXT, slang TEXT, \
+    synth TEXT, txaud TEXT, intrf TEXT);" |sqlite3 "${cfgdb}"
     echo -n "pragma busy_timeout=500;create table if not exists lang \
     (tlng TEXT, slng TEXT);" |sqlite3 "${cfgdb}"
     echo -n "pragma busy_timeout=500; create table if not exists geom \
@@ -278,9 +279,9 @@ create_cfgdb() {
     echo -n "pragma busy_timeout=500; create table if not exists updt \
     (date TEXT,ignr TEXT);" |sqlite3 "${cfgdb}"
     sqlite3 "${cfgdb}" "pragma busy_timeout=500;\
-    insert into opts (gramr,wlist,trans,dlaud,ttrgt,\
-    clipw,itray,swind,stsks,tlang,slang,synth,txaud,intrf) \
-    values ('FALSE','FALSE','FALSE','FALSE','FALSE','FALSE','FALSE',\
+    insert into opts (gramr,trans,dlaud,ttrgt,itray,\
+    swind,stsks,tlang,slang,synth,txaud,intrf) \
+    values ('FALSE','FALSE','FALSE','FALSE','FALSE',\
     'FALSE','FALSE','','','','','default');"
     sqlite3 "${cfgdb}" "insert into lang (tlng,slng) values ('','');"
     sqlite3 "${cfgdb}" "insert into user (autr,pass) values ('','');"
@@ -1320,7 +1321,6 @@ clipw() {
         fi
     else
         source "$DS/ifs/cmns.sh"
-        cdb ${cfgdb} 3 opts clipw FALSE &
         notify-send -i info "$(gettext "Information")" \
 "$(gettext "Clipboard watcher: No topic selected or active, exiting...")" -t 10000
     fi

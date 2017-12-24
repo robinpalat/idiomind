@@ -859,7 +859,8 @@ function strt() {
     include "$DS/ifs/mods/practice"
     
     if [[ "${1}" = 1 ]]; then
-        NUMBER="<span color='#6E6E6E'><b><big>$(wc -l < ${pr}.0)</big></b></span>"; declare info${icon}="<span font_desc='Arial Bold 12'>$(gettext "Test completed") </span> — "
+        NUMBER="$(wc -l < ${pr}.0)"
+        declare info${icon}="<span font_desc='Arial Bold 12'>$(gettext "Test completed") </span> — "
         [[ "${pr}" = e ]] && \
         info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed a test of") $NUMBER $(gettext "sentences")</span>\n" \
         || info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed a test of") $NUMBER $(gettext "words")</span>\n"

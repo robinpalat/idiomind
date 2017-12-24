@@ -31,7 +31,6 @@ if [[ "$1" =  1 ]]; then
     'edit-paste' "$(gettext "Yes")" "$(gettext "No")"
     ret="$?"
     if [ $ret = 0 ]; then
-        cdb "${cfgdb}" 3 opts clipw 'FALSE'
         [[ -f $DT/clipw ]] && rm -f $DT/clipw
         exit 1
     fi

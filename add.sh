@@ -7,7 +7,6 @@ source "$DS/default/sets.cfg"
 lgt=${tlangs[$tlng]}
 lgs=${slangs[$slng]}
 include "$DS/ifs/mods/add"
-wlist="$(cdb "${cfgdb}" 1 opts wlist)"
 trans="$(cdb "${cfgdb}" 1 opts trans)"
 ttrgt="$(cdb "${cfgdb}" 1 opts ttrgt)"
 dlaud="$(cdb "${cfgdb}" 1 opts dlaud)"
@@ -152,8 +151,6 @@ function new_sentence() {
             mv -f "$DT_r/audtm.mp3" "${DM_tlt}/$cdid.mp3"
         fi
         if [[ "$type" = 2 ]]; then
-            ( if [[ ${wlist} = TRUE ]] && [ -n "${wrds}" ]; then
-                list_words_sentence; fi ) &
             [[ ${dlaud} = TRUE ]] && fetch_audio "$aw" "$bw"
         fi
         cleanups "$DT_r"
@@ -733,7 +730,7 @@ fetch_content() {
                 if [ -n "${title}" ]; then
                     if ! grep -Fo "trgt{${title^}}" "${DC_tlt}/data" >/dev/null 2>&1 && \
                     ! grep -Fxq "${title^}" "${DC_tlt}/exclude" >/dev/null 2>&1; then
-                        export wlist='FALSE'; export trans='TRUE'
+                        export trans='TRUE'
                         export trgt="${title^}"
                         new_item
                     fi
@@ -801,7 +798,6 @@ new_items() {
         
     elif [ $ret -eq 0 -o $ret -eq 4 -o  $ret -eq 5 ]; then
         if [ $ret -eq 5 ]; then "$DS/ifs/tls.sh" clipw & return; fi
-        [ $ret -eq 4 ] && export wlist='TRUE'
         if [ -z "${tpe}" ]; then
             check_s "${tpe}" && exit 1
         fi
