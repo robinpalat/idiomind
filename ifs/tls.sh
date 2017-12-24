@@ -563,15 +563,8 @@ _translation() {
 } >/dev/null 2>&1
 
 _help() {
-    sz=(540 500); [[ ${swind} = TRUE ]] && sz=(520 420)
-    _url='http://idiomind.sourceforge.net/doc/help.html'
-    yad --html --title="$(gettext "Get started")" \
-    --name=Idiomind --class=Idiomind \
-    --uri="${_url}" \
-    --window-icon=idiomind \
-    --fixed --on-top --mouse \
-    --width=${sz[0]} --height=${sz[1]} --borders=5 \
-    --button="$(gettext "Close")":1 &
+    xdg-open 'https://sourceforge.net/p/idiomind/wiki/Get%20started/'
+    
 } >/dev/null 2>&1
 
 check_updates() {
@@ -1000,7 +993,7 @@ translate_to() {
     cleanups "$DT/translate_to" "${DC_tlt}/slng_err.bk"
 } >/dev/null 2>&1
 
-menu_addons() {
+update_addons() {
     > /usr/share/idiomind/addons/menu_list
     while read -r _set; do
         if [ -e "/usr/share/idiomind/addons/${_set}/icon.png" ]; then
@@ -1373,8 +1366,8 @@ case "$1" in
     _definition "$@" ;;
     find_trad)
     _translation "$@" ;;
-    update_menu)
-    menu_addons ;;
+    update_addons)
+    update_addons ;;
     _stats)
     stats_dlg ;;
     colorize)

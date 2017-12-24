@@ -8,8 +8,8 @@ echo -e "\n--- updating lists..."
 while read -r tpc; do
     dir="$DM_tl/${tpc}/.conf"; unset stts tpc
     stts=$(sed -n 1p "${dir}/stts")
-    if [ ${stts} != 12 ]; then
-        mv -f "${dir}/stts"  "${dir}/stts.bk"; echo 12 > "${dir}/stts"
+    if [ ${stts} != 0 ]; then
+        mv -f "${dir}/stts"  "${dir}/stts.bk"; echo 0 > "${dir}/stts"
     fi
 done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime +80 -type d \
 -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')

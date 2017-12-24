@@ -93,7 +93,7 @@ function new_session() {
         [ ! -d "${dir}" ] && continue
         stts=$(sed -n 1p "${dir}/stts")
         ! [[ ${stts} =~ $numer ]] && stts=1
-        [[ ${stts} = 12 ]] && continue
+        [[ ${stts} = 0 ]] && continue
         if [ $((stts+stts%2)) = 4 -o $((stts+stts%2)) = 8 ]; then
             calculate_review "${line}"
             if [[ $((stts%2)) = 0 ]]; then
@@ -422,7 +422,7 @@ function topic() {
 
         fi
 
-    elif [[ ${stts} = 12 ]]; then
+    elif [[ ${stts} = 0 ]]; then
     
         readd
         
@@ -565,7 +565,7 @@ case "$1" in
     stop)
     "$DS/stop.sh" 2 ;;
     update_addons)
-    "$DS/ifs/tls.sh" "${@}" ;;
+    "$DS/ifs/tls.sh" update_addons ;;
     *)
     _start ;;
 esac

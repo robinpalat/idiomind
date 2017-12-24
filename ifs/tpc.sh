@@ -56,7 +56,7 @@ if [ -d "${DM_tlt}" ]; then
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
         active_topic
         
-     elif [ ${stts} = 12 ]; then
+     elif [ ${stts} = 0 ]; then
         msg_2 "$(gettext "Topic inactive. Do you want to enable it now?") " \
         dialog-question "$(gettext "Yes")" "$(gettext "Just open it")"
         if [ $? = 0 ]; then

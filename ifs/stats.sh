@@ -57,7 +57,7 @@ function save_topic_stats() {
                         C1=${G2}; C2=${G1}
                     elif [ ${stts} = 3 -o ${stts} = 4 ]; then
                         C1=${G2}
-                    elif [ ${stts} = 12 ]; then
+                    elif [ ${stts} = 0 ]; then
                         C4=$((G1+G2))
                     else
                         C1=${G2}; C0=${G1}
@@ -125,7 +125,7 @@ function save_word_stats() {
                     C4=$((G2+G3))
                 elif [ ${stts} = 3 -o ${stts} = 4 ]; then
                     C1=${G0}
-                elif [ ${stts} = 12 ]; then
+                elif [ ${stts} = 0 ]; then
                     C5=${G0}
                 else 
                     C1=${G1}; C2=${G2}; C3=${G3}

@@ -8,7 +8,7 @@ alias gettext='gettext "idiomind"'
 source /usr/share/idiomind/default/sets.cfg
 lang1="${!tlangs[@]}"; declare lt=( $lang1 )
 lang2="${!slangs[@]}"; declare ls=( $lang2 )
-text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") ${USER^} </span>
+text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") </span>
 \n      $(gettext "To get started, please configure the following:")\n"
 sx=$(xrandr -q |grep -w Screen |sed 's/.*current //;s/,.*//' |awk '{print $1}')
 sy=$(xrandr -q |grep -w Screen |sed 's/.*current //;s/,.*//' |awk '{print $3}')
