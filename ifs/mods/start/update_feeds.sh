@@ -18,7 +18,7 @@
 if curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1; then
     DCP="$DM_tl/Feeds/.conf"
     if [ -f "$DCP/feeds.cfg" ]; then
-        echo -e "\n--- updating feeds..."
+        echo -e "\n--- feeds..."
         if [ "$(grep -o 'update="[^"]*' "$DCP/feeds.cfg" |grep -o '[^"]*$')" = TRUE ]; then
         ( sleep 1; "$DS_a/Feeds/feeds.sh" update 0 ) & fi
         echo -e "--- feeds updated\n"

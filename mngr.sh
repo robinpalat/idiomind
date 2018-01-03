@@ -824,32 +824,31 @@ mark_as_learned_topic() {
         dialog-information "$(gettext "Information")" & exit; fi
     fi
     [ ! -s "${DC_tlt}/data" ] && exit 1
-    export lns=$(cat "${DC_tlt}/data" |wc -l)
     
     stts=$(sed -n 1p "${DC_tlt}/stts")
     ! [[ ${stts} =~ ${numer} ]] && stts=1
 
-    if ! echo "$stts" |grep -E '3|4|7|8|9|10'; then
+    if ! echo ${stts} |grep -E '3|4|7|8|9|10'; then
 
         calculate_review "${tpc}"
         steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
-        d=$(date +%m/%d/%Y)
-        if [ "${steps}" -gt 0 ]; then
+        datex=$(date +%m/%d/%Y)
+        if [ ${steps} -gt 0 ]; then
             ! [[ ${steps} =~ ${numer} ]] && steps=1
             if [ ${steps} -eq 4 ]; then
                 stts=$((stts+1))
             fi
             if [ ${RM} -ge 50 ]; then
                 if [ ${steps} -eq 8 ]; then
-                    tpc_db 7 reviews date8 ${d}
+                    tpc_db 9 reviews date8 ${datex}
                 elif [ ${steps} -gt 8 ]; then
-                    tpc_db 7 reviews date8 ${d}
+                    tpc_db 9 reviews date8 ${datex}
                 else
-                    tpc_db 7 reviews date${steps} ${d} # FIX 
+                    tpc_db 9 reviews date${steps} ${datex} # FIX 
                 fi
             fi
         else
-            tpc_db 7 reviews date1 ${d}
+            tpc_db 9 reviews date1 ${datex}
         fi
         if [ -d "${DC_tlt}/practice" ]; then
             (cd "${DC_tlt}/practice"; rm ./.*; rm ./*
@@ -910,24 +909,24 @@ mark_as_learned_topic_ok() {
     if ! echo "$stts" |grep -E '3|4|7|8|9|10'; then
         calculate_review "${tpc}"
         steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
-        d=$(date +%m/%d/%Y)
-        if [ "${steps}" -gt 0 ]; then
-            ! [[ ${steps} =~ ${numer} ]] && steps=1
+        ! [[ ${steps} =~ ${numer} ]] && steps=0
+        datex=$(date +%m/%d/%Y)
+
+        if [ ${steps} -gt 0 ]; then
             if [ ${steps} -eq 4 ]; then
                 stts=$((stts+1))
             fi
             if [ ${RM} -ge 50 ]; then
-                
                 if [ ${steps} -eq 8 ]; then
-                    tpc_db 7 reviews date8 ${d}
+                    tpc_db 9 reviews date8 ${datex}
                 elif [ ${steps} -gt 8 ]; then
-                    tpc_db 7 reviews date8 ${d}
+                    tpc_db 9 reviews date8 ${datex}
                 else
-                    tpc_db 7 reviews date${steps} ${d} # FIX 
+                    tpc_db 9 reviews date${steps} ${datex} # FIX 
                 fi
             fi
         else
-            tpc_db 7 reviews date1 ${d}
+            tpc_db 9 reviews date1 ${datex}
         fi
         
         if [ -d "${DC_tlt}/practice" ]; then

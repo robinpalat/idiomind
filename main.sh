@@ -83,7 +83,7 @@ function new_session() {
         for n in {1..4} 7; do 
         cdb ${shrdb} 6 T${n}; done
     fi
-    echo -e "\n--- updating topics status..."
+    echo -e "\n--- topics status..."
     tdate=$(date +%Y%m%d)
     while read -r line; do
         if [ -n "$line" ]; then
@@ -139,7 +139,7 @@ function new_session() {
     
     # make index
     "$DS/mngr.sh" mkmn 0 &
-    echo -e "--- topics updated\n"
+    echo -e "--- topics status updated\n"
     
     # statistics
     ( source "$DS/ifs/stats.sh"; sleep 5; pre_comp ) &
@@ -299,10 +299,10 @@ function topic() {
         export cnf1=$(mktemp "$DT/cnf1.XXXXXX")
         export cnf3=$(mktemp "$DT/cnf3.XXXXXX")
         export cnf4=$(mktemp "$DT/cnf4.XXXXXX")
-        if [ ! -z "$dtei" ]; then 
+        if [ -n "$dtei" ]; then 
             export infolbl="$(gettext "Review") $repass  $(gettext "Installed on") $dtei\n$(gettext "created by") $autr"
             [ -e "${DC_tlt}/download" ] && export plusinfo=" <b>$(gettext "Downloadable content available")</b>"
-        elif [ ! -z "$dtec" ]; then 
+        else 
             export infolbl="$(gettext "Review") $repass  $(gettext "Created on") $dtec"
         fi
         export lbl1="<span font_desc='Free Sans 15'>${tpc}</span><sup>\n$(gettext "Sentences") $cfg4  $(gettext "Words") $cfg3  $plusinfo\n$infolbl</sup>"
@@ -511,15 +511,15 @@ _start() {
     if [ ! -d "$DT" ] && [[ -z "$1" ]]; then 
         new_session
     fi
-    if [ ! -e "$DT/tpe" ]; then
+    if [ ! -f "$DT/tpe" ]; then
         cu=TRUE; tpe="$(sed -n 1p "$DC_s/tpc")"
         if ! ls -1a "$DS/addons/" |grep -Fxo "${tpe}" >/dev/null 2>&1; then
-            [ ! -L "$DM_tl/${tpe}" ] && echo "${tpe}" > "$DT/tpe"
+            echo "${tpe}" > "$DT/tpe"
         fi
     fi
     if [ "$(< "$DT/tpe")" != "${tpc}" ]; then
         if ! ls -1a "$DS/addons/" |grep -Fxo "${tpc}" >/dev/null 2>&1; then
-            [ ! -L "$DM_tl/${tpe}" ] && echo "${tpc}" > "$DT/tpe"
+            echo "${tpc}" > "$DT/tpe"
         fi
     fi
     date=$(cdb ${cfgdb} 1 sess date)

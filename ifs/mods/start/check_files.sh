@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo -e "\n--- updating dicts..."
+echo -e "\n--- dicts..."
 "$DS_a/Dics/cnfg.sh" updt_dicts
 echo -e "--- dicts updated\n"
 

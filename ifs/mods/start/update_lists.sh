@@ -3,7 +3,7 @@
 
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
-echo -e "\n--- updating lists..."
+echo -e "\n--- lists..."
 
 while read -r tpc; do
     dir="$DM_tl/${tpc}/.conf"; unset stts tpc

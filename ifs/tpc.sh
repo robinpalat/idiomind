@@ -25,6 +25,7 @@ chek_topic() {
         tpc_db 3 id name "${tpc}"
         tpc_db 3 id slng "${slng}"
         tpc_db 3 id tlng "${tlng}"
+        tpc_db 3 id dtec "$(date +%F)"
     fi
     touch "${DC_tlt}/data"
     if [ ! -e "$DT/n_s_pr" ]; then

@@ -373,7 +373,7 @@ _restore_backup() {
 } >/dev/null 2>&1
 
 fback() {
-    xdg-open "http://idiomind.sourceforge.net/contact"
+    xdg-open "https://sourceforge.net/p/idiomind/link"
 } >/dev/null 2>&1
 
 
@@ -587,6 +587,7 @@ check_updates() {
 } >/dev/null 2>&1
 
 a_check_updates() {
+    echo -e "\n--- Checking for updates..."
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
     link='http://idiomind.sourceforge.net/doc/checkversion'
@@ -616,7 +617,8 @@ a_check_updates() {
             fi
         fi
     fi
-   return 0
+    echo -e "--- updates OK\n"
+    return 0
 } 
 
 promp_topic_info() {
@@ -704,7 +706,7 @@ set_image() {
             mv -f "$img" "${DM_tls}/images/${trgt,,}"-${n}.jpg
         fi
     elif [ $ret -eq 0 ]; then
-        /usr/bin/import "$DT/temp.jpg"
+        GDK_BACKEND=x11 /usr/bin/import "$DT/temp.jpg"
         /usr/bin/convert "$DT/temp.jpg" -interlace Plane -thumbnail 405x275^ \
         -gravity center -extent 400x270 -quality 90% "$ifile"
         "$DS/ifs/tls.sh" set_image "${2}" "${trgt}" & exit

@@ -82,7 +82,7 @@ function save_topic_stats() {
     f4=$(cut -d ',' -f 5 <<< "$rdata"); ! [[ ${f4} =~ $int ]] && f4=0
 
     if [ -f "${no_data}" ] && [[ ${f0} -gt 10 ]]; then
-        rm -f "${no_data}"
+        cleanups "${no_data}"
     elif [[ ${f0} -lt 10 ]]; then
         touch "${no_data}"
     fi
@@ -179,7 +179,7 @@ function mk_topic_stats() {
             declare c$m=$(cut -d ',' -f 3 < ${pross})
             declare d$m=$(cut -d ',' -f 4 < ${pross})
             declare e$m=$(cut -d ',' -f 5 < ${pross})
-            rm -f ${pross}; break
+            cleanups ${pross}; break
         else
             read D0 <&4; ! [[ ${D0} =~ $int ]] && D0=0
             read D1 <&5; ! [[ ${D1} =~ $int ]] && D1=0
@@ -284,11 +284,13 @@ function chktb() {
 }
 
 function pre_comp() {
-    echo -e "\n--- updating statistics..."
+    echo -e "\n--- statistics..."
     f_lock "$DT/p_stats"
     val1=0; val2=0
     echo -n "create table if not exists 'expire_month' (date TEXT);" |sqlite3 "${db}"
     echo -n "create table if not exists 'expire_week' (date TEXT);" |sqlite3 "${db}"
+    
+    cleanups "$pross" "$data" "$no_data" "$databk"
     
     [ ${dtmnth} = 01 -o $(chktb 'expire_month' 31) = 0 ] && val1=1
     [ ${dtweek} = 0 -o $(chktb 'expire_week' 7) = 0 ] && val2=1
@@ -303,7 +305,7 @@ function pre_comp() {
     fi
     
     echo -e "--- statistics updated\n"
-    rm -f "$DT/p_stats"
+    cleanups "$DT/p_stats"
 }
 
 function stats() {
@@ -312,7 +314,7 @@ function stats() {
         [ ! -e "${data}" ] && cp -f "${databk}" "${data}"
         [ ! -e "${pross}" ] && save_topic_stats 0
         mk_topic_stats
-        [ -e "$DT/p_stats"  ] && rm "$DT/p_stats"
+        cleanups "$DT/p_stats"
     fi
     if [ -f "${no_data}" ]; then
         source "$DS/ifs/cmns.sh"

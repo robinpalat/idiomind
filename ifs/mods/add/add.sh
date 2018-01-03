@@ -343,7 +343,7 @@ function clean_9() {
 }
 
 function set_image_1() {
-    /usr/bin/import "$DT_r/img.jpg"
+    GDK_BACKEND=x11 /usr/bin/import "$DT_r/img.jpg"
     /usr/bin/convert "$DT_r/img.jpg" -interlace Plane -thumbnail 110x90^ \
     -gravity center -extent 110x90 -quality 90% "$DT_r/ico.jpg"
 }

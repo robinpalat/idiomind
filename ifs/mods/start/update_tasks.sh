@@ -10,7 +10,7 @@
 
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
-echo -e "\n--- updating tasks..."
+echo -e "\n--- tasks..."
 l1="$(gettext "To Review [new]:") "
 l2="$(gettext "To Review [new] [overdue]:") "
 l3="$(gettext "To Review:") "

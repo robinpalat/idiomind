@@ -403,7 +403,7 @@ function process() {
         if [[ $1 = image ]]; then
             pars=`mktemp`
             trap rm "$pars*" EXIT
-            /usr/bin/import "$DT_r/img_.png"
+            GDK_BACKEND=x11 /usr/bin/import "$DT_r/img_.png"
             /usr/bin/convert "$DT_r/img_.png" -shave 1x1 "$pars.png"
             ( echo "#"
             mogrify -modulate 100,0 -resize 400% "$pars.png"

@@ -84,13 +84,13 @@ function tpc_db() {
     if [ $1 = 1 ]; then # read
         sqlite3 "$DC_tlt/tpc" "select ${co} from '${ta}';"
     elif [ $1 = 2 ]; then # insert
-        sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500;\
+        sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=300;\
         insert into ${ta} (${co}) values ('${va}');"
     elif [ $1 = 3 ]; then # mod
-        sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500;\
+        sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=300;\
         update ${ta} set ${co}='${va}';"
     elif [ $1 = 4 ]; then # delete
-        sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500;\
+        sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=300;\
         delete from ${ta} where ${co}='${va}';"
     elif [ $1 = 5 ]; then # select all
         sqlite3 "$DC_tlt/tpc" "select * FROM '${ta}';" |tr -s '|' '\n'
@@ -147,19 +147,33 @@ function check_index1() {
 }
 
 function check_list() {
-    db="$DM_tls/data/config"
+    export topics="$(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
+    -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')" \
+    addons="$(ls -1a "$DS/addons/")" db="$DM_tls/data/config"
+    
     if [ -e ${db} ]; then
-        sqlite3 ${db} "delete from topics;"
         if ls -tNd "$DM_tl"/*/ 1> /dev/null 2>&1; then
-            while read -r topic; do
-                if ! echo -e "$(ls -1a "$DS/addons/")" \
-                |grep -Fxo "${topic}" >/dev/null 2>&1; then
-                    if [ -d "$DM_tl/${topic}" ]; then
-                     sqlite3 ${db} "insert into topics (list) values ('${topic}');"
-                    fi
-                fi
-            done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
-            -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
+python <<PY
+import os, locale, sqlite3
+en = locale.getpreferredencoding()
+shrdb = os.environ['shrdb']
+shrdb.encode(en)
+db = sqlite3.connect(shrdb)
+db.text_factory = str
+cur = db.cursor()
+addons = os.environ['addons']
+addons.encode(en)
+addons = addons.split('\n')
+topics = os.environ['topics']
+topics.encode(en)
+topics = topics.split('\n')
+cur.execute("delete from topics")
+for tpc in topics:
+    if not tpc in addons:
+        cur.execute("insert into topics (list) values (?)", (tpc,))
+db.commit()
+db.close()
+PY
         fi
     fi
 }
@@ -233,59 +247,51 @@ function check_err() {
 
 function calculate_review() {
     [ -z ${notice1} ] && source "$DS/default/sets.cfg"
-    DC_tlt="$DM_tl/${1}/.conf"
-    dates="$(tpc_db 5 reviews)"
-    dts=$(wc -l <<< "$dates")
+    export DC_tlt="$DM_tl/${1}/.conf"
+    steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
 
-    if [ ${dts} = 1 ]; then
-        dte=$(tpc_db 1 reviews date1)
-        adv="<b>  ${notice1} $cuestion_review </b>"
-        TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    if [ ${steps} = 1 ]; then
+        dater=$(tpc_db 1 reviews date1)
+        TM=$(( ( $(date +%s) - $(date -d ${dater} +%s) ) /(24 * 60 * 60 ) ))
         RM=$((100*TM/notice1))
         tdays=${notice1}
-    elif [ ${dts} = 2 ]; then
-        dte=$(tpc_db 1 reviews date2)
-        adv="<b>  ${notice2} $cuestion_review </b>"
-        TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    elif [ ${steps} = 2 ]; then
+        dater=$(tpc_db 1 reviews date2)
+        TM=$(( ( $(date +%s) - $(date -d "$dater" +%s) ) /(24 * 60 * 60 ) ))
         RM=$((100*TM/notice2))
         tdays=${notice2}
-    elif [ ${dts} = 3 ]; then
-        dte=$(tpc_db 1 reviews date3)
-        adv="<b>  ${notice3} $cuestion_review </b>"
-        TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    elif [ ${steps} = 3 ]; then
+        dater=$(tpc_db 1 reviews date3)
+        TM=$(( ( $(date +%s) - $(date -d "$dater" +%s) ) /(24 * 60 * 60 ) ))
         RM=$((100*TM/notice3))
         tdays=${notice3}
-    elif [ ${dts} = 4 ]; then
-        dte=$(tpc_db 1reviews date4)
-        adv="<b>  ${notice4} $cuestion_review </b>"
-        TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    elif [ ${steps} = 4 ]; then
+        dater=$(tpc_db 1 reviews date4)
+        TM=$(( ( $(date +%s) - $(date -d "$dater" +%s) ) /(24 * 60 * 60 ) ))
         RM=$((100*TM/notice4))
         tdays=${notice4}
-    elif [ ${dts} = 5 ]; then
-        dte=$(tpc_db 1reviews date5)
-        adv="<b>  ${notice5} $cuestion_review </b>"
-        TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    elif [ ${steps} = 5 ]; then
+        dater=$(tpc_db 1 reviews date5)
+        TM=$(( ( $(date +%s) - $(date -d "$dater" +%s) ) /(24 * 60 * 60 ) ))
         RM=$((100*TM/notice5))
         tdays=${notice5}
-    elif [ ${dts} = 6 ]; then
-        dte=$(tpc_db 1 reviews date6)
-        adv="<b>  ${notice6} $cuestion_review </b>"
-        TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    elif [ ${steps} = 6 ]; then
+        dater=$(tpc_db 1 reviews date6)
+        TM=$(( ( $(date +%s) - $(date -d "$dater" +%s) ) /(24 * 60 * 60 ) ))
         RM=$((100*TM/notice6))
         tdays=${notice6}
-    elif [ ${dts} = 7 ]; then
-        dte=$(tpc_db 1 reviews date7)
-        adv="<b>  ${notice7} $cuestion_review </b>"
-        TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    elif [ ${steps} = 7 ]; then
+        dater=$(tpc_db 1 reviews date7)
+        TM=$(( ( $(date +%s) - $(date -d "$dater" +%s) ) /(24 * 60 * 60 ) ))
         RM=$((100*TM/notice7))
         tdays=${notice7}
-    elif [ ${dts} = 8 ]; then
-        dte=$(tpc_db 1 reviews date8)
-        adv="<b>  ${notice8} $cuestion_review </b>"
-        TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    elif [ ${steps} = 8 ]; then
+        dater=$(tpc_db 1 reviews date8)
+        TM=$(( ( $(date +%s) - $(date -d "$dater" +%s) ) /(24 * 60 * 60 ) ))
         RM=$((100*TM/notice8))
         tdays=${notice8}
     fi
-    export tdays adv
+    [ -z "$RM" ] && tpc_db 9 reviews date1 "$(date +%m/%d/%Y)"
+    export tdays
     return ${RM}
 }

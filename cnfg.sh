@@ -174,7 +174,7 @@ config_dlg() {
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
-        if cut -d "|" -f10 < "$cnf1" |grep "TRUE"; then
+        if cut -d "|" -f8 < "$cnf1" |grep "TRUE"; then
             if [ ! -f "$config_dir/idiomind.desktop" ]; then
                 echo "$desktopfile" > "$config_dir/idiomind.desktop"
             fi
