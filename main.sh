@@ -94,40 +94,53 @@ function new_session() {
         stts=$(sed -n 1p "${dir}/stts")
         ! [[ ${stts} =~ $numer ]] && stts=1
         [[ ${stts} = 0 ]] && continue
-        if [ $((stts+stts%2)) = 4 -o $((stts+stts%2)) = 8 ]; then
-            calculate_review "${line}"
-            if [[ $((stts%2)) = 0 ]]; then
-                if [ ${RM} -ge 180 -a ${stts} = 8 ]; then
-                    echo 10 > "${dir}/stts"; touch "${dim}"
-                    cdb ${shrdb} 2 T2 list "${line}"
-                elif [ ${RM} -ge 100 -a ${stts} -lt 8 ]; then
-                    echo 8 > "${dir}/stts"; touch "${dim}"
-                    cdb ${shrdb} 2 T1 list "${line}"
-                elif [ ${stts} = 8 ]; then
-                    cdb ${shrdb} 2 T3 list "${line}"
-                elif [ ${stts} = 10 ]; then
-                    cdb ${shrdb} 2 T4 list "${line}"
+            if grep -E '3|4|7|8|9|10' <<< "$stts" >/dev/null 2>&1; then
+
+                calculate_review "${line}"
+                
+                if [[ $((stts%2)) = 0 ]]; then
+                
+                    if [ ${RM} -ge 180 -a ${stts} = 8 ]; then
+                        echo 10 > "${dir}/stts"; touch "${dim}"
+                        cdb ${shrdb} 2 T2 list "${line}"
+                        
+                    elif [ ${RM} -ge 100 -a ${stts} -lt 8 ]; then
+                        echo 8 > "${dir}/stts"; touch "${dim}"
+                        cdb ${shrdb} 2 T1 list "${line}"
+                        
+                    elif [ ${stts} = 8 ]; then
+                        cdb ${shrdb} 2 T3 list "${line}"
+                        
+                    elif [ ${stts} = 10 ]; then
+                        cdb ${shrdb} 2 T4 list "${line}"
+                    fi
+                    
+                elif [[ $((stts%2)) = 1 ]]; then
+                
+                    if [ ${RM} -ge 180 -a ${stts} = 7 ]; then
+                        echo 9 > "${dir}/stts"; touch "${dim}"
+                        cdb ${shrdb} 2 T2 list "${line}"
+                        
+                    elif [ ${RM} -ge 100 -a ${stts} -lt 7 ]; then
+                        echo 7 > "${dir}/stts"; touch "${dim}"
+                        cdb ${shrdb} 2 T1 list "${line}"
+                        
+                    elif [ ${stts} = 7 ]; then
+                        cdb ${shrdb} 2 T3 list "${line}"
+                        
+                    elif [ ${stts} = 9 ]; then
+                        cdb ${shrdb} 2 T4 list "${line}"
+                    fi
                 fi
-            elif [[ $((stts%2)) = 1 ]]; then
-                if [ ${RM} -ge 180 -a ${stts} = 7 ]; then
-                    echo 9 > "${dir}/stts"; touch "${dim}"
-                    cdb ${shrdb} 2 T2 list "${line}"
-                elif [ ${RM} -ge 100 -a ${stts} -lt 7 ]; then
-                    echo 7 > "${dir}/stts"; touch "${dim}"
-                    cdb ${shrdb} 2 T1 list "${line}"
-                elif [ ${stts} = 7 ]; then
-                    cdb ${shrdb} 2 T3 list "${line}"
-                elif [ ${stts} = 9 ]; then
-                    cdb ${shrdb} 2 T4 list "${line}"
+                
+            elif [[ $((stts+stts%2)) = 6 ]]; then
+            
+                datedir=$(stat -c %y "$dir" |cut -d ' ' -f1)
+                cdate=$(date -d $datedir +"%Y%m%d")
+                if [ $((tdate-cdate)) -gt 20 ]; then
+                    cdb ${shrdb} 2 T7 list "${line}"
                 fi
             fi
-        elif [[ $((stts+stts%2)) = 6 ]]; then
-            datedir=$(stat -c %y "$dir" |cut -d ' ' -f1)
-            cdate=$(date -d $datedir +"%Y%m%d")
-            if [ $((tdate-cdate)) -gt 20 ]; then
-                cdb ${shrdb} 2 T7 list "${line}"
-            fi
-        fi
         fi
     done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
     -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
