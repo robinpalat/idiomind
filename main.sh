@@ -282,7 +282,7 @@ fi
 
 function topic() {
     source "$DS/ifs/cmns.sh"
-    export -f tpc_db
+    export -f tpc_db msg
     [ -e "${DC_tlt}/stts" ] && export stts=$(sed -n 1p "${DC_tlt}/stts")
     if ! [[ ${stts} =~ $numer ]]; then return 1; fi
 

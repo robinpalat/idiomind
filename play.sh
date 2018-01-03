@@ -57,9 +57,7 @@ play_list() {
     if [ -z "${tpc}" ]; then
         msg "$(gettext "No topic is active")\n" dialog-information & exit 1
     fi
-    if ! file "${tpcdb}" | grep 'SQLite'; then
-        msg "$(gettext "No such file or directory")\n" dialog-information & exit 1
-    fi
+
     [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
     [ ! -e $DT/playlck ] && echo 0 > $DT/playlck
     

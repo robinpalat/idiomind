@@ -939,7 +939,9 @@ mark_as_learned_topic_ok() {
             echo 3 > "${DC_tlt}/stts"
         fi
     fi
+    
     export data="${DC_tlt}/data" tpcdb
+    
 
 python <<PY
 import os, re, locale, sqlite3

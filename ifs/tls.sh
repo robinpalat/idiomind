@@ -107,6 +107,10 @@ check_index() {
             echo ${stts} > "${DC_tlt}/stts"
             export mkmn=1; export fix=1
         fi
+        
+        if ! file "${tpcdb}" | grep 'SQLite'; then
+            msg "$(gettext "No such file or directory")\n" dialog-information & exit 1 # FIX
+        fi
 
         learn="$(tpc_db 5 learning)"
         leart="$(tpc_db 5 learnt)"
@@ -806,8 +810,8 @@ translate_to() {
         --class=Idiomind --name=Idiomind \
         --text="$(gettext "The current Native language of this topic is")  <b>$active_trans</b>" \
         --text-align=center --always-print-result --window-icon=idiomind \
-        --buttons-layout=end --center --on-top --align=right \
-        --width=380 --height=420 --borders=12 \
+        --buttons-layout=end --center --on-top --align=left \
+        --width=400 --height=450 --borders=15 \
         --field="":LBL " " \
         --field="\n<b>$(gettext "Verified Translations") </b> ":LBL " " \
         --field="$active_trans — $(gettext "The  accuracy of this translation was verified")":CHK "$chk" \
@@ -826,8 +830,8 @@ translate_to() {
         --class=Idiomind --name=Idiomind \
         --text="$(gettext "The current Native language of this topic is")  <b>$active_trans</b>" \
         --text-align=center --always-print-result --window-icon=idiomind \
-        --buttons-layout=end --center --on-top --align=right \
-        --width=380 --height=420 --borders=12 \
+        --buttons-layout=end --center --on-top --align=left \
+        --width=400 --height=450 --borders=15 \
         --field="":LBL " " \
         --field="\n<b>$(gettext "Verified Translations") </b> ":LBL " " \
         --field="$active_trans — $(gettext "The  accuracy of this translation was verified")":CHK "$chk" \
