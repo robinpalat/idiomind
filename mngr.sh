@@ -685,9 +685,8 @@ delete_topic() {
         fi
         > "$DC_s/tpc"
         
-        tas=( 'topics' 'T1' 'T2' 'T3' 'T4' 'T5' 'T6' 'T7' )
-        for ta in ${tas[@]}; do
-            cdb "${shrdb}" 4 "${ta}" list "${tpc}"
+         for n in {1..7}; do 
+        cdb "${shrdb}" 7 T${n} "${name}" "${tpc}"
         done
         idiomind tasks
         
@@ -735,11 +734,12 @@ rename_topic() {
         tpc_db 3 id name "${name}"
         echo "${name}" > "$DC_s/tpc"
         echo "${name}" > "$DT/tpe"
-        tas=( 'T1' 'T2' 'T3' 'T4' 'T5' 'T6' 'T7' )
-        for ta in ${tas[@]}; do
-            cdb "${shrdb}" 7 "${ta}" "${name}" "${tpc}"
+
+        for n in {1..7}; do 
+        cdb "${shrdb}" 7 T${n} "${name}" "${tpc}"
         done
         idiomind tasks
+        
         check_list
         cleanups "$DM_tl/${tpc}" "$DM/backup/${tpc}.bk" "$DT/rm_lk"
         "$DS/mngr.sh" mkmn 0 & exit 1
@@ -777,7 +777,7 @@ mark_to_learn_topic() {
         yad_kill "yad --form " "yad --multi-progress "\
          "yad --list " "yad --text-info " "yad --notebook "
     fi
-
+    
     steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
     tpc_db 7 config repass ${steps}
     export data="${DC_tlt}/data" tpcdb
@@ -812,6 +812,10 @@ PY
     "$DS/ifs/tls.sh" colorize 1
     "$DS/mngr.sh" mkmn 1 &
     [[ ${3} = 1 ]] && idiomind topic &
+    
+    for n in {1..7}; do sqlite3 ${shrdb} \
+    "delete from T${n} where list='${tpc}';"; done
+    idiomind tasks
 }
 
 mark_as_learned_topic() {
@@ -860,11 +864,12 @@ mark_as_learned_topic() {
             echo 3 > "${DC_tlt}/stts"
         fi
     fi
-    
+
     if [[ ${3} = 1 ]]; then
         yad_kill "yad --form " "yad --list " \
         "yad --text-info " "yad --notebook "
     fi
+
     export data="${DC_tlt}/data" tpcdb
 
 python <<PY
@@ -895,7 +900,10 @@ PY
     ( sleep 1; mv -f "${DC_tlt}/note.bk" "${DC_tlt}/note" ) &
     [[ ${3} = 1 ]] && idiomind topic &
     ( sleep 1; "$DS/ifs/tls.sh" colorize 0 ) &
-    exit
+    
+    for n in {1..7}; do sqlite3 ${shrdb} \
+    "delete from T${n} where list='${tpc}';"; done
+    idiomind tasks
 }
 
 mark_as_learned_topic_ok() {
@@ -939,10 +947,9 @@ mark_as_learned_topic_ok() {
             echo 3 > "${DC_tlt}/stts"
         fi
     fi
-    
+
     export data="${DC_tlt}/data" tpcdb
     
-
 python <<PY
 import os, re, locale, sqlite3
 en = locale.getpreferredencoding()
@@ -968,6 +975,10 @@ db.close()
 PY
     cp -f "${DC_tlt}/note" "${DC_tlt}/note.bk"
     ( sleep 1; mv -f "${DC_tlt}/note.bk" "${DC_tlt}/note" ) &
+    
+    for n in {1..7}; do sqlite3 ${shrdb} \
+    "delete from T${n} where list='${tpc}';"; done
+    idiomind tasks
 }
 
 case "$1" in
