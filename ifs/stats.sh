@@ -43,33 +43,27 @@ function save_topic_stats() {
         -type d -not -path '*/\.*' |sed 's|\./||g;/^$/d'); do
             C0=0; C1=0; C2=0; C3=0; C4=0; G1=0; G2=0
             dir1="$DM_tl/${tpc}/.conf"
-            unset stts tpcdb
+            unset stts
             stts=$(sed -n 1p "$dir1/stts")
-            tpcdb="$dir1/tpc"
-            if file "$tpcdb" | grep 'SQLite'; then
-                G1="$(grep -c '[^[:space:]]' <<< "$(tpc_db 5 learning)")"
-                G2="$(grep -c '[^[:space:]]' <<< "$(tpc_db 5 learnt)")"
-                
-                if [[ ${stts} =~ $int ]]; then
-                    if [ ${stts} -le 10 -a ${stts} -ge 7 ]; then
-                        C3=${G2}
-                    elif [ ${stts} = 5 -o ${stts} = 6 ]; then
-                        C1=${G2}; C2=${G1}
-                    elif [ ${stts} = 3 -o ${stts} = 4 ]; then
-                        C1=${G2}
-                    elif [ ${stts} = 0 ]; then
-                        C4=$((G1+G2))
-                    else
-                        C1=${G2}; C0=${G1}
-                    fi
+            if [[ ${stts} =~ $int ]]; then
+                if [ ${stts} -le 10 -a ${stts} -ge 7 ]; then
+                    C3=1
+                elif [ ${stts} = 5 -o ${stts} = 6 ]; then
+                    C2=1
+                elif [ ${stts} = 3 -o ${stts} = 4 ]; then
+                    C1=1
+                elif [ ${stts} = 0 ]; then
+                    C4=1
+                elif [ ${stts} = 1 ]; then
+                    C0=1
                 fi
-                f0=$((f0+C0))
-                f1=$((f1+C1))
-                f2=$((f2+C2))
-                f3=$((f3+C3))
-                f4=$((f4+C4))
-                echo "${f0},${f1},${f2},${f3},${f4}"
             fi
+            f0=$((f0+C0))
+            f1=$((f1+C1))
+            f2=$((f2+C2))
+            f3=$((f3+C3))
+            f4=$((f4+C4))
+            echo "${f0},${f1},${f2},${f3},${f4}"
         done |tail -n 1
         IFS=$old_IFS
     }
@@ -103,6 +97,7 @@ function save_word_stats() {
         old_IFS=$IFS; IFS=$'\n'
         for tpc in $(cd "$DM_tl"; find ./ -maxdepth 1 \
         -type d -not -path '*/\.*' |sed 's|\./||g;/^$/d'); do
+        
             G0=0; G1=0; G2=0; G3=0
             C1=0; C2=0; C3=0; C4=0; C5=0
             dir1="$DM_tl/${tpc}/.conf"
@@ -112,31 +107,36 @@ function save_word_stats() {
             G0="$(grep -c '[^[:space:]]' <<< "$(tpc_db 5 words)")"
 
             if [ -f "$dir2/log1" ]; then
-                G1=$(egrep -cv '#|^$' "$dir2/log1"); fi
+                G1=$(egrep -cv '#|^$' "$dir2/log1")
+            fi
             if [ -f "$dir2/log2" ]; then
-                G2=$(egrep -cv '#|^$' "$dir2/log2"); fi
+                G2=$(egrep -cv '#|^$' "$dir2/log2")
+            fi
             if [ -f "$dir2/log3" ]; then
-                G3=$(egrep -cv '#|^$' "$dir2/log3"); fi
+                G3=$(egrep -cv '#|^$' "$dir2/log3")
+            fi
             
             if [[ ${stts} =~ $int ]]; then
-                if [ ${stts} -le 10 -a ${stts} -ge 7 ]; then :
-                elif [ ${stts} = 5 -o ${stts} = 6 ]; then
-                    C1=${G1}; C2=${G2}; C3=${G3}
-                    C4=$((G2+G3))
-                elif [ ${stts} = 3 -o ${stts} = 4 ]; then
+            
+                if [ ${stts} -le 10 -a ${stts} -ge 7 ]; then
                     C1=${G0}
-                elif [ ${stts} = 0 ]; then
-                    C5=${G0}
-                else 
-                    C1=${G1}; C2=${G2}; C3=${G3}
+                elif [ ${stts} = 5 -o ${stts} = 6 ]; then
+                    C2=${G1}; C3=${G2}; C4=${G3}
+                    C5=$((G2+G3))
+                elif [ ${stts} = 3 -o ${stts} = 4 ]; then
+                    C2=${G0}
+                elif [ ${stts} = 1 ]; then 
+                    C2=${G1}; C3=${G2}; C4=${G3}
+                else
+                    C1=0; C2=0; C3=0; C4=0; C5=0
                 fi
             fi
-            f0=$((f0+G0))
-            f1=$((f1+C1))
-            f2=$((f2+C2))
-            f3=$((f3+C3))
-            f4=$((f4+C4))
-            f5=$((f5+C5))
+            f0=$((f0+G0)) # all
+            f1=$((f1+C1)) # to review, unprocessed
+            f2=$((f2+C2)) # easy
+            f3=$((f3+C3)) # learning
+            f4=$((f4+C4)) # diff
+            f5=$((f5+C5)) # forgo
             echo "${f0},${f1},${f2},${f3},${f4},${f5}"
             
         done |tail -n 1
@@ -328,4 +328,5 @@ function stats() {
         --width=650 --height=410 --borders=0 \
         --no-buttons
     fi
+    
 } >/dev/null 2>&1

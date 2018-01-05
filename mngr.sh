@@ -139,10 +139,10 @@ edit_item() {
     tpcs="$(grep -vFx "${tpe}" <<< "$tpcs" |tr "\\n" '!' |sed 's/\!*$//g')"
     export tpc_list="${tpc}!${tpcs}"
     fi
-    export cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"""
-    export cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" ${cdid}"
-    export cmd_def="'$DS/ifs/tls.sh' 'find_def' "\"${trgt}\"""
-    export cmd_trad="'$DS/ifs/tls.sh' 'find_trad' "\"${trgt}\"""
+    export cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\""" \
+    cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" ${cdid}" \
+    cmd_def="'$DS/ifs/tls.sh' 'find_def' "\"${trgt}\""" \
+    cmd_trad="'$DS/ifs/tls.sh' 'find_trad' "\"${trgt}\"""
 
     [ -z "${item}" ] && exit 1
     if [ ${text_missing} != 0 ]; then

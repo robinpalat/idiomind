@@ -206,19 +206,19 @@ function cleanups() {
 
 function get_item() {
     export item="$(sed 's/}/}\n/g' <<< "${1}")"
-    export type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"
-    export trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
-    export srce="$(grep -oP '(?<=srce{).*(?=})' <<<"${item}")"
-    export exmp="$(grep -oP '(?<=exmp{).*(?=})' <<<"${item}")"
-    export defn="$(grep -oP '(?<=defn{).*(?=})' <<<"${item}")"
-    export note="$(grep -oP '(?<=note{).*(?=})' <<<"${item}")"
-    export wrds="$(grep -oP '(?<=wrds{).*(?=})' <<<"${item}")"
-    export grmr="$(grep -oP '(?<=grmr{).*(?=})' <<<"${item}")"
-    export mark="$(grep -oP '(?<=mark{).*(?=})' <<<"${item}")"
-    export link="$(grep -oP '(?<=link{).*(?=})' <<<"${item}")"
-    export tags="$(grep -oP '(?<=tags{).*(?=})' <<<"${item}")"
-    export refr="$(grep -oP '(?<=refr{).*(?=})' <<<"${item}")"
-    export cdid="$(grep -oP '(?<=cdid{).*(?=})' <<<"${item}")"
+    export type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")" \
+    trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")" \
+    srce="$(grep -oP '(?<=srce{).*(?=})' <<<"${item}")" \
+    exmp="$(grep -oP '(?<=exmp{).*(?=})' <<<"${item}")" \
+    defn="$(grep -oP '(?<=defn{).*(?=})' <<<"${item}")" \
+    note="$(grep -oP '(?<=note{).*(?=})' <<<"${item}")" \
+    wrds="$(grep -oP '(?<=wrds{).*(?=})' <<<"${item}")" \
+    grmr="$(grep -oP '(?<=grmr{).*(?=})' <<<"${item}")" \
+    mark="$(grep -oP '(?<=mark{).*(?=})' <<<"${item}")" \
+    link="$(grep -oP '(?<=link{).*(?=})' <<<"${item}")" \
+    tags="$(grep -oP '(?<=tags{).*(?=})' <<<"${item}")" \
+    refr="$(grep -oP '(?<=refr{).*(?=})' <<<"${item}")" \
+    cdid="$(grep -oP '(?<=cdid{).*(?=})' <<<"${item}")"
 }
 
 function unset_item() {
@@ -246,52 +246,20 @@ function check_err() {
 }
 
 function calculate_review() {
-    [ -z ${notice1} ] && source "$DS/default/sets.cfg"
+    [ -z ${notice} ] && source "$DS/default/sets.cfg"
     export DC_tlt="$DM_tl/${1}/.conf"
     steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
-
-    if [ ${steps} = 1 ]; then
-        dater=$(tpc_db 1 reviews date1)
+    if [ ${steps} -ge 1 ]; then
+        dater=$(tpc_db 1 reviews date${steps})
+        if [ -z "$dater" ]; then
+            d="$(date +%m/%d/%Y)"
+            tpc_db 9 reviews date1 "${d}"
+            dater="${d}"
+        fi
         TM=$(( ( $(date +%s) - $(date -d ${dater} +%s) ) /(24 * 60 * 60 ) ))
-        RM=$((100*TM/notice1))
-        tdays=${notice1}
-    elif [ ${steps} = 2 ]; then
-        dater=$(tpc_db 1 reviews date2)
-        TM=$(( ( $(date +%s) - $(date -d "$dater" +%s) ) /(24 * 60 * 60 ) ))
-        RM=$((100*TM/notice2))
-        tdays=${notice2}
-    elif [ ${steps} = 3 ]; then
-        dater=$(tpc_db 1 reviews date3)
-        TM=$(( ( $(date +%s) - $(date -d "$dater" +%s) ) /(24 * 60 * 60 ) ))
-        RM=$((100*TM/notice3))
-        tdays=${notice3}
-    elif [ ${steps} = 4 ]; then
-        dater=$(tpc_db 1 reviews date4)
-        TM=$(( ( $(date +%s) - $(date -d "$dater" +%s) ) /(24 * 60 * 60 ) ))
-        RM=$((100*TM/notice4))
-        tdays=${notice4}
-    elif [ ${steps} = 5 ]; then
-        dater=$(tpc_db 1 reviews date5)
-        TM=$(( ( $(date +%s) - $(date -d "$dater" +%s) ) /(24 * 60 * 60 ) ))
-        RM=$((100*TM/notice5))
-        tdays=${notice5}
-    elif [ ${steps} = 6 ]; then
-        dater=$(tpc_db 1 reviews date6)
-        TM=$(( ( $(date +%s) - $(date -d "$dater" +%s) ) /(24 * 60 * 60 ) ))
-        RM=$((100*TM/notice6))
-        tdays=${notice6}
-    elif [ ${steps} = 7 ]; then
-        dater=$(tpc_db 1 reviews date7)
-        TM=$(( ( $(date +%s) - $(date -d "$dater" +%s) ) /(24 * 60 * 60 ) ))
-        RM=$((100*TM/notice7))
-        tdays=${notice7}
-    elif [ ${steps} = 8 ]; then
-        dater=$(tpc_db 1 reviews date8)
-        TM=$(( ( $(date +%s) - $(date -d "$dater" +%s) ) /(24 * 60 * 60 ) ))
-        RM=$((100*TM/notice8))
-        tdays=${notice8}
+        tdays=${notice[${steps}]}
+        RM=$((100*TM/tdays))
+        export tdays
+        return ${RM}
     fi
-    [ -z "$RM" ] && tpc_db 9 reviews date1 "$(date +%m/%d/%Y)"
-    export tdays
-    return ${RM}
 }

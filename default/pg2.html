@@ -4,7 +4,11 @@
     <script src="./js/chart.js"></script>
     <script type="text/javascript" src="/tmp/.idiomind_stats"></script>
     <style type="text/css">
-    a.cursor {cursor:hand;}
+    a.cursor {cursor:hand;
+    text-decoration:none;
+    color:#414149;
+    font-size:10;
+    font-weight:bold;}
     body {margin:12;padding:10;}
     </style>
     <script>
@@ -12,14 +16,15 @@
     </script>
 </head>
 <body>
+    <div align="left">
+    <a onclick="page1(); return false" class="cursor"> Weekly report of words based on practice activity </a>
+    </div>
+    </br>
     <div>
-    <font size="1.5" color="#828282"><svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#C5E8E3" /></svg> All <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#E6E6E6" /></svg> Iddle <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#48B951" /></svg> Easy <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#EE9F50" /></svg> Learning <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#E46577" /></svg> Difficult <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#AF809F" /></svg> Forgotten </font>
+    <font size="1.5" color="#828282"><svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#C5E8E3" /></svg> Iddle <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#E6E6E6" /></svg> To review (unprocessed) <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#48B951" /></svg> Easy <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#EE9F50" /></svg> Learning <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#E46577" /></svg> Difficult <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#AF809F" /></svg> Forgotten </font>
     </div>
     <div>
     <canvas id="canvas" height="270" width="520"></canvas>
-    </div>
-    <div align="center">
-    <a onclick="page1(); return false" style="text-decoration:none;" class="cursor"><font size="1.5" color="#181818"><br> Weekly report of words based on practice activity </font></a>
     </div>
 	<script>
     var fdata = JSON.parse(data2);
