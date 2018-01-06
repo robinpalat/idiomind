@@ -6,8 +6,9 @@
     <style type="text/css">
     a.cursor {cursor:hand;
     text-decoration:none;
-    color:#414149;
-    font-size:10;
+    font-family: "Arial", Georgia, Serif;
+    color:#616161;
+    font-size:11;
     font-weight:bold;}
     body {margin:12;padding:10;}
     </style>
@@ -21,7 +22,7 @@
     </div>
     </br>
     <div>
-    <font size="1.5" color="#828282"><svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#C5E8E3" /></svg> Iddle <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#E6E6E6" /></svg> To review (unprocessed) <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#48B951" /></svg> Easy <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#EE9F50" /></svg> Learning <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#E46577" /></svg> Difficult <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#AF809F" /></svg> Forgotten </font>
+    <font size="1.5" color="#828282"><svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#62C6E8" /></svg> New words learnt <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#EE9F50" /></svg> New words learning <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#AF809F" /></svg> Forgotten words <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#E56481" /></svg> Difficult words <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#48B951" /></svg> OK </font>
     </div>
     <div>
     <canvas id="canvas" height="270" width="520"></canvas>
@@ -30,46 +31,39 @@
     var fdata = JSON.parse(data2);
     var lineChartData = {
     labels : fdata[0].wk,
-    datasets : [{ label: "Iddle", 
-    fillColor : "rgba(220,220,220,0.0)",
-    strokeColor : "rgba(230,230,230,1)",
-    pointColor : "rgba(230,230,230,1)",
-    pointStrokeColor : "rgba(230,230,230,1)",
+    datasets : [{ label: "new", 
+    fillColor : "rgba(98,198,232,0.0)",
+    strokeColor : "rgba(98,198,232,1)",
+    pointColor : "rgba(98,198,232,1)",
+    pointStrokeColor : "rgba(98,198,232,1)",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f5},
-    { label: "total", 
-    fillColor : "rgba(143,198,232,0.0)",
-    strokeColor : "rgba(209,240,235,1)",
-    pointColor : "rgba(209,240,235,1)",
-    pointStrokeColor : "rgba(209,240,235,1)",
-    pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(220,220,220,1)", data : fdata[0].f0},
-    { label: "Difficult", 
-    fillColor : "rgba(195,47,124,0.0)",
-    strokeColor : "rgba(195,47,124,1)",
-    pointColor : "rgba(195,47,124,1)",
-    pointStrokeColor : "rgba(195,47,124,1)",
+    pointHighlightStroke : "rgba(220,220,220,1)", data : fdata[0].f0}, 
+    { label: "learning", 
+    fillColor : "rgba(238,159,80,0.0)",
+    strokeColor : "rgba(238,159,80,1)",
+    pointColor : "rgba(238,159,80,1)",
+    pointStrokeColor : "rgba(238,159,80,1)",
     pointHighlightFill : "#fff",
     pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f3},
     { label: "Forgotten", 
-    fillColor : "rgba(175,128,159,0.0)",
-    strokeColor : "rgba(175,128,159,1)",
-    pointColor : "rgba(175,128,159,1)",
-    pointStrokeColor : "rgba(175,128,159,1)",
-    pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f4},
-    { label: "Learning", 
-    fillColor : "rgba(222,118,7,0.0)",
-    strokeColor : "rgba(222,118,7,1)",
-    pointColor : "rgba(222,118,7,1)",
-    pointStrokeColor : "rgba(222,118,7,1)",
-    pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f2},
-    { label: "Easy", 
     fillColor : "rgba(72,185,81,0.0)",
     strokeColor : "rgba(72,185,81,1)",
     pointColor : "rgba(72,185,81,1)",
-    pointStrokeColor : "rgba(72,185,81,0.5)",
+    pointStrokeColor : "rgba(72,185,81,1)",
+    pointHighlightFill : "#fff",
+    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f4},
+    { label: "Learning", 
+    fillColor : "rgba(229,100,129,0.0)",
+    strokeColor : "rgba(229,100,129,1)",
+    pointColor : "rgba(229,100,129,1)",
+    pointStrokeColor : "rgba(229,100,129,1)",
+    pointHighlightFill : "#fff",
+    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f2},
+    { label: "Easy", 
+    fillColor :"rgba(175,128,159,0)",
+    strokeColor : "rgba(175,128,159,1)",
+    pointColor : "rgba(175,128,159,1)",
+    pointStrokeColor : "rgba(175,128,159,0.5)",
     pointHighlightFill : "#fff",
     pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f1}]
     }

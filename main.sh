@@ -155,7 +155,7 @@ function new_session() {
     echo -e "--- topics status updated\n"
     
     # statistics
-    ( source "$DS/ifs/stats.sh"; sleep 5; pre_comp ) &
+    ( source "$DS/ifs/stats.sh"; sleep 5; export val1=0 val2=0; pre_comp ) &
 }
 
 if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
@@ -283,7 +283,7 @@ fi
 function topic() {
     source "$DS/ifs/cmns.sh"
     export -f tpc_db msg
-    [ -e "${DC_tlt}/stts" ] && export stts=$(sed -n 1p "${DC_tlt}/stts")
+    [ -f "${DC_tlt}/stts" ] && export stts=$(sed -n 1p "${DC_tlt}/stts")
     if ! [[ ${stts} =~ $numer ]]; then return 1; fi
 
     readd(){

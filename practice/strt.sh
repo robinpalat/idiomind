@@ -4,10 +4,13 @@
 source /usr/share/idiomind/default/c.conf
 sz=(500 470); [[ ${swind} = TRUE ]] && sz=(420 410)
 source "$DS/ifs/cmns.sh"
+dw=$(date +%U)
+
 if [[ -n "$1" ]]; then
     tpc="$1"
     DM_tlt="$DM_tl/$1"
     DC_tlt="$DM_tlt/.conf"
+    stts=$(sed -n 1p "${DC_tlt}/stts")
     tpcdb="$DC_tlt/tpc"
 fi
 pdir="${DC_tlt}/practice"
@@ -56,6 +59,7 @@ function score() {
     [ ! -e ./${pr}.l ] && touch ./${pr}.l
     if [[ $(($(< ./${pr}.l)+easy)) -ge ${all} ]]; then
         _log ${pr}; play "$pdirs/all.mp3" &
+        echo "1p${dw}.$tpc.${dw}p1" >> "$log"
         date "+%a %d %B" > ./${pr}.lock
         save_score 0 & echo 21 > .${icon}
         strt 1
@@ -95,20 +99,20 @@ function save_score() {
 function _log() { 
     if [ ${1} != 'e' ]; then
          if [ -e ./${1}.1 ]; then
-         echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1" |sed '/\.\./d' >> "$log"; fi
+         echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1.<${stts}/${dw}>" |sed '/\.\./d' >> "$log"; fi
          if [ -e ./${1}.2 ]; then
          [ ! -e ./${1}.3 ] && echo -n "$(head -n10 < ./${1}.2 |sed -e ':a;N;$!ba;s/\n/, /g')" > ./${1}.df
-         echo "w2.$(tr -s '\n' '|' < ./${1}.2).w2" |sed '/\.\./d' >> "$log"; fi
+         echo "w2.$(tr -s '\n' '|' < ./${1}.2).w2.<${stts}/${dw}>" |sed '/\.\./d' >> "$log"; fi
          if [ -e ./${1}.3 ]; then
          echo -n "$(head -n10 < ./${1}.3 |sed -e ':a;N;$!ba;s/\n/, /g')" > ./${1}.df
-         echo "w3.$(tr -s '\n' '|' < ./${1}.3).w3" |sed '/\.\./d' >> "$log"; fi
+         echo "w3.$(tr -s '\n' '|' < ./${1}.3).w3.<${stts}/${dw}>" |sed '/\.\./d' >> "$log"; fi
     elif [ ${1} = 'e' ]; then
          if [ -e ./${1}.1 ]; then
-         echo "s1.$(tr -s '\n' '|' < ./${1}.1).s1" |sed '/\.\./d' >> "$log"; fi
+         echo "s1.$(tr -s '\n' '|' < ./${1}.1).s1.<${stts}/${dw}>" |sed '/\.\./d' >> "$log"; fi
          if [ -e ./${1}.2 ]; then
-         echo "s2.$(tr -s '\n' '|' < ./${1}.2).s2" |sed '/\.\./d' >> "$log"; fi
+         echo "s2.$(tr -s '\n' '|' < ./${1}.2).s2.<${stts}/${dw}>" |sed '/\.\./d' >> "$log"; fi
          if [ -e ./${1}.3 ]; then
-         echo "s3.$(tr -s '\n' '|' < ./${1}.3).s3" |sed '/\.\./d' >> "$log"; fi
+         echo "s3.$(tr -s '\n' '|' < ./${1}.3).s3.<${stts}/${dw}>" |sed '/\.\./d' >> "$log"; fi
     fi
 }
     
@@ -833,6 +837,7 @@ function practices() {
         img_cont="$DS/images/cont.png"
         img_no="$DS/images/no.png"
         img_yes="$DS/images/yes.png"
+        echo "0p${dw}.$tpc.${dw}p0" >> "$log"
         practice_${pr}
     fi
 }
