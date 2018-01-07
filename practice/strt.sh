@@ -5,12 +5,11 @@ source /usr/share/idiomind/default/c.conf
 sz=(500 470); [[ ${swind} = TRUE ]] && sz=(420 410)
 source "$DS/ifs/cmns.sh"
 dw=$(date +%U)
-
 if [[ -n "$1" ]]; then
     tpc="$1"
     DM_tlt="$DM_tl/$1"
     DC_tlt="$DM_tlt/.conf"
-    stts=$(sed -n 1p "${DC_tlt}/stts")
+    stts=$(< "${DC_tlt}/stts")
     tpcdb="$DC_tlt/tpc"
 fi
 pdir="${DC_tlt}/practice"
@@ -21,7 +20,6 @@ if [ -e "${DC_tlt}/translations/active" ]; then
     act=$(sed -n 1p "${DC_tlt}/translations/active")
     [ -n "$act" ] && slng="$act"
 fi
-
 export -f f_lock
 
 function stats() {

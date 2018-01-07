@@ -1,0 +1,57 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <script src="./js/chart.js"></script>
+    <script type="text/javascript" src="/tmp/.idiomind_stats"></script>
+    <style type="text/css">
+    a.cursor {cursor:hand;
+    text-decoration:none;
+    font-family: "Arial", Georgia, Serif;
+    color:#616161;
+    font-size:11;
+    font-weight:bold;}
+    body {margin:12;padding:10;}
+    </style>
+    <script>
+    function page1() { window.location = "/usr/share/idiomind/default/pg1.html"; }
+    </script>
+</head>
+<body>
+    <div align="left">
+    <a onclick="page1(); return false" class="cursor"> Weekly report of practice activity </a>
+    </div>
+    </br>
+    <div>
+    <font size="1.5" color="#828282"><svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#48B951" /></svg> Test passed <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#7F7F7F" /></svg> Practice activity </font>
+    </div>
+    <div>
+    <canvas id="canvas" height="270" width="520"></canvas>
+    </div>
+	<script>
+    var fdata = JSON.parse(data2);
+    var lineChartData = {
+    labels : fdata[0].wk,
+    datasets : [{ label: "passed", 
+    fillColor : "rgba(72,185,81,0.0)",
+    strokeColor : "rgba(72,185,81,1)",
+    pointColor : "rgba(72,185,81,1)",
+    pointStrokeColor : "rgba(72,185,81,1)",
+    pointHighlightFill : "#fff",
+    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f5},
+    { label: "activity", 
+    fillColor :"rgba(127,127,127,0)",
+    strokeColor : "rgba(127,127,127,1)",
+    pointColor : "rgba(127,127,127,1)",
+    pointStrokeColor : "rgba(127,127,127,0.5)",
+    pointHighlightFill : "#fff",
+    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f6}]
+    }
+	window.onload = function(){
+    var ctx = document.getElementById("canvas").getContext("2d");
+    window.myLine = new Chart(ctx).Line(lineChartData, {
+        responsive: true
+    });
+	}
+	</script>
+</body>
+</html>

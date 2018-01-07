@@ -13,12 +13,12 @@
     body {margin:12;padding:10;}
     </style>
     <script>
-    function page1() { window.location = "/usr/share/idiomind/default/pg1.html"; }
+    function page3() { window.location = "/usr/share/idiomind/default/pg3.html"; }
     </script>
 </head>
 <body>
     <div align="left">
-    <a onclick="page1(); return false" class="cursor"> Weekly report of words based on practice activity </a>
+    <a onclick="page3(); return false" class="cursor"> Weekly report of words based on practice activity </a>
     </div>
     </br>
     <div>
@@ -44,28 +44,28 @@
     pointColor : "rgba(238,159,80,1)",
     pointStrokeColor : "rgba(238,159,80,1)",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f3},
-    { label: "Forgotten", 
-    fillColor : "rgba(72,185,81,0.0)",
-    strokeColor : "rgba(72,185,81,1)",
-    pointColor : "rgba(72,185,81,1)",
-    pointStrokeColor : "rgba(72,185,81,1)",
+    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f1},
+    { label: "Forgotten",
+    fillColor :"rgba(175,128,159,0)",
+    strokeColor : "rgba(175,128,159,1)",
+    pointColor : "rgba(175,128,159,1)",
+    pointStrokeColor : "rgba(175,128,159,0.5)",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f4},
+    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f2},
     { label: "Learning", 
     fillColor : "rgba(229,100,129,0.0)",
     strokeColor : "rgba(229,100,129,1)",
     pointColor : "rgba(229,100,129,1)",
     pointStrokeColor : "rgba(229,100,129,1)",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f2},
+    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f3},
     { label: "Easy", 
-    fillColor :"rgba(175,128,159,0)",
-    strokeColor : "rgba(175,128,159,1)",
-    pointColor : "rgba(175,128,159,1)",
-    pointStrokeColor : "rgba(175,128,159,0.5)",
+    fillColor : "rgba(72,185,81,0.0)",
+    strokeColor : "rgba(72,185,81,1)",
+    pointColor : "rgba(72,185,81,1)",
+    pointStrokeColor : "rgba(72,185,81,1)",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f1}]
+    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f4}]
     }
 	window.onload = function(){
     var ctx = document.getElementById("canvas").getContext("2d");

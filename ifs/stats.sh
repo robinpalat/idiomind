@@ -17,7 +17,7 @@ function create_db() {
         (month TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT);" |sqlite3 "${db}"
         for m in {01..12}; do sqlite3 ${db} "insert into ${mtable} (month) values ('${m}');"; done
         echo -n "create table if not exists ${wtable} \
-        (week TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT);" |sqlite3 "${db}"
+        (week TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT, val5 TEXT, val6 TEXT);" |sqlite3 "${db}"
         echo -n "create table if not exists 'expire_month' (date TEXT);" |sqlite3 "${db}"
         echo -n "create table if not exists 'expire_week' (date TEXT);" |sqlite3 "${db}"
         touch "${no_data}"
@@ -28,7 +28,7 @@ function create_db() {
         (month TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT);" |sqlite3 "${db}"
         for m in {01..12}; do sqlite3 ${db} "insert into ${mtable} (month) values ('${m}');"; done
         echo -n "create table if not exists ${wtable} \
-        (week TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT, val5 TEXT);" |sqlite3 "${db}"
+        (week TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT, val5 TEXT, val6 TEXT);" |sqlite3 "${db}"
         echo -n "create table if not exists 'expire_month' (date TEXT);" |sqlite3 "${db}"
         echo -n "create table if not exists 'expire_week' (date TEXT);" |sqlite3 "${db}"
         touch "${no_data}"
@@ -94,50 +94,51 @@ function save_topic_stats() {
 
 function save_word_stats() {
     
-    tpc_practs="$(grep -o -P "(?<=0p${dw}.).*(?=\.${dw}p0)" "${log}" |tr '|' '\n')"
-    tpc_practs_ok="$(grep -o -P "(?<=1p${dw}.).*(?=\.${dw}p1)" "${log}" |tr '|' '\n')"
-    c_tpc_practs="$(wc -l <<< "${tpc_practs}")"
-    c_tpc_practs_ok="$(wc -l <<< "${tpc_practs_ok}")"
-    
-count() {
-    S1w1="$(grep -o -P "(?<=w1.).*(?=\.w1.<1/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # new words learned
-    c_S1w1="$(grep -c '[^[:space:]]' <<< "$S1w1")"
-    S1w2="$(grep -o -P "(?<=w2.).*(?=\.w2.<1/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # words learning (new)
-    c_S1w2="$(grep -c '[^[:space:]]' <<< "$S1w2")"
-    S1w3="$(grep -o -P "(?<=w3.).*(?=\.w3.<1/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # words learning (new)
-    c_S1w3="$(grep -c '[^[:space:]]' <<< "$S1w3")"
-    cc_S1w=$((c_S1w2+c_S1w3)) # words learning (new) x 2
-    S5w1="$(grep -o -P "(?<=w1.).*(?=\.w1.<5/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # words reviewed
-    c_S5w1="$(grep -c '[^[:space:]]' <<< "$S5w1")"
-    S5w2="$(grep -o -P "(?<=w2.).*(?=\.w2.<5/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # forgotten words
-    c_S5w2="$(grep -c '[^[:space:]]' <<< "$S5w2")"
-    S5w3="$(grep -o -P "(?<=w3.).*(?=\.w3.<5/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # forgotten words
-    c_S5w3="$(grep -c '[^[:space:]]' <<< "$S5w3")"
-    cc_S5w=$((c_S5w2+c_S5w3)) # forgotten words x2 
-    S6w1="$(grep -o -P "(?<=w1.).*(?=\.w1.<6/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # words reviewed
-    c_S6w1="$(grep -c '[^[:space:]]' <<< "$S6w1")"
-    S6w2="$(grep -o -P "(?<=w2.).*(?=\.w2.<6/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # Difficult Words to Remember
-    c_S6w2="$(grep -c '[^[:space:]]' <<< "$S6w2")"
-    S6w3="$(grep -o -P "(?<=w3.).*(?=\.w3.<6/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # Difficult Words to Remember
-    c_S6w3="$(grep -c '[^[:space:]]' <<< "$S6w3")"
-    cc_S6w=$((c_S6w2+c_S6w3)) # Difficult Words to Remember
-    cc_S56w=$((c_S5w1+c_S6w1)) # assimilated words ok
-    # new words learned | words learning (new) | forgotten words | Difficult Words to Remember | words reviewed
-    echo "${c_S1w1},${cc_S1w},${cc_S5w},${cc_S6w},${cc_S56w}"
-}
+    compute() {
+        tpc_practs="$(grep -o -P "(?<=0p${dw}.).*(?=\.${dw}p0)" "${log}" |tr '|' '\n')"
+        tpc_practs_ok="$(grep -o -P "(?<=1p${dw}.).*(?=\.${dw}p1)" "${log}" |tr '|' '\n')"
+        c_tpc_practs="$(grep -c '[^[:space:]]' <<< "${tpc_practs}")"
+        c_tpc_practs_ok="$(grep -c '[^[:space:]]' <<< "${tpc_practs_ok}")"
+        S1w1="$(grep -o -P "(?<=w1.).*(?=\.w1.<1/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # new words learned
+        c_S1w1="$(grep -c '[^[:space:]]' <<< "$S1w1")"
+        S1w2="$(grep -o -P "(?<=w2.).*(?=\.w2.<1/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # words learning (new)
+        c_S1w2="$(grep -c '[^[:space:]]' <<< "$S1w2")"
+        S1w3="$(grep -o -P "(?<=w3.).*(?=\.w3.<1/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # words learning (new)
+        c_S1w3="$(grep -c '[^[:space:]]' <<< "$S1w3")"
+        cc_S1w=$((c_S1w2+c_S1w3)) # words learning (new) x 2
+        S5w1="$(grep -o -P "(?<=w1.).*(?=\.w1.<5/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # words reviewed
+        c_S5w1="$(grep -c '[^[:space:]]' <<< "$S5w1")"
+        S5w2="$(grep -o -P "(?<=w2.).*(?=\.w2.<5/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # forgotten words
+        c_S5w2="$(grep -c '[^[:space:]]' <<< "$S5w2")"
+        S5w3="$(grep -o -P "(?<=w3.).*(?=\.w3.<5/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # forgotten words
+        c_S5w3="$(grep -c '[^[:space:]]' <<< "$S5w3")"
+        cc_S5w=$((c_S5w2+c_S5w3)) # forgotten words x2 
+        S6w1="$(grep -o -P "(?<=w1.).*(?=\.w1.<6/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # words reviewed
+        c_S6w1="$(grep -c '[^[:space:]]' <<< "$S6w1")"
+        S6w2="$(grep -o -P "(?<=w2.).*(?=\.w2.<6/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # Difficult Words to Remember
+        c_S6w2="$(grep -c '[^[:space:]]' <<< "$S6w2")"
+        S6w3="$(grep -o -P "(?<=w3.).*(?=\.w3.<6/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # Difficult Words to Remember
+        c_S6w3="$(grep -c '[^[:space:]]' <<< "$S6w3")"
+        cc_S6w=$((c_S6w2+c_S6w3)) # Difficult Words to Remember
+        cc_S56w=$((c_S5w1+c_S6w1)) # assimilated words ok
+        # new words learned | words learning (new) | forgotten words |
+        # Difficult Words to Remember | words reviewed | test pass | pract act
+        echo "${c_S1w1},${cc_S1w},${cc_S5w},${cc_S6w},${cc_S56w},${c_tpc_practs_ok},${c_tpc_practs}"
+    }
   
     if [[ $(sqlite3 ${db} "select week from '${wtable}' where week is '${week^}';") ]]; then :
     else
-        rdata=$(count)
+        rdata=$(compute)
         D0=$(cut -d ',' -f 1 <<< "${rdata}"); ! [[ ${D0} =~ $int ]] && D0=0
         D1=$(cut -d ',' -f 2 <<< "${rdata}"); ! [[ ${D1} =~ $int ]] && D1=0
         D2=$(cut -d ',' -f 3 <<< "${rdata}"); ! [[ ${D2} =~ $int ]] && D2=0
         D3=$(cut -d ',' -f 4 <<< "${rdata}"); ! [[ ${D3} =~ $int ]] && D3=0
         D4=$(cut -d ',' -f 5 <<< "${rdata}"); ! [[ ${D4} =~ $int ]] && D4=0
-        
+        D5=$(cut -d ',' -f 6 <<< "${rdata}"); ! [[ ${D5} =~ $int ]] && D5=0
+        D6=$(cut -d ',' -f 7 <<< "${rdata}"); ! [[ ${D6} =~ $int ]] && D6=0
         dte=$(sqlite3 ${db} "select date from 'expire_month';")
-        sqlite3 "${db}" "insert into ${wtable} (week,val0,val1,val2,val3,val4) \
-        values ('${week^}','${D0}','${D1}','${D2}','${D3}','${D4}');"
+        sqlite3 "${db}" "insert into ${wtable} (week,val0,val1,val2,val3,val4,val5,val6) \
+        values ('${week^}','${D0}','${D1}','${D2}','${D3}','${D4}','${D5}','${D6}');"
     fi
 }
 
@@ -181,32 +182,41 @@ function mk_topic_stats() {
     field3="[$d01,$d02,$d03,$d04,$d05,$d06,$d07,$d08,$d09,$d10,$d11,$d12]"
     field4="[$e01,$e02,$e03,$e04,$e05,$e06,$e07,$e08,$e09,$e10,$e11,$e12]"
     echo -e "data1='[{\"f0\":$field0,\"f1\":$field1,\"f2\":$field2,\"f3\":$field3,\"f4\":$field4}]';" > "${data}"
-
-    exec 3< <(sqlite3 "$db" "select week FROM ${wtable}" |tail -n9)
-    exec 4< <(sqlite3 "$db" "select val0 FROM ${wtable}" |tail -n9)
-    exec 5< <(sqlite3 "$db" "select val1 FROM ${wtable}" |tail -n9)
-    exec 6< <(sqlite3 "$db" "select val2 FROM ${wtable}" |tail -n9)
-    exec 7< <(sqlite3 "$db" "select val3 FROM ${wtable}" |tail -n9)
-    exec 8< <(sqlite3 "$db" "select val4 FROM ${wtable}" |tail -n9)
+    
+    # words
+    exec 4< <(sqlite3 "$db" "select week FROM ${wtable}" |tail -n9)
+    exec 5< <(sqlite3 "$db" "select val0 FROM ${wtable}" |tail -n9)
+    exec 6< <(sqlite3 "$db" "select val1 FROM ${wtable}" |tail -n9)
+    exec 7< <(sqlite3 "$db" "select val2 FROM ${wtable}" |tail -n9)
+    exec 8< <(sqlite3 "$db" "select val3 FROM ${wtable}" |tail -n9)
+    exec 9< <(sqlite3 "$db" "select val4 FROM ${wtable}" |tail -n9)
+    exec 10< <(sqlite3 "$db" "select val5 FROM ${wtable}" |tail -n9)
+    exec 11< <(sqlite3 "$db" "select val6 FROM ${wtable}" |tail -n9)
     for m in {01..10}; do
-        read week <&3
-        read D0 <&4
-        read D1 <&5
-        read D2 <&6
-        read D3 <&7
-        read D4 <&8
+        read week <&4
+        read D0 <&5
+        read D1 <&6
+        read D2 <&7
+        read D3 <&8
+        read D4 <&9
+        read D5 <&10
+        read D6 <&11
         if [ -n "$week" ]; then
             ! [[ ${D0} =~ $int ]] && D0=0
             ! [[ ${D1} =~ $int ]] && D1=0
             ! [[ ${D2} =~ $int ]] && D2=0
             ! [[ ${D3} =~ $int ]] && D3=0
             ! [[ ${D4} =~ $int ]] && D4=0
+            ! [[ ${D5} =~ $int ]] && D5=0
+            ! [[ ${D6} =~ $int ]] && D6=0
             declare a$m=${week}
             declare b$m=${D0}
             declare c$m=${D1}
             declare d$m=${D2}
             declare e$m=${D3}
             declare f$m=${D4}
+            declare g$m=${D5}
+            declare h$m=${D6}
         else
             declare a$m=" "
             declare b$m=0
@@ -214,6 +224,8 @@ function mk_topic_stats() {
             declare d$m=0
             declare e$m=0
             declare f$m=0
+            declare g$m=0
+            declare h$m=0
         fi
     done
     fieldw="[\"$a01\",\"$a02\",\"$a03\",\"$a04\",\"$a05\",\"$a06\",\"$a07\",\"$a08\",\"$a09\",\"$a10\"]"
@@ -222,7 +234,9 @@ function mk_topic_stats() {
     field2="[$d01,$d02,$d03,$d04,$d05,$d06,$d07,$d08,$d09,$d10]"
     field3="[$e01,$e02,$e03,$e04,$e05,$e06,$e07,$e08,$e09,$e10]"
     field4="[$f01,$f02,$f03,$f04,$f05,$f06,$f07,$f08,$f09,$f10]"
-    echo -e "data2='[{\"wk\":$fieldw,\"f0\":$field0,\"f1\":$field1,\"f2\":$field2,\"f3\":$field3,\"f4\":$field4}]';" >> "${data}"
+    field5="[$g01,$g02,$g03,$g04,$g05,$g06,$g07,$g08,$g09,$g10]"
+    field6="[$h01,$h02,$h03,$h04,$h05,$h06,$h07,$h08,$h09,$h10]"
+    echo -e "data2='[{\"wk\":$fieldw,\"f0\":$field0,\"f1\":$field1,\"f2\":$field2,\"f3\":$field3,\"f4\":$field4,\"f5\":$field5,\"f6\":$field6}]';" >> "${data}"
     cp -f "${data}" "${databk}"
 }
 
