@@ -37,7 +37,7 @@ function create_db() {
 
 function save_topic_stats() {
     
-    count() {
+    compute() {
         n=1; f0=0; f1=0; f2=0; f3=0; f4=0
         old_IFS=$IFS; IFS=$'\n'
         for tpc in $(cd "$DM_tl"; find ./ -maxdepth 1 \
@@ -69,7 +69,7 @@ function save_topic_stats() {
         IFS=$old_IFS
     }
 
-    rdata=$(count)
+    rdata=$(compute)
     f0=$(cut -d ',' -f 1 <<< "$rdata"); ! [[ ${f0} =~ $int ]] && f0=0
     f1=$(cut -d ',' -f 2 <<< "$rdata"); ! [[ ${f1} =~ $int ]] && f1=0
     f2=$(cut -d ',' -f 3 <<< "$rdata"); ! [[ ${f2} =~ $int ]] && f2=0
@@ -97,8 +97,8 @@ function save_word_stats() {
     compute() {
         tpc_practs="$(grep -o -P "(?<=0p${dw}.).*(?=\.${dw}p0)" "${log}" |tr '|' '\n')"
         tpc_practs_ok="$(grep -o -P "(?<=1p${dw}.).*(?=\.${dw}p1)" "${log}" |tr '|' '\n')"
-        c_tpc_practs="$(grep -c '[^[:space:]]' <<< "${tpc_practs}")"
-        c_tpc_practs_ok="$(grep -c '[^[:space:]]' <<< "${tpc_practs_ok}")"
+        c_tpc_practs=$(grep -c '[^[:space:]]' <<< "${tpc_practs}")
+        c_tpc_practs_ok=$(grep -c '[^[:space:]]' <<< "${tpc_practs_ok}")
         S1w1="$(grep -o -P "(?<=w1.).*(?=\.w1.<1/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # new words learned
         c_S1w1="$(grep -c '[^[:space:]]' <<< "$S1w1")"
         S1w2="$(grep -o -P "(?<=w2.).*(?=\.w2.<1/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # words learning (new)
@@ -143,6 +143,7 @@ function save_word_stats() {
 }
 
 function mk_topic_stats() {
+    
     exec 4< <(sqlite3 "$db" "select val0 FROM ${mtable}")
     exec 5< <(sqlite3 "$db" "select val1 FROM ${mtable}")
     exec 6< <(sqlite3 "$db" "select val2 FROM ${mtable}")
@@ -184,14 +185,13 @@ function mk_topic_stats() {
     echo -e "data1='[{\"f0\":$field0,\"f1\":$field1,\"f2\":$field2,\"f3\":$field3,\"f4\":$field4}]';" > "${data}"
     
     # words
-    exec 4< <(sqlite3 "$db" "select week FROM ${wtable}" |tail -n9)
-    exec 5< <(sqlite3 "$db" "select val0 FROM ${wtable}" |tail -n9)
-    exec 6< <(sqlite3 "$db" "select val1 FROM ${wtable}" |tail -n9)
-    exec 7< <(sqlite3 "$db" "select val2 FROM ${wtable}" |tail -n9)
-    exec 8< <(sqlite3 "$db" "select val3 FROM ${wtable}" |tail -n9)
-    exec 9< <(sqlite3 "$db" "select val4 FROM ${wtable}" |tail -n9)
-    exec 10< <(sqlite3 "$db" "select val5 FROM ${wtable}" |tail -n9)
-    exec 11< <(sqlite3 "$db" "select val6 FROM ${wtable}" |tail -n9)
+    exec 4< <(sqlite3 "$db" "select week FROM ${wtable}" |tail -n10)
+    exec 5< <(sqlite3 "$db" "select val0 FROM ${wtable}" |tail -n10)
+    exec 6< <(sqlite3 "$db" "select val1 FROM ${wtable}" |tail -n10)
+    exec 7< <(sqlite3 "$db" "select val2 FROM ${wtable}" |tail -n10)
+    exec 8< <(sqlite3 "$db" "select val3 FROM ${wtable}" |tail -n10)
+    exec 9< <(sqlite3 "$db" "select val4 FROM ${wtable}" |tail -n10)
+
     for m in {01..10}; do
         read week <&4
         read D0 <&5
@@ -199,24 +199,18 @@ function mk_topic_stats() {
         read D2 <&7
         read D3 <&8
         read D4 <&9
-        read D5 <&10
-        read D6 <&11
         if [ -n "$week" ]; then
             ! [[ ${D0} =~ $int ]] && D0=0
             ! [[ ${D1} =~ $int ]] && D1=0
             ! [[ ${D2} =~ $int ]] && D2=0
             ! [[ ${D3} =~ $int ]] && D3=0
             ! [[ ${D4} =~ $int ]] && D4=0
-            ! [[ ${D5} =~ $int ]] && D5=0
-            ! [[ ${D6} =~ $int ]] && D6=0
-            declare a$m=${week}
+            declare a$m="${week}"
             declare b$m=${D0}
             declare c$m=${D1}
             declare d$m=${D2}
             declare e$m=${D3}
             declare f$m=${D4}
-            declare g$m=${D5}
-            declare h$m=${D6}
         else
             declare a$m=" "
             declare b$m=0
@@ -224,18 +218,34 @@ function mk_topic_stats() {
             declare d$m=0
             declare e$m=0
             declare f$m=0
+        fi
+    done
+
+    a="$(sqlite3 "$db" "select val5 FROM ${wtable}" |tail -n10)"
+    b="$(sqlite3 "$db" "select val6 FROM ${wtable}" |tail -n10)"
+    
+    for m in {1..10}; do
+        D5="$(sed -n ${m}p <<< "$a")"
+        D6="$(sed -n ${m}p <<< "$b")"
+        if [ -n "$D5" ]; then
+            ! [[ ${D5} =~ $int ]] && D5=0
+            ! [[ ${D6} =~ $int ]] && D6=0
+            declare g$m=${D5}
+            declare h$m=${D6}
+        else
             declare g$m=0
             declare h$m=0
         fi
     done
+    
     fieldw="[\"$a01\",\"$a02\",\"$a03\",\"$a04\",\"$a05\",\"$a06\",\"$a07\",\"$a08\",\"$a09\",\"$a10\"]"
     field0="[$b01,$b02,$b03,$b04,$b05,$b06,$b07,$b08,$b09,$b10]"
     field1="[$c01,$c02,$c03,$c04,$c05,$c06,$c07,$c08,$c09,$c10]"
     field2="[$d01,$d02,$d03,$d04,$d05,$d06,$d07,$d08,$d09,$d10]"
     field3="[$e01,$e02,$e03,$e04,$e05,$e06,$e07,$e08,$e09,$e10]"
     field4="[$f01,$f02,$f03,$f04,$f05,$f06,$f07,$f08,$f09,$f10]"
-    field5="[$g01,$g02,$g03,$g04,$g05,$g06,$g07,$g08,$g09,$g10]"
-    field6="[$h01,$h02,$h03,$h04,$h05,$h06,$h07,$h08,$h09,$h10]"
+    field5="[$g1,$g2,$g3,$g4,$g5,$g6,$g7,$g8,$g9,$g10]"
+    field6="[$h1,$h2,$h3,$h4,$h5,$h6,$h7,$h8,$h9,$h10]"
     echo -e "data2='[{\"wk\":$fieldw,\"f0\":$field0,\"f1\":$field1,\"f2\":$field2,\"f3\":$field3,\"f4\":$field4,\"f5\":$field5,\"f6\":$field6}]';" >> "${data}"
     cp -f "${data}" "${databk}"
 }
@@ -247,7 +257,7 @@ no_data="${DM_tls}/data/no_data"
 databk="${DM_tls}/data/idiomind_stats"
 db="${DM_tls}/data/log.db"
 int='^[0-9]+$'
-week=$(date +%b%d)
+week=$(date "+%b %d")
 month=$(date +%b)
 dtweek=$(date +%w)
 dtmnth=$(date +%d)
@@ -279,9 +289,7 @@ function pre_comp() {
     f_lock "$DT/p_stats"
     echo -n "create table if not exists 'expire_month' (date TEXT);" |sqlite3 "${db}"
     echo -n "create table if not exists 'expire_week' (date TEXT);" |sqlite3 "${db}"
-    
     cleanups "$pross" "$data" "$no_data" "$databk"
-    
     [ ${dtmnth} = 01 -o $(chktb 'expire_month' 31) = 0 ] && val1=1
     [ ${dtweek} = 0 -o $(chktb 'expire_week' 7) = 0 ] && val2=1
 
@@ -293,7 +301,7 @@ function pre_comp() {
     else
         save_topic_stats 0
     fi
-    
+
     echo -e "--- statistics updated\n"
     cleanups "$DT/p_stats"
 }
@@ -317,7 +325,7 @@ function stats() {
         --name=Idiomind --class=Idiomind \
         --browser --encoding=UTF-8 \
         --orient=vert --window-icon=idiomind --center --on-top \
-        --width=650 --height=410 --borders=0 \
+        --width=680 --height=440 --borders=0 \
         --no-buttons
     fi
     
