@@ -26,32 +26,32 @@ if [[ "$1" = _dlg_ ]]; then
     source "$DS/ifs/cmns.sh"
     msg "$(gettext "Does not need configuration")\n" dialog-information "$4"
 else
-	link="http://translate.googleapis.com/translate_a/single?client=gtx&sl=$2&tl=$3&dt=t&q=$1"
-	gtra="$(wget -U "$useragent" -qO - "$link")"
-	
-	 if grep -o -E 'ja|zh-cn|ru' <<< ${3} >/dev/null 2>&1 ; then
-	 
-		if [[ "$4" = singleline ]]; then
-		
-			echo -e "${gtra}" |sed -e 's/\",\".*//g' |sed -e 's/.*\[\[\[\"//g'
-		
-		else
-			while read t; do
-				echo -n "$(grep -oP '(?<=trgt=\").*(?=\",\")' <<< "${t}")"
-			done < <(echo "${gtra}" |sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g')
-		fi
+    link="http://translate.googleapis.com/translate_a/single?client=gtx&sl=$2&tl=$3&dt=t&q=$1"
+    gtra="$(wget -U "$useragent" -qO - "$link")"
+    
+     if grep -o -E 'ja|zh-cn|ru' <<< ${3} >/dev/null 2>&1 ; then
+     
+        if [[ "$4" = singleline ]]; then
+        
+            echo -e "${gtra}" |sed -e 's/\",\".*//g' |sed -e 's/.*\[\[\[\"//g'
+        
+        else
+            while read t; do
+                echo -n "$(grep -oP '(?<=trgt=\").*(?=\",\")' <<< "${t}")"
+            done < <(echo "${gtra}" |sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g')
+        fi
 
     else
-	
-		if [[ "$4" = singleline ]]; then
-		
-			echo -e "${gtra}" |sed -e 's/\",\".*//g' |sed -e 's/.*\[\[\[\"//g'
-		
-		else
-			while read t; do
-				echo -n "$(grep -oP '(?<=trgt=\").*(?=\",\")' <<< "${t}")"
-			done < <(echo "${gtra}" |sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g')
-		fi
+    
+        if [[ "$4" = singleline ]]; then
+        
+            echo -e "${gtra}" |sed -e 's/\",\".*//g' |sed -e 's/.*\[\[\[\"//g'
+        
+        else
+            while read t; do
+                echo -n "$(grep -oP '(?<=trgt=\").*(?=\",\")' <<< "${t}")"
+            done < <(echo "${gtra}" |sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g')
+        fi
     
     fi
 fi

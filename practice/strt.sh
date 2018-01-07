@@ -693,7 +693,8 @@ function lock() {
             ./${pr}.2 ./${pr}.3 ./${pr}.srces ./${pr} ./${pr}.df
             echo 1 > ./.${icon}; echo 0 > ./${pr}.l
         elif [ $ret -eq 4 ]; then
-            cleanups "${lock}"; return 0
+            cleanups "${lock}"
+            return 0
         fi
         strt 0
     fi

@@ -1,0 +1,84 @@
+#!/bin/bash
+
+# Text-to-speech (TTS) API Documentation
+#http://www.voicerss.org/api/documentation.aspx
+d1="Voicerss.TTS online.Word pronunciation.various"
+d2="Voicerss.TTS online.Pronunciation.various"
+name="Voicerss - TTS online"
+key=$(grep -o key=\"[^\"]* "$DC_a/voicerss.cfg" |grep -o '[^"]*$')
+speed=$(grep -o speed=\"[^\"]* "$DC_a/voicerss.cfg" |grep -o '[^"]*$')
+voice=$(grep -o voice=\"[^\"]* "$DC_a/voicerss.cfg" |grep -o '[^"]*$')
+voices=""
+fileconf="$DC_a/voicerss.cfg"
+# ----------
+
+DC_a="$HOME/.config/idiomind/addons"
+[ ! -f "$fileconf" ] && touch "$fileconf"
+if [[ -z "$(< "$fileconf")" ]]; then
+    echo -e "voice=\"\"\nspeed=\"\"\nkey=\"\"" > "$fileconf"
+fi
+
+function check_conf(){
+    
+    if [ -z "${key}" ] || [[ ${#key} != 32 ]]; then
+        echo -e "$(gettext "Missing key for \"$name\". Go to Dics settings and double-click on the name to configure.")\n" >> "$DC_a/dicts.err"
+        if [ "${d1}" ]; then
+            mv -f "$DC_a/dict/enables/${d1}" "$DC_a/dict/disables/${d1}"
+        fi
+        if [ "${d2}" ]; then
+            mv -f "$DC_a/dict/enables/${d2}" "$DC_a/dict/disables/${d2}"
+        fi
+        return 1
+    else
+        return 0
+    fi
+}
+
+if [[ "$1" = _dlg_ ]] || [[ "$dlg" = _dlg_ ]]; then
+
+    label="$(gettext "Languages"): English, Spanish, Portuguese, Russian, Italian, German, French, Chinese\n
+Text-to-speech (TTS) API Documentation\nhttp://www.voicerss.org/api/documentation.aspx"
+
+    c=$(yad --form --title="${4}" \
+    --text="${label}" \
+    --name=Idiomind --class=Idiomind \
+    --window-icon="$DS/images/icon.png" --center \
+    --on-top --skip-taskbar --expand-column=3 \
+    --width=400 --height=200 --borders=12 \
+    --always-print-result --editable --print-all --align=right \
+    --field=Voice:CB "" \
+    --field=Speed:CB "$speed!Slow!Normal!Fast" \
+    --field="Key" "$key" \
+    --button="$(gettext "Cancel")":1 \
+    --button="$(gettext "OK")":0)
+    ret=$?
+    if [ $ret = 0 ]; then
+        sed -i "s/voice=.*/voice=\"$(cut -d "|" -f1 <<<"$c")\"/g" "$fileconf"
+        sed -i "s/speed=.*/speed=\"$(cut -d "|" -f2 <<<"$c")\"/g" "$fileconf"
+        sed -i "s/key=.*/key=\"$(cut -d "|" -f3 <<<"$c")\"/g" "$fileconf"
+    fi
+else
+    check_conf
+    if [ $? = 0 ]; then
+        if [ "$speed" = Slow ]; then s=-2
+        elif [ "$speed" = Normal ]; then s=0
+        elif [ "$speed" = Fast ]; then s=2
+        else s=0
+        fi
+        if [ -z "$voice" ]; then
+            if [ "$lgt" = en ]; then v='en-us'
+            elif [ "$lgt" = es ]; then v='es-es'
+            elif [ "$lgt" = pt ]; then v='pt-br'
+            elif [ "$lgt" = ru ]; then v='ru-ru'
+            elif [ "$lgt" = it ]; then v='it-it'
+            elif [ "$lgt" = de ]; then v='de-de'
+            elif [ "$lgt" = fr ]; then v='fr-fr'
+            elif [ "$lgt" = zh-cn ]; then v='zh-cn'
+            fi
+        else
+            v="$voice"
+        fi
+        export LINK="http://api.voicerss.org/?key=$key&hl=$v&r=$s&f=16khz_16bit_mono&src=${word}"
+        export ex='mp3'
+    fi
+fi
