@@ -108,10 +108,17 @@ check_index() {
             export mkmn=1; export fix=1
         fi
         
+        if [ ${stts} -gt 1 ]; then
+            dater=$(tpc_db 1 reviews date1)
+            if [ -z "$dater" ]; then
+                d="$(date +%m/%d/%Y)"
+                tpc_db 9 reviews date1 "${d}"
+            fi
+        fi
+
         if ! file "${tpcdb}" | grep 'SQLite'; then
             msg "$(gettext "No such file or directory")\n" dialog-information & exit 1 # FIX
         fi
-
         learn="$(tpc_db 5 learning)"
         leart="$(tpc_db 5 learnt)"
         cnt0=$(grep -c '[^[:space:]]' < "${DC_tlt}/data")

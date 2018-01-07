@@ -259,12 +259,7 @@ function calculate_review() {
     export DC_tlt="$DM_tl/${1}/.conf"
     steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
     if [ ${steps} -ge 1 ]; then
-        dater=$(tpc_db 1 reviews date${steps})
-        if [ -z "$dater" ]; then
-            d="$(date +%m/%d/%Y)"
-            tpc_db 9 reviews date1 "${d}"
-            dater="${d}"
-        fi
+        dater=""; dater=$(tpc_db 1 reviews date${steps})
         TM=$(( ( $(date +%s) - $(date -d ${dater} +%s) ) /(24 * 60 * 60 ) ))
         tdays=${notice[${steps}]}
         RM=$((100*TM/tdays))

@@ -99,7 +99,6 @@ function new_session() {
                 calculate_review "${line}"
                 
                 if [[ $((stts%2)) = 0 ]]; then
-                
                     if [ ${RM} -ge 180 -a ${stts} = 8 ]; then
                         echo 10 > "${dir}/stts"; touch "${dim}"
                         cdb ${shrdb} 2 T2 list "${line}"
@@ -116,7 +115,6 @@ function new_session() {
                     fi
                     
                 elif [[ $((stts%2)) = 1 ]]; then
-                [ -z ${RM} ] && echo "$line ......."
                     if [ ${RM} -ge 180 -a ${stts} = 7 ]; then
                         echo 9 > "${dir}/stts"; touch "${dim}"
                         cdb ${shrdb} 2 T2 list "${line}"
