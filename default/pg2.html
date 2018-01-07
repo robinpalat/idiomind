@@ -5,6 +5,7 @@
     <script type="text/javascript" src="/tmp/.idiomind_stats"></script>
     <style type="text/css">
     a.cursor {cursor:hand;
+    margin:10;
     text-decoration:none;
     font-family: "Arial", Georgia, Serif;
     color:#616161;
@@ -13,13 +14,19 @@
     body {margin:12;padding:10;}
     </style>
     <script>
-    function page3() { window.location = "/usr/share/idiomind/default/pg3.html"; }
+    function page3() { window.location = "./pg3.html"; }
+    function page1() { window.location = "./pg1.html"; }
     </script>
 </head>
 <body>
-    <div align="left">
-    <a onclick="page3(); return false" class="cursor"> Weekly report of words based on practice activity </a>
-    </div>
+<div style="text-align:center">
+    <span style="float:left"><a onclick="page2(); return false" class="cursor"> Weekly report of words based on practice activity </a></span>
+    <span style="float:right">
+        <a onclick="page1(); return false" class="cursor"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAbCAQAAADSI7duAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfiAQcOORQpL3XtAAAAu0lEQVQ4y5XUMQ4BURDG8f8SrI5jiNBQUVFQEKwLKohQaGh02+0NtnAGR1B8ipeNRGE/0728XyYzk3kP/ohqyX0DkIsfPMk//FdkiL5XYoroeb3cEUOH1rkixg6NuSCmQFRGm5wRc48eEUuHxhwQa4fW2CMSh7bYIbYOhR7iBlScgYXMiZe5qHnj8jCNlcvDnBc+PyNmfjEXxMTlYetGLg/7PPAfc4ro+jxDdHyec6JdHKLSVuHlfQVf8QaZuTFDjx9DcAAAAABJRU5ErkJggg=="></img></a>
+        <a onclick="page3(); return false" class="cursor"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAbCAQAAADSI7duAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfiAQcOOQ+jSrwBAAAAq0lEQVQ4y63ToVICcBDE4e8vg2jTx2AcLJgwYZCAo0L05QwyDgSLFJqNN7DxJJQzkdlhvHThNzt7d3ucWB29FD3zZpcr3yrbHB8oPzl+p2x0Uvxe+XaeoA0PypeLFJ8oK5cp/qR85viLssjNzJQP3RSfK++usgCwVga5kUC54TXz3PCcbaNhmu254TG7YMM4y0bDKE/dMM/zTf4p/fwHry39Hh/p0HWx91/1B813LOFR4xSVAAAAAElFTkSuQmCC"></img></a>
+    </span>
+    <span> </span>
+</div>
     </br>
     <div>
     <font size="1.5" color="#828282">New words: <span style="margin-right:5;border:1px solid rgba(0,0,0,.1);"><svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#A7E17A" /></svg> Learned <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#F2A961" /></svg> Learning </span>Words reviewed: <span style="margin-right:5; border:1px solid rgba(0,0,0,.1);"><svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#48B951" /></svg> Good <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#AF809F" /></svg> Forgotten <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#E56481" /></svg> Difficult </span></font>

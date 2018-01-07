@@ -5,6 +5,7 @@
     <script type="text/javascript" src="/tmp/.idiomind_stats"></script>
     <style type="text/css">
     a.cursor {cursor:hand;
+    margin:10;
     text-decoration:none;
     font-family: "Arial", Georgia, Serif;
     color:#616161;
@@ -13,13 +14,19 @@
     body {margin:12;padding:10;}
     </style>
     <script>
-    function page1() { window.location = "/usr/share/idiomind/default/pg1.html"; }
+    function page1() { window.location = "./pg1.html"; }
+    function page2() { window.location = "./pg2.html"; }
     </script>
 </head>
 <body>
-    <div align="left">
-    <a onclick="page1(); return false" class="cursor"> Weekly report of practice activity </a>
-    </div>
+<div style="text-align:center">
+    <span style="float:left"><a onclick="page2(); return false" class="cursor"> Weekly report of practice activity </a></span>
+    <span style="float:right">
+        <a onclick="page2(); return false" class="cursor"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAbCAQAAADSI7duAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfiAQcOORQpL3XtAAAAu0lEQVQ4y5XUMQ4BURDG8f8SrI5jiNBQUVFQEKwLKohQaGh02+0NtnAGR1B8ipeNRGE/0728XyYzk3kP/ohqyX0DkIsfPMk//FdkiL5XYoroeb3cEUOH1rkixg6NuSCmQFRGm5wRc48eEUuHxhwQa4fW2CMSh7bYIbYOhR7iBlScgYXMiZe5qHnj8jCNlcvDnBc+PyNmfjEXxMTlYetGLg/7PPAfc4ro+jxDdHyec6JdHKLSVuHlfQVf8QaZuTFDjx9DcAAAAABJRU5ErkJggg=="></img></a>
+        <a onclick="page1(); return false" class="cursor"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAbCAQAAADSI7duAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfiAQcPAB7GvHt+AAAA/UlEQVQ4y53UzWrCQBSG4TeZ0oW/CCKiIngBk24FK6XQjVcw9+oltN6DPw2K0tJGW9su2nQhSmKSycFvFcIDOWfOnMCFcXDtwI3QLiMpDgko8WDDKvL8jY9Hg5kEww8rPOosJBi+WONRwyfMx7DnBU2VZZKrlK998opHOclVanEfvKEpsYpzldH4jnc0xThXmYe6I0BTjBajLDPYEqApsOHvfIJpd8VnSY9CctzJhHRoMWV/fHFlwW0GzJkci8BKDf14T1lltLhlwRO/+bjJkGce4zQ9DQwD66GeUscwzFuwQ2oY7nAktIrhXrbdFYx0B6+5wWEs/W+4sraE+QdX8TfZdHPDdwAAAABJRU5ErkJggg=="></img></a>
+    </span>
+    <span> </span>
+</div>
     </br>
     <div>
     <font size="1.5" color="#828282"><span style="margin-right:5;border:1px solid rgba(0,0,0,.1);"><svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#48B951" /></svg> Tests passed <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#7F7F7F" /></svg> Practice activity </span></font>
