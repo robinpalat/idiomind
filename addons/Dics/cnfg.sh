@@ -89,7 +89,7 @@ function dlg() {
                 echo 'FALSE'
                 if grep -E ".$lgt|.various" <<< "${dict}">/dev/null 2>&1; then
                     sed 's/\./\n/g' <<< "${dict}"| \
-                    sed "3s|${sus}|<span color='#0038FF'>${sus}<\/span>|"
+                    sed "3s|${sus}|<span color='#2BB62D'>${sus}<\/span>|"
                 else 
                     echo "${dict}" |sed 's/\./\n/g'
                 fi
@@ -101,7 +101,7 @@ function dlg() {
         plus="$(gettext "To start is okay select all, later, according to your preferences or to gain performance, you can disable some.")\n\n"
         rm "$DC_s/dics_first_run"
     fi
-    inf="$plus<b>$(gettext "Please, select at least one script for each task:")</b>"
+    inf="$plus$(gettext "Please, select at least one script for each task:")"
     if [[ -n "${1}" ]]; then 
         text="--text=$inf"; n=${1}
     else 

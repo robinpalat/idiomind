@@ -632,7 +632,7 @@ promp_topic_info() {
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
     if [ -n "$active_trans" -a "$active_trans" != "$slng" ]; then
         slng_err_lbl="$(gettext "You may need to translate this topic to your language: click \"Manage\" tab on the main window, click \"Edit\" -> \"Translate\" buttons, and from \"Automatic Translation\" select:") \"$slng\""
-        echo "$slng_err_lbl" > "${DC_tlt}/slng.err"
+        echo -e "$slng_err_lbl" >> "${DC_tlt}/slng.err"
     fi
     check_err "${DC_tlt}/slng.err" "${DC_tlt}/note.err"
     

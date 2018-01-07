@@ -231,14 +231,23 @@ function unset_item() {
 function check_err() {
     for filerr in "$@"; do
         if [ -f "$filerr" ]; then
+            if [ ${filerr: -4} == ".err" ]; then
+            mtitle="$(gettext "Errors found")"
+            mimage="dialog-warning"
+            elif [ ${filerr: -4} == ".inf" ]; then
+            mtitle="$(gettext "Errors found")"
+            mimage="info"
+            fi
             sleep 2; echo "$(< "$filerr")" |yad --text-info \
-            --title="$(gettext "Errors found")" \
+            --title="$mtitle" \
             --name=Idiomind --class=Idiomind \
             --window-icon=idiomind \
-            --image="face-worried" \
+            --image="$mimage" \
             --wrap --margins=5 \
+            --show-uri --uri-color="#6591AA" \
+            --fontname='monospace 9' \
             --fixed --center --on-top \
-            --width=450 --height=150 --borders=5 \
+            --width=450 --height=180 --borders=5 \
             --button="$(gettext "Close")":1
             cleanups "$filerr"
         fi
