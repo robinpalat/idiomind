@@ -70,13 +70,13 @@ for tpc in topics:
     auto_mrk = cur_tpc_db.execute("select acheck from config")
     auto_mrk = [i[0] for i in auto_mrk]
     marks = cur_tpc_db.execute("select list from marks")
-    marks = cur_tpc_db.fetchall()
+    marks = marks.fetchall()
     marks = [i[0] for i in marks]
     learn = cur_tpc_db.execute("select list from learning")
-    learn = cur_tpc_db.fetchall()
+    learn = learn.fetchall()
     learn = [i[0] for i in learn]
     reviews = cur_tpc_db.execute("select * from reviews")
-    reviews = cur_tpc_db.fetchall()
+    reviews = reviews.fetchall()
     reviews = [i[0] for i in reviews]
     try:
         cont = str

@@ -144,8 +144,8 @@ function practice_a() {
         --width=400 --height=255 --borders=8 \
         --field="\n$question":lbl "" \
         --field="":lbl "" \
-        --button="[$(gettext "Exit")]":1 \
-        --button="  $(gettext "Continue") >>  !$img_cont":0
+        --button="!window-close":1 \
+        --button="!media-seek-forward":0
     }
 
     answer() {
@@ -241,8 +241,8 @@ function practice_b(){
         --no-headers \
         --width=400 --height=300 --borders=8 \
         --column=Option \
-        --button="[$(gettext "Exit")]":1 \
-        --button="   $(gettext "Continue")   !$img_cont":0)"
+        --button="!window-close":1 \
+        --button="!media-seek-forward":0)"
     }
 
     P=4; s=11
@@ -325,7 +325,7 @@ function practice_c() {
         --buttons-layout=edge --image-on-top --undecorated \
         --width=390 --height=220 --borders=8 \
         --field="!$DS/images/listen.png":BTN "$cmd_play" \
-        --button="[$(gettext "Exit")]":1 \
+        --button="!window-close":1 \
         --button="  $(gettext "No")  !$img_no":3 \
         --button="  $(gettext "Yes")  !$img_yes":2
     }
@@ -385,8 +385,8 @@ function practice_d() {
             srce=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
         fi
         [ ! -e "$img" ] && img="$DS/images/imgmiss.jpg"
-        cuest="<span background='black' color='white' font_desc='Arial Bold 13'> ${trgt} </span>"
-        aswer="<span background='green' color='white' font_desc='Arial Bold 13'> ${srce} </span>"
+        cuest="<span background='#232323' color='white' font_desc='Arial Bold 13'> ${trgt} </span>"
+        aswer="<span background='#185E18' color='white' font_desc='Arial Bold 13'> ${srce} </span>"
     }
 
     question() {
@@ -397,8 +397,8 @@ function practice_d() {
         --image-on-top --undecorated --buttons-layout=spread \
         --width=418 --height=360 --borders=8 \
         --field="$cuest":lbl "" \
-        --button="[$(gettext "Exit")]":1 \
-        --button="  $(gettext "Continue") >>  !$img_cont":0
+        --button="!window-close":1 \
+        --button="!media-seek-forward":0
     }
 
     answer() {
@@ -489,7 +489,7 @@ function practice_e() {
         --align=center --image-on-top \
         --width=550 --height=220 --borders=10 \
         --field="" "" \
-        --button="[$(gettext "Exit")]":1 \
+        --button="!window-close":1 \
         --button="!$DS/images/listen.png":"$cmd_play" \
         --button="    $(gettext "Check")    ":0)
     }
@@ -505,7 +505,7 @@ function practice_e() {
         --width=530 --height=220 --borders=15 \
         --field="":lbl "" \
         --field="<span font_desc='Arial 9'>$OK\n\n$prc $hits</span>":lbl \
-        --button="    $(gettext "Continue")    ":2
+        --button="!media-seek-forward":2
     }
     
     get_text() {

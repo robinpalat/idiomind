@@ -234,16 +234,13 @@ check_index() {
         export s tpcdb datafile datatmp
 
         python <<PY
-import os, re, locale, sqlite3 
+import os, re, sqlite3 
 count = 1
-en = locale.getpreferredencoding()
 s = os.environ['s']
 datafile = os.environ['datafile']
-datafile.encode(en)
 datatmp = os.environ['datatmp']
 datatmp = open(datatmp, "w")
 tpcdb = os.environ['tpcdb']
-tpcdb.encode(en)
 db = sqlite3.connect(tpcdb)
 db.text_factory = str
 cur = db.cursor()

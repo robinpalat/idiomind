@@ -247,7 +247,7 @@ function list_words_edit() {
     n=1
     while read -r trgt; do
         if [ "$(wc -l < "${DC_tlt}/data")" -ge 200 ]; then
-            echo -e "\n\n$n) [$(gettext "Maximum number of notes has been exceeded")] $trgt\n" >> "${DC_tlt}/note.err"
+            echo -e "$(gettext "Maximum number of notes has been exceeded:")\n$trgt\n\n" >> "${DC_tlt}/note.err"
         elif [ -z "$(< "$DT_r/select_lines")" ]; then
             cleanups "${DT_r}"; exit 0
         else
@@ -558,7 +558,7 @@ function process() {
             
             
             if [[ $(wc -l < "${DC_tlt}/data") -ge 200 ]]; then
-                echo -e "\n\n$n) [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> "$DT_r/slog"
+                echo -e "$(gettext "Maximum number of notes has been exceeded:")\n$trgt\n\n" >> "$DT_r/slog"
             else
                 if [[ $(wc -$c <<< "${trgt}") = 1 ]]; then
                     export trgt="$(clean_1 "${trgt}")"
@@ -626,7 +626,7 @@ function process() {
                 audio="${trgt,,}"
                 
                 if [[ $(wc -l < "${DC_tlt}/data") -ge 200 ]]; then
-                    echo -e "\n\n$n) [$(gettext "Maximum number of notes has been exceeded")] ${trgt}" >> "$DT_r/wlog"
+                    echo -e "$(gettext "Maximum number of notes has been exceeded:")\n$trgt\n\n" >> "$DT_r/wlog"
                 else
                     export srce="$(translate "${trgt}" auto $lgs)"
                     [ -z "${srce}" ] && internet
