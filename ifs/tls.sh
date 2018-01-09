@@ -647,27 +647,9 @@ promp_topic_info() {
 
 first_run() {
     source /usr/share/idiomind/default/c.conf
-    dlg() {
-        sleep 3; mv -f "${file}" "${file}".p
-        yad --title="$title" --text="${note}" \
-        --name=Idiomind --class=Idiomind \
-        --always-print-result \
-        --image=dialog-information --window-icon=idiomind \
-        --image-on-top --on-top --sticky --center \
-        --width=500 --height=140 --borders=5 \
-        --button="$(gettext "Do not show again")":1 \
-        --button="$(gettext "OK")":0
-        [ $? = 1 ] && rm -f "${file}" "${file}".p
-    }
-    NOTE2="$(gettext "Close and reopen the main window to see any changes.")"
     NOTE3="$(gettext "To start adding notes you need to have a Topic.\nCreate one using the "New" button...")"
 
-    if [[ ${2} = edit_list ]]; then
-        title="$(gettext "Info")"
-        note="${NOTE2}"
-        file="$DC_s/elist_first_run"
-        dlg
-    elif [[ ${2} = topics ]]; then
+    if [[ ${2} = topics ]]; then
         "$DS/chng.sh" "$NOTE3"; sleep 1
         source /usr/share/idiomind/default/c.conf
         if [ -n "$tpc" ]; then
@@ -676,11 +658,9 @@ first_run() {
         fi
     elif [[ -z "${2}" ]]; then
         echo "-- done"
-        touch "$DC_s/elist_first_run" \
-        "$DC_s/topics_first_run" \
-        "$DC_s/dics_first_run"
+        touch "$DC_s/topics_first_run" "$DC_s/dics_first_run"
     fi
-    exit
+    return
 }
 
 set_image() {
@@ -816,7 +796,7 @@ translate_to() {
         ldgl="$(yad --form --title="$(gettext "Native Language Settings")" \
         --class=Idiomind --name=Idiomind \
         --text="$(gettext "The current Native language of this topic is")  <b>$active_trans</b>" \
-        --text-align=center --always-print-result --window-icon=idiomind \
+        --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top --align=left \
         --width=400 --height=450 --borders=15 \
         --field="":LBL " " \
@@ -836,7 +816,7 @@ translate_to() {
         ldgl="$(yad --form --title="$(gettext "Native Language Settings")" \
         --class=Idiomind --name=Idiomind \
         --text="$(gettext "The current Native language of this topic is")  <b>$active_trans</b>" \
-        --text-align=center --always-print-result --window-icon=idiomind \
+        --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top --align=left \
         --width=400 --height=450 --borders=15 \
         --field="":LBL " " \

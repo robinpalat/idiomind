@@ -58,8 +58,8 @@ function dwld() {
                 fi
             done < <(tpc_db 5 words)
             
-            [ -f "${tmp}/note" ] && cat "${tmp}/note" >> "${DM_tlt}/note"
-            [ -f "${tmp}/conf/info" ] && cat "${tmp}/conf/info" >> "${DM_tlt}/note"
+            [ -f "${tmp}/note" ] && cat "${tmp}/note" >> "${DC_tlt}/note"
+            [ -f "${tmp}/conf/info" ] && cat "${tmp}/conf/info" >> "${DC_tlt}/note"
             rm -fr "${tmp}/share" "${tmp}/images" "${tmp}/note"
             mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
             cleanups "$DM_t/$tlng/.share/audio/.mp3" \
