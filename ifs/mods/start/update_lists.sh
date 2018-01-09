@@ -37,7 +37,7 @@ for n in {1..100}; do
 done
 
 if grep '^$' "${items}"; then sed -i '/^$/d' "${items}"; fi
-f_lock "$DT/co_lk"
+f_lock 1 "$DT/co_lk"
 lstp="${items}"
 
 export dir topics lstp shrdb
@@ -159,6 +159,7 @@ PY
 
 [ $(date +%d) = 1 -o $(date +%d) = 14 ] && rm "$log"; touch "$log"
 "$DS/mngr.sh" mkmn 1 &
-cleanups "$items" "$DT/co_lk"
+cleanups "$items"
+f_lock 3 "$DT/co_lk"
 echo -e "--- lists updated\n"
 exit

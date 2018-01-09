@@ -10,7 +10,7 @@ export lgt lgs
 include "$DS/ifs/mods/mngr"
 
 mkmn() {
-    f_lock "$DT/mn_lk"
+    f_lock 1 "$DT/mn_lk"
     cleanups "$DM_tl/images" "$DM_tl/.conf"
     dirimg='/usr/share/idiomind/images'
     index="$DM_tl/.share/index"; > "$index"
@@ -29,11 +29,11 @@ mkmn() {
     find ./ -maxdepth 1 -mtime +79 -type d -not -path '*/\.*' \
     -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
     [[ "$2" = 1 ]] && (source "$DS/ifs/stats.sh"; save_topic_stats 0) &
-    cleanups "$DT/mn_lk"; exit 0
+    f_lock 3 "$DT/mn_lk"; exit 0
 }
 
 delete_item_ok() {
-    f_lock "$DT/ps_lk"
+    f_lock 1 "$DT/ps_lk"
     trgt="${3}"; DM_tlt="$DM_tl/${2}"; DC_tlt="$DM_tl/${2}/.conf"
     item="$(grep -F -m 1 "trgt{${trgt}}" "$DC_tlt/data" |sed 's/}/}\n/g')"
     cdid=$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")
@@ -64,11 +64,11 @@ delete_item_ok() {
         cleanups "${DC_tlt}/lk"
     fi
     "$DS/ifs/tls.sh" colorize 1 &
-    cleanups "$DT/ps_lk" & exit 1
+    f_lock 3 "$DT/ps_lk" & exit 1
 }
 
 delete_item() {
-    f_lock "$DT/ps_lk"
+    f_lock 1 "$DT/ps_lk"
     DM_tlt="$DM_tl/${2}"; DC_tlt="$DM_tl/${2}/.conf"
     
     if [ -n "${trgt}" ]; then
@@ -107,7 +107,7 @@ delete_item() {
             "$DS/ifs/tls.sh" colorize 1 &
         fi
     fi
-    cleanups "$DT/ps_lk" & return 0
+    f_lock 3 "$DT/ps_lk" & return 0
 }
 
 edit_item() {
@@ -385,7 +385,7 @@ edit_list_cmds() {
         
         include "$DS/ifs/mods/add"
         dlaud=$(cdb ${cfgdb} 1 opts dlaud) 
-        n=1; f_lock "$DT/el_lk"
+        n=1; f_lock 1 "$DT/el_lk"
         
         learn="$(tpc_db 5 learning)"; leart="$(tpc_db 5 learnt)"
         tpc_db 6 'learning'; tpc_db 6 'words'; tpc_db 6 'sentences'
@@ -442,7 +442,7 @@ edit_list_cmds() {
         if [[ "$(echo "${learnt}${learn}" |wc -l)" -lt 1 ]]; then
         > "${direc}/data"; fi
         "$DS/ifs/tls.sh" colorize 1
-        rm -f "$DT/el_lk"
+        f_lock 3 "$DT/el_lk"
         if [ -e "$DT/items_to_add" ]; then
             invrt_msg=FALSE
             export DT_r=$(mktemp -d "$DT/XXXXXX")
@@ -668,7 +668,7 @@ delete_topic() {
     edit-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
     ret="$?"
     if [ ${ret} -eq 0 ]; then
-        f_lock "$DT/rm_lk"
+        f_lock 1 "$DT/rm_lk"
         if [ -f "$DT/n_s_pr" ]; then
             if [ "$(sed -n 1p "$DT/n_s_pr")" = "${tpc}" ]; then
             "$DS/stop.sh" 5; fi
@@ -694,7 +694,7 @@ delete_topic() {
         "yad --form " "yad --notebook "
         "$DS/mngr.sh" mkmn 1 &
     fi
-    rm -f "$DT/rm_lk" & exit 1
+    f_lock 3 "$DT/rm_lk" & exit 1
 }
 
 
@@ -728,7 +728,7 @@ rename_topic() {
         name="${name} ($i)"
     fi
     if [ -n "${name##+([[:space:]])}" ]; then
-        f_lock "$DT/rm_lk"
+        f_lock 1 "$DT/rm_lk"
         mv -f "$DM_tl/${tpc}" "$DM_tl/${name}"
         export DC_tlt="$DM_tl/${name}/.conf"
         tpc_db 3 id name "${name}"
@@ -741,7 +741,8 @@ rename_topic() {
         idiomind tasks
         
         check_list
-        cleanups "$DM_tl/${tpc}" "$DM/backup/${tpc}.bk" "$DT/rm_lk"
+        cleanups "$DM_tl/${tpc}" "$DM/backup/${tpc}.bk"
+        f_lock 3 "$DT/rm_lk"
         "$DS/mngr.sh" mkmn 0 & exit 1
     fi
 }

@@ -3,14 +3,6 @@
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 
-function f_lock() {
-    brk=0
-    while true; do
-        if [ ! -e "${1}" -o ${brk} -gt 20 ]; then touch "${1}" & break
-        elif [ -e "${1}" ]; then sleep 1; fi; let brk++
-    done
-}
-
 function create_db() {
     if [ ! -e "${db}" ]; then
         echo -n "create table if not exists ${mtable} \
@@ -286,7 +278,7 @@ function chktb() {
 
 function pre_comp() {
     echo -e "\n--- statistics..."
-    f_lock "$DT/p_stats"
+    f_lock 1 "$DT/p_stats"
     echo -n "create table if not exists 'expire_month' (date TEXT);" |sqlite3 "${db}"
     echo -n "create table if not exists 'expire_week' (date TEXT);" |sqlite3 "${db}"
     cleanups "$pross" "$data" "$no_data" "$databk"
@@ -303,18 +295,18 @@ function pre_comp() {
     fi
 
     echo -e "--- statistics updated\n"
-    cleanups "$DT/p_stats"
+    f_lock 3 "$DT/p_stats"
 }
 
 create_db
 
 function stats() {
     if [ ! -e "${data}" -o -e "${pross}" ]; then
-        f_lock "$DT/p_stats"
+        f_lock 1 "$DT/p_stats"
         [ ! -e "${data}" ] && cp -f "${databk}" "${data}"
         [ ! -e "${pross}" ] && save_topic_stats 0
         mk_topic_stats
-        cleanups "$DT/p_stats"
+        f_lock 3 "$DT/p_stats"
     fi
     if [ -f "${no_data}" ]; then
         source "$DS/ifs/cmns.sh"

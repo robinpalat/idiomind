@@ -4,6 +4,7 @@
 source /usr/share/idiomind/default/c.conf
 sz=(500 470); [[ ${swind} = TRUE ]] && sz=(420 410)
 source "$DS/ifs/cmns.sh"
+export -f tpc_db
 dw=$(date +%U)
 if [[ -n "$1" ]]; then
     tpc="$1"

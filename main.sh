@@ -41,8 +41,9 @@ if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
 fi
 
 function new_session() {
-    echo "-- new session"
     source "$DS/ifs/cmns.sh"
+    f_lock 1 "$DT/ps_lk"
+    echo "-- new session"
     export -f cdb
     d=$(date +%d)
     cdb ${cfgdb} 3 sess date ${d}
@@ -53,8 +54,7 @@ function new_session() {
     msg "$(gettext "An error occurred while trying to write on '/tmp'")\n" \
     error "$(gettext "Error")" & exit 1
     fi
-    
-    f_lock "$DT/ps_lk"
+
     # list topics
     check_list
     # 
@@ -160,7 +160,7 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     slngcurrent="$slng"; source "$DS/ifs/tls.sh"; check_format_1 "${1}"
     if [ $? != 19 ]; then
-        msg "$(gettext "File is corrupted.")\n" error "$(gettext "Information")" & exit 1
+        msg "$(gettext "File format corrupted")\n" error "$(gettext "Information")" & exit 1
     fi
     file="${1}"
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
@@ -186,7 +186,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
                 msg "$(gettext "Please wait until the current actions are finished")...\n" dialog-information
                 sleep 15; cleanups "$DT/in_lk"; exit 1
             fi
-            f_lock "$DT/in_lk"
+            f_lock 1 "$DT/in_lk"
             listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
             ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
             if [ $(wc -l <<< "$listt") -ge 120 ]; then
@@ -254,13 +254,13 @@ for item in data:
     elif type == '2':
         cur.execute("insert into sentences (list) values (?)", (trgt,))
     if mark == 'TRUE':
-        cur.execute("insert into learning (list) values (?)", (trgt,))
+        cur.execute("insert into marks (list) values (?)", (trgt,))
     cur.execute("insert into learning (list) values (?)", (trgt,))
 db.commit()
 db.close()
 PY
             "$DS/ifs/tls.sh" colorize 1
-            cleanups "$DT/in_lk"
+            f_lock 3 "$DT/in_lk"
             
             slngtopic="$slng"; slng="$slngcurrent"
             cdb "${cfgdb}" 3 lang tlng "${tlng}"
@@ -280,6 +280,7 @@ fi
 
 function topic() {
     source "$DS/ifs/cmns.sh"
+    f_lock 0 "$DT/tpc_lk"
     export -f tpc_db msg
     [ -f "${DC_tlt}/stts" ] && export stts=$(sed -n 1p "${DC_tlt}/stts")
     if ! [[ ${stts} =~ $numer ]]; then return 1; fi
@@ -319,7 +320,7 @@ function topic() {
         export lbl1="<span font_desc='Free Sans 15'>${tpc}</span><sup>\n$(gettext "Sentences") $cfg4  $(gettext "Words") $cfg3  $plusinfo\n$infolbl</sup>"
     }
     
-    oclean() { cleanups "$cnf1" "$cnf3" "$cnf4"; }
+    oclean() { cleanups "$cnf1" "$cnf3" "$cnf4" "$DT/tpc_lk"; }
     
     apply() {
             note_mod="$(< "${cnf3}")"
@@ -336,14 +337,30 @@ function topic() {
                 "$DS/ifs/tls.sh" colorize 1; rm "${cnf1}"
             fi
             if grep TRUE "${cnf1}" >/dev/null 2>&1; then
-                while read item; do
-                    if grep '|TRUE|' <<<"${item}" >/dev/null 2>&1; then
-                    trgt="$(sed -e 's/|TRUE|//;s/|//;s/<[^>]*>//g' <<< "$item")"
-                    tpc_db 4 learning list "${trgt}"
-                    tpc_db 2 learnt list "${trgt}"
-                    fi
-                done < "${cnf1}"
+                f_lock 1 "$DT/tpc_lk"
+                export cnf1 tpcdb
+python <<PY
+import os, re, locale, sqlite3
+tags = re.compile(r'<[^>]+>')
+en = locale.getpreferredencoding()
+cnf1 = os.environ['cnf1']
+cnf1.encode(en)
+tpcdb = os.environ['tpcdb']
+db = sqlite3.connect(tpcdb)
+db.text_factory = str
+cur = db.cursor()
+cnf1 = [line.strip() for line in open(cnf1)]
+for item in cnf1:
+    if "|TRUE|" in item:
+        trgt = item.replace("|TRUE|", "")
+        trgt = tags.sub('', trgt)
+        cur.execute("insert into learnt (list) values (?)", (trgt,))
+        cur.execute("delete from learning where list=?", (trgt,))
+db.commit()
+db.close()
+PY
                 "$DS/ifs/tls.sh" colorize 1
+                f_lock 3 "$DT/tpc_lk"
                 source "$DS/ifs/stats.sh"
                 save_topic_stats 0
             fi

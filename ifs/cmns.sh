@@ -84,18 +84,18 @@ function tpc_db() {
     if [ $1 = 1 ]; then # read
         sqlite3 "$DC_tlt/tpc" "select ${co} from '${ta}';"
     elif [ $1 = 2 ]; then # insert
-        sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=300;\
+        sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500; \
         insert into ${ta} (${co}) values ('${va}');"
     elif [ $1 = 3 ]; then # mod
         sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=300;\
         update ${ta} set ${co}='${va}';"
     elif [ $1 = 4 ]; then # delete
-        sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=300;\
+        sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500; \
         delete from ${ta} where ${co}='${va}';"
     elif [ $1 = 5 ]; then # select all
         sqlite3 "$DC_tlt/tpc" "select * FROM '${ta}';" |tr -s '|' '\n'
     elif [ $1 = 6 ]; then # delet all
-        sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=1000;\
+        sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=2000;\
         delete from '${ta}';"
     elif [ $1 = 7 ]; then # mod especific
         sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500;\
@@ -129,11 +129,21 @@ function yad_kill() {
 
 function f_lock() {
     brk=0
-    while true; do
-        if [ ! -e "${1}" -o ${brk} -gt 20 ]; then touch "${1}" & break
-        elif [ -e "${1}" ]; then sleep 1; fi
-        let brk++
-    done
+    if [ $1 = 0 -o $1 = 1 ]; then
+        while [ ${brk} -le 20 ]; do
+            if [ ! -f "${2}" ]; then 
+                [ $1 = 1 ] && touch "${2}"
+                break
+            elif [ -f "${2}" -a ${brk} = 1 ]; then
+                msg "$(gettext "Please wait until the current actions are finished")...\n" \
+                dialog-information 
+            elif [ -f "${2}" ]; then
+                sleep 1; fi
+            let brk++
+        done
+    elif [ $1 = 3 ]; then
+        if [ -f "$2" ]; then rm -f "$2"; fi
+    fi
 }
 
 function check_index1() {

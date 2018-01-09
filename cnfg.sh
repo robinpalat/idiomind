@@ -44,11 +44,14 @@ set_lang() {
     source "$DS/default/sets.cfg"
     lgt=${tlangs[$tlng]}
     ln -sf "$DS/images/flags/${lgt}.png" "$DT/icon"
+    DM_tl="$DM_t/$language"
     last="$(cd "$DM_tl"/; ls -tNd */ |cut -f1 -d'/' |head -n1)"
     if [ -n "${last}" ]; then
         mode="$(< "$DM_tl/${last}/.conf/stts")"
         if [[ ${mode} =~ $numer ]]; then
             "$DS/ifs/tpc.sh" "${last}" ${mode} 1 &
+        else
+            > "$DT/tpe"; > "$DC_s/tpc"
         fi
     else
         > "$DT/tpe"; > "$DC_s/tpc"
@@ -113,7 +116,7 @@ config_dlg() {
     --field="<small>$(gettext "Program to convert text to WAV file")</small>" "$txaud" \
     --field="$(gettext "Interface language")":CB "$lst" \
     --field=" :LBL" " " --field=":LBL" " " \
-    --field="$(gettext "Get started")":BTN "$DS/ifs/tls.sh help" \
+    --field="$(gettext "Getting started")":BTN "$DS/ifs/tls.sh help" \
     --field="$(gettext "Report a problem")":BTN "$DS/ifs/tls.sh fback" \
     --field="$(gettext "Check for updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
     --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
@@ -217,3 +220,4 @@ config_dlg() {
 }  >/dev/null 2>&1
 
 config_dlg
+

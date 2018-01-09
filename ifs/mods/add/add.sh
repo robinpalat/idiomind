@@ -64,17 +64,16 @@ function index() {
         if [ ! -d "${DC_tlt}" ]; then return 1; fi
         #
         if [ ! -z "${trgt}" ]; then
-            if ! grep -Fo "trgt{${trgt}}" "${DC_tlt}/data" >/dev/null 2>&1; then
+            if ! grep -Fof "trgt{${trgt}}" "${DC_tlt}/data" >/dev/null 2>&1; then
                 if [[ ${1} = 1 ]]; then
                     unset wrds grmr
                     tpc_db 2 learning list "${trgt}"
                     tpc_db 2 words list "${trgt}"
-                    echo -e "${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
                 elif [[ ${1} = 2 ]]; then
                     tpc_db 2 learning list "${trgt}"
                     tpc_db 2 sentences list "${trgt}"
-                    echo -e "${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
                 fi
+                echo -e "${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
                 [[ ${1} = 1 ]] && unset link
                 eval newline="$(sed -n 2p $DS/default/vars)"
                 echo "${newline}" >> "${DC_tlt}/data"

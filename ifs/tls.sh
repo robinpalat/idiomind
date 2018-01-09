@@ -230,32 +230,58 @@ check_index() {
         tpc_db 6 'learning'; tpc_db 6 'learnt'
         tpc_db 6 'marks'
         echo -n "pragma foreign_keys=ON" |sqlite3 "${tpcdb}"
-        n=1; while read -r item_; do
-            item="$(sed 's/}/}\n/g' <<< "${item_}")"
-            trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
-            type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
-            if [[ ! "${type}" =~ $numer ]]; then
-                [[ $(wc -$c <<< "${trgt}") = 1 ]] && type=1 || type=2
-            fi
-            if [ -n "${trgt}" ]; then
-                if [ ${type} = 1 ]; then
-                    tpc_db 2 words list "$trgt"
-                elif [ ${type} = 2 ]; then
-                    tpc_db 2 sentences list "$trgt"
-                fi
-                if [ "$s" = 1 ]; then
-                    tpc_db 2 learnt list "$trgt"
-                else
-                    tpc_db 2 learning list "$trgt"
-                fi
-                echo "${item_}" >> "$DT/data"
-            fi
-            [ ${n} -gt 200 ] && break || let n++
-        done < "${DC_tlt}/data"
+        datafile="${DC_tlt}/data"; datatmp="$DT/data"
+        export s tpcdb datafile datatmp
+
+        python <<PY
+import os, re, locale, sqlite3 
+count = 1
+en = locale.getpreferredencoding()
+s = os.environ['s']
+datafile = os.environ['datafile']
+datafile.encode(en)
+datatmp = os.environ['datatmp']
+datatmp = open(datatmp, "w")
+tpcdb = os.environ['tpcdb']
+tpcdb.encode(en)
+db = sqlite3.connect(tpcdb)
+db.text_factory = str
+cur = db.cursor()
+datalist = [line.strip() for line in open(datafile)]
+for mitem in datalist:
+    if count > 200:
+        break
+    item = mitem.replace('}', '}\n')
+    fields = re.split('\n',item)
+    trgt = (fields[0].split('trgt{'))[1].split('}')[0]
+    try:
+        typee = (fields[13].split('type{'))[1].split('}')[0]
+        mark = (fields[8].split('mark{'))[1].split('}')[0]
+    except:
+        typee = (fields[23].split('type{'))[1].split('}')[0]
+        mark = (fields[18].split('mark{'))[1].split('}')[0]
+    if typee == '1':
+        cur.execute("insert into words (list) values (?)", (trgt,))
+    elif typee == '2':
+        cur.execute("insert into sentences (list) values (?)", (trgt,))
+    if mark == 'TRUE':
+        cur.execute("insert into marks (list) values (?)", (trgt,))
+    if s == '1':
+        cur.execute("insert into learnt (list) values (?)", (trgt,))
+    else:
+        cur.execute("insert into learning (list) values (?)", (trgt,))
+    datatmp.write(mitem+"\n")
+    count += 1
+db.commit()
+db.close()
+datatmp.close()
+PY
+        [ $? != 0 ] && yad
         mv -f "$DT/data" "${DC_tlt}/data"
         sed -i '/^$/d' "${DC_tlt}/data"
         export mkmn=1
     }
+
     _newformat
     _check
 
@@ -1005,7 +1031,7 @@ stats_dlg() {
 
 colorize() {
     source "$DS/ifs/cmns.sh"
-    f_lock "$DT/co_lk"
+    f_lock 1 "$DT/co_lk"
     cleanups "${DC_tlt}/index"
     touch "${DM_tlt}"
     reviews="$(tpc_db 5 reviews |wc -l)"
@@ -1060,7 +1086,7 @@ for item in data:
             f.write(i+"\nFALSE\n"+srce+"\n")
 f.close()
 PY
-    rm -f "$DT/co_lk"
+    f_lock 3 "$DT/co_lk"
 } >/dev/null 2>&1
 
 itray() {
