@@ -15,8 +15,11 @@ if [[ -n "$1" ]]; then
 fi
 pdir="${DC_tlt}/practice"
 pdirs="$DS/practice"
-declare -A prcts=( ['a']='Flashcards' ['b']='Multiple-choice'\
- ['c']='Recognize Pronunciation' ['d']='Images' ['e']='Listen and Writing Sentences')
+declare -A prcts=( ['a']='Flashcards' ['b']='Multiple-choice' \
+['c']='Recognize Pronunciation' ['d']='Images' ['e']='Listen and Writing Sentences')
+t3="<span color='#AE3259' font_desc='Verdana 8'>"
+t2="<span color='#C15F27' font_desc='Verdana 8'>"
+ 
 if [ -e "${DC_tlt}/translations/active" ]; then
     act=$(sed -n 1p "${DC_tlt}/translations/active")
     [ -n "$act" ] && slng="$act"
@@ -96,22 +99,53 @@ function save_score() {
 }
 
 function _log() { 
+
     if [ ${1} != 'e' ]; then
-         if [ -e ./${1}.1 ]; then
-         echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1.<${stts}/${dw}>" |sed '/\.\./d' >> "$log"; fi
-         if [ -e ./${1}.2 ]; then
-         [ ! -e ./${1}.3 ] && echo -n "$(head -n10 < ./${1}.2 |sed -e ':a;N;$!ba;s/\n/, /g')" > ./${1}.df
-         echo "w2.$(tr -s '\n' '|' < ./${1}.2).w2.<${stts}/${dw}>" |sed '/\.\./d' >> "$log"; fi
-         if [ -e ./${1}.3 ]; then
-         echo -n "$(head -n10 < ./${1}.3 |sed -e ':a;N;$!ba;s/\n/, /g')" > ./${1}.df
-         echo "w3.$(tr -s '\n' '|' < ./${1}.3).w3.<${stts}/${dw}>" |sed '/\.\./d' >> "$log"; fi
+    
+        if [ -e ./${1}.1 ]; then
+            echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1.<${stts}/${dw}>" \
+            |sed '/\.\./d' >> "$log"
+        fi
+        if [ -f ./${1}.2 ]; then
+            if [ -f ./${1}.3 ]; then
+                lg2="$(grep -Fvxf ./${1}.3 < ./${1}.2)"
+                [ -n "${lg2}" ] && c=", "
+                lg3="$(< ./${1}.3)"
+                echo "w2.$(tr -s '\n' '|' <<< "${lg2}").w2.<${stts}/${dw}>" \
+                |sed '/\.\./d' >> "$log"
+                echo "w3.$(tr -s '\n' '|' <<< "${lg3}").w3.<${stts}/${dw}>" \
+                |sed '/\.\./d' >> "$log"
+                i2="${t2}$(echo "${lg2}" |head -n8 |sed -e ':a;N;$!ba;s/\n/, /g')</span>"
+                i3="${t3}$(echo "${lg3}" |head -n8 |sed -e ':a;N;$!ba;s/\n/, /g')</span>"
+                echo -n "${i2}${c}${i3}" > ./${1}.df
+            else
+                lg2="$(< ./${1}.2)"
+                i2="$t2$(echo "${lg2}" |head -n16 |sed -e ':a;N;$!ba;s/\n/, /g') </span>"
+                echo -n "${i2}" > ./${1}.df
+                echo "w2.$(tr -s '\n' '|' <<< "${lg2}").w2.<${stts}/${dw}>" \
+                |sed '/\.\./d' >> "$log"
+            fi
+        elif [ -f ./${1}.3 ]; then
+            lg3="$(< ./${1}.3)"
+            echo "w3.$(tr -s '\n' '|' <<< "${lg3}").w3.<${stts}/${dw}>" \
+            |sed '/\.\./d' >> "$log"
+            i3="$t3$(head -n16 <<< "${lg3}") |sed -e ':a;N;$!ba;s/\n/, /g')</span>"
+            echo -n "${i3}" > ./${1}.df
+        fi
+
     elif [ ${1} = 'e' ]; then
-         if [ -e ./${1}.1 ]; then
-         echo "s1.$(tr -s '\n' '|' < ./${1}.1).s1.<${stts}/${dw}>" |sed '/\.\./d' >> "$log"; fi
-         if [ -e ./${1}.2 ]; then
-         echo "s2.$(tr -s '\n' '|' < ./${1}.2).s2.<${stts}/${dw}>" |sed '/\.\./d' >> "$log"; fi
-         if [ -e ./${1}.3 ]; then
-         echo "s3.$(tr -s '\n' '|' < ./${1}.3).s3.<${stts}/${dw}>" |sed '/\.\./d' >> "$log"; fi
+        if [ -e ./${1}.1 ]; then
+            echo "s1.$(tr -s '\n' '|' < ./${1}.1).s1.<${stts}/${dw}>" \
+            |sed '/\.\./d' >> "$log"
+        fi
+        if [ -e ./${1}.2 ]; then
+            echo "s2.$(tr -s '\n' '|' < ./${1}.2).s2.<${stts}/${dw}>" \
+            |sed '/\.\./d' >> "$log"
+        fi
+        if [ -e ./${1}.3 ]; then
+            echo "s3.$(tr -s '\n' '|' < ./${1}.3).s3.<${stts}/${dw}>" \
+            |sed '/\.\./d' >> "$log"
+        fi
     fi
 }
     
@@ -684,9 +718,9 @@ function lock() {
             if [ $(grep -o "wait"=\"[^\"]* "${lock}" |grep -o '[^"]*$') != $(date +%d) ]; then
                 rm "${lock}" & return 0
             else
-                msg_2 "$(gettext "Consider waiting a while before resuming to practice some items")\n" \
+                msg_2 "$(gettext "Consider waiting a while before resuming to practice some items") \n" \
                 dialog-information "$(gettext "OK")" "$(gettext "Practice")"
-                ret=$?; [ $ret = 1 ] && ret=4
+                ret=$?; [ $ret = 1 ] && ret=4; [ $ret = 0 ] && ret=5
             fi
         fi
         if [ $ret -eq 0 ]; then
@@ -856,8 +890,8 @@ function strt() {
         echo -e "wait=\"$(date +%d)\"" > ./${pr}.lock
     fi
     for i in a b c d; do
-        if [[ -s ./${i}.df ]]; then
-        declare plus${i}=" | <span font_desc='Verdana 8'>$(< ./${i}.df)</span>"
+        if [ -f ./${i}.df ]; then
+        declare plus${i}=" | $(< ./${i}.df)"
         fi
     done
 

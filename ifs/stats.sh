@@ -317,7 +317,7 @@ function stats() {
         --name=Idiomind --class=Idiomind \
         --browser --encoding=UTF-8 \
         --orient=vert --window-icon=idiomind --center --on-top \
-        --width=680 --height=440 --borders=0 \
+        --width=750 --height=470 --borders=0 \
         --no-buttons
     fi
     
