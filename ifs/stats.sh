@@ -177,14 +177,14 @@ function mk_topic_stats() {
     echo -e "data1='[{\"f0\":$field0,\"f1\":$field1,\"f2\":$field2,\"f3\":$field3,\"f4\":$field4}]';" > "${data}"
     
     # words
-    exec 4< <(sqlite3 "$db" "select week FROM ${wtable}" |tail -n10)
-    exec 5< <(sqlite3 "$db" "select val0 FROM ${wtable}" |tail -n10)
-    exec 6< <(sqlite3 "$db" "select val1 FROM ${wtable}" |tail -n10)
-    exec 7< <(sqlite3 "$db" "select val2 FROM ${wtable}" |tail -n10)
-    exec 8< <(sqlite3 "$db" "select val3 FROM ${wtable}" |tail -n10)
-    exec 9< <(sqlite3 "$db" "select val4 FROM ${wtable}" |tail -n10)
+    exec 4< <(sqlite3 "$db" "select week FROM ${wtable}" |tail -n17)
+    exec 5< <(sqlite3 "$db" "select val0 FROM ${wtable}" |tail -n17)
+    exec 6< <(sqlite3 "$db" "select val1 FROM ${wtable}" |tail -n17)
+    exec 7< <(sqlite3 "$db" "select val2 FROM ${wtable}" |tail -n17)
+    exec 8< <(sqlite3 "$db" "select val3 FROM ${wtable}" |tail -n17)
+    exec 9< <(sqlite3 "$db" "select val4 FROM ${wtable}" |tail -n17)
 
-    for m in {01..10}; do
+    for m in {01..17}; do
         read week <&4
         read D0 <&5
         read D1 <&6
@@ -213,10 +213,10 @@ function mk_topic_stats() {
         fi
     done
 
-    a="$(sqlite3 "$db" "select val5 FROM ${wtable}" |tail -n10)"
-    b="$(sqlite3 "$db" "select val6 FROM ${wtable}" |tail -n10)"
+    a="$(sqlite3 "$db" "select val5 FROM ${wtable}" |tail -n17)"
+    b="$(sqlite3 "$db" "select val6 FROM ${wtable}" |tail -n17)"
     
-    for m in {1..10}; do
+    for m in {1..17}; do
         D5="$(sed -n ${m}p <<< "$a")"
         D6="$(sed -n ${m}p <<< "$b")"
         if [ -n "$D5" ]; then
@@ -230,14 +230,14 @@ function mk_topic_stats() {
         fi
     done
     
-    fieldw="[\"$a01\",\"$a02\",\"$a03\",\"$a04\",\"$a05\",\"$a06\",\"$a07\",\"$a08\",\"$a09\",\"$a10\"]"
-    field0="[$b01,$b02,$b03,$b04,$b05,$b06,$b07,$b08,$b09,$b10]"
-    field1="[$c01,$c02,$c03,$c04,$c05,$c06,$c07,$c08,$c09,$c10]"
-    field2="[$d01,$d02,$d03,$d04,$d05,$d06,$d07,$d08,$d09,$d10]"
-    field3="[$e01,$e02,$e03,$e04,$e05,$e06,$e07,$e08,$e09,$e10]"
-    field4="[$f01,$f02,$f03,$f04,$f05,$f06,$f07,$f08,$f09,$f10]"
-    field5="[$g1,$g2,$g3,$g4,$g5,$g6,$g7,$g8,$g9,$g10]"
-    field6="[$h1,$h2,$h3,$h4,$h5,$h6,$h7,$h8,$h9,$h10]"
+    fieldw="[\"$a01\",\"$a02\",\"$a03\",\"$a04\",\"$a05\",\"$a06\",\"$a07\",\"$a08\",\"$a09\",\"$a10\",\"$a11\",\"$a12\",\"$a13\",\"$a14\",\"$a15\",\"$a16\",\"$a17\"]"
+    field0="[$b01,$b02,$b03,$b04,$b05,$b06,$b07,$b08,$b09,$b10,$b11,$b12,$b13,$b14,$b15,$b16,$b17]"
+    field1="[$c01,$c02,$c03,$c04,$c05,$c06,$c07,$c08,$c09,$c10,$c11,$c12,$c13,$c14,$c15,$c16,$c17]"
+    field2="[$d01,$d02,$d03,$d04,$d05,$d06,$d07,$d08,$d09,$d10,$d11,$d12,$d13,$d14,$d15,$d16,$d17]"
+    field3="[$e01,$e02,$e03,$e04,$e05,$e06,$e07,$e08,$e09,$e10,$e11,$e12,$e13,$e14,$e15,$e16,$e17]"
+    field4="[$f01,$f02,$f03,$f04,$f05,$f06,$f07,$f08,$f09,$f10,$f11,$f12,$f13,$f14,$f15,$f16,$f17]"
+    field5="[$g1,$g2,$g3,$g4,$g5,$g6,$g7,$g8,$g9,$g10,$g11,$g12,$g13,$g14,$g15,$g16,$g17]"
+    field6="[$h1,$h2,$h3,$h4,$h5,$h6,$h7,$h8,$h9,$h10,$h11,$h12,$h13,$h14,$h15,$h16,$h17]"
     echo -e "data2='[{\"wk\":$fieldw,\"f0\":$field0,\"f1\":$field1,\"f2\":$field2,\"f3\":$field3,\"f4\":$field4,\"f5\":$field5,\"f6\":$field6}]';" >> "${data}"
     cp -f "${data}" "${databk}"
 }

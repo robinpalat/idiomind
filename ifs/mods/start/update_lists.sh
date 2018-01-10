@@ -21,8 +21,6 @@ words=$(grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' \
 sentences=$(grep -o -P '(?<=s1.).*(?=\.s1)' "${log}" |tr '|' '\n' \
 |sort |uniq -dc |sort -n -r |sed 's/ \+/ /g')
 topics="$(cdb "${shrdb}" 5 topics|head -n30)"
-
-# grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' |sort |uniq
 dir="$DM_tl/"
 
 for n in {1..100}; do

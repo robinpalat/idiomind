@@ -120,7 +120,7 @@ function new_sentence() {
     mksure "${trgt}" "${srce}" "${grmr}" "${wrds}"
 
     if [ $? = 1 ]; then
-        echo -e "${info3}:\n${trgt}\n" >> "${DC_tlt}/note.err"
+        echo -e "${info3}:\n${trgt}\n\n" >> "${DC_tlt}/note.err"
         cleanups "$DT_r"; exit 1
     else
         notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000 &
@@ -186,7 +186,7 @@ function new_word() {
     mksure "${trgt}" "${srce}"
     
     if [ $? = 1 ]; then
-        echo -e "${info3}:\n${trgt}\n" >> "${DC_tlt}/note.err"
+        echo -e "${info3}:\n${trgt}\n\n" >> "${DC_tlt}/note.err"
         cleanups "$DT_r"; exit 1
     else
         if [ -e "$DT_r/__opts__" ]; then
@@ -266,7 +266,7 @@ function list_words_edit() {
                 fi
                 ( img_word "${trgt}" "${srce}" ) &
             else
-                echo -e "${info3}:\n$trgt\n" >> "${DC_tlt}/note.err"
+                echo -e "${info3}:\n$trgt\n\n" >> "${DC_tlt}/note.err"
                 cleanups "${DM_tlt}/$cdid.mp3"
             fi
         fi
@@ -301,7 +301,7 @@ function list_words_sentence() {
     n=1
     while read -r trgt; do
         if [ $(wc -l < "${DC_tlt}/data") -ge 200 ]; then
-            echo -e "${info3}:\n$trgt\n" >> "${DC_tlt}/note.err"
+            echo -e "${info3}:\n$trgt\n\n" >> "${DC_tlt}/note.err"
         elif [ -z "$(< "$DT_r/select_lines")" ]; then
             cleanups "${DT_r}"; exit 0
         else
@@ -320,7 +320,7 @@ function list_words_sentence() {
                 fi
                 ( img_word "${trgt}" "${srce}" ) &
             else
-                echo -e "${info3}:\n$trgt\n" >> "${DC_tlt}/note.err"
+                echo -e "${info3}:\n$trgt\n\n" >> "${DC_tlt}/note.err"
             fi
         fi
         let n++
@@ -672,7 +672,7 @@ function process() {
             "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
         fi
         
-        [ -n "$log" ] && echo "${info3}:\n$log\n" >> "${DC_tlt}/note.err"
+        [ -n "$log" ] && echo "${info3}:\n$log\n\n" >> "${DC_tlt}/note.err"
     fi
     [[ ! -f "$DT_r/__opts__" ]] && cleanups "$DT_r"
     cleanups "$DT/n_s_pr" & return 0
