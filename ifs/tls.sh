@@ -273,7 +273,7 @@ db.commit()
 db.close()
 datatmp.close()
 PY
-        [ $? != 0 ] && yad
+
         mv -f "$DT/data" "${DC_tlt}/data"
         sed -i '/^$/d' "${DC_tlt}/data"
         export mkmn=1

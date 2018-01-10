@@ -9,7 +9,6 @@ source /usr/share/idiomind/default/sets.cfg
 lang1="${!tlangs[@]}"; declare lt=( $lang1 )
 lang2="${!slangs[@]}"; declare ls=( $lang2 )
 text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") </span>
-\n$(gettext "For info please go to:") <a href='https://sourceforge.net/p/idiomind/wiki/Get%20started/'>Idiomind Sourceforge page</a>
 \n      $(gettext "To get started, please configure the following:")"
 sx=$(xrandr -q |grep -w Screen |sed 's/.*current //;s/,.*//' |awk '{print $1}')
 sy=$(xrandr -q |grep -w Screen |sed 's/.*current //;s/,.*//' |awk '{print $3}')
