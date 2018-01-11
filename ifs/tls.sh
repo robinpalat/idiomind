@@ -336,6 +336,9 @@ create_shrdb() {
     echo -n "create table if not exists T5 (list TEXT);" |sqlite3 "${shrdb}"
     echo -n "create table if not exists T6 (list TEXT);" |sqlite3 "${shrdb}"
     echo -n "create table if not exists T7 (list TEXT);" |sqlite3 "${shrdb}"
+    echo -n "create table if not exists T8 (list TEXT);" |sqlite3 "${shrdb}"
+    echo -n "create table if not exists T9 (list TEXT);" |sqlite3 "${shrdb}"
+    echo -n "create table if not exists T10 (list TEXT);" |sqlite3 "${shrdb}"
 }
 
 add_audio() {
@@ -1336,12 +1339,6 @@ clipw() {
 
 } >/dev/null 2>&1
 
-
-gtext() {
-$(gettext "Marked items")
-$(gettext "Difficult words")
-$(gettext "Does not need configuration")
-}>/dev/null 2>&1
 
 case "$1" in
     backup)

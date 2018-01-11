@@ -17,9 +17,9 @@ pdir="${DC_tlt}/practice"
 pdirs="$DS/practice"
 declare -A prcts=( ['a']='Flashcards' ['b']='Multiple-choice' \
 ['c']='Recognize Pronunciation' ['d']='Images' ['e']='Listen and Writing Sentences')
-t3="<span color='#AE3259' font_desc='Verdana 8'>"
 t2="<span color='#C15F27' font_desc='Verdana 8'>"
- 
+t3="<span color='#AE3259' font_desc='Verdana 8'>"
+
 if [ -e "${DC_tlt}/translations/active" ]; then
     act=$(sed -n 1p "${DC_tlt}/translations/active")
     [ -n "$act" ] && slng="$act"
@@ -109,7 +109,7 @@ function _log() {
         if [ -f ./${1}.2 ]; then
             if [ -f ./${1}.3 ]; then
                 lg2="$(grep -Fvxf ./${1}.3 < ./${1}.2)"
-                [ -n "${lg2}" ] && c=", "
+                [ -n "${lg2}" ] && erw="${t2},</span> " || erw=""
                 lg3="$(< ./${1}.3)"
                 echo "w2.$(tr -s '\n' '|' <<< "${lg2}").w2.<${stts}/${dw}>" \
                 |sed '/\.\./d' >> "$log"
@@ -117,13 +117,13 @@ function _log() {
                 |sed '/\.\./d' >> "$log"
                 i2="${t2}$(echo "${lg2}" |head -n8 |sed -e ':a;N;$!ba;s/\n/, /g')</span>"
                 i3="${t3}$(echo "${lg3}" |head -n8 |sed -e ':a;N;$!ba;s/\n/, /g')</span>"
-                echo -n "${i2}${c}${i3}" > ./${1}.df
+                echo -n "${i2}${erw}${i3}" > ./${1}.df
             else
                 lg2="$(< ./${1}.2)"
+                 echo "w2.$(tr -s '\n' '|' <<< "${lg2}").w2.<${stts}/${dw}>" \
+                |sed '/\.\./d' >> "$log"
                 i2="$t2$(echo "${lg2}" |head -n16 |sed -e ':a;N;$!ba;s/\n/, /g') </span>"
                 echo -n "${i2}" > ./${1}.df
-                echo "w2.$(tr -s '\n' '|' <<< "${lg2}").w2.<${stts}/${dw}>" \
-                |sed '/\.\./d' >> "$log"
             fi
         elif [ -f ./${1}.3 ]; then
             lg3="$(< ./${1}.3)"
@@ -148,7 +148,7 @@ function _log() {
         fi
     fi
 }
-    
+
 # practice A
 function practice_a() {
     fonts() {
@@ -859,10 +859,10 @@ function practices() {
             msg "$(gettext "There are not enough items to practice") \n" \
             dialog-information " " "$(gettext "OK")"
         elif grep -o -E 'a|b|c|d' <<< ${pr}; then
-            msg "$(gettext "There are no words on the \"Learning\" list, but there are still sentences") \n" \
+            msg "$(gettext "There are no words on the \"Learning\" list, but there are still sentences")... \n" \
             dialog-information " " "$(gettext "OK")"
         elif grep -o 'e' <<< ${pr}; then
-            msg "$(gettext "There are no sentences on the \"Learning\" list, but there are still words") \n" \
+            msg "$(gettext "There are no sentences on the \"Learning\" list, but there are still words")... \n" \
             dialog-information " " "$(gettext "OK")"
         fi
         strt 0 & return
@@ -876,9 +876,9 @@ function practices() {
     fi
 }
 
-
 function strt() {
     check_dir "${pdir}"; cd "${pdir}"
+
     for i in {1..5}; do
         if [[ ! -e ./.${i} ]]; then
         echo 1 > ./.${i}
@@ -894,7 +894,8 @@ function strt() {
         declare plus${i}=" | $(< ./${i}.df)"
         fi
     done
-
+    
+    #------
     include "$DS/ifs/mods/practice"
     
     if [[ "${1}" = 1 ]]; then
@@ -944,6 +945,12 @@ function strt() {
         fi
         strt 0
     else
+        if [ "${1}" = 2 ]; then
+            cdb ${shrdb} 2 T8 list "${tpc}"
+        elif [ "${1}" = 1 ]; then
+            cdb ${shrdb} 4 T8 list "${tpc}"
+        fi &
+        idiomind tasks
         "$DS/ifs/tls.sh" colorize 1 & exit 0
     fi
 }

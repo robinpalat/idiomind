@@ -8,11 +8,28 @@ fi
 
 function check_s() {
     if [ -z "${1}" ]; then
-        [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "No topic selected")\n" \
-        dialog-information "$(gettext "Information")" & exit 1
+        tpcs="$(cdb "${shrdb}" 5 topics |tr "\\n" '!' |sed 's/\!*$//g')"
+        tpe="$(yad --form --title="$(gettext "No topic selected")" \
+        --name=Idiomind --class=Idiomind \
+        --text="$(gettext "Select the Topic to which the notes should be added")" \
+        --gtkrc="$DS/default/gtkrc.cfg" \
+        --always-print-result --separator="" \
+        --skip-taskbar --fixed --center --on-top --align=right \
+        --window-icon=idiomind \
+        --width=470 --borders=5 \
+        --field=":CB" " !$tpcs" \
+        --button="$(gettext "OK")":0)"
+        
+        if [ -z "${tpe}" ]; then
+            [ -d "$DT_r" ] && rm -fr "$DT_r"
+            msg "$(gettext "No topic selected")\n" \
+            dialog-information "$(gettext "Information")" & exit 1
+        else
+            echo "${tpe}" > "$DT/tpe"
+            export tpe
+        fi
     fi
-    DC_tlt="$DM_tl/${1}/.conf"
+    DC_tlt="$DM_tl/${tpe}/.conf"
     if [[ $(wc -l < "${DC_tlt}/data") -ge 200 ]]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "You've reached the maximum number of notes for this topic. Max allowed (200)")" \
@@ -64,7 +81,7 @@ function index() {
         if [ ! -d "${DC_tlt}" ]; then return 1; fi
         #
         if [ ! -z "${trgt}" ]; then
-            if ! grep -Fof "trgt{${trgt}}" "${DC_tlt}/data" >/dev/null 2>&1; then
+            if ! grep -Fof "trgt{${trgt}}" < "${DC_tlt}/data" >/dev/null 2>&1; then
                 if [[ ${1} = 1 ]]; then
                     unset wrds grmr
                     tpc_db 2 learning list "${trgt}"

@@ -386,6 +386,7 @@ function process() {
     if [ ! -d "$DT_r" ] ; then
         mkdir "$DT_r"; cd "$DT_r"
     fi
+    
     echo "${tpe}" > "$DT/n_s_pr"
     export ns=$(wc -l < "${DC_tlt}/data")
     export db="$DS/default/dicts/$lgt"
@@ -497,16 +498,21 @@ function process() {
         tpe="$(dlg_checklist_3 "$DT_r/xlines" "${tpe}")"
         ret="$?"
     fi
+    
     if [ $ret -eq 2 ]; then
+    
         cleanups "$slt"
         txt="$(dlg_text_info_1 "$DT_r/xlines")"
-            ret=$?
-            if [ $ret -eq 0 ]; then
-                unset trgt; process __edit__ "${txt}"
-            else
-                unset trgt; process "$(< "$DT_r/xlines")"
-            fi
+        ret=$?
+        if [ $ret -eq 0 ]; then
+            unset trgt; process '__edit__' "${txt}"
+        else
+            unset trgt; process "$(< "$DT_r/xlines")"
+        fi
+        
     elif [ $ret -eq 0 ]; then
+    
+        check_s "${tpe}"
         unset link
         touch "$DT_r/select_lines"
         if [ "${tpe}" = "$(gettext "New") *" ]; then
@@ -518,9 +524,10 @@ function process() {
         export DM_tlt="$DM_tl/${tpe}"
         export DC_tlt="$DM_tl/${tpe}/.conf"
         if [ ! -d "${DM_tlt}" ]; then
-            msg "$(gettext "An error occurred.")\n" "face-worried" "$(gettext "Information")"
+            msg "$(gettext "An error occurred.")\n" "error" "$(gettext "Information")"
             cleanups "$DT_r" "$DT/n_s_pr" "$slt" & exit 1
         fi
+        
         while read -r chkst; do
             [ -n "$chkst" ] && sed 's/TRUE//g;s/|//g' <<< "${chkst}" >> "$DT_r/select_lines"
         done < "${slt}"
@@ -528,7 +535,6 @@ function process() {
 
         touch "$DT_r/wlog" "$DT_r/slog" "$DT_r/adds" \
         "$DT_r/addw" "$DT_r/wrds"
-        
         cnta=$(sed '/^$/d' "$DT_r/select_lines" |wc -l)
         cntb=$(sed '/^$/d' "$DT_r/wrds" |wc -l)
         
@@ -538,7 +544,7 @@ function process() {
             "$(gettext "Adding $number_items notes")" \
             "$(gettext "Please wait till the process is completed")" )
         else
-            [[ $conten != '__words__' ]] && cleanups "$DT_r"
+            [ "$conten" != '__words__' ] && cleanups "$DT_r"
             cleanups "$DT/n_s_pr" "$slt" & exit 1
         fi
         
@@ -555,7 +561,6 @@ function process() {
             [ -z "${srce}" ] && internet
             export srce="$(clean_2 "${srce}")"
             export cdid="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "" "")"
-            
             
             if [[ $(wc -l < "${DC_tlt}/data") -ge 200 ]]; then
                 echo -e "$(gettext "Maximum number of notes has been exceeded:")\n$trgt\n\n" >> "$DT_r/slog"
@@ -674,7 +679,7 @@ function process() {
         
         [ -n "$log" ] && echo "${info3}:\n$log\n\n" >> "${DC_tlt}/note.err"
     fi
-    [[ ! -f "$DT_r/__opts__" ]] && cleanups "$DT_r"
+    [ ! -f "$DT_r/__opts__" ] && cleanups "$DT_r"
     cleanups "$DT/n_s_pr" & return 0
 }
 
@@ -801,7 +806,7 @@ new_items() {
     elif [ $ret -eq 0 -o $ret -eq 4 -o  $ret -eq 5 ]; then
         if [ $ret -eq 5 ]; then "$DS/ifs/tls.sh" clipw & return; fi
         if [ -z "${tpe}" ]; then
-            check_s "${tpe}" && exit 1
+            check_s "${tpe}"; [ -z "${tpe}" ] && exit 1
         fi
         if [ "${tpe}" = "$(gettext "New") *" ]; then
             "$DS/add.sh" new_topic

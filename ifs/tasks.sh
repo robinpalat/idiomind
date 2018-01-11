@@ -1,16 +1,17 @@
 #!/bin/bash
 
-source /usr/share/idiomind/default/c.conf
 arg="$1"
+tpt="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg#*:})"
+act="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg%%:*})"
+
 l1="$(gettext "To Review [new]:") "
 l2="$(gettext "To Review [new] [overdue]:") "
 l3="$(gettext "To Review:") "
 l4="$(gettext "To Review [overdue]:") "
-l5="$(gettext "Practice:") "
+l5="$(gettext "To Practice:") "
 l6="$(gettext "Back to Practice:") "
 l7="$(gettext "Finalize Review [overdue]:") "
-tpt="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg#*:})"
-act="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg%%:*})"
+l8="$(gettext "Resume Practice:") "
 
 chngtpt(){
     mode="$(< "$DM_tl/${1}/.conf/stts")"
@@ -35,12 +36,17 @@ elif [ "${act}: " = "$l4" ]; then
     modmenu "$arg"; chngtpt "$tpt"
 elif [ "${act}: " = "$l7" ]; then
     modmenu "$arg"; chngtpt "$tpt"
+
 elif [ "${act}: " = "$l5" ]; then
     modmenu "$arg"
     "$DS/practice/strt.sh" "$tpt" &
 elif [ "${act}: " = "$l6" ]; then
     modmenu "$arg"
     "$DS/practice/strt.sh" "$tpt" &
+elif [ "${act}: " = "$l8" ]; then
+    modmenu "$arg"
+    "$DS/practice/strt.sh" "$tpt" &
+
 else
     while read -r addon; do
         if [ -e "$DC_a/$addon.tasks" ]; then
@@ -53,3 +59,4 @@ else
     done < "$DS_a/menu_list"
 fi
 
+exit 0
