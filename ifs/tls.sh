@@ -117,7 +117,7 @@ check_index() {
         fi
 
         if ! file "${tpcdb}" | grep 'SQLite'; then
-            msg "$(gettext "No such file or directory")\n" dialog-information & exit 1 # FIX
+            cp -f "$DS/default/tpc" "$tpcdb"
         fi
         learn="$(tpc_db 5 learning)"
         leart="$(tpc_db 5 learnt)"
@@ -217,8 +217,8 @@ check_index() {
         >/dev/null 2>&1; then c=c; else c=w; fi
         if echo "$stts" |grep -E '3|4|7|8|9|10'\
         >/dev/null 2>&1; then s=1; fi
-        if [ ! -e "${DC_tlt}/data" ]; then
-            if [ -e "$DM/backup/${tpc}.bk" ]; then
+        if [ ! -f "${DC_tlt}/data" ]; then
+            if [ -f "$DM/backup/${tpc}.bk" ]; then
                 sed -n '/----- newest/,/----- oldest/p' \
                 "$DM/backup/${tpc}.bk" \
                 |grep -v '\----- newest' \
@@ -256,8 +256,19 @@ for mitem in datalist:
         typee = (fields[13].split('type{'))[1].split('}')[0]
         mark = (fields[8].split('mark{'))[1].split('}')[0]
     except:
-        typee = (fields[23].split('type{'))[1].split('}')[0]
-        mark = (fields[18].split('mark{'))[1].split('}')[0]
+        typee = ''
+    if not typee:
+        try:
+            typee = (fields[23].split('type{'))[1].split('}')[0]
+            mark = (fields[18].split('mark{'))[1].split('}')[0]
+        except:
+            typee = ''
+    if not typee:
+        try:
+            typee = (fields[11].split('type{'))[1].split('}')[0]
+            mark = (fields[8].split('mark{'))[1].split('}')[0]
+        except:
+            pass
     if typee == '1':
         cur.execute("insert into words (list) values (?)", (trgt,))
     elif typee == '2':
@@ -386,28 +397,31 @@ _backup() {
 } >/dev/null 2>&1
 
 _restore_backup() {
+    local tpc; tpc="$2"
     [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/cmns.sh"
-    file="$HOME/.idiomind/backup/${2}.bk"
-    touch "$DT/act_restfile"; check_dir "${DM_tl}/${2}/.conf"
+    file="$HOME/.idiomind/backup/${tpc}.bk"
+    touch "$DT/act_restfile"; check_dir "${DM_tl}/${tpc}/.conf"
     if [[ ${3} = 1 ]]; then
         sed -n '/----- newest/,/----- oldest/p' "${file}" \
         |grep -v '\----- newest' |grep -v '\----- oldest' |head -n200 > \
-        "${DM_tl}/${2}/.conf/data"
+        "${DM_tl}/${tpc}/.conf/data"
     elif [[ ${3} = 2 ]]; then
         sed -n '/----- oldest/,/----- end/p' "${file}" \
         |grep -v '\----- oldest' |grep -v '\----- end' |head -n200 > \
-        "${DM_tl}/${2}/.conf/data"
+        "${DM_tl}/${tpc}/.conf/data"
     fi
+
     tpc_db 6 'learning'
-    $DS/ifs/tls.sh check_index "${2}" 1
+    $DS/ifs/tls.sh check_index "${tpc}" 1
     
-    mode="$(< "$DM_tl/${2}/.conf/stts")"
-    if ! [[ ${mode} =~ $num ]]; then
-        echo 13 > "$DM_tl/${2}/.conf/stts"; mode=13
+    stts="$(< "$DM_tl/${tpc}/.conf/stts")"
+    if ! [[ ${stts} =~ $num ]]; then
+        echo 13 > "$DM_tl/${tpc}/.conf/stts"; stts=13
     fi
     
-    "$DS/ifs/tpc.sh" "${2}" ${mode} 0 &
+    "$DS/ifs/tpc.sh" "${tpc}" ${stts} 0 &
+    
 } >/dev/null 2>&1
 
 fback() {
