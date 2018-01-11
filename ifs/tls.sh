@@ -136,6 +136,7 @@ check_index() {
 
             [ -f "${DC_tlt}/0.cfg" ] && mv "${DC_tlt}/0.cfg" "${DC_tlt}/data"
             [ -f "${DC_tlt}/8.cfg" ] && mv "${DC_tlt}/8.cfg" "${DC_tlt}/stts"
+            [ -f "${DC_tlt}/8.bk" ] && mv "${DC_tlt}/8.cfg" "${DC_tlt}/stts.bk"
             [ -f "${DC_tlt}/5.cfg" ] && mv "${DC_tlt}/5.cfg" "${DC_tlt}/index"
             [ -f "${DC_tlt}/info" ] && mv "${DC_tlt}/info" "${DC_tlt}/note"
             if [ -e "${DC_tlt}/10.cfg" ]; then

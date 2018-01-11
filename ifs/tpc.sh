@@ -20,7 +20,7 @@ chek_topic() {
         echo ${stts} > "${DC_tlt}/stts"
         touch "${DC_tlt}/data"
     fi
-    if [ ! -e "$tpcdb" ]; then
+    if [ ! -f "$tpcdb" ]; then
         cp -f "$DS/default/tpc" "$tpcdb"
         tpc_db 3 id name "${tpc}"
         tpc_db 3 id slng "${slng}"
@@ -28,7 +28,7 @@ chek_topic() {
         tpc_db 3 id dtec "$(date +%F)"
     fi
     touch "${DC_tlt}/data"
-    if [ ! -e "$DT/n_s_pr" ]; then
+    if [ ! -f "$DT/n_s_pr" ]; then
         "$DS/ifs/tls.sh" check_index "${topic}"
     fi
 }
@@ -49,20 +49,32 @@ active_topic() {
 if [ -d "${DM_tlt}" ]; then
 
     if ((stts>=1 && stts<=10)); then
+    
         chek_topic
-        if [ ! -e "${DC_tlt}/feeds" ]; then
-            echo "${topic}" > "$DT/tpe"
-        fi
+        echo "${topic}" > "$DT/tpe"
         ( sleep 10 && "$DS/ifs/tls.sh" backup "${topic}" ) &
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
         active_topic
         
-     elif [ ${stts} = 0 ]; then
+     elif [ ${stts} = 0 -o ${stts} = 12 ]; then
+     
         msg_2 "$(gettext "Topic inactive. Do you want to enable it now?") " \
         dialog-question "$(gettext "Yes")" "$(gettext "Just open it")"
         if [ $? = 0 ]; then
-            export stts="$(< "${DC_tlt}/stts.bk")"
+            
+            if [ -f "${DC_tlt}/stts.bk" ]; then
+                stts="$(< "${DC_tlt}/stts.bk")"
+            else
+                stts=13
+            fi
+            
+            [[ ! "${stts}" =~ $numer ]] && stts=13
+            [ ${stts} = 12 -o ${stts} = 0 ] && stts=1
+
+            export stts
             cleanups "${DC_tlt}/stts.bk"; echo ${stts} > "${DC_tlt}/stts"
+            chek_topic
+            
             touch "${DM_tlt}"
             
             if echo "$stts" |grep -E '3|4|7|8|9|10'; then
@@ -85,7 +97,7 @@ if [ -d "${DM_tlt}" ]; then
                     fi
                 fi
             fi
-            chek_topic
+            
             "$DS/mngr.sh" mkmn 1
             ( sleep 10 && "$DS/ifs/tls.sh" backup "${topic}" ) &
             active_topic
@@ -94,11 +106,15 @@ if [ -d "${DM_tlt}" ]; then
             idiomind topic & exit 0
         fi
     elif [ ${stts} = 13 ]; then
+    
         chek_topic
         active_topic
+        
     elif [ ${stts} = 14 ]; then
+    
         chek_topic
         active_topic
+        
     else
         if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
             source "$DS/ifs/mods/main/${topic}.sh"
