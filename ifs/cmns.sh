@@ -217,18 +217,18 @@ function cleanups() {
 function get_item() {
     export item="$(sed 's/}/}\n/g' <<< "${1}")"
     export type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")" \
-    trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")" \
-    srce="$(grep -oP '(?<=srce{).*(?=})' <<<"${item}")" \
-    exmp="$(grep -oP '(?<=exmp{).*(?=})' <<<"${item}")" \
-    defn="$(grep -oP '(?<=defn{).*(?=})' <<<"${item}")" \
-    note="$(grep -oP '(?<=note{).*(?=})' <<<"${item}")" \
-    wrds="$(grep -oP '(?<=wrds{).*(?=})' <<<"${item}")" \
-    grmr="$(grep -oP '(?<=grmr{).*(?=})' <<<"${item}")" \
-    mark="$(grep -oP '(?<=mark{).*(?=})' <<<"${item}")" \
-    link="$(grep -oP '(?<=link{).*(?=})' <<<"${item}")" \
-    tags="$(grep -oP '(?<=tags{).*(?=})' <<<"${item}")" \
-    refr="$(grep -oP '(?<=refr{).*(?=})' <<<"${item}")" \
-    cdid="$(grep -oP '(?<=cdid{).*(?=})' <<<"${item}")"
+    trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")" \
+    srce="$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")" \
+    exmp="$(grep -oP '(?<=exmp{).*(?=})' <<< "${item}")" \
+    defn="$(grep -oP '(?<=defn{).*(?=})' <<< "${item}")" \
+    note="$(grep -oP '(?<=note{).*(?=})' <<< "${item}")" \
+    wrds="$(grep -oP '(?<=wrds{).*(?=})' <<< "${item}")" \
+    grmr="$(grep -oP '(?<=grmr{).*(?=})' <<< "${item}")" \
+    mark="$(grep -oP '(?<=mark{).*(?=})' <<< "${item}")" \
+    link="$(grep -oP '(?<=link{).*(?=})' <<< "${item}")" \
+    tags="$(grep -oP '(?<=tags{).*(?=})' <<< "${item}")" \
+    refr="$(grep -oP '(?<=refr{).*(?=})' <<< "${item}")" \
+    cdid="$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")"
 }
 
 function unset_item() {

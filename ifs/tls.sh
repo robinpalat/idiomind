@@ -174,12 +174,11 @@ check_index() {
             ! [[ ${stts} =~ $numer ]] && stts=13
 
             while read -r item_; do
-                item="$(sed 's/}/}\n/g' <<< "${item_}")"
-                type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
+                get_item "${item_}"
+                
                 if [[ ! "${type}" =~ $numer ]]; then
                     [[ $(wc -$c <<< "${trgt}") = 1 ]] && type=1 || type=2
                 fi
-                trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
                 if [ -n "${trgt}" -a -n ${type} ]; then
                     if grep -Fxo "${trgt}" "${DC_tlt}/6.cfg" >/dev/null 2>&1; then
                         tpc_db 2 marks list "$trgt"
@@ -198,7 +197,9 @@ check_index() {
                     elif [ ${type} = 2 ]; then
                         tpc_db 2 sentences list "$trgt"
                     fi
-                    echo "${item_}" >> "$DT/data"
+                    
+                    eval line="$(sed -n 2p $DS/default/vars)"
+                    echo -e "${line}" >> "$DT/data"
             fi
             done < "${DC_tlt}/data"
                 
@@ -256,19 +257,8 @@ for mitem in datalist:
         typee = (fields[13].split('type{'))[1].split('}')[0]
         mark = (fields[8].split('mark{'))[1].split('}')[0]
     except:
-        typee = ''
-    if not typee:
-        try:
-            typee = (fields[23].split('type{'))[1].split('}')[0]
-            mark = (fields[18].split('mark{'))[1].split('}')[0]
-        except:
-            typee = ''
-    if not typee:
-        try:
-            typee = (fields[11].split('type{'))[1].split('}')[0]
-            mark = (fields[8].split('mark{'))[1].split('}')[0]
-        except:
-            pass
+        typee = (fields[23].split('type{'))[1].split('}')[0]
+        mark = (fields[18].split('mark{'))[1].split('}')[0]
     if typee == '1':
         cur.execute("insert into words (list) values (?)", (trgt,))
     elif typee == '2':
