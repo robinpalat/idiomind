@@ -242,11 +242,11 @@ function check_err() {
     for filerr in "$@"; do
         if [ -f "$filerr" ]; then
             if [ ${filerr: -4} == ".err" ]; then
-            mtitle="$(gettext "Errors found")"
-            mimage="dialog-warning"
+                mtitle="$(gettext "Errors found")"
+                mimage="dialog-warning"
             elif [ ${filerr: -4} == ".inf" ]; then
-            mtitle="$(gettext "Errors found")"
-            mimage="info"
+                mtitle="$(gettext "Errors found")"
+                mimage="info"
             fi
             sleep 2; echo "$(< "$filerr")" |yad --text-info \
             --title="$mtitle" \

@@ -66,43 +66,45 @@ mkhtml() {
     note="$(sed '/^$/d' "${DC_tlt}/note" |sed ':a;N;$!ba;s/\n/<br>/g;s/\&/&amp;/g')"
     [ -n "${note}" ] && _note >> "$file" || echo "<br>" >> "$file"
     
-    tr=1; n=1
+    itr=1; n=1
     while read -r _item; do
         if [ ! -d "$DT/export" ]; then break & exit 1; fi
         unset img trgt srce type
-        if [ $f -eq 0 ]; then [[ ${tr} -gt 3 ]] && tr=1; fi
-        if [ $f -eq 2 ]; then [[ ${tr} -gt 2 ]] && tr=1; fi
+        if [ $f -eq 0 ]; then [[ ${itr} -gt 3 ]] && itr=1; fi
+        if [ $f -eq 2 ]; then [[ ${itr} -gt 2 ]] && itr=1; fi
         get_item "${_item}"
         
         if [ -n "${trgt}" -a -n "${srce}" -a -n "${type}" ]; then
+        
             fimg="${DM_tlt}/images/${trgt,,}.jpg"
-            [ ! -e "$fimg" ] && fimg="$imagesdir/${trgt,,}-1.jpg"
-            if [ -e "$fimg" ]; then
+            [ ! -f "$fimg" ] && fimg="$imagesdir/${trgt,,}-1.jpg"
+
+            img_small=""; img_large=""
+            if [ -f "$fimg" ]; then
+                fimg="$(sed -s 's/\?/%3F/;s/\:/%3A/;s/\;/%3B/g'<<< "$fimg")"
                 img_small="<img class=\"simg\" src=\"$fimg\" width=100px></img><br>"
                 img_large="<img class=\"simg\" src=\"$fimg\" width=150px></img><br>"
-            else
-                img_small=""; img_large=""
             fi
             
             if [ ${type} = 1 -a $f = 0 ]; then
                 if [[ -n "${exmp}${defn}${note}" ]]; then
                     img="$img_small"
                     word_example_normal
-                    let tr--
+                    let itr--
 
                 elif [[ -z "${exmp}${defn}${note}" ]]; then
-                    if [ ${tr} = 1 ]; then
+                    if [ ${itr} = 1 ]; then
                         trgt1="${trgt}"; srce1="${srce}"; img1="${img_large}"
-                    elif [ ${tr} = 2 ]; then
+                    elif [ ${itr} = 2 ]; then
                         trgt2="${trgt}"; srce2="${srce}"; img2="${img_large}"
-                    elif [ ${tr} = 3 ]; then
+                    elif [ ${itr} = 3 ]; then
                         img="${img_large}"
                         word_image_normal >> "$file.words2"
                     fi
                 fi
             elif [ ${type} = 2 -a $f = 0 ]; then
                 sentence_normal >> "$file.sente"
-                let tr--
+                let itr--
             
             elif [ ${type} = 1 -a $f = 2 ]; then
                 [[ ${n} -gt 12 ]] && n=1
@@ -112,19 +114,19 @@ mkhtml() {
                     let n++
                 done < <(echo -e "${ras}\n${srce}" |sort -Ru |sed '/^$/d')
                 
-                if [ ${tr} = 1 ]; then
+                if [ ${itr} = 1 ]; then
                     trgt1="${trgt}"
                     
-                elif [ ${tr} = 2 ]; then
+                elif [ ${itr} = 2 ]; then
                     word_examen >> "$file.words2"
                 fi
             elif [ ${type} = 2 -a $f = 2 ]; then
-                let tr--
+                let itr--
             fi
-        elif [ ${tr} = 2 ]; then
+        elif [ ${itr} = 2 ]; then
             echo -e "</td></table>" >> "$file.words2"
         fi
-        let tr++
+        let itr++
     done < "${DC_tlt}/data"
     
     echo -e "$(< "$file.words2")\n<br>" >> "$file"
