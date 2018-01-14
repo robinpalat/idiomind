@@ -98,7 +98,7 @@ function dlg() {
     }
 
     if [ -e "$DC_s/dics_first_run" ]; then
-        plus="$(gettext "To start is okay select all, later, according to your preferences or to gain performance, you can disable some.")\n\n"
+        plus="$(gettext "To start is okay select all, later, according to your preferences or to gain performance, you can disable some.")\n"
         rm "$DC_s/dics_first_run"
     fi
     inf="$plus$(gettext "Please, select at least one script for each task:")"
@@ -127,7 +127,11 @@ function dlg() {
     --button="$(gettext "Cancel")":1 \
     --button=OK:0)"
     ret=$?
-        if [ $ret -eq 2 ]; then
+        if [ $ret -eq 3 ]; then
+        
+                "$DS_a/Dics/cnfg.sh" add_dlg
+    
+        elif [ $ret -eq 2 ]; then
                 "$DS_a/Dics/cnfg.sh" add_dlg
         elif [ $ret -eq 0 ]; then
             while read -r dict; do

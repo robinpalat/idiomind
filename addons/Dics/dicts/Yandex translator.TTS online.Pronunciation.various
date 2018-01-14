@@ -1,17 +1,22 @@
 #!/bin/bash
 
+# https://developer.tech.yandex.ru
+
+voices=( "jane" "oksana" "alyss" "omazh" "zahar" "ermil" )
+voice=${voices[0]}
+
 if [[ "$1" = _dlg_ ]]; then
     source "$DS/ifs/cmns.sh"
-    msg "$(gettext "Languages"): English, Spanish, Portuguese, Russian, Italian, German, French\n$(gettext "Does not need configuration")\n" dialog-information "$4"
+    msg "$(gettext "Languages"): English, Russian\n$(gettext "Does not need configuration")\n" dialog-information "$4" "$(gettext "Close")"
 else
-    if [ "$lgt" = en ]; then t=en_GB
-    elif [ "$lgt" = es ]; then t=es_ES
-    elif [ "$lgt" = pt ]; then t=pt_PT
-    elif [ "$lgt" = ru ]; then t=ru_RU
-    elif [ "$lgt" = it ]; then t=it_IT
-    elif [ "$lgt" = de ]; then t=de_DE
-    elif [ "$lgt" = fr ]; then t=fr_FR
+    if [ "$lgt" = en ]; then 
+        t=en_GB
+        export LINK="http://tts.voicetech.yandex.net/tts?format=mp3&quality=hi&platform=web&application=translate&speaker=$voice&lang=$t&text=${word}"
+        export ex='mp3'
+    elif [ "$lgt" = ru ]; then
+        t=ru_RU
+        export LINK="http://tts.voicetech.yandex.net/tts?format=mp3&quality=hi&platform=web&application=translate&speaker=$voice&lang=$t&text=${word}"
+        export ex='mp3'
     fi
-    export LINK="http://tts.voicetech.yandex.net/tts?format=mp3&quality=hi&platform=web&application=translate&lang=$t&text=${word}"
-    export ex='mp3'
+    
 fi

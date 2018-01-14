@@ -2,7 +2,7 @@
 
 if [[ "$1" = _dlg_ ]]; then
     source "$DS/ifs/cmns.sh"
-    msg "$(gettext "Languages"): English\n$(gettext "Does not need configuration")\n" dialog-information "$4"
+    msg "$(gettext "Languages"): English\n$(gettext "Does not need configuration")\n" dialog-information "$4" "$(gettext "Close")"
 else
     export LINK="http://ssl.gstatic.com/dictionary/static/sounds/de/0/${word}.mp3"
     export ex='mp3'

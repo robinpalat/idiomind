@@ -120,7 +120,7 @@ function save_word_stats() {
   
     if [[ $(sqlite3 ${db} "select week from '${wtable}' where week is '${week^}';") ]]; then :
     else
-        rdata=$(compute)
+        [ -f "${log}" ] && rdata=$(compute) || rdata="0,0,0,0,0,0,0"
         D0=$(cut -d ',' -f 1 <<< "${rdata}"); ! [[ ${D0} =~ $int ]] && D0=0
         D1=$(cut -d ',' -f 2 <<< "${rdata}"); ! [[ ${D1} =~ $int ]] && D1=0
         D2=$(cut -d ',' -f 3 <<< "${rdata}"); ! [[ ${D2} =~ $int ]] && D2=0

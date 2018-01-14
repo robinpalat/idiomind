@@ -54,7 +54,7 @@ new_topic() {
     if [ -z "${name}" ]; then 
         return 1
     else
-        mkdir -p "$DM_tl/${name}"
+        check_dir "$DM_tl/${name}"
         check_list
         "$DS/ifs/tpc.sh" "${name}" "$mode" "$activ"
         "$DS/mngr.sh" mkmn 0
@@ -66,7 +66,7 @@ function new_item() {
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
     if [ ! -d "$DT_r" ]; then
-        mkdir "$DT_r"; cd "$DT_r"
+        check_dir "$DT_r"; cd "$DT_r"
     fi
     check_s "${tpe}"
     if [ -z "${trgt}" ]; then trgt="${3}"; fi
@@ -332,7 +332,7 @@ function list_words_dclik() {
     source "$DS/ifs/mods/add/add.sh"
     words="$(sed 's/<[^>]*>//g' <<< "${3}")"
     [[ -d "$2"  ]] && DT_r="$2"
-    [ ! -d "$DT_r" ] && mkdir "$DT_r"
+    [ ! -d "$DT_r" ] && check_dir "$DT_r"
     export DT_r
 
     if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then
@@ -384,7 +384,7 @@ function list_words_dclik() {
 
 function process() {
     if [ ! -d "$DT_r" ] ; then
-        mkdir "$DT_r"; cd "$DT_r"
+        check_dir "$DT_r"; cd "$DT_r"
     fi
     
     echo "${tpe}" > "$DT/n_s_pr"
@@ -749,7 +749,8 @@ fetch_content() {
 
 new_items() {
     check_err "$DC_a/dicts.err"
-    itemdir=$(cat /dev/urandom |tr -cd 'a-f0-9' |head -c 10)
+    itemdir=$(base64 <<< $((RANDOM%100000)) | head -c 32)
+
     export DT_r="$DT/$itemdir"
     if [ -f "$DT/clipw" ]; then 
         "$DS/ifs/clipw.sh" 1 & exit 1
@@ -792,13 +793,13 @@ new_items() {
         tpe=$(cut -d "|" -f3 <<< "${lzgplr}")
     fi
     if [ $ret -eq 3 ]; then
-        [ -d "$2" ] && DT_r="$2" || mkdir "$DT_r"
+        [ -d "$2" ] && DT_r="$2" || check_dir "$DT_r"
         ! grep '*' <<< "${tpe}" >/dev/null 2>&1 && echo "${tpe}" > "$DT/tpe"
         cd "$DT_r"; set_image_1
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
         
     elif [ $ret -eq 2 ]; then
-        [ -d "$2" ] && DT_r="$2" || mkdir "$DT_r"
+        [ -d "$2" ] && DT_r="$2" || check_dir "$DT_r"
         ! grep '*' <<< "${tpe}" >/dev/null 2>&1 && echo "${tpe}" > "$DT/tpe"
         "$DS/ifs/tls.sh" add_audio "$DT_r"
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
@@ -815,9 +816,9 @@ new_items() {
             ! grep '*' <<< "${tpe}" >/dev/null 2>&1 && echo "${tpe}" > "$DT/tpe"
         fi
         if [ "$3" = 2 ]; then
-            [ -d "$2" ] && DT_r="$2" || mkdir "$DT_r"
+            [ -d "$2" ] && DT_r="$2" || check_dir "$DT_r"
         else 
-            mkdir "$DT_r"
+            check_dir "$DT_r"
         fi
         
         export DT_r; cd "$DT_r"

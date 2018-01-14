@@ -787,16 +787,14 @@ python <<PY
 import os, re, locale, sqlite3
 en = locale.getpreferredencoding()
 data = os.environ['data']
-data.encode(en)
 tpcdb = os.environ['tpcdb']
-tpcdb.encode(en)
 db = sqlite3.connect(tpcdb)
 db.text_factory = str
 cur = db.cursor()
 cur.execute("delete from learnt")
 cur.execute("delete from learning")
 db.commit()
-data = [line.strip() for line in open(data)]
+data = [line.decode(en).strip() for line in open(data)]
 for item in data:
     item = item.replace('}', '}\n')
     fields = re.split('\n',item)
@@ -877,16 +875,14 @@ python <<PY
 import os, re, locale, sqlite3
 en = locale.getpreferredencoding()
 data = os.environ['data']
-data.encode(en)
 tpcdb = os.environ['tpcdb']
-tpcdb.encode(en)
 db = sqlite3.connect(tpcdb)
 db.text_factory = str
 cur = db.cursor()
 cur.execute("delete from learnt")
 cur.execute("delete from learning")
 db.commit()
-data = [line.strip() for line in open(data)]
+data = [line.decode(en).strip() for line in open(data)]
 for item in data:
     item = item.replace('}', '}\n')
     fields = re.split('\n',item)
@@ -955,16 +951,14 @@ python <<PY
 import os, re, locale, sqlite3
 en = locale.getpreferredencoding()
 data = os.environ['data']
-data.encode(en)
 tpcdb = os.environ['tpcdb']
-tpcdb.encode(en)
 db = sqlite3.connect(tpcdb)
 db.text_factory = str
 cur = db.cursor()
 cur.execute("delete from learnt")
 cur.execute("delete from learning")
 db.commit()
-data = [line.strip() for line in open(data)]
+data = [line.decode(en).strip() for line in open(data)]
 for item in data:
     item = item.replace('}', '}\n')
     fields = re.split('\n',item)

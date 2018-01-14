@@ -74,7 +74,12 @@ function cdb () {
     elif [ $2 = 7 ]; then # mod especific
         sqlite3 "$db" "pragma busy_timeout=200;\
         update '${ta}' set list='${co}' where list='${va}';"
+    elif [ $2 = 8 ]; then # read especific
+        sqlite3 "$db" "select list from '${ta}' where list is '${va}';"
     fi
+    
+
+    
 }
 
 function tpc_db() {
@@ -167,16 +172,13 @@ python <<PY
 import os, locale, sqlite3
 en = locale.getpreferredencoding()
 shrdb = os.environ['shrdb']
-shrdb.encode(en)
 db = sqlite3.connect(shrdb)
 db.text_factory = str
 cur = db.cursor()
 addons = os.environ['addons']
-addons.encode(en)
-addons = addons.split('\n')
+addons = addons.decode(en).split('\n')
 topics = os.environ['topics']
-topics.encode(en)
-topics = topics.split('\n')
+topics = topics.decode(en).split('\n')
 cur.execute("delete from topics")
 for tpc in topics:
     if not tpc in addons:

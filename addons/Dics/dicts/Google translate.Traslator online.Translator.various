@@ -24,7 +24,7 @@
 
 if [[ "$1" = _dlg_ ]]; then
     source "$DS/ifs/cmns.sh"
-    msg "$(gettext "Does not need configuration")\n" dialog-information "$4"
+    msg "$(gettext "Does not need configuration")\n" dialog-information "$4" "$(gettext "Close")"
 else
     link="http://translate.googleapis.com/translate_a/single?client=gtx&sl=$2&tl=$3&dt=t&q=$1"
     gtra="$(wget -U "$useragent" -qO - "$link")"

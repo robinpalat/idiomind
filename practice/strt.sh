@@ -946,7 +946,9 @@ function strt() {
         strt 0
     else
         if [ "${1}" = 2 ]; then
-            cdb ${shrdb} 2 T8 list "${tpc}"
+            if [[ -z "$(cdb ${shrdb} 8 T8 list "${tpc}")" ]]; then
+                cdb ${shrdb} 2 T8 list "${tpc}"
+            fi
         elif [ "${1}" = 1 ]; then
             cdb ${shrdb} 4 T8 list "${tpc}"
         fi &

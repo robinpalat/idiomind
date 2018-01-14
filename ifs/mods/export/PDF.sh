@@ -81,7 +81,7 @@ mkhtml() {
 
             img_small=""; img_large=""
             if [ -f "$fimg" ]; then
-                fimg="$(sed -s 's/\?/%3F/;s/\:/%3A/;s/\;/%3B/g'<<< "$fimg")"
+                fimg="$(sed -s 's/\?/%3F/;s/\:/%3A/;s/\;/%3B/g' <<< "$fimg")"
                 img_small="<img class=\"simg\" src=\"$fimg\" width=100px></img><br>"
                 img_large="<img class=\"simg\" src=\"$fimg\" width=150px></img><br>"
             fi

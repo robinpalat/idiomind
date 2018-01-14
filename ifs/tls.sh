@@ -117,7 +117,7 @@ check_index() {
         fi
 
         if ! file "${tpcdb}" | grep 'SQLite'; then
-            cp -f "$DS/default/tpc" "$tpcdb"
+            "$DS/ifs/tpc.sh" _create_tpcdb_ "$tpc"
         fi
         learn="$(tpc_db 5 learning)"
         leart="$(tpc_db 5 learnt)"
@@ -236,7 +236,8 @@ check_index() {
         export s tpcdb datafile datatmp
 
         python <<PY
-import os, re, sqlite3 
+import os, re, sqlite3, locale
+en = locale.getpreferredencoding()
 count = 1
 s = os.environ['s']
 datafile = os.environ['datafile']
@@ -246,7 +247,7 @@ tpcdb = os.environ['tpcdb']
 db = sqlite3.connect(tpcdb)
 db.text_factory = str
 cur = db.cursor()
-datalist = [line.strip() for line in open(datafile)]
+datalist = [line.decode(en).strip() for line in open(datafile)]
 for mitem in datalist:
     if count > 200:
         break
@@ -659,7 +660,7 @@ a_check_updates() {
             fi
         fi
     fi
-    echo -e "--- updates OK\n"
+
     return 0
 } 
 
@@ -1064,12 +1065,10 @@ marks = os.environ['marks']
 log1 = os.environ['log1']
 log2 = os.environ['log2']
 log3 = os.environ['log3']
-ENC = locale.getpreferredencoding()
-learning.encode(ENC)
-marks.encode(ENC)
-learning = learning.split('\n')
-marks = marks.split('\n')
-data = [line.strip() for line in open(data)]
+en = locale.getpreferredencoding()
+learning = learning.decode(en).split('\n')
+marks = marks.decode(en).split('\n')
+data = [line.decode(en).strip() for line in open(data)]
 f = open(index, "w")
 for item in data:
     item = item.replace('}', '}\n')

@@ -2,7 +2,7 @@
 
 if [[ "$1" = _dlg_ ]]; then
     source "$DS/ifs/cmns.sh"
-    msg "$(gettext "Languages"): Chinese, English, Japanese, Portuguese, Spanish\n$(gettext "Does not need configuration")\n" dialog-information "$4"
+    msg "$(gettext "Languages"): Chinese, English, Japanese, Portuguese, Spanish\n$(gettext "Does not need configuration")\n" dialog-information "$4" "$(gettext "Close")"
 else
     if [ "$lgt" = zh-cn ]; then t=zh
     elif [ "$lgt" = en ]; then t=en

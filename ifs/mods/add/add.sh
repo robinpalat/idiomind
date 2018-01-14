@@ -18,7 +18,7 @@ function check_s() {
         --window-icon=idiomind \
         --width=470 --borders=5 \
         --field=":CB" " !$tpcs" \
-        --button="$(gettext "OK")":0)"
+        --button="$(gettext "OK")":0 |sed -e 's/^ *//' -e 's/ *$//')"
         
         if [ -z "${tpe}" ]; then
             [ -d "$DT_r" ] && rm -fr "$DT_r"
@@ -381,14 +381,14 @@ function translate() {
         fi
         for trans in "$DC_d"/*."Traslator online.Translator".*; do
             trans="$DS_a/Dics/dicts/$(basename "${trans}")"
-            if [ -e "${trans}" ]; then "${trans}" "$@" && break; fi
+            if [ -f "${trans}" ]; then "${trans}" "$@" && break; fi
         done
     fi
 }
 
 dwld1() {
     LINK=""; source "$1/dicts/$(basename "${dict}")"
-    if [ "${LINK}" -a ! -e "$audio_file" ]; then
+    if [ -n "${LINK}" -a ! -f "$audio_file" ]; then
         wget -T 51 -q -U "$useragent" -O "$audio_dwld.$ex" "${LINK}"
         if [[ ${ex} != 'mp3' ]]; then
             mv -f "$audio_dwld.$ex" "$audio_dwld.mp3"
@@ -406,7 +406,7 @@ dwld1() {
 
 dwld2() {
     LINK=""; source "$1/dicts/$(basename "${dict}")"
-    if [ "${LINK}" -a ! -e "${audio_file}" ]; then
+    if [ -n "${LINK}" -a ! -f "${audio_file}" ]; then
         wget -T 51 -q -U "$useragent" -O "$DT_r/audio.mp3" "${LINK}"
     fi
     if [ -f "$audio_file" ]; then
@@ -442,7 +442,7 @@ function tts_word() {
         done
     fi
     if ls "$DC_d"/*."TTS online.Word pronunciation".various 1> /dev/null 2>&1; then
-        if [ ! -e "${2}/${1}.mp3" ]; then
+        if [ ! -f "${2}/${1}.mp3" ]; then
             for dict in $DC_d/*."TTS online.Word pronunciation".various; do
                 dwld1 "$DS_a/Dics"; [ $? = 5 ] && break
             done
@@ -460,13 +460,13 @@ function fetch_audio() {
     while read -r Word; do
         word="${Word,,}"; export audio_file="$DM_tls/audio/$word.mp3"
         audio_dwld="$DM_tls/audio/$word"
-        if [ ! -e "$audio_file" ]; then
+        if [ ! -f "$audio_file" ]; then
             if ls "$DC_d"/*."TTS online.Word pronunciation".$lgt 1> /dev/null 2>&1; then
                 for dict in "$DC_d"/*."TTS online.Word pronunciation".$lgt; do
                     dwld1 "$DS_a/Dics"; [ $? = 5 ] && break
                 done
             fi
-            if [ ! -e "$audio_file" ]; then
+            if [ ! -f "$audio_file" ]; then
                 if ls "$DC_d"/*."TTS online.Word pronunciation".various 1> /dev/null 2>&1; then
                     for dict in "$DC_d"/*."TTS online.Word pronunciation".various; do
                         dwld1 "$DS_a/Dics"; [ $? = 5 ] && break
@@ -479,11 +479,11 @@ function fetch_audio() {
 
 function img_word() {
     if ls "$DC_d"/*."Script.Download image".* 1> /dev/null 2>&1; then
-        if [ ! -e "${DM_tls}/images/${1,,}-1.jpg" -a ! -e "${DM_tlt}/images/${1,,}.jpg" ]; then
+        if [ ! -e "${DM_tls}/images/${1,,}-1.jpg" -a ! -f "${DM_tlt}/images/${1,,}.jpg" ]; then
             touch "$DT/${1}.img"
             for Script in "$DC_d"/*."Script.Download image".*; do
                 Script="$DS_a/Dics/dicts/$(basename "${Script}")"
-                [ -e "${Script}" ] && "${Script}" "${1}"
+                [ -f "${Script}" ] && "${Script}" "${1}"
                 if [ -f "$DT/${1}.jpg" ]; then
                     if [[ $(du "$DT/${1}.jpg" |cut -f1) -gt 10 ]]; then
                         break
@@ -495,8 +495,8 @@ function img_word() {
             if [ ! -e "$DT/${1}.jpg" ]; then
                 for Script in "$DC_d"/*."Script.Download image".*; do
                     Script="$DS_a/Dics/dicts/$(basename "${Script}")"
-                    [ -e "${Script}" ] && "${Script}" "${2}"
-                    if [ -e "$DT/${2}.jpg" ]; then
+                    [ -f "${Script}" ] && "${Script}" "${2}"
+                    if [ -f "$DT/${2}.jpg" ]; then
                         if [[ $(du "$DT/${2}.jpg" |cut -f1) -gt 10 ]]; then
                             break
                         else 
@@ -505,9 +505,9 @@ function img_word() {
                     fi
                 done
             fi
-            if [ -e "$DT/${1}.jpg" -o -e "$DT/${2}.jpg" ]; then
+            if [ -f "$DT/${1}.jpg" -o -f "$DT/${2}.jpg" ]; then
                 [[ $(wc -w <<< ${1}) -gt 1 ]] && sf="${DM_tlt}/images/${1,,}.jpg" || sf="${DM_tls}/images/${1,,}-1.jpg"
-                [ -e "$DT/${1}.jpg" ] && img_file="${1}.jpg" || img_file="${2}.jpg"
+                [ -f "$DT/${1}.jpg" ] && img_file="${1}.jpg" || img_file="${2}.jpg"
                 local size="$(/usr/bin/identify -ping -format '%w %h' "$DT/${img_file}")"
                 w="$(echo $size |cut -f1 -d ' ')"
                 e="$(echo $size |cut -f2 -d ' ')"

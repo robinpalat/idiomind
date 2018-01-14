@@ -42,7 +42,6 @@ fi
 
 function new_session() {
     source "$DS/ifs/cmns.sh"
-    f_lock 1 "$DT/ps_lk"
     echo "-- new session"
     export -f cdb
     d=$(date +%d)
@@ -54,7 +53,9 @@ function new_session() {
     msg "$(gettext "An error occurred while trying to write on '/tmp'")\n" \
     error "$(gettext "Error")" & exit 1
     fi
-
+    
+    f_lock 1 "$DT/ps_lk"
+    
     # list topics
     check_list
     # 
