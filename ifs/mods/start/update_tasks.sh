@@ -24,37 +24,37 @@ f="$DT/tasks"; cleanups "$f"
 
 ## topics 
 while read -r tpc; do
-    echo "$l1$tpc" >> "$f"
+    echo -e "$l1$tpc" >> "$f"
 done < <(cdb "${shrdb}" 5 T1 |tac)
 
 ## practice
 while read -r tpc; do
-    echo "$l8$tpc" >> "$f"
+    echo -e "$l8$tpc" >> "$f"
 done < <(cdb "${shrdb}" 5 T8 |tac)
 while read -r tpc; do
-    echo "$l6$tpc" >> "$f"
+    echo -e "$l6$tpc" >> "$f"
 done < <(cdb "${shrdb}" 5 T6 |tac)
 while read -r tpc; do
-    echo "$l5$tpc" >> "$f"
+    echo -e "$l5$tpc" >> "$f"
 done < <(cdb "${shrdb}" 5 T5 |tac)
 
 ## topics 
 while read -r tpc; do
-    echo "$l2$tpc" >> "$f"
+    echo -e "$l2$tpc" >> "$f"
 done < <(cdb "${shrdb}" 5 T2 |tac)
 while read -r tpc; do
-    echo "$l3$tpc" >> "$f"
+    echo -e "$l3$tpc" >> "$f"
 done < <(cdb "${shrdb}" 5 T3 |tac)
 while read -r tpc; do
-    echo "$l4$tpc" >> "$f"
+    echo -e "$l4$tpc" >> "$f"
 done < <(cdb "${shrdb}" 5 T4 |tac)
 
 while read -r tpc; do
-    echo "$l7$tpc" >> "$f"
+    echo -e "$l7$tpc" >> "$f"
 done < <(cdb "${shrdb}" 5 T7 |tac)
 
 
-## addons 
+## addons
 while read -r addon; do
     if [ -e "$DC_a/$addon.tasks" ]; then
         tac "$DC_a/$addon.tasks" >> "$f"

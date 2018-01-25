@@ -180,14 +180,14 @@ check_index() {
                     [[ $(wc -$c <<< "${trgt}") = 1 ]] && type=1 || type=2
                 fi
                 if [ -n "${trgt}" -a -n ${type} ]; then
-                    if grep -Fxo "${trgt}" "${DC_tlt}/6.cfg" >/dev/null 2>&1; then
+                    if grep -Fxo "${trgt}" < "${DC_tlt}/6.cfg" >/dev/null 2>&1; then
                         tpc_db 2 marks list "$trgt"
                     fi
                     if echo "$stts" |grep -E '3|4|7|8|9|10'>/dev/null 2>&1; then
                         tpc_db 2 learnt list "$trgt"
-                    elif grep -Fxo "${trgt}" "${DC_tlt}/1.cfg" >/dev/null 2>&1; then
+                    elif grep -Fxo "${trgt}" < "${DC_tlt}/1.cfg" >/dev/null 2>&1; then
                         tpc_db 2 learning list "$trgt"
-                    elif grep -Fxo "${trgt}" "${DC_tlt}/2.cfg">/dev/null 2>&1 ; then
+                    elif grep -Fxo "${trgt}" < "${DC_tlt}/2.cfg">/dev/null 2>&1 ; then
                         tpc_db 2 learnt list "$trgt"
                     else
                         tpc_db 2 learning list "$trgt"
