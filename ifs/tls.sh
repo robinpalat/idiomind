@@ -117,7 +117,7 @@ check_index() {
         fi
 
         if ! file "${tpcdb}" | grep 'SQLite'; then
-            "$DS/ifs/tpc.sh" _create_tpcdb_ "$tpc"
+            "$DS/ifs/mkdb.sh" tpc "$tpc"
         fi
         learn="$(tpc_db 5 learning)"
         leart="$(tpc_db 5 learnt)"
