@@ -77,9 +77,6 @@ function cdb () {
     elif [ $2 = 8 ]; then # read especific
         sqlite3 "$db" "select list from '${ta}' where list is '${va}';"
     fi
-    
-
-    
 }
 
 function tpc_db() {

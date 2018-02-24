@@ -21,7 +21,7 @@ if [[ -z "$(< "$fileconf")" ]]; then
 fi
 key=$(grep -o key=\"[^\"]* "$fileconf" |grep -o '[^"]*$')
 speed=$(grep -o speed=\"[^\"]* "$fileconf" |grep -o '[^"]*$')
-voice=$(grep -o voice=\"[^\"]* "$fileconf" |grep -o '[^"]*$')
+voice=$(grep -o voice=\"[^\"]* "$fileconf" |grep -o '[^"]*$' |sed 's/(null)//')
 
 
 function check_conf(){

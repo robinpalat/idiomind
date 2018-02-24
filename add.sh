@@ -262,7 +262,7 @@ function list_words_edit() {
             if [ $? = 0 ]; then
                 index 1
                 if [ ! -e "$DM_tls/audio/$audio.mp3" ]; then
-                    ( [[ ${dlaud} = TRUE ]] && tts_word "$audio" "$DM_tls/audio" )
+                    ( [[ ${dlaud} = TRUE ]] && tts_word "$audio" "${DM_tls}/audio" )
                 fi
                 ( img_word "${trgt}" "${srce}" ) &
             else
