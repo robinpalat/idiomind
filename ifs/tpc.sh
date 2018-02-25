@@ -22,7 +22,7 @@ chek_topic() {
     fi
     
     if ! file "${tpcdb}" | grep 'SQLite'; then
-        "$DS/ifs/mkdb.sh" tpc "$tpc"
+        "$DS/ifs/mkdb.sh" tpc "${tpc}"
     fi
     
     touch "${DC_tlt}/data"

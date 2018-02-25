@@ -96,7 +96,7 @@
 			scaleFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
 
 			// Number - Scale label font size in pixels
-			scaleFontSize: 11,
+			scaleFontSize: 10,
 
 			// String - Scale label font weight style
 			scaleFontStyle: "normal",

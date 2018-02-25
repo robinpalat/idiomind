@@ -81,7 +81,7 @@ function index() {
         if [ ! -d "${DC_tlt}" ]; then return 1; fi
         #
         if [ ! -z "${trgt}" ]; then
-            if ! grep -Fof "trgt{${trgt}}" < "${DC_tlt}/data" >/dev/null 2>&1; then
+            if ! grep -Fo "trgt{${trgt}}" < "${DC_tlt}/data" >/dev/null 2>&1; then
                 if [[ ${1} = 1 ]]; then
                     unset wrds grmr
                     tpc_db 2 learning list "${trgt}"
@@ -743,7 +743,7 @@ function dlg_form_3() {
     --buttons-layout=spread --skip-taskbar --image-on-top \
     --align=center --text-align=center --center --on-top \
     --width=420 --height=320 --borders=5 \
-    "${btn2}" --button="!gtk-close!$(gettext "Close") ":1
+    "${btn2}" --button="$(gettext "Close")!gtk-close!$(gettext "Close") ":1
 }
 
 function dlg_progress_1() {

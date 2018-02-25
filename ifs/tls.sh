@@ -73,7 +73,7 @@ check_index() {
     source "$DS/ifs/cmns.sh"
     DC_tlt="$DM_tl/${2}/.conf"
     DM_tlt="$DM_tl/${2}"
-    tpc="${2}"; mkmn=0; fix=0; c=0; s=0
+    tpc="${2}"; mkmn=0; fix=0; c=0; s=0; db_configTable=0
     [[ ${3} = 1 ]] && r=1 || r=0
 
     _check() {
@@ -119,6 +119,12 @@ check_index() {
         if ! file "${tpcdb}" | grep 'SQLite'; then
             "$DS/ifs/mkdb.sh" tpc "$tpc"
         fi
+        
+        cnt="$(sqlite3 "${tpcdb}" "SELECT Count(*) FROM config")"
+        if [[ $cnt != '1' ]]; then
+            db_configTable=1
+        fi
+
         learn="$(tpc_db 5 learning)"
         leart="$(tpc_db 5 learnt)"
         cnt0=$(grep -c '[^[:space:]]' < "${DC_tlt}/data")
@@ -293,6 +299,16 @@ PY
         fi
         _restore
     fi
+    
+    if [[ ${db_configTable} = 1 ]]; then
+        sqlite3 "$tpcdb" "delete from config;"
+        sqlite3 "${tpcdb}" "pragma busy_timeout=2000;\
+        insert into config (words,sntcs,marks,learn,\
+        diffi,rplay,audio,ntosd,loop,rword,acheck,repass) \
+        values ('TRUE','TRUE','FALSE','FALSE','FALSE','FALSE',\
+        'FALSE','FALSE','FALSE','FALSE','TRUE','0');"
+    fi
+
     if [[ ${mkmn} = 1 ]] ;then
         "$DS/ifs/tls.sh" colorize 1; "$DS/mngr.sh" mkmn 0
     fi
@@ -711,7 +727,7 @@ set_image() {
         if [ $? -eq 1 ]; then rm -f "$DT/$trgt".img; else return 1 ; fi
     fi
     if [ -e "$ifile" ]; then
-        btn2="--button=!edit-delete!$(gettext "Remove image"):2"
+        btn2="--button=!gtk-delete!$(gettext "Remove image"):2"
         image="--image=$ifile"
     else
         btn2="--button=!image-x-generic!"$(gettext "Add an image by screen clipping")":0"
@@ -1284,7 +1300,7 @@ app_version = os.environ['_version']
 app_website = os.environ['_website']
 app_comments = os.environ['_descrip']
 website_label = os.environ['_website']
-app_copyright = 'Copyright (c) 2013-2017 Robin Palatnik'
+app_copyright = 'Copyright (c) 2013-2018 Robin Palatnik'
 app_license = (('This program is free software: you can redistribute it and/or modify\n'+
 'it under the terms of the GNU General Public License as published by\n'+
 'the Free Software Foundation, either version 3 of the License, or\n'+

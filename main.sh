@@ -306,7 +306,7 @@ function topic() {
         repass=$(tpc_db 1 config repass)
         acheck=$(tpc_db 1 config acheck)
 
-        [ -z $repass ] && repass=0; export repass acheck
+        [ -z "$repass" ] && repass=0; export repass acheck
         ( sleep 2 && "$DS/ifs/tls.sh" promp_topic_info ) &
         c=$((RANDOM%100000)); export KEY=$c
         export cnf1=$(mktemp "$DT/cnf1.XXXXXX")

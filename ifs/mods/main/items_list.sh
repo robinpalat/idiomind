@@ -92,7 +92,7 @@ function word_view() {
     "${field_tag}" "${field_exmp}" "${field_defn}" "${field_note}" \
     --button="gtk-edit":4 \
     --button="!$DS/images/listen.png":"$cmd_listen" \
-    --button="$(gettext "Next")":2
+    --button="!media-seek-forward":2
     
 } >/dev/null 2>&1
 
@@ -119,7 +119,7 @@ function sentence_view() {
     --button="gtk-edit":4 \
     --button="$(gettext "Words")":"$cmd_words" \
     --button="!$DS/images/listen.png":"$cmd_listen" \
-    --button="$(gettext "Next")":2
+    --button="!media-seek-forward":2
     
 } >/dev/null 2>&1
 

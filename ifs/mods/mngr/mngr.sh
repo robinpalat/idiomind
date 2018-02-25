@@ -26,7 +26,7 @@ function dlg_form_1() {
     --button="$(gettext "Image")":"${cmd_image}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
     --button="!$DS/images/listen.png!$(gettext "Listen")":"${cmd_play}" \
-    --button="$(gettext "Next")":2 \
+    --button="!media-seek-forward":2 \
     --button="$(gettext "Close")":0
 }
 
@@ -53,7 +53,7 @@ function dlg_form_2() {
     --field="$(gettext "Audio")":FL "${audf}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
     --button="!$DS/images/listen.png!$(gettext "Listen")":"${cmd_play}" \
-    --button="$(gettext "Next")":2 \
+    --button="!media-seek-forward":2 \
     --button="$(gettext "Close")":0
 }
 
