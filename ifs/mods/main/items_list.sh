@@ -90,7 +90,7 @@ function word_view() {
     --image-on-top --center --on-top \
     --width=630 --height=390 --borders=18 \
     "${field_tag}" "${field_exmp}" "${field_defn}" "${field_note}" \
-    --button="gtk-edit":4 \
+    --button="!gtk-edit":4 \
     --button="!$DS/images/listen.png":"$cmd_listen" \
     --button="!media-seek-forward":2
     
@@ -116,8 +116,8 @@ function sentence_view() {
     --width=630 --height=390 --borders=18 \
     --column="":TEXT \
     --column="":TEXT \
-    --button="gtk-edit":4 \
-    --button="$(gettext "Words")":"$cmd_words" \
+    --button="!gtk-edit":4 \
+    --button="!gtk-justify-left!$(gettext "Words")":"$cmd_words" \
     --button="!$DS/images/listen.png":"$cmd_listen" \
     --button="!media-seek-forward":2
     
