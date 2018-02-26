@@ -28,10 +28,10 @@ function check_conf(){
     
     if [ -z "${key}" ] || [[ ${#key} != 32 ]]; then
         echo -e "$(gettext "Missing key for \"$name\". Go to Dics settings and double-click on the name to configure.")\n" >> "$DC_a/dicts.err"
-        if [ -f "$DC_a/dict/enables/${d1}" ]; then
+        if [ -f "$DC_a/dict/enables/${d1}" ] && [ ! -d "$DT/dict_test" ]; then
             mv -f "$DC_a/dict/enables/${d1}" "$DC_a/dict/disables/${d1}"
         fi
-        if [ -f "$DC_a/dict/enables/${d2}" ]; then
+        if [ -f "$DC_a/dict/enables/${d2}" ] && [ ! -d "$DT/dict_test" ]; then
             mv -f "$DC_a/dict/enables/${d2}" "$DC_a/dict/disables/${d2}"
         fi
         return 1

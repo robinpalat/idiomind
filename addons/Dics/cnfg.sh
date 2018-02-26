@@ -11,7 +11,7 @@ enables="$dir/enables"
 disables="$dir/disables"
 task=( 'Word pronunciation' 'Pronunciation' 'Translator' \
 'Search definition' 'Search images' 'Download images' '_' )
-test_ok="$(< "$DC_a/dict/test_ok")"
+test_ok="$(< "$DC_a/dict/test")"
 
 function add_dlg() {
     langs=( 'various' 'zh-cn' 'en' 'fr' \
@@ -86,7 +86,7 @@ function dlg() {
                 if grep "${dict}" <<< "$test_ok" >/dev/null 2>&1; then
                     echo "gtk-apply"
                 else
-                    echo "error"
+                    echo "dialog-warning"
                 fi
             fi
         done < <(ls "$enables/")
@@ -122,7 +122,7 @@ function dlg() {
     --print-all --always-print-result --separator="|" \
     --dclick-action="$DS_a/Dics/cnfg.sh dclk" \
     --window-icon=idiomind \
-    --expand-column=2 --hide-column=3 \
+    --expand-column=0 --hide-column=3 \
     --search-column=4 --regex-search \
     --center --on-top \
     --width=600 --height=370 --borders=8 \
@@ -137,11 +137,10 @@ function dlg() {
     --button=OK:0 \
     --button="$(gettext "Cancel")":1)"
     ret=$?
-        if [ $ret -eq 3 ]; then
-                "$DS_a//Dics/test.sh"
-        elif [ $ret -eq 2 ]; then
+        
+        if [ $ret -eq 2 ]; then
                 "$DS_a/Dics/cnfg.sh" add_dlg
-        elif [ $ret -eq 0 ]; then
+        elif [ $ret -eq 0  -o $ret -eq 3 ]; then
             while read -r dict; do
                 name="$(cut -d "|" -f2 <<< "$dict")"
                 type="$(cut -d "|" -f3 <<< "$dict")"
@@ -171,6 +170,8 @@ function dlg() {
                     fi
                 fi
             done < <(sed 's/<[^>]*>//g' <<< "${sel}")
+            
+            if [ $ret -eq 3 ]; then "$DS_a//Dics/test.sh"; fi
         fi
     exit 1
 } >/dev/null 2>&1

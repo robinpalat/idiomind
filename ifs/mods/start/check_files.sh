@@ -14,6 +14,10 @@ if [ ! -d "$DC" ]; then
     mkdir -p "$DC/addons"
 fi
 
-if [ ! -e "${cfg_db}" ]; then
-	"$DS/ifs/tls.sh" create_cfg
+if [ ! -f "${cfg_db}" ]; then
+    "$DS/ifs/tls.sh" create_cfg
+fi
+
+if [ -f "$DC_s/dics_first_run" ]; then
+    "$DS_a/Dics/test.sh" 1
 fi
