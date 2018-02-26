@@ -677,13 +677,13 @@ function dlg_checklist_2() {
     if [ $(wc -w <<< "${1}") -le 5 -a $(wc -w <<< "${1}") -gt 1 ]; then
     fl="--field="$(gettext "Show in word viewer")":CHK"; fi
     list "${1}" | yad --list --checklist --tabnum=1 --plug="$fkey" \
-    --no-headers --text-align=left --text="$(gettext "Words list")" \
+    --no-headers --text-align=left --text="$(gettext "Words of the sentence")" \
     --column=" " --column=" " |sed '/^$/d' > "$slts" &
     yad --form --tabnum=2 --plug="$fkey" \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --separator="|" \
     --field="$(gettext "Note")":TXT "${note}" \
-    --field="$(gettext "Example (only for words)")":TXT "${exmp}" \
+    --field="$(gettext "Example (for words)")":TXT "${exmp}" \
     --field="$(gettext "Mark")":CHK "$fl" & \
     yad --paned --orient=hor --key="$fkey" \
     --title="$(gettext "Options")" \

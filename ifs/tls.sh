@@ -594,7 +594,8 @@ _definition() {
     source "$DS/ifs/cmns.sh"
     export query="$(sed 's/<[^>]*>//g' <<<"${2}")"
     f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"
-    if [ -z "$f" ]; then "$DS_a/Dics/cnfg.sh" 3
+    if [ -z "$f" ]; then 
+        "$DS_a/Dics/cnfg.sh" 3
         f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"
     fi
     eval _url="$(< "$DS_a/Dics/dicts/$(basename "$f")")"
@@ -849,7 +850,7 @@ translate_to() {
         --width=400 --height=450 --borders=15 \
         --field="":LBL " " \
         --field="\n<b>$(gettext "Verified Translations") </b> ":LBL " " \
-        --field="$active_trans — $(gettext "The  accuracy of this translation was verified")":CHK "$chk" \
+        --field="$active_trans — $(gettext "The quality of this translation was verified")":CHK "$chk" \
         --field="<small>$(gettext "This topic has no verified translations.")</small>":LBL " " \
         --field=" ":LBL " " \
         --field="<b>$(gettext "Automatic Translation")</b> ":LBL " " \
@@ -869,7 +870,7 @@ translate_to() {
         --width=400 --height=450 --borders=15 \
         --field="":LBL " " \
         --field="\n<b>$(gettext "Verified Translations") </b> ":LBL " " \
-        --field="$active_trans — $(gettext "The  accuracy of this translation was verified")":CHK "$chk" \
+        --field="$active_trans — $(gettext "The quality of this translation was verified")":CHK "$chk" \
         --field="$(gettext "Change native language:")":CB "!${list_transl_saved}" \
         --field=" ":LBL " " \
         --field="<b>$(gettext "Automatic Translation")</b> ":LBL " " \

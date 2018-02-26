@@ -20,7 +20,7 @@ l5="$(gettext "To Practice:") "
 l6="$(gettext "Back to Practice:") "
 l7="$(gettext "Finalize Review [overdue]:") "
 l8="$(gettext "Resume Practice:") "
-f="$DT/tasks"; cleanups "$f"
+f="$DT/tasks.tmp"; cleanups "$f" "$DT/tasks"
 
 ## topics 
 while read -r tpc; do
@@ -60,6 +60,8 @@ while read -r addon; do
         tac "$DC_a/$addon.tasks" >> "$f"
     fi
 done < "$DS_a/menu_list"
+
+mv -f "$f" "$DT/tasks"
 
 echo -e "--- tasks updated\n"
 

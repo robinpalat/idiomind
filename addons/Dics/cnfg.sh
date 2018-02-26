@@ -11,6 +11,7 @@ enables="$dir/enables"
 disables="$dir/disables"
 task=( 'Word pronunciation' 'Pronunciation' 'Translator' \
 'Search definition' 'Search images' 'Download images' '_' )
+test_ok="$(< "$DC_a/dict/test_ok")"
 
 function add_dlg() {
     langs=( 'various' 'zh-cn' 'en' 'fr' \
@@ -81,7 +82,13 @@ function dlg() {
         while read -r dict; do
             if [ -n "${dict}" ]; then
                 echo 'TRUE'
-                sed 's/\./\n/g' <<< "${dict}"; fi
+                sed 's/\./\n/g' <<< "${dict}"
+                if grep "${dict}" <<< "$test_ok" >/dev/null 2>&1; then
+                    echo "gtk-apply"
+                else
+                    echo "error"
+                fi
+            fi
         done < <(ls "$enables/")
         
         while read -r dict; do
@@ -93,12 +100,13 @@ function dlg() {
                 else 
                     echo "${dict}" |sed 's/\./\n/g'
                 fi
+                echo "$DS/images/cont.png"
             fi
         done < <(ls "$disables/")
     }
 
     if [ -e "$DC_s/dics_first_run" ]; then
-        plus="$(gettext "To start is okay select all, later, according to your preferences or to gain performance, you can disable some.")\n"
+        plus="$(gettext "To start is okay select all, later, according to your preferences, you can disable some.")\n"
         rm "$DC_s/dics_first_run"
     fi
     inf="$plus$(gettext "Please, select at least one script for each task:")"
@@ -123,14 +131,14 @@ function dlg() {
     --column="$(gettext "Type")":TEXT \
     --column="$(gettext "Task")":TEXT \
     --column="$(gettext "Language")":TEXT \
+    --column="$(gettext "Status")":IMG \
     --button="$(gettext "Add")":2 \
-    --button="$(gettext "Cancel")":1 \
-    --button=OK:0)"
+    --button="$(gettext "Test")":3 \
+    --button=OK:0 \
+    --button="$(gettext "Cancel")":1)"
     ret=$?
         if [ $ret -eq 3 ]; then
-        
-                "$DS_a/Dics/cnfg.sh" add_dlg
-    
+                "$DS_a//Dics/test.sh"
         elif [ $ret -eq 2 ]; then
                 "$DS_a/Dics/cnfg.sh" add_dlg
         elif [ $ret -eq 0 ]; then
