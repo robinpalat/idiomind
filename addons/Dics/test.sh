@@ -12,13 +12,13 @@ if [ "$1" = 1 ]; then DC_d="$DC_a/dict/disables"; fi
 
 function dlg_progress_2() {
     yad --progress --title="$(gettext "Performing Tests")" \
-    --text="$(gettext "Please wait")" \
+    --text="$(gettext "Please wait...")" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind --align=right \
     --progress-text=" " --auto-close \
     --percentage="0" \
     --no-buttons --on-top --fixed \
-    --width=300 --height=80 --borders=5
+    --width=350 --height=80 --borders=5
 }
 
 ( echo "1"
