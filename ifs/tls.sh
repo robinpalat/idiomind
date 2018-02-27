@@ -615,7 +615,7 @@ _translation() {
     sz=(800 500); [[ ${swind} = TRUE ]] && sz=(700 400)
     yad --html --title="" \
     --name=Idiomind --class=Idiomind \
-    --uri="${link}" --browser \
+    --uri="${link}" --browser --encoding='UTF-8' \
     --window-icon=idiomind \
     --fixed --on-top --mouse \
     --width=${sz[0]} --height=${sz[1]} --borders=5 \
