@@ -222,8 +222,7 @@ check_index() {
     _restore() {
         if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} \
         >/dev/null 2>&1; then c=c; else c=w; fi
-        if echo "$stts" |grep -E '3|4|7|8|9|10'\
-        >/dev/null 2>&1; then s=1; fi
+        if echo "$stts" |grep -E '3|4|7|8|9|10' >/dev/null 2>&1; then s=1; fi
         if [ ! -f "${DC_tlt}/data" ]; then
             if [ -f "$DM/backup/${tpc}.bk" ]; then
                 sed -n '/----- newest/,/----- oldest/p' \
@@ -242,8 +241,10 @@ check_index() {
         export s tpcdb datafile datatmp
 
         python <<PY
-import os, re, sqlite3, locale
-en = locale.getpreferredencoding()
+import os, re, sqlite3, locale, sys
+enc = locale.getpreferredencoding()
+reload(sys)
+sys.setdefaultencoding("utf-8")
 count = 1
 s = os.environ['s']
 datafile = os.environ['datafile']
@@ -253,8 +254,9 @@ tpcdb = os.environ['tpcdb']
 db = sqlite3.connect(tpcdb)
 db.text_factory = str
 cur = db.cursor()
-datalist = [line.decode(en).strip() for line in open(datafile)]
+datalist = [line.decode(enc).strip() for line in open(datafile)]
 for mitem in datalist:
+    mitem = str(mitem)
     if count > 200:
         break
     item = mitem.replace('}', '}\n')
@@ -266,6 +268,7 @@ for mitem in datalist:
     except:
         typee = (fields[23].split('type{'))[1].split('}')[0]
         mark = (fields[18].split('mark{'))[1].split('}')[0]
+    
     if typee == '1':
         cur.execute("insert into words (list) values (?)", (trgt,))
     elif typee == '2':

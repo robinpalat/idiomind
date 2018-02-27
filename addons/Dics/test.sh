@@ -10,7 +10,6 @@ cleanups "$DT/test_fail" "$DT/test_ok" "$DT/dict_test"
 mkdir "$DT/dict_test"
 if [ "$1" = 1 ]; then DC_d="$DC_a/dict/disables"; fi
 
-
 function dlg_progress_2() {
     yad --progress --title="$(gettext "Performing Tests")" \
     --text="$(gettext "Please wait")" \
@@ -27,7 +26,6 @@ echo "# $(gettext " ")";
 internet
 
 
-#  TRANSLATOR
 echo "5"
 echo "# TRANSLATOR";
 st="$(gettext "This is a test")"
@@ -43,7 +41,6 @@ for trans in "$DC_d"/*."Traslator online.Translator".*; do
     fi
 done
 
-#  AUDIO SENTENCES
 echo "10"
 echo "# AUDIO";
 word="$(gettext "This is a test")"
@@ -66,7 +63,6 @@ for dict in "$DC_d"/*."TTS online.Pronunciation".*; do
     cleanups "$audio_file"
 done
 
-#  AUDIO 
 echo "30"
 echo "# AUDIO WORDS SPECIFIC LANG";
 word="$(gettext "test")"
@@ -94,7 +90,6 @@ if ls "$DC_d"/*."TTS online.Word pronunciation".$lgt 1> /dev/null 2>&1; then
     done
 fi
 
-##  AUDIO WORDS VARIOUS LANGS
 echo "50"
 echo "# AUDIO WORDS VARIOUS LANGS";
 word="$(gettext "test")"
@@ -122,7 +117,6 @@ if ls "$DC_d"/*."TTS online.Word pronunciation".various 1> /dev/null 2>&1; then
     done
 fi
 
-##  ONLINE PAGES
 echo "70"
 echo "# ONLINE PAGES";
 word="$(gettext "test")"
@@ -141,7 +135,6 @@ if ls "$DC_d"/*."Link.Search definition".* 1> /dev/null 2>&1; then
     done  
 fi
 
-##  IMAGE DOWNLOADER
 echo "80"
 echo "# IMAGE DOWNLOADER";
 word="$(gettext "test")"
@@ -163,9 +156,9 @@ if ls "$DC_d"/*."Script.Download image".* 1> /dev/null 2>&1; then
     done
 fi
 
-cleanups "$DT/dict_test"
 mv "$DT/test_ok" "$DC_a/dict/test"
 cat "$DT/test_fail" >> "$DC_a/dicts.err"
+cleanups "$DT/dict_test" "$DT/test_fail"
 echo "100"
 
  ) | dlg_progress_2
