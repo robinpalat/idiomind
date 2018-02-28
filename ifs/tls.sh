@@ -626,7 +626,7 @@ _translation() {
 } >/dev/null 2>&1
 
 _help() {
-    xdg-open 'https://sourceforge.net/p/idiomind/wiki/Get%20started/'
+    xdg-open 'https://sourceforge.net/p/idiomind/wiki/Getting%20started'
     
 } >/dev/null 2>&1
 
@@ -1351,7 +1351,7 @@ clipw() {
             sleep 1
             notify-send -i info "$(gettext "Information")" \
 "$(gettext "The clipboard watcher is enabled for 5 minutes...")
-($tpc)" -t 5000
+ $(gettext "Notes will be added to:") \"$tpc\"" -t 8000
         else 
             "$DS/ifs/clipw.sh" 1
         fi

@@ -76,7 +76,7 @@ function edit_list_list() {
 
 function edit_feeds_list() {
     yad --list --title="$(gettext "Feeds for") \"${tpc}\"" \
-    --text="<small>$(gettext "Configure feed urls to add content automatically from news headlines.")</small>" \
+    --text="<small>$(gettext "Configure feed urls to add content automatically")</small>" \
     --name=Idiomind --class=Idiomind \
     --editable --separator='\n' \
     --always-print-result --print-all \
@@ -84,7 +84,9 @@ function edit_feeds_list() {
     --limit=3 --no-headers --center \
     --width=520 --height=140 --borders=5 \
     --column="" \
-    "$btnf" --button="$(gettext "Save")":0
+    "$btnf" --button="$(gettext "Save")":0 \
+    --button="$(gettext "Cancel")":1
+    
 }
 
 function progr_3() {

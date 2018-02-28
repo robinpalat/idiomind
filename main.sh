@@ -29,9 +29,9 @@ source /usr/share/idiomind/default/c.conf
 if [ -z "${tlng}" -o -z "${slng}" ]; then
     source "$DS/ifs/cmns.sh"
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
-    msg_2 "$(gettext "Please check language settings in the preferences dialog")\n" \
-    error "$(gettext "Open")" "$(gettext "Cancel")"
-    if [ $? = 0 ]; then "$DS/cnfg.sh" 1; else exit 1; fi
+    msg "$(gettext "Please check language settings in the preferences dialog").\n" \
+    dialog-warning "$(gettext "Language settings")"
+    exit 1
 fi
 
 if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
@@ -210,7 +210,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             DM_tlt="$DM_t/$tlng/${name}"
             DC_tlt="$DM_t/$tlng/${name}/.conf"
             export tpcdb="$DC_tlt/tpc"
-            cp -f "$DS/default/tpc" "$tpcdb"
+            "$DS/ifs/mkdb.sh" tpc "${tpc}"
             tpc_db 9 id name "${name}"
             tpc_db 9 id slng "$slng"
             tpc_db 9 id tlng "$tlng"
@@ -375,7 +375,7 @@ PY
         }
         
     if ((stts>=1 && stts<=10)); then
-        readd
+        if [ -f "${DC_tlt}/tpc-journal" ]; then exit 1; else readd; fi
         
         if [ ${cfg0} -lt 1 ]; then
 
@@ -453,7 +453,7 @@ PY
 
     elif [[ ${stts} = 0 ]]; then
     
-        readd
+        if [ -f "${DC_tlt}/tpc-journal" ]; then exit 1; else readd; fi
         
         if [ ${cfg0} -lt 1 ]; then
         

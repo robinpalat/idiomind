@@ -508,13 +508,13 @@ edit_list_more() {
     fi
     optns="$(sed '/^$/d' <<< "${cols1}${cols2}")"
     
-    more="$(yad --form --title="" \
+    more="$(yad --form --title="$(gettext "Select")" \
     --field=":CB" "!${optns}" --separator="" \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --name=Idiomind --class=Idiomind \
     --expand-column=2 --no-click --no-headers\
     --window-icon=idiomind --on-top --center \
-    --width=350 --height=100 --borders=5 \
+    --width=390 --height=100 --borders=5 \
     --column="":TXT \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0)"

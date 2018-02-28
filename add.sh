@@ -56,7 +56,7 @@ new_topic() {
     else
         check_dir "$DM_tl/${name}"
         check_list
-        "$DS/ifs/tpc.sh" "${name}" "$mode" "$activ"
+        "$DS/ifs/tpc.sh" "${name}" "${mode}" "${activ}"
         "$DS/mngr.sh" mkmn 0
     fi
 }
@@ -517,7 +517,7 @@ function process() {
         touch "$DT_r/select_lines"
         if [ "${tpe}" = "$(gettext "New") *" ]; then
             new_topic
-            source $DS/default/c.conf
+            source "$DS/default/c.conf"
         else
             echo "${tpe}" > "$DT/tpe"
         fi
@@ -811,7 +811,7 @@ new_items() {
         fi
         if [ "${tpe}" = "$(gettext "New") *" ]; then
             "$DS/add.sh" new_topic
-            source $DS/default/c.conf
+            source "$DS/default/c.conf"
         else
             ! grep '*' <<< "${tpe}" >/dev/null 2>&1 && echo "${tpe}" > "$DT/tpe"
         fi

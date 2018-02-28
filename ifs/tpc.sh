@@ -21,8 +21,11 @@ chek_topic() {
         touch "${DC_tlt}/data"
     fi
     
+    if [ ! -f "${tpcdb}" ]; then
+        "$DS/ifs/mkdb.sh" tpc "${topic}"
+    fi
     if ! file "${tpcdb}" | grep 'SQLite'; then
-        "$DS/ifs/mkdb.sh" tpc "${tpc}"
+        "$DS/ifs/mkdb.sh" tpc "${topic}"
     fi
     
     touch "${DC_tlt}/data"
@@ -116,7 +119,7 @@ if [ -d "${DM_tlt}" ]; then
     else
         if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
             source "$DS/ifs/mods/main/${topic}.sh"
-            echo "${tpc}" > "$DC_s/tpc"
+            echo "${topic}" > "$DC_s/tpc"
             active_topic
         fi
     fi

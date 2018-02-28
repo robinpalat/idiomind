@@ -641,7 +641,7 @@ function dlg_checklist_3() {
     --title="$(gettext "Found") $(wc -l < "${1}") $(gettext "notes")" \
     --name=Idiomind --class=Idiomind \
     --skip-taskbar --orient=vert --window-icon=idiomind --center --on-top \
-    --gtkrc="$DS/default/gtkrc.cfg" --buttons-layout=edge \
+    --gtkrc="$DS/default/gtkrc.cfg" \
     --width=${sz[0]} --height=${sz[1]} --borders=5 --splitter=${sz[2]} \
     --button=!'gtk-edit'!"$(gettext "Edit")":2 \
     --button=!'gtk-apply'!"$(gettext "Add")":0
