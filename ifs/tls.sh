@@ -749,7 +749,8 @@ set_image() {
             mv -f "$img" "${DM_tls}/images/${trgt,,}"-${n}.jpg
         fi
     elif [ $ret -eq 0 ]; then
-        GDK_BACKEND=x11 /usr/bin/import "$DT/temp.jpg"
+        #GDK_BACKEND=x11 /usr/bin/import "$DT/temp.jpg"
+        gnome-screenshot -a --file="$DT/temp.jpg"
         /usr/bin/convert "$DT/temp.jpg" -interlace Plane -thumbnail 405x275^ \
         -gravity center -extent 400x270 -quality 90% "$ifile"
         "$DS/ifs/tls.sh" set_image "${2}" "${trgt}" & exit
