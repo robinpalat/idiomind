@@ -565,7 +565,7 @@ function process() {
             if [[ $(wc -l < "${DC_tlt}/data") -ge 200 ]]; then
                 echo -e "$(gettext "Maximum number of notes has been exceeded:")\n$trgt\n\n" >> "$DT_r/slog"
             else
-                if [[ $(wc -$c <<< "${trgt}") = 1 ]]; then
+                if [[ $(wc -${c} <<< "${trgt}") = 1 ]]; then
                     export trgt="$(clean_1 "${trgt}")"
                     export srce="$(clean_0 "${srce}")"
                     exmp="$(sqlite3 "$tlngdb" "select Example from Words where Word is '${trgt}';")"
@@ -592,7 +592,7 @@ function process() {
                         echo -e "\n\n$n) ${trgt}" >> "$DT_r/wlog"
                         rm "${DM_tlt}/$cdid.mp3"
                     fi
-                elif [[ $(wc -$c <<< "${trgt}") -ge 1 ]]; then
+                elif [[ $(wc -${c} <<< "${trgt}") -ge 1 ]]; then
                     
                     if [ ${#trgt} -ge ${sentence_chars} ]; then
                         echo -e "\n\n$n) [$(gettext "Sentence too long")] $trgt" >> "$DT_r/slog"
