@@ -496,29 +496,31 @@ edit_list_cmds() {
 edit_list_more() {
     touch "$DT/edit_list_more"
     file="$HOME/.idiomind/backup/${tpc}.bk"
-    cols1="$(gettext "Reverse items order")\n$(gettext "Remove all items")\n$(gettext "Restart topic status")\n$(gettext "Manage feeds")\n$(gettext "Show short sentences in word's view")"
+    cols1="$(gettext "Reverse items order")!$(gettext "Remove all items")!$(gettext "Restart topic status")!$(gettext "Manage feeds")!$(gettext "Show short sentences in word's view")"
     dt1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
     dt2=$(grep '\----- oldest' "${file}" |cut -d' ' -f3)
     if [ -n "$dt2" ]; then
-        cols2="\n$(gettext "Restore backup:") $dt1\n$(gettext "Restore backup:") $dt2"
+        cols2="!$(gettext "Restore backup:") $dt1!$(gettext "Restore backup:") $dt2"
     elif [ -n "$dt1" ]; then
-        cols2="\n$(gettext "Restore backup:") $dt1"
+        cols2="!$(gettext "Restore backup:") $dt1"
     else
         cols2=""
     fi
-    more="$(echo -e "${cols1}${cols2}" |sed '/^$/d' \
-    |yad --list --title="" \
+    optns="$(sed '/^$/d' <<< "${cols1}${cols2}")"
+    
+    more="$(yad --form --title="" \
+    --field=":CB" "!${optns}" --separator="" \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --name=Idiomind --class=Idiomind \
     --expand-column=2 --no-click --no-headers\
     --window-icon=idiomind --on-top --center \
-    --width=350 --height=300 --borders=5 \
+    --width=350 --height=100 --borders=5 \
     --column="":TXT \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0)"
     ret="$?"
     if [ $ret = 0 ]; then
-        _war(){ msg_2 "$(gettext "Confirm")\n" \
+        _war(){ msg_2 "${more}\n" \
         dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"; }
 
         if grep "$(gettext "Reverse items order")" <<< "${more}"; then
