@@ -444,7 +444,7 @@ add_file() {
     FL=$(yad --file --title="$(gettext "Add File")" \
     --text=" $(gettext "Browse to and select the file that you want to add.")" \
     --name=Idiomind --class=Idiomind \
-    --file-filter="$(gettext "All Files") | *.mp3 *.ogg *.mp4 *.m4v *.jpg *.jpeg *.png *.txt *.gif" \
+    --file-filter="$(gettext "Supported files") | *.mp3 *.ogg *.mp4 *.m4v *.jpg *.jpeg *.png *.txt *.gif" \
     --add-preview --multiple \
     --window-icon="$DS/images/icon.png" --on-top --center \
     --width=680 --height=500 --borders=5 \

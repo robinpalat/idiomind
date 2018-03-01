@@ -12,19 +12,18 @@ if [ "$1" = 1 ]; then DC_d="$DC_a/dict/disables"; fi
 
 function dlg_progress_2() {
     yad --progress --title="$(gettext "Performing Tests")" \
-    --text="$(gettext "Please wait...")" \
+    --text="$(gettext "Checking the availability of internet resources. Please wait...")" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind --align=right \
     --progress-text=" " --auto-close \
     --percentage="0" \
     --no-buttons --on-top --fixed \
-    --width=350 --height=80 --borders=5
+    --width=420 --height=80 --borders=8
 }
 
 ( echo "1"
 echo "# $(gettext " ")";
 internet
-
 
 echo "5"
 echo "# TRANSLATOR";
@@ -135,7 +134,7 @@ if ls "$DC_d"/*."Link.Search definition".* 1> /dev/null 2>&1; then
     done  
 fi
 
-echo "80"
+echo "90"
 echo "# IMAGE DOWNLOADER";
 word="$(gettext "test")"
 
