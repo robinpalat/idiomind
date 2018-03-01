@@ -2,7 +2,8 @@
 # -*- ENCODING: UTF-8 -*-
 
 if [ -z "${tlng}" -o -z "${slng}" ]; then
-    msg "$(gettext "Please check language settings in the preferences dialog").\n" \
+        msg "$(gettext "Please check the language settings in the preferences dialog.")
+$(gettext "If necessary, close the program from the panel icon and start it again.")\n" \
     dialog-warning "$(gettext "Language settings")"
     exit 1
 fi

@@ -27,7 +27,7 @@ function vwr() {
     type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
     export trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
     export srce="$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")"
-    export exmp="$(grep -oP '(?<=exmp{).*(?=})' <<< "${item}")"
+    export exmp="$(grep -oP '(?<=exmp{).*(?=})' <<< "${item}" |sed -e 's/^ *//' -e 's/ *$//')"
     export defn="$(grep -oP '(?<=defn{).*(?=})' <<< "${item}")"
     export note="$(grep -oP '(?<=note{).*(?=})' <<< "${item}")"
     export grmr="$(grep -oP '(?<=grmr{).*(?=})' <<< "${item}")"
@@ -79,7 +79,7 @@ function word_view() {
     [ -n "${tags}" ] && field_tag="--field=<small>$tags</small>:lbl"
     [ -n "${defn}" ] && field_defn="--field=$defn:lbl"
     [ -n "${note}" ] && field_note="--field=💬  <span font_desc='Arial 9'>$note</span>:lbl"
-    [ "${exmp##+([[:space:]])}" ] && field_exmp="--field=<span font_desc='Sans Free italic 11'>\"$exmp\"</span>:lbl"
+    [ -n "${exmp}" ] && field_exmp="--field=<span font_desc='Sans Free italic 11'>\"$exmp\"</span>:lbl"
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free ${font_size}'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>$link\n\n"
     yad --form --title=" " \
