@@ -244,7 +244,7 @@ function check_err() {
                 mtitle="$(gettext "Errors found")"
                 mimage="dialog-warning"
             elif [ ${filerr: -4} == ".inf" ]; then
-                mtitle="$(gettext "Errors found")"
+                mtitle="$(gettext "Information")"
                 mimage="info"
             fi
             sleep 2; echo "$(< "$filerr")" |yad --text-info \

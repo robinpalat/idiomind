@@ -37,7 +37,7 @@ fi
 if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
     source "$DS/ifs/cmns.sh"
     msg "$(gettext "Please wait until the current actions are finished")...\n" dialog-information
-    sleep 15; cleanups "$DT/ps_lk" "$DT/el_lk"; exit 1
+    (sleep 50; cleanups "$DT/ps_lk" "$DT/el_lk") & exit 1
 fi
 
 function new_session() {
@@ -313,12 +313,12 @@ function topic() {
         export cnf3=$(mktemp "$DT/cnf3.XXXXXX")
         export cnf4=$(mktemp "$DT/cnf4.XXXXXX")
         if [ -n "$dtei" ]; then 
-            export infolbl="$(gettext "Review") $repass  $(gettext "Installed on") $dtei\n$(gettext "Created by") $autr"
-            [ -e "${DC_tlt}/download" ] && export plusinfo=" <b>$(gettext "Downloadable content available")</b>"
+            [ -e "${DC_tlt}/download" ] && export plusinfo="<b>$(gettext "Downloadable content available")</b>"
+            export infolbl="$(gettext "Review") $repass  $(gettext "Installed on") $dtei\n$(gettext "Created by") $autr\n$plusinfo"
         else 
             export infolbl="$(gettext "Review") $repass  $(gettext "Created on") $dtec"
         fi
-        export lbl1="<span font_desc='Free Sans 15'>${tpc}</span><sup>\n$(gettext "Sentences") $cfg4  $(gettext "Words") $cfg3  $plusinfo\n$infolbl</sup>"
+        export lbl1="<span font_desc='Free Sans 15'>${tpc}</span><sup>\n$(gettext "Sentences") $cfg4  $(gettext "Words") $cfg3\n$infolbl</sup>"
     }
     
     oclean() { cleanups "$cnf1" "$cnf3" "$cnf4" "$DT/tpc_lk"; }

@@ -110,11 +110,21 @@ if [[ ${1} = 0 ]]; then
 elif [[ ${1} != 0 ]]; then
     source /usr/share/idiomind/default/c.conf
     sz=(560 560); [[ ${swind} = TRUE ]] && sz=(450 420)
+    
+    if [ -z "${tlng}" -o -z "${slng}" ]; then
+        source "$DS/ifs/cmns.sh"
+        if [ ! -d "$DT" ]; then mkdir "$DT"; fi
+        msg "$(gettext "Please check language settings in the preferences dialog").\n" \
+        dialog-warning "$(gettext "Language settings")"
+        exit 1
+    fi
+
     if [ -e "$DT/mn_lk" ]; then
         source "$DS/ifs/cmns.sh"
         msg "$(gettext "Please wait until the current actions are finished")...\n" dialog-information
-        exit 1
+        (sleep 50; cleanups "$DT/mn_lk") & exit 1
     fi
+        
     remove_d() {
         source "$DS/ifs/cmns.sh"
         ins="$(cd "/usr/share/idiomind/addons/"; set -- */; printf "%s\n" "${@%/}")"

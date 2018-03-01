@@ -444,7 +444,7 @@ add_file() {
     FL=$(yad --file --title="$(gettext "Add File")" \
     --text=" $(gettext "Browse to and select the file that you want to add.")" \
     --name=Idiomind --class=Idiomind \
-    --file-filter="*.mp3 *.ogg *.mp4 *.m4v *.jpg *.jpeg *.png *.txt *.gif" \
+    --file-filter="$(gettext "All Files") | *.mp3 *.ogg *.mp4 *.m4v *.jpg *.jpeg *.png *.txt *.gif" \
     --add-preview --multiple \
     --window-icon="$DS/images/icon.png" --on-top --center \
     --width=680 --height=500 --borders=5 \
@@ -485,7 +485,7 @@ videourl() {
 }
 
 addFiles() {
-    yad --form --title="$(gettext "Attached Files")" \
+    yad --form --title="$(gettext "Resources")" \
     --name=Idiomind --class=Idiomind \
     ---window-icon=idiomind --center \
     --width=320 --height=100 --borders=5 \
@@ -573,7 +573,7 @@ echo "</body></html>" >> "${DC_tlt}/att.html"
     ch1="$(ls -A "${DM_tlt}/files")"
     if [[ "$(ls -A "${DM_tlt}/files")" ]]; then
         [ ! -e "${DC_tlt}/att.html" ] && mkindex
-         yad --html --title="$(gettext "Attached Files")" \
+         yad --html --title="$(gettext "Resources")" \
         --name=Idiomind --class=Idiomind \
         --encoding=UTF-8 --uri="${DC_tlt}/att.html" --browser \
         --window-icon=idiomind --center \
@@ -691,9 +691,9 @@ promp_topic_info() {
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
     if [ -n "$active_trans" -a "$active_trans" != "$slng" ]; then
         slng_err_lbl="$(gettext "You may need to translate this topic to your language: click \"Manage\" tab on the main window, click \"Edit\" -> \"Translate\" buttons, and from \"Automatic Translation\" select:") \"$slng\""
-        echo -e "$slng_err_lbl" >> "${DC_tlt}/slng.err"
+        echo -e "$slng_err_lbl" >> "${DC_tlt}/slng.inf"
     fi
-    check_err "${DC_tlt}/slng.err" "${DC_tlt}/note.err"
+    check_err "${DC_tlt}/slng.inf" "${DC_tlt}/note.err"
     
 } >/dev/null 2>&1
 

@@ -167,7 +167,7 @@ function upld() {
         trad="$(tpc_db 1 id slng)"
         fsize="$(tpc_db 1 id nsze)"
         cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
-        info="<b>$(gettext "Downloadable content")</b>"
+        info="<b>$(gettext "Downloadable content available")</b>"
         info2="<small>$(gettext "Audio files:") $naud\n$(gettext "Images:") $nimg\n$(gettext "Translations:") $trad\n$(gettext "Total size:") $fsize</small>"
         yad --form --columns=1 --title="$(gettext "Share")" \
         --name=Idiomind --class=Idiomind \

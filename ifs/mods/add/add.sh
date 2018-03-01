@@ -2,8 +2,9 @@
 # -*- ENCODING: UTF-8 -*-
 
 if [ -z "${tlng}" -o -z "${slng}" ]; then
-msg "$(gettext "Please check the language settings in the preferences dialog.")\n" \
-error "$(gettext "Information")" & exit 1
+    msg "$(gettext "Please check language settings in the preferences dialog").\n" \
+    dialog-warning "$(gettext "Language settings")"
+    exit 1
 fi
 
 function check_s() {
