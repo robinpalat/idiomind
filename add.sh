@@ -704,7 +704,7 @@ fetch_content() {
     
     source "$DS/ifs/mods/add/add.sh"
 
-    while read -r _feed; do
+    cat "${DC_tlt}/feeds" |while read -r _feed; do
     
         if [ -n "${_feed}" ]; then
             wget -O "$DT/out.xml" "${_feed}"
@@ -735,7 +735,7 @@ fetch_content() {
         fi
         cleanups "$DT/out.xml"
         
-    done < "${DC_tlt}/feeds"
+    done
     
     cleanups "$DT/updating_feeds"
     return 0
