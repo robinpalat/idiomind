@@ -859,10 +859,10 @@ function practices() {
             msg "$(gettext "There are not enough items to practice") \n" \
             dialog-information " " "$(gettext "OK")"
         elif grep -o -E 'a|b|c|d' <<< ${pr}; then
-            msg "$(gettext "There are no words on the \"Learning\" list, but there are still sentences")... \n" \
+            msg "$(gettext "There are no words on the \"Learning\" list, but there are still sentences"). \n" \
             dialog-information " " "$(gettext "OK")"
         elif grep -o 'e' <<< ${pr}; then
-            msg "$(gettext "There are no sentences on the \"Learning\" list, but there are still words")... \n" \
+            msg "$(gettext "There are no sentences on the \"Learning\" list, but there are still words"). \n" \
             dialog-information " " "$(gettext "OK")"
         fi
         strt 0 & return

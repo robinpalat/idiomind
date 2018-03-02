@@ -592,10 +592,10 @@ function dlg_form_1() {
     --width=470 --borders=5 \
     --field="" "$txt" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
-    --button=!'edit-paste'!"$(gettext "Enable clipboard watcher")":5 \
+    --button=!'edit-paste'!"$(gettext "Clipboard watcher")":5 \
     --button=!'image-x-generic'!"$(gettext "Screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an audio file")":2 \
-    --button=!'gtk-edit'!"$(gettext "Options for copy-pasted text")":"$cmd_words" \
+    --button=!'gtk-edit'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
     --button=!'gtk-apply'!"$(gettext "Add")":0
 }
 
@@ -612,9 +612,10 @@ function dlg_form_2() {
     --field="" "$txt" \
     --field="" "$srce" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
-    --button=!'edit-paste'!"$(gettext "Enable clipboard watcher")":5 \
+    --button=!'edit-paste'!"$(gettext "Clipboard watcher")":5 \
     --button=!'image-x-generic'!"$(gettext "Screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an audio file")":2 \
+    --button=!'gtk-edit'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
     --button=!'gtk-apply'!"$(gettext "Add")":0
 }
 

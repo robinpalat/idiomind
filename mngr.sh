@@ -642,7 +642,7 @@ edit_list_dlg() {
 edit_feeds() {
     file="$DM_tl/${2}/.conf/feeds"
     feeds="$(< "${file}")"
-    [ -n "$feeds" ] && btnf="--button="$(gettext "Fetch Content")":2" \
+    [ -n "$feeds" ] && btnf="--button="$(gettext "Fetch")":2" \
     || btnf="--center"
     export btnf; mods="$(echo "${feeds}" |edit_feeds_list)"
     ret="$?"
@@ -654,7 +654,7 @@ edit_feeds() {
             echo "${mods}" |sed -e '/^$/d' > "${file}"
         fi
         if [ $ret = 2 ]; then
-            "$DS/add.sh" fetch_content "${tpc}" &
+            "$DS/add.sh" fetch_content "${tpc}" 1 &
         fi
     fi
 } >/dev/null 2>&1

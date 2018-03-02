@@ -728,6 +728,7 @@ fetch_content() {
                     ! grep -Fxq "${title^}" "${DC_tlt}/exclude" >/dev/null 2>&1; then
                         export trans='TRUE'
                         export trgt="${title^}"
+                        echo "${trgt}" >> "$DT/updating_feeds"
                         new_item
                     fi
                 fi
@@ -736,6 +737,12 @@ fetch_content() {
         cleanups "$DT/out.xml"
         
     done
+
+    if [[ ${3} = 1 ]] && [[ $(wc -l < "$DT/updating_feeds") = 0 ]]; then
+        notify-send -i idiomind \
+        "$(gettext "Feeds for") \"${tpc}\"" \
+        "$(gettext "No new content")" -t 8000
+    fi
     
     cleanups "$DT/updating_feeds"
     return 0
