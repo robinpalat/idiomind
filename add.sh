@@ -687,6 +687,9 @@ function process() {
 fetch_content() {
     export tpe="${2}"
     DC_tlt="$DM_tl/${tpe}/.conf"
+    itemdir=$(base64 <<< $((RANDOM%100000)) | head -c 32)
+    export DT_r="$DT/$itemdir"
+    
     if [[ $(wc -l < "${DC_tlt}/data") -ge 200 ]]; then exit 1; fi
     if [ -e "$DT/updating_feeds" ]; then
         exit 1
@@ -698,32 +701,18 @@ fetch_content() {
         | grep -m1 "HTTP/1.1" >/dev/null 2>&1 && break || sleep 10
         [ ${t} = 30 ] && exit 1
     done
-    feeds="${DC_tlt}/feeds"
+    
     source "$DS/ifs/mods/add/add.sh"
-    tmplitem="<?xml version='1.0' encoding='UTF-8'?>
-    <xsl:stylesheet version='1.0'
-      xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
-      xmlns:itunes='http://www.itunes.com/dtds/feed-1.0.dtd'
-      xmlns:media='http://search.yahoo.com/mrss/'
-      xmlns:atom='http://www.w3.org/2005/Atom'>
-      <xsl:output method='text'/>
-      <xsl:template match='/'>
-        <xsl:for-each select='/rss/channel/item'>
-          <xsl:value-of select='enclosure/@url'/><xsl:text>-!-</xsl:text>
-          <xsl:value-of select='media:cache[@type=\"image/jpeg\"]/@url'/><xsl:text>-!-</xsl:text>
-          <xsl:value-of select='title'/><xsl:text>-!-</xsl:text>
-          <xsl:value-of select='link'/><xsl:text>-!-</xsl:text>
-          <xsl:value-of select='itunes:summary'/><xsl:text>-!-</xsl:text>
-          <xsl:value-of select='description'/><xsl:text>EOL</xsl:text>
-        </xsl:for-each>
-      </xsl:template>
-    </xsl:stylesheet>"
+
     while read -r _feed; do
+    
         if [ -n "${_feed}" ]; then
-            feed_items="$(xsltproc - "${_feed}" <<< "${tmplitem}" 2> /dev/null)"
+            wget -O "$DT/out.xml" "${_feed}"
+            feed_items="$(xsltproc "$DS/default/tmpl.xml" "$DT/out.xml")"
             if [ -z "${feed_items}" ]; then internet; fi
             feed_items="$(echo "${feed_items}" |tr '\n' '*' |tr -s '[:space:]' |sed 's/EOL/\n/g' |head -n2)"
             feed_items="$(echo "${feed_items}" |sed '/^$/d')"
+
             while read -r item; do
                 if [[ $(wc -l < "${DC_tlt}/data") -ge 200 ]]; then exit 1; fi
                 fields="$(echo "${item}" |sed -r 's|-\!-|\n|g')"
@@ -744,8 +733,12 @@ fetch_content() {
                 fi
             done <<< "${feed_items}"
         fi
-    done < "${feeds}"
-    cleanups "$DT/updating_feeds"; exit 0
+        cleanups "$DT/out.xml"
+        
+    done < "${DC_tlt}/feeds"
+    
+    cleanups "$DT/updating_feeds"
+    return 0
 } 
 
 new_items() {
