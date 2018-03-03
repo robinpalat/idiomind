@@ -546,8 +546,7 @@ edit_list_more() {
                 cleanups "$DT/list_output" "$DT/list_input"
                 yad_kill "yad --list --title="
                 echo 1 > "${DC_tlt}/stts"
-                tpc_db 6 'reviews'; tpc_db 6 'learnt'
-                tpc_db 6 'learning'
+                tpc_db 6 'reviews'; tpc_db 6 'learnt'; tpc_db 6 'learning'
                 
                 while read -r item_; do
                     item="$(sed 's/}/}\n/g' <<< "${item_}")"
@@ -782,7 +781,7 @@ mark_to_learn_topic() {
     fi
     
     steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
-    tpc_db 7 config repass ${steps}
+    tpc_db 9 config repass ${steps}
     export data="${DC_tlt}/data" tpcdb
     
 python <<PY
@@ -849,6 +848,7 @@ mark_as_learned_topic() {
                 elif [ ${steps} -gt 8 ]; then
                     tpc_db 9 reviews date8 ${datex}
                 else
+                    steps=$((steps+1))
                     tpc_db 9 reviews date${steps} ${datex} # FIX 
                 fi
             fi
@@ -933,6 +933,7 @@ mark_as_learned_topic_ok() {
                 fi
             fi
         else
+            steps=$((steps+1))
             tpc_db 9 reviews date1 ${datex}
         fi
         
