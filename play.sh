@@ -53,7 +53,11 @@ play_list() {
     tpc="$(sed -n 1p "$HOME/.config/idiomind/tpc")"
     DC_tlt="${DM_tl}/${tpc}/.conf"
     tpcdb="$DC_tlt/tpc"
-    
+    if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
+        msg "$(gettext "Please wait until the current actions are finished")...\n" \
+        dialog-information
+        (sleep 50; cleanups "$DT/ps_lk" "$DT/el_lk") & exit 1
+    fi
     if [ -z "${tpc}" ]; then
         msg "$(gettext "No topic is active")\n" dialog-information & exit 1
     fi

@@ -751,7 +751,11 @@ fetch_content() {
 new_items() {
     check_err "$DC_a/dicts.err"
     itemdir=$(base64 <<< $((RANDOM%100000)) | head -c 32)
-
+    if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
+        msg "$(gettext "Please wait until the current actions are finished")...\n" \
+        dialog-information
+        (sleep 50; cleanups "$DT/ps_lk" "$DT/el_lk") & exit 1
+    fi
     export DT_r="$DT/$itemdir"
     if [ -f "$DT/clipw" ]; then 
         "$DS/ifs/clipw.sh" 1 & exit 1

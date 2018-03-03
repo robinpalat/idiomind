@@ -235,7 +235,9 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             sed -i '/^$/d' "${DC_tlt}/data"
             export data="${DC_tlt}/data"
 python <<PY
-import os, re, locale, sqlite3
+import os, re, locale, sqlite3, sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 en = locale.getpreferredencoding()
 data = os.environ['data']
 data.encode(en)
@@ -342,7 +344,9 @@ function topic() {
                 f_lock 1 "$DT/tpc_lk"
                 export cnf1 tpcdb
 python <<PY
-import os, re, locale, sqlite3
+import os, re, locale, sqlite3, sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 tags = re.compile(r'<[^>]+>')
 en = locale.getpreferredencoding()
 cnf1 = os.environ['cnf1']

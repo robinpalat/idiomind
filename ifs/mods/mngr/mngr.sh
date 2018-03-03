@@ -10,7 +10,7 @@ function dlg_form_1() {
     --separator="|" \
     --window-icon=idiomind \
     --align=right --text-align=center --columns=2 \
-    --buttons-layout=end --on-top --center \
+    --buttons-layout=end --center \
     --width=650 --height=400 --borders=10 \
     --field="$(gettext "$tlng")" "${trgt}" \
     --field="$(gettext "$slng")" "${srce}" \
@@ -41,7 +41,7 @@ function dlg_form_2() {
     --always-print-result --print-all \
     --separator="|" \
     --window-icon=idiomind \
-    --buttons-layout=end --align=right --on-top --center \
+    --buttons-layout=end --align=right --center \
     --width=650 --height=400 --borders=10 \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field=" $lbl_2":${t} "$type" \

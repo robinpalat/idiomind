@@ -129,7 +129,7 @@ function upld() {
         --name=Idiomind --class=Idiomind \
         --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
-        --align=right --center --on-top \
+        --align=right --center \
         --width=${sz[0]} --height=${sz[1]} --borders=18 \
         --field=" :LBL" "" \
         --field="$(gettext "Category"):CB" "" \
@@ -148,7 +148,7 @@ function upld() {
         --name=Idiomind --class=Idiomind \
         --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
-        --align=right --center --on-top \
+        --align=right --center \
         --width=${sz[0]} --height=${sz[1]} --borders=18 --field=" :LBL" "" \
         --field="$(gettext "Category"):CBE" "$_Categories" \
         --field="$(gettext "Skill Level"):CB" "$_levels" \
@@ -173,7 +173,7 @@ function upld() {
         --name=Idiomind --class=Idiomind \
         --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
-        --align=left --center --on-top \
+        --align=left --center \
         --width=${sz[0]} --height=170 --borders=10 \
         --text="$info" \
         --field="$info2:lbl" " " \
@@ -188,7 +188,7 @@ function upld() {
         --separator="|" \
         --name=Idiomind --class=Idiomind \
         --window-icon=idiomind --buttons-layout=end \
-        --align=left --center --on-top \
+        --align=left --center \
         --width=${sz[0]} --height=140 --borders=10 \
         --field="<b>$(gettext "Downloaded files")</b>:lbl" " " \
         --field="$(gettext "Total size:") ${fsize}":lbl " " \

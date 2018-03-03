@@ -785,7 +785,9 @@ mark_to_learn_topic() {
     export data="${DC_tlt}/data" tpcdb
     
 python <<PY
-import os, re, locale, sqlite3
+import os, re, locale, sqlite3, sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 en = locale.getpreferredencoding()
 data = os.environ['data']
 tpcdb = os.environ['tpcdb']
@@ -874,7 +876,9 @@ mark_as_learned_topic() {
     export data="${DC_tlt}/data" tpcdb
 
 python <<PY
-import os, re, locale, sqlite3
+import os, re, locale, sqlite3, sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 en = locale.getpreferredencoding()
 data = os.environ['data']
 tpcdb = os.environ['tpcdb']
@@ -951,7 +955,9 @@ mark_as_learned_topic_ok() {
     export data="${DC_tlt}/data" tpcdb
     
 python <<PY
-import os, re, locale, sqlite3
+import os, re, locale, sqlite3, sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 en = locale.getpreferredencoding()
 data = os.environ['data']
 tpcdb = os.environ['tpcdb']

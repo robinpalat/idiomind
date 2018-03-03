@@ -829,7 +829,7 @@ function practices() {
             --skip-taskbar --buttons-layout=spread \
             --align=center --center --on-top \
             --width=400 --height=105 --borders=8 \
-            --field="$(gettext "Learning mode")":CHK "" \
+            --field=" $(gettext "Learning mode")":CHK "" \
             --field=" ":LBL "" \
             --button="      $(gettext "$slng")      !!$(gettext "Questions in") $(gettext "$slng") / $(gettext "Answers in") $(gettext "$tlng")":3 \
             --button="      $(gettext "$tlng")      !!$(gettext "Questions in") $(gettext "$tlng") / $(gettext "Answers in") $(gettext "$slng")":2); ret="$?"

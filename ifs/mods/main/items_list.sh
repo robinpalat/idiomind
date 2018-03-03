@@ -87,7 +87,7 @@ function word_view() {
     --text="${sentence}" \
     --window-icon=idiomind \
     --skip-taskbar --text-align=center \
-    --image-on-top --center --on-top \
+    --image-on-top --center \
     --width=630 --height=390 --borders=18 \
     "${field_tag}" "${field_exmp}" "${field_defn}" "${field_note}" \
     --button="!gtk-edit":4 \
@@ -111,7 +111,7 @@ function sentence_view() {
     --select-action="$DS/play.sh 'play_word'" \
     --dclick-action="$DS/play.sh 'play_word'" \
     --window-icon=idiomind \
-    --skip-taskbar --image-on-top --center --on-top \
+    --skip-taskbar --image-on-top --center \
     --scroll --text-align=left --expand-column=0 --no-headers \
     --width=630 --height=390 --borders=18 \
     --column="":TEXT \
