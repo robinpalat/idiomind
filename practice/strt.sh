@@ -5,7 +5,7 @@ source /usr/share/idiomind/default/c.conf
 sz=(500 470); [[ ${swind} = TRUE ]] && sz=(420 410)
 source "$DS/ifs/cmns.sh"
 export -f tpc_db
-dw=$(date +%U)
+dw=$(date +%W)
 if [[ -n "$1" ]]; then
     tpc="$1"
     DM_tlt="$DM_tl/$1"
@@ -61,7 +61,7 @@ function score() {
     [ ! -e ./${pr}.l ] && touch ./${pr}.l
     if [[ $(($(< ./${pr}.l)+easy)) -ge ${all} ]]; then
         _log ${pr}; play "$pdirs/all.mp3" &
-        echo "1p${dw}.$tpc.${dw}p1" >> "$log"
+        echo "1p.$tpc.p1" >> "$log"
         date "+%a %d %B" > ./${pr}.lock
         save_score 0 & echo 21 > .${icon}
         strt 1
@@ -103,7 +103,7 @@ function _log() {
     if [ ${1} != 'e' ]; then
     
         if [ -e ./${1}.1 ]; then
-            echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1.<${stts}/${dw}>" \
+            echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1.<${stts}>" \
             |sed '/\.\./d' >> "$log"
         fi
         if [ -f ./${1}.2 ]; then
@@ -111,23 +111,23 @@ function _log() {
                 lg2="$(grep -Fvxf ./${1}.3 < ./${1}.2)"
                 [ -n "${lg2}" ] && erw="${t2},</span> " || erw=""
                 lg3="$(< ./${1}.3)"
-                echo "w2.$(tr -s '\n' '|' <<< "${lg2}").w2.<${stts}/${dw}>" \
+                echo "w2.$(tr -s '\n' '|' <<< "${lg2}").w2.<${stts}>" \
                 |sed '/\.\./d' >> "$log"
-                echo "w3.$(tr -s '\n' '|' <<< "${lg3}").w3.<${stts}/${dw}>" \
+                echo "w3.$(tr -s '\n' '|' <<< "${lg3}").w3.<${stts}>" \
                 |sed '/\.\./d' >> "$log"
                 i2="${t2}$(echo "${lg2}" |head -n8 |sed -e ':a;N;$!ba;s/\n/, /g')</span>"
                 i3="${t3}$(echo "${lg3}" |head -n8 |sed -e ':a;N;$!ba;s/\n/, /g')</span>"
                 echo -n "${i2}${erw}${i3}" > ./${1}.df
             else
                 lg2="$(< ./${1}.2)"
-                 echo "w2.$(tr -s '\n' '|' <<< "${lg2}").w2.<${stts}/${dw}>" \
+                 echo "w2.$(tr -s '\n' '|' <<< "${lg2}").w2.<${stts}>" \
                 |sed '/\.\./d' >> "$log"
                 i2="$t2$(echo "${lg2}" |head -n16 |sed -e ':a;N;$!ba;s/\n/, /g') </span>"
                 echo -n "${i2}" > ./${1}.df
             fi
         elif [ -f ./${1}.3 ]; then
             lg3="$(< ./${1}.3)"
-            echo "w3.$(tr -s '\n' '|' <<< "${lg3}").w3.<${stts}/${dw}>" \
+            echo "w3.$(tr -s '\n' '|' <<< "${lg3}").w3.<${stts}>" \
             |sed '/\.\./d' >> "$log"
             i3="$t3$(head -n16 <<< "${lg3}") |sed -e ':a;N;$!ba;s/\n/, /g')</span>"
             echo -n "${i3}" > ./${1}.df
@@ -135,15 +135,15 @@ function _log() {
 
     elif [ ${1} = 'e' ]; then
         if [ -e ./${1}.1 ]; then
-            echo "s1.$(tr -s '\n' '|' < ./${1}.1).s1.<${stts}/${dw}>" \
+            echo "s1.$(tr -s '\n' '|' < ./${1}.1).s1.<${stts}>" \
             |sed '/\.\./d' >> "$log"
         fi
         if [ -e ./${1}.2 ]; then
-            echo "s2.$(tr -s '\n' '|' < ./${1}.2).s2.<${stts}/${dw}>" \
+            echo "s2.$(tr -s '\n' '|' < ./${1}.2).s2.<${stts}>" \
             |sed '/\.\./d' >> "$log"
         fi
         if [ -e ./${1}.3 ]; then
-            echo "s3.$(tr -s '\n' '|' < ./${1}.3).s3.<${stts}/${dw}>" \
+            echo "s3.$(tr -s '\n' '|' < ./${1}.3).s3.<${stts}>" \
             |sed '/\.\./d' >> "$log"
         fi
     fi
@@ -778,7 +778,7 @@ function decide_group() {
 
 function practices() {
     pr=${1}
-    log="$DC_s/log"
+    log="$DC_s/$dw.log"
     cfg0="$DC_tlt/data"
     cfg4="$(tpc_db 5 sentences)"
     cfg3="$(tpc_db 5 words)"
@@ -871,7 +871,7 @@ function practices() {
         img_cont="$DS/images/cont.png"
         img_no="$DS/images/no.png"
         img_yes="$DS/images/yes.png"
-        echo "0p${dw}.$tpc.${dw}p0" >> "$log"
+        echo "0p.$tpc.p0" >> "$log"
         practice_${pr}
     fi
 }

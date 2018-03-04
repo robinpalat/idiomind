@@ -9,7 +9,7 @@ function create_db() {
         (month TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT);" |sqlite3 "${db}"
         for m in {01..12}; do sqlite3 ${db} "insert into ${mtable} (month) values ('${m}');"; done
         echo -n "create table if not exists ${wtable} \
-        (week TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT, val5 TEXT, val6 TEXT);" |sqlite3 "${db}"
+        (w TEXT, week TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT, val5 TEXT, val6 TEXT);" |sqlite3 "${db}"
         echo -n "create table if not exists 'expire_month' (date TEXT);" |sqlite3 "${db}"
         echo -n "create table if not exists 'expire_week' (date TEXT);" |sqlite3 "${db}"
         touch "${no_data}"
@@ -20,7 +20,7 @@ function create_db() {
         (month TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT);" |sqlite3 "${db}"
         for m in {01..12}; do sqlite3 ${db} "insert into ${mtable} (month) values ('${m}');"; done
         echo -n "create table if not exists ${wtable} \
-        (week TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT, val5 TEXT, val6 TEXT);" |sqlite3 "${db}"
+        (w TEXT, week TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT, val5 TEXT, val6 TEXT);" |sqlite3 "${db}"
         echo -n "create table if not exists 'expire_month' (date TEXT);" |sqlite3 "${db}"
         echo -n "create table if not exists 'expire_week' (date TEXT);" |sqlite3 "${db}"
         touch "${no_data}"
@@ -87,29 +87,29 @@ function save_topic_stats() {
 function save_word_stats() {
     
     compute() {
-        tpc_practs="$(grep -o -P "(?<=0p${dw}.).*(?=\.${dw}p0)" "${log}" |tr '|' '\n')"
-        tpc_practs_ok="$(grep -o -P "(?<=1p${dw}.).*(?=\.${dw}p1)" "${log}" |tr '|' '\n')"
+        tpc_practs="$(grep -o -P "(?<=0p.).*(?=\.p0)" "${log}" |tr '|' '\n')"
+        tpc_practs_ok="$(grep -o -P "(?<=1p.).*(?=\.p1)" "${log}" |tr '|' '\n')"
         c_tpc_practs=$(grep -c '[^[:space:]]' <<< "${tpc_practs}")
         c_tpc_practs_ok=$(grep -c '[^[:space:]]' <<< "${tpc_practs_ok}")
-        S1w1="$(grep -o -P "(?<=w1.).*(?=\.w1.<1/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # new words learned
+        S1w1="$(grep -o -P "(?<=w1.).*(?=\.w1.<1>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # new words learned
         c_S1w1="$(grep -c '[^[:space:]]' <<< "$S1w1")"
-        S1w2="$(grep -o -P "(?<=w2.).*(?=\.w2.<1/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # words learning (new)
+        S1w2="$(grep -o -P "(?<=w2.).*(?=\.w2.<1>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # words learning (new)
         c_S1w2="$(grep -c '[^[:space:]]' <<< "$S1w2")"
-        S1w3="$(grep -o -P "(?<=w3.).*(?=\.w3.<1/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # words learning (new)
+        S1w3="$(grep -o -P "(?<=w3.).*(?=\.w3.<1>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # words learning (new)
         c_S1w3="$(grep -c '[^[:space:]]' <<< "$S1w3")"
         cc_S1w=$((c_S1w2+c_S1w3)) # words learning (new) x 2
-        S5w1="$(grep -o -P "(?<=w1.).*(?=\.w1.<5/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # words reviewed
+        S5w1="$(grep -o -P "(?<=w1.).*(?=\.w1.<5>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # words reviewed
         c_S5w1="$(grep -c '[^[:space:]]' <<< "$S5w1")"
-        S5w2="$(grep -o -P "(?<=w2.).*(?=\.w2.<5/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # forgotten words
+        S5w2="$(grep -o -P "(?<=w2.).*(?=\.w2.<5>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # forgotten words
         c_S5w2="$(grep -c '[^[:space:]]' <<< "$S5w2")"
-        S5w3="$(grep -o -P "(?<=w3.).*(?=\.w3.<5/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # forgotten words
+        S5w3="$(grep -o -P "(?<=w3.).*(?=\.w3.<5>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # forgotten words
         c_S5w3="$(grep -c '[^[:space:]]' <<< "$S5w3")"
         cc_S5w=$((c_S5w2+c_S5w3)) # forgotten words x2 
-        S6w1="$(grep -o -P "(?<=w1.).*(?=\.w1.<6/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # words reviewed
+        S6w1="$(grep -o -P "(?<=w1.).*(?=\.w1.<6>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # words reviewed
         c_S6w1="$(grep -c '[^[:space:]]' <<< "$S6w1")"
-        S6w2="$(grep -o -P "(?<=w2.).*(?=\.w2.<6/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # Difficult Words to Remember
+        S6w2="$(grep -o -P "(?<=w2.).*(?=\.w2.<6>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # Difficult Words to Remember
         c_S6w2="$(grep -c '[^[:space:]]' <<< "$S6w2")"
-        S6w3="$(grep -o -P "(?<=w3.).*(?=\.w3.<6/${dw}>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # Difficult Words to Remember
+        S6w3="$(grep -o -P "(?<=w3.).*(?=\.w3.<6>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # Difficult Words to Remember
         c_S6w3="$(grep -c '[^[:space:]]' <<< "$S6w3")"
         cc_S6w=$((c_S6w2+c_S6w3)) # Difficult Words to Remember
         cc_S56w=$((c_S5w1+c_S6w1)) # assimilated words ok
@@ -117,10 +117,23 @@ function save_word_stats() {
         # Difficult Words to Remember | words reviewed | test pass | pract act
         echo "${c_S1w1},${cc_S1w},${cc_S5w},${cc_S6w},${cc_S56w},${c_tpc_practs_ok},${c_tpc_practs}"
     }
-  
-    if [[ $(sqlite3 ${db} "select week from '${wtable}' where week is '${week^}';") ]]; then :
-    else
-        [ -f "${log}" ] && rdata=$(compute) || rdata="0,0,0,0,0,0,0"
+
+    w=${dw}
+    while [ 1 ]; do
+        if [[ $(sqlite3 ${db} "select w from '${wtable}' where w is '${w}';") ]]; then break
+        else
+            if [ ${w} = ${dw} -a $(date +%u) != 7 ]; then continue
+            else
+                echo ${w} >> "$DT/weekscnt"
+            fi
+        fi
+        if [ ${w} -lt 1 ]; then break
+        else w=$((w-1)); fi
+    done
+
+    tac "$DT/weekscnt" |head -n12 | while read -r w; do
+        export log="$DC/${w}.log"
+        if [ -f "${log}" ]; then rdata=$(compute); else rdata="0,0,0,0,0,0,0"; fi
         D0=$(cut -d ',' -f 1 <<< "${rdata}"); ! [[ ${D0} =~ $int ]] && D0=0
         D1=$(cut -d ',' -f 2 <<< "${rdata}"); ! [[ ${D1} =~ $int ]] && D1=0
         D2=$(cut -d ',' -f 3 <<< "${rdata}"); ! [[ ${D2} =~ $int ]] && D2=0
@@ -128,10 +141,11 @@ function save_word_stats() {
         D4=$(cut -d ',' -f 5 <<< "${rdata}"); ! [[ ${D4} =~ $int ]] && D4=0
         D5=$(cut -d ',' -f 6 <<< "${rdata}"); ! [[ ${D5} =~ $int ]] && D5=0
         D6=$(cut -d ',' -f 7 <<< "${rdata}"); ! [[ ${D6} =~ $int ]] && D6=0
-        dte=$(sqlite3 ${db} "select date from 'expire_month';")
-        sqlite3 "${db}" "insert into ${wtable} (week,val0,val1,val2,val3,val4,val5,val6) \
-        values ('${week^}','${D0}','${D1}','${D2}','${D3}','${D4}','${D5}','${D6}');"
-    fi
+        sqlite3 "${db}" "insert into ${wtable} (w,week,val0,val1,val2,val3,val4,val5,val6) \
+        values ('${w}','${week^}','${D0}','${D1}','${D2}','${D3}','${D4}','${D5}','${D6}');"
+        # cleanups "${log}"
+    done
+    cleanups "$DT/weekscnt"
 }
 
 function mk_topic_stats() {
@@ -242,7 +256,6 @@ function mk_topic_stats() {
     cp -f "${data}" "${databk}"
 }
 
-log="$DC/log"
 pross="$DM_tls/data/pre_data"
 data="/tmp/.idiomind_stats"
 no_data="${DM_tls}/data/no_data"
@@ -257,7 +270,7 @@ mtable="M$(date +%y)"
 wtable="W$(date +%y)"
 dmonth=$(date +%m)
 cdate=$(date +%m/%d/%Y)
-dw=$(date +%U)
+dw=$(date +%W |sed 's/^0*//')
 
 function chktb() {
     atable=$1; days=$2
@@ -270,9 +283,15 @@ function chktb() {
         fi
         echo 1
     else
-        if [ $((($(date +%s)-$(date -d ${dte} +%s))/(24*60*60))) -gt ${days} ]; then
-        sqlite3 ${db} "update '${atable}' set date='${cdate}' where date='${dte}';">/dev/null 2>&1; echo 0
-        else echo 1; fi
+        # actual date - expire date (1-7 days)
+        if [ $(date +%s) -lt $(date -d ${dte} +%s) ]; then
+        fdate=$(date +%m/%d/%Y -d "+7 days")
+        yad
+        sqlite3 ${db} "update '${atable}' set date='${fdate}' where date='${dte}';">/dev/null 2>&1
+            echo 0
+        else 
+            echo 1
+        fi
     fi
 }
 
