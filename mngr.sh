@@ -28,7 +28,7 @@ mkmn() {
     -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d'; \
     find ./ -maxdepth 1 -mtime +79 -type d -not -path '*/\.*' \
     -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
-    [[ "$2" = 1 ]] && (source "$DS/ifs/stats.sh"; save_topic_stats 0) &
+    [[ "$2" = 1 ]] && (source "$DS/ifs/stats.sh"; coll_tpc_stats 0) &
     f_lock 3 "$DT/mn_lk"; exit 0
 }
 

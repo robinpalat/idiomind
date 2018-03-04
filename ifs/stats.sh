@@ -27,7 +27,7 @@ function create_db() {
     fi
 }
 
-function save_topic_stats() {
+function coll_tpc_stats() {
     
     compute() {
         n=1; f0=0; f1=0; f2=0; f3=0; f4=0
@@ -74,7 +74,6 @@ function save_topic_stats() {
         touch "${no_data}"
     fi
     if [[ "$1" = 1 ]]; then
-        dte=$(sqlite3 ${db} "select date from 'expire_month';")
         sqlite3 ${db} "update ${mtable} set val0='${f0}' where month='${dmonth}';"
         sqlite3 ${db} "update ${mtable} set val1='${f1}' where month='${dmonth}';"
         sqlite3 ${db} "update ${mtable} set val2='${f2}' where month='${dmonth}';"
@@ -84,7 +83,7 @@ function save_topic_stats() {
     echo "${f0},${f1},${f2},${f3},${f4}" > "${pross}"
 }
 
-function save_word_stats() {
+function coll_items_stats() {
     
     compute() {
         tpc_practs="$(grep -o -P "(?<=0p.).*(?=\.p0)" "${log}" |tr '|' '\n')"
@@ -120,35 +119,33 @@ function save_word_stats() {
 
     w=${dw}
     while [ 1 ]; do
-        if [[ $(sqlite3 ${db} "select w from '${wtable}' where w is '${w}';") ]]; then break
+        if [[ -n "$(sqlite3 ${db} "select w from '${wtable}' where w is '${w}';")" ]]; then break
         else
             if [ ${w} = ${dw} -a $(date +%u) != 7 ]; then continue
-            else
-                echo ${w} >> "$DT/weekscnt"
-            fi
+            else echo ${w} >> "$DT/weekscnt"; fi
         fi
-        if [ ${w} -lt 1 ]; then break
-        else w=$((w-1)); fi
+        if [ ${w} -lt 1 ]; then break else w=$((w-1)); fi
     done
-
-    tac "$DT/weekscnt" |head -n12 | while read -r w; do
-        export log="$DC/${w}.log"
-        if [ -f "${log}" ]; then rdata=$(compute); else rdata="0,0,0,0,0,0,0"; fi
-        D0=$(cut -d ',' -f 1 <<< "${rdata}"); ! [[ ${D0} =~ $int ]] && D0=0
-        D1=$(cut -d ',' -f 2 <<< "${rdata}"); ! [[ ${D1} =~ $int ]] && D1=0
-        D2=$(cut -d ',' -f 3 <<< "${rdata}"); ! [[ ${D2} =~ $int ]] && D2=0
-        D3=$(cut -d ',' -f 4 <<< "${rdata}"); ! [[ ${D3} =~ $int ]] && D3=0
-        D4=$(cut -d ',' -f 5 <<< "${rdata}"); ! [[ ${D4} =~ $int ]] && D4=0
-        D5=$(cut -d ',' -f 6 <<< "${rdata}"); ! [[ ${D5} =~ $int ]] && D5=0
-        D6=$(cut -d ',' -f 7 <<< "${rdata}"); ! [[ ${D6} =~ $int ]] && D6=0
-        sqlite3 "${db}" "insert into ${wtable} (w,week,val0,val1,val2,val3,val4,val5,val6) \
-        values ('${w}','${week^}','${D0}','${D1}','${D2}','${D3}','${D4}','${D5}','${D6}');"
-        # cleanups "${log}"
-    done
+    if [ -f "$DT/weekscnt" ]; then
+        tac "$DT/weekscnt" |head -n12 | while read -r w; do
+            export log="$DC/${w}.log"
+            if [ -f "${log}" ]; then rdata=$(compute); else rdata="0,0,0,0,0,0,0"; fi
+            D0=$(cut -d ',' -f 1 <<< "${rdata}"); ! [[ ${D0} =~ $int ]] && D0=0
+            D1=$(cut -d ',' -f 2 <<< "${rdata}"); ! [[ ${D1} =~ $int ]] && D1=0
+            D2=$(cut -d ',' -f 3 <<< "${rdata}"); ! [[ ${D2} =~ $int ]] && D2=0
+            D3=$(cut -d ',' -f 4 <<< "${rdata}"); ! [[ ${D3} =~ $int ]] && D3=0
+            D4=$(cut -d ',' -f 5 <<< "${rdata}"); ! [[ ${D4} =~ $int ]] && D4=0
+            D5=$(cut -d ',' -f 6 <<< "${rdata}"); ! [[ ${D5} =~ $int ]] && D5=0
+            D6=$(cut -d ',' -f 7 <<< "${rdata}"); ! [[ ${D6} =~ $int ]] && D6=0
+            sqlite3 "${db}" "insert into ${wtable} (w,week,val0,val1,val2,val3,val4,val5,val6) \
+            values ('${w}','${week^}','${D0}','${D1}','${D2}','${D3}','${D4}','${D5}','${D6}');"
+            # cleanups "${log}"
+        done
+    fi
     cleanups "$DT/weekscnt"
 }
 
-function mk_topic_stats() {
+function mk_tpc_stats() {
     
     exec 4< <(sqlite3 "$db" "select val0 FROM ${mtable}")
     exec 5< <(sqlite3 "$db" "select val1 FROM ${mtable}")
@@ -272,7 +269,7 @@ dmonth=$(date +%m)
 cdate=$(date +%m/%d/%Y)
 dw=$(date +%W |sed 's/^0*//')
 
-function chktb() {
+function chk_expire() {
     atable=$1; days=$2
     dte=$(sqlite3 ${db} "select date from '${atable}';")>/dev/null 2>&1
     if ! [[ ${dte} =~ ^[0-9]{2}/[0-9]{2}/[0-9]{4}$ ]]; then
@@ -283,11 +280,14 @@ function chktb() {
         fi
         echo 1
     else
-        # actual date - expire date (1-7 days)
-        if [ $(date +%s) -lt $(date -d ${dte} +%s) ]; then
-        fdate=$(date +%m/%d/%Y -d "+7 days")
-        yad
-        sqlite3 ${db} "update '${atable}' set date='${fdate}' where date='${dte}';">/dev/null 2>&1
+        if [ $(date +%s) -gt $(date -d ${dte} +%s) ]; then
+            if [ ${atable} = 'expire_month' ]; then
+                newdate=$(date +%m/01/%Y "-d +1 month")
+            elif [ ${atable} = 'expire_week' ]; then
+                newdate=$(date +%m/%d/%Y -d "+${days} days")
+            fi
+            echo "--- expire date: ${dte} / new: ${newdate}\n"
+            sqlite3 ${db} "update '${atable}' set date='${newdate}' where date='${dte}';">/dev/null 2>&1
             echo 0
         else 
             echo 1
@@ -301,16 +301,16 @@ function pre_comp() {
     echo -n "create table if not exists 'expire_month' (date TEXT);" |sqlite3 "${db}"
     echo -n "create table if not exists 'expire_week' (date TEXT);" |sqlite3 "${db}"
     cleanups "$pross" "$data" "$no_data" "$databk"
-    [ ${dtmnth} = 01 -o $(chktb 'expire_month' 31) = 0 ] && val1=1
-    [ ${dtweek} = 0 -o $(chktb 'expire_week' 7) = 0 ] && val2=1
+    [ $(chk_expire 'expire_month' 31) = 0 ] && val1=1
+    [ $(chk_expire 'expire_week' 7) = 0 ] && val2=1
 
     if [ ${val1} = 1 -a ${val2} != 1 ]; then
-        save_topic_stats 1
+        coll_tpc_stats 1
     elif [ ${val2} = 1 ]; then
-        save_topic_stats ${val1}
-        save_word_stats
+        coll_tpc_stats ${val1}
+        coll_items_stats
     else
-        save_topic_stats 0
+        coll_tpc_stats 0
     fi
 
     echo -e "--- statistics updated\n"
@@ -323,8 +323,8 @@ function stats() {
     if [ ! -e "${data}" -o -e "${pross}" ]; then
         f_lock 1 "$DT/p_stats"
         [ ! -e "${data}" ] && cp -f "${databk}" "${data}"
-        [ ! -e "${pross}" ] && save_topic_stats 0
-        mk_topic_stats
+        [ ! -e "${pross}" ] && coll_tpc_stats 0
+        mk_tpc_stats
         f_lock 3 "$DT/p_stats"
     fi
     if [ -f "${no_data}" ]; then

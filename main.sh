@@ -368,7 +368,7 @@ PY
                 "$DS/ifs/tls.sh" colorize 1
                 f_lock 3 "$DT/tpc_lk"
                 source "$DS/ifs/stats.sh"
-                save_topic_stats 0
+                coll_tpc_stats 0
             fi
             
             ntpc=$(cut -d '|' -f 1 < "${cnf4}")
