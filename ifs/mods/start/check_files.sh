@@ -14,6 +14,11 @@ if [ ! -d "$DC" ]; then
     mkdir -p "$DC/addons"
 fi
 
+if [ -f "$DC_s/1.cfg" ]; then
+    for n in {1..10}; do cleanups "$DC_s/${n}.cfg"; done
+    for n in {1..10}; do cleanups "$DM_tls/${n}.cfg"; done
+fi
+
 if [ ! -f "${cfg_db}" ]; then
     "$DS/ifs/tls.sh" create_cfg
 fi

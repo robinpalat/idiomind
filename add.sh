@@ -77,7 +77,7 @@ function new_item() {
         dialog-information "$(gettext "Information")" & exit 1
     fi
     if grep -o -E 'ja|zh-cn|ru' <<< "$lgt" >/dev/null 2>&1 ; then
-        srce=$(translate "${trgt}" auto $lgs)
+        srce="$(translate "${trgt}" auto $lgs)"
         [ -z "${srce}" ] && internet
         if [ $(wc -w <<< "${srce}") = 1 ]; then
             new_word

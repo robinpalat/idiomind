@@ -3,7 +3,7 @@
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 
-export s0="<img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAbCAYAAAAdx42aAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAB3AAAAdwBBaEhYAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABmSURBVEiJY2AYBaNgFIyCUTAKRjpgRBc4ceKiDAPzv/lUt+jfrwhzc/O36OIsGAoZ/3MxMDC4UNsBv1lZ2bGJM1HbIlLBqANGHTDqgFEHDLgDMIpiBgbG3wwM/+9R2yJGZuY/2MQB3hUOVat6QXgAAAAASUVORK5CYII=\"/>"
+export s0="<img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAB5QAAAeUBKFD6vwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABTSURBVFiF7c6hDYBADEDRf+QE6yAIm7EEYSkcwbDNySKYgJRg+M9Utf0gSZKkvysA+3E2iD55a5nGYX661CWfphlggAEG1HvEClEzh4KyvRH0uQvFHQppbRgchwAAAABJRU5ErkJggg==\"/>"
 
 _head(){
     cat <<!EOF
@@ -22,7 +22,7 @@ _note(){
 sentence_normal() {
     cat <<!EOF
 <table style="vertical-align:top" width="100%" align="left" cellpadding="0" cellspacing="0">
-<td>$s0<s1>${trgt}</s1><br><s2>${srce}</s2><hr class="dashed"></td></table>
+<td><s1>${trgt}</s1><br><s2>${srce}</s2><hr class="dashed"></td></table>
 !EOF
 }
 
