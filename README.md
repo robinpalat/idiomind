@@ -1,7 +1,7 @@
 
 # System Requirement #
 
-GTK+-based desktop environments, bash (>=4.1), yad (>=0.37), mplayer, imagemagick, wkhtmltopdf, curl, html2text, xclip, python, espeak, sqlite3, sox.
+GTK+-based desktop environment, bash (>=4.1), yad (>=0.37), mplayer, imagemagick, wkhtmltopdf, curl, html2text, xclip, python, espeak, sqlite3, sox.
 
 # Installing in Debian, Ubuntu, and derivatives: #
 
