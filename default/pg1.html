@@ -1,7 +1,7 @@
 <html>
 <head>
     <meta charset="utf-8"/>
-    <script src="./js/chart.js"></script>
+    <script src="/usr/share/idiomind/default/js/chart.js"></script>
     <script type="text/javascript" src="/tmp/.idiomind_stats"></script>
     <style type="text/css">
     a.cursor {cursor:hand;
@@ -16,13 +16,16 @@
     body {margin:12;padding:10;}
     </style>
     <script>
-    function page2() { window.location = "./pg2.html"; }
-    function page3() { window.location = "./pg3.html"; }
-    </script>
+    var a = window.location.toString();
+    a = a.substring(a.indexOf('lang=')+5);
+    function page2() { window.location = "file:////usr/share/idiomind/default/pg2.html?lang="+a; }
+    function page3() { window.location = "file:////usr/share/idiomind/default/pg3.html?lang="+a; }
+  </script>
+
 </head>
 <body>
 <div style="text-align:center">
-    <span style="float:left"><a onclick="page2(); return false" class="lbl"> Monthly register based on topics status </a></span>
+    <span style="float:left"><a onclick="page2(); return false" id="lbl1" class="lbl"></a></span>
     <span style="float:right">
         <a onclick="#; return false" class="cursor"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAWCAQAAABnVgTKAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAADdcAAA3XAUIom3gAAAAHdElNRQfiAQcSLzeC7OtcAAAAeklEQVQoz2NgGGZABJnDhEUBI4Mugx0DMwMzTIAFQwkbgxmDGKoQuiJ+BksGLnR9qIpkGYwQlmBXpMOghsT7z8CIz+EYANnwVwxfGCTg2m4yMDD8x2bSY4YDDN8wTUK37iPDPoZX+KyDgL8MjxlYGISRrcMFRIdF4gIAQC0P06A5tTcAAAAASUVORK5CYII="></img></a> 
         <a onclick="page2(); return false" class="cursor"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAWCAQAAABnVgTKAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAADdcAAA3XAUIom3gAAAAHdElNRQfiAQcSLxleOuaTAAAAdklEQVQoz2NgGBbACLswM5zFxsDMsIGBk+E0w390RUxo/FiGKQz8hBQxMJgxLGZQI6SIgUGKYR6DO3Y3MTMwMCRD2SwMzgwcDCfxmYQBWLCK/mBoZtiJX9EzhhKGW/gdfoohFlUJMmBjYGM4w5BP2JXGDMMLAADXJw84ku438wAAAABJRU5ErkJggg=="></img></a> 
@@ -77,11 +80,36 @@
     pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f1}]
     }
     window.onload = function(){
+    
+    var a = window.location.toString();
+    a = a.substring(a.indexOf('lang=')+5);
+
+    if (a == 'en') {
+        var lbl1 = 'Monthly register based on topics status';
+    } else if
+        (a == 'es') {
+        var lbl1 = 'Registro mensual basado en el estado de los temas';
+    } else if
+        (a == 'it') {
+        var lbl1 = 'Monthly register based on topics status';
+    } else if
+        (a == 'fr') {
+        var lbl1 = 'Monthly register based on topics status';
+    } else if
+        (a == 'pt') {
+        var lbl1 = 'Monthly register based on topics status';
+    };
+    
+    document.getElementById("lbl1").innerHTML = lbl1;
+    
     var ctx = document.getElementById("canvas").getContext("2d");
     window.myLine = new Chart(ctx).Line(lineChartData, {
         responsive: true
     });
 	}
 	</script>
+    
+  
+    
 </body>
 </html>

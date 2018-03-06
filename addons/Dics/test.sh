@@ -22,7 +22,7 @@ function dlg_progress_2() {
 }
 
 ( echo "1"
-echo "# $(gettext " ")";
+echo "#  ";
 internet
 
 echo "5"
