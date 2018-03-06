@@ -743,14 +743,13 @@ function decide_group() {
         good="$(gettext "Very Good!")   "
     fi
     info="$(gettext "Left") <b>$left</b>   $(gettext "Learnt") <b>$learnt</b>   $(gettext "Easy") <b>$easy</b>   $(gettext "Learning") <b>$ling</b>   $(gettext "Difficult") <b>$hard</b>"
-    optns=$(yad --form --title="$good$(gettext "Continue")..." \
+    optns=$(yad --form --title="$good$(gettext "Continue")" \
     --window-icon=idiomind \
     --always-print-result \
     --skip-taskbar --buttons-layout=spread \
     --text-align=center --align=center --center --on-top \
     --text="${info}" "" \
-    --width=500 --height=90 --borders=8 \
-    --button="!window-close":5 \
+    --width=500 --borders=15 \
     --button="$(gettext "Again")!view-refresh!$(gettext "Go back to practice the above items")":1 \
     --button="$(gettext "Continue")!go-next!$(gettext "Practice the next group")":0); ret="$?"
     unset good
@@ -828,7 +827,7 @@ function practices() {
             --window-icon=idiomind \
             --skip-taskbar --buttons-layout=spread \
             --align=center --center --on-top \
-            --width=400 --height=105 --borders=8 \
+            --width=400 --borders=15 \
             --field=" $(gettext "Learning mode")":CHK "" \
             --field=" ":LBL "" \
             --button="      $(gettext "$slng")      !!$(gettext "Questions in") $(gettext "$slng") / $(gettext "Answers in") $(gettext "$tlng")":3 \
