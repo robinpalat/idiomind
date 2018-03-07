@@ -4,16 +4,16 @@
     <script src="/usr/share/idiomind/default/js/chart.js"></script>
     <script type="text/javascript" src="/tmp/.idiomind_stats"></script>
     <style type="text/css">
-    a.cursor {cursor:hand;
-    margin:10;
-    text-decoration:none;}
-    .lbl {
-    text-decoration:none;
-    font-family: "Arial", Georgia, Serif;
-    color:#616161;
-    font-size:12;
-    font-weight:bold;}
-    body {margin:12;padding:10;}
+        a.cursor {cursor:hand;
+        margin:10;
+        text-decoration:none;}
+        .lbl {
+        text-decoration:none;
+        font-family: "Arial", Georgia, Serif;
+        color:#616161;
+        font-size:12;
+        font-weight:bold;}
+        body {margin:12;padding:10;}
     </style>
     <script>
     var a = window.location.toString();
@@ -80,63 +80,58 @@
     pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f1}]
     }
     window.onload = function(){
-    
-    var a = window.location.toString();
-    a = a.substring(a.indexOf('lang=')+5);
-
-    if (a == 'en') {
-        var lbl1 = 'Monthly register based on topics status';
-        var lbl2 = 'New (unprocessed)';
-        var lbl3 = 'Learned';
-        var lbl4 = 'Reviewing';
-        var lbl5 = 'Learned, but needs review';
-        var lbl6 = 'Inactive';
-    } else if
-        (a == 'es') {
-        var lbl1 = 'Registro mensual basado en el estado de los temas';
-        var lbl2 = 'Nuevos (no procesados)';
-        var lbl3 = 'Aprendidos';
-        var lbl4 = 'Repasando';
-        var lbl5 = 'Aprendidos pero necesitan repaso';
-        var lbl6 = 'Inactivos';
+        var a = window.location.toString();
+        a = a.substring(a.indexOf('lang=')+5);
+        if (a == 'es') {
+            var lbl1 = 'Reporte mensual del estado de los temas';
+            var lbl2 = 'Nuevos (no procesados)';
+            var lbl3 = 'Aprendidos';
+            var lbl4 = 'Repasando';
+            var lbl5 = 'Aprendidos pero necesitan repaso';
+            var lbl6 = 'Inactivos';
+        } else if
+            (a == 'it') {
+            var lbl1 = 'Monthly register based on topics status';
+            var lbl2 = 'New (unprocessed)';
+            var lbl3 = 'Learned';
+            var lbl4 = 'Reviewing';
+            var lbl5 = 'Learned, but needs review';
+            var lbl6 = 'Inactive';
+        } else if
+            (a == 'fr') {
+            var lbl1 = 'Monthly register based on topics status';
+            var lbl2 = 'New (unprocessed)';
+            var lbl3 = 'Learned';
+            var lbl4 = 'Reviewing';
+            var lbl5 = 'Learned, but needs review';
+            var lbl6 = 'Inactive';
+        } else if
+            (a == 'pt') {
+            var lbl1 = 'Monthly register based on topics status';
+            var lbl2 = 'New (unprocessed)';
+            var lbl3 = 'Learned';
+            var lbl4 = 'Reviewing';
+            var lbl5 = 'Learned, but needs review';
+            var lbl6 = 'Inactive';
+        } else {
+            var lbl1 = 'Monthly register based on topics status';
+            var lbl2 = 'New (unprocessed)';
+            var lbl3 = 'Learned';
+            var lbl4 = 'Reviewing';
+            var lbl5 = 'Learned, but needs review';
+            var lbl6 = 'Inactive';
+        };
+        document.getElementById("lbl1").innerHTML = lbl1;
+        document.getElementById("lbl2").innerHTML = lbl2;
+        document.getElementById("lbl3").innerHTML = lbl3;
+        document.getElementById("lbl4").innerHTML = lbl4;
+        document.getElementById("lbl5").innerHTML = lbl5;
+        document.getElementById("lbl6").innerHTML = lbl6;
         
-    } else if
-        (a == 'it') {
-        var lbl1 = 'Monthly register based on topics status';
-        var lbl2 = 'New (unprocessed)';
-        var lbl3 = 'Learned';
-        var lbl4 = 'Reviewing';
-        var lbl5 = 'Learned, but needs review';
-        var lbl6 = 'Inactive';
-    } else if
-        (a == 'fr') {
-        var lbl1 = 'Monthly register based on topics status';
-        var lbl2 = 'New (unprocessed)';
-        var lbl3 = 'Learned';
-        var lbl4 = 'Reviewing';
-        var lbl5 = 'Learned, but needs review';
-        var lbl6 = 'Inactive';
-    } else if
-        (a == 'pt') {
-        var lbl1 = 'Monthly register based on topics status';
-        var lbl2 = 'New (unprocessed)';
-        var lbl3 = 'Learned';
-        var lbl4 = 'Reviewing';
-        var lbl5 = 'Learned, but needs review';
-        var lbl6 = 'Inactive';
-    };
-    
-    document.getElementById("lbl1").innerHTML = lbl1;
-    document.getElementById("lbl2").innerHTML = lbl2;
-    document.getElementById("lbl3").innerHTML = lbl3;
-    document.getElementById("lbl4").innerHTML = lbl4;
-    document.getElementById("lbl5").innerHTML = lbl5;
-    document.getElementById("lbl6").innerHTML = lbl6;
-    
-    var ctx = document.getElementById("canvas").getContext("2d");
-    window.myLine = new Chart(ctx).Line(lineChartData, {
-        responsive: true
-    });
+        var ctx = document.getElementById("canvas").getContext("2d");
+        window.myLine = new Chart(ctx).Line(lineChartData, {
+            responsive: true
+        });
 	}
 	</script>
     

@@ -4,17 +4,17 @@
     <script src="/usr/share/idiomind/default/js/chart.js"></script>
     <script type="text/javascript" src="/tmp/.idiomind_stats"></script>
     <style type="text/css">
-    a.cursor {cursor:hand;
-    margin:10;
-    text-decoration:none;
-    }
-    .lbl {
-    text-decoration:none;
-    font-family: "Arial", Georgia, Serif;
-    color:#616161;
-    font-size:12;
-    font-weight:bold;}
-    body {margin:12;padding:10;}
+        a.cursor {cursor:hand;
+        margin:10;
+        text-decoration:none;
+        }
+        .lbl {
+        text-decoration:none;
+        font-family: "Arial", Georgia, Serif;
+        color:#616161;
+        font-size:12;
+        font-weight:bold;}
+        body {margin:12;padding:10;}
     </style>
     <script>
     var a = window.location.toString();
@@ -80,74 +80,70 @@
     pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f4}]
     }
 	window.onload = function(){
+        var a = window.location.toString();
+        a = a.substring(a.indexOf('lang=')+5);
+        if (a == 'es') {
+            var lbl1 = 'Reporte semanal de palabras basado en los resultados de las prácticas';
+            var lbl2 = 'Nuevas palabras:';
+            var lbl3 = 'Aprendidas';
+            var lbl4 = 'Aprendiendo';
+            var lbl5 = 'Palabras repasadas:';
+            var lbl6 = 'Superadas';
+            var lbl7 = 'Olvidadas';
+            var lbl8 = 'Difíciles';
+        } else if
+            (a == 'it') {
+            var lbl1 = 'Weekly report of words based on practice activity';
+            var lbl2 = 'New words:';
+            var lbl3 = 'Learned';
+            var lbl4 = 'Learning';
+            var lbl5 = 'Words reviewed:';
+            var lbl6 = 'Passed';
+            var lbl7 = 'Forgotten';
+            var lbl8 = 'Difficult';
+        } else if
+            (a == 'fr') {
+            var lbl1 = 'Weekly report of words based on practice activity';
+            var lbl2 = 'New words:';
+            var lbl3 = 'Learned';
+            var lbl4 = 'Learning';
+            var lbl5 = 'Words reviewed:';
+            var lbl6 = 'Passed';
+            var lbl7 = 'Forgotten';
+            var lbl8 = 'Difficult';
+        } else if
+            (a == 'pt') {
+            var lbl1 = 'Weekly report of words based on practice activity';
+            var lbl2 = 'New words:';
+            var lbl3 = 'Learned';
+            var lbl4 = 'Learning';
+            var lbl5 = 'Words reviewed:';
+            var lbl6 = 'Passed';
+            var lbl7 = 'Forgotten';
+            var lbl8 = 'Difficult';
+        } else {
+            var lbl1 = 'Weekly report of words based on practice activity';
+            var lbl2 = 'New words:';
+            var lbl3 = 'Learned';
+            var lbl4 = 'Learning';
+            var lbl5 = 'Words reviewed:';
+            var lbl6 = 'Passed';
+            var lbl7 = 'Forgotten';
+            var lbl8 = 'Difficult';
+        };
+        document.getElementById("lbl1").innerHTML = lbl1;
+        document.getElementById("lbl2").innerHTML = lbl2;
+        document.getElementById("lbl3").innerHTML = lbl3;
+        document.getElementById("lbl4").innerHTML = lbl4;
+        document.getElementById("lbl5").innerHTML = lbl5;
+        document.getElementById("lbl6").innerHTML = lbl6;
+        document.getElementById("lbl7").innerHTML = lbl7;
+        document.getElementById("lbl8").innerHTML = lbl8;
         
-    var a = window.location.toString();
-    a = a.substring(a.indexOf('lang=')+5);
-
-    if (a == 'en') {
-        var lbl1 = 'Weekly report of words based on practice activity';
-        var lbl2 = 'New words:';
-        var lbl3 = 'Learned';
-        var lbl4 = 'Learning';
-        var lbl5 = 'Words reviewed:';
-        var lbl6 = 'Passed';
-        var lbl7 = 'Forgotten';
-        var lbl8 = 'Difficult';
-    } else if
-        (a == 'es') {
-        var lbl1 = 'Reporte semanal de palabras basado en actividad de la práctica';
-        var lbl2 = 'Nuevas palabras:';
-        var lbl3 = 'Aprendidas';
-        var lbl4 = 'Aprendiendo';
-        var lbl5 = 'Palabras repasadas:';
-        var lbl6 = 'Superadas';
-        var lbl7 = 'Olvidadas';
-        var lbl8 = 'Difíciles';
-    } else if
-        (a == 'it') {
-        var lbl1 = 'Weekly report of words based on practice activity';
-        var lbl2 = 'New words:';
-        var lbl3 = 'Learned';
-        var lbl4 = 'Learning';
-        var lbl5 = 'Words reviewed:';
-        var lbl6 = 'Passed';
-        var lbl7 = 'Forgotten';
-        var lbl8 = 'Difficult';
-    } else if
-        (a == 'fr') {
-        var lbl1 = 'Weekly report of words based on practice activity';
-        var lbl2 = 'New words:';
-        var lbl3 = 'Learned';
-        var lbl4 = 'Learning';
-        var lbl5 = 'Words reviewed:';
-        var lbl6 = 'Passed';
-        var lbl7 = 'Forgotten';
-        var lbl8 = 'Difficult';
-    } else if
-        (a == 'pt') {
-        var lbl1 = 'Weekly report of words based on practice activity';
-        var lbl2 = 'New words:';
-        var lbl3 = 'Learned';
-        var lbl4 = 'Learning';
-        var lbl5 = 'Words reviewed:';
-        var lbl6 = 'Passed';
-        var lbl7 = 'Forgotten';
-        var lbl8 = 'Difficult';
-    };
-    
-    document.getElementById("lbl1").innerHTML = lbl1;
-    document.getElementById("lbl2").innerHTML = lbl2;
-    document.getElementById("lbl3").innerHTML = lbl3;
-    document.getElementById("lbl4").innerHTML = lbl4;
-    document.getElementById("lbl5").innerHTML = lbl5;
-    document.getElementById("lbl6").innerHTML = lbl6;
-    document.getElementById("lbl7").innerHTML = lbl7;
-    document.getElementById("lbl8").innerHTML = lbl8;
-    
-    var ctx = document.getElementById("canvas").getContext("2d");
-    window.myLine = new Chart(ctx).Line(lineChartData, {
-        responsive: true
-    });
+        var ctx = document.getElementById("canvas").getContext("2d");
+        window.myLine = new Chart(ctx).Line(lineChartData, {
+            responsive: true
+        });
 	}
 	</script>
 </body>

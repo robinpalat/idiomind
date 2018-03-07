@@ -2,9 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
-source "$DS/default/sets.cfg"
-lgt=${tlangs[$tlng]}
-lgs=${slangs[$slng]}
 
 function create_db() {
     if [ ! -e "${db}" ]; then
@@ -334,7 +331,7 @@ function stats() {
         source "$DS/ifs/cmns.sh"
         msg "$(gettext "Insufficient data")\n" dialog-information " "
     else
-        yad --html --uri="file:///$DS/default/pg1.html?lang=$lgs" \
+        yad --html --uri="file:///$DS/default/pg1.html?lang=$intrf" \
         --title="$(gettext "Statistics")" \
         --name=Idiomind --class=Idiomind \
         --browser --encoding=UTF-8 \
