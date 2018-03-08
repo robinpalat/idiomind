@@ -223,7 +223,7 @@ function mk_tpc_stats() {
             declare f$m=0
         fi
     done
-
+    
     a="$(sqlite3 "$db" "select val5 FROM ${wtable}" |tail -n17)"
     b="$(sqlite3 "$db" "select val6 FROM ${wtable}" |tail -n17)"
     
