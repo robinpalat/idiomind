@@ -80,7 +80,7 @@ function new_session() {
     fi
     # update - topics
     if [ ! -f "${shrdb}" ]; then
-        "$DS/ifs/tls.sh" create_shrdb
+        "$DS/ifs/mkdb.sh" share
     else
         for n in {1..4} 7; do 
         cdb ${shrdb} 6 T${n}; done

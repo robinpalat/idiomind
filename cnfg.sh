@@ -10,9 +10,8 @@ cnf1=$(mktemp "$DT/cnf1.XXXXXX")
 source $DS/default/sets.cfg
 lang1="${!tlangs[@]}"; lt=( $lang1 )
 lang2="${!slangs[@]}"; ls=( $lang2 )
-if [ ! -e "${cfgdb}" ]; then
-    "$DS/ifs/tls.sh" create_cfgdb
-fi
+if [ ! -f "${cfgdb}" ]; then "$DS/ifs/mkdb.sh" config; fi
+if ! file "${cfgdb}" |grep 'SQLite'; then "$DS/ifs/mkdb.sh" config; fi
 desktopfile="[Desktop Entry]
 Name=Idiomind
 GenericName=Learning Tool
@@ -36,7 +35,8 @@ confirm() {
 
 set_lang() {
     language="$1"
-    check_dir "$DM_t/$language/.share/images" "$DM_t/$language/.share/audio"
+    check_dir "$DM_t/$language/.share/images" \
+    "$DM_t/$language/.share/audio"
     cdb "${cfgdb}" 3 lang tlng "${language}"
     cdb "${cfgdb}" 3 lang slng "${slng}"
     "$DS/stop.sh" 4
@@ -56,6 +56,8 @@ set_lang() {
     else
         > "$DT/tpe"; > "$DC_s/tpc"
     fi
+    if [ ! -f "${shrdb}" ]; then "$DS/ifs/mkdb.sh" share; fi
+    if ! file "${shrdb}" | grep 'SQLite'; then "$DS/ifs/mkdb.sh" share; fi
     
     check_list
     

@@ -50,7 +50,7 @@ elif [ "${act}: " = "$l8" ]; then
 else
     while read -r addon; do
         if [ -e "$DC_a/$addon.tasks" ]; then
-            if grep -o "$arg" "$DC_a/$addon.tasks"; then
+            if grep -o "$arg" "$DC_a/$addon.$tlng"; then
                 "$DS/addons/$addon/cnfg.sh" tasks "$tpt" &
                 modmenu "$arg"
                 break

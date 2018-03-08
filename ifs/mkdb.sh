@@ -38,12 +38,59 @@ function create_tpcdb() {
     sqlite3 "${tpcdb}" "pragma busy_timeout=2000;\
     insert into reviews (date1) values ('');"
     echo -n "pragma foreign_keys=ON" |sqlite3 "${tpcdb}"
-
     return 0
 }
 
+function create_shrdb() {
+    source /usr/share/idiomind/default/c.conf
+    shrdb="$DM_tls/data/config"
+    echo -n "create table if not exists topics (list TEXT);" |sqlite3 "${shrdb}"
+    echo -n "create table if not exists T1 (list TEXT);" |sqlite3 "${shrdb}"
+    echo -n "create table if not exists T2 (list TEXT);" |sqlite3 "${shrdb}"
+    echo -n "create table if not exists T3 (list TEXT);" |sqlite3 "${shrdb}"
+    echo -n "create table if not exists T4 (list TEXT);" |sqlite3 "${shrdb}"
+    echo -n "create table if not exists T5 (list TEXT);" |sqlite3 "${shrdb}"
+    echo -n "create table if not exists T6 (list TEXT);" |sqlite3 "${shrdb}"
+    echo -n "create table if not exists T7 (list TEXT);" |sqlite3 "${shrdb}"
+    echo -n "create table if not exists T8 (list TEXT);" |sqlite3 "${shrdb}"
+    echo -n "create table if not exists T9 (list TEXT);" |sqlite3 "${shrdb}"
+    echo -n "create table if not exists T10 (list TEXT);" |sqlite3 "${shrdb}"
+}
+
+function create_cfgdb() {
+    cfgdb="$HOME/.config/idiomind/config"
+    echo -n "pragma busy_timeout=800;create table if not exists opts \
+    (gramr TEXT, trans TEXT, dlaud TEXT, ttrgt TEXT, itray TEXT, \
+    swind TEXT, stsks TEXT, tlang TEXT, slang TEXT, \
+    synth TEXT, txaud TEXT, intrf TEXT);" |sqlite3 "${cfgdb}"
+    echo -n "pragma busy_timeout=500;create table if not exists lang \
+    (tlng TEXT, slng TEXT);" |sqlite3 "${cfgdb}"
+    echo -n "pragma busy_timeout=500; create table if not exists geom \
+    (vals TEXT);" |sqlite3 "${cfgdb}"
+    echo -n "pragma busy_timeout=500; create table if not exists user \
+    (autr TEXT, pass TEXT);" |sqlite3 "${cfgdb}"
+    echo -n "pragma busy_timeout=500; create table if not exists sess \
+    (date TEXT);" |sqlite3 "${cfgdb}"
+    echo -n "pragma busy_timeout=500; create table if not exists updt \
+    (date TEXT,ignr TEXT);" |sqlite3 "${cfgdb}"
+    sqlite3 "${cfgdb}" "pragma busy_timeout=500;\
+    insert into opts (gramr,trans,dlaud,ttrgt,itray,\
+    swind,stsks,tlang,slang,synth,txaud,intrf) \
+    values ('FALSE','FALSE','FALSE','FALSE','FALSE',\
+    'FALSE','FALSE','','','','','default');"
+    sqlite3 "${cfgdb}" "insert into lang (tlng,slng) values ('','');"
+    sqlite3 "${cfgdb}" "insert into user (autr,pass) values ('','');"
+    sqlite3 "${cfgdb}" "insert into geom (vals) values ('');"
+    v=$(date +%d)
+    sqlite3 "${cfgdb}" "insert into sess (date) values ('${v}');"
+    sqlite3 "${cfgdb}" "insert into updt (date) values ('${v}');"
+}
 
 case "$1" in
     tpc)
     create_tpcdb "$@" ;;
+    share)
+    create_shrdb "$@" ;;
+    config)
+    create_cfgdb "$@" ;;
 esac

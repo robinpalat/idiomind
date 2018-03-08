@@ -56,8 +56,8 @@ done < <(cdb "${shrdb}" 5 T7 |tac)
 
 ## addons
 while read -r addon; do
-    if [ -e "$DC_a/$addon.tasks" ]; then
-        tac "$DC_a/$addon.tasks" >> "$f"
+    if [ -e "$DC_a/$addon.$tlng" ]; then
+        tac "$DC_a/$addon.$tlng" >> "$f"
     fi
 done < "$DS_a/menu_list"
 

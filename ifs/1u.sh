@@ -82,7 +82,7 @@ function set_lang() {
     
     shrdb="$DM_t/$tlng/.share/data/config"
     if [ ! -f "${shrdb}" ]; then
-        "/usr/share/idiomind/ifs/tls.sh" create_shrdb
+        "/usr/share/idiomind/ifs/mkdb.sh" share
     fi
 }
 
@@ -133,7 +133,7 @@ elif [ $ret -eq 0 ]; then
     
     export cfgdb="$DC_s/config"
     if [ ! -f "${cfgdb}" ]; then
-        "/usr/share/idiomind/ifs/tls.sh" create_cfgdb
+        "/usr/share/idiomind/ifs/mkdb.sh" config
     fi
 
     for val in "${lt[@]}"; do

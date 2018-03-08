@@ -318,51 +318,6 @@ PY
     cleanups "$DT/ps_lk"
 }
 
-create_cfgdb() {
-    cfgdb="$HOME/.config/idiomind/config"
-    echo -n "pragma busy_timeout=800;create table if not exists opts \
-    (gramr TEXT, trans TEXT, dlaud TEXT, ttrgt TEXT, itray TEXT, \
-    swind TEXT, stsks TEXT, tlang TEXT, slang TEXT, \
-    synth TEXT, txaud TEXT, intrf TEXT);" |sqlite3 "${cfgdb}"
-    echo -n "pragma busy_timeout=500;create table if not exists lang \
-    (tlng TEXT, slng TEXT);" |sqlite3 "${cfgdb}"
-    echo -n "pragma busy_timeout=500; create table if not exists geom \
-    (vals TEXT);" |sqlite3 "${cfgdb}"
-    echo -n "pragma busy_timeout=500; create table if not exists user \
-    (autr TEXT, pass TEXT);" |sqlite3 "${cfgdb}"
-    echo -n "pragma busy_timeout=500; create table if not exists sess \
-    (date TEXT);" |sqlite3 "${cfgdb}"
-    echo -n "pragma busy_timeout=500; create table if not exists updt \
-    (date TEXT,ignr TEXT);" |sqlite3 "${cfgdb}"
-    sqlite3 "${cfgdb}" "pragma busy_timeout=500;\
-    insert into opts (gramr,trans,dlaud,ttrgt,itray,\
-    swind,stsks,tlang,slang,synth,txaud,intrf) \
-    values ('FALSE','FALSE','FALSE','FALSE','FALSE',\
-    'FALSE','FALSE','','','','','default');"
-    sqlite3 "${cfgdb}" "insert into lang (tlng,slng) values ('','');"
-    sqlite3 "${cfgdb}" "insert into user (autr,pass) values ('','');"
-    sqlite3 "${cfgdb}" "insert into geom (vals) values ('');"
-    v=$(date +%d)
-    sqlite3 "${cfgdb}" "insert into sess (date) values ('${v}');"
-    sqlite3 "${cfgdb}" "insert into updt (date) values ('${v}');"
-}
-
-create_shrdb() {
-    source /usr/share/idiomind/default/c.conf
-    shrdb="$DM_tls/data/config"
-    echo -n "create table if not exists topics (list TEXT);" |sqlite3 "${shrdb}"
-    echo -n "create table if not exists T1 (list TEXT);" |sqlite3 "${shrdb}"
-    echo -n "create table if not exists T2 (list TEXT);" |sqlite3 "${shrdb}"
-    echo -n "create table if not exists T3 (list TEXT);" |sqlite3 "${shrdb}"
-    echo -n "create table if not exists T4 (list TEXT);" |sqlite3 "${shrdb}"
-    echo -n "create table if not exists T5 (list TEXT);" |sqlite3 "${shrdb}"
-    echo -n "create table if not exists T6 (list TEXT);" |sqlite3 "${shrdb}"
-    echo -n "create table if not exists T7 (list TEXT);" |sqlite3 "${shrdb}"
-    echo -n "create table if not exists T8 (list TEXT);" |sqlite3 "${shrdb}"
-    echo -n "create table if not exists T9 (list TEXT);" |sqlite3 "${shrdb}"
-    echo -n "create table if not exists T10 (list TEXT);" |sqlite3 "${shrdb}"
-}
-
 add_audio() {
     cd "$HOME"
     aud="$(yad --file --title="$(gettext "Add Audio")" \
@@ -1372,10 +1327,6 @@ case "$1" in
     _restore_backup "$@" ;;
     check_index)
     check_index "$@" ;;
-    create_cfgdb)
-    create_cfgdb ;;
-    create_shrdb)
-    create_shrdb ;;
     addFiles)
     addFiles "$@" ;;
     videourl)

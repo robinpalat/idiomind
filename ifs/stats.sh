@@ -4,7 +4,7 @@ source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 
 function create_db() {
-    if [ ! -e "${db}" ]; then
+    if [ ! -f "${db}" ]; then
         echo -n "create table if not exists ${mtable} \
         (month TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT);" |sqlite3 "${db}"
         for m in {01..12}; do sqlite3 ${db} "insert into ${mtable} (month) values ('${m}');"; done
