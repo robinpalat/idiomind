@@ -115,7 +115,7 @@ config_dlg() {
     --field="$(gettext "My language is")":CB "$(gettext "${slng}")$list2" \
     --field=" :LBL" " " --field=":LBL" " " \
     --field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
-    --field="<small>$(gettext "Program to convert text to WAV file")</small>" "$txaud" \
+    --field="$(gettext "Pinned Tasks")":BTN "$txaud" \
     --field="$(gettext "Interface language")":CB "$lst" \
     --field=" :LBL" " " --field=":LBL" " " \
     --field="$(gettext "Getting started")":BTN "$DS/ifs/tls.sh help" \

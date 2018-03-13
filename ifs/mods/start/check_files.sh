@@ -15,6 +15,7 @@ if [ ! -d "$DC" ]; then
 fi
 
 if [ -f "$DC_s/1.cfg" ]; then
+    source "$DS/ifs/cmns.sh"
     for n in {1..10}; do cleanups "$DC_s/${n}.cfg"; done
     for n in {1..10}; do cleanups "$DM_tls/${n}.cfg"; done
 fi

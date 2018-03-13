@@ -61,8 +61,7 @@ while read -r addon; do
     fi
 done < "$DS_a/menu_list"
 
-mv -f "$f" "$DT/tasks"
-
+[ -f "$f" ] && mv -f "$f" "$DT/tasks"
 echo -e "--- tasks updated\n"
 
 exit 0
