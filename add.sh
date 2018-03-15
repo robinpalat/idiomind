@@ -403,14 +403,14 @@ function process() {
     elif [[ $conten != '__edit__' ]]; then
     
         if [[ $1 = image ]]; then
-            pars=`mktemp`
-            trap rm "$pars*" EXIT
+            pars="$DT_r/txt"
             # /usr/bin/import "$DT_r/img_.png"
             gnome-screenshot -a --file="$DT_r/img_.png"
             /usr/bin/convert "$DT_r/img_.png" -shave 1x1 "$pars.png"
             ( echo "#"
             mogrify -modulate 100,0 -resize 400% "$pars.png"
             tesseract "$pars.png" "$pars" -l ${tesseract_lngs[$tlng]} &> /dev/null
+            cleanups "$pars"
             if [ $? != 0 ]; then
                 info="$(gettext "The package 'tesseract-ocr' is not installed\nPlease install") <b>tesseract-ocr-${tesseract_lngs[$tlng]}</b> $(gettext "and try again.")"
                 msg "${info}" error "$(gettext "Error")"; cleanups "$DT/n_s_pr" "$DT_r" & exit 0
@@ -681,7 +681,7 @@ function process() {
         [ -n "$log" ] && echo "${info3}:\n$log\n\n" >> "${DC_tlt}/note.err"
     fi
     [ ! -f "$DT_r/__opts__" ] && cleanups "$DT_r"
-    cleanups "$DT/n_s_pr" & return 0
+    cleanups "$DT/n_s_pr" "$slt" & return 0
 }
 
 fetch_content() {
@@ -744,7 +744,7 @@ fetch_content() {
         "$(gettext "No new content")" -t 8000
     fi
     
-    cleanups "$DT/updating_feeds"
+    cleanups "$DT/updating_feeds" 
     return 0
 } 
 
