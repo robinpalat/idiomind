@@ -5,7 +5,7 @@ source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
 info2="$(gettext "Switch Language")?"
-cd "$DS/addons"
+check_dir "$DS/addons"; cd "$DS/addons"
 cnf1=$(mktemp "$DT/cnf1.XXXXXX")
 source $DS/default/sets.cfg
 lang1="${!tlangs[@]}"; lt=( $lang1 )

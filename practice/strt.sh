@@ -15,6 +15,7 @@ if [[ -n "$1" ]]; then
 fi
 pdir="${DC_tlt}/practice"
 pdirs="$DS/practice"
+check_dir "$DC_s/logs"
 declare -A prcts=( ['a']='Flashcards' ['b']='Multiple-choice' \
 ['c']='Recognize Pronunciation' ['d']='Images' ['e']='Listen and Writing Sentences')
 t2="<span color='#C15F27' font_desc='Verdana 8'>"
@@ -777,7 +778,7 @@ function decide_group() {
 
 function practices() {
     pr=${1}
-    log="$DC_s/$dw.log"
+    log="$DC_s/logs/$dw.log"
     cfg0="$DC_tlt/data"
     cfg4="$(tpc_db 5 sentences)"
     cfg3="$(tpc_db 5 words)"

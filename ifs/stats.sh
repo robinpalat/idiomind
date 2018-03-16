@@ -128,7 +128,7 @@ function coll_items_stats() {
     done
     if [ -f "$DT/weekscnt" ]; then
         tac "$DT/weekscnt" |head -n12 | while read -r w; do
-            export log="$DC/${w}.log"
+            export log="$DC/logs/${w}.log"
             if [ -f "${log}" ]; then rdata=$(compute); else rdata="0,0,0,0,0,0,0"; fi
             D0=$(cut -d ',' -f 1 <<< "${rdata}"); ! [[ ${D0} =~ $int ]] && D0=0
             D1=$(cut -d ',' -f 2 <<< "${rdata}"); ! [[ ${D1} =~ $int ]] && D1=0
@@ -268,6 +268,7 @@ wtable="W$(date +%y)"
 dmonth=$(date +%m)
 cdate=$(date +%m/%d/%Y)
 dw=$(date +%W |sed 's/^0*//')
+check_dir "$DC_s/logs"
 
 function chk_expire() {
     atable=$1; days=$2

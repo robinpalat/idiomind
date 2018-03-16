@@ -546,22 +546,17 @@ _start() {
         new_session
     fi
     if [ ! -f "$DT/tpe" ]; then
-        cu=TRUE; tpe="$(sed -n 1p "$DC_s/tpc")"
-        if ! ls -1a "$DS/addons/" |grep -Fxo "${tpe}" >/dev/null 2>&1; then
-            echo "${tpe}" > "$DT/tpe"
-        fi
+        cu=TRUE; touch "$DT/tpe"
     fi
     if [ "$(< "$DT/tpe")" != "${tpc}" ]; then
-        if ! ls -1a "$DS/addons/" |grep -Fxo "${tpc}" >/dev/null 2>&1; then
-            echo "${tpc}" > "$DT/tpe"
-        fi
+        touch "$DT/tpe"
     fi
     date=$(cdb ${cfgdb} 1 sess date)
     if [[ "$(date +%d)" != "$date" ]] && [[ -z "$1" ]]; then
         new_session; cu=TRUE
     fi
     ( if [[ "${cu}" = TRUE ]]; then
-    "$DS/ifs/tls.sh" a_check_updates; fi ) &
+    "$DS/ifs/tls.sh" a_check_updates & fi ) &
 
     export swind=$(cdb ${cfgdb} 1 opts swind) 
     if [[ $(cdb ${cfgdb} 1 opts itray) = TRUE ]] && \
