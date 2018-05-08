@@ -11,8 +11,8 @@ mkdir "$DT/dict_test"
 if [ "$1" = 1 ]; then DC_d="$DC_a/dict/disables"; fi
 
 function dlg_progress_2() {
-    yad --progress --title="$(gettext "Performing Tests")" \
-    --text="$(gettext "Checking the availability of internet resources. Please wait...")" \
+    yad --progress --title="" \
+    --text="$(gettext "Checking on-line resources. Please wait...")" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind --align=right \
     --progress-text=" " --auto-close \
