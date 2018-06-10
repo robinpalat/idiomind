@@ -30,7 +30,7 @@ function dwld() {
     [ $? != 0 ] && err && exit 1
     
     if [ -f "$DT/download/${ilnk}.tar.gz" ]; then
-        cd "$DT/download"/
+        cd "$DT/download"/ &&
         tar xvf "$DT/download/${ilnk}.tar.gz"
 
         if [ -d "$DT/download/files" ]; then
@@ -113,7 +113,7 @@ function upld() {
             dialog-information
             "$DS/ifs/upld.sh" upld "${tpc}" & exit 1
         fi
-        [ -d "$DT" ] && cd "$DT" || exit 1
+        if [ -d "$DT" ]; then cd "$DT" && else exit 1; fi
         [ -d "$DT/upload" ] && rm -fr "$DT/upload"
         
         if [ "${tpc}" != "${1}" ]; then
@@ -312,7 +312,7 @@ function upld() {
         export orig levl
         export stts=0
         ### copying files
-        cd "${DM_tlt}"/
+        cd "${DM_tlt}"/ &&
         cp -r ./* "$DT_u/files/"
         cleanups "$DT_u/files/.mp3"
         mkdir "$DT_u/files/share"

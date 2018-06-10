@@ -66,7 +66,7 @@ function new_item() {
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
     if [ ! -d "$DT_r" ]; then
-        check_dir "$DT_r"; cd "$DT_r"
+        check_dir "$DT_r"; cd "$DT_r" &&
     fi
     check_s "${tpe}"
     if [ -z "${trgt}" ]; then trgt="${3}"; fi
@@ -233,7 +233,7 @@ function list_words_edit() {
     exmp="${3}"
     [ -z "${exmp}" ] && exmp="${trgt}"
     check_s "${tpe}"
-    DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
+    DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r" &&
     words="$(list_words_2 "${2}")"
     slt="$(dlg_checklist_1 "${words}")"
     if [ $? -eq 0 ]; then
@@ -384,7 +384,7 @@ function list_words_dclik() {
 
 function process() {
     if [ ! -d "$DT_r" ] ; then
-        check_dir "$DT_r"; cd "$DT_r"
+        check_dir "$DT_r"; cd "$DT_r" &&
     fi
     
     echo "${tpe}" > "$DT/n_s_pr"
@@ -800,7 +800,7 @@ new_items() {
     if [ $ret -eq 3 ]; then
         [ -d "$2" ] && DT_r="$2" || check_dir "$DT_r"
         ! grep '*' <<< "${tpe}" >/dev/null 2>&1 && echo "${tpe}" > "$DT/tpe"
-        cd "$DT_r"; set_image_1
+        cd "$DT_r" &&; set_image_1
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
         
     elif [ $ret -eq 2 ]; then
@@ -826,7 +826,7 @@ new_items() {
             check_dir "$DT_r"
         fi
         
-        export DT_r; cd "$DT_r"
+        export DT_r; cd "$DT_r" &&
         xclip -i /dev/null
         if [ -z "${tpe}" ] && [[ ${3} != 3 ]]; then cleanups "$DT_r"
             msg "$(gettext "No topic is active")\n" \
