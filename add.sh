@@ -233,7 +233,7 @@ function list_words_edit() {
     exmp="${3}"
     [ -z "${exmp}" ] && exmp="${trgt}"
     check_s "${tpe}"
-    DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r" &&
+    DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
     words="$(list_words_2 "${2}")"
     slt="$(dlg_checklist_1 "${words}")"
     if [ $? -eq 0 ]; then
@@ -384,7 +384,7 @@ function list_words_dclik() {
 
 function process() {
     if [ ! -d "$DT_r" ] ; then
-        check_dir "$DT_r"; cd "$DT_r" &&
+        check_dir "$DT_r"; cd "$DT_r"
     fi
     
     echo "${tpe}" > "$DT/n_s_pr"
