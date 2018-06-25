@@ -66,7 +66,7 @@ function new_item() {
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
     if [ ! -d "$DT_r" ]; then
-        check_dir "$DT_r"; cd "$DT_r" &&
+        check_dir "$DT_r"; cd "$DT_r"
     fi
     check_s "${tpe}"
     if [ -z "${trgt}" ]; then trgt="${3}"; fi
@@ -800,7 +800,7 @@ new_items() {
     if [ $ret -eq 3 ]; then
         [ -d "$2" ] && DT_r="$2" || check_dir "$DT_r"
         ! grep '*' <<< "${tpe}" >/dev/null 2>&1 && echo "${tpe}" > "$DT/tpe"
-        cd "$DT_r" &&; set_image_1
+        cd "$DT_r" && set_image_1
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
         
     elif [ $ret -eq 2 ]; then
