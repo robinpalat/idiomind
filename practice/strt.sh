@@ -920,11 +920,11 @@ function strt() {
     --width=${sz[0]} --height=${sz[1]} --borders=10 \
     --ellipsize=end --wrap-width=200 --ellipsize-cols=1 \
     --column="Action" --column="Pick":IMG --column="Label" \
-    "a" "$pdirs/images/$(< ./.1).png" "$info1$(gettext "Flashcards") $plusa"  \
-    "b" "$pdirs/images/$(< ./.2).png" "$info2$(gettext "Multiple-choice") $plusb" \
-    "c" "$pdirs/images/$(< ./.3).png" "$info3$(gettext "Recognize Pronunciation") $plusc" \
-    "d" "$pdirs/images/$(< ./.4).png" "$info4$(gettext "Images") $plusd" \
-    "e" "$pdirs/images/$(< ./.5).png" "$info5$(gettext "Listen and Writing Sentences")" \
+    "a" "$DS/images/practice/$(< ./.1).png" "$info1$(gettext "Flashcards") $plusa"  \
+    "b" "$DS/images/practice/$(< ./.2).png" "$info2$(gettext "Multiple-choice") $plusb" \
+    "c" "$DS/images/practice/$(< ./.3).png" "$info3$(gettext "Recognize Pronunciation") $plusc" \
+    "d" "$DS/images/practice/$(< ./.4).png" "$info4$(gettext "Images") $plusd" \
+    "e" "$DS/images/practice/$(< ./.5).png" "$info5$(gettext "Listen and Writing Sentences")" \
     --button="$(gettext "Restart")":3 \
     --button="$(gettext "Start")":0)"
     ret=$?

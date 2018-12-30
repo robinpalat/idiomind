@@ -27,7 +27,7 @@ function dwld() {
     URL="${url1}"; else err & exit 1; fi
     
     wget -q -c -T 80 -O "$DT/download/${ilnk}.tar.gz" "${URL}"
-    [ $? != 0 ] && err && exit 1
+    if [ $? != 0 ]; then err & exit 1; fi
     
     if [ -f "$DT/download/${ilnk}.tar.gz" ]; then
         cd "$DT/download"/
@@ -113,7 +113,7 @@ function upld() {
             dialog-information
             "$DS/ifs/upld.sh" upld "${tpc}" & exit 1
         fi
-        if [ -d "$DT" ]; then cd "$DT" && else exit 1; fi
+        if [ -d "$DT" ]; then cd "$DT"; else exit 1; fi
         [ -d "$DT/upload" ] && rm -fr "$DT/upload"
         
         if [ "${tpc}" != "${1}" ]; then
