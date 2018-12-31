@@ -1082,6 +1082,7 @@ itray() {
     export lbl4="$(gettext "Next")"
     export lbl5="$(gettext "Index")"
     export lbl9="$(gettext "Tasks")"
+    export lbl10="$(gettext "Settings")"
     export lbl8="$(gettext "Quit")"
     export dirt="$DT/"
     export lgt=${tlangs[$tlng]}
@@ -1095,7 +1096,7 @@ stop = os.environ['lbl3']
 next = os.environ['lbl4']
 topics = os.environ['lbl5']
 tasks = os.environ['lbl9']
-quit = os.environ['lbl8']
+settings = os.environ['lbl10']
 quit = os.environ['lbl8']
 icon = os.environ['dirt']+'icon'
 my_pid = os.getpid()
@@ -1195,6 +1196,9 @@ class IdiomindIndicator:
         popup_menu.append(item)
         item = gtk.SeparatorMenuItem()
         popup_menu.append(item)
+        item = self.create_menu_label(settings)
+        item.connect("activate", self.on_settings_click)
+        popup_menu.append(item)
         item = self.create_menu_label(quit)
         item.connect("activate", self.on_Quit_click)
         popup_menu.append(item)
@@ -1219,6 +1223,8 @@ class IdiomindIndicator:
         self.stts = 1
         os.system("/usr/share/idiomind/stop.sh 2 &")
         self._on_menu_update()
+    def on_settings_click(self, widget):
+        os.system("/usr/share/idiomind/cnfg.sh &")
     def on_Quit_click(self, widget):
         os.system("/usr/share/idiomind/stop.sh 1 &")
         gtk.main_quit()

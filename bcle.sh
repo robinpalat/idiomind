@@ -15,14 +15,28 @@ export word_rep sentence_rep pause_osd
 export -f include msg tpc_db
 sleep 1
 
-if [[ "$rplay" = TRUE ]]; then
-    while [ 1 ]; do
-        "$DS/chng.sh" 0; sleep ${pause_rep}
-        if [ "$(< $DT/playlck)" = '0' ]; then
-            "$DS"/stop.sh 2 & break
-        fi
-    done
+t=0
+[ $(tpc_db 1 config words) = 'TRUE' ] && t=1
+[ $(tpc_db 1 config sntcs) = 'TRUE' ] && t=1
+[ $(tpc_db 1 config marks) = 'TRUE' ] && t=1
+[ $(tpc_db 1 config learn) = 'TRUE' ] && t=1
+[ $(tpc_db 1 config diffi) = 'TRUE' ] && t=1
+
+
+if [ "$t" = 1 ]; then
+
+    if [[ "$rplay" = TRUE ]]; then
+        while [ 1 ]; do
+            "$DS/chng.sh" 0; sleep ${pause_rep}
+            if [ "$(< $DT/playlck)" = '0' ]; then
+                "$DS"/stop.sh 2 & break
+            fi
+        done
+    else
+        "$DS/chng.sh" 0
+        echo 0 > "$DT/playlck" & exit 0
+    fi
+
 else
-    "$DS/chng.sh" 0
-    echo 0 > "$DT/playlck" & exit 0
+    "$DS/play.sh" play_list
 fi

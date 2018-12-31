@@ -212,6 +212,19 @@ play_list() {
     exit 0
 }
 
+play_stop() {
+    source "/usr/share/idiomind/default/c.conf"
+    if [ -f "$DT/playlck" ]; then
+        if [ "$(< $DT/playlck)" = '0' ]; then
+            "$DS/bcle.sh" &
+        else
+            "$DS/stop.sh" 2 &
+        fi
+    else
+        "$DS/bcle.sh" &
+    fi
+}
+
 case "$1" in
     play_word)
     play_word "$@" ;;
@@ -223,4 +236,6 @@ case "$1" in
     play_list2 "$@" ;;
     play_list)
     play_list "$@" ;;
+    playstop)
+    play_stop "$@" ;;
 esac
