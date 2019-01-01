@@ -15,4 +15,46 @@ Icon=idiomind
 MimeType=application/x-idmnd;
 Keywords=Education;Languages;
 X-Ubuntu-Gettext-Domain=idiomind
+Actions=Add;Play/Stop;Home;Index;Settings
+StartupWMClass=Idiomind
+
+[Desktop Action Add]
+Name=Add
+Name[es]=Agregar
+Name[fr]=Ajouter
+Name[it]=Aggiungi
+Name[pt]=Adicionar
+Exec=idiomind --add
+StartupWMClass=Idiomind
+[Desktop Action Play/Stop]
+Name=Play/Stop
+Name[es]=Play/Stop
+Name[fr]=Play/Stop
+Name[it]=Play/Stop
+Name[pt]=Play/Stop
+Exec=/usr/share/idiomind/play.sh playstop
+StartupWMClass=Idiomind
+[Desktop Action Home]
+Name=Home
+Name[es]=Inicio
+Name[fr]=Home
+Name[it]=Home
+Name[pt]=Início
+Exec=idiomind topic
+StartupWMClass=Idiomind
+[Desktop Action Index]
+Name=Index
+Name[es]=Indice
+Name[fr]=Index
+Name[it]=Indice
+Name[pt]=Indice
+Exec=/usr/share/idiomind/chng.sh
+StartupWMClass=Idiomind
+[Desktop Action Settings]
+Name=Settings
+Name[es]=Opciones
+Name[fr]=Index
+Name[it]=Indice
+Name[pt]=Indice
+Exec=/usr/share/idiomind/cnfg.sh
 StartupWMClass=Idiomind

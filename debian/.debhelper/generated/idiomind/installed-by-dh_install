@@ -15,11 +15,11 @@
 ./addons/Dics
 ./addons/User data
 ./practice/all.mp3
-./practice/images
 ./practice/no.mp3
 ./practice/strt.sh
 ./default/attch.css
 ./default/c.conf
+./default/ch.xml
 ./default/dicts
 ./default/gtkrc.cfg
 ./default/js
@@ -42,11 +42,20 @@
 ./ifs/tpc.sh
 ./ifs/upld.sh
 ./images/a.png
+./images/add.png
+./images/add_audio.png
+./images/add_clipboard.png
+./images/add_image.png
+./images/add_list.png
+./images/add_more.png
+./images/add_tag.png
+./images/add_translation.png
 ./images/ai.png
 ./images/bar.png
 ./images/cont.png
 ./images/dl.png
 ./images/flags
+./images/home.png
 ./images/img.0.png
 ./images/img.1.png
 ./images/img.10.png
@@ -65,7 +74,9 @@
 ./images/logo.png
 ./images/no.png
 ./images/nw.png
+./images/practice
 ./images/thumb.png
+./images/unavailable.png
 ./images/yes.png
 ./main.sh
 ./add.sh
