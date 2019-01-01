@@ -1,0 +1,16 @@
+Source: idiomind
+Section: x11
+Priority: optional
+Maintainer: Robin Palatnik <robinpalat@users.sourceforge.net>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.6
+Homepage: http://idiomind.sourceforge.net
+
+Package: idiomind
+Architecture: all
+Depends: ${misc:Depends}, bash (>=4.1), sox, mplayer, imagemagick, wkhtmltopdf, curl, xdg-utils, xclip, python, python-gtk2, python-requests, python-appindicator, espeak, sqlite3, xsltproc, libsox-fmt-mp3
+Recommends: yad (>=0.37)
+Suggests: tesseract-ocr
+Description: Learning foreign vocabulary
+ Idiomind is a small program to help you extend your vocabulary.
+ Idiomind is based on shell scripts and YAD (GUI)

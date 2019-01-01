@@ -1,0 +1,18 @@
+[Desktop Entry]
+Version=1.0
+Name=Idiomind
+GenericName=Tutor
+Comment=Vocabulary learning tool
+Comment[es]=Utilidad para aprendizaje de vocabulario
+Comment[fr]=Outil d'apprentissage de vocabulaire
+Comment[it]=Strumento di apprendimento vocabolario
+Comment[pt]=Ferramenta de aprendizagem de vocabulário
+Exec=idiomind %f
+Terminal=false
+Type=Application
+Categories=Languages;Education;
+Icon=idiomind
+MimeType=application/x-idmnd;
+Keywords=Education;Languages;
+X-Ubuntu-Gettext-Domain=idiomind
+StartupWMClass=Idiomind
