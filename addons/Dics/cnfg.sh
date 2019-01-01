@@ -142,38 +142,55 @@ function dlg() {
                 "$DS_a/Dics/cnfg.sh" add_dlg
         elif [ $ret -eq 0  -o $ret -eq 3 ]; then
             while read -r dict; do
+
                 name="$(cut -d "|" -f2 <<< "$dict")"
                 type="$(cut -d "|" -f3 <<< "$dict")"
                 tget="$(cut -d "|" -f4 <<< "$dict")"
+                
                 if grep 'FALSE' <<< "$dict"; then
+                
                     if [ ! -f "$disables/$name.$type.$tget.$lgt" ]; then
-                        [ -f "$enables/$name.$type.$tget.$lgt" ] \
-                        && mv -f "$enables/$name.$type.$tget.$lgt" \
-                        "$disables/$name.$type.$tget.$lgt"
+                        if [ -f "$enables/$name.$type.$tget.$lgt" ]; then 
+                            mv -f "$enables/$name.$type.$tget.$lgt" \
+                            "$disables/$name.$type.$tget.$lgt"
+                        fi
                     fi
                     if [ ! -f "$disables/$name.$type.$tget.various" ]; then
-                        [ -f "$enables/$name.$type.$tget.various" ] \
-                        && mv -f "$enables/$name.$type.$tget.various" \
-                        "$disables/$name.$type.$tget.various"
+                        if [ -f "$enables/$name.$type.$tget.various" ]; then 
+                            mv -f "$enables/$name.$type.$tget.various" \
+                            "$disables/$name.$type.$tget.various"
+                        fi
                     fi
                 fi
+                
                 if grep 'TRUE' <<< "$dict"; then
+                
                     if [ ! -f "$enables/$name.$type.$tget.$lgt" ]; then
-                        [ -f "$disables/$name.$type.$tget.$lgt" ] \
-                        && mv -f "$disables/$name.$type.$tget.$lgt" \
-                        "$enables/$name.$type.$tget.$lgt"
+                        if [ -f "$disables/$name.$type.$tget.$lgt" ]; then 
+                            mv -f "$disables/$name.$type.$tget.$lgt" \
+                            "$enables/$name.$type.$tget.$lgt"
+                        fi
                     fi
                     if [ ! -f "$enables/$name.$type.$tget.various" ]; then
-                        [ -f "$disables/$name.$type.$tget.various" ] \
-                        && mv -f "$disables/$name.$type.$tget.various" \
-                        "$enables/$name.$type.$tget.various"
+                        if [ -f "$disables/$name.$type.$tget.various" ]; then 
+                            mv -f "$disables/$name.$type.$tget.various" \
+                            "$enables/$name.$type.$tget.various"
+                        fi
                     fi
                 fi
+                
+                # just to make sure
+                if [ -f "$disables/$name.$type.$tget.$lgt" -a \
+                -f "$enables/$name.$type.$tget.$lgt" ]; then
+                    rm "$disables/$name.$type.$tget.$lgt"
+                fi
+                
             done < <(sed 's/<[^>]*>//g' <<< "${sel}")
             
             if [ $ret -eq 3 ]; then "$DS_a//Dics/test.sh"; fi
         fi
     exit 1
+    
 } >/dev/null 2>&1
 
 function update_config_dir() {
