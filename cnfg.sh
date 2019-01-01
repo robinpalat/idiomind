@@ -115,7 +115,7 @@ config_dlg() {
     --field="$(gettext "My language is")":CB "$(gettext "${slng}")$list2" \
     --field=" :LBL" " " --field=":LBL" " " \
     --field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
-    --field="$(gettext "Pinned Tasks")":BTN "$txaud" \
+    --field="<small>$(gettext "Program to convert text to WAV file")</small>" "$txaud" \
     --field="$(gettext "Interface language")":CB "$lst" \
     --field=" :LBL" " " --field=":LBL" " " \
     --field="$(gettext "Getting started")":BTN "$DS/ifs/tls.sh help" \
@@ -154,14 +154,19 @@ config_dlg() {
         val=$(cut -d "|" -f16 < "$cnf1")
         [[ "$val" != "$txaud" ]] && cdb "${cfgdb}" 3 opts txaud "${val}"
 
+        # Interface Language
         val=$(cut -d "|" -f17 < "$cnf1")
         if [[ "$val" != "$intrf" ]]; then
             cdb "${cfgdb}" 3 opts intrf ${val}
             kill_icon=1; show_icon=1; export intrf=$val
             idiomind tasks &
         fi
-
+        
+        #Icon tray
         if [[ $(cdb ${cfgdb} 1 opts itray)  = TRUE ]] && [[ ! -f "$DT/tray.pid" ]]; then
+            if lsb_release -i -c | grep juno; then
+                msg "$(gettext "Sorry, your System not support icon tray")" dialog-warning
+            fi
             show_icon=1
         elif [[ $(cdb ${cfgdb} 1 opts itray)  = FALSE ]] && [[ -f "$DT/tray.pid" ]]; then
             kill_icon=1
@@ -175,6 +180,7 @@ config_dlg() {
             $DS/ifs/tls.sh itray &
         fi
         
+        #Autostart
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
@@ -187,6 +193,8 @@ config_dlg() {
                 rm "$config_dir/idiomind.desktop"
             fi
         fi
+        
+        #Languages source and target 
         ntlang=$(cut -d "|" -f11 < "$cnf1")
         if [[ $(gettext ${tlng}) != ${ntlang} ]]; then
             for val in "${lt[@]}"; do
