@@ -1,9 +1,9 @@
-idiomind (0.3.0-1) willy; urgency=low
+idiomind (0.3.0-1) cosmic; urgency=low
 
   * Various fixes and improvements
   * Updated languages
   
- -- Robin Palatnik <robinpalat@users.sourceforge.net>  Mon, 26 Feb 2018 22:03:38 -0300
+ -- Robin Palatnik <robinpalat@users.sourceforge.net>  Tue, 01 Jan 2019 14:14:36 -0300
 
 idiomind (0.2.9-1) willy; urgency=low
 

@@ -8,9 +8,9 @@ Homepage: http://idiomind.sourceforge.net
 
 Package: idiomind
 Architecture: all
-Depends: ${misc:Depends}, bash (>=4.1), sox, mplayer, imagemagick, wkhtmltopdf, curl, xdg-utils, xclip, python, python-gtk2, python-requests, python-appindicator, espeak, sqlite3, xsltproc, libsox-fmt-mp3
-Recommends: yad (>=0.37)
+Depends: ${misc:Depends}, bash (>=4.1), sox, mplayer, imagemagick, wkhtmltopdf, curl, xdg-utils, xclip, python, python-gtk2, python-requests, python-appindicator, espeak, sqlite3, xsltproc, libsox-fmt-mp3, gnome-screenshot
+Recommends: yad (>=0.39)
 Suggests: tesseract-ocr
-Description: Learning foreign vocabulary
- Idiomind is a small program to help you extend your vocabulary.
+Description: A help to learn another language
+ Idiomind is a small program to help you extend your vocabulary and more.
  Idiomind is based on shell scripts and YAD (GUI)

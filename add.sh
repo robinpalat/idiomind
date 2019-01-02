@@ -771,6 +771,8 @@ new_items() {
         "$DS/ifs/tls.sh" first_run topics & exit 1
     fi
 
+    #
+    # |tr -cd '\11\12\15\40-\176' 
     [ -z "${4}" ] && txt="$(xclip -selection primary -o)" || txt="${4}"
     export trgt="$(clean_4 "${txt}")"
     

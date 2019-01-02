@@ -11,8 +11,8 @@ mkdir "$DT/dict_test"
 if [ "$1" = 1 ]; then DC_d="$DC_a/dict/disables"; fi
 
 function dlg_progress_2() {
-    yad --progress --title="" \
-    --text="$(gettext "Checking on-line resources. Please wait...")" \
+    yad --progress --title="Idiomind" \
+    --text="$(gettext "Please wait while resources are being tested...")" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind --align=right \
     --progress-text=" " --auto-close \
@@ -156,10 +156,10 @@ if ls "$DC_d"/*."Script.Download image".* 1> /dev/null 2>&1; then
 fi
 
 mv "$DT/test_ok" "$DC_a/dict/test"
-cat "$DT/test_fail" >> "$DC_a/dicts.err"
+cat "$DT/test_fail" >> "$DC_a/dicts.inf"
 cleanups "$DT/dict_test" "$DT/test_fail"
 echo "100"
 
  ) | dlg_progress_2
  
-"$DS/addons/Dics/cnfg.sh"
+if [ "$1" != 1 ]; then "$DS/addons/Dics/cnfg.sh"; fi

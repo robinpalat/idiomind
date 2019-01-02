@@ -298,7 +298,7 @@ function chk_expire() {
 
 function pre_comp() {
     echo -e "\n--- statistics..."
-    f_lock 1 "$DT/p_stats"
+    if [ ! -f "$DC/topics_first_run" ]; then f_lock 1 "$DT/p_stats"; fi
     echo -n "create table if not exists 'expire_month' (date TEXT);" |sqlite3 "${db}"
     echo -n "create table if not exists 'expire_week' (date TEXT);" |sqlite3 "${db}"
     cleanups "$pross" "$data" "$no_data" "$databk"

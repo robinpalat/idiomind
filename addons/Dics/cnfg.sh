@@ -11,7 +11,12 @@ enables="$dir/enables"
 disables="$dir/disables"
 task=( 'Word pronunciation' 'Pronunciation' 'Translator' \
 'Search definition' 'Search images' 'Download images' '_' )
-test_ok="$(< "$DC_a/dict/test")"
+
+if [ -f "$DC_a/dict/test" ] ; then
+    test_ok="$(< "$DC_a/dict/test")"
+else
+    test_ok=""
+fi
 
 function add_dlg() {
     langs=( 'various' 'zh-cn' 'en' 'fr' \
@@ -105,17 +110,19 @@ function dlg() {
         done < <(ls "$disables/")
     }
 
-    if [ -e "$DC_s/dics_first_run" ]; then
+    if [ -f "$DC_s/dics_first_run" ]; then
+        "$DS_a/Dics/test.sh" 1
         plus="$(gettext "To start is okay select all, later, according to your preferences, you can disable some.")\n"
         rm "$DC_s/dics_first_run"
     fi
-    inf="$plus$(gettext "Please, select at least one script for each task:")"
+    inf="$plus<b>$(gettext "Please, select at least one script for each task")</b>\n"
     if [[ -n "${1}" ]]; then 
         text="--text=$inf"; n=${1}
     else 
         text="--center"; n=6
     fi
-    check_err "$DC_a/dicts.err"
+    
+    check_err "$DC_a/dicts.inf"
     sel="$(dict_list ${n} |yad --list \
     --title="$(gettext "Dictionaries")" \
     --name=Idiomind --class=Idiomind "${text}" \
