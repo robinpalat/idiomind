@@ -390,7 +390,7 @@ _restore_backup() {
 } >/dev/null 2>&1
 
 fback() {
-    xdg-open "https://sourceforge.net/p/idiomind/link"
+    xdg-open "https://sourceforge.net/p/idiomind/contact"
 } >/dev/null 2>&1
 
 
@@ -581,7 +581,7 @@ _translation() {
 } >/dev/null 2>&1
 
 _help() {
-    xdg-open 'https://sourceforge.net/p/idiomind/wiki/Getting%20started'
+    xdg-open 'https://sourceforge.net/p/idiomind/gettingstarted'
     
 } >/dev/null 2>&1
 

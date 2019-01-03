@@ -171,14 +171,6 @@ config_dlg() {
         elif [[ $(cdb ${cfgdb} 1 opts itray)  = FALSE ]] && [[ -f "$DT/tray.pid" ]]; then
             kill_icon=1
         fi
-        if [ $kill_icon = 1 ]; then
-            kill -9 $(cat $DT/tray.pid)
-            kill -9 $(pgrep -f "$DS/ifs/tls.sh itray")
-            rm -f "$DT/tray.pid"
-        fi
-        if [ $show_icon = 1 ]; then
-            $DS/ifs/tls.sh itray &
-        fi
         
         #Autostart
         [ ! -d  "$HOME/.config/autostart" ] \
@@ -206,7 +198,13 @@ config_dlg() {
                 info3="\n$(gettext "Note that these languages may present some text display errors:") Chinese, Japanese, Russian."
             fi
             confirm "$info2$info3" dialog-question ${tlng}
-            [ $? -eq 0 ] && set_lang ${tlng}
+            if [ $? -eq 0 ]; then 
+                set_lang ${tlng}; 
+                # icon tray change
+                if [ $(cdb ${cfgdb} 1 opts itray)  = TRUE ]; then
+                    kill_icon=1; show_icon=1
+                fi
+            fi
         fi
         nslang=$(cut -d "|" -f12 < "$cnf1")
         if [[ "${slng}" != "${nslang}" ]]; then
@@ -221,6 +219,16 @@ config_dlg() {
                 fi
             fi
         fi
+        
+        if [ $kill_icon = 1 ]; then
+            kill -9 $(cat $DT/tray.pid)
+            kill -9 $(pgrep -f "$DS/ifs/tls.sh itray")
+            rm -f "$DT/tray.pid"
+        fi
+        if [ $show_icon = 1 ]; then
+            $DS/ifs/tls.sh itray &
+        fi
+        
     fi
     rm -f "$cnf1" "$DT/.lc"
 
