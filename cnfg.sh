@@ -43,7 +43,6 @@ set_lang() {
     source "$DS/default/c.conf"
     source "$DS/default/sets.cfg"
     lgt=${tlangs[$tlng]}
-    ln -sf "$DS/images/flags/${lgt}.png" "$DT/icon"
     DM_tl="$DM_t/$language"
     last="$(cd "$DM_tl"/; ls -tNd */ |cut -f1 -d'/' |head -n1)"
     if [ -n "${last}" ]; then
@@ -163,12 +162,12 @@ config_dlg() {
         fi
         
         #Icon tray
-        if [[ $(cdb ${cfgdb} 1 opts itray)  = TRUE ]] && [[ ! -f "$DT/tray.pid" ]]; then
+        if [[ "$(cdb ${cfgdb} 1 opts itray)"  = TRUE ]] && [[ ! -f "$DT/tray.pid" ]]; then
             if lsb_release -i -c | grep juno; then
                 msg "$(gettext "Sorry, your System not support icon tray")" dialog-warning
             fi
             show_icon=1
-        elif [[ $(cdb ${cfgdb} 1 opts itray)  = FALSE ]] && [[ -f "$DT/tray.pid" ]]; then
+        elif [[ "$(cdb ${cfgdb} 1 opts itray)"  = FALSE ]] && [[ -f "$DT/tray.pid" ]]; then
             kill_icon=1
         fi
         
@@ -201,7 +200,7 @@ config_dlg() {
             if [ $? -eq 0 ]; then 
                 set_lang ${tlng}; 
                 # icon tray change
-                if [ $(cdb ${cfgdb} 1 opts itray)  = TRUE ]; then
+                if [ "$(cdb ${cfgdb} 1 opts itray)"  = TRUE ]; then
                     kill_icon=1; show_icon=1
                 fi
             fi

@@ -1074,8 +1074,6 @@ itray() {
     [ ! -e "$HOME/.config/idiomind/tpc" ] && \
     touch "$HOME/.config/idiomind/tpc"
     source "$DS/default/sets.cfg"
-    lgt=${tlangs[$tlng]}
-    ln -sf "$DS/images/flags/${lgt}.png" "$DT/icon"
     export lbl1="$(gettext "Add")"
     export lbl2="$(gettext "Play")"
     export lbl3="$(gettext "Stop playback")"
@@ -1098,7 +1096,7 @@ topics = os.environ['lbl5']
 tasks = os.environ['lbl9']
 settings = os.environ['lbl10']
 quit = os.environ['lbl8']
-icon = os.environ['dirt']+'icon'
+icon = '/usr/share/idiomind/images/flags/' + lgt + '.png'
 my_pid = os.getpid()
 f_pid = open(os.environ['dirt']+'tray.pid', 'w')
 f_pid.write(str(my_pid))
