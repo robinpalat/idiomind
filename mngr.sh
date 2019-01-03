@@ -755,7 +755,7 @@ mark_to_learn_topic() {
         msg "$(gettext "Sorry, this topic is currently not active.")\n " \
         dialog-information "$(gettext "Information")" & exit
     fi
-    if [ $((cfg3+cfg4)) -le 10 ]; then
+    if [ $((cfg3+cfg4)) -lt 10 ]; then
         msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
         dialog-information "$(gettext "Information")" & exit
     fi
@@ -825,7 +825,7 @@ mark_as_learned_topic() {
         if [ "${tpc}" != "${2}" ]; then
         msg "$(gettext "Sorry, this topic is currently not active.")\n " \
         dialog-information "$(gettext "Information")" & exit; fi
-        if [ $((cfg3+cfg4)) -le 11 ]; then
+        if [ $((cfg3+cfg4)) -lt 10 ]; then
         msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
         dialog-information "$(gettext "Information")" & exit; fi
     fi

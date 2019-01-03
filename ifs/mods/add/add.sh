@@ -94,6 +94,7 @@ function index() {
                 fi
                 echo -e "${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
                 [[ ${1} = 1 ]] && unset link
+                unset defn
                 eval newline="$(sed -n 2p $DS/default/vars)"
                 echo "${newline}" >> "${DC_tlt}/data"
             fi
@@ -678,7 +679,7 @@ function dlg_checklist_2() {
         fi
         done
     }
-    exmp="$trgt"
+    pre_exmp="$trgt"
     if [ $(wc -w <<< "${1}") -le 5 -a $(wc -w <<< "${1}") -gt 1 ]; then
     fl="--field="$(gettext "Show in word viewer")":CHK"; fi
     list "${1}" | yad --list --checklist --tabnum=1 --plug="$fkey" \
@@ -688,7 +689,7 @@ function dlg_checklist_2() {
     --gtkrc="$DS/default/gtkrc.cfg" \
     --separator="|" \
     --field="$(gettext "Note")":TXT "${note}" \
-    --field="$(gettext "Example (for words)")":TXT "${exmp}" \
+    --field="$(gettext "Example (for words)")":TXT "${pre_exmp}" \
     --field="$(gettext "Mark")":CHK "$fl" & \
     yad --paned --orient=hor --key="$fkey" \
     --title="$(gettext "Options")" \

@@ -382,15 +382,16 @@ PY
     if ((stts>=1 && stts<=10)); then
         if [ -f "${DC_tlt}/tpc-journal" ]; then exit 1; else readd; fi
         
+        # empty topic
         if [ ${cfg0} -lt 1 ]; then
-
+            echo "Empty topic N1 / ${cfg0} / ${cfg1} / ${cfg2}"
             notebook_1; ret=$?
             
             if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
             
             if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
 
-        elif [ ${cfg1} -ge 1 ] || [ ${cfg1} -ge 0 -a ${cfg0} -lt 15 ]; then
+        elif [ ${cfg1} -ge 1 ] || [ ${cfg1} -gt 0 -a ${cfg0} -ge 10 ]; then
       
             if echo "$stts" |grep -E '3|4|7|8|9|10'; then
             
@@ -413,8 +414,11 @@ PY
                 fi
                 
                 pres="<u><b>$(gettext "Topic learnt")</b></u>  $(gettext "* however you have new notes") ($cfg1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
+                echo "N2 / ${cfg0} / ${cfg1} / ${cfg2}"
                 notebook_2
+
             else
+                echo "N1 / ${cfg0} / ${cfg1} / ${cfg2}"
                 notebook_1
             fi
                 ret=$?
@@ -423,7 +427,7 @@ PY
                 
                 if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
 
-        elif [ ${cfg1} -eq 0 -a ${cfg0} -ge 15 ]; then
+        elif [ ${cfg1} -eq 0 -a ${cfg0} -ge 10 ]; then
         
              if  ! echo "$stts" |grep -E '3|4|7|8|9|10'; then
             
@@ -447,9 +451,9 @@ PY
                     oclean & return 1
                 fi 
             fi
-            
+
             pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
-            
+            echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
             notebook_2; ret=$?
             
             if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
@@ -461,7 +465,7 @@ PY
         if [ -f "${DC_tlt}/tpc-journal" ]; then exit 1; else readd; fi
         
         if [ ${cfg0} -lt 1 ]; then
-        
+            echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
             notebook_1; ret=$?
             
             if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
@@ -471,9 +475,10 @@ PY
         elif [ ${cfg1} -ge 1 ]; then
         
             if echo "$stts" |grep -E '3|4|7|8|9|10'; then
-            
+                echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
                 notebook_2
             else
+                echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
                 notebook_1
             fi
             ret=$?
@@ -487,6 +492,7 @@ PY
             calculate_review "${tpc}"
             
             pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
+            echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
             notebook_2; ret=$?
         fi
         

@@ -542,7 +542,7 @@ function process() {
         if [ -n "$(< "$DT_r/select_lines")" -o -n "$(< "$DT_r/wrds")" ]; then
             number_items=$((cnta+cntb))
             ( sleep 1; notify-send -i idiomind \
-            "$(gettext "Adding $number_items notes")" \
+            "$number_items $(gettext "new notes")" \
             "$(gettext "Please wait till the process is completed")" )
         else
             [ "$conten" != '__words__' ] && cleanups "$DT_r"
@@ -572,7 +572,7 @@ function process() {
                     exmp="$(sqlite3 "$tlngdb" "select Example from Words where Word is '${trgt}';")"
                     defn="$(sqlite3 "$tlngdb" "select Definition from Words where Word is '${trgt}';")"
                     export exmp="$(echo "$exmp" |tr '\n' ' ')"
-                    export defn="$(echo "$exmp" |tr '\n' ' ')"
+                    export defn="$(echo "$defn" |tr '\n' ' ')"
                     export cdid="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "" "")"
                     audio="${trgt,,}"
                     mksure "${trgt}" "${srce}"
@@ -598,7 +598,8 @@ function process() {
                     if [ ${#trgt} -ge ${sentence_chars} ]; then
                         echo -e "\n\n$n) [$(gettext "Sentence too long")] $trgt" >> "$DT_r/slog"
                     else
-                        ( export DT_r; sentence_p 1
+                        ( export db="$DS/default/dicts/$lgt"
+                        export DT_r; sentence_p 1
                         export cdid="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
                         mksure "${trgt}" "${srce}" "${wrds}" "${grmr}"
                         
