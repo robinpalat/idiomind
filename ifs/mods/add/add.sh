@@ -678,6 +678,7 @@ function dlg_checklist_2() {
         fi
         done
     }
+    exmp="$trgt"
     if [ $(wc -w <<< "${1}") -le 5 -a $(wc -w <<< "${1}") -gt 1 ]; then
     fl="--field="$(gettext "Show in word viewer")":CHK"; fi
     list "${1}" | yad --list --checklist --tabnum=1 --plug="$fkey" \
@@ -695,7 +696,7 @@ function dlg_checklist_2() {
     --skip-taskbar --orient=vert \
     --window-icon=idiomind --center --on-top \
     --gtkrc="$DS/default/gtkrc.cfg" \
-    --width=480 --height=250 --borders=5 --splitter=180 \
+    --width=500 --height=260 --borders=5 --splitter=180 \
     --button="  $(gettext "Close")  ":0
 }
 

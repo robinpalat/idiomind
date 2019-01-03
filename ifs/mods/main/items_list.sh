@@ -117,7 +117,7 @@ function sentence_view() {
     --column="":TEXT \
     --column="":TEXT \
     --button="!gtk-edit":4 \
-    --button="!gtk-justify-left!$(gettext "Words")":"$cmd_words" \
+    --button="!format-justify-left!$(gettext "Words")":"$cmd_words" \
     --button="!$DS/images/listen.png":"$cmd_listen" \
     --button="!media-seek-forward":2
     
