@@ -102,8 +102,8 @@ play_list() {
         n=0
         while [ ${n} -le 4 ]; do
             arr="in${n}"
-            [[ ${!arr} -lt 1 ]] && echo "$DS/images/ai.png" || echo "$DS/images/a.png"
-            echo ${!psets[${n}]}
+            [[ ${!arr} -lt 1 ]] && echo "$DS/images/ai0.png" || echo "$DS/images/a${n}.png"
+            echo "${!psets[${n}]}"
             echo "  $(gettext "${lbls[$n]}")"
             let n++
         done
@@ -111,7 +111,7 @@ play_list() {
             source "${ad}"
             for item in "${!items[@]}"; do
                 echo "$DS/images/${items[$item]}.png"
-                echo `grep -o ${items[$item]}=\"[^\"]* "${file_cfg}" |grep -o '[^"]*$'`
+                grep -o ${items[$item]}=\"[^\"]* "${file_cfg}" |grep -o '[^"]*$'
                 echo "  $(gettext "${item}") <i><small>${aname}</small></i>"
             done
             unset items
@@ -202,7 +202,8 @@ play_list() {
             fi
             [ -f "$DT/play2lck" ] && rm -f "$DT/play2lck"
             "$DS/stop.sh" 2
-            "$DS/bcle.sh" &
+            "$DS/bcle.sh" "$2" &
+
         # cmd stop
         elif [ $ret -eq 2 ]; then
             [ -e "$DT/playlck" ] && echo 0 > "$DT/playlck"
