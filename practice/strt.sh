@@ -713,7 +713,7 @@ function lock() {
         if ! grep 'wait' <<< "$(< "${lock}")"; then
             text_dlg="<b>$(gettext "Practice Completed")</b>\\n$(< "${lock}")"
             msg_2 "$text_dlg" \
-            "$DS/images/yes.png" "$(gettext "Restart")" "$(gettext "OK")" "$(gettext "Practice Completed")"
+            "$DS/images/practice/21.png" "$(gettext "Restart")" "$(gettext "OK")" "$(gettext "Practice Completed")"
             ret=$?
         else
             if [ $(grep -o "wait"=\"[^\"]* "${lock}" |grep -o '[^"]*$') != $(date +%d) ]; then

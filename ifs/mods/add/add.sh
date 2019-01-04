@@ -593,11 +593,11 @@ function dlg_form_1() {
     --width=470 --borders=5 \
     --field="" "$txt" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
-    --button=!'edit-paste'!"$(gettext "Clipboard watcher")":5 \
-    --button=!'image-x-generic'!"$(gettext "Screen clipping")":3 \
-    --button=!'audio-x-generic'!"$(gettext "Add an audio file")":2 \
-    --button=!'gtk-edit'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
-    --button=!'gtk-apply'!"$(gettext "Add")":0
+    --button=!'/usr/share/idiomind/images/add_clipboard.png'!"$(gettext "Clipboard watcher")":5 \
+    --button=!'/usr/share/idiomind/images/add_image.png'!"$(gettext "Screen clipping")":3 \
+    --button=!'/usr/share/idiomind/images/add_audio.png'!"$(gettext "Add an audio file")":2 \
+    --button=!'/usr/share/idiomind/images/add_more.png'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
+    --button=!'/usr/share/idiomind/images/add.png'!"$(gettext "Add")":0
 }
 
 function dlg_form_2() {
@@ -613,11 +613,11 @@ function dlg_form_2() {
     --field="" "$txt" \
     --field="" "$srce" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
-    --button=!'edit-paste'!"$(gettext "Clipboard watcher")":5 \
-    --button=!'image-x-generic'!"$(gettext "Screen clipping")":3 \
-    --button=!'audio-x-generic'!"$(gettext "Add an audio file")":2 \
-    --button=!'gtk-edit'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
-    --button=!'gtk-apply'!"$(gettext "Add")":0
+    --button=!'/usr/share/idiomind/images/add_clipboard.png'!"$(gettext "Clipboard watcher")":5 \
+    --button=!'/usr/share/idiomind/images/add_image.png'!"$(gettext "Screen clipping")":3 \
+    --button=!'/usr/share/idiomind/images/add_audio.png'!"$(gettext "Add an audio file")":2 \
+    --button=!'/usr/share/idiomind/images/add_more.png'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
+    --button=!'/usr/share/idiomind/images/add.png'!"$(gettext "Add")":0
 }
 
 function dlg_checklist_3() {
@@ -648,8 +648,8 @@ function dlg_checklist_3() {
     --skip-taskbar --orient=vert --window-icon=idiomind --center --on-top \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --width=${sz[0]} --height=${sz[1]} --borders=5 --splitter=${sz[2]} \
-    --button=!'gtk-edit'!"$(gettext "Edit")":2 \
-    --button=!'gtk-apply'!"$(gettext "Add")":0
+    --button=!'/usr/share/idiomind/images/add_more.png'!"$(gettext "Edit")":2 \
+    --button=!'/usr/share/idiomind/images/add.png'!"$(gettext "Add")":0
 }
 
 function dlg_checklist_1() {
