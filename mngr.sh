@@ -686,8 +686,8 @@ delete_topic() {
         fi
         > "$DC_s/tpc"
         
-         for n in {1..7}; do 
-        cdb "${shrdb}" 7 T${n} "${name}" "${tpc}"
+        for n in {1..7}; do 
+            cdb "${shrdb}" 7 T${n} "${name}" "${tpc}"
         done
         idiomind tasks
         

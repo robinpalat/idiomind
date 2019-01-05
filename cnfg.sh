@@ -76,6 +76,11 @@ config_dlg() {
     sz=(510 350); [[ ${swind} = TRUE ]] && sz=(460 320)
     show_icon=0; kill_icon=0
     opts="$(cdb "${cfgdb}" 5 opts)"
+    if [ $(wc -l <<<"$opts") != 8 ]; then 
+        rm "${cfgdb}"; "$DS/ifs/mkdb.sh" config
+        opts="$(cdb "${cfgdb}" 5 opts)"
+    fi
+    
     csets=( 'gramr' 'trans' 'dlaud' 'ttrgt' \
     'itray' 'swind' 'stsks' 'tlang' 'slang' )
     v=1; for get in ${csets[@]}; do
