@@ -420,8 +420,8 @@ function practice_d() {
             srce=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
         fi
         [ ! -e "$img" ] && img="$DS/images/imgmiss.jpg"
-        cuest="<span background='#232323' color='white' font_desc='Arial Bold 13'> ${trgt} </span>"
-        aswer="<span background='#185E18' color='white' font_desc='Arial Bold 13'> ${srce} </span>"
+        cuest="<span background='#515151' color='white' font_desc='Arial Bold 14'> ${trgt} </span>"
+        aswer="<span background='#515151' color='white' font_desc='Arial 14'> ${srce} </span>"
     }
 
     question() {

@@ -24,10 +24,7 @@ chek_topic() {
     if [ ! -f "${tpcdb}" ]; then
         "$DS/ifs/mkdb.sh" tpc "${topic}"
     fi
-    if ! file "${tpcdb}" | grep 'SQLite'; then
-        "$DS/ifs/mkdb.sh" tpc "${topic}"
-    fi
-    
+
     touch "${DC_tlt}/data"
     if [ ! -f "$DT/n_s_pr" ]; then
         "$DS/ifs/tls.sh" check_index "${topic}"

@@ -73,7 +73,7 @@ check_index() {
     source "$DS/ifs/cmns.sh"
     DC_tlt="$DM_tl/${2}/.conf"
     DM_tlt="$DM_tl/${2}"
-    tpc="${2}"; mkmn=0; fix=0; c=0; s=0; db_configTable=0
+    tpc="${2}"; mkmn=0; fix=0; c=0; s=0; db_configTable=0; newform=0
     [[ ${3} = 1 ]] && r=1 || r=0
 
     _check() {
@@ -116,107 +116,116 @@ check_index() {
             fi
         fi
 
-        if ! file "${tpcdb}" | grep 'SQLite'; then
-            "$DS/ifs/mkdb.sh" tpc "$tpc"
+        if [ -z "$(file "${tpcdb}" |grep -o 'SQLite')" ]; then
+			"$DS/ifs/mkdb.sh" tpc "${tpc}"; fix=1
+		fi
+    
+        if [ -f "${DC_tlt}/0.cfg" || -f "${DC_tlt}/id.cfg" ]; then
+            newform=1
         fi
         
         cnt="$(sqlite3 "${tpcdb}" "SELECT Count(*) FROM config")"
         if [[ $cnt != '1' ]]; then
             db_configTable=1
         fi
+        
+        if grep -o 'trgt{}srce{}' "${DC_tlt}/data"; then fix=1; fi
 
         learn="$(tpc_db 5 learning)"
         leart="$(tpc_db 5 learnt)"
         cnt0=$(grep -c '[^[:space:]]' < "${DC_tlt}/data")
+        
+        index0=$(grep -c '[^[:space:]]' < "${DC_tlt}/index")
+        index0=$((index0/3))
+        
         cnt1="$(grep -c '[^[:space:]]' <<< "$learn")"
         cnt2="$(grep -c '[^[:space:]]' <<< "$leart")"
         if [ $((cnt1+cnt2)) != ${cnt0} ]; then export fix=1; fi
         if [ $? != 0 ]; then export fix=1; fi
+        if [ ${index0} != ${cnt1} ]; then fix=1; fi
         export stts
     }
     
     _newformat() {
-        if [ -f "${DC_tlt}/id.cfg" ]; then
-            (sleep 1; notify-send -i idiomind "$(gettext "Old configuration")" \
-            "$(gettext "Updating...")" -t 3000) &
+		(sleep 1; notify-send -i idiomind "$(gettext "Old configuration")" \
+		"$(gettext "Updating...")" -t 3000) &
 
-            [ -f "${DC_tlt}/0.cfg" ] && mv "${DC_tlt}/0.cfg" "${DC_tlt}/data"
-            [ -f "${DC_tlt}/8.cfg" ] && mv "${DC_tlt}/8.cfg" "${DC_tlt}/stts"
-            [ -f "${DC_tlt}/8.bk" ] && mv "${DC_tlt}/8.cfg" "${DC_tlt}/stts.bk"
-            [ -f "${DC_tlt}/5.cfg" ] && mv "${DC_tlt}/5.cfg" "${DC_tlt}/index"
-            [ -f "${DC_tlt}/info" ] && mv "${DC_tlt}/info" "${DC_tlt}/note"
-            if [ -e "${DC_tlt}/10.cfg" ]; then
-                source "${DC_tlt}/10.cfg"
-                tpc_db 3 config repass "$repass"
-            fi
-            n=1; while read -r d; do
-                tpc_db 3 reviews date${n} "$d"; let n++
-            done < "${DC_tlt}/9.cfg"
-            
-            tpc_db 6 'sentences'; tpc_db 6 'words'
-            tpc_db 6 'learning'; tpc_db 6 'learnt'
-            tpc_db 6 'marks'
-            
-            echo -n "PRAGMA foreign_keys=ON" |sqlite3 "${tpcdb}"
-            touch "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg" \
-            "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg" \
-            "${DC_tlt}/6.cfg"
-            if [ -e "${DC_tlt}/id.cfg" ]; then 
-                source "${DC_tlt}/id.cfg"
-                tpc_db 3 id slng "$slng"
-                tpc_db 3 id tlng "$tlng"
-                tpc_db 3 id autr "$autr"
-                tpc_db 3 id ctgy "$ctgy"
-                tpc_db 3 id ilnk "$ilnk"
-                tpc_db 3 id orig "$orig"
-                tpc_db 3 id dtec "$dtec"
-                tpc_db 3 id levl "$levl"
-            else
-                dtec=$(date +%F)
-                tpc_db 3 id dtec "$dtec"
-            fi
+		[ -f "${DC_tlt}/0.cfg" ] && mv "${DC_tlt}/0.cfg" "${DC_tlt}/data"
+		[ -f "${DC_tlt}/8.cfg" ] && mv "${DC_tlt}/8.cfg" "${DC_tlt}/stts"
+		[ -f "${DC_tlt}/8.bk" ] && mv "${DC_tlt}/8.cfg" "${DC_tlt}/stts.bk"
+		[ -f "${DC_tlt}/5.cfg" ] && mv "${DC_tlt}/5.cfg" "${DC_tlt}/index"
+		[ -f "${DC_tlt}/info" ] && mv "${DC_tlt}/info" "${DC_tlt}/note"
+		if [ -e "${DC_tlt}/10.cfg" ]; then
+			source "${DC_tlt}/10.cfg"
+			tpc_db 3 config repass "$repass"
+		fi
+		n=1; while read -r d; do
+			tpc_db 3 reviews date${n} "$d"; let n++
+		done < "${DC_tlt}/9.cfg"
+		
+		tpc_db 6 'sentences'; tpc_db 6 'words'
+		tpc_db 6 'learning'; tpc_db 6 'learnt'
+		tpc_db 6 'marks'
+		
+		echo -n "PRAGMA foreign_keys=ON" |sqlite3 "${tpcdb}"
+		touch "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg" \
+		"${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg" \
+		"${DC_tlt}/6.cfg"
+		if [ -e "${DC_tlt}/id.cfg" ]; then 
+			source "${DC_tlt}/id.cfg"
+			tpc_db 3 id slng "$slng"
+			tpc_db 3 id tlng "$tlng"
+			tpc_db 3 id autr "$autr"
+			tpc_db 3 id ctgy "$ctgy"
+			tpc_db 3 id ilnk "$ilnk"
+			tpc_db 3 id orig "$orig"
+			tpc_db 3 id dtec "$dtec"
+			tpc_db 3 id levl "$levl"
+		else
+			dtec=$(date +%F)
+			tpc_db 3 id dtec "$dtec"
+		fi
 
-            stts=$(sed -n 1p "${DC_tlt}/stts")
-            ! [[ ${stts} =~ $numer ]] && stts=13
+		stts=$(sed -n 1p "${DC_tlt}/stts")
+		! [[ ${stts} =~ $numer ]] && stts=13
 
-            while read -r item_; do
-                get_item "${item_}"
-                
-                if [[ ! "${type}" =~ $numer ]]; then
-                    [[ $(wc -$c <<< "${trgt}") = 1 ]] && type=1 || type=2
-                fi
-                if [ -n "${trgt}" -a -n ${type} ]; then
-                    if grep -Fxo "${trgt}" < "${DC_tlt}/6.cfg" >/dev/null 2>&1; then
-                        tpc_db 2 marks list "$trgt"
-                    fi
-                    if echo "$stts" |grep -E '3|4|7|8|9|10'>/dev/null 2>&1; then
-                        tpc_db 2 learnt list "$trgt"
-                    elif grep -Fxo "${trgt}" < "${DC_tlt}/1.cfg" >/dev/null 2>&1; then
-                        tpc_db 2 learning list "$trgt"
-                    elif grep -Fxo "${trgt}" < "${DC_tlt}/2.cfg">/dev/null 2>&1 ; then
-                        tpc_db 2 learnt list "$trgt"
-                    else
-                        tpc_db 2 learning list "$trgt"
-                    fi
-                    if [ ${type} = 1 ]; then
-                        tpc_db 2 words list "$trgt"
-                    elif [ ${type} = 2 ]; then
-                        tpc_db 2 sentences list "$trgt"
-                    fi
-                    
-                    eval line="$(sed -n 2p $DS/default/vars)"
-                    echo -e "${line}" >> "$DT/data"
-            fi
-            done < "${DC_tlt}/data"
-                
-            cleanups "${DC_tlt}/10.cfg" "${DC_tlt}/7.cfg" \
-            "${DC_tlt}/9.cfg" "${DC_tlt}/id.cfg" \
-            "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg" \
-            "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg" "${DC_tlt}/6.cfg"
-            mv -f "$DT/data" "${DC_tlt}/data"
-            sed -i '/^$/d' "${DC_tlt}/data"
-            export mkmn=1
-        fi
+		while read -r item_; do
+			get_item "${item_}"
+			
+			if [[ ! "${type}" =~ $numer ]]; then
+				[[ $(wc -$c <<< "${trgt}") = 1 ]] && type=1 || type=2
+			fi
+			if [ -n "${trgt}" -a -n ${type} ]; then
+				if grep -Fxo "${trgt}" < "${DC_tlt}/6.cfg" >/dev/null 2>&1; then
+					tpc_db 2 marks list "$trgt"
+				fi
+				if echo "$stts" |grep -E '3|4|7|8|9|10'>/dev/null 2>&1; then
+					tpc_db 2 learnt list "$trgt"
+				elif grep -Fxo "${trgt}" < "${DC_tlt}/1.cfg">/dev/null 2>&1; then
+					tpc_db 2 learning list "$trgt"
+				elif grep -Fxo "${trgt}" < "${DC_tlt}/2.cfg">/dev/null 2>&1 ; then
+					tpc_db 2 learnt list "$trgt"
+				else
+					tpc_db 2 learning list "$trgt"
+				fi
+				if [ ${type} = 1 ]; then
+					tpc_db 2 words list "$trgt"
+				elif [ ${type} = 2 ]; then
+					tpc_db 2 sentences list "$trgt"
+				fi
+				
+				eval line="$(sed -n 2p $DS/default/vars)"
+				echo -e "${line}" >> "$DT/data"
+		fi
+		done < "${DC_tlt}/data"
+			
+		cleanups "${DC_tlt}/10.cfg" "${DC_tlt}/7.cfg" \
+		"${DC_tlt}/9.cfg" "${DC_tlt}/id.cfg" \
+		"${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg" \
+		"${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg" "${DC_tlt}/6.cfg"
+		mv -f "$DT/data" "${DC_tlt}/data"
+		sed -i '/^$/d' "${DC_tlt}/data"
+		export mkmn=1
     }
 
     _restore() {
@@ -229,10 +238,12 @@ check_index() {
                 "$DM/backup/${tpc}.bk" \
                 |grep -v '\----- newest' \
                 |grep -v '\----- oldest' |head -n200 > "${DC_tlt}/data"
+                
             else
                 msg "$(gettext "No such file or directory")\n${topic}\n" error & exit 1
             fi
         fi
+        sed -i "/trgt{}srce{}/d" "${DC_tlt}/data"
         tpc_db 6 'sentences'; tpc_db 6 'words'
         tpc_db 6 'learning'; tpc_db 6 'learnt'
         tpc_db 6 'marks'
@@ -291,7 +302,7 @@ PY
         export mkmn=1
     }
 
-    _newformat
+    [ ${newform} = 1 ] && _newformat
     _check
 
     if [[ ${fix} = 1 ]]; then

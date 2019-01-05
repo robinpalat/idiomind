@@ -4,6 +4,7 @@
 function create_tpcdb() {
     tpc="${2}"
     tpcdb="${DM_tl}/${2}/.conf/tpc"
+    [ -f "$tpcdb" ] && rm "$tpcdb"
     dtec="$(date +%F)"
     
     echo -n "create table if not exists id \
@@ -60,13 +61,6 @@ function create_tpcdb() {
     sqlite3 "${tpcdb}" "pragma busy_timeout=2000;\
     insert into reviews (date1) values ('');"
     echo -n "pragma foreign_keys=ON" |sqlite3 "${tpcdb}"
-    
-    
-    
-    
-    
-    
-    
     return 0
 }
 
