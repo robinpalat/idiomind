@@ -70,8 +70,8 @@ play_list() {
         title="$(gettext "Play")"
         [ ${mode} -ge 1 -a -n "${tpc}" ] && title="${tpc}"
     else
-        tpp="$(gettext "Playing:") $(sed -n 1p "$DT/playlck") ..."
-        title="${tpp}"
+        tpp="$(gettext "Playing:") $(sed -n 1p "$DT/playlck")"
+        title="${tpp:0:40}..."
         btn1="$(gettext "Stop"):2"
     fi
     ntosd=""; audio=""

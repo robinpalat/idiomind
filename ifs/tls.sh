@@ -120,7 +120,7 @@ check_index() {
 			"$DS/ifs/mkdb.sh" tpc "${tpc}"; fix=1
 		fi
     
-        if [ -f "${DC_tlt}/0.cfg" || -f "${DC_tlt}/id.cfg" ]; then
+        if [ -f "${DC_tlt}/0.cfg" ] || [ -f "${DC_tlt}/id.cfg" ]; then
             newform=1
         fi
         
@@ -135,9 +135,13 @@ check_index() {
         leart="$(tpc_db 5 learnt)"
         cnt0=$(grep -c '[^[:space:]]' < "${DC_tlt}/data")
         
-        index0=$(grep -c '[^[:space:]]' < "${DC_tlt}/index")
-        index0=$((index0/3))
-        
+        if [ -f "${DC_tlt}/index" ]; then
+            index0=$(grep -c '[^[:space:]]' < "${DC_tlt}/index")
+            index0=$((index0/3))
+        else
+            index0=0
+        fi
+
         cnt1="$(grep -c '[^[:space:]]' <<< "$learn")"
         cnt2="$(grep -c '[^[:space:]]' <<< "$leart")"
         if [ $((cnt1+cnt2)) != ${cnt0} ]; then export fix=1; fi
@@ -282,7 +286,7 @@ for mitem in datalist:
     
     if typee == '1':
         cur.execute("insert into words (list) values (?)", (trgt,))
-    elif typee == '2':
+    else:
         cur.execute("insert into sentences (list) values (?)", (trgt,))
     if mark == 'TRUE':
         cur.execute("insert into marks (list) values (?)", (trgt,))
@@ -410,7 +414,8 @@ add_file() {
     FL=$(yad --file --title="$(gettext "Add File")" \
     --text=" $(gettext "Browse to and select the file that you want to add.")" \
     --name=Idiomind --class=Idiomind \
-    --file-filter="$(gettext "Supported files") | *.mp3 *.ogg *.mp4 *.m4v *.jpg *.jpeg *.png *.txt *.gif" \
+    --file-filter="$(gettext "Supported files") \
+    | *.mp3 *.ogg *.mp4 *.m4v *.jpg *.jpeg *.png *.txt *.gif" \
     --add-preview --multiple \
     --window-icon="$DS/images/icon.png" --on-top --center \
     --width=680 --height=500 --borders=5 \
@@ -1316,22 +1321,24 @@ ABOUT
 
 
 clipw() {
-    if [ -n "${tpc}" ]; then
-        if [[ ! -e $DT/clipw  ]]; then
-            "$DS/ifs/clipw.sh" &
-            sleep 1
-            notify-send -i info "$(gettext "Information")" \
-"$(gettext "The clipboard watcher is enabled for 5 minutes...")
- $(gettext "Notes will be added to:") \"$tpc\"" -t 8000
-        else 
-            "$DS/ifs/clipw.sh" 1
-        fi
-    else
-        source "$DS/ifs/cmns.sh"
-        notify-send -i info "$(gettext "Information")" \
-"$(gettext "Clipboard watcher: No topic selected or active, exiting...")" -t 10000
+    if [ -f $DT/tpe ]; then 
+        tpe="$(sed -n 1p $DT/tpe |sed -e 's/^ *//' -e 's/ *$//')"
     fi
-
+    if [ -n "${tpe}" ]; then
+        info="$(gettext "Notes will be added to:") \"$tpe\""
+    else
+        info="$(gettext "No topic selected or active")"
+    fi
+    if [[ ! -e $DT/clipw  ]]; then
+        "$DS/ifs/clipw.sh" &
+        sleep 1
+        notify-send -i info "$(gettext "Information")" \
+"$(gettext "The clipboard watcher is enabled for 5 minutes...")
+ $info" -t 8000
+    else 
+        "$DS/ifs/clipw.sh" 1
+    fi
+    
 } >/dev/null 2>&1
 
 

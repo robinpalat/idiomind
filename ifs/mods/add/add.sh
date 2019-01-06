@@ -645,7 +645,7 @@ function dlg_checklist_3() {
     yad --paned --key="$fkey" \
     --title="$(gettext "Found") $(wc -l < "${1}") $(gettext "notes")" \
     --name=Idiomind --class=Idiomind \
-    --skip-taskbar --orient=vert --window-icon=idiomind --center --on-top \
+    --skip-taskbar --orient=vert --window-icon=idiomind --center \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --width=${sz[0]} --height=${sz[1]} --borders=5 --splitter=${sz[2]} \
     --button=!'/usr/share/idiomind/images/add_more.png'!"$(gettext "Edit")":2 \

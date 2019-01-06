@@ -311,13 +311,13 @@ edit_item() {
                             mv -f "${DM_tlt}/$cdid.mp3" "${DM_tlt}/$cdid_mod.mp3"; fi
                     fi
                 fi
-                if [ "$type" != "$type_mod" ]; then
+                if [ ${type} != ${type_mod} ]; then
                     if [ ${type_mod} = 1 ]; then
-                        tpc_db 4 sentences "${trgt_mod}"
+                        tpc_db 4 sentences list "${trgt_mod}"
                         tpc_db 2 words list "${trgt_mod}"
 
                     elif [ ${type_mod} = 2 ]; then
-                        tpc_db 4 words "${trgt_mod}"
+                        tpc_db 4 words list "${trgt_mod}"
                         tpc_db 2 sentences list "${trgt_mod}"
                     fi
                 fi
@@ -344,8 +344,13 @@ edit_item() {
                 fi
             fi
 
-            [ ${type} != ${type_mod} -a ${type_mod} = 1 ] && ( img_word "${trgt}" "${srce}" ) &
-            [ ${colorize_run} = 1 ] && "$DS/ifs/tls.sh" colorize 1 &
+            if [ ${type} != ${type_mod} ] && [ ${type_mod} = 1 ]; then
+                colorize_run=1
+                ( img_word "${trgt}" "${srce}" ) fi &
+                
+            if [ ${colorize_run} = 1 ]; then 
+                sleep 2 && "$DS/ifs/tls.sh" colorize 1 &
+            fi
 
             if [ $ret -eq 2 ]; then $DS/mngr.sh edit ${list} $((item_pos+1)) &
             elif [ $ret -eq 0 ]; then 
@@ -686,7 +691,7 @@ delete_topic() {
         fi
         > "$DC_s/tpc"
         
-        for n in {1..7}; do 
+        for n in {1..10}; do 
             cdb "${shrdb}" 7 T${n} "${name}" "${tpc}"
         done
         idiomind tasks
@@ -736,8 +741,8 @@ rename_topic() {
         echo "${name}" > "$DC_s/tpc"
         echo "${name}" > "$DT/tpe"
 
-        for n in {1..7}; do 
-        cdb "${shrdb}" 7 T${n} "${name}" "${tpc}"
+        for n in {1..10}; do 
+            cdb "${shrdb}" 7 T${n} "${name}" "${tpc}"
         done
         idiomind tasks
         
@@ -815,8 +820,8 @@ PY
     "$DS/mngr.sh" mkmn 1 &
     [[ ${3} = 1 ]] && idiomind topic &
     
-    for n in {1..7}; do sqlite3 ${shrdb} \
-    "delete from T${n} where list='${tpc}';"; done
+    for n in {1..10}; do sqlite3 ${shrdb} \
+        "delete from T${n} where list='${tpc}';"; done
     idiomind tasks
 }
 
@@ -904,8 +909,8 @@ PY
     [[ ${3} = 1 ]] && idiomind topic &
     ( sleep 1; "$DS/ifs/tls.sh" colorize 0 ) &
     
-    for n in {1..7}; do sqlite3 ${shrdb} \
-    "delete from T${n} where list='${tpc}';"; done
+    for n in {1..10}; do sqlite3 ${shrdb} \
+        "delete from T${n} where list='${tpc}';"; done
     idiomind tasks
 }
 
@@ -980,7 +985,7 @@ PY
     cp -f "${DC_tlt}/note" "${DC_tlt}/note.bk"
     ( sleep 1; mv -f "${DC_tlt}/note.bk" "${DC_tlt}/note" ) &
     
-    for n in {1..7}; do sqlite3 ${shrdb} \
+    for n in {1..10}; do sqlite3 ${shrdb} \
     "delete from T${n} where list='${tpc}';"; done
     idiomind tasks
 }

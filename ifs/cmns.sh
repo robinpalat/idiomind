@@ -91,7 +91,7 @@ function tpc_db() {
     elif [ $1 = 3 ]; then # mod
         sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=300;\
         update ${ta} set ${co}='${va}';"
-    elif [ $1 = 4 ]; then # delete
+    elif [ $1 = 4 ]; then # delete especific
         sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500; \
         delete from ${ta} where ${co}='${va}';"
     elif [ $1 = 5 ]; then # select all
