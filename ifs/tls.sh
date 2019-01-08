@@ -606,7 +606,10 @@ first_run() {
             rm -f "$DC_s/topics_first_run"
             "$DS/add.sh" new_items &
         fi
-    elif [[ -z "${2}" ]]; then
+    elif [[ "${2}" = 'TRUE' ]]; then
+        echo "-- done"
+        touch "$DC_s/topics_first_run" "$DC_s/recommended_dicts_first_run"
+    elif [[ "${2}" = 'FALSE' ]]; then
         echo "-- done"
         touch "$DC_s/topics_first_run" "$DC_s/dics_first_run"
     fi

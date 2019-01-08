@@ -95,6 +95,7 @@ dlg=$(yad --form --title="Idiomind" \
 --width=480 --height=260 --borders=15 \
 --field="\t\t\t\t\t$(gettext "Select the language you are learning")  :CB" "$list1" \
 --field="\t\t\t\t\t$(gettext "Select your language")  :CB" "$list2" \
+--field="$(gettext "Set recommended Initialization settings :)")  :chk" "$list2" \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "Save")!gtk-apply":0)
 ret=$?
@@ -105,6 +106,7 @@ if [ $ret -eq 1 ]; then
 elif [ $ret -eq 0 ]; then
     target=$(echo "$dlg" |cut -d "|" -f1)
     source=$(echo "$dlg" |cut -d "|" -f2)
+    iniset=$(echo "$dlg" |cut -d "|" -f3)
     
     if [ -z "$dlg" ]; then
     /usr/share/idiomind/ifs/1u.sh & exit 1
@@ -128,12 +130,13 @@ elif [ $ret -eq 0 ]; then
     fi
     DM_t="$HOME/.idiomind/topics"
     DC_s="$HOME/.config/idiomind"
+
     [ ! -d  "$DC_s" ] && mkdir -p "$DC_s/addons"
     touch "$DC_s/tpc"
     
     export cfgdb="$DC_s/config"
     if [ ! -f "${cfgdb}" ]; then
-        "/usr/share/idiomind/ifs/mkdb.sh" config
+        "/usr/share/idiomind/ifs/mkdb.sh" config "$iniset"
     fi
 
     for val in "${lt[@]}"; do
@@ -150,7 +153,7 @@ elif [ $ret -eq 0 ]; then
 
     if echo "$target" |grep -oE 'Chinese|Japanese|Russian'; then _info; fi
     
-    /usr/share/idiomind/ifs/tls.sh first_run
+    /usr/share/idiomind/ifs/tls.sh first_run "$iniset"
     export u=1
     idiomind -s
 fi

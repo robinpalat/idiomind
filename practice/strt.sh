@@ -750,7 +750,7 @@ function decide_group() {
     --skip-taskbar --buttons-layout=spread \
     --text-align=center --align=center --center --on-top \
     --text="${info}" "" \
-    --width=500 --borders=15 \
+    --width=450 --height=120 --borders=15 \
     --button="$(gettext "Again")!view-refresh!$(gettext "Go back to practice the above items")":1 \
     --button="$(gettext "Continue")!go-next!$(gettext "Practice the next group")":0); ret="$?"
     unset good

@@ -19,8 +19,8 @@ function add_dlg() {
     add="$(yad --file --title="$(gettext "Add resource")" \
     --text=" $(gettext "Browse to and select the file that you want to add.")" \
     --class=Idiomind --name=Idiomind \
-    --window-icon=idiomind --center --on-top \
-    --width=650 --height=550 --borders=5 \
+    --window-icon=idiomind --center \
+    --width=650 --height=550 --borders=5 --on-top \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0 |cut -d "|" -f1)"
     ret=$?
@@ -126,7 +126,6 @@ function dlg() {
         test_ok=""
     fi
     
-    check_err "$DC_a/dicts.inf"
     sel="$(dict_list ${n} |yad --list \
     --title="$(gettext "Dictionaries")" \
     --name=Idiomind --class=Idiomind "${text}" \
@@ -135,8 +134,8 @@ function dlg() {
     --window-icon=idiomind \
     --expand-column=0 --hide-column=3 \
     --search-column=4 --regex-search \
-    --center --on-top \
-    --width=680 --height=430 --borders=8 \
+    --center \
+    --width=680 --height=430 --borders=10 \
     --column="$(gettext "Enable")":CHK \
     --column="$(gettext "Resource")":TEXT \
     --column="$(gettext "Type")":TEXT \
@@ -198,7 +197,7 @@ function dlg() {
                 
             done < <(sed 's/<[^>]*>//g' <<< "${sel}")
             
-            if [ $ret -eq 3 ]; then "$DS_a//Dics/test.sh"; fi
+            if [ $ret -eq 3 ]; then "$DS_a/Dics/test.sh"; fi
         fi
     exit 1
     
@@ -215,11 +214,39 @@ function update_config_dir() {
             echo "-- added dict: $(basename "${dict}")"
             > "$disables/$(basename "${dict}")"; fi
     done <<< "${lsdics}"
+    
+    if [ -f "$DC_s/recommended_dicts_first_run" ]; then # recommended_dicts_first_run
+    
+        cleanups "$DC_s/recommended_dicts_first_run"  \
+        "$DC_s/dics_first_run"
+    
+        #lsdics="$(ls "$disables/")"
+    
+        #"$DS_a/Dics/test.sh" 1 silence
+        #if [ -f "$DC_a/dict/test" ] ; then
+            #test_ok="$(< "$DC_a/dict/test")"
+        #fi
+        
+            #if grep "${dict}" <<< "${test_ok}"  >/dev/null 2>&1; then
+                #echo "-- enable dict: ${dict}"
+                #mv -f "$disables/${dict}" "$enables/${dict}"
+            #fi
+            
+        if ls "$disables"/*.various 1> /dev/null 2>&1; then
+            mv -f "$disables"/*.various "$enables"/
+        fi
+        
+        if ls "$disables"/*.$lgt 1> /dev/null 2>&1; then
+            mv -f "$disables"/*.$lgt "$enables"/
+        fi
+    fi
+
     while read -r dict; do
         if ! grep "$(basename "${dict}")" <<< "${lsdics}">/dev/null 2>&1; then
             cleanups "$enables/${dict}"; echo "-- removed: $(basename "${dict}")"
         fi
     done < <(ls "$enables")
+    
     while read -r dict; do
         if ! grep "$(basename "${dict}")" <<< "${lsdics}">/dev/null 2>&1; then
             cleanups "$disables/${dict}"; echo "-- removed: $(basename "${dict}")"

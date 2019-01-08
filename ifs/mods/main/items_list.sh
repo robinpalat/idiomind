@@ -266,7 +266,7 @@ function tpc_view() {
     --width=${sz[0]} --height=${sz[1]} --borders=8 \
     --column=" " --column=" " \
     --button="$(gettext "Install")":0 \
-    --button="$(gettext "Close")":1
+    --button="$(gettext "Close")!gtk-close":1
 }
 
 function panelini() {

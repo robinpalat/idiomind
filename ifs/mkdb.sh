@@ -65,6 +65,7 @@ function create_tpcdb() {
 }
 
 function create_shrdb() {
+    echo -e "\n--- share database..."
     source /usr/share/idiomind/default/c.conf
     shrdb="$DM_tls/data/config"
     echo -n "create table if not exists topics (list TEXT);" |sqlite3 "${shrdb}"
@@ -78,9 +79,11 @@ function create_shrdb() {
     echo -n "create table if not exists T8 (list TEXT);" |sqlite3 "${shrdb}"
     echo -n "create table if not exists T9 (list TEXT);" |sqlite3 "${shrdb}"
     echo -n "create table if not exists T10 (list TEXT);" |sqlite3 "${shrdb}"
+    echo -e "\n--- share database created"
 }
 
 function create_cfgdb() {
+    echo -e "\n--- config database..."
     cfgdb="$HOME/.config/idiomind/config"
     echo -n "pragma busy_timeout=800;create table if not exists opts \
     (gramr TEXT, trans TEXT, dlaud TEXT, ttrgt TEXT, itray TEXT, \
@@ -99,14 +102,15 @@ function create_cfgdb() {
     sqlite3 "${cfgdb}" "pragma busy_timeout=500;\
     insert into opts (gramr,trans,dlaud,ttrgt,itray,\
     swind,stsks,tlang,slang,synth,txaud,intrf) \
-    values ('FALSE','FALSE','FALSE','FALSE','FALSE',\
-    'FALSE','FALSE','','','','','default');"
+    values ('"$2"','"$2"','"$2"','FALSE','FALSE',\
+    'FALSE','"$2"','','','','','default');"
     sqlite3 "${cfgdb}" "insert into lang (tlng,slng) values ('','');"
     sqlite3 "${cfgdb}" "insert into user (autr,pass) values ('','');"
     sqlite3 "${cfgdb}" "insert into geom (vals) values ('');"
     v=$(date +%d)
     sqlite3 "${cfgdb}" "insert into sess (date) values ('${v}');"
     sqlite3 "${cfgdb}" "insert into updt (date) values ('${v}');"
+    echo -e "\n--- config database created"
 }
 
 case "$1" in
