@@ -11,7 +11,7 @@ mkdir "$DT/dict_test"
 # if [ "$1" = 1 ]; then DC_d="$DC_a/dict/disables"; fi
 
 DC_d="$DC_a/dict/disables"
-DC_e="$DC_a/dict/enaables"
+DC_e="$DC_a/dict/enables"
 
 function dlg_progress_2() {
     #if [ ! -f "$DC_s/dics_first_run" ]; then
@@ -47,7 +47,7 @@ for trans in "$DC_d"/*."Traslator online.Translator".*; do
 done
 
 st="$(gettext "This is a test")"
-for trans in "$DC_d"/*."Traslator online.Translator".*; do
+for trans in "$DC_e"/*."Traslator online.Translator".*; do
     trans="$DS_a/Dics/dicts/$(basename "${trans}")"
     name="$(cut -f 1 -d '.' <<< "$(basename "${trans}")")"
     #echo "# TRANSLATOR  ($name)";
@@ -291,4 +291,4 @@ echo "100"
 
  ) | dlg_progress_2
  
-if [ "$1" != 1 ]; then sleep 1; "$DS/addons/Dics/cnfg.sh"; fi
+if [ "$1" != 1 ]; then "$DS/addons/Dics/cnfg.sh"; fi

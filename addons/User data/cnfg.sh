@@ -24,7 +24,7 @@ D=$(yad --list --radiolist --title="$(gettext "User Data")" \
 --center --on-top --expand-column=2 --image-on-top \
 --skip-taskbar --image=folder --ellipsize-cols=2 \
 --width=450 --height=280 --borders=10 \
---button="$(gettext "Save")!gtk-apply":0 \
+--button="$(gettext "Select")!gtk-apply":0 \
 --button="$(gettext "Close")":1 \
 --column="" \
 --column="$(gettext "Options")" \
@@ -34,7 +34,7 @@ if [[ $ret -eq 0 ]]; then
     in=$(sed -n 1p <<<"$D")
     ex=$(sed -n 2p <<<"$D")
 
-    if grep "TRUE $(gettext "Export")" <<<"$ex"; then
+    if grep "TRUE $(gettext "Export")" <<< "${ex}"; then
         set -e
         cd "$HOME"
         exp=$(yad --file --save --title="$(gettext "Export")" \
@@ -69,7 +69,7 @@ if [[ $ret -eq 0 ]]; then
             fi
         fi
 
-    elif grep "TRUE $(gettext "Import")" <<<"$in"; then
+    elif grep "TRUE $(gettext "Import")" <<< "${in}"; then
         set -e
         cd "$HOME"
         add=$(yad --file --title="$(gettext "Import")" \

@@ -123,8 +123,8 @@ config_dlg() {
     --field="$(gettext "Interface language")":CB "$lst" \
     --field=" :LBL" " " --field=":LBL" " " \
     --field="$(gettext "Getting started")":BTN "$DS/ifs/tls.sh help" \
-    --field="$(gettext "Report a problem / Feedback")":BTN "$DS/ifs/tls.sh fback" \
-    --field="$(gettext "Program Updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
+    --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh fback" \
+    --field="$(gettext "Program updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
     --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
     cat "$DS_a/menu_list" |yad --plug=$KEY --tabnum=2 --list \
     --text=" $(gettext "Double-click to configure") " --print-all \
