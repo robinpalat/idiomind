@@ -79,7 +79,7 @@ function new_item() {
     
     if [ ${#trgt} -le ${sentence_chars} ] && \
     [ $(echo -e "${trgt}" |wc -l) -gt ${sentence_lines} ]; then
-        export trgt; process & return; 
+        export trgt; process & return
     fi
     if [ ${#trgt} -gt ${sentence_chars} ]; then 
         export trgt; process & return

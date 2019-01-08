@@ -22,10 +22,10 @@ D=$(yad --list --radiolist --title="$(gettext "User Data")" \
 --always-print-result --print-all --separator=" " \
 --window-icon=idiomind \
 --center --on-top --expand-column=2 --image-on-top \
---skip-taskbar --image=folder \
+--skip-taskbar --image=folder --ellipsize-cols=2 \
 --width=450 --height=280 --borders=10 \
---button="$(gettext "Cancel")":1 \
---button="$(gettext "OK")":0 \
+--button="$(gettext "Save")!gtk-apply":0 \
+--button="$(gettext "Close")":1 \
 --column="" \
 --column="$(gettext "Options")" \
 "FALSE" "$(gettext "Import")" "FALSE" "$(gettext "Export")")

@@ -12,12 +12,6 @@ disables="$dir/disables"
 task=( 'Word pronunciation' 'Pronunciation' 'Translator' \
 'Search definition' 'Search images' 'Download images' '_' )
 
-if [ -f "$DC_a/dict/test" ] ; then
-    test_ok="$(< "$DC_a/dict/test")"
-else
-    test_ok=""
-fi
-
 function add_dlg() {
     langs=( 'various' 'zh-cn' 'en' 'fr' \
     'de' 'it' 'ja' 'pt' 'ru' 'es' 'vi' )
@@ -103,23 +97,33 @@ function dlg() {
                     sed 's/\./\n/g' <<< "${dict}"| \
                     sed "3s|${sus}|<span color='#2BB62D'>${sus}<\/span>|"
                 else 
-                    echo "${dict}" |sed 's/\./\n/g'
+                    sed 's/\./\n/g' <<< "${dict}"
                 fi
-                echo "$DS/images/cont.png"
+                 if grep "${dict}" <<< "$test_ok" >/dev/null 2>&1; then
+                    echo "gtk-apply"
+                else
+                    echo "dialog-warning"
+                fi
             fi
         done < <(ls "$disables/")
     }
 
     if [ -f "$DC_s/dics_first_run" ]; then
         "$DS_a/Dics/test.sh" 1
-        plus="$(gettext "To start is okay select all, later, according to your preferences, you can disable some.")\n"
+        plus="$(gettext "To start is okay select all, later, according to your preferences you can disable some.")\n"
         rm "$DC_s/dics_first_run"
     fi
-    inf="$plus<b>$(gettext "Please, select at least one script for each task")</b>\n"
+    inf="<b>$(gettext "Please, select at least one resource for each task")</b>\n$plus"
     if [[ -n "${1}" ]]; then 
         text="--text=$inf"; n=${1}
     else 
         text="--center"; n=6
+    fi
+    
+    if [ -f "$DC_a/dict/test" ] ; then
+        test_ok="$(< "$DC_a/dict/test")"
+    else
+        test_ok=""
     fi
     
     check_err "$DC_a/dicts.inf"
@@ -141,8 +145,8 @@ function dlg() {
     --column="$(gettext "Status")":IMG \
     --button="$(gettext "Add")":2 \
     --button="$(gettext "Test")":3 \
-    --button=OK:0 \
-    --button="$(gettext "Cancel")":1)"
+    --button="$(gettext "Save")!gtk-apply":0 \
+    --button="$(gettext "Close")":1)"
     ret=$?
         
         if [ $ret -eq 2 ]; then

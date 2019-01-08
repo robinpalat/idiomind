@@ -23,9 +23,9 @@ Icon=idiomind
 StartupWMClass=Idiomind"
 
 confirm() {
-    yad --form --title="$(gettext "Confirm")" \
+    yad --form --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
-    --image="dialog-question" --text="$1\n" \
+    --image="$DS/images/trans.png" --text="$1\n" \
     --window-icon=idiomind \
     --skip-taskbar --center --on-top \
     --width=380 --height=100 --borders=5 \
@@ -123,8 +123,8 @@ config_dlg() {
     --field="$(gettext "Interface language")":CB "$lst" \
     --field=" :LBL" " " --field=":LBL" " " \
     --field="$(gettext "Getting started")":BTN "$DS/ifs/tls.sh help" \
-    --field="$(gettext "Report a problem")":BTN "$DS/ifs/tls.sh fback" \
-    --field="$(gettext "Check for updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
+    --field="$(gettext "Report a problem / Feedback")":BTN "$DS/ifs/tls.sh fback" \
+    --field="$(gettext "Program Updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
     --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
     cat "$DS_a/menu_list" |yad --plug=$KEY --tabnum=2 --list \
     --text=" $(gettext "Double-click to configure") " --print-all \
@@ -138,8 +138,9 @@ config_dlg() {
     --tab="$(gettext "Preferences")" \
     --tab="$(gettext "More")" \
     --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=5 \
-    --button="$(gettext "Cancel")":1 \
-    --button="$(gettext "OK")":0
+    --button="$(gettext "Save")"!"gtk-apply":0 \
+    --button="$(gettext "Close")":1
+    
     ret=$?
 
     if [ $ret -eq 0 ]; then
@@ -161,9 +162,13 @@ config_dlg() {
         # Interface Language
         val=$(cut -d "|" -f17 < "$cnf1")
         if [[ "$val" != "$intrf" ]]; then
-            cdb "${cfgdb}" 3 opts intrf ${val}
-            kill_icon=1; show_icon=1; export intrf=$val
-            idiomind tasks &
+            msg_2 "$(gettext "Are you sure you want to change the interface language?")\n" \
+            dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Idiomind")"
+            if [ $? -eq 0 ]; then 
+                cdb "${cfgdb}" 3 opts intrf ${val}
+                kill_icon=1; show_icon=1; export intrf=$val
+                idiomind tasks &
+            fi
         fi
         
         #Icon tray
@@ -199,7 +204,7 @@ config_dlg() {
                 fi
             done
             if echo "$tlng$slng" |grep -oE 'Chinese|Japanese|Russian'; then
-                info3="\n$(gettext "Note that these languages may present some text display errors:") Chinese, Japanese, Russian."
+                info3="\n\n$(gettext "Note that these languages may present some text display errors:") Chinese, Japanese, Russian."
             fi
             confirm "$info2$info3" dialog-question ${tlng}
             if [ $? -eq 0 ]; then 

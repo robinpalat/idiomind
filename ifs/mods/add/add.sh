@@ -131,9 +131,9 @@ function sentence_p() {
     |sed 's/ /\n/g' |grep -v '^.$' |grep -v '^..$' \
     |tr -d '*)(,;"“”:' |tr -s '_&|{}[]' ' ' \
     |sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
-    |sed 's/\]//;s/\[//;s/<[^>]*>//g' |sed "s/'$//;s/^'//"\
+    |sed 's/\]//;s/\[//;s/<[^>]*>//g' |sed "s/'$//;s/^'//" \
     |sed 's/\.//;s/  / /;s/ /\. /;s/-$//;s/^-//;s/"//g' \
-    |tr -d '.' |sed 's/^ *//; s/ *$//; /^$/d' \
+    |tr -d '.' |sed 's/^ *//; s/ *$//; /^$/d' |sed 's|\/|\n|g' \
     |sed 's/ \+/ /g' |sed -e ':a;N;$!ba;s/\n/\n/g' > "${aw}"
     # TODO
     translate "$(sed '/^$/d' "${aw}")" auto "$lg" singleline |tr -d '!?¿,;.' \

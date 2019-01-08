@@ -93,10 +93,10 @@ dlg=$(yad --form --title="Idiomind" \
 --image-on-top --buttons-layout=end --align=right \
 --fixed --geometry="+$sx+$sy" --center --on-top \
 --width=480 --height=260 --borders=15 \
---field="\t\t\t\t\t$(gettext "Select foreign language")  :CB" "$list1" \
---field="\t\t\t\t\t$(gettext "Select native language")  :CB" "$list2" \
+--field="\t\t\t\t\t$(gettext "Select the language you are learning")  :CB" "$list1" \
+--field="\t\t\t\t\t$(gettext "Select your language")  :CB" "$list2" \
 --button="$(gettext "Cancel")":1 \
---button="$(gettext "OK")":0)
+--button="$(gettext "Save")!gtk-apply":0)
 ret=$?
 
 if [ $ret -eq 1 ]; then

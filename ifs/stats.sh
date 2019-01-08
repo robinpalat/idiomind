@@ -267,7 +267,8 @@ mtable="M$(date +%y)"
 wtable="W$(date +%y)"
 dmonth=$(date +%m)
 cdate=$(date +%m/%d/%Y)
-dw=$(date +%W |sed 's/^0*//')
+if [ $(date +%W) = "00" ]; then dw=0
+else dw=$(date +%W |sed 's/^0*//'); fi
 check_dir "$DC_s/logs"
 
 function chk_expire() {

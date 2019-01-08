@@ -245,7 +245,7 @@ function dialog_1() {
     yad --title="$(gettext "Review")  \"${tpc}\"" \
     --class=idiomind --name=Idiomind \
     --text="$(gettext "<b>Would you like to review it?</b>\n The waiting period already has been completed.")" \
-    --image='view-refresh' \
+    --image="$DS/images/review.png" \
     --window-icon=idiomind \
     --buttons-layout=spread --fixed --center --on-top \
     --width=440 --height=115 --borders=8 \

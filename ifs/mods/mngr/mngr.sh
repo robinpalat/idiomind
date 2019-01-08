@@ -70,7 +70,7 @@ function edit_list_list() {
     --column="" \
     --button="$(gettext "More")":"$DS/mngr.sh edit_list_more" \
     --button="$(gettext "Translate")":2 \
-    --button="$(gettext "Save")!document-save":0 \
+    --button="$(gettext "Save")!gtk-apply":0 \
     --button="$(gettext "Cancel")":1
 }
 
