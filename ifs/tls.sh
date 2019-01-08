@@ -588,7 +588,7 @@ promp_topic_info() {
     source "$DS/default/sets.cfg"
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
     if [ -n "$active_trans" -a "$active_trans" != "$slng" ]; then
-        slng_err_lbl="$(gettext "You may need to translate this topic to your language: click \"Manage\" tab on the main window, click \"Edit\" -> \"Translate\" buttons, and from \"Automatic Translation\" select:") \"$slng\""
+        slng_err_lbl="$(gettext "You may need to translate this topic to your language: click \"Manage\" tab on the main window, click \"Edit\" -> \"Translate\" -> \"Automatic Translation\" ->") \"$slng\""
         echo -e "$slng_err_lbl" >> "${DC_tlt}/slng.inf"
     fi
     check_err "${DC_tlt}/slng.inf" "${DC_tlt}/note.err"
