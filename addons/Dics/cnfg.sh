@@ -9,6 +9,9 @@ export lgs=${slangs[$slng]}
 dir="$DC/addons/dict"
 enables="$dir/enables"
 disables="$dir/disables"
+msgs="$DC/addons/dict/msgs"
+check_dir "$msgs"
+
 task=( 'Word pronunciation' 'Pronunciation' 'Translator' \
 'Search definition' 'Search images' 'Download images' '_' )
 
@@ -74,7 +77,7 @@ function dlg() {
     fi
     dict_list() {
         sus="${task[$1]}"
-        cd "$enables/"
+        cd "$enables"/
         find . -not -name "*.$lgt" -and -not -name "*.various" -type f \
         -exec mv --target-directory="$disables/" {} +
         
@@ -88,7 +91,7 @@ function dlg() {
                     echo "dialog-warning"
                 fi
             fi
-        done < <(ls "$enables/")
+        done < <(ls "$enables"/)
         
         while read -r dict; do
             if [ -n "${dict}" ]; then
@@ -105,7 +108,7 @@ function dlg() {
                     echo "dialog-warning"
                 fi
             fi
-        done < <(ls "$disables/")
+        done < <(ls "$disables"/)
     }
 
     if [ -f "$DC_s/dics_first_run" ]; then
@@ -211,7 +214,7 @@ function update_config_dir() {
     while read -r dict; do
         if [ ! -e "$enables/$(basename "${dict}")" \
             -a ! -e "$disables/$(basename "${dict}")" ]; then
-            echo "-- added dict: $(basename "${dict}")"
+            echo -e "\tadded dict: $(basename "${dict}")"
             > "$disables/$(basename "${dict}")"; fi
     done <<< "${lsdics}"
     

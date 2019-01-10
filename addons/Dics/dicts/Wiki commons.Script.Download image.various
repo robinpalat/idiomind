@@ -1,8 +1,17 @@
 #!/bin/bash
 
 if [[ "$1" = _dlg_ ]]; then
+    fname="$(basename "$0")"
+    name="<b>$(cut -f 1 -d '.' <<< "$fname")</b>"
+    icon=dialog-information 
+    if [ -f "$DC_a/dict/msgs/$fname" ]; then
+        info="\n<b>Status:</b> $(< "$DC_a/dict/msgs/$fname")"
+        icon=dialog-warning
+    fi
     source "$DS/ifs/cmns.sh"
-    msg "$(gettext "Does not need configuration")\n" dialog-information "$4"
+    msg "$name\n<small>$(gettext "Languages"): Various\n$(gettext "Does not need configuration")</small>\n$info" $icon "$4" "$(gettext "Close")"
+    
+    
 else
     url="https://commons.wikimedia.org/wiki/$1"
     urimg="$(wget -q "$url" -O - |grep -o -P '//upload.*?jpg' |sed -e 's/\(thumb\/\)//g' |sed -e 's/^/http:/g' |head -n1)"
