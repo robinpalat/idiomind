@@ -219,8 +219,8 @@ function upld() {
         list="${list}${em}${clocal}"
     done
     LANGUAGE_TO_LEARN="${tlng^}"
-    linkc="https://sourceforge.net/p/idiomind/${tlng,,}"
-    linkac='https://sourceforge.net/p/idiomind/newuser'
+    linkc="https://idiomind.sourceforge.io/links/${tlng,,}"
+    linkac='https://idiomind.sourceforge.io/community/?q=user/register'
     ctgy=$(tpc_db 1 id ctgy)
     levl=$(tpc_db 1 id levl)
     text_upld="<span font_desc='Arial 12'><b>$(gettext "Share online with other learners!")</b></span>\n<a href='$linkc'>$(gettext "Visit the topics library")</a>"
@@ -428,7 +428,7 @@ tpc = os.environ['tpc']
 body = os.environ['body']
 try:
     # http://idiomind.net/community/xmlrpc.php
-    server = xmlrpclib.Server('http://sourceforge.net/p/idiomind/xmlrpc')
+    server = xmlrpclib.Server('http://idiomind.sourceforge.io/community/xmlrpc.php')
     nid = server.metaWeblog.newPost('blog', autr, pssw, 
     {'title': tpc, 'description': body}, True)
 except:

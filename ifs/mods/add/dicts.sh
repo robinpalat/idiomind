@@ -14,7 +14,14 @@ function dicts() {
                 msg_2 "$(gettext "You may need to configure a list of Internet resources. \nDo you want to do this now?")" \
                 dialog-information "$(gettext "Yes")" "$(gettext "Cancel")" "Idiomind"
                 if [ $? = 0 ]; then 
-                    rm -f "$DT/dicts"; "$DS_a/Dics/cnfg.sh" 6
+                    if ps -A |pgrep -f "yad --form --title"; then 
+                        kill -9 $(pgrep -f "yad --form --title") &
+                    fi
+                    rm -f "$DT/dicts"; "$DS_a/Dics/cnfg.sh" 6 &
+                    
+                    if ps -A |pgrep -f "/usr/share/idiomind/add.sh"; then 
+                        killall add.sh & 
+                    fi
                 fi
                 echo "$tlng" > "$DC_a/dict/.dict"
             fi

@@ -156,10 +156,14 @@ check_index() {
         if [ $? != 0 ]; then export fix=1; fi
         
         if [ ${index0} != ${cnt1} ]; then fix=1; fi
+        
+        if grep -E '3|4|7|8|9|10' <<< "$stts"; then
+             [ ${cnt0} = 0 ] && echo 1 > "${DC_tlt}/stts"
+             mkmn=1
+        fi
         export stts
     }
     
-
     _restore() {
         if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} \
         >/dev/null 2>&1; then c=c; else c=w; fi
@@ -524,13 +528,13 @@ _translation() {
 } >/dev/null 2>&1
 
 _help() {
-    xdg-open 'https://sourceforge.net/p/idiomind/gettingstarted'
+    xdg-open 'https://idiomind.sourceforge.io/links/gettingstarted'
     
 } >/dev/null 2>&1
 
 check_updates() {
     source "$DS/ifs/cmns.sh"; internet
-    link='https://sourceforge.net/p/idiomind/checkversion'
+    link='https://idiomind.sourceforge.io/links/checkversion'
     nver=$(wget --user-agent "$useragent" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g')
     pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
     d2=$(date +%Y%m%d); cdb ${cfgdb} 3 updt date ${d2}
@@ -543,7 +547,7 @@ check_updates() {
         if [ $ret -eq 0 ]; then xdg-open "$pkg"; fi
     else
         msg " $(gettext "No updates available.")\n" \
-        dialog-information "$(gettext "Information")"
+        dialog-information "Idiomind $nver"
     fi
 } >/dev/null 2>&1
 
@@ -551,7 +555,7 @@ a_check_updates() {
     echo -e "\n--- Checking for updates..."
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
-    link='https://sourceforge.net/p/idiomind/checkversion'
+    link='https://idiomind.sourceforge.io/links/checkversion'
     nver=$(wget --user-agent "$useragent" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g')
     pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
     d1=$(cdb ${cfgdb} 1 updt date)
