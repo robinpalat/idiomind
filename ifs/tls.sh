@@ -336,7 +336,7 @@ _restore_backup() {
 } >/dev/null 2>&1
 
 fback() {
-    xdg-open "https://sourceforge.net/p/idiomind/contact"
+    xdg-open "https://idiomind.sourceforge.io/contact.html"
 } >/dev/null 2>&1
 
 
