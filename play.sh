@@ -75,7 +75,7 @@ play_list() {
         btn1="$(gettext "Stop"):2"
     fi
     ntosd=""; audio=""
-    lbls=( 'Words' 'Sentences' 'Marked' 'Learning...' 'A bit difficult...' )
+    lbls=( 'Words' 'Sentences' 'Marked' 'Learning' 'A bit difficult' )
     in=( 'in0' 'in1' 'in2' 'in3' 'in4' )
     iteml=( "$(gettext "No repeat")" "$(gettext "Words")" "$(gettext "Sentences")" )
 

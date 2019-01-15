@@ -77,13 +77,13 @@ function edit_list_list() {
 function edit_feeds_list() {
     kill -9 $(pgrep -f "yad --list --title") &
     yad --list --title="$(gettext "Feeds")" \
-    --text="<small>$(gettext "Add content automatically. Configure feed urls:")</small>" \
+    --text="<small>$(gettext "Configure feed urls to add content automatically.")</small>" \
     --name=Idiomind --class=Idiomind \
     --editable --separator='\n' \
     --always-print-result --print-all \
     --window-icon=idiomind \
     --limit=3 --no-headers --center \
-    --width=520 --height=140 --borders=5 \
+    --width=520 --height=140 --borders=10 \
     --column="" \
     "$btnf" --button="$(gettext "Save")":0 \
     --button="$(gettext "Cancel")":1

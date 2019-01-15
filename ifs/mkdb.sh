@@ -56,7 +56,7 @@ function create_tpcdb() {
     sqlite3 "${tpcdb}" "pragma busy_timeout=2000;\
     insert into config (words,sntcs,marks,learn,\
     diffi,rplay,audio,ntosd,loop,rword,acheck,repass) \
-    values ('TRUE','TRUE','FALSE','FALSE','FALSE','FALSE',\
+    values ('FALSE','FALSE','FALSE','FALSE','FALSE','FALSE',\
     'FALSE','FALSE','FALSE','FALSE','TRUE','0');"
     sqlite3 "${tpcdb}" "pragma busy_timeout=2000;\
     insert into reviews (date1) values ('');"

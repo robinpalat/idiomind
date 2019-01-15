@@ -110,7 +110,7 @@ config_dlg() {
     --field="$(gettext "Use color to highlight grammar")":CHK "$gramr" \
     --field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
     --field="$(gettext "Download audio pronunciation")":CHK "$dlaud" \
-    --field="$(gettext "Detect language of source text (slower)")":CHK "$ttrgt" \
+    --field="$(gettext "Detect language of source text (slow and inaccurate)")":CHK "$ttrgt" \
     --field="$(gettext "Show icon in the notification area")":CHK "$itray" \
     --field="$(gettext "Adjust windows size to small screens")":CHK "$swind" \
     --field="$(gettext "Run at startup")":CHK "$stsks" \

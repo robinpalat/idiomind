@@ -639,7 +639,7 @@ set_image() {
         btn2="--button=!gtk-delete!$(gettext "Remove image"):2"
         image="--image=$ifile"
     else
-        btn2="--button=!image-x-generic!"$(gettext "Add an image by screen clipping")":0"
+        btn2="--button=!$DS/images/add_image.png!"$(gettext "Add an image by screen clipping")":0"
         image="--image=$DS/images/bar.png"
     fi
     export btn2 image
@@ -694,7 +694,7 @@ echo -e "yad --form --title=\"$(gettext "$tlng") / $active_trans\" \\
 --always-print-result --print-all \\
 --width=${sz[0]} --height=${sz[1]} --borders=5 \\
 --on-top --scroll --center --separator='|\n' \\
---button=$(gettext \"Save\")!document-save:0 \\
+--button=$(gettext \"Save\")!gtk-apply:0 \\
 --button=$(gettext \"Cancel\"):1 \\" > "$DT/dlg"
 
     (echo "#"; n=1

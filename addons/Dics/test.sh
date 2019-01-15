@@ -291,7 +291,7 @@ function dlg_progress_2() {
     --text="<b>$(gettext "Please wait while online resources are being tested...")</b>" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind --align=right \
-    --progress-text=" "  \
+    --progress-text=" " --pulsate \
     --percentage="0" --auto-close \
     --no-buttons --on-top --fixed \
     --width=420 --borders=10

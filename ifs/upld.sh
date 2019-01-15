@@ -22,7 +22,7 @@ function dwld() {
     ilnk=$(tpc_db 1 id ilnk)
     tlng=$(tpc_db 1 id tlng)
     [ -z "${ilnk}" ] && err
-    url1="http://idiomind.sourceforge.net/dl.php/?fl=${tlng,,}/${ilnk}"
+    url1="http://idiomind.sourceforge.io/dl.php/?fl=${tlng,,}/${ilnk}"
     if wget -S --spider "${url1}" 2>&1 |grep 'HTTP/1.1 200 OK'; then 
     URL="${url1}"; else err & exit 1; fi
     
@@ -137,7 +137,7 @@ function upld() {
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
         --field="$(gettext "Author")" "$autr" \
         --field="\t\t\t\t\t\t$(gettext "Password")" "$pass" \
-        --field="<a href='$linkac'>$(gettext "Get account to share")</a> \n":LBL \
+        --field="<a href='$linkac'>$(gettext "Get account")</a> \n":LBL \
         --button="$(gettext "Export")":2 \
         --button="$(gettext "Close")":4
     }
@@ -168,9 +168,10 @@ function upld() {
         fsize="$(tpc_db 1 id nsze)"
         cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
         info="<b>$(gettext "Downloadable content available")</b>"
-        info2="<small>$(gettext "Audio files:") $naud\n$(gettext "Images:") $nimg\n$(gettext "Translations:") $trad\n$(gettext "Total size:") $fsize</small>"
+        info2="$(gettext "Files:")\n<small>$(gettext "Audio files:") $naud\n$(gettext "Images:") $nimg\n$(gettext "Translations:") $trad\n$(gettext "Total size:") $fsize</small>"
         yad --form --columns=1 --title="$(gettext "Share")" \
         --name=Idiomind --class=Idiomind \
+        --image="$DS/images/dl.png" \
         --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
         --align=left --center \

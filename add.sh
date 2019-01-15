@@ -20,16 +20,25 @@ new_topic() {
     [ -n "$4" ] && name="${4}"
     listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
     ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
+
     if [[ $(wc -l <<< "${listt}") -ge 120 ]]; then
         msg "$(gettext "Maximum number of topics reached.")" \
         dialog-information "$(gettext "Information")" & exit 1
+    elif [[ -z "${listt}" ]]; then
+        name_1u="$(gettext "My collection of words from") $(date '+%B')"
     fi
     source "$DS/ifs/mods/add/add.sh"
 
     if [[ -z "$name" ]]; then
         to=0; while [ ${to} -lt 4 ]; do
-            if [[ -z "$name" ]]; then add="$(dlg_form_0)"
-            else add="$(dlg_form_0 "$name")"; fi
+            if [[ -n "$name_1u" ]]; then 
+                add="$(dlg_form_0 "$name_1u")"
+                export name="${name_1u}"
+            elif [[ -z "$name" ]]; then 
+                add="$(dlg_form_0)"
+            else 
+                add="$(dlg_form_0 "$name")"
+            fi
             name="$(clean_3 "$(cut -d "|" -f1 <<< "${add}")")"
             if [[ ${#name} -gt 55 ]]; then
                 msg "$(gettext "Sorry, the name is too long.")\n" \
@@ -45,8 +54,8 @@ new_topic() {
     chck=$(grep -Fxo "${name}" <<< "${listt}" |wc -l)
     if [[ ${chck} -ge 1 ]]; then
         for i in {1..50}; do
-        chck=$(grep -Fxo "${name} ($i)" <<< "${listt}")
-        [ -z "${chck}" ] && break; done
+            chck=$(grep -Fxo "${name} ($i)" <<< "${listt}")
+            [ -z "${chck}" ] && break; done
         name="${name} ($i)"
     else
         name="${name}"
