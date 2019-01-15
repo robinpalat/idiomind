@@ -501,7 +501,7 @@ edit_list_cmds() {
 edit_list_more() {
     touch "$DT/edit_list_more"
     file="$HOME/.idiomind/backup/${tpc}.bk"
-    cols1="$(gettext "Reverse items order")!$(gettext "Remove all items")!$(gettext "Restart topic status")!$(gettext "Manage feeds")!$(gettext "Show short sentences in word's view")"
+    cols1="$(gettext "Reverse items order")!$(gettext "Remove all items")!$(gettext "Restart topic status")!$(gettext "Feeds")!$(gettext "Show short sentences in word's view")"
     dt1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
     dt2=$(grep '\----- oldest' "${file}" |cut -d' ' -f3)
     if [ -n "$dt2" ]; then
@@ -564,7 +564,7 @@ edit_list_more() {
                 "$DS/mngr.sh" mkmn 1; "$DS/ifs/tls.sh" colorize 0
                 cleanups "$DT/edit_list_more"
             fi
-        elif grep "$(gettext "Manage feeds")" <<< "${more}"; then
+        elif grep "$(gettext "Feeds")" <<< "${more}"; then
             idiomind feeds
             cleanups "$DT/edit_list_more"
         elif grep "$(gettext "Show short sentences in word's view")" <<< "${more}"; then

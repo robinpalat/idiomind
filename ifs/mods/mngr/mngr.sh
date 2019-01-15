@@ -76,8 +76,8 @@ function edit_list_list() {
 
 function edit_feeds_list() {
     kill -9 $(pgrep -f "yad --list --title") &
-    yad --list --title="$(gettext "Add content automatically")" \
-    --text="<small>$(gettext "Configure feed urls")</small>" \
+    yad --list --title="$(gettext "Feeds")" \
+    --text="<small>$(gettext "Add content automatically. Configure feed urls:")</small>" \
     --name=Idiomind --class=Idiomind \
     --editable --separator='\n' \
     --always-print-result --print-all \
