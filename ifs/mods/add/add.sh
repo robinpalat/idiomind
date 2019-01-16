@@ -587,7 +587,7 @@ function dlg_form_1() {
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --always-print-result --separator="|" \
-    --skip-taskbar --fixed --center --on-top \
+    --skip-taskbar --fixed --center \
     --buttons-layout=spread --align=right --image="${img}" \
     --window-icon=idiomind \
     --width=470 --borders=5 \
@@ -606,7 +606,7 @@ function dlg_form_2() {
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --always-print-result --separator="|" \
-    --skip-taskbar --fixed --center --on-top \
+    --skip-taskbar --fixed --center \
     --buttons-layout=spread --align=right --image="${img}" \
     --window-icon=idiomind \
     --width=470 --borders=5 \

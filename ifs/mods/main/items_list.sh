@@ -168,7 +168,7 @@ function notebook_1() {
     --text="${lbl1}${info2}\n" \
     --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
-    --field=" $(gettext "Mark as learnt") ":FBTN "$cmd_mark" \
+    --field=" $(gettext "Mark as learnt") "!'gtk-apply':FBTN "$cmd_mark" \
     --field="$(gettext "Auto-check learned items")\t\t":CHK "$acheck" \
     --field=" ":LBL " " \
     --field="$btn1":FBTN "$cmd1" \
@@ -221,7 +221,7 @@ function notebook_2() {
     --text="$lbl1\n" \
     --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
-    --field=" $(gettext "Review") ":FBTN "$cmd_mark" \
+    --field=" $(gettext "Review") "!'view-refresh':FBTN "$cmd_mark" \
     --field="\t\t\t\t\t\t\t\\t\t\t\t\t\t":LBL "_" \
     --field=" ":LBL " " --field=" ":LBL " " \
     --field="$btn1":FBTN "$cmd1" \
