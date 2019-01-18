@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-#  Copyright 2013-2018 Robin Palatnik
+#  Copyright 2015-2019 Robin Palatnik
 #  Email patapatass@hotmail.com
 #  
 #  This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,7 @@ fi
 
 if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
     source "$DS/ifs/cmns.sh"
-    msg "$(gettext "Please wait until the current actions are finished")...\n" dialog-information
+    msg "$(gettext "Please wait until the current process is finished")...\n" dialog-information
     (sleep 50; cleanups "$DT/ps_lk" "$DT/el_lk") & exit 1
 fi
 
@@ -186,7 +186,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
     ret=$?
         if [ $ret -eq 0 ]; then
             if [ -e "$DT/in_lk" ]; then
-                msg "$(gettext "Please wait until the current actions are finished")...\n" dialog-information
+                msg "$(gettext "Please wait until the current process is finished")...\n" dialog-information
                 sleep 15; cleanups "$DT/in_lk"; exit 1
             fi
             f_lock 1 "$DT/in_lk"

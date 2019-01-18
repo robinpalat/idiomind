@@ -77,7 +77,7 @@ function dwld() {
 
 function upld() {
     if [ -d "$DT/upload" ]; then
-        msg_4 "$(gettext "Please wait until the current actions are finished")" \
+        msg_4 "$(gettext "Please wait until the current process is finished.")" \
         "face-worried" "$(gettext "OK")" "$(gettext "Stop")" \
         "$(gettext "Uploading")" "$DT/upload"
         ret=$?
@@ -88,7 +88,7 @@ function upld() {
         fi
     fi
     if [ -d "$DT/download" ]; then
-        msg_4 "$(gettext "Please wait until the current actions are finished")" \
+        msg_4 "$(gettext "Please wait until the current process is finished.")" \
         "face-worried" "$(gettext "OK")" "$(gettext "Stop")" \
         "$(gettext "Downloading")" "$DT/download"
         ret=$?
@@ -277,7 +277,7 @@ function upld() {
     elif [ $ret = 2 ]; then
         sv_data
         if [ -d "$DT/export" ]; then
-            msg_4 "$(gettext "Please wait until the current actions are finished").\n" \
+            msg_4 "$(gettext "Please wait until the current process is finished.")\n" \
             "face-worried" "$(gettext "Cancel")" "$(gettext "Stop")" \
             "$(gettext "Wait")" "$DT/export"
             ret=$?

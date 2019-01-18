@@ -122,7 +122,7 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
 
     if [ -e "$DT/mn_lk" ]; then
         source "$DS/ifs/cmns.sh"
-        msg "$(gettext "Please wait until the current actions are finished")...\n" dialog-information
+        msg "$(gettext "Please wait until the current process is finished")...\n" dialog-information
         (sleep 50; cleanups "$DT/mn_lk") & exit 1
     fi
         

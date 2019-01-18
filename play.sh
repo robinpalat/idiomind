@@ -54,7 +54,7 @@ play_list() {
     DC_tlt="${DM_tl}/${tpc}/.conf"
     tpcdb="$DC_tlt/tpc"
     if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
-        msg "$(gettext "Please wait until the current actions are finished")...\n" \
+        msg "$(gettext "Please wait until the current process is finished.")...\n" \
         dialog-information
         (sleep 50; cleanups "$DT/ps_lk" "$DT/el_lk") & exit 1
     fi

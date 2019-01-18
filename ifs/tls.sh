@@ -592,7 +592,7 @@ promp_topic_info() {
     source "$DS/default/sets.cfg"
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
     if [ -n "$active_trans" -a "$active_trans" != "$slng" ]; then
-        slng_err_lbl="$(gettext "You may need to translate this topic to your language: click \"Manage\" tab on the main window, click \"Edit\" -> \"Translate\" -> \"Automatic Translation\" ->") \"$slng\""
+        slng_err_lbl="$(gettext "You may have to translate this topic to your own language: click \"Manage\" tab on the main window, click \"Edit\" -> \"Translate\" -> \"Automatic Translation\" ->") \"$slng\""
         echo -e "$slng_err_lbl" >> "${DC_tlt}/slng.inf"
     fi
     check_err "${DC_tlt}/slng.inf" "${DC_tlt}/note.err"
@@ -670,7 +670,7 @@ function transl_batch() {
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
     if [ -e "$DT/transl_batch_lk" ]; then
-        msg_4 "$(gettext "Please wait until the current actions are finished")" \
+        msg_4 "$(gettext "Please wait until the current process is finished.")" \
         "face-worried" "$(gettext "OK")" "$(gettext "Stop")" \
         "$(gettext "Wait")" "$DT/translation"
         ret=$?
@@ -764,7 +764,7 @@ translate_to() {
         --field=" ":LBL " " \
         --field="<b>$(gettext "Automatic Translation")</b> ":LBL " " \
         --field="$(gettext "Select native language:")":CB "${list_transl}" \
-        --field="<small>$(gettext "Note that translation from google translate service sometimes is inaccurate especially in complex frases.")</small>":LBL " " \
+        --field="<small>$(gettext "Note: translations from google translate service sometimes is inaccurate especially in complex frases.")</small>":LBL " " \
         --field=" ":LBL " " \
         --field="<b>$(gettext "Manually Translation")</b> ":LBL " " \
         --field="$(gettext "Open")":fbtn "$DS/ifs/tls.sh transl_batch" \
@@ -784,7 +784,7 @@ translate_to() {
         --field=" ":LBL " " \
         --field="<b>$(gettext "Automatic Translation")</b> ":LBL " " \
         --field="$(gettext "Select native language:")":CB "${list_transl}" \
-        --field="<small>$(gettext "Note that translation from google translate service sometimes is inaccurate especially in complex frases.")</small>":LBL " " \
+        --field="<small>$(gettext "Note: translations from google translate service sometimes is inaccurate especially in complex frases.")</small>":LBL " " \
         --field=" ":LBL " " \
         --field="<b>$(gettext "Manually Translation")</b> ":LBL " " \
         --field="$(gettext "Open")":fbtn "$DS/ifs/tls.sh transl_batch" \
@@ -813,7 +813,7 @@ translate_to() {
         
             yad_kill "yad --form --title="
             if grep "$autom_trans" <<< "$(cd "$DC_tlt/translations"; ls *.bk)"; then
-                msg_2 "$(gettext "Exist a copy of this translation. Do you want to restore the copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
+                msg_2 "$(gettext "There is a copy of this translation. Do you want to restore the copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
                 if [ $? = 0 ]; then
                     mv -f "$DC_tlt/translations/$autom_trans.bk" "${DC_tlt}/data"
                     cleanups "$DT/translation" "$DT/transl_batch_lk" \
@@ -825,7 +825,7 @@ translate_to() {
                 fi
             fi
             if grep "$autom_trans" <<< "$(cd "$DC_tlt/translations"; ls *.tra)"; then
-                msg_2 "$(gettext "Exist a Verified translation for this language. Do you want to use this copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
+                msg_2 "$(gettext "There is a verified translation for this language. Do you want to use this copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
                 if [ $? = 0 ]; then
                     cp -f "$DC_tlt/translations/$autom_trans.tra" "${DC_tlt}/data"
                     echo "$autom_trans" > "${DC_tlt}/translations/active"
@@ -1214,7 +1214,7 @@ app_version = os.environ['_version']
 app_website = os.environ['_website']
 app_comments = os.environ['_descrip']
 website_label = os.environ['_website']
-app_copyright = 'Copyright (c) 2013-2019 Robin Palatnik'
+app_copyright = 'Copyright (c) 2015-2019 Robin Palatnik'
 app_license = (('This program is free software: you can redistribute it and/or modify\n'+
 'it under the terms of the GNU General Public License as published by\n'+
 'the Free Software Foundation, either version 3 of the License, or\n'+

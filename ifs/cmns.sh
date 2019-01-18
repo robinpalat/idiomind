@@ -137,7 +137,7 @@ function f_lock() {
                 [ $1 = 1 ] && touch "${2}"
                 break
             elif [ -f "${2}" -a ${brk} = 1 ]; then
-                msg "$(gettext "Please wait until the current actions are finished")...\n" \
+                msg "$(gettext "Please wait until the current process is finished")...\n" \
                 dialog-information 
             elif [ -f "${2}" ]; then
                 sleep 1; fi

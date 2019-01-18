@@ -151,7 +151,7 @@ edit_item() {
     temp="...."
     if [[ "${srce}" = "${temp}" ]]; then
         if [ -e "$DT/${trgt}.edit" ]; then
-            msg_4 "$(gettext "Wait till the process is completed.")" \
+            msg_4 "$(gettext "Please wait until the current process is finished.")" \
             "face-worried" "$(gettext "OK")" "$(gettext "Stop")" \
             "$(gettext "Wait")" "$DT/${trgt}.edit"
             if [ $? = 1 ]; then
@@ -367,7 +367,7 @@ edit_list_cmds() {
     if grep -o -E 'ja|zh-cn|ru' <<< "${lgt}"; then c=c; else c=w; fi
     direc="$DM_tl/${2}/.conf"
     if [ -e "$DT/transl_batch_out" ]; then
-        msg_4 "$(gettext "Please wait until the current actions are finished")" \
+        msg_4 "$(gettext "Please wait until the current process is finished.")" \
         "face-worried" "$(gettext "OK")" "$(gettext "Stop")" \
         "$(gettext "Wait")" "$DT/transl_batch_out"
         ret=$?
@@ -600,12 +600,12 @@ edit_list_dlg() {
     
     if [ -e "$DT/items_to_add" -o -e "$DT/el_lk" ]; then
         if [ -e "$DT/items_to_add" ]; then
-            msg_4 "$(gettext "Wait until it finishes a previous process")" \
+            msg_4 "$(gettext "Please wait until the current process is finished.")" \
             "face-worried" "$(gettext "OK")" "$(gettext "Stop")" \
             "$(gettext "Wait")" "$DT/items_to_add"
             ret=$?
         elif [ -e "$DT/el_lk" ]; then
-            msg_4 "$(gettext "Wait until it finishes a previous process")" \
+            msg_4 "$(gettext "Please wait until the current process is finished.")" \
             "face-worried" "$(gettext "OK")" "$(gettext "Stop")" \
             "$(gettext "Wait")" "$DT/el_lk"
             ret=$?
@@ -761,7 +761,7 @@ mark_to_learn_topic() {
         dialog-information "$(gettext "Information")" & exit
     fi
     if [ $((cfg3+cfg4)) -lt 10 ]; then
-        msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
+        msg "$(gettext "Insufficient number of items to perform this action").\t\n " \
         dialog-information "$(gettext "Information")" & exit
     fi
     
@@ -831,7 +831,7 @@ mark_as_learned_topic() {
         msg "$(gettext "Sorry, this topic is currently not active.")\n " \
         dialog-information "$(gettext "Information")" & exit; fi
         if [ $((cfg3+cfg4)) -lt 10 ]; then
-        msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
+        msg "$(gettext "Insufficient number of items to perform this action").\t\n " \
         dialog-information "$(gettext "Information")" & exit; fi
     fi
     [ ! -s "${DC_tlt}/data" ] && exit 1

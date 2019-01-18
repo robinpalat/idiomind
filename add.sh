@@ -561,7 +561,7 @@ function process() {
             number_items=$((cnta+cntb))
             ( sleep 1; notify-send -i idiomind \
             "$number_items $(gettext "new notes")" \
-            "$(gettext "Please wait till the process is completed")" )
+            "$(gettext "Please wait until the current process is finished.")" )
         else
             [ "$conten" != '__words__' ] && cleanups "$DT_r"
             cleanups "$DT/n_s_pr" "$slt" & exit 1
@@ -771,7 +771,7 @@ new_items() {
 
     itemdir=$(base64 <<< $((RANDOM%100000)) | head -c 32)
     if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
-        msg "$(gettext "Please wait until the current actions are finished")...\n" \
+        msg "$(gettext "Please wait until the current process is finished")...\n" \
         dialog-information
         (sleep 50; cleanups "$DT/ps_lk" "$DT/el_lk") & exit 1
     fi
