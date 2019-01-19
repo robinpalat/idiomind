@@ -73,7 +73,8 @@ check_index() {
     source "$DS/ifs/cmns.sh"
     DC_tlt="$DM_tl/${2}/.conf"
     DM_tlt="$DM_tl/${2}"
-    tpc="${2}"; mkmn=0; fix=0; c=0; s=0; db_configTable=0
+    tpc="${2}"; mkmn=0; fix=0
+    c=0; s=0; db_configTable=0
     [[ ${3} = 1 ]] && r=1 || r=0
 
     _check() {
@@ -107,6 +108,8 @@ check_index() {
             echo ${stts} > "${DC_tlt}/stts"
             export mkmn=1; export fix=1
         fi
+        
+        calculate_review "${tpc}" >/dev/null 2>&1 # to check and fix possible db errors
         
         if [ ${stts} -gt 1 ]; then
             dater=$(tpc_db 1 reviews date1)
@@ -528,7 +531,7 @@ _translation() {
 } >/dev/null 2>&1
 
 _help() {
-    xdg-open 'https://idiomind.sourceforge.io/links/gettingstarted'
+    xdg-open 'https://idiomind.sourceforge.io/help.html'
     
 } >/dev/null 2>&1
 

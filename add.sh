@@ -25,7 +25,7 @@ new_topic() {
         msg "$(gettext "Maximum number of topics reached.")" \
         dialog-information "$(gettext "Information")" & exit 1
     elif [[ -z "${listt}" ]]; then
-        name_1u="$(gettext "My collection of words from") $(date '+%B')"
+        name_1u="$(gettext "My collection from") $(date '+%B')"
     fi
     source "$DS/ifs/mods/add/add.sh"
 

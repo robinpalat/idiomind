@@ -269,6 +269,15 @@ function calculate_review() {
     steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
     if [ ${steps} -ge 1 ]; then
         dater=""; dater=$(tpc_db 1 reviews date${steps})
+
+        if ! [[ ${dater} =~ ^[0-9]{2}/[0-9]{2}/[0-9]{4}$ ]]; then
+            echo "--error: $1"
+            tpc_db 6 reviews
+            tpc_db 8 reviews date1 "$(date +%m/%d/%Y)"
+            dater=$(tpc_db 1 reviews date1)
+            steps=1
+        fi
+
         TM=$(( ( $(date +%s) - $(date -d ${dater} +%s) ) /(24 * 60 * 60 ) ))
         tdays=${notice[${steps}]}
         RM=$((100*TM/tdays))
