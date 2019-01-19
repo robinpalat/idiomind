@@ -132,6 +132,7 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
         old="$(cat "$DC_a/menu_list")"
         while read -r _rm; do
             if [ -n "${_rm}" ]; then
+                [[ "$(sed -n 1p "$DC_s/tpc")" = "${_rm}" ]] && > "$DC_s/tpc"
                 if [ -d "$DM_tl/${_rm}"/ ]; then
                     ( echo "# $(gettext "Removing") ${_rm}"; sleep 1
                     rm -fr "$DM_tl/${_rm}"/

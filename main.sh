@@ -497,13 +497,15 @@ PY
             notebook_2; ret=$?
         fi
         
-    elif [[ ${stts} = 14 ]]; then
-    
-        echo 1 > "${DC_tlt}/stts"
-
     else
         tpa="$(sed -n 1p "$DC_s/tpc")"
-        source "$DS/ifs/mods/main/${tpa}.sh"; ${tpa} &
+        if [ -f "$DS/ifs/mods/main/${tpa}.sh" ] ; then
+            source "$DS/ifs/mods/main/${tpa}.sh"; ${tpa} &
+        else
+            echo 13 > "${DC_tlt}/stts"
+            > "$DC_s/tpc"
+            "$DS/mngr.sh" mkmn 1
+        fi
     fi
     
     oclean & return 0
