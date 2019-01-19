@@ -102,7 +102,7 @@ play_list() {
         n=0
         while [ ${n} -le 4 ]; do
             arr="in${n}"
-            [[ ${!arr} -lt 1 ]] && echo "$DS/images/ai0.png" || echo "$DS/images/a${n}.png"
+            [[ ${!arr} -lt 1 ]] && echo "$DS/images/ai0.png" ||echo "$DS/images/a${n}.png"
             echo "${!psets[${n}]}"
             echo "  $(gettext "${lbls[$n]}")"
             let n++

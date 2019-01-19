@@ -697,8 +697,9 @@ function dlg_checklist_2() {
     --skip-taskbar --orient=vert \
     --window-icon=idiomind --center --on-top \
     --gtkrc="$DS/default/gtkrc.cfg" \
-    --width=500 --height=260 --borders=5 --splitter=180 \
-    --button="  $(gettext "Close")  ":0
+    --width=500 --height=260 --borders=10 --splitter=180 \
+    --button="$(gettext "Add")!gtk-apply":0 \
+    --button="  $(gettext "Cancel")  ":1
 }
 
 function dlg_text_info_1() {

@@ -158,7 +158,7 @@ function upld() {
         --field=" ":LBL "" \
         --button="$(gettext "Export")":2 \
         --button="$(gettext "Upload")":0 \
-        --button="$(gettext "Cancel")":4
+        --button="$(gettext "Close")":4
     }
 
     dlg_dwld_content() {
@@ -168,7 +168,7 @@ function upld() {
         fsize="$(tpc_db 1 id nsze)"
         cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
         info="<b>$(gettext "Downloadable content available")</b>"
-        info2="$(gettext "Files:")\n<small>$(gettext "Audio files:") $naud\n$(gettext "Images:") $nimg\n$(gettext "Translations:") $trad\n$(gettext "Total size:") $fsize</small>"
+        info2="$(gettext "Files")\n<small>$(gettext "Audio files:") $naud\n$(gettext "Images:") $nimg\n$(gettext "Translations:") $trad\n$(gettext "Total size:") $fsize</small>"
         yad --form --columns=1 --title="$(gettext "Share")" \
         --name=Idiomind --class=Idiomind \
         --image="$DS/images/dl.png" \
@@ -177,10 +177,11 @@ function upld() {
         --align=left --center \
         --width=${sz[0]} --height=170 --borders=10 \
         --text="$info" \
+        --field=":lbl" " " \
         --field="$info2:lbl" " " \
+        --field="$(gettext "Download"):fbtn" "${cmd_dwl}" \
         --button="$(gettext "Export")":2 \
-        --button="$(gettext "Download")":"${cmd_dwl}" \
-        --button="$(gettext "Cancel")":4
+        --button="$(gettext "Close")":4
     } 
     
     dlg_export() {
@@ -195,7 +196,7 @@ function upld() {
         --field="$(gettext "Total size:") ${fsize}":lbl " " \
         --field=" :lbl" " " \
         --button="$(gettext "Export")":2 \
-        --button="$(gettext "Cancel")":4
+        --button="$(gettext "Close")":4
     }
     
     sv_data() {

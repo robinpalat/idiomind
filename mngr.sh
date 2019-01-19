@@ -501,7 +501,8 @@ edit_list_cmds() {
 edit_list_more() {
     touch "$DT/edit_list_more"
     file="$HOME/.idiomind/backup/${tpc}.bk"
-    cols1="$(gettext "Reverse items order")!$(gettext "Remove all items")!$(gettext "Restart topic status")!$(gettext "Feeds")!$(gettext "Show short sentences in word's view")"
+    
+    cols1="$(gettext "Reverse items order")!$(gettext "Remove all items")!$(gettext "Restart topic status")!$(gettext "Show short sentences in word's view")"
     dt1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
     dt2=$(grep '\----- oldest' "${file}" |cut -d' ' -f3)
     if [ -n "$dt2" ]; then
@@ -511,7 +512,8 @@ edit_list_more() {
     else
         cols2=""
     fi
-    optns="$(sed '/^$/d' <<< "${cols1}${cols2}")"
+    optns="$(ls "$DS/ifs/mods/topic"/ |tr '\n' '!' |sed 's/\.sh//g')${cols1}${cols2}"
+    optns="$(sed '/^$/d' <<< "$optns")"
     
     more="$(yad --form --title="$(gettext "Other options")" \
     --field=":CB" "!${optns}" --separator="" \
@@ -564,9 +566,6 @@ edit_list_more() {
                 "$DS/mngr.sh" mkmn 1; "$DS/ifs/tls.sh" colorize 0
                 cleanups "$DT/edit_list_more"
             fi
-        elif grep "$(gettext "Feeds")" <<< "${more}"; then
-            idiomind feeds
-            cleanups "$DT/edit_list_more"
         elif grep "$(gettext "Show short sentences in word's view")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
                 yad_kill "yad --list --title="
@@ -585,6 +584,8 @@ edit_list_more() {
                 "$DS/ifs/tls.sh" restore "${tpc}" ${line}
                 cleanups "$DT/edit_list_more"
             fi
+        elif [ -f "$DS/ifs/mods/topic/${more}.sh" ]; then 
+            "$DS/ifs/mods/topic/${more}.sh" "${more}" # ADDON: $DS/ifs/mods/topic/ADDON.sh ADDON
         else
             cleanups "$DT/edit_list_more"
         fi
@@ -641,27 +642,6 @@ edit_list_dlg() {
         fi
     fi
 }
-
-
-edit_feeds() {
-    file="$DM_tl/${2}/.conf/feeds"
-    feeds="$(< "${file}")"
-    [ -n "$feeds" ] && btnf="--button="$(gettext "Fetch")":2" \
-    || btnf="--center"
-    export btnf; mods="$(echo "${feeds}" |edit_feeds_list)"
-    ret="$?"
-    if [ $ret != 1 -a $ret -le 2 ]; then
-        if [ -z "${mods}" ]; then
-            cleanups "${file}" "$DM_tl/${2}/.conf/exclude"
-        elif [ "${feeds}" != "${mods}" ]; then
-            touch "$DM_tl/${2}/.conf/exclude"
-            echo "${mods}" |sed -e '/^$/d' > "${file}"
-        fi
-        if [ $ret = 2 ]; then
-            "$DS/add.sh" fetch_content "${tpc}" 1 &
-        fi
-    fi
-} >/dev/null 2>&1
 
 
 delete_topic() {

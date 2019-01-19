@@ -97,7 +97,7 @@ function coll_items_stats() {
         S1w3="$(grep -o -P "(?<=w3.).*(?=\.w3.<1>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # words learning (new)
         c_S1w3="$(grep -c '[^[:space:]]' <<< "$S1w3")"
         cc_S1w=$((c_S1w2+c_S1w3)) # words learning (new) x 2
-        S5w1="$(grep -o -P "(?<=w1.).*(?=\.w1.<5>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # words reviewed
+        S5w1="$(grep -o -P "(?<=w1.).*(?=\.w1.<5>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # reviewed words
         c_S5w1="$(grep -c '[^[:space:]]' <<< "$S5w1")"
         S5w2="$(grep -o -P "(?<=w2.).*(?=\.w2.<5>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # forgotten words
         c_S5w2="$(grep -c '[^[:space:]]' <<< "$S5w2")"
@@ -122,9 +122,11 @@ function coll_items_stats() {
         if [[ -n "$(sqlite3 ${db} "select w from '${wtable}' where w is '${w}';")" ]]; then break
         else
             if [ ${w} = ${dw} -a $(date +%u) != 7 ]; then continue
-            else echo ${w} >> "$DT/weekscnt"; fi
+            else 
+                echo ${w} >> "$DT/weekscnt"
+            fi
         fi
-        if [ ${w} -lt 1 ]; then break else w=$((w-1)); fi
+        if [ ${w} -lt 1 ]; then break; else w=$((w-1)); fi
     done
     if [ -f "$DT/weekscnt" ]; then
         tac "$DT/weekscnt" |head -n12 | while read -r w; do
@@ -139,7 +141,7 @@ function coll_items_stats() {
             D6=$(cut -d ',' -f 7 <<< "${rdata}"); ! [[ ${D6} =~ $int ]] && D6=0
             sqlite3 "${db}" "insert into ${wtable} (w,week,val0,val1,val2,val3,val4,val5,val6) \
             values ('${w}','${week^}','${D0}','${D1}','${D2}','${D3}','${D4}','${D5}','${D6}');"
-            # cleanups "${log}"
+            cleanups "${log}"
         done
     fi
     cleanups "$DT/weekscnt"
@@ -253,6 +255,7 @@ function mk_tpc_stats() {
     cp -f "${data}" "${databk}"
 }
 
+# Variables
 pross="$DM_tls/data/pre_data"
 data="/tmp/.idiomind_stats"
 no_data="${DM_tls}/data/no_data"
