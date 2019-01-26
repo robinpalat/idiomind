@@ -8,7 +8,7 @@ alias gettext='gettext "idiomind"'
 source /usr/share/idiomind/default/sets.cfg
 lang1="${!tlangs[@]}"; declare lt=( $lang1 )
 lang2="${!slangs[@]}"; declare ls=( $lang2 )
-text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome to Idiomind") </span>
+text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") </span>
 \n      $(gettext "To get started, please configure the following:")"
 sx=$(xrandr -q |grep -w Screen |sed 's/.*current //;s/,.*//' |awk '{print $1}')
 sy=$(xrandr -q |grep -w Screen |sed 's/.*current //;s/,.*//' |awk '{print $3}')
@@ -92,9 +92,9 @@ dlg=$(yad --form --title="Idiomind" \
 --window-icon=idiomind \
 --image-on-top --buttons-layout=end --align=right \
 --fixed --geometry="+$sx+$sy" --center --on-top \
---width=480 --height=260 --borders=15 \
---field="\t\t\t\t\t$(gettext "Select the language you are learning")  :CB" "$list1" \
---field="\t\t\t\t\t$(gettext "Select your language")  :CB" "$list2" \
+--width=440 --height=260 --borders=15 \
+--field="\t\t\t$(gettext "Select the language you are learning")  :CB" "$list1" \
+--field="\t\t\t$(gettext "Select your language")  :CB" "$list2" \
 --field="$(gettext "Set recommended Initialization configurations : )")  :chk" "TRUE" \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "Save")!gtk-apply":0)

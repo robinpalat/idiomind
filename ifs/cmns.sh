@@ -91,7 +91,7 @@ function tpc_db() {
     elif [ $1 = 3 ]; then # mod
         sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=300;\
         update ${ta} set ${co}='${va}';"
-    elif [ $1 = 4 ]; then # delete especific
+    elif [ $1 = 4 ]; then # delete specific
         sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500; \
         delete from ${ta} where ${co}='${va}';"
     elif [ $1 = 5 ]; then # select all
@@ -99,7 +99,7 @@ function tpc_db() {
     elif [ $1 = 6 ]; then # delet all
         sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=2000;\
         delete from '${ta}';"
-    elif [ $1 = 7 ]; then # mod especific
+    elif [ $1 = 7 ]; then # mod specific
         sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500;\
         update '${ta}' set list='${co}' where list='${va}';"
     elif [ $1 = 8 ]; then # insert fast
@@ -107,6 +107,8 @@ function tpc_db() {
         "insert into ${ta} (${co}) values ('${va}');"
     elif [ $1 = 9 ]; then # mod fast
         sqlite3 "$DC_tlt/tpc" "update ${ta} set ${co}='${va}';"
+    elif [ $1 = 10 ]; then # select specific, first record
+        sqlite3 "$DC_tlt/tpc" "select ${co} from '${ta}' asc limit 1;" |tr -s '|' '\n'
     fi
 }
 
@@ -263,13 +265,13 @@ function check_err() {
     done &
 }
 
-function calculate_review() {
+function calculate_review() { # TODO check count rows and fix
     [ -z ${notice} ] && source "$DS/default/sets.cfg"
     export DC_tlt="$DM_tl/${1}/.conf"
     steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
     if [ ${steps} -ge 1 ]; then
         dater=""; dater=$(tpc_db 1 reviews date${steps})
-
+        
         if ! [[ ${dater} =~ ^[0-9]{2}/[0-9]{2}/[0-9]{4}$ ]]; then
             echo "--error: $1"
             tpc_db 6 reviews
