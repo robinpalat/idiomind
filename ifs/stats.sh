@@ -10,7 +10,6 @@ function weekof() {
     date_fmt="+%b%d"
     weeknum_Jan1=$(date -d $year-01-01 +%W)
     weekday_Jan1=$(date -d $year-01-01 +%u)
-
     if ((weeknum_Jan1)); then
         first_Mon=$year-01-01
     else
