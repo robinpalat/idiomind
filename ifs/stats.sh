@@ -4,6 +4,21 @@
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 
+function weekof() {
+    thisweek=$1
+    year=$(date +%Y)
+    date_fmt="+%b%d"
+    weeknum_Jan1=$(date -d $year-01-01 +%W)
+    weekday_Jan1=$(date -d $year-01-01 +%u)
+
+    if ((weeknum_Jan1)); then
+        first_Mon=$year-01-01
+    else
+        first_Mon=$year-01-$((01 + (7 - weekday_Jan1 + 1) ))
+    fi
+    echo "$(date -d "$first_Mon +$((thisweek - 1)) week" "$date_fmt")"
+}
+
 function create_db() {
     if [ ! -f "${db}" ]; then
         echo -e "-- new log database\n"
@@ -139,7 +154,7 @@ function coll_items_stats() {
         tac "$DT/weekscnt" |head -n12 |while read -r w; do
             export log="$DC/logs/${w}.log"
             if [ -f "${log}" ]; then rdata=$(compute); else rdata="0,0,0,0,0,0,0"; fi
-            weeklbl="" # TODO
+            weeklbl=$(weekof $w)
             D0=$(cut -d ',' -f 1 <<< "${rdata}"); ! [[ ${D0} =~ $int ]] && D0=0
             D1=$(cut -d ',' -f 2 <<< "${rdata}"); ! [[ ${D1} =~ $int ]] && D1=0
             D2=$(cut -d ',' -f 3 <<< "${rdata}"); ! [[ ${D2} =~ $int ]] && D2=0
@@ -148,7 +163,7 @@ function coll_items_stats() {
             D5=$(cut -d ',' -f 6 <<< "${rdata}"); ! [[ ${D5} =~ $int ]] && D5=0
             D6=$(cut -d ',' -f 7 <<< "${rdata}"); ! [[ ${D6} =~ $int ]] && D6=0
             sqlite3 "${db}" "insert into ${wtable} (w,week,val0,val1,val2,val3,val4,val5,val6) \
-            values ('${w}','${week^}','${D0}','${D1}','${D2}','${D3}','${D4}','${D5}','${D6}');"
+            values ('${w}','${weeklbl^}','${D0}','${D1}','${D2}','${D3}','${D4}','${D5}','${D6}');"
             cleanups "${log}"
         done
     fi
