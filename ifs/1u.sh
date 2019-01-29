@@ -95,7 +95,9 @@ dlg=$(yad --form --title="Idiomind" \
 --width=440 --height=260 --borders=15 \
 --field="\t\t\t$(gettext "Select the language you are learning")  :CB" "$list1" \
 --field="\t\t\t$(gettext "Select your language")  :CB" "$list2" \
+--field=" :LBL" " "  \
 --field="$(gettext "Set recommended Initialization configurations : )")  :chk" "TRUE" \
+--field=" :LBL" " "  \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "Save")!gtk-apply":0)
 ret=$?
@@ -106,7 +108,7 @@ if [ $ret -eq 1 ]; then
 elif [ $ret -eq 0 ]; then
     target=$(echo "$dlg" |cut -d "|" -f1)
     source=$(echo "$dlg" |cut -d "|" -f2)
-    iniset=$(echo "$dlg" |cut -d "|" -f3)
+    iniset=$(echo "$dlg" |cut -d "|" -f4)
     
     if [ -z "$dlg" ]; then
     /usr/share/idiomind/ifs/1u.sh & exit 1

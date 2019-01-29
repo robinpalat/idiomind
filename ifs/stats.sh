@@ -57,16 +57,11 @@ function coll_tpc_stats() {
             unset stts
             stts=$(sed -n 1p "$dir1/stts")
             if [[ ${stts} =~ $int ]]; then
-                if [ ${stts} -le 10 -a ${stts} -ge 7 ]; then
-                    C3=1
-                elif [ ${stts} = 5 -o ${stts} = 6 ]; then
-                    C2=1
-                elif [ ${stts} = 3 -o ${stts} = 4 ]; then
-                    C1=1
-                elif [ ${stts} = 0 ]; then
-                    C4=1
-                elif [ ${stts} = 1 ]; then
-                    C0=1
+                if [ ${stts} -le 10 -a ${stts} -ge 7 ]; then C3=1
+                elif [ ${stts} = 5 -o ${stts} = 6 ]; then C2=1
+                elif [ ${stts} = 3 -o ${stts} = 4 ]; then C1=1
+                elif [ ${stts} = 0 ]; then C4=1
+                elif [ ${stts} = 1 ]; then C0=1
                 fi
             fi
             f0=$((f0+C0))
