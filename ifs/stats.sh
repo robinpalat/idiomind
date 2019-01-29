@@ -6,6 +6,7 @@ source "$DS/ifs/cmns.sh"
 
 function create_db() {
     if [ ! -f "${db}" ]; then
+        echo -e "-- new log database\n"
         echo -n "create table if not exists ${mtable} \
         (month TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT);" |sqlite3 "${db}"
         for m in {01..12}; do sqlite3 ${db} "insert into ${mtable} (month) values ('${m}');"; done
@@ -16,7 +17,9 @@ function create_db() {
         touch "${no_data}"
         val1=1; val2=1; pre_comp
      fi
-     if ! [[ "$(sqlite3 ${db} "SELECT name FROM sqlite_master WHERE type='table' AND name='$mtable';")" ]]; then
+     if ! [[ "$(sqlite3 ${db} "SELECT name FROM sqlite_master WHERE type='table' AND name='$mtable';")" ]] || \
+     ! [[ "$(sqlite3 ${db} "SELECT name FROM sqlite_master WHERE type='table' AND name='$wtable';")" ]]; then
+        echo -e "-- new table for log database\n"
         echo -n "create table if not exists ${mtable} \
         (month TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT);" |sqlite3 "${db}"
         for m in {01..12}; do sqlite3 ${db} "insert into ${mtable} (month) values ('${m}');"; done
@@ -119,22 +122,24 @@ function coll_items_stats() {
     }
 
     w=${dw}
-    while [ 1 ]; do break
-        if [ ${w} -lt 1 ]; then break; fi
-        if [[ -n "$(sqlite3 ${db} "select w from '${wtable}' where w is '${w}';")" ]]; then yad & break
+    until [ ${w} -lt 0 ]; do
+        if [[ -n "$(sqlite3 ${db} "select w from '${wtable}' where w is '${w}';")" ]]; then
+            break
         else
-            if [ $(date +%u) != 7 ]; then continue
+            if [ ${w} = ${dw} -a $(date +%u) != 7 ]; then
+                :
             else 
                 echo ${w} >> "$DT/weekscnt"
-                echo $w
             fi
         fi
-        w=$((w-1))
+        let w--
     done
+
     if [ -f "$DT/weekscnt" ]; then
         tac "$DT/weekscnt" |head -n12 |while read -r w; do
             export log="$DC/logs/${w}.log"
             if [ -f "${log}" ]; then rdata=$(compute); else rdata="0,0,0,0,0,0,0"; fi
+            weeklbl="" # TODO
             D0=$(cut -d ',' -f 1 <<< "${rdata}"); ! [[ ${D0} =~ $int ]] && D0=0
             D1=$(cut -d ',' -f 2 <<< "${rdata}"); ! [[ ${D1} =~ $int ]] && D1=0
             D2=$(cut -d ',' -f 3 <<< "${rdata}"); ! [[ ${D2} =~ $int ]] && D2=0
@@ -316,7 +321,7 @@ function pre_comp() {
     elif [ ${val2} = 1 ]; then
         coll_tpc_stats ${val1}
         coll_items_stats
-        echo -e "--- expire date: ${dte} / new: ${newdate}\n"
+        echo -e "--- expire week\n"
     else
         coll_tpc_stats 0
     fi
