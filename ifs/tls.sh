@@ -112,17 +112,17 @@ check_index() {
             export mkmn=1; export fix=1
         fi
 
-        # DB issues
-        cnt1="$(sqlite3 "${tpcdb}" "SELECT Count(*) FROM reviews")"
-        if [ ${cnt1} != '1' ]; then
+        # DB check
+        cnt="$(sqlite3 "${tpcdb}" "SELECT Count(*) FROM reviews")"
+        if [ ${cnt} != '1' ]; then
             db_reviews=1; echo -e "\n-- error: db_table_reviews"
         fi
-        cnt2="$(sqlite3 "${tpcdb}" "SELECT Count(*) FROM id")"
-        if [ ${cnt2} != '1' ]; then
+        cnt="$(sqlite3 "${tpcdb}" "SELECT Count(*) FROM id")"
+        if [ ${cnt} != '1' ]; then
             db_id=1; echo -e "\n-- error: db_table_id"
         fi
-        cnt3="$(sqlite3 "${tpcdb}" "SELECT Count(*) FROM config")"
-        if [[ ${cnt3} != '1' ]]; then
+        cnt="$(sqlite3 "${tpcdb}" "SELECT Count(*) FROM config")"
+        if [[ ${cnt} != '1' ]]; then
             db_config=1; echo -e "\n-- error: db_table_config"
         fi
         
@@ -141,9 +141,7 @@ check_index() {
         if [ -f "${DC_tlt}/0.cfg" ] || [ -f "${DC_tlt}/id.cfg" ]; then
             newform=1
         fi
-        
 
-        
         if grep -o 'trgt{}srce{}' "${DC_tlt}/data"; then fix=1; fi
 
         learn="$(tpc_db 5 learning)"
@@ -264,6 +262,7 @@ PY
         _restore
     fi
     
+    # db fixing
     if [ ${db_config} = 1 ]; then
         sqlite3 "$tpcdb" "delete from config;"
         sqlite3 "${tpcdb}" "pragma busy_timeout=2000;\
@@ -273,23 +272,34 @@ PY
         'FALSE','FALSE','FALSE','FALSE','TRUE','0');"
     fi
     
+    if [ ${db_reviews} = 1 ]; then
+        firstrec="$(sqlite3 "${tpcdb}" "select * FROM reviews;" |sed -n 1p| tr '|' '\n')"
+        tpc_db 6 reviews
+        for i in {1..8}; do
+            val="$(sed -n ${i}p <<< "${firstrec}")"
+            if [ ${i} = '1' ]; then
+                sqlite3 "${tpcdb}" "insert into reviews ("date$i") values ('"$val"');"
+            else
+                sqlite3 "${tpcdb}" "update reviews set "date$i"='"${val}"';"
+            fi
+        done
+    fi
+    
     if [ ${db_id} = 1 ]; then
         source /usr/share/idiomind/default/sets.cfg
-        firstrec="$(sqlite3 "$DC_tlt/tpc" "select * FROM id;" |sed -n 1p| tr '|' '\n')"
+        firstrec="$(sqlite3 "${tpcdb}" "select * FROM id;" |sed -n 1p| tr '|' '\n')"
         tpc_db 6 id
-        for i in {0..18}; do
+        for i in {1..18}; do
             val="$(sed -n ${i}p <<< "${firstrec}")"
-            declare ${tsets[${i}]}="$val"
-            
+            col=${tsets[$((i-1))]}
+            if [ ${col} = 'name' ]; then
+                sqlite3 "${tpcdb}" "insert into id ("$col") values ('"$val"');"
+            else
+                sqlite3 "${tpcdb}" "update id set "$col"='"${val}"';"
+            fi
         done
-        sqlite3 "${tpcdb}" "pragma busy_timeout=2000;\
-        insert into id (name,slng,tlng,autr,cntt,ctgy,ilnk,orig,\
-        dtec,dteu,dtei,nwrd,nsnt,nimg,naud,nsze,levl,info,stts) \
-        values ('"$name"','"$slng"','"$tlng"','"$autr"','"$cntt"',\
-        '"$ctgy"','"$ilnk"','"$orig"','"$dtec"','"$dteu"','"$dtei"','"$nwrd"',\
-        '"$nsnt"','"$nimg"','"$naud"','"$nsze"','"$levl"','"$info"','"$stts"');"
     fi
-
+    # create topics index
     if [ ${mkmn} = 1 ] ;then
         "$DS/ifs/tls.sh" colorize 1; "$DS/mngr.sh" mkmn 0
     fi

@@ -1,5 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
+
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 
@@ -118,18 +119,20 @@ function coll_items_stats() {
     }
 
     w=${dw}
-    while [ 1 ]; do
-        if [[ -n "$(sqlite3 ${db} "select w from '${wtable}' where w is '${w}';")" ]]; then break
+    while [ 1 ]; do break
+        if [ ${w} -lt 1 ]; then break; fi
+        if [[ -n "$(sqlite3 ${db} "select w from '${wtable}' where w is '${w}';")" ]]; then yad & break
         else
-            if [ ${w} = ${dw} -a $(date +%u) != 7 ]; then continue
+            if [ $(date +%u) != 7 ]; then continue
             else 
                 echo ${w} >> "$DT/weekscnt"
+                echo $w
             fi
         fi
-        if [ ${w} -lt 1 ]; then break; else w=$((w-1)); fi
+        w=$((w-1))
     done
     if [ -f "$DT/weekscnt" ]; then
-        tac "$DT/weekscnt" |head -n12 | while read -r w; do
+        tac "$DT/weekscnt" |head -n12 |while read -r w; do
             export log="$DC/logs/${w}.log"
             if [ -f "${log}" ]; then rdata=$(compute); else rdata="0,0,0,0,0,0,0"; fi
             D0=$(cut -d ',' -f 1 <<< "${rdata}"); ! [[ ${D0} =~ $int ]] && D0=0
@@ -291,7 +294,6 @@ function chk_expire() {
             elif [ ${atable} = 'expire_week' ]; then
                 newdate=$(date +%m/%d/%Y -d "+${days} days")
             fi
-            echo "--- expire date: ${dte} / new: ${newdate}\n"
             sqlite3 ${db} "update '${atable}' set date='${newdate}' where date='${dte}';">/dev/null 2>&1
             echo 0
         else 
@@ -309,11 +311,12 @@ function pre_comp() {
     [ $(chk_expire 'expire_month' 31) = 0 ] && val1=1
     [ $(chk_expire 'expire_week' 7) = 0 ] && val2=1
 
-    if [ ${val1} = 1 -a ${val2} != 1 ]; then
+    if [ ${val1} = 1 ] && [ ${val2} != 1 ]; then
         coll_tpc_stats 1
     elif [ ${val2} = 1 ]; then
         coll_tpc_stats ${val1}
         coll_items_stats
+        echo -e "--- expire date: ${dte} / new: ${newdate}\n"
     else
         coll_tpc_stats 0
     fi
@@ -334,7 +337,7 @@ function stats() {
     fi
     if [ -f "${no_data}" ]; then
         source "$DS/ifs/cmns.sh"
-        msg "$(gettext "Insufficient data")\n" dialog-information " "
+        msg "$(gettext "Insufficient data")\n" dialog-information "Idiomind"
     else
         yad --html --uri="file:///$DS/default/pg1.html?lang=$intrf" \
         --title="$(gettext "Statistics")" \
