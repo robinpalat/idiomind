@@ -113,17 +113,21 @@ check_index() {
         fi
 
         # DB check
-        cnt="$(sqlite3 "${tpcdb}" "SELECT Count(*) FROM reviews")"
-        if [ ${cnt} != '1' ]; then
-            db_reviews=1; echo -e "\n-- error: db_table_reviews"
-        fi
-        cnt="$(sqlite3 "${tpcdb}" "SELECT Count(*) FROM id")"
-        if [ ${cnt} != '1' ]; then
-            db_id=1; echo -e "\n-- error: db_table_id"
-        fi
-        cnt="$(sqlite3 "${tpcdb}" "SELECT Count(*) FROM config")"
-        if [[ ${cnt} != '1' ]]; then
-            db_config=1; echo -e "\n-- error: db_table_config"
+        if [ -z "$(file "${tpcdb}" |grep -o 'SQLite')" ]; then
+			"$DS/ifs/mkdb.sh" tpc "${tpc}"; fix=1
+		else
+            cnt="$(sqlite3 "${tpcdb}" "SELECT Count(*) FROM reviews")"
+            if [ ${cnt} != '1' ]; then
+                db_reviews=1; echo -e "\n-- error: db_table_reviews"
+            fi
+            cnt="$(sqlite3 "${tpcdb}" "SELECT Count(*) FROM id")"
+            if [ ${cnt} != '1' ]; then
+                db_id=1; echo -e "\n-- error: db_table_id"
+            fi
+            cnt="$(sqlite3 "${tpcdb}" "SELECT Count(*) FROM config")"
+            if [[ ${cnt} != '1' ]]; then
+                db_config=1; echo -e "\n-- error: db_table_config"
+            fi
         fi
         
         if [ ${stts} -gt 1 ]; then
@@ -134,10 +138,6 @@ check_index() {
             fi
         fi
 
-        if [ -z "$(file "${tpcdb}" |grep -o 'SQLite')" ]; then
-			"$DS/ifs/mkdb.sh" tpc "${tpc}"; fix=1
-		fi
-    
         if [ -f "${DC_tlt}/0.cfg" ] || [ -f "${DC_tlt}/id.cfg" ]; then
             newform=1
         fi
