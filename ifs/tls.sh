@@ -1256,7 +1256,7 @@ app_version = os.environ['_version']
 app_website = os.environ['_website']
 app_comments = os.environ['_descrip']
 website_label = os.environ['_website']
-app_copyright = 'Copyright (c) 2015-2019 Robin Palatnik'
+app_copyright = 'Copyright (c) 2013-2019 Robin Palatnik'
 app_license = (('This program is free software: you can redistribute it and/or modify\n'+
 'it under the terms of the GNU General Public License as published by\n'+
 'the Free Software Foundation, either version 3 of the License, or\n'+

@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-#  Copyright 2015-2019 Robin Palatnik
+#  Copyright 2013-2019 Robin Palatnik
 #  Email patapatass@hotmail.com
 #  
 #  This program is free software; you can redistribute it and/or modify
@@ -593,7 +593,7 @@ case "$1" in
     --add)
    "$DS/add.sh" new_items "${dir}" 2 "${2}" ;;
     add)
-    "$DS/add.sh" new_item "${@}" ;;
+    "$DS/add.sh" new_item '__cmd__' "${@}" ;;
     feeds)
     "$DS/mngr.sh" edit_feeds "${tpc}" ;;
     tasks)

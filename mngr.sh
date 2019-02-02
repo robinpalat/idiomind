@@ -515,7 +515,7 @@ edit_list_more() {
     optns="$(ls "$DS/ifs/mods/topic"/ |tr '\n' '!' |sed 's/\.sh//g')${cols1}${cols2}"
     optns="$(sed '/^$/d' <<< "$optns")"
     
-    more="$(yad --form --title="$(gettext "Other options")" \
+    more="$(yad --form --title="$(gettext "More options")" \
     --field=":CB" "!${optns}" --separator="" \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --name=Idiomind --class=Idiomind \

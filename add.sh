@@ -71,16 +71,23 @@ new_topic() {
 }
 
 function new_item() {
+    if [[ $2 = '__cmd__' ]]; then
+        trgt="${4}"
+    elif [ -n "${2}" ]; then 
+        tpe="${2}"
+    fi
+    check_s "${tpe}"
     
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
-    if [ -n "${2}" ]; then tpe="${2}"; fi
+    
     export tpe
     
     if [ ! -d "$DT_r" ]; then
+        DT_r="$DT/$(base64 <<< $((RANDOM%100000)) |head -c 32)"
         check_dir "$DT_r"; cd "$DT_r"
     fi
-    check_s "${tpe}"
+    
     if [ -z "${trgt}" ]; then trgt="${3}"; fi
     
     if [[ ${trans} = FALSE ]] && [ -z "${srce}" -o -z "${trgt}" ]; then
