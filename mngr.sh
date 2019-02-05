@@ -672,8 +672,9 @@ delete_topic() {
         > "$DC_s/tpc"
         
         for n in {1..10}; do 
-            cdb "${shrdb}" 7 T${n} "${name}" "${tpc}"
+            cdb "${shrdb}" 4 T${n} list "${tpc}"
         done
+        cdb "${shrdb}" 4 topics list "${tpc}"
         idiomind tasks
         
         yad_kill "yad --list " "yad --text-info " \
@@ -724,6 +725,7 @@ rename_topic() {
         for n in {1..10}; do 
             cdb "${shrdb}" 7 T${n} "${name}" "${tpc}"
         done
+        cdb "${shrdb}" 7 topics "${name}" "${tpc}"
         idiomind tasks
         
         check_list
