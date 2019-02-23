@@ -97,7 +97,9 @@ config_dlg() {
         list1="${list1}${emrk}${clocal}"
     done
     list2=$(for i in "${!slangs[@]}"; do echo -n "!$i"; done)
-    lk="https://poeditor.com/join/project/Y4OXR1mTmU"
+    lnk1="https://idiomind.sourceforge.io/contact.html"
+    lnk2='https://idiomind.sourceforge.io/help.html'
+    lnk3="https://poeditor.com/join/project/Y4OXR1mTmU"
 
     c=$((RANDOM%100000)); KEY=$c
     yad --plug=$KEY --form --tabnum=1 \
@@ -122,10 +124,11 @@ config_dlg() {
     --expand-column=2 --no-headers \
     --column=icon:IMG --column=Action &
      yad --plug=$KEY --form --tabnum=3 \
-    --align=left --scroll \
+    --align=center --scroll \
     --field=" :LBL" " " --field=" :LBL" " " --field=" :LBL" " " \
-    --field="$(gettext "Getting started")":BTN "$DS/ifs/tls.sh help" \
-    --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh fback" \
+    --field="<a href='$lnk1'>$(gettext "Getting started")</a>":LBL "$DS/ifs/tls.sh help" \
+    --field="<a href='$lnk2'>$(gettext "Feedback")</a>":LBL "$DS/ifs/tls.sh fback" \
+    --field="<a href='$lnk3'>$(gettext "Do you want to help translate?")</a>":LBL "$DS/ifs/tls.sh fback" \
     --field="$(gettext "Program updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
     --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" &
     yad --notebook --key=$KEY --title="$(gettext "Settings")" \
