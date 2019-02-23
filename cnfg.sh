@@ -73,7 +73,7 @@ set_lang() {
 }
 
 config_dlg() {
-    sz=(510 450); [[ ${swind} = TRUE ]] && sz=(460 420)
+    sz=(600 520); [[ ${swind} = TRUE ]] && sz=(550 500)
     show_icon=0; kill_icon=0
     source "$DS/default/sets.cfg"
     
