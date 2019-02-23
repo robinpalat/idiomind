@@ -122,7 +122,7 @@ config_dlg() {
     --column=icon:IMG --column=Action &
      yad --plug=$KEY --form --tabnum=3 \
     --align=left --scroll \
-    --field=" :LBL" " " \
+    --field=" :LBL" " " --field=" :LBL" " " --field=" :LBL" " " \
     --field="$(gettext "Getting started")":BTN "$DS/ifs/tls.sh help" \
     --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh fback" \
     --field="$(gettext "Program updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
@@ -186,7 +186,7 @@ config_dlg() {
         fi
         
         #Languages source and target 
-        ntlang=$(cut -d "|" -f12 < "$cnf1")
+        ntlang=$(cut -d "|" -f11 < "$cnf1")
         if [[ $(gettext ${tlng}) != ${ntlang} ]]; then
             for val in "${lt[@]}"; do
                 if [[ ${ntlang} = $(gettext ${val}) ]]; then
@@ -206,7 +206,7 @@ config_dlg() {
             fi
         fi
         
-        nslang=$(cut -d "|" -f13 < "$cnf1")
+        nslang=$(cut -d "|" -f12 < "$cnf1")
         if [[ "${slng}" != "${nslang}" ]]; then
             slng="${nslang}"
             confirm "$info2" dialog-question "${slng}"
