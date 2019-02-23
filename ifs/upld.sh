@@ -22,7 +22,7 @@ function dwld() {
     ilnk=$(tpc_db 1 id ilnk)
     tlng=$(tpc_db 1 id tlng)
     [ -z "${ilnk}" ] && err
-    url1="http://idiomind.sourceforge.io/dl.php/?fl=${tlng,,}/${ilnk}"
+    url1="http://idiomind.sourceforge.io/download.php/?fl=${tlng,,}/${ilnk}"
     if wget -S --spider "${url1}" 2>&1 |grep 'HTTP/1.1 200 OK'; then 
     URL="${url1}"; else err & exit 1; fi
     
@@ -435,7 +435,7 @@ try:
     {'title': tpc, 'description': body}, True)
 except:
     sys.exit(3)
-url = requests.get('http://idiomind.sourceforge.net/uploads.php').url
+url = requests.get('http://idiomind.sourceforge.net/upload.php').url
 DT_u = os.environ['DT_u']
 volumes = [i for i in os.listdir(DT_u)]
 for f in volumes:
