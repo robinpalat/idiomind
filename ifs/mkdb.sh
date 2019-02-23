@@ -87,8 +87,8 @@ function create_cfgdb() {
     cfgdb="$HOME/.config/idiomind/config"
     echo -n "pragma busy_timeout=800;create table if not exists opts \
     (gramr TEXT, trans TEXT, dlaud TEXT, ttrgt TEXT, itray TEXT, \
-    swind TEXT, stsks TEXT, tlang TEXT, slang TEXT, \
-    synth TEXT, txaud TEXT, intrf TEXT);" |sqlite3 "${cfgdb}"
+    swind TEXT, stsks TEXT, intrf TEXT, synth TEXT, txaud TEXT, \
+    tlang TEXT, slang TEXT);" |sqlite3 "${cfgdb}"
     echo -n "pragma busy_timeout=500;create table if not exists lang \
     (tlng TEXT, slng TEXT);" |sqlite3 "${cfgdb}"
     echo -n "pragma busy_timeout=500; create table if not exists geom \
@@ -101,9 +101,9 @@ function create_cfgdb() {
     (date TEXT,ignr TEXT);" |sqlite3 "${cfgdb}"
     sqlite3 "${cfgdb}" "pragma busy_timeout=500;\
     insert into opts (gramr,trans,dlaud,ttrgt,itray,\
-    swind,stsks,tlang,slang,synth,txaud,intrf) \
+    swind,stsks,intrf,synth,txaud,tlang,slang) \
     values ('"$2"','"$2"','"$2"','FALSE','FALSE',\
-    'FALSE','"$2"','','','','','default');"
+    'FALSE','"$2"','default','','','','');"
     sqlite3 "${cfgdb}" "insert into lang (tlng,slng) values ('','');"
     sqlite3 "${cfgdb}" "insert into user (autr,pass) values ('','');"
     sqlite3 "${cfgdb}" "insert into geom (vals) values ('');"

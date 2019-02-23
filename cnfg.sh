@@ -73,23 +73,19 @@ set_lang() {
 }
 
 config_dlg() {
-    sz=(510 350); [[ ${swind} = TRUE ]] && sz=(460 320)
+    sz=(510 450); [[ ${swind} = TRUE ]] && sz=(460 420)
     show_icon=0; kill_icon=0
-    opts="$(cdb "${cfgdb}" 5 opts)"
-    if [ $(wc -l <<<"$opts") != 8 ]; then 
-        rm "${cfgdb}"; "$DS/ifs/mkdb.sh" config
-        opts="$(cdb "${cfgdb}" 5 opts)"
-    fi
+    source "$DS/default/sets.cfg"
     
-    csets=( 'gramr' 'trans' 'dlaud' 'ttrgt' \
-    'itray' 'swind' 'stsks' 'tlang' 'slang' )
-    v=1; for get in ${csets[@]}; do
-        val=$(sed -n ${v}p <<< "$opts")
-        declare "$get"="$val"; let v++
+    if [ $(cdb "${cfgdb}" 5 opts |wc -l) != 12 ]; then
+        rm "${cfgdb}"; "$DS/ifs/mkdb.sh" config
+    fi
+
+    for get in ${csets[@]}; do
+        val="$(cdb "${cfgdb}" 1 opts $get)"
+        declare "$get"="$val"
     done
-    synth="$(cdb "${cfgdb}" 1 opts synth)"
-    txaud="$(cdb "${cfgdb}" 1 opts txaud)"
-    intrf="$(cdb "${cfgdb}" 1 opts intrf)"
+
     if [ -z "$intrf" ]; then intrf=Default; fi
     lst="$intrf"$(sed "s/\!$intrf//g" <<<"!Default!en!es!fr!it!pt")""
     if [ "$ntosd" != TRUE ]; then audio=TRUE; fi
@@ -106,7 +102,6 @@ config_dlg() {
     yad --plug=$KEY --form --tabnum=1 \
     --align=right --scroll \
     --separator='|' --always-print-result --print-all \
-    --field=":LBL" " " \
     --field="$(gettext "Use color to highlight grammar")":CHK "$gramr" \
     --field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
     --field="$(gettext "Download audio pronunciation")":CHK "$dlaud" \
@@ -114,60 +109,56 @@ config_dlg() {
     --field="$(gettext "Show icon in the notification area")":CHK "$itray" \
     --field="$(gettext "Adjust windows size to small screens")":CHK "$swind" \
     --field="$(gettext "Run at startup")":CHK "$stsks" \
-    --field=" :LBL" " " --field=":LBL" " " \
-    --field="$(gettext "I'm learning")":CB "$(gettext "${tlng}")$list1" \
-    --field="$(gettext "My language is")":CB "$(gettext "${slng}")$list2" \
-    --field=" :LBL" " " --field=":LBL" " " \
+    --field="$(gettext "Interface language")":CB "$lst" \
     --field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
     --field="<small>$(gettext "Program to convert text to WAV file")</small>" "$txaud" \
-    --field="$(gettext "Interface language")":CB "$lst" \
-    --field=" :LBL" " " --field=":LBL" " " \
-    --field="$(gettext "Getting started")":BTN "$DS/ifs/tls.sh help" \
-    --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh fback" \
-    --field="$(gettext "Program updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
-    --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
+    --field=" :LBL" " "  \
+    --field="$(gettext "I'm learning")":CB "$(gettext "${tlng}")$list1" \
+    --field="$(gettext "My language is")":CB "$(gettext "${slng}")$list2" \
+    --field=" :LBL" " " > "$cnf1" &
     cat "$DS_a/menu_list" |yad --plug=$KEY --tabnum=2 --list \
     --text=" $(gettext "Double-click to configure") " --print-all \
     --dclick-action="$DS/ifs/dclik.sh" \
     --expand-column=2 --no-headers \
     --column=icon:IMG --column=Action &
+     yad --plug=$KEY --form --tabnum=3 \
+    --align=left --scroll \
+    --field=" :LBL" " " \
+    --field="$(gettext "Getting started")":BTN "$DS/ifs/tls.sh help" \
+    --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh fback" \
+    --field="$(gettext "Program updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
+    --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" &
     yad --notebook --key=$KEY --title="$(gettext "Settings")" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind \
-    --tab-borders=5 --sticky --center \
+    --tab-pos=left --tab-borders=5 --sticky --center \
     --tab="$(gettext "Preferences")" \
     --tab="$(gettext "More")" \
-    --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=5 \
+    --tab="$(gettext "Help")" \
+    --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=10 \
     --button="$(gettext "Save")"!"gtk-apply":0 \
     --button="$(gettext "Close")":1
-    
     ret=$?
-
+    
     if [ $ret -eq 0 ]; then
-        n=1; v=0
-        while [ ${n} -le 12 ]; do
+        n=1
+        while [ ${n} -le 9 ]; do
             val=$(cut -d "|" -f${n} < "$cnf1")
-            if [ "$val" = TRUE -o "$val" = FALSE ]; then
-                cdb "${cfgdb}" 3 opts "${csets[$v]}" "${val}"; ((v=v+1))
-            fi
-            ((n=n+1))
+            cdb "${cfgdb}" 3 opts "${csets[$((n-1))]}" "${val}"
+           let n++
         done
         
-        val=$(cut -d "|" -f15 < "$cnf1")
-        [[ "$val" != "$synth" ]] && cdb "${cfgdb}" 3 opts synth "${val}"
-        
-        val=$(cut -d "|" -f16 < "$cnf1")
-        [[ "$val" != "$txaud" ]] && cdb "${cfgdb}" 3 opts txaud "${val}"
-
-        # Interface Language
-        val=$(cut -d "|" -f17 < "$cnf1")
+        ## Interface Language
+        val=$(cut -d "|" -f8 < "$cnf1")
         if [[ "$val" != "$intrf" ]]; then
             msg_2 "$(gettext "Are you sure you want to change the interface language?")\n" \
             dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Idiomind")"
             if [ $? -eq 0 ]; then 
-                cdb "${cfgdb}" 3 opts intrf ${val}
+                cdb "${cfgdb}" 3 opts intrf "${val}"
                 kill_icon=1; show_icon=1; export intrf=$val
                 idiomind tasks &
+            else
+                cdb "${cfgdb}" 3 opts intrf "${intrf}"
             fi
         fi
         
@@ -185,7 +176,7 @@ config_dlg() {
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
-        if cut -d "|" -f8 < "$cnf1" |grep "TRUE"; then
+        if cut -d "|" -f7 < "$cnf1" |grep "TRUE"; then
             if [ ! -f "$config_dir/idiomind.desktop" ]; then
                 echo "$desktopfile" > "$config_dir/idiomind.desktop"
             fi
@@ -196,7 +187,7 @@ config_dlg() {
         fi
         
         #Languages source and target 
-        ntlang=$(cut -d "|" -f11 < "$cnf1")
+        ntlang=$(cut -d "|" -f12 < "$cnf1")
         if [[ $(gettext ${tlng}) != ${ntlang} ]]; then
             for val in "${lt[@]}"; do
                 if [[ ${ntlang} = $(gettext ${val}) ]]; then
@@ -215,7 +206,8 @@ config_dlg() {
                 fi
             fi
         fi
-        nslang=$(cut -d "|" -f12 < "$cnf1")
+        
+        nslang=$(cut -d "|" -f13 < "$cnf1")
         if [[ "${slng}" != "${nslang}" ]]; then
             slng="${nslang}"
             confirm "$info2" dialog-question "${slng}"

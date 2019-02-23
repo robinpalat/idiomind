@@ -68,7 +68,7 @@ function cdb () {
     elif [ $2 = 4 ]; then # delete
         sqlite3 "$db" "delete from ${ta} where ${co}='${va}';"
     elif [ $2 = 5 ]; then # select all
-        sqlite3 "$db" "select * FROM ${ta};" |tr -s '|' '\n'
+        sqlite3 "$db" "select * FROM ${ta};" |sed 's/|/\n/g'
     elif [ $2 = 6 ]; then # delet all
         sqlite3 "$db" "delete from '${ta}';"
     elif [ $2 = 7 ]; then # mod especific
