@@ -26,7 +26,7 @@ fi
 
 source /usr/share/idiomind/default/c.conf
 
-if [ -z "${tlng}" -o -z "${slng}" ]; then
+if [ -z "${tlng}" -o -z "${slng}" -a ! -f "$DT/.langc" ]; then
     source "$DS/ifs/cmns.sh"
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     msg "$(gettext "Please check the language settings in the preferences dialog.")

@@ -35,6 +35,7 @@ confirm() {
 
 set_lang() {
     language="$1"
+    touch "$DT/.langc"
     check_dir "$DM_t/$language/.share/images" \
     "$DM_t/$language/.share/audio"
     cdb "${cfgdb}" 3 lang tlng "${language}"
@@ -230,7 +231,7 @@ config_dlg() {
         fi
         
     fi
-    rm -f "$cnf1" "$DT/.lc"
+    cleanups "$cnf1" "$DT/.langc"
 
     exit
 
