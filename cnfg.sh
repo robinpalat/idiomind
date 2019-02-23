@@ -73,7 +73,7 @@ set_lang() {
 }
 
 config_dlg() {
-    sz=(600 520); [[ ${swind} = TRUE ]] && sz=(550 500)
+    sz=(600 480); [[ ${swind} = TRUE ]] && sz=(550 460)
     show_icon=0; kill_icon=0
     source "$DS/default/sets.cfg"
     
@@ -112,7 +112,6 @@ config_dlg() {
     --field="$(gettext "Interface language")":CB "$lst" \
     --field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
     --field="<small>$(gettext "Program to convert text to WAV file")</small>" "$txaud" \
-    --field=" :LBL" " "  \
     --field="$(gettext "I'm learning")":CB "$(gettext "${tlng}")$list1" \
     --field="$(gettext "My language is")":CB "$(gettext "${slng}")$list2" \
     --field=" :LBL" " " > "$cnf1" &
@@ -135,7 +134,7 @@ config_dlg() {
     --tab="$(gettext "Preferences")" \
     --tab="$(gettext "More")" \
     --tab="$(gettext "Help")" \
-    --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=10 \
+    --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=0 \
     --button="$(gettext "Save")"!"gtk-apply":0 \
     --button="$(gettext "Close")":1
     ret=$?
