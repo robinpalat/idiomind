@@ -74,7 +74,7 @@ set_lang() {
 }
 
 config_dlg() {
-    sz=(600 480); [[ ${swind} = TRUE ]] && sz=(550 460)
+    sz=(520 480); [[ ${swind} = TRUE ]] && sz=(490 460)
     show_icon=0; kill_icon=0
     source "$DS/default/sets.cfg"
     
@@ -108,16 +108,15 @@ config_dlg() {
     --field="$(gettext "Use color to highlight grammar")":CHK "$gramr" \
     --field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
     --field="$(gettext "Download audio pronunciation")":CHK "$dlaud" \
-    --field="$(gettext "Detect language of source text (slow and inaccurate)")":CHK "$ttrgt" \
+    --field="$(gettext "Detect language of source text (inaccurate)")":CHK "$ttrgt" \
     --field="$(gettext "Show icon in the notification area")":CHK "$itray" \
     --field="$(gettext "Adjust windows size to small screens")":CHK "$swind" \
     --field="$(gettext "Run at startup")":CHK "$stsks" \
     --field="$(gettext "Interface language")":CB "$lst" \
-    --field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
-    --field="<small>$(gettext "Program to convert text to WAV file")</small>" "$txaud" \
+    --field="<small>$(gettext "Use this speech synthesizer")</small>" "$synth" \
+    --field="<small>$(gettext "Program to convert text to audio")</small>" "$txaud" \
     --field="$(gettext "I'm learning")":CB "$(gettext "${tlng}")$list1" \
-    --field="$(gettext "My language is")":CB "$(gettext "${slng}")$list2" \
-    --field=" :LBL" " " > "$cnf1" &
+    --field="$(gettext "My language is")":CB "$(gettext "${slng}")$list2" > "$cnf1" &
     cat "$DS_a/menu_list" |yad --plug=$KEY --tabnum=2 --list \
     --text=" $(gettext "Double-click to configure") " --print-all \
     --dclick-action="$DS/ifs/dclik.sh" \

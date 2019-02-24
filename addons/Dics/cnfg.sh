@@ -92,7 +92,6 @@ function dlg() {
                 fi
             fi
         done < <(ls "$enables"/)
-        
         while read -r dict; do
             if [ -n "${dict}" ]; then
                 echo 'FALSE'
@@ -155,13 +154,11 @@ function dlg() {
                 "$DS_a/Dics/cnfg.sh" add_dlg
         elif [ $ret -eq 0  -o $ret -eq 3 ]; then
             while read -r dict; do
-
                 name="$(cut -d "|" -f2 <<< "$dict")"
                 type="$(cut -d "|" -f3 <<< "$dict")"
                 tget="$(cut -d "|" -f4 <<< "$dict")"
                 
                 if grep 'FALSE' <<< "$dict"; then
-                
                     if [ ! -f "$disables/$name.$type.$tget.$lgt" ]; then
                         if [ -f "$enables/$name.$type.$tget.$lgt" ]; then 
                             mv -f "$enables/$name.$type.$tget.$lgt" \
@@ -175,9 +172,7 @@ function dlg() {
                         fi
                     fi
                 fi
-                
                 if grep 'TRUE' <<< "$dict"; then
-                
                     if [ ! -f "$enables/$name.$type.$tget.$lgt" ]; then
                         if [ -f "$disables/$name.$type.$tget.$lgt" ]; then 
                             mv -f "$disables/$name.$type.$tget.$lgt" \
@@ -191,13 +186,10 @@ function dlg() {
                         fi
                     fi
                 fi
-                
-                # just to make sure
                 if [ -f "$disables/$name.$type.$tget.$lgt" -a \
                 -f "$enables/$name.$type.$tget.$lgt" ]; then
                     rm "$disables/$name.$type.$tget.$lgt"
                 fi
-                
             done < <(sed 's/<[^>]*>//g' <<< "${sel}")
             
             if [ $ret -eq 3 ]; then "$DS_a/Dics/test.sh"; fi
@@ -243,13 +235,11 @@ function update_config_dir() {
             mv -f "$disables"/*.$lgt "$enables"/
         fi
     fi
-
     while read -r dict; do
         if ! grep "$(basename "${dict}")" <<< "${lsdics}">/dev/null 2>&1; then
             cleanups "$enables/${dict}"; echo "-- removed: $(basename "${dict}")"
         fi
     done < <(ls "$enables")
-    
     while read -r dict; do
         if ! grep "$(basename "${dict}")" <<< "${lsdics}">/dev/null 2>&1; then
             cleanups "$disables/${dict}"; echo "-- removed: $(basename "${dict}")"

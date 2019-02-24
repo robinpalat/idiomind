@@ -154,4 +154,5 @@ if [[ $ret -eq 0 ]]; then
         fi
     fi
 fi
-exit
+
+exit 0
