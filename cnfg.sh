@@ -97,9 +97,9 @@ config_dlg() {
         list1="${list1}${emrk}${clocal}"
     done
     list2=$(for i in "${!slangs[@]}"; do echo -n "!$i"; done)
-    lnk1="https://idiomind.sourceforge.io/contact.html"
-    lnk2='https://idiomind.sourceforge.io/help.html'
-    lnk3="https://poeditor.com/join/project/Y4OXR1mTmU"
+    lnk1='https://idiomind.sourceforge.io/help.html'
+    lnk2="https://idiomind.sourceforge.io/contact.html"
+    lnk3="https://poeditor.com/join/project/oGBLVJULjK"
 
     c=$((RANDOM%100000)); KEY=$c
     yad --plug=$KEY --form --tabnum=1 \
