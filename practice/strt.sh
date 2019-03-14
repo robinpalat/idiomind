@@ -420,8 +420,8 @@ function practice_d() {
             srce=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
         fi
         [ ! -e "$img" ] && img="$DS/images/imgmiss.jpg"
-        cuest="<span background='#515151' color='white' font_desc='Arial Bold 14'> ${trgt} </span>"
-        aswer="<span background='#515151' color='white' font_desc='Arial 14'> ${srce} </span>"
+        cuest="<span font_desc='Arial Bold 12'> ${trgt} </span>"
+        aswer="<span font_desc='Arial Bold 12'> ${trgt}</span> <i>/ ${srce}</i> "
     }
 
     question() {
@@ -432,6 +432,7 @@ function practice_d() {
         --image-on-top --undecorated --buttons-layout=spread \
         --width=418 --height=360 --borders=8 \
         --field="$cuest":lbl "" \
+        --field="":lbl "" \
         --button="!window-close":1 \
         --button="!media-seek-forward":0
     }
@@ -444,6 +445,7 @@ function practice_d() {
         --image-on-top --undecorated --buttons-layout=spread \
         --width=418 --height=360 --borders=8 \
         --field="$aswer":lbl "" \
+        --field="":lbl "" \
         --button="$(gettext "I did not know it")!$img_no":3 \
         --button="$(gettext "I Knew it")!$img_yes":2
     }
@@ -675,8 +677,8 @@ function get_list() {
         (echo "#"
         while read -r itm; do
         _item="$(grep -F -m 1 "trgt{${itm}}" "${cfg0}" |sed 's/}/}\n/g')"
-        if [ -e "$DM_tls/images/${itm,,}-1.jpg" \
-        -o -e "$DM_tlt/images/${itm,,}.jpg" ]; then
+        if [ -f "$DM_tls/images/${itm,,}-1.jpg" \
+        -o -f "$DM_tlt/images/${itm,,}.jpg" ]; then
             [ -n "${itm}" ] && echo "${itm}" >> "${pdir}/${pr}.0"
         fi
         done < "$DT/images") | yad --progress \
