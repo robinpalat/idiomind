@@ -13,6 +13,6 @@ Architecture: all
 Depends: ${misc:Depends}, bash (>=4.1), sox, mplayer, imagemagick, wkhtmltopdf, curl, xdg-utils, xclip, python, python-gtk2, python-requests, python-appindicator, espeak, sqlite3, xsltproc, libsox-fmt-mp3, gnome-screenshot, libnotify-bin
 Recommends: yad (>=0.39)
 Suggests: tesseract-ocr
-Description: A help to learn another language
- Idiomind is a small program to help you extend your vocabulary and more.
- Idiomind is based on shell scripts and YAD (GUI)
+Description: Language learning tool
+ Idiomind is a small program aimed to help you learn another language.
+ Idiomind is based on shell scripts and YAD (GUI).

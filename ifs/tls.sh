@@ -1246,7 +1246,7 @@ PY
 }
 
 about() {
-    export _descrip="$(gettext "A help to learn another language")"
+    export _descrip="$(gettext "Language learning tool")"
     python << ABOUT
 import gtk, os
 app_logo = os.path.join('/usr/share/idiomind/images/logo.png')
