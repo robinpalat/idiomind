@@ -1,1 +1,1 @@
-https://$lgt.wikipedia.org/wiki/${query,,}
+http://${lgt}.wikipedia.org/wiki/${query,,}

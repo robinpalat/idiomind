@@ -37,14 +37,19 @@ function check_conf(){
     fi
 }
 
-if [[ "$1" = _dlg_ ]] || [[ "$dlg" = _dlg_ ]]; then
+if [[ "$1" = '_DLG_' ]] || [[ "$dlg" = '_DLG_' ]]; then
 
     fname="$(basename "$0")"
     name="<b>$(cut -f 1 -d '.' <<< "$fname")</b>"
-    icon=dialog-information 
-    if [ -f "$DC_a/dict/msgs/$d2" ] ; then
-        info="\n<b>Status:</b> $(< "$DC_a/dict/msgs/$d2")"
-        icon=dialog-warning
+    icon="gtk-apply"
+    
+    if [ -f "$DC_a/dict/msgs/$fname" ]; then
+        info="\n<small>$(gettext "<b>Status:</b>") $(< "$DC_a/dict/msgs/$fname")</small>"
+        icon="dialog-warning"
+        
+    elif grep -Fxq "$fname" "$DC_a/dict/ok_nolang.list" >/dev/null 2>&1; then
+        info="\n<small>$(gettext "<b>Status:</b> Not enabled for the language you are learning.")</small>\n"
+        icon="dialog-information"
     fi
 
     c=$(yad --form --title="${4}" \
@@ -74,18 +79,39 @@ else
         elif [ "$speed" = Normal ]; then s=0
         elif [ "$speed" = Fast ]; then s=2
         fi
-        if [ "$lgt" = en ]; then v=ukenglishmale
-        elif [ "$lgt" = es ]; then v=eurspanishmale
-        elif [ "$lgt" = pt ]; then v=brportuguesefemale
-        elif [ "$lgt" = ru ]; then v=rurussianfemale
-        elif [ "$lgt" = it ]; then v=euritalianmale
-        elif [ "$lgt" = de ]; then v=eurgermanfemale
-        elif [ "$lgt" = fr ]; then v=eurfrenchmale
-        elif [ "$lgt" = zh-cn ]; then v=chchinesefemale
-        elif [ "$lgt" = ja ]; then v=jpjapanesefemale
+        if [ "$lgt" = "en" ]; then 
+            v=ukenglishmale
+            _test="test"
+        elif [ "$lgt" = "es" ]; then 
+            v=eurspanishmale
+            _test="prueba"
+        elif [ "$lgt" = "pt" ]; then 
+            v=brportuguesefemale
+            _test="teste"
+        elif [ "$lgt" = "ru" ]; then 
+            v=rurussianfemale
+            _test="тест"
+        elif [ "$lgt" = "it" ]; then
+            v=euritalianmale
+            _test="prova"
+        elif [ "$lgt" = "de" ]; then 
+            v=eurgermanfemale
+            _test="Prüfung"
+        elif [ "$lgt" = "fr" ]; then 
+            v=eurfrenchmale
+            _test="tester"
+        elif [ "$lgt" = "zh-cn" ]; then 
+            v=chchinesefemale
+            _test="测试"
+        elif [ "$lgt" = "ja" ]; then 
+            v=jpjapanesefemale
+            _test="テスト"
         fi
-        export LINK="https://api.ispeech.org/api/rest?apikey=$k&action=convert&voice=$v&speed=$s&pitch=0&text=${word}"
-        export ex='mp3'
+        
+        TLANGS="zh-cn, en, ja, pt, es, ru, it, de, fr"
+        export TESTURL="https://api.ispeech.org/api/rest?apikey=$k&action=convert&voice=$v&speed=$s&pitch=0&text=${_test}"
+        export URL="https://api.ispeech.org/api/rest?apikey=$k&action=convert&voice=$v&speed=$s&pitch=0&text=${word}"
+        export EX='mp3'
     fi
 fi
 

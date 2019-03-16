@@ -391,11 +391,11 @@ function translate() {
 }
 
 dwld1() {
-    LINK=""; source "$1/dicts/$(basename "${dict}")"
-    if [ -n "${LINK}" -a ! -f "$audio_file" ]; then
-        wget -T 51 -q -U "$useragent" -O "$audio_dwld.$ex" "${LINK}"
-        if [[ ${ex} != 'mp3' ]]; then
-            mv -f "$audio_dwld.$ex" "$audio_dwld.mp3"
+    URL=""; source "$1/dicts/$(basename "${dict}")"
+    if [ -n "${URL}" -a ! -f "$audio_file" ]; then
+        wget -T 51 -q -U "$useragent" -O "$audio_dwld.$EX" "${URL}"
+        if [[ ${EX} != 'mp3' ]]; then
+            mv -f "$audio_dwld.$EX" "$audio_dwld.mp3"
         fi
     fi
     if [ -f "$audio_file" ]; then
@@ -409,9 +409,9 @@ dwld1() {
 }
 
 dwld2() {
-    LINK=""; source "$1/dicts/$(basename "${dict}")"
-    if [ -n "${LINK}" -a ! -f "${audio_file}" ]; then
-        wget -T 51 -q -U "$useragent" -O "$DT_r/audio.mp3" "${LINK}"
+    URL=""; source "$1/dicts/$(basename "${dict}")"
+    if [ -n "${URL}" -a ! -f "${audio_file}" ]; then
+        wget -T 51 -q -U "$useragent" -O "$DT_r/audio.mp3" "${URL}"
     fi
     if [ -f "$DT_r/audio.mp3" ]; then
         if file -b --mime-type "$DT_r/audio.mp3" |grep -E 'mpeg|mp3|' >/dev/null 2>&1 \

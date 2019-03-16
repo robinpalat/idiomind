@@ -41,14 +41,19 @@ function check_conf(){
     fi
 }
 
-if [[ "$1" = _dlg_ ]] || [[ "$dlg" = _dlg_ ]]; then
+if [[ "$1" = '_DLG_' ]] || [[ "$dlg" = '_DLG_' ]]; then
 
     fname="$(basename "$0")"
     name="<b>$(cut -f 1 -d '.' <<< "$fname")</b>"
-    icon=dialog-information 
-    if [ -f "$DC_a/dict/msgs/$d2" ] ; then
-        info="\n<b>Status:</b> $(< "$DC_a/dict/msgs/$d2")"
-        icon=dialog-warning
+    icon="gtk-apply"
+    
+    if [ -f "$DC_a/dict/msgs/$fname" ]; then
+        info="\n<small>$(gettext "<b>Status:</b>") $(< "$DC_a/dict/msgs/$fname")</small>"
+        icon="dialog-warning"
+        
+    elif grep -Fxq "$fname" "$DC_a/dict/ok_nolang.list" >/dev/null 2>&1; then
+        info="\n<small>$(gettext "<b>Status:</b> Not enabled for the language you are learning.")</small>\n"
+        icon="dialog-information"
     fi
 
     c=$(yad --form --title="${4}" \
@@ -73,25 +78,44 @@ if [[ "$1" = _dlg_ ]] || [[ "$dlg" = _dlg_ ]]; then
 else
     check_conf
     if [ $? = 0 ]; then
-        if [ "$speed" = Slow ]; then s=-2
-        elif [ "$speed" = Normal ]; then s=0
-        elif [ "$speed" = Fast ]; then s=2
-        else s=0
+        if [ "$speed" = "Slow" ]; then s="-2"
+        elif [ "$speed" = "Normal" ]; then s="0"
+        elif [ "$speed" = "Fast" ]; then s="2"
+        else s="0"
         fi
         if [ -z "$voice" ]; then
-            if [ "$lgt" = en ]; then v='en-us'
-            elif [ "$lgt" = es ]; then v='es-es'
-            elif [ "$lgt" = pt ]; then v='pt-br'
-            elif [ "$lgt" = ru ]; then v='ru-ru'
-            elif [ "$lgt" = it ]; then v='it-it'
-            elif [ "$lgt" = de ]; then v='de-de'
-            elif [ "$lgt" = fr ]; then v='fr-fr'
-            elif [ "$lgt" = zh-cn ]; then v='zh-cn'
+            if [ "$lgt" = "en" ]; then 
+                v='en-us'
+                _test="test"
+            elif [ "$lgt" = "es" ]; then 
+                v='es-es'
+                _test="prueba"
+            elif [ "$lgt" = "pt" ]; then 
+                v='pt-br'
+                _test="teste"
+            elif [ "$lgt" = "ru" ]; then 
+                v='ru-ru'
+                _test="тест"
+            elif [ "$lgt" = "it" ]; then 
+                v='it-it'
+                _test="prova"
+            elif [ "$lgt" = "de" ]; then 
+                v='de-de'
+                _test="Prüfung"
+            elif [ "$lgt" = "fr" ]; then 
+                v='fr-fr'
+                _test="tester"
+            elif [ "$lgt" = "zh-cn" ]; then 
+                v='zh-cn'
+                _test="测试"
             fi
         else
             v="$voice"
         fi
-        export LINK="http://api.voicerss.org/?key=$key&hl=$v&r=$s&f=16khz_16bit_mono&src=${word}"
-        export ex='mp3'
+        
+        TLANGS="zh-cn, en, pt, es, ru, it, de, fr"
+        export TESTURL="http://api.voicerss.org/?key=$key&hl=$v&r=$s&c=mp3&f=16khz_16bit_mono&src=${_test}"
+        export URL="http://api.voicerss.org/?key=$key&hl=$v&r=$s&c=mp3&f=16khz_16bit_mono&src=${word}"
+        export EX='mp3'
     fi
 fi

@@ -1,19 +1,31 @@
 #!/bin/bash
 
-if [[ "$1" = _dlg_ ]]; then
+if [[ "$1" = '_DLG_' ]]; then
     fname="$(basename "$0")"
     name="<b>$(cut -f 1 -d '.' <<< "$fname")</b>"
-    icon=dialog-information 
+    icon="gtk-apply"
+    
     if [ -f "$DC_a/dict/msgs/$fname" ]; then
-        info="\n<b>Status:</b> $(< "$DC_a/dict/msgs/$fname")"
-        icon=dialog-warning
+        info="\n<small>$(gettext "<b>Status:</b>") $(< "$DC_a/dict/msgs/$fname")</small>"
+        icon="dialog-warning"
+        
+    elif grep -Fxq "$fname" "$DC_a/dict/ok_nolang.list" >/dev/null 2>&1; then
+        info="\n<small>$(gettext "<b>Status:</b> Not enabled for the language you are learning.")</small>\n"
+        icon="dialog-information"
     fi
+    
     source "$DS/ifs/cmns.sh"
     msg "$name\n<small>$(gettext "Languages"): English\n$(gettext "Does not need configuration")</small>\n$info" $icon "$4" "$(gettext "Close")"
 else
     if [ ${#word} -lt 6 ]; then
-        c=0000000
-        export LINK="http://media.merriam-webster.com/soundc11/${word:0:1}/${word}${c::-${#word}}1.wav"
-        export ex='wav'
+        c="0000000"
+        _test="test"
+        
+        LANGS="en"
+        export TESTURL="http://media.merriam-webster.com/audio/prons/en/us/mp3/${_test:0:1}/${_test}${c::-${#_test}}1.mp3"
+        export URL="http://media.merriam-webster.com/audio/prons/en/us/mp3/${word:0:1}/${word}${c::-${#word}}1.mp3"
+        #export TESTURL="http://media.merriam-webster.com/soundc11/${word:0:1}/${word}${c::-${#word}}1.wav"
+        #export URL="http://media.merriam-webster.com/soundc11/${word:0:1}/${word}${c::-${#word}}1.wav"
+        export EX='mp3'
     fi
 fi

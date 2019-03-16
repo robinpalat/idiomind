@@ -63,7 +63,7 @@ function add_dlg() {
 function dclk() {
     [ "$2" = TRUE ] && dir=enables
     [ "$2" = FALSE ] && dir=disables
-    "$DS_a/Dics/dicts/$3.$4.$5.$6" _dlg_ "$@"
+    "$DS_a/Dics/dicts/$3.$4.$5.$6" '_DLG_' "$@"
 }
 
 function cpfile() {
@@ -87,6 +87,8 @@ function dlg() {
                 sed 's/\./\n/g' <<< "${dict}"
                 if grep "${dict}" <<< "$test_ok" >/dev/null 2>&1; then
                     echo "gtk-apply"
+                elif grep "${dict}" <<< "$test_ok_nolang" >/dev/null 2>&1; then
+                    echo "info"
                 else
                     echo "dialog-warning"
                 fi
@@ -101,8 +103,10 @@ function dlg() {
                 else 
                     sed 's/\./\n/g' <<< "${dict}"
                 fi
-                 if grep "${dict}" <<< "$test_ok" >/dev/null 2>&1; then
+                if grep "${dict}" <<< "$test_ok" >/dev/null 2>&1; then
                     echo "gtk-apply"
+                elif grep "${dict}" <<< "$test_ok_nolang" >/dev/null 2>&1; then
+                    echo "info"
                 else
                     echo "dialog-warning"
                 fi
@@ -122,10 +126,16 @@ function dlg() {
         text="--center"; n=6
     fi
     
-    if [ -f "$DC_a/dict/test" ] ; then
-        test_ok="$(< "$DC_a/dict/test")"
+    if [ -f "$DC_a/dict/ok.list" ] ; then
+        test_ok="$(< "$DC_a/dict/ok.list")"
     else
         test_ok=""
+    fi
+    
+    if [ -f "$DC_a/dict/ok_nolang.list" ] ; then
+        test_ok_nolang="$(< "$DC_a/dict/ok_nolang.list")"
+    else
+        test_ok_nolang=""
     fi
     
     sel="$(dict_list ${n} |yad --list \

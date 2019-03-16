@@ -5,27 +5,49 @@
 voices=( "jane" "oksana" "alyss" "omazh" "zahar" "ermil" )
 voice=${voices[0]}
 
-if [[ "$1" = _dlg_ ]]; then
+if [[ "$1" = '_DLG_' ]]; then
     fname="$(basename "$0")"
     name="<b>$(cut -f 1 -d '.' <<< "$fname")</b>"
-    icon=dialog-information 
+    icon="gtk-apply"
+    
     if [ -f "$DC_a/dict/msgs/$fname" ]; then
-        info="\n<b>Status:</b> $(< "$DC_a/dict/msgs/$fname")"
-        icon=dialog-warning
+        info="\n<small>$(gettext "<b>Status:</b>") $(< "$DC_a/dict/msgs/$fname")</small>"
+        icon="dialog-warning"
+        
+    elif grep -Fxq "$fname" "$DC_a/dict/ok_nolang.list" >/dev/null 2>&1; then
+        info="\n<small>$(gettext "<b>Status:</b> Not enabled for the language you are learning.")</small>\n"
+        icon="dialog-information"
     fi
+    
     source "$DS/ifs/cmns.sh"
     msg "$name\n<small>$(gettext "Languages"): English, Russian\n$(gettext "Does not need configuration")</small>\n$info" $icon "$4" "$(gettext "Close")"
     
-    
 else
-    if [ "$lgt" = en ]; then 
-        t=en_GB
-        export LINK="http://tts.voicetech.yandex.net/tts?format=mp3&quality=hi&platform=web&application=translate&speaker=$voice&lang=$t&text=${word}"
-        export ex='mp3'
-    elif [ "$lgt" = ru ]; then
-        t=ru_RU
-        export LINK="http://tts.voicetech.yandex.net/tts?format=mp3&quality=hi&platform=web&application=translate&speaker=$voice&lang=$t&text=${word}"
-        export ex='mp3'
+    if [ "$lgt" = "en" ]; then 
+        t="en_GB"
+        _test="test"
+    elif [ "$lgt" = "es" ]; then 
+        t="es_ES"
+        _test="prueba"
+    elif [ "$lgt" = "pt" ]; then 
+        t="pt_PT"
+        _test="teste"
+    elif [ "$lgt" = "ru" ]; then 
+        t="ru_RU"
+        _test="тест"
+    elif [ "$lgt" = "it" ]; then 
+        t="it_IT"
+        _test="prova"
+    elif [ "$lgt" = "de" ]; then 
+        t="de_DE"
+        _test="Prüfung"
+    elif [ "$lgt" = "fr" ]; then 
+        t="fr_FR"
+        _test="tester"
     fi
     
+    TLANGS="en, pt, es, ru, it, de, fr"
+    export TESTURL="http://tts.voicetech.yandex.net/tts?format=mp3&quality=hi&platform=web&application=translate&speaker=$voice&lang=$t&text=${_test}"
+    export URL="http://tts.voicetech.yandex.net/tts?format=mp3&quality=hi&platform=web&application=translate&speaker=$voice&lang=$t&text=${word}"
+    export EX='mp3'
 fi
