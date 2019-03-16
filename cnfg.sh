@@ -110,7 +110,7 @@ config_dlg() {
     --field="$(gettext "Download audio pronunciation")":CHK "$dlaud" \
     --field="$(gettext "Detect language of source text (inaccurate)")":CHK "$ttrgt" \
     --field="$(gettext "Show icon in the notification area")":CHK "$itray" \
-    --field="$(gettext "Adjust windows size to small screens")":CHK "$swind" \
+    --field="$(gettext "Smaller windows")":CHK "$swind" \
     --field="$(gettext "Run at startup")":CHK "$stsks" \
     --field="$(gettext "Interface language")":CB "$lst" \
     --field="<small>$(gettext "Use this speech synthesizer")</small>" "$synth" \
@@ -127,7 +127,7 @@ config_dlg() {
     --field=" :LBL" " " --field=" :LBL" " " --field=" :LBL" " " \
     --field="<a href='$lnk1'>$(gettext "Getting started")</a>":LBL "$DS/ifs/tls.sh help" \
     --field="<a href='$lnk2'>$(gettext "Feedback")</a>":LBL "$DS/ifs/tls.sh fback" \
-    --field="<a href='$lnk3'>$(gettext "Do you want to help translate?")</a>":LBL "$DS/ifs/tls.sh fback" \
+    --field="<a href='$lnk3'>$(gettext "Translate this program")</a>":LBL "$DS/ifs/tls.sh fback" \
     --field="$(gettext "Program updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
     --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" &
     yad --notebook --key=$KEY --title="$(gettext "Settings")" \

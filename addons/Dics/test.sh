@@ -52,9 +52,10 @@ function test_() {
     # AUDIO - Sentences"
     echo "10"
 
-    audio_file="$DT/dict_test/audio"
     if ls "$DC_d"/*."TTS online.Pronunciation".* 1> /dev/null 2>&1; then
+        n=10
         for dict in "$DC_d"/*."TTS online.Pronunciation".*; do
+            audio_file="$DT/dict_test/${n}_audio"
             filename="$(basename "${dict}")"
             unset TESTURL; source "$DS_a/Dics/dicts/$filename"
             if [ -n "${TESTURL}" ]; then
@@ -64,8 +65,8 @@ function test_() {
                 fi
             fi
             if [ -f "$audio_file.mp3" ]; then
-                if file -b --mime-type "$audio_file.mp3" |grep -E 'mpeg|mp3|' >/dev/null 2>&1 \
-                && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 120 ]]; then
+                if file -b --mime-type "$audio_file.mp3" |grep -o -E 'mpeg|mp3|' >/dev/null 2>&1 \
+                && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
                 
                     if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
                         echo "$filename" >> "$DT/test_ok"
@@ -78,12 +79,16 @@ function test_() {
             fi
             
             cleanups "$audio_file.mp3"
+            let n++
         done
     fi
     
     echo "20"
+    
     if ls "$DC_e"/*."TTS online.Pronunciation".* 1> /dev/null 2>&1; then
+         n=20
         for dict in "$DC_e"/*."TTS online.Pronunciation".*; do
+            audio_file="$DT/dict_test/${n}_audio"
             filename="$(basename "${dict}")"
             unset TESTURL; source "$DS_a/Dics/dicts/$filename"
             if [ -n "${TESTURL}" ]; then
@@ -93,8 +98,8 @@ function test_() {
                 fi
             fi
             if [ -f "$audio_file.mp3" ]; then
-                if file -b --mime-type "$audio_file.mp3" |grep -E 'mpeg|mp3|' >/dev/null 2>&1 \
-                && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 120 ]]; then
+                if file -b --mime-type "$audio_file.mp3" |grep -o -E 'mpeg|mp3|' >/dev/null 2>&1 \
+                && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
                 
                     if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
                         echo "$filename" >> "$DT/test_ok"
@@ -107,6 +112,7 @@ function test_() {
             fi
             
             cleanups "$audio_file.mp3"
+            let n++
         done
     fi
 
@@ -114,10 +120,11 @@ function test_() {
     # AUDIO - Words"
     echo "50"
 
-    audio_file="$DT/dict_test/audio"
     if ls "$DC_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
+        n=50
         for dict in $DC_d/*."TTS online.Word pronunciation".*; do
             filename="$(basename "${dict}")"
+            audio_file="$DT/dict_test/${n}_audio"
             unset TESTURL; source "$DS_a/Dics/dicts/$filename"
             if [ -n "${TESTURL}" ]; then
                 wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
@@ -126,8 +133,8 @@ function test_() {
                 fi
             fi
             if [ -f "$audio_file.mp3" ]; then
-                if file -b --mime-type "$audio_file.mp3" |grep -E 'mpeg|mp3|' >/dev/null 2>&1 \
-                && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 120 ]]; then
+                if file -b --mime-type "$audio_file.mp3" |grep -o -E 'mpeg|mp3|' >/dev/null 2>&1 \
+                && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
                 
                     if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
                         echo "$filename" >> "$DT/test_ok"
@@ -140,13 +147,17 @@ function test_() {
             fi
             
             cleanups "$audio_file.mp3"
+            let n++
         done
     fi
 
     echo "60"
+    
     if ls "$DC_e"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
+        n=60
         for dict in $DC_e/*."TTS online.Word pronunciation".*; do
             filename="$(basename "${dict}")"
+            audio_file="$DT/dict_test/${n}_audio"
             unset TESTURL; source "$DS_a/Dics/dicts/$filename"
             if [ -n "${TESTURL}" ]; then
                 wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
@@ -155,8 +166,8 @@ function test_() {
                 fi
             fi
             if [ -f "$audio_file.mp3" ]; then
-                if file -b --mime-type "$audio_file.mp3" |grep -E 'mpeg|mp3|' >/dev/null 2>&1 \
-                && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 120 ]]; then
+                if file -b --mime-type "$audio_file.mp3" |grep -o -E 'mpeg|mp3|' >/dev/null 2>&1 \
+                && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
                 
                     if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
                         echo "$filename" >> "$DT/test_ok"
@@ -169,6 +180,7 @@ function test_() {
             fi
             
             cleanups "$audio_file.mp3"
+            let n++
         done
     fi
 
