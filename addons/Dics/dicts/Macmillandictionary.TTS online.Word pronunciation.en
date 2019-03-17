@@ -10,7 +10,7 @@ if [[ "$1" = '_DLG_' ]]; then
         icon="dialog-warning"
         
     elif grep -Fxq "$fname" "$DC_a/dict/ok_nolang.list" >/dev/null 2>&1; then
-        info="\n<small>$(gettext "<b>Status:</b> Not enabled for the language you are learning.")</small>\n"
+        info="\n<small>$(gettext "<b>Status:</b> Not available for the language you are learning.")</small>\n"
         icon="dialog-information"
     fi
     
@@ -18,12 +18,21 @@ if [[ "$1" = '_DLG_' ]]; then
     msg "$name\n<small>$(gettext "Languages"): English\n$(gettext "Does not need configuration")</small>\n$info" $icon "$4" "$(gettext "Close")"
 
 else
-    test="test"
-    s_test="${test:0:5}_"
-    [[ ${#word} -lt 5 ]] && s="${word:0:5}_" || s="${word:0:5}"
+    w1="${word:0:3}"
+    [[ ${#word} -gt 5 ]] && w2="${word:0:5}"
+    [[ ${#word} = 5 ]] && w2="${word}"
+    [[ ${#word} = 4 ]] && w2="${word}_"
+    if [[ ${#word} = 3 ]]; then
+        w2="${word}_B"
+    fi
+    if [[ ${#word} = 2 ]]; then
+        w1="${word:0:2}_"
+        w2="${word}_Br"
+    fi
 
     TLANGS="en"
-    export TESTURL="http://www.macmillandictionary.com/media/british/uk_pron/${word:0:1}/${test:0:3}/$s_test/${test}_British_English_pronunciation.mp3"
-    export URL="http://www.macmillandictionary.com/media/british/uk_pron/${word:0:1}/${word:0:3}/$s/${word}_British_English_pronunciation.mp3"
+    export TESTURL="https://www.macmillandictionary.com/media/british/uk_pron/t/tes/test_/test_British_English_pronunciation.mp3"
+    export URL="https://www.macmillandictionary.com/media/british/uk_pron/${word:0:1}/${w1}/${w2}/${word}_British_English_pronunciation.mp3"
     export EX='mp3'
 fi
+

@@ -275,7 +275,7 @@ function panelini() {
     --always-print-result \
     --window-icon=idiomind \
     --on-top --no-buttons --text-align=left --align=left \
-    --width=160 --height=150 ${geometry} --borders=10 \
+    --width=170 --height=150 ${geometry} --borders=10 \
     --field="$(gettext "New")"!'list-add':btn "$DS/add.sh 'new_items'" \
     --field="$(gettext "Home")"!'go-home':btn "idiomind 'topic'" \
     --field="$(gettext "Index")"!'gtk-index':btn "$DS/chng.sh" \

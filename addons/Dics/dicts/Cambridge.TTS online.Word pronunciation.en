@@ -10,7 +10,7 @@ if [[ "$1" = '_DLG_' ]]; then
         icon="dialog-warning"
         
     elif grep -Fxq "$fname" "$DC_a/dict/ok_nolang.list" >/dev/null 2>&1; then
-        info="\n<small>$(gettext "<b>Status:</b> Not enabled for the language you are learning.")</small>\n"
+        info="\n<small>$(gettext "<b>Status:</b> Not available for the language you are learning.")</small>\n"
         icon="dialog-information"
     fi
     
@@ -20,8 +20,20 @@ if [[ "$1" = '_DLG_' ]]; then
 else
     [[ ${#word} -lt 5 ]] && s="${word:0:5}_" || s="${word:0:5}"
     
+    w1="${word:0:3}"
+    [[ ${#word} -gt 5 ]] && w2="${word:0:5}"
+    [[ ${#word} = 5 ]] && w2="${word}"
+    [[ ${#word} = 4 ]] && w2="${word}_"
+    if [[ ${#word} = 3 ]]; then
+        w2="${word}__"
+    fi
+    if [[ ${#word} = 2 ]]; then
+        w1="${word:0:2}_"
+        w2="${word}___"
+    fi
+
     TLANGS="en"
-    export TESTURL="http://dictionary.cambridge.org/media/british/us_pron/${word:0:1}/${word:0:3}/$s/test.mp3"
-    export URL="http://dictionary.cambridge.org/media/british/us_pron/${word:0:1}/${word:0:3}/$s/${word}.mp3"
+    export TESTURL="https://dictionary.cambridge.org/media/english/us_pron/t/tes/test_/test.mp3"
+    export URL="https://dictionary.cambridge.org/media/english/us_pron/${word:0:1}/${w1}/${w2}/${word}.mp3"
     export EX='mp3'
 fi

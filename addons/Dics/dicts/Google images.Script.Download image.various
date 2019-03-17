@@ -13,7 +13,7 @@ if [[ "$1" = '_DLG_' ]]; then
         icon="dialog-warning"
         
     elif grep -Fxq "$fname" "$DC_a/dict/ok_nolang.list" >/dev/null 2>&1; then
-        info="\n<small>$(gettext "<b>Status:</b> Not enabled for the language you are learning.")</small>\n"
+        info="\n<small>$(gettext "<b>Status:</b> Not available for the language you are learning.")</small>\n"
         icon="dialog-information"
     fi
     
