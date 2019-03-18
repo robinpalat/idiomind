@@ -10,8 +10,8 @@ fname="$(basename "$0")"
 msgs="$HOME/.config/idiomind/addons/dict/msgs"
 voices=""
 fileconf="$HOME/.config/idiomind/addons/voicerss.cfg"
-label="\n<b>$(gettext "Languages"):</b>\n English, Spanish, Portuguese, Russian, Italian, German, French, Chinese\n
-Text-to-speech (TTS) API Documentation\nhttp://www.voicerss.org/api/documentation.aspx"
+label="\n<small><b>$(gettext "Languages"):</b>\n English, Spanish, Portuguese, Russian, Italian, German, French, Chinese\n
+Text-to-speech (TTS) API Documentation\nhttp://www.voicerss.org/api/documentation.aspx</small>"
 # ----------
 
 DC_a="$HOME/.config/idiomind/addons"

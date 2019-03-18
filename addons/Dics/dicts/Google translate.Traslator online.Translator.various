@@ -38,7 +38,7 @@ if [[ "$1" = '_DLG_' ]]; then
     fi
     
     source "$DS/ifs/cmns.sh"
-    msg "$name\n<small>\n<b>$(gettext "Languages"):</b>\n Various</small>\n$info" $icon "$4" "$(gettext "Close")"
+    msg "$name\n<small>\n<b>$(gettext "Languages"):</b>\n Chinese, English, Frech, German, Italian, Japanese, Portuguese, Russian, Spanish, Vietnamese</small>\n$info" $icon "$4" "$(gettext "Close")"
     
     
 else
