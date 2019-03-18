@@ -551,21 +551,21 @@ _definition() {
     --browser --uri="${_url}" \
     --window-icon=idiomind \
     --fixed --on-top --mouse \
-    --width=680 --height=520 --borders=0 \
+    --width=700 --height=500 --borders=5 \
     --button="$(gettext "Close")":1 &
 } >/dev/null 2>&1
 
 _translation() {
     source "$DS/ifs/cmns.sh"
     source /usr/share/idiomind/default/c.conf
-    local link="https://translate.google.com/#$lgt/$lgs/${2}"
-    sz=(800 500); [[ ${swind} = TRUE ]] && sz=(700 400)
+    local link="https://translate.google.com/?vi=c#view=home&op=translate&sl=$lgt&tl=$lgs&text=${2}"
+
     yad --html --title="" \
     --name=Idiomind --class=Idiomind \
     --uri="${link}" --browser --encoding='UTF-8' \
     --window-icon=idiomind \
     --fixed --on-top --mouse \
-    --width=${sz[0]} --height=${sz[1]} --borders=5 \
+    --width=700 --height=500 --borders=5 \
     --button="$(gettext "Close")":1 &
 } >/dev/null 2>&1
 

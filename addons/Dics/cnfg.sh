@@ -86,11 +86,11 @@ function dlg() {
                 echo 'TRUE'
                 sed 's/\./\n/g' <<< "${dict}"
                 if grep "${dict}" <<< "$test_ok" >/dev/null 2>&1; then
-                    echo "gtk-apply"
+                    echo "$DS/addons/Dics/c.png"
                 elif grep "${dict}" <<< "$test_ok_nolang" >/dev/null 2>&1; then
-                    echo "info"
+                    echo "$DS/addons/Dics/b.png"
                 else
-                    echo "dialog-warning"
+                    echo "$DS/addons/Dics/a.png"
                 fi
             fi
         done < <(ls "$enables"/)
@@ -104,11 +104,11 @@ function dlg() {
                     sed 's/\./\n/g' <<< "${dict}"
                 fi
                 if grep "${dict}" <<< "$test_ok" >/dev/null 2>&1; then
-                    echo "gtk-apply"
+                    echo "$DS/addons/Dics/c.png"
                 elif grep "${dict}" <<< "$test_ok_nolang" >/dev/null 2>&1; then
-                    echo "info"
+                    echo "$DS/addons/Dics/b.png"
                 else
-                    echo "dialog-warning"
+                    echo "$DS/addons/Dics/a.png"
                 fi
             fi
         done < <(ls "$disables"/)
