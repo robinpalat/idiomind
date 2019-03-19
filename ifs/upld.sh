@@ -14,10 +14,11 @@ function dwld() {
         dialog-information
         cleanups "$DT/download"
     }
-    sleep 0.5
-    msg "$(gettext "When the download completes the files will be added to topic directory.")" \
-    dialog-information "$(gettext "Downloading")"
-    kill -9 $(pgrep -f "yad --form --columns=1")
+    (sleep 0.5 && notify-send -i 'dialog-information' "$(gettext "Downloading")" \
+    "$(gettext "When the download completes, the files will be added to topic directory...")" -t 8000) &
+    
+    kill -9 $(pgrep -f "yad --form --columns=2")
+    
     mkdir "$DT/download"
     ilnk=$(tpc_db 1 id ilnk)
     tlng=$(tpc_db 1 id tlng)
@@ -147,7 +148,7 @@ function upld() {
         --text="$text_upld" \
         --name=Idiomind --class=Idiomind \
         --always-print-result \
-        --window-icon=idiomind --buttons-layout=end \
+        --window-icon=idiomind  \
         --align=right --center \
         --width=${sz[0]} --height=${sz[1]} --borders=18 --field=" :LBL" "" \
         --field="$(gettext "Category"):CBE" "$_Categories" \
@@ -168,18 +169,18 @@ function upld() {
         fsize="$(tpc_db 1 id nsze)"
         cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
         info="<b>$(gettext "Downloadable content available")</b>"
-        info2="$(gettext "Files")\n<small>$(gettext "Audio files:") $naud\n$(gettext "Images:") $nimg\n$(gettext "Translations:") $trad\n$(gettext "Total size:") $fsize</small>"
-        yad --form --columns=1 --title="$(gettext "Share")" \
+        info2="\n<small>$(gettext "Audio files:") $naud\n$(gettext "Images:") $nimg\n$(gettext "Translations:") $trad\n$(gettext "Size:") $fsize</small>"
+        yad --form --columns=2 --title="$(gettext "Share")" \
         --name=Idiomind --class=Idiomind \
-        --image="$DS/images/dl.png" \
         --always-print-result \
-        --window-icon=idiomind --buttons-layout=end \
+        --window-icon=idiomind  \
         --align=left --center \
-        --width=${sz[0]} --height=170 --borders=10 \
+        --width=350 --height=240 --borders=10 \
         --text="$info" \
-        --field=":lbl" " " \
         --field="$info2:lbl" " " \
         --field="$(gettext "Download"):fbtn" "${cmd_dwl}" \
+        --field="\t\t\t\t\t:lbl" " " \
+        --field="\t\t\t\t\t:lbl" " " \
         --button="$(gettext "Export")":2 \
         --button="$(gettext "Close")":4
     } 
@@ -189,12 +190,12 @@ function upld() {
         yad --form --title="$(gettext "Share")" \
         --separator="|" \
         --name=Idiomind --class=Idiomind \
-        --window-icon=idiomind --buttons-layout=end \
+        --window-icon=idiomind \
         --align=left --center \
-        --width=${sz[0]} --height=140 --borders=10 \
+        --width=350 --height=240 --borders=10 \
         --field="<b>$(gettext "Downloaded files")</b>:lbl" " " \
-        --field="$(gettext "Total size:") ${fsize}":lbl " " \
-        --field=" :lbl" " " \
+        --field="\n$(gettext "Size:") ${fsize}":lbl " " \
+        --field="\t\t\t\t\t\t\t:lbl" " " \
         --button="$(gettext "Export")":2 \
         --button="$(gettext "Close")":4
     }
@@ -294,7 +295,7 @@ function upld() {
         sv_data
         conds_upload "${2}"
         "$DS/ifs/tls.sh" check_index "${tpc}" 1
-        ( sleep 1; notify-send -i dialog-information "$(gettext "Uploading")" \
+        ( sleep 1; notify-send -i 'dialog-information' "$(gettext "Uploading")" \
         "$(gettext "Please wait, it may take a while")" -t 6000 ) &
         mkdir -p "$DT/upload/files"
         DT_u="$DT/upload/"

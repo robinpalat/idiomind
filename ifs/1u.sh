@@ -96,7 +96,7 @@ dlg=$(yad --form --title="Idiomind" \
 --field="\t\t\t$(gettext "Select the language you are learning")  :CB" "$list1" \
 --field="\t\t\t$(gettext "Select your language")  :CB" "$list2" \
 --field=" :LBL" " "  \
---field="$(gettext "Set recommended Initialization configurations : )")  :chk" "TRUE" \
+--field="$(gettext "Set recommended Initialization configurations")  :chk" "TRUE" \
 --field=" :LBL" " "  \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "Save")!gtk-apply":0)

@@ -250,10 +250,9 @@ function check_err() {
                 mimage="info"
             fi
             sleep 2; echo "$(< "$filerr")" |yad --text-info \
-            --title="$mtitle" \
+            --title="Idiomind - $mtitle" \
             --name=Idiomind --class=Idiomind \
             --window-icon=idiomind \
-            --image="$mimage" \
             --wrap --margins=5 \
             --show-uri --uri-color="#6591AA" \
             --fontname='monospace 9' \

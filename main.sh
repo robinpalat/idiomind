@@ -317,8 +317,7 @@ function topic() {
         export cnf3=$(mktemp "$DT/cnf3.XXXXXX")
         export cnf4=$(mktemp "$DT/cnf4.XXXXXX")
         if [ -n "$dtei" ]; then 
-            [ -e "${DC_tlt}/download" ] && export plusinfo="<b>$(gettext "Downloadable content available")</b>"
-            export infolbl="$(gettext "Review") $repass  $(gettext "Installed on") $dtei\n$(gettext "Created by") $autr\n$plusinfo"
+            export infolbl="$(gettext "Review") $repass  $(gettext "Installed on") $dtei\n$(gettext "Created by") $autr"
         else 
             export infolbl="$(gettext "Review") $repass  $(gettext "Created on") $dtec"
         fi
@@ -568,11 +567,18 @@ _start() {
     "$DS/ifs/tls.sh" a_check_updates & fi ) &
 
     export swind=$(cdb ${cfgdb} 1 opts swind) 
-    if [[ $(cdb ${cfgdb} 1 opts itray) = TRUE ]] && \
-    ! pgrep -f "$DS/ifs/tls.sh itray"; then
-        $DS/ifs/tls.sh itray &
+    if [[ $(cdb ${cfgdb} 1 opts itray) = TRUE ]]; then
+        if ! pgrep -f "$DS/ifs/tls.sh itray"; then
+            $DS/ifs/tls.sh itray &
+        else
+            idiomind topic
+        fi
     else
-        ipanel
+        if ! pgrep -f "yad --fixed --form --title="Idiomind""; then
+            ipanel &
+        else
+            idiomind topic
+        fi
     fi
 }
 

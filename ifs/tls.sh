@@ -632,9 +632,14 @@ promp_topic_info() {
     [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
-    active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
+    if [ -f "${DC_tlt}/translations/active" ]; then
+        active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
+    fi
     if [ -n "$active_trans" -a "$active_trans" != "$slng" ]; then
-        slng_err_lbl="$(gettext "You may have to translate this topic to your own language: click \"Manage\" tab on the main window, click \"Edit\" -> \"Translate\" -> \"Automatic Translation\" ->") \"$slng\""
+        slng_err_lbl="\n$(gettext "Native languages do not match.\nYou may have to translate this topic to your own language: click \"Manage\" tab on the main window, click \"Edit\" -> \"Translate\" -> \"Automatic Translation\" ->") \"$slng\"."
+        echo -e "$slng_err_lbl" >> "${DC_tlt}/slng.inf"
+    elif [ -z "$active_trans" -a "$(tpc_db 1 id slng)" != "$slng" ]; then
+        slng_err_lbl="\n$(gettext "Native languages do not match.\nYou may have to translate this topic to your own language: click \"Manage\" tab on the main window, click \"Edit\" -> \"Translate\" -> \"Automatic Translation\" ->") \"$slng\"."
         echo -e "$slng_err_lbl" >> "${DC_tlt}/slng.inf"
     fi
     check_err "${DC_tlt}/slng.inf" "${DC_tlt}/note.err"
@@ -787,8 +792,12 @@ translate_to() {
     |sed 's/\.tra//g' |tr "\\n" '!' |sed 's/\!*$//g')"
     list_transl=$(for i in "${!slangs[@]}"; do echo -n "!$i"; done)
     list_transl_saved_WC="$(cd "$DC_tlt/translations"; ls *.tra |wc -l)"
-    active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
-    if [ -z "$active_trans" ]; then active_trans="$slng"; fi
+    if [ -f "${DC_tlt}/translations/active" ]; then 
+        active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
+    fi
+    if [ -z "$active_trans" ]; then active_trans="$(tpc_db 1 id slng)"; fi
+    if [ -z "$active_trans" ]; then active_trans="Undefined"; fi
+
     if grep "$active_trans" <<< "${list_transl_saved}"; then 
     chk=TRUE; else chk=FALSE; fi
     
@@ -921,7 +930,12 @@ translate_to() {
                 sed -i 's/^ *//; s/ *$//;s/\。/\. /g' "$DT/words.trad"
                 paste -d '&' "$DT/words.trad_tmp" "$DT/words.trad" > "$DT/mix_words.trad_tmp"
              }
+             
+            ( notify-send -i info "$(gettext "Translating")" \
+            "$(gettext "Please wait ...")" -t 8000 ) &
+            
             pretrans 
+
             c2=$(cat "$DT/index.trad" | wc -l)
             if [[ ${c1} != ${c2} ]]; then
                 > "$DT/words.trad_tmp"; > "$DT/index.trad_tmp"
@@ -936,13 +950,13 @@ translate_to() {
                         del="_"; pretrans
                         c2=$(cat "$DT/index.trad" | wc -l)
                         if [[ ${c1} != ${c2} ]]; then
-                        msg "$(gettext "There was a problem with the translation.")\n" error
+                        msg "$(gettext "There was a problem with the translation;\nSome items were not translated correctly.")\n" 'dialog-warning'
                         fi
                     fi
                 fi
             fi
             if [ -z "$(< "$DT/index.trad")" -o -z "$(< "$DT/words.trad")" ]; then
-                msg "$(gettext "A problem has occurred, try again later.")\n" 'error'
+                msg "$(gettext "A problem has occurred, try again later.")\n" 'dialog-warning'
                 cleanups "$DT/words.trad_tmp" "$DT/index.trad_tmp" \
                 "$DT/mix_words.trad_tmp" "$DT/translate_to" "$DT/translation"
                 [ -e "${DC_tlt}/slng_err.bk" ] && mv "${DC_tlt}/slng_err.bk" "${DC_tlt}/slng_err"
