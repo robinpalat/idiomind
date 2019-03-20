@@ -3,7 +3,7 @@
 
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
-echo -e "\n--- lists..."
+echo -e "\n--- checking lists..."
 
 while read -r tpc; do
     dir="$DM_tl/${tpc}/.conf"; unset stts tpc
@@ -152,6 +152,8 @@ for tpc in topics:
                     print 'mark_as_learnt -> ' + tpc
     except:
         print 'err -> ' + tpc
+        
+print "\tlists ok\n"
 shr_db.close()      
 PY
 
@@ -159,5 +161,5 @@ PY
 "$DS/mngr.sh" mkmn 1 &
 cleanups "$items"
 f_lock 3 "$DT/co_lk"
-echo -e "--- lists updated\n"
+
 exit

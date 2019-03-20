@@ -6,6 +6,7 @@ function create_tpcdb() {
     tpcdb="${DM_tl}/${2}/.conf/tpc"
     [ -f "$tpcdb" ] && rm "$tpcdb"
     dtec="$(date +%F)"
+    echo -e "\n--- creating topic database..."
     
     echo -n "create table if not exists id \
     (name TEXT, slng TEXT, tlng TEXT, autr TEXT, cntt TEXT, ctgy TEXT, ilnk TEXT, \
@@ -61,11 +62,13 @@ function create_tpcdb() {
     sqlite3 "${tpcdb}" "pragma busy_timeout=2000;\
     insert into reviews (date1) values ('');"
     echo -n "pragma foreign_keys=ON" |sqlite3 "${tpcdb}"
+    
+    echo -e "\n--- topic database ok"
     return 0
 }
 
 function create_shrdb() {
-    echo -e "\n--- share database..."
+    echo -e "\n--- creating share database..."
     source /usr/share/idiomind/default/c.conf
     shrdb="$DM_tls/data/config"
     echo -n "create table if not exists topics (list TEXT);" |sqlite3 "${shrdb}"
@@ -79,11 +82,11 @@ function create_shrdb() {
     echo -n "create table if not exists T8 (list TEXT);" |sqlite3 "${shrdb}"
     echo -n "create table if not exists T9 (list TEXT);" |sqlite3 "${shrdb}"
     echo -n "create table if not exists T10 (list TEXT);" |sqlite3 "${shrdb}"
-    echo -e "\n--- share database created"
+    echo -e "\n--- share database ok"
 }
 
 function create_cfgdb() {
-    echo -e "\n--- config database..."
+    echo -e "\n--- creating config database..."
     cfgdb="$HOME/.config/idiomind/config"
     echo -n "pragma busy_timeout=800;create table if not exists opts \
     (gramr TEXT, trans TEXT, dlaud TEXT, ttrgt TEXT, itray TEXT, \
@@ -110,7 +113,7 @@ function create_cfgdb() {
     v=$(date +%d)
     sqlite3 "${cfgdb}" "insert into sess (date) values ('${v}');"
     sqlite3 "${cfgdb}" "insert into updt (date) values ('${v}');"
-    echo -e "\n--- config database created"
+    echo -e "\n--- config database ok"
 }
 
 case "$1" in

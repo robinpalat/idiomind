@@ -86,17 +86,17 @@ function new_session() {
         for n in {1..4} 7; do 
         cdb ${shrdb} 6 T${n}; done
     fi
-    echo -e "\n--- topics status..."
+    echo -e "\n--- checking topics..."
     tdate=$(date +%Y%m%d)
     while read -r line; do
         if [ -n "$line" ]; then
-        unset stts
-        dir="$DM_tl/${line}/.conf"
-        dim="$DM_tl/${line}"
-        [ ! -d "${dir}" ] && continue
-        stts=$(sed -n 1p "${dir}/stts")
-        ! [[ ${stts} =~ $numer ]] && stts=1
-        [[ ${stts} = 0 ]] && continue
+            unset stts
+            dir="$DM_tl/${line}/.conf"
+            dim="$DM_tl/${line}"
+            [ ! -d "${dir}" ] && continue
+            stts=$(sed -n 1p "${dir}/stts")
+            ! [[ ${stts} =~ $numer ]] && stts=1
+            [[ ${stts} = 0 ]] && continue
             if grep -E '3|4|7|8|9|10' <<< "$stts" >/dev/null 2>&1; then
 
                 calculate_review "${line}"
@@ -153,7 +153,7 @@ function new_session() {
     
     # make index
     "$DS/mngr.sh" mkmn 0 &
-    echo -e "--- topics status updated\n"
+    echo -e "\ttopics ok\n"
     
     # statistics
     ( source "$DS/ifs/stats.sh"; sleep 5; export val1=0 val2=0; pre_comp ) &

@@ -178,9 +178,9 @@ function upld() {
         --width=350 --height=240 --borders=10 \
         --text="$info" \
         --field="$info2:lbl" " " \
-        --field="$(gettext "Download"):fbtn" "${cmd_dwl}" \
-        --field="\t\t\t\t\t:lbl" " " \
-        --field="\t\t\t\t\t:lbl" " " \
+        --field="$(gettext "Download"):btn" "${cmd_dwl}" \
+        --field="\t\t:lbl" " " \
+        --field="\t\t:lbl" " " \
         --button="$(gettext "Export")":2 \
         --button="$(gettext "Close")":4
     } 

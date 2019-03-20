@@ -763,8 +763,8 @@ mark_to_learn_topic() {
     fi
     
     if [[ ${3} = 1 ]]; then
-        yad_kill "yad --form " "yad --multi-progress "\
-         "yad --list " "yad --text-info " "yad --notebook "
+        yad_kill "yad --form " "yad --multi-progress " \
+        "yad --list " "yad --text-info " "yad --notebook "
     fi
     
     steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
