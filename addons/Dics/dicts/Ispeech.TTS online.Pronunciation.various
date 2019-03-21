@@ -19,9 +19,7 @@ key=$(grep -o key=\"[^\"]* "$fileconf" |grep -o '[^"]*$')
 speed=$(grep -o speed=\"[^\"]* "$fileconf" |grep -o '[^"]*$')
 voice=$(grep -o voice=\"[^\"]* "$fileconf" |grep -o '[^"]*$' |sed 's/(null)//')
 
-
 function check_conf(){
-    
     if [ -z "${key}" ] || [[ ${#key} != 32 ]]; then
         echo "$(gettext "Missing key! go to Dics settings -> double-click on the resource name")" > "$msgs/$d2"
         if [ -f "$DC_a/dict/enables/${d1}" ] && [ ! -d "$DT/dict_test" ]; then
@@ -38,11 +36,9 @@ function check_conf(){
 }
 
 if [[ "$1" = '_DLG_' ]] || [[ "$dlg" = '_DLG_' ]]; then
-
     fname="$(basename "$0")"
     name="<b>$(cut -f 1 -d '.' <<< "$fname")</b>"
     icon="$DS/addons/Dics/c.png"
-    
     if [ -f "$DC_a/dict/msgs/$fname" ]; then
         info="\n<small>$(gettext "<b>Status:</b>\n") $(< "$DC_a/dict/msgs/$fname")</small>"
         icon="$DS/addons/Dics/a.png"
@@ -51,7 +47,6 @@ if [[ "$1" = '_DLG_' ]] || [[ "$dlg" = '_DLG_' ]]; then
         info="\n<small>$(gettext "<b>Status:</b>\n Not available for the language you are learning.")</small>\n"
         icon="$DS/addons/Dics/b.png"
     fi
-
     c=$(yad --form --title="${4}" \
     --text="$name\n${label}\n\n$info\n" \
     --image=$icon \
@@ -72,6 +67,7 @@ if [[ "$1" = '_DLG_' ]] || [[ "$dlg" = '_DLG_' ]]; then
         sed -i "s/key=.*/key=\"$(cut -d "|" -f3 <<< "$c")\"/g" "$fileconf"
     fi
 else
+
     check_conf
     if [ $? = 0 ]; then
         speed=$(grep -o speed=\"[^\"]* "$DC_a/ispeech.cfg" |grep -o '[^"]*$')
@@ -107,7 +103,6 @@ else
             v=jpjapanesefemale
             _test="テスト"
         fi
-        
         TLANGS="zh-cn, en, ja, pt, es, ru, it, de, fr"
         export TESTURL="https://api.ispeech.org/api/rest?apikey=$k&action=convert&voice=$v&speed=$s&pitch=0&text=${_test}"
         export URL="https://api.ispeech.org/api/rest?apikey=$k&action=convert&voice=$v&speed=$s&pitch=0&text=${word}"

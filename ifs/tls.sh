@@ -111,7 +111,6 @@ check_index() {
             echo ${stts} > "${DC_tlt}/stts"
             export mkmn=1; export fix=1
         fi
-
         # DB check
         if [ -z "$(file "${tpcdb}" |grep -o 'SQLite')" ]; then
 			"$DS/ifs/mkdb.sh" tpc "${tpc}"; fix=1
@@ -129,7 +128,6 @@ check_index() {
                 db_config=1; echo -e "\n-- error: db_table_config"
             fi
         fi
-        
         if [ ${stts} -gt 1 ]; then
             dater=$(tpc_db 1 reviews date1)
             if [ -z "$dater" ]; then
@@ -137,27 +135,22 @@ check_index() {
                 tpc_db 9 reviews date1 "${d}"
             fi
         fi
-
         if [ -f "${DC_tlt}/0.cfg" ] || [ -f "${DC_tlt}/id.cfg" ]; then
             newform=1
         fi
-
         if grep -o 'trgt{}srce{}' "${DC_tlt}/data"; then fix=1; fi
 
         learn="$(tpc_db 5 learning)"
         leart="$(tpc_db 5 learnt)"
         words="$(tpc_db 5 words)"
         sentences="$(tpc_db 5 sentences)"
-        
         cnt0=$(grep -c '[^[:space:]]' < "${DC_tlt}/data")
-        
         if [ -f "${DC_tlt}/index" ]; then
             index0=$(grep -c '[^[:space:]]' < "${DC_tlt}/index")
             index0=$((index0/3))
         else
             index0=0
         fi
-
         cnt1="$(grep -c '[^[:space:]]' <<< "$learn")"
         cnt2="$(grep -c '[^[:space:]]' <<< "$leart")"
         cnt3="$(grep -c '[^[:space:]]' <<< "$words")"
@@ -165,11 +158,8 @@ check_index() {
         
         if [ $((cnt3+cnt4)) != ${cnt0} ]; then export fix=1; fi
         if [ $((cnt1+cnt2)) != ${cnt0} ]; then export fix=1; fi
-        
         if [ $? != 0 ]; then export fix=1; fi
-        
         if [ ${index0} != ${cnt1} ]; then fix=1; fi
-        
         if grep -E '3|4|7|8|9|10' <<< "$stts"; then
              [ ${cnt0} = 0 ] && echo 1 > "${DC_tlt}/stts"
              mkmn=1
@@ -187,7 +177,6 @@ check_index() {
                 "$DM/backup/${tpc}.bk" \
                 |grep -v '\----- newest' \
                 |grep -v '\----- oldest' |head -n200 > "${DC_tlt}/data"
-                
             else
                 msg "$(gettext "No such file or directory")\n${topic}\n" error & exit 1
             fi
@@ -261,7 +250,6 @@ PY
         fi
         _restore
     fi
-    
     # db fixing
     if [ ${db_config} = 1 ]; then
         sqlite3 "$tpcdb" "delete from config;"
@@ -271,7 +259,6 @@ PY
         values ('TRUE','TRUE','FALSE','FALSE','FALSE','FALSE',\
         'FALSE','FALSE','FALSE','FALSE','TRUE','0');"
     fi
-    
     if [ ${db_reviews} = 1 ]; then
         firstrec="$(sqlite3 "${tpcdb}" "select * FROM reviews;" |sed -n 1p| tr '|' '\n')"
         tpc_db 6 reviews
@@ -284,7 +271,6 @@ PY
             fi
         done
     fi
-    
     if [ ${db_id} = 1 ]; then
         source /usr/share/idiomind/default/sets.cfg
         firstrec="$(sqlite3 "${tpcdb}" "select * FROM id;" |sed -n 1p| tr '|' '\n')"
@@ -364,7 +350,6 @@ _restore_backup() {
         |grep -v '\----- oldest' |grep -v '\----- end' |head -n200 > \
         "${DM_tl}/${tpc}/.conf/data"
     fi
-
     tpc_db 6 'learning'
     $DS/ifs/tls.sh check_index "${tpc}" 1
     
@@ -372,7 +357,6 @@ _restore_backup() {
     if ! [[ ${stts} =~ $num ]]; then
         echo 13 > "$DM_tl/${tpc}/.conf/stts"; stts=13
     fi
-    
     "$DS/ifs/tpc.sh" "${tpc}" ${stts} 0 &
     
 } >/dev/null 2>&1
@@ -624,7 +608,6 @@ a_check_updates() {
             fi
         fi
     fi
-
     return 0
 } 
 
@@ -691,7 +674,6 @@ set_image() {
     fi
     export btn2 image
     dlg_form_3; ret=$?
-    
     if [ $ret -eq 2 ]; then
         rm -f "$ifile"
         if [ ${im} = 1 ]; then
@@ -861,7 +843,6 @@ translate_to() {
                 echo "$review_trans" > "${DC_tlt}/translations/active"
             fi
         elif [ -n "$autom_trans" -a "$autom_trans" != "(null)" ]; then
-        
             yad_kill "yad --form --title="
             if grep "$autom_trans" <<< "$(cd "$DC_tlt/translations"; ls *.bk)"; then
                 msg_2 "$(gettext "There is a copy of this translation. Do you want to restore the copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "

@@ -15,20 +15,8 @@ if [[ "$1" = '_DLG_' ]]; then
     msg "$name\n<small>\n<b>$(gettext "Languages"):</b>\n English</small>\n$info" $icon "$4" "$(gettext "Close")"
 else
 
-    [[ ${#word} -lt 5 ]] && s="${word:0:5}_" || s="${word:0:5}"
-    w1="${word:0:3}"
-    [[ ${#word} -gt 5 ]] && w2="${word:0:5}"
-    [[ ${#word} = 5 ]] && w2="${word}"
-    [[ ${#word} = 4 ]] && w2="${word}_"
-    if [[ ${#word} = 3 ]]; then
-        w2="${word}__"
-    fi
-    if [[ ${#word} = 2 ]]; then
-        w1="${word:0:2}_"
-        w2="${word}___"
-    fi
-    TLANGS="en"
-    export TESTURL="https://dictionary.cambridge.org/media/english/us_pron/t/tes/test_/test.mp3"
-    export URL="https://dictionary.cambridge.org/media/english/us_pron/${word:0:1}/${w1}/${w2}/${word}.mp3"
+    LANGS="en"
+    export TESTURL="http://s3.amazonaws.com/audio.oxforddictionaries.com/en/mp3/test_gb_1.mp3"
+    export URL="http://s3.amazonaws.com/audio.oxforddictionaries.com/en/mp3/${word}_gb_1.mp3"
     export EX='mp3'
 fi
