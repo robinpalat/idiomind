@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TLANGS="en, es"
+TLANGS="en"
 INFO=""
 LANGUAGES="English"
 STATUS="Ok"
@@ -17,9 +17,8 @@ else
     url="https://commons.wikimedia.org/wiki/$1"
     w="$1"
 fi
-
-urimg="$(wget -q "$url" -O - |grep -o -P '//upload.*?jpg' |sed -e 's/\(thumb\/\)//g' |sed -e 's/^/http:/g' |head -n1)"
-if [[ -n "$1" ]] && [[ "$1" != '_dlg_' ]]; then
+if [[ "$1" != '_dclk_' ]]; then
+    urimg="$(wget -q "$url" -O - |grep -o -P '//upload.*?jpg' |sed -e 's/\(thumb\/\)//g' |sed -e 's/^/http:/g' |head -n1)"
     wget -T 51 -q -U Mozilla -O "$DT/$w.jpg" "$urimg"
 fi
 

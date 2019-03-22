@@ -3,3 +3,4 @@
 dlg="$1"
 dir="/usr/share/idiomind/addons/Dics/dicts"
 source "$dir/Voicerss.TTS online.Pronunciation.various"
+TLANGS="zh-cn, en, pt, es, ru, it, de, fr"

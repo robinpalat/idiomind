@@ -68,9 +68,11 @@ function dclk() {
     fname="$3.$4.$5.$6"
     
     if [ "$4" = "Link" ]; then
-        TLANGS="zh-cn, en, ja, pt, es, ru, it, de, fr"
+        TLANGS=$(grep -o TLANGS=\"[^\"]* \
+        "$DS_a/Dics/dicts/${fname}" |grep -o '[^"]*$')
+        LANGUAGES=$(grep -o LANGUAGES=\"[^\"]* \
+        "$DS_a/Dics/dicts/${fname}" |grep -o '[^"]*$')
         INFO="$(gettext "Link to web page")"
-        LANGUAGES="Undefined"
         if [ ! -f "$msgs/$fname" ]; then
             STATUS="Ok"
         else
@@ -83,11 +85,11 @@ function dclk() {
 
     name="<b>$3</b>"
     icon="$DS/addons/Dics/c.png"
-
+ 
     if [ -f "$msgs/$fname" ]; then
         STATUS="$(< "$msgs/$fname")"
         icon="$DS/addons/Dics/a.png"
-    elif grep -Fxq "$fname" "$DC_a/dict/ok_nolang.list" >/dev/null 2>&1; then
+    elif ! echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
         STATUS="$(gettext "Not available for the language you are learning.")"
         icon="$DS/addons/Dics/b.png"
     fi
@@ -156,30 +158,35 @@ function dlg() {
         
         while read -r dict; do
             if [ -n "${dict}" ]; then
+                TLANGS=$(grep -o TLANGS=\"[^\"]* \
+                "$DS_a/Dics/dicts/${dict}" |grep -o '[^"]*$')
                 echo 'TRUE'
                 sed 's/\./\n/g' <<< "${dict}"
-                if grep "${dict}" <<< "$test_ok" >/dev/null 2>&1; then
-                    echo "$DS/addons/Dics/c.png"
-                elif grep "${dict}" <<< "$test_ok_nolang" >/dev/null 2>&1; then
+                if ! echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
                     echo "$DS/addons/Dics/b.png"
+                elif [ ! -f "$msgs/${dict}" ]; then
+                    echo "$DS/addons/Dics/c.png"
                 else
                     echo "$DS/addons/Dics/a.png"
                 fi
             fi
         done < <(ls "$enables"/)
+        
         while read -r dict; do
             if [ -n "${dict}" ]; then
+                TLANGS=$(grep -o TLANGS=\"[^\"]* \
+                "$DS_a/Dics/dicts/${dict}" |grep -o '[^"]*$')
                 echo 'FALSE'
                 if grep -E ".$lgt|.various" <<< "${dict}">/dev/null 2>&1; then
-                    sed 's/\./\n/g' <<< "${dict}"| \
+                    sed 's/\./\n/g' <<< "${dict}" | \
                     sed "3s|${sus}|<span color='#2BB62D'>${sus}<\/span>|"
                 else 
                     sed 's/\./\n/g' <<< "${dict}"
                 fi
-                if grep "${dict}" <<< "$test_ok" >/dev/null 2>&1; then
-                    echo "$DS/addons/Dics/c.png"
-                elif grep "${dict}" <<< "$test_ok_nolang" >/dev/null 2>&1; then
+                if ! echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
                     echo "$DS/addons/Dics/b.png"
+                elif [ ! -f "$msgs/${dict}" ]; then
+                    echo "$DS/addons/Dics/c.png"
                 else
                     echo "$DS/addons/Dics/a.png"
                 fi
@@ -197,18 +204,6 @@ function dlg() {
         text="--text=$inf"; n=${1}
     else 
         text="--center"; n=6
-    fi
-    
-    if [ -f "$DC_a/dict/ok.list" ] ; then
-        test_ok="$(< "$DC_a/dict/ok.list")"
-    else
-        test_ok=""
-    fi
-    
-    if [ -f "$DC_a/dict/ok_nolang.list" ] ; then
-        test_ok_nolang="$(< "$DC_a/dict/ok_nolang.list")"
-    else
-        test_ok_nolang=""
     fi
     
     sel="$(dict_list ${n} |yad --list \

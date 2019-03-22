@@ -6,15 +6,11 @@ source "$DS/ifs/cmns.sh"
 source "$DS/default/sets.cfg"
 lgt=${tlangs[$tlng]}
 lgs=${slangs[$slng]}
-cleanups "$DT/test_fail" "$DT/test_ok" \
-"$DT/dict_test" "$DC_a/dict/ok.list" \
-"$DC_a/dict/ok_nolang.list"
 
 mkdir "$DT/dict_test"
 DC_d="$DC_a/dict/disables"
 DC_e="$DC_a/dict/enables"
 msgs="$DC_a/dict/msgs"
-cleanups "$msgs"
 check_dir "$msgs"
 
 function test_() {
@@ -29,12 +25,12 @@ function test_() {
         echo "5"
         
         for trans in "$DC_d"/*."Traslator online.Translator".*; do
-            filename="$(basename "${trans}")"
+            filename="$(basename "${trans}")"; cleanups "$msgs/$filename"
             trans="$DS_a/Dics/dicts/$filename"
             if [ -f "${trans}" ]; then
                 re="$("${trans}" "This is a test" auto $lgs)"
                 if [ -n "${re}" ]; then
-                    echo "$filename" >> "$DT/test_ok"
+                    :
                 else
                     echo "FAIL" > "$msgs/$filename"
                 fi
@@ -44,12 +40,12 @@ function test_() {
         echo "7"
         st="$(gettext "This is a test")"
         for trans in "$DC_e"/*."Traslator online.Translator".*; do
-            filename="$(basename "${trans}")"
+            filename="$(basename "${trans}")"; cleanups "$msgs/$filename"
             trans="$DS_a/Dics/dicts/$filename"
             if [ -f "${trans}" ]; then
                 re="$("${trans}" "This is a test" auto $lgs)"
                 if [ -n "${re}" ]; then
-                    echo "$filename" >> "$DT/test_ok"
+                    :
                 else
                     echo "FAIL" > "$msgs/$filename"
                 fi
@@ -66,7 +62,7 @@ function test_() {
             n=10
             for dict in "$DC_d"/*."TTS online.Pronunciation".*; do
                 audio_file="$DT/dict_test/${n}_audio"
-                filename="$(basename "${dict}")"
+                filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
                 unset TESTURL; source "$DS_a/Dics/dicts/$filename"
                 if [ -n "${TESTURL}" ]; then
                     wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
@@ -77,12 +73,7 @@ function test_() {
                 if [ -f "$audio_file.mp3" ]; then
                     if file -b --mime-type "$audio_file.mp3" |grep -o -E 'mpeg|mp3|' >/dev/null 2>&1 \
                     && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
-                    
-                        if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
-                            echo "$filename" >> "$DT/test_ok"
-                        else
-                            echo "$filename" >> "$DT/test_ok_nolang"
-                        fi
+                        :
                     else 
                         echo "FAIL" > "$msgs/$filename"
                     fi
@@ -99,7 +90,7 @@ function test_() {
              n=20
             for dict in "$DC_e"/*."TTS online.Pronunciation".*; do
                 audio_file="$DT/dict_test/${n}_audio"
-                filename="$(basename "${dict}")"
+                filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
                 unset TESTURL; source "$DS_a/Dics/dicts/$filename"
                 if [ -n "${TESTURL}" ]; then
                     wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
@@ -110,12 +101,7 @@ function test_() {
                 if [ -f "$audio_file.mp3" ]; then
                     if file -b --mime-type "$audio_file.mp3" |grep -o -E 'mpeg|mp3|' >/dev/null 2>&1 \
                     && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
-                    
-                        if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
-                            echo "$filename" >> "$DT/test_ok"
-                        else
-                            echo "$filename" >> "$DT/test_ok_nolang"
-                        fi
+                        :
                     else 
                         echo "FAIL" > "$msgs/$filename"
                     fi
@@ -135,7 +121,7 @@ function test_() {
         if ls "$DC_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
             n=50
             for dict in $DC_d/*."TTS online.Word pronunciation".*; do
-                filename="$(basename "${dict}")"
+                filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
                 audio_file="$DT/dict_test/${n}_audio"
                 unset TESTURL; source "$DS_a/Dics/dicts/$filename"
                 if [ -n "${TESTURL}" ]; then
@@ -147,13 +133,9 @@ function test_() {
                 if [ -f "$audio_file.mp3" ]; then
                     if file -b --mime-type "$audio_file.mp3" |grep -o -E 'mpeg|mp3|' >/dev/null 2>&1 \
                     && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
-                    
-                        if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
-                            echo "$filename" >> "$DT/test_ok"
-                        else
-                            echo "$filename" >> "$DT/test_ok_nolang"
-                        fi
+                        :
                     else
+                        filename="$(basename "${dict}")"
                         echo "FAIL" > "$msgs/$filename"
                     fi
                 fi
@@ -168,7 +150,7 @@ function test_() {
         if ls "$DC_e"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
             n=60
             for dict in $DC_e/*."TTS online.Word pronunciation".*; do
-                filename="$(basename "${dict}")"
+                filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
                 audio_file="$DT/dict_test/${n}_audio"
                 unset TESTURL; source "$DS_a/Dics/dicts/$filename"
                 if [ -n "${TESTURL}" ]; then
@@ -180,12 +162,7 @@ function test_() {
                 if [ -f "$audio_file.mp3" ]; then
                     if file -b --mime-type "$audio_file.mp3" |grep -o -E 'mpeg|mp3|' >/dev/null 2>&1 \
                     && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
-                    
-                        if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
-                            echo "$filename" >> "$DT/test_ok"
-                        else
-                            echo "$filename" >> "$DT/test_ok_nolang"
-                        fi
+                        :
                     else
                         echo "FAIL" > "$msgs/$filename"
                     fi
@@ -206,10 +183,10 @@ function test_() {
         export query="$word" lgt
         if ls "$DC_d"/*."Link.Search definition".* 1> /dev/null 2>&1; then
             for dict in $DC_d/*."Link.Search definition".*; do
-                filename="$(basename "${dict}")"
+                filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
                 eval _url="$(< "$DS_a/Dics/dicts/$filename")"
                 if curl -v "$_url" 2>&1 |grep -m1 "HTTP/1.1" >/dev/null 2>&1; then
-                    echo "$filename" >> "$DT/test_ok"
+                    :
                 else 
                     echo "FAIL" > "$msgs/$filename"
                 fi
@@ -219,10 +196,10 @@ function test_() {
         echo "80"
         if ls "$DC_e"/*."Link.Search definition".* 1> /dev/null 2>&1; then
             for dict in $DC_e/*."Link.Search definition".*; do
-                filename="$(basename "${dict}")"
+                filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
                 eval _url="$(< "$DS_a/Dics/dicts/$filename")"
                 if curl -v "$_url" 2>&1 |grep -m1 "HTTP/1.1" >/dev/null 2>&1; then
-                    echo "$filename" >> "$DT/test_ok"
+                    :
                 else 
                     echo "FAIL" > "$msgs/$filename"
                 fi
@@ -237,18 +214,14 @@ function test_() {
         
         if ls "$DC_d"/*."Script.Download image".* 1> /dev/null 2>&1; then
             for Script in "$DC_d"/*."Script.Download image".*; do
-                filename="$(basename "${Script}")"
+                filename="$(basename "${Script}")"; cleanups "$msgs/$filename"
                 Script="$DS_a/Dics/dicts/$filename"
                 TLANGS=$(grep -o TLANGS=\"[^\"]* "$Script" |grep -o '[^"]*$')
                 TESTWORD=$(grep -o TESTWORD=\"[^\"]* "$Script" |grep -o '[^"]*$')
                 [ -f "${Script}" ] && "${Script}" "${TESTWORD}" "_TEST_"
                 if [ -f "$DT/${TESTWORD}.jpg" ]; then
                     if [[ $(du "$DT/${TESTWORD}.jpg" |cut -f1) -gt 10 ]]; then
-                        if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
-                            echo "$filename" >> "$DT/test_ok"
-                        else
-                            echo "$filename" >> "$DT/test_ok_nolang"
-                        fi
+                        :
                     else 
                         echo "FAIL" > "$msgs/$filename"
                     fi
@@ -260,18 +233,14 @@ function test_() {
         echo "95"
         if ls "$DC_e"/*."Script.Download image".* 1> /dev/null 2>&1; then
             for Script in "$DC_e"/*."Script.Download image".*; do
-                filename="$(basename "${Script}")"
+                filename="$(basename "${Script}")"; cleanups "$msgs/$filename"
                 Script="$DS_a/Dics/dicts/$filename"
                 TLANGS=$(grep -o TLANGS=\"[^\"]* "$Script" |grep -o '[^"]*$')
                 TESTWORD=$(grep -o TESTWORD=\"[^\"]* "$Script" |grep -o '[^"]*$')
                 [ -f "${Script}" ] && "${Script}" "${TESTWORD}" "_TEST_"
                 if [ -f "$DT/${TESTWORD}.jpg" ]; then
                     if [[ $(du "$DT/${TESTWORD}.jpg" |cut -f1) -gt 10 ]]; then
-                        if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
-                            echo "$filename" >> "$DT/test_ok"
-                        else
-                            echo "$filename" >> "$DT/test_ok_nolang"
-                        fi
+                        :
                     else 
                         echo "FAIL" > "$msgs/$filename"
                     fi
@@ -282,9 +251,7 @@ function test_() {
     fi
     
     # ---------------------------------------------------
-    mv "$DT/test_ok" "$DC_a/dict/ok.list"
-    mv "$DT/test_ok_nolang" "$DC_a/dict/ok_nolang.list"
-    
+
     if [ ! -f "$DC_s/dics_first_run" ]; then
         cat "$DT/test_fail" >> "$DC_a/dicts.inf"
     fi

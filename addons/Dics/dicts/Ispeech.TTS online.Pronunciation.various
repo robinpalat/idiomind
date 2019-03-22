@@ -17,6 +17,7 @@ function check_key(){ # remove from active if missing key
     local fname="$(basename "$0")"
     msgs="$HOME/.config/idiomind/addons/dict/msgs"
     if [ -z "${key}" ] || [[ ${#key} != 32 ]]; then
+        echo "$(gettext "Missing key")" > "$msgs/$d1"
         echo "$(gettext "Missing key")" > "$msgs/$d2"
         if [ -f "$DC_a/dict/enables/${d1}" ] && [ ! -d "$DT/dict_test" ]; then
             mv -f "$DC_a/dict/enables/${d1}" "$DC_a/dict/disables/${d1}"
@@ -26,7 +27,6 @@ function check_key(){ # remove from active if missing key
         fi
         return 1
     else
-        [ -f "$msgs/$fname" ] && rm "$msgs/$fname" 
         return 0
     fi
 }
@@ -35,10 +35,8 @@ key=$(grep -o key=\"[^\"]* "$FILECONF" |grep -o '[^"]*$')
 check_key
 
 if [ $? = 0 ]; then
-
     speed=$(grep -o speed=\"[^\"]* "$FILECONF" |grep -o '[^"]*$')
     voice=$(grep -o voice=\"[^\"]* "$FILECONF" |grep -o '[^"]*$' |sed 's/(null)//')
-
     if [ "$speed" = Slow ]; then s=-2
     elif [ "$speed" = Normal ]; then s=0
     elif [ "$speed" = Fast ]; then s=2
