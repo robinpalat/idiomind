@@ -1083,7 +1083,7 @@ topics = os.environ['lbl5']
 tasks = os.environ['lbl9']
 settings = os.environ['lbl10']
 quit = os.environ['lbl8']
-icon = '/usr/share/idiomind/images/flags/' + lgt + '.png'
+icon = '/usr/share/idiomind/images/logo.png'
 my_pid = os.getpid()
 f_pid = open(os.environ['dirt']+'tray.pid', 'w')
 f_pid.write(str(my_pid))
