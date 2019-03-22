@@ -1,61 +1,55 @@
 #!/bin/bash
 
-# This software is provided for the purpose of reasonable personal use of
-# the Google Translate service, i.e., for those who prefer command line to
-# web interface. For other purposes, please refer to the official Google
-# Translate API <https://developers.google.com/translate/>.
-# 
-# By using this software, the user are aware that:
-# 
-# 1. Google Translate is a proprietary service provided and owned by
-# Google Inc.
-# 
-# 2. This script is NOT a Google product. Neither this software nor
-# its author is affiliated with Google Inc.
-# 
-# 3. The software is provided "AS IS", without warranty of any kind,
-# express or implied, including but not limited to the warranties of
-# merchantability, fitness for a particular purpose and noninfringement. In
-# no event shall the authors be liable for any claim, damages or other
-# liability, whether in an action of contract, tort or otherwise, arising
-# from, out of or in connection with the software or the use or other
-# dealings in the software.
-
 TLANGS="zh-cn, en, ja, pt, es, ru, it, de, fr"
+INFO="Due to limitations of google translate, this script does not
+guarantee that would work properly at all times
 
-if [[ "$1" = '_DLG_' ]]; then
-    fname="$(basename "$0")"
-    name="<b>$(cut -f 1 -d '.' <<< "$fname")</b>"
-    icon="$DS/addons/Dics/c.png"
-    if [ -f "$DC_a/dict/msgs/$fname" ]; then
-        info="\n<small>$(gettext "<b>Status:</b>\n") $(< "$DC_a/dict/msgs/$fname")</small>"
-        icon="$DS/addons/Dics/a.png"
-    elif grep -Fxq "$fname" "$DC_a/dict/ok_nolang.list" >/dev/null 2>&1; then
-        info="\n<small>$(gettext "<b>Status:</b>\n Not available for the language you are learning.")</small>\n"
-        icon="$DS/addons/Dics/b.png"
-    fi
-    source "$DS/ifs/cmns.sh"
-    msg "$name\n<small>\n<b>$(gettext "Languages"):</b>\n Chinese, English, Frech, German, Italian, Japanese, Portuguese, Russian, Spanish, Vietnamese</small>\n$info" $icon "$4" "$(gettext "Close")"
-else
+This software is provided for the purpose of reasonable personal use of
+the Google Translate service.
+Please refer to the official Google Translate API 
+https://developers.google.com/translate/.
 
-    link="http://translate.googleapis.com/translate_a/single?client=gtx&sl=$2&tl=$3&dt=t&q=$1"
+By using this software, the user are aware that:
+
+1. Google Translate is a proprietary service provided and owned by
+Google Inc.
+
+2. This script is NOT a Google product. Neither this software nor
+its author is affiliated with Google Inc.
+
+3. The software is provided AS IS, without warranty of any kind,
+express or implied, including but not limited to the warranties of
+merchantability, fitness for a particular purpose and noninfringement. In
+no event shall the authors be liable for any claim, damages or other
+liability, whether in an action of contract, tort or otherwise, arising
+from, out of or in connection with the software or the use or other
+dealings in the software."
+LANGUAGES="Chinese, English, Frech, German, Italian, Japanese, Portuguese, Russian, Spanish, Vietnamese"
+STATUS="Ok"
+VOICES=""
+CONF="FALSE"
+FILECONF=""
+TESTWORD=""
+
+
+link="http://translate.googleapis.com/translate_a/single?client=gtx&sl=$2&tl=$3&dt=t&q=$1"
+if [[ "$1" != '_dclk_' ]]; then
     gtra="$(wget -U "$useragent" -qO - "$link")"
-     if grep -o -E 'ja|zh-cn|ru' <<< ${3} >/dev/null 2>&1 ; then
-        if [[ "$4" = singleline ]]; then
-            echo -e "${gtra}" |sed -e 's/\",\".*//g' |sed -e 's/.*\[\[\[\"//g'
-        else
-            while read t; do
-                echo -n "$(grep -oP '(?<=trgt=\").*(?=\",\")' <<< "${t}")"
-            done < <(echo "${gtra}" |sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g')
-        fi
+fi
+if grep -o -E 'ja|zh-cn|ru' <<< "${3}" >/dev/null 2>&1 ; then
+    if [[ "$4" = singleline ]]; then
+        echo -e "${gtra}" |sed -e 's/\",\".*//g' |sed -e 's/.*\[\[\[\"//g'
     else
-        if [[ "$4" = singleline ]]; then
-            echo -e "${gtra}" |sed -e 's/\",\".*//g' |sed -e 's/.*\[\[\[\"//g'
-        else
-            while read t; do
-                echo -n "$(grep -oP '(?<=trgt=\").*(?=\",\")' <<< "${t}")"
-            done < <(echo "${gtra}" |sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g')
-        fi
+        while read t; do
+            echo -n "$(grep -oP '(?<=trgt=\").*(?=\",\")' <<< "${t}")"
+        done < <(echo "${gtra}" |sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g')
+    fi
+elif grep -o -E 'de|en|es|fr|it|pt|vi' <<< "${3}" >/dev/null 2>&1 ; then
+    if [[ "$4" = singleline ]]; then
+        echo -e "${gtra}" |sed -e 's/\",\".*//g' |sed -e 's/.*\[\[\[\"//g'
+    else
+        while read t; do
+            echo -n "$(grep -oP '(?<=trgt=\").*(?=\",\")' <<< "${t}")"
+        done < <(echo "${gtra}" |sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g')
     fi
 fi
-

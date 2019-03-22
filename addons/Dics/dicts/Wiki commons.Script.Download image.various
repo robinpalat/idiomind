@@ -1,30 +1,25 @@
 #!/bin/bash
 
-TLANGS="en"
-TWORD="House"
+TLANGS="en, es"
+INFO=""
+LANGUAGES="English"
+STATUS="Ok"
+VOICES=""
+CONF="FALSE"
+FILECONF=""
+TESTWORD="cat"
 
-if [[ "$1" = '_DLG_' ]]; then
-    fname="$(basename "$0")"
-    name="<b>$(cut -f 1 -d '.' <<< "$fname")</b>"
-    icon="$DS/addons/Dics/c.png"
-    if [ -f "$DC_a/dict/msgs/$fname" ]; then
-        info="\n<small>$(gettext "<b>Status:</b>\n") $(< "$DC_a/dict/msgs/$fname")</small>"
-        icon="$DS/addons/Dics/a.png"
-    elif grep -Fxq "$fname" "$DC_a/dict/ok_nolang.list" >/dev/null 2>&1; then
-        info="\n<small>$(gettext "<b>Status:</b>\n Not available for the language you are learning.")</small>\n"
-        icon="$DS/addons/Dics/b.png"
-    fi
-    source "$DS/ifs/cmns.sh"
-    msg "$name\n<small>\n<b>$(gettext "Languages"):</b>\n Various</small>\n$info" $icon "$4" "$(gettext "Close")"
+
+if [[ "$2" = '_TEST_' ]]; then
+    url="https://commons.wikimedia.org/wiki/House"
+    w="$TESTWORD"
 else
+    url="https://commons.wikimedia.org/wiki/$1"
+    w="$1"
+fi
 
-    if [[ "$2" = '_TEST_' ]]; then
-        url="https://commons.wikimedia.org/wiki/House"
-        w="House"
-    else
-        url="https://commons.wikimedia.org/wiki/$1"
-        w="$1"
-    fi
-    urimg="$(wget -q "$url" -O - |grep -o -P '//upload.*?jpg' |sed -e 's/\(thumb\/\)//g' |sed -e 's/^/http:/g' |head -n1)"
+urimg="$(wget -q "$url" -O - |grep -o -P '//upload.*?jpg' |sed -e 's/\(thumb\/\)//g' |sed -e 's/^/http:/g' |head -n1)"
+if [[ -n "$1" ]] && [[ "$1" != '_dlg_' ]]; then
     wget -T 51 -q -U Mozilla -O "$DT/$w.jpg" "$urimg"
 fi
+

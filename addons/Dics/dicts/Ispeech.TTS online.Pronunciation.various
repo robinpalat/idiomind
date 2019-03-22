@@ -1,27 +1,23 @@
 #!/bin/bash
 
-d1="Ispeech.TTS online.Word pronunciation.various"
-d2="Ispeech.TTS online.Pronunciation.various"
-name="Ispeech - TTS online"
-fname="$(basename "$0")"
-msgs="$HOME/.config/idiomind/addons/dict/msgs"
-voices=""
-fileconf="$HOME/.config/idiomind/addons/ispeech.cfg"
-label="\n<small><b>$(gettext "Languages"):</b>\n English, Spanish, Portuguese, Russian, Italian, German, French, Chinese</small>"
-# ----------
+TLANGS="zh-cn, en, ja, pt, es, ru, it, de, fr"
+INFO=""
+LANGUAGES="English, Spanish, Portuguese, Russian, Italian, German, French, Chinese"
+STATUS="Ok"
+VOICES=""
+CONF="TRUE"
+FILECONF="$HOME/.config/idiomind/addons/dict/Ispeech.cfg"
+TESTWORD=""
 
-DC_a="$HOME/.config/idiomind/addons"
-[ ! -f "$fileconf" ] && touch "$fileconf"
-if [[ -z "$(< "$fileconf")" ]]; then
-    echo -e "voice=\"\"\nspeed=\"\"\nkey=\"\"" > "$fileconf"
-fi
-key=$(grep -o key=\"[^\"]* "$fileconf" |grep -o '[^"]*$')
-speed=$(grep -o speed=\"[^\"]* "$fileconf" |grep -o '[^"]*$')
-voice=$(grep -o voice=\"[^\"]* "$fileconf" |grep -o '[^"]*$' |sed 's/(null)//')
 
-function check_conf(){
+function check_key(){ # remove from active if missing key
+    DC_a="$HOME/.config/idiomind/addons"
+    d1="Ispeech.TTS online.Word pronunciation.various"
+    d2="Ispeech.TTS online.Pronunciation.various"
+    local fname="$(basename "$0")"
+    msgs="$HOME/.config/idiomind/addons/dict/msgs"
     if [ -z "${key}" ] || [[ ${#key} != 32 ]]; then
-        echo "$(gettext "Missing key! go to Dics settings -> double-click on the resource name")" > "$msgs/$d2"
+        echo "$(gettext "Missing key")" > "$msgs/$d2"
         if [ -f "$DC_a/dict/enables/${d1}" ] && [ ! -d "$DT/dict_test" ]; then
             mv -f "$DC_a/dict/enables/${d1}" "$DC_a/dict/disables/${d1}"
         fi
@@ -35,78 +31,49 @@ function check_conf(){
     fi
 }
 
-if [[ "$1" = '_DLG_' ]] || [[ "$dlg" = '_DLG_' ]]; then
-    fname="$(basename "$0")"
-    name="<b>$(cut -f 1 -d '.' <<< "$fname")</b>"
-    icon="$DS/addons/Dics/c.png"
-    if [ -f "$DC_a/dict/msgs/$fname" ]; then
-        info="\n<small>$(gettext "<b>Status:</b>\n") $(< "$DC_a/dict/msgs/$fname")</small>"
-        icon="$DS/addons/Dics/a.png"
-        
-    elif grep -Fxq "$fname" "$DC_a/dict/ok_nolang.list" >/dev/null 2>&1; then
-        info="\n<small>$(gettext "<b>Status:</b>\n Not available for the language you are learning.")</small>\n"
-        icon="$DS/addons/Dics/b.png"
-    fi
-    c=$(yad --form --title="${4}" \
-    --text="$name\n${label}\n\n$info\n" \
-    --image=$icon \
-    --name=Idiomind --class=Idiomind \
-    --window-icon="$DS/images/icon.png" --center \
-    --on-top --skip-taskbar --expand-column=3 \
-    --width=600 --height=200 --borders=12 \
-    --always-print-result --editable --print-all --align=right \
-    --field=Voice:CB "" \
-    --field=Speed:CB "$speed!Slow!Normal!Fast" \
-    --field="Key" "$key" \
-    --button="$(gettext "Cancel")":1 \
-    --button="$(gettext "OK")":0)
-    ret=$?
-    if [ $ret = 0 ]; then
-        sed -i "s/voice=.*/voice=\"$(cut -d "|" -f1 <<< "$c")\"/g" "$fileconf"
-        sed -i "s/speed=.*/speed=\"$(cut -d "|" -f2 <<< "$c")\"/g" "$fileconf"
-        sed -i "s/key=.*/key=\"$(cut -d "|" -f3 <<< "$c")\"/g" "$fileconf"
-    fi
-else
+key=$(grep -o key=\"[^\"]* "$FILECONF" |grep -o '[^"]*$')
+check_key
 
-    check_conf
-    if [ $? = 0 ]; then
-        speed=$(grep -o speed=\"[^\"]* "$DC_a/ispeech.cfg" |grep -o '[^"]*$')
-        if [ "$speed" = Slow ]; then s=-2
-        elif [ "$speed" = Normal ]; then s=0
-        elif [ "$speed" = Fast ]; then s=2
-        fi
-        if [ "$lgt" = "en" ]; then 
-            v=ukenglishmale
-            _test="test"
-        elif [ "$lgt" = "es" ]; then 
-            v=eurspanishmale
-            _test="prueba"
-        elif [ "$lgt" = "pt" ]; then 
-            v=brportuguesefemale
-            _test="teste"
-        elif [ "$lgt" = "ru" ]; then 
-            v=rurussianfemale
-            _test="тест"
-        elif [ "$lgt" = "it" ]; then
-            v=euritalianmale
-            _test="prova"
-        elif [ "$lgt" = "de" ]; then 
-            v=eurgermanfemale
-            _test="Prüfung"
-        elif [ "$lgt" = "fr" ]; then 
-            v=eurfrenchmale
-            _test="tester"
-        elif [ "$lgt" = "zh-cn" ]; then 
-            v=chchinesefemale
-            _test="测试"
-        elif [ "$lgt" = "ja" ]; then 
-            v=jpjapanesefemale
-            _test="テスト"
-        fi
-        TLANGS="zh-cn, en, ja, pt, es, ru, it, de, fr"
-        export TESTURL="https://api.ispeech.org/api/rest?apikey=$k&action=convert&voice=$v&speed=$s&pitch=0&text=${_test}"
-        export URL="https://api.ispeech.org/api/rest?apikey=$k&action=convert&voice=$v&speed=$s&pitch=0&text=${word}"
-        export EX='mp3'
+if [ $? = 0 ]; then
+
+    speed=$(grep -o speed=\"[^\"]* "$FILECONF" |grep -o '[^"]*$')
+    voice=$(grep -o voice=\"[^\"]* "$FILECONF" |grep -o '[^"]*$' |sed 's/(null)//')
+
+    if [ "$speed" = Slow ]; then s=-2
+    elif [ "$speed" = Normal ]; then s=0
+    elif [ "$speed" = Fast ]; then s=2
     fi
+    if [ "$lgt" = "en" ]; then 
+        v=ukenglishmale
+        _test="test"
+    elif [ "$lgt" = "es" ]; then 
+        v=eurspanishmale
+        _test="prueba"
+    elif [ "$lgt" = "pt" ]; then 
+        v=brportuguesefemale
+        _test="teste"
+    elif [ "$lgt" = "ru" ]; then 
+        v=rurussianfemale
+        _test="тест"
+    elif [ "$lgt" = "it" ]; then
+        v=euritalianmale
+        _test="prova"
+    elif [ "$lgt" = "de" ]; then 
+        v=eurgermanfemale
+        _test="Prüfung"
+    elif [ "$lgt" = "fr" ]; then 
+        v=eurfrenchmale
+        _test="tester"
+    elif [ "$lgt" = "zh-cn" ]; then 
+        v=chchinesefemale
+        _test="测试"
+    elif [ "$lgt" = "ja" ]; then 
+        v=jpjapanesefemale
+        _test="テスト"
+    fi
+    
+    export TESTURL="https://api.ispeech.org/api/rest?apikey=$k&action=convert&voice=$v&speed=$s&pitch=0&text=${_test}"
+    export URL="https://api.ispeech.org/api/rest?apikey=$k&action=convert&voice=$v&speed=$s&pitch=0&text=${word}"
+    export EX='mp3'
 fi
 

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+TLANGS="" # Example: zh-cn, en, ja, pt, es
+INFO=""
+LANGUAGES="" # Example: Chinese, English
+STATUS="Ok"
+VOICES=""
+CONF="FALSE" 
+FILECONF="" # "$HOME/.config/idiomind/addons/dict/XXXX.cfg"
+TESTWORD="" # Example: cat
+
+
+export TESTURL="" # URL + "Test"
+export URL="" # URL + ${word} (query)
+export EX='mp3'
+

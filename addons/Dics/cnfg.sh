@@ -10,6 +10,7 @@ dir="$DC/addons/dict"
 enables="$dir/enables"
 disables="$dir/disables"
 msgs="$DC/addons/dict/msgs"
+DC_a="$HOME/.config/idiomind/addons"
 check_dir "$msgs"
 
 task=( 'Word pronunciation' 'Pronunciation' 'Translator' \
@@ -61,9 +62,81 @@ function add_dlg() {
 }
 
 function dclk() {
+    
     [ "$2" = TRUE ] && dir=enables
     [ "$2" = FALSE ] && dir=disables
-    "$DS_a/Dics/dicts/$3.$4.$5.$6" '_DLG_' "$@"
+    fname="$3.$4.$5.$6"
+    
+    if [ "$4" = "Link" ]; then
+        TLANGS="zh-cn, en, ja, pt, es, ru, it, de, fr"
+        INFO="$(gettext "Link to web page")"
+        LANGUAGES="Undefined"
+        if [ ! -f "$msgs/$fname" ]; then
+            STATUS="Ok"
+        else
+            STATUS="Break"
+        fi
+        CONF="FALSE"
+    else
+        source "$DS_a/Dics/dicts/$3.$4.$5.$6"
+    fi
+
+    name="<b>$3</b>"
+    icon="$DS/addons/Dics/c.png"
+
+    if [ -f "$msgs/$fname" ]; then
+        STATUS="$(< "$msgs/$fname")"
+        icon="$DS/addons/Dics/a.png"
+    elif grep -Fxq "$fname" "$DC_a/dict/ok_nolang.list" >/dev/null 2>&1; then
+        STATUS="$(gettext "Not available for the language you are learning.")"
+        icon="$DS/addons/Dics/b.png"
+    fi
+
+    if [[ "$CONF" = "TRUE" ]]; then
+        fileconf="$DC_a/dict/$3.cfg"
+        SPEED=""
+        VOICES=""
+        [ ! -f "$fileconf" ] && touch "$fileconf"
+        if [[ -z "$(< "$fileconf")" ]]; then
+            echo -e "voice=\"\"\nspeed=\"\"\nkey=\"\"" > "$fileconf"
+        fi
+        key=$(grep -o key=\"[^\"]* "$fileconf" |grep -o '[^"]*$')
+        speed=$(grep -o speed=\"[^\"]* "$fileconf" |grep -o '[^"]*$')
+        voice=$(grep -o voice=\"[^\"]* "$fileconf" |grep -o '[^"]*$' |sed 's/(null)//')
+        SPEED="$speed!Slow!Normal!Fast"
+
+        c=$(yad --form --title="${3}" \
+        --text="$name\n<small>\n<b>$(gettext "Languages"):</b>\n$LANGUAGES\n\n<b>$(gettext "Information"):</b>\n$INFO\n\n<b>$(gettext "Status:")</b>\n $STATUS</small>\n" \
+        --image=$icon \
+        --name=Idiomind --class=Idiomind \
+        --window-icon="$DS/images/icon.png" --center \
+        --on-top --skip-taskbar --expand-column=3 \
+        --width=600 --height=200 --borders=12 \
+        --always-print-result --editable --print-all --align=right \
+        --field=Voice:CB "" \
+        --field=Speed:CB "$SPEED" \
+        --field="Key" "$key" \
+        --button="$(gettext "Cancel")":1 \
+        --button="$(gettext "OK")":0)
+        ret=$?
+
+        if [ $ret = 0 ]; then
+            sed -i "s/voice=.*/voice=\"$(cut -d "|" -f1 <<< "$c")\"/g" "$fileconf"
+            sed -i "s/speed=.*/speed=\"$(cut -d "|" -f2 <<< "$c")\"/g" "$fileconf"
+            sed -i "s/key=.*/key=\"$(cut -d "|" -f3 <<< "$c")\"/g" "$fileconf"
+        fi
+    else
+        yad --form --title="${3}" \
+        --text="$name\n<small>\n<b>$(gettext "Languages"):</b>\n$LANGUAGES\n\n<b>$(gettext "Information"):</b>\n$INFO\n\n<b>$(gettext "Status:")</b>\n $STATUS</small>\n" \
+        --image=$icon \
+        --name=Idiomind --class=Idiomind \
+        --window-icon="$DS/images/icon.png" --center \
+        --on-top --skip-taskbar --expand-column=3 \
+        --width=600 --height=200 --fixed --borders=12 \
+        --align=right \
+        --button="$(gettext "Close")":1 
+    fi
+
 }
 
 function cpfile() {
@@ -142,7 +215,7 @@ function dlg() {
     --title="$(gettext "Dictionaries")" \
     --name=Idiomind --class=Idiomind "${text}" \
     --print-all --always-print-result --separator="|" \
-    --dclick-action="$DS_a/Dics/cnfg.sh dclk" \
+    --dclick-action="$DS_a/Dics/cnfg.sh _dclk_" \
     --window-icon=idiomind \
     --expand-column=0 --hide-column=3 \
     --search-column=4 --regex-search \
@@ -260,7 +333,7 @@ function update_config_dir() {
 case "$1" in
     add_dlg)
     add_dlg "$@" ;;
-    dclk)
+    _dclk_)
     dclk "$@" ;;
     cpfile)
     cpfile "$@" ;;

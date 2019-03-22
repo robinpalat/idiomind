@@ -21,249 +21,266 @@ function test_() {
     f_lock 1 "$DT/dicts_lk"
     internet
     
-    # ---------------------------------------------------
-    # TRANSLATORS"
-    echo "5"
+    echo "1"
     
-    for trans in "$DC_d"/*."Traslator online.Translator".*; do
-        filename="$(basename "${trans}")"
-        trans="$DS_a/Dics/dicts/$filename"
-        if [ -f "${trans}" ]; then 
-            re="$("${trans}" "This is a test" auto $lgs)"
-            echo "$filename" >> "$DT/test_ok"
-        else
-            echo "FAIL" > "$msgs/$filename"
-        fi
-    done
-    echo "7"
-    st="$(gettext "This is a test")"
-    for trans in "$DC_e"/*."Traslator online.Translator".*; do
-        filename="$(basename "${trans}")"
-        trans="$DS_a/Dics/dicts/$filename"
-        if [ -f "${trans}" ]; then 
-            re="$("${trans}" "This is a test" auto $lgs)"
-            echo "$filename" >> "$DT/test_ok"
-        else
-            echo "FAIL" > "$msgs/$filename"
-        fi
-    done
-
-    # ---------------------------------------------------
-    # AUDIO - Sentences"
-    echo "10"
-
-    if ls "$DC_d"/*."TTS online.Pronunciation".* 1> /dev/null 2>&1; then
-        n=10
-        for dict in "$DC_d"/*."TTS online.Pronunciation".*; do
-            audio_file="$DT/dict_test/${n}_audio"
-            filename="$(basename "${dict}")"
-            unset TESTURL; source "$DS_a/Dics/dicts/$filename"
-            if [ -n "${TESTURL}" ]; then
-                wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
-                if [[ ${EX} != 'mp3' ]]; then
-                    mv -f "$audio_file.$EX" "$audio_file.mp3"
-                fi
-            fi
-            if [ -f "$audio_file.mp3" ]; then
-                if file -b --mime-type "$audio_file.mp3" |grep -o -E 'mpeg|mp3|' >/dev/null 2>&1 \
-                && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
-                
-                    if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
-                        echo "$filename" >> "$DT/test_ok"
-                    else
-                        echo "$filename" >> "$DT/test_ok_nolang"
-                    fi
-                else 
-                    echo "FAIL" > "$msgs/$filename"
-                fi
-            fi
-            
-            cleanups "$audio_file.mp3"
-            let n++
-        done
-    fi
-    
-    echo "20"
-    
-    if ls "$DC_e"/*."TTS online.Pronunciation".* 1> /dev/null 2>&1; then
-         n=20
-        for dict in "$DC_e"/*."TTS online.Pronunciation".*; do
-            audio_file="$DT/dict_test/${n}_audio"
-            filename="$(basename "${dict}")"
-            unset TESTURL; source "$DS_a/Dics/dicts/$filename"
-            if [ -n "${TESTURL}" ]; then
-                wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
-                if [[ ${EX} != 'mp3' ]]; then
-                    mv -f "$audio_file.$EX" "$audio_file.mp3"
-                fi
-            fi
-            if [ -f "$audio_file.mp3" ]; then
-                if file -b --mime-type "$audio_file.mp3" |grep -o -E 'mpeg|mp3|' >/dev/null 2>&1 \
-                && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
-                
-                    if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
-                        echo "$filename" >> "$DT/test_ok"
-                    else
-                        echo "$filename" >> "$DT/test_ok_nolang"
-                    fi
-                else 
-                    echo "FAIL" > "$msgs/$filename"
-                fi
-            fi
-            
-            cleanups "$audio_file.mp3"
-            let n++
-        done
-    fi
-
-    # ---------------------------------------------------
-    # AUDIO - Words"
-    echo "50"
-
-    if ls "$DC_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
-        n=50
-        for dict in $DC_d/*."TTS online.Word pronunciation".*; do
-            filename="$(basename "${dict}")"
-            audio_file="$DT/dict_test/${n}_audio"
-            unset TESTURL; source "$DS_a/Dics/dicts/$filename"
-            if [ -n "${TESTURL}" ]; then
-                wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
-                if [[ ${EX} != 'mp3' ]]; then
-                    mv -f "$audio_file.$EX" "$audio_file.mp3"
-                fi
-            fi
-            if [ -f "$audio_file.mp3" ]; then
-                if file -b --mime-type "$audio_file.mp3" |grep -o -E 'mpeg|mp3|' >/dev/null 2>&1 \
-                && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
-                
-                    if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
-                        echo "$filename" >> "$DT/test_ok"
-                    else
-                        echo "$filename" >> "$DT/test_ok_nolang"
-                    fi
+    if [ "$(cut -d "|" -f1 <<< "$c")" = 'TRUE' ]; then
+        # ---------------------------------------------------
+        # TRANSLATORS"
+        echo "5"
+        
+        for trans in "$DC_d"/*."Traslator online.Translator".*; do
+            filename="$(basename "${trans}")"
+            trans="$DS_a/Dics/dicts/$filename"
+            if [ -f "${trans}" ]; then
+                re="$("${trans}" "This is a test" auto $lgs)"
+                if [ -n "${re}" ]; then
+                    echo "$filename" >> "$DT/test_ok"
                 else
                     echo "FAIL" > "$msgs/$filename"
                 fi
             fi
-            
-            cleanups "$audio_file.mp3"
-            let n++
         done
-    fi
-
-    echo "60"
-    
-    if ls "$DC_e"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
-        n=60
-        for dict in $DC_e/*."TTS online.Word pronunciation".*; do
-            filename="$(basename "${dict}")"
-            audio_file="$DT/dict_test/${n}_audio"
-            unset TESTURL; source "$DS_a/Dics/dicts/$filename"
-            if [ -n "${TESTURL}" ]; then
-                wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
-                if [[ ${EX} != 'mp3' ]]; then
-                    mv -f "$audio_file.$EX" "$audio_file.mp3"
-                fi
-            fi
-            if [ -f "$audio_file.mp3" ]; then
-                if file -b --mime-type "$audio_file.mp3" |grep -o -E 'mpeg|mp3|' >/dev/null 2>&1 \
-                && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
-                
-                    if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
-                        echo "$filename" >> "$DT/test_ok"
-                    else
-                        echo "$filename" >> "$DT/test_ok_nolang"
-                    fi
+        
+        echo "7"
+        st="$(gettext "This is a test")"
+        for trans in "$DC_e"/*."Traslator online.Translator".*; do
+            filename="$(basename "${trans}")"
+            trans="$DS_a/Dics/dicts/$filename"
+            if [ -f "${trans}" ]; then
+                re="$("${trans}" "This is a test" auto $lgs)"
+                if [ -n "${re}" ]; then
+                    echo "$filename" >> "$DT/test_ok"
                 else
                     echo "FAIL" > "$msgs/$filename"
                 fi
             fi
-            
-            cleanups "$audio_file.mp3"
-            let n++
         done
     fi
+    
+    if [ "$(cut -d "|" -f3 <<< "$c")" = 'TRUE' ]; then
+        # ---------------------------------------------------
+        # AUDIO - Sentences"
+        echo "10"
 
-    # ---------------------------------------------------
-    # WEB PAGES"
-    echo "70"
-    
-    word="test"
-    export query="$word" lgt
-    if ls "$DC_d"/*."Link.Search definition".* 1> /dev/null 2>&1; then
-        for dict in $DC_d/*."Link.Search definition".*; do
-            filename="$(basename "${dict}")"
-            eval _url="$(< "$DS_a/Dics/dicts/$filename")"
-            if curl -v "$_url" 2>&1 |grep -m1 "HTTP/1.1" >/dev/null 2>&1; then
-                echo "$filename" >> "$DT/test_ok"
-            else 
-                echo "FAIL" > "$msgs/$filename"
-            fi
-        done  
-    fi
-    
-    echo "80"
-    if ls "$DC_e"/*."Link.Search definition".* 1> /dev/null 2>&1; then
-        for dict in $DC_e/*."Link.Search definition".*; do
-            filename="$(basename "${dict}")"
-            eval _url="$(< "$DS_a/Dics/dicts/$filename")"
-            if curl -v "$_url" 2>&1 |grep -m1 "HTTP/1.1" >/dev/null 2>&1; then
-                echo "$filename" >> "$DT/test_ok"
-            else 
-                echo "FAIL" > "$msgs/$filename"
-            fi
-        done  
-    fi
-
-    # ---------------------------------------------------
-    # IMAGE DOWNLOADER"
-    echo "90"
-    
-    if ls "$DC_d"/*."Script.Download image".* 1> /dev/null 2>&1; then
-        for Script in "$DC_d"/*."Script.Download image".*; do
-            filename="$(basename "${Script}")"
-            Script="$DS_a/Dics/dicts/$filename"
-            TLANGS=$(grep -o TLANGS=\"[^\"]* "$Script" |grep -o '[^"]*$')
-            TWORD=$(grep -o TWORD=\"[^\"]* "$Script" |grep -o '[^"]*$')
-            [ -f "${Script}" ] && "${Script}" "${TWORD}" "_TEST_"
-            if [ -f "$DT/${TWORD}.jpg" ]; then
-                if [[ $(du "$DT/${TWORD}.jpg" |cut -f1) -gt 10 ]]; then
-                    if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
-                        echo "$filename" >> "$DT/test_ok"
-                    else
-                        echo "$filename" >> "$DT/test_ok_nolang"
+        if ls "$DC_d"/*."TTS online.Pronunciation".* 1> /dev/null 2>&1; then
+            n=10
+            for dict in "$DC_d"/*."TTS online.Pronunciation".*; do
+                audio_file="$DT/dict_test/${n}_audio"
+                filename="$(basename "${dict}")"
+                unset TESTURL; source "$DS_a/Dics/dicts/$filename"
+                if [ -n "${TESTURL}" ]; then
+                    wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
+                    if [[ ${EX} != 'mp3' ]]; then
+                        mv -f "$audio_file.$EX" "$audio_file.mp3"
                     fi
+                fi
+                if [ -f "$audio_file.mp3" ]; then
+                    if file -b --mime-type "$audio_file.mp3" |grep -o -E 'mpeg|mp3|' >/dev/null 2>&1 \
+                    && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
+                    
+                        if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
+                            echo "$filename" >> "$DT/test_ok"
+                        else
+                            echo "$filename" >> "$DT/test_ok_nolang"
+                        fi
+                    else 
+                        echo "FAIL" > "$msgs/$filename"
+                    fi
+                fi
+                
+                cleanups "$audio_file.mp3"
+                let n++
+            done
+        fi
+        
+        echo "20"
+        
+        if ls "$DC_e"/*."TTS online.Pronunciation".* 1> /dev/null 2>&1; then
+             n=20
+            for dict in "$DC_e"/*."TTS online.Pronunciation".*; do
+                audio_file="$DT/dict_test/${n}_audio"
+                filename="$(basename "${dict}")"
+                unset TESTURL; source "$DS_a/Dics/dicts/$filename"
+                if [ -n "${TESTURL}" ]; then
+                    wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
+                    if [[ ${EX} != 'mp3' ]]; then
+                        mv -f "$audio_file.$EX" "$audio_file.mp3"
+                    fi
+                fi
+                if [ -f "$audio_file.mp3" ]; then
+                    if file -b --mime-type "$audio_file.mp3" |grep -o -E 'mpeg|mp3|' >/dev/null 2>&1 \
+                    && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
+                    
+                        if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
+                            echo "$filename" >> "$DT/test_ok"
+                        else
+                            echo "$filename" >> "$DT/test_ok_nolang"
+                        fi
+                    else 
+                        echo "FAIL" > "$msgs/$filename"
+                    fi
+                fi
+                
+                cleanups "$audio_file.mp3"
+                let n++
+            done
+        fi
+    fi
+
+    if [ "$(cut -d "|" -f5 <<< "$c")" = 'TRUE' ]; then
+        # ---------------------------------------------------
+        # AUDIO - Words"
+        echo "50"
+
+        if ls "$DC_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
+            n=50
+            for dict in $DC_d/*."TTS online.Word pronunciation".*; do
+                filename="$(basename "${dict}")"
+                audio_file="$DT/dict_test/${n}_audio"
+                unset TESTURL; source "$DS_a/Dics/dicts/$filename"
+                if [ -n "${TESTURL}" ]; then
+                    wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
+                    if [[ ${EX} != 'mp3' ]]; then
+                        mv -f "$audio_file.$EX" "$audio_file.mp3"
+                    fi
+                fi
+                if [ -f "$audio_file.mp3" ]; then
+                    if file -b --mime-type "$audio_file.mp3" |grep -o -E 'mpeg|mp3|' >/dev/null 2>&1 \
+                    && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
+                    
+                        if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
+                            echo "$filename" >> "$DT/test_ok"
+                        else
+                            echo "$filename" >> "$DT/test_ok_nolang"
+                        fi
+                    else
+                        echo "FAIL" > "$msgs/$filename"
+                    fi
+                fi
+                
+                cleanups "$audio_file.mp3"
+                let n++
+            done
+        fi
+
+        echo "60"
+        
+        if ls "$DC_e"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
+            n=60
+            for dict in $DC_e/*."TTS online.Word pronunciation".*; do
+                filename="$(basename "${dict}")"
+                audio_file="$DT/dict_test/${n}_audio"
+                unset TESTURL; source "$DS_a/Dics/dicts/$filename"
+                if [ -n "${TESTURL}" ]; then
+                    wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
+                    if [[ ${EX} != 'mp3' ]]; then
+                        mv -f "$audio_file.$EX" "$audio_file.mp3"
+                    fi
+                fi
+                if [ -f "$audio_file.mp3" ]; then
+                    if file -b --mime-type "$audio_file.mp3" |grep -o -E 'mpeg|mp3|' >/dev/null 2>&1 \
+                    && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
+                    
+                        if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
+                            echo "$filename" >> "$DT/test_ok"
+                        else
+                            echo "$filename" >> "$DT/test_ok_nolang"
+                        fi
+                    else
+                        echo "FAIL" > "$msgs/$filename"
+                    fi
+                fi
+                
+                cleanups "$audio_file.mp3"
+                let n++
+            done
+        fi
+    fi
+
+    if [ "$(cut -d "|" -f2 <<< "$c")" = 'TRUE' ]; then
+        # ---------------------------------------------------
+        # WEB PAGES"
+        echo "70"
+        
+        word="test"
+        export query="$word" lgt
+        if ls "$DC_d"/*."Link.Search definition".* 1> /dev/null 2>&1; then
+            for dict in $DC_d/*."Link.Search definition".*; do
+                filename="$(basename "${dict}")"
+                eval _url="$(< "$DS_a/Dics/dicts/$filename")"
+                if curl -v "$_url" 2>&1 |grep -m1 "HTTP/1.1" >/dev/null 2>&1; then
+                    echo "$filename" >> "$DT/test_ok"
                 else 
                     echo "FAIL" > "$msgs/$filename"
                 fi
-            fi
-            cleanups "$DT/${TWORD}.jpg"
-        done
-    fi
-
-    echo "95"
-    if ls "$DC_e"/*."Script.Download image".* 1> /dev/null 2>&1; then
-        for Script in "$DC_e"/*."Script.Download image".*; do
-            filename="$(basename "${Script}")"
-            Script="$DS_a/Dics/dicts/$filename"
-            TLANGS=$(grep -o TLANGS=\"[^\"]* "$Script" |grep -o '[^"]*$')
-            TWORD=$(grep -o TWORD=\"[^\"]* "$Script" |grep -o '[^"]*$')
-            [ -f "${Script}" ] && "${Script}" "${TWORD}" "_TEST_"
-            if [ -f "$DT/${TWORD}.jpg" ]; then
-                if [[ $(du "$DT/${TWORD}.jpg" |cut -f1) -gt 10 ]]; then
-                    if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
-                        echo "$filename" >> "$DT/test_ok"
-                    else
-                        echo "$filename" >> "$DT/test_ok_nolang"
-                    fi
+            done  
+        fi
+        
+        echo "80"
+        if ls "$DC_e"/*."Link.Search definition".* 1> /dev/null 2>&1; then
+            for dict in $DC_e/*."Link.Search definition".*; do
+                filename="$(basename "${dict}")"
+                eval _url="$(< "$DS_a/Dics/dicts/$filename")"
+                if curl -v "$_url" 2>&1 |grep -m1 "HTTP/1.1" >/dev/null 2>&1; then
+                    echo "$filename" >> "$DT/test_ok"
                 else 
                     echo "FAIL" > "$msgs/$filename"
                 fi
-            fi
-            cleanups "$DT/${TWORD}.jpg"
-        done
+            done  
+        fi
     fi
 
+    if [ "$(cut -d "|" -f4 <<< "$c")" = 'TRUE' ]; then
+        # ---------------------------------------------------
+        # IMAGE DOWNLOADER"
+        echo "90"
+        
+        if ls "$DC_d"/*."Script.Download image".* 1> /dev/null 2>&1; then
+            for Script in "$DC_d"/*."Script.Download image".*; do
+                filename="$(basename "${Script}")"
+                Script="$DS_a/Dics/dicts/$filename"
+                TLANGS=$(grep -o TLANGS=\"[^\"]* "$Script" |grep -o '[^"]*$')
+                TESTWORD=$(grep -o TESTWORD=\"[^\"]* "$Script" |grep -o '[^"]*$')
+                [ -f "${Script}" ] && "${Script}" "${TESTWORD}" "_TEST_"
+                if [ -f "$DT/${TESTWORD}.jpg" ]; then
+                    if [[ $(du "$DT/${TESTWORD}.jpg" |cut -f1) -gt 10 ]]; then
+                        if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
+                            echo "$filename" >> "$DT/test_ok"
+                        else
+                            echo "$filename" >> "$DT/test_ok_nolang"
+                        fi
+                    else 
+                        echo "FAIL" > "$msgs/$filename"
+                    fi
+                fi
+                cleanups "$DT/${TESTWORD}.jpg"
+            done
+        fi
+
+        echo "95"
+        if ls "$DC_e"/*."Script.Download image".* 1> /dev/null 2>&1; then
+            for Script in "$DC_e"/*."Script.Download image".*; do
+                filename="$(basename "${Script}")"
+                Script="$DS_a/Dics/dicts/$filename"
+                TLANGS=$(grep -o TLANGS=\"[^\"]* "$Script" |grep -o '[^"]*$')
+                TESTWORD=$(grep -o TESTWORD=\"[^\"]* "$Script" |grep -o '[^"]*$')
+                [ -f "${Script}" ] && "${Script}" "${TESTWORD}" "_TEST_"
+                if [ -f "$DT/${TESTWORD}.jpg" ]; then
+                    if [[ $(du "$DT/${TESTWORD}.jpg" |cut -f1) -gt 10 ]]; then
+                        if echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
+                            echo "$filename" >> "$DT/test_ok"
+                        else
+                            echo "$filename" >> "$DT/test_ok_nolang"
+                        fi
+                    else 
+                        echo "FAIL" > "$msgs/$filename"
+                    fi
+                fi
+                cleanups "$DT/${TESTWORD}.jpg"
+            done
+        fi
+    fi
+    
     # ---------------------------------------------------
     mv "$DT/test_ok" "$DC_a/dict/ok.list"
     mv "$DT/test_ok_nolang" "$DC_a/dict/ok_nolang.list"
@@ -288,10 +305,29 @@ function dlg_progress_2() {
 }
 
 if [[ "$2" = 'silence' ]]; then
+    export c="TRUE|TRUE|TRUE|TRUE|TRUE|"
     echo -e "\n-- testing online resources..."
     test_
-    echo -e "\n-- testing online resources concluded"
+    echo -e "\ttesting online resources ok"
 else
+    cnf1=$(mktemp "$DT/cnf1.XXXXXX")
+    yad --form --title="$(gettext "Test")" \
+    --text="$(gettext "Options")\n" \
+    --name=Idiomind --class=Idiomind \
+    --center --columns=2 --output-by-row \
+    --on-top --skip-taskbar \
+    --width=400 --height=200 --borders=10 \
+    --always-print-result --print-all --align=right \
+    --field=" $(gettext "Translators")":CHK "" \
+    --field=" $(gettext "Sentence Pronunciation")":CHK "" \
+    --field=" $(gettext "Word Pronunciation")":CHK "" \
+    --field=" $(gettext "Web Pages")":CHK "" \
+    --field=" $(gettext "Image Downloader")":CHK "" \
+    --button="$(gettext "Cancel")":1 \
+    --button="$(gettext "Apply")":0 > "$cnf1"
+    ret=$?; [ $ret = 1 ] && exit
+    export c="$(< "$cnf1")"; cleanups "$cnf1"
+    
     ( echo "1"; echo "#  "; test_ ) | dlg_progress_2
 fi
 
