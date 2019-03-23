@@ -743,16 +743,16 @@ function decide_group() {
     preeasy=$((learnt+easy)); left=$((all-learnt))
     if [[ ${easy} = 10 ]]; then
         cleanups ./${pr}.df; export plus${pr}=""
-        good="$(gettext "Very Good!")   "
+        #good="$(gettext "Very Good!")   "
     fi
-    info="$(gettext "Left") <b>$left</b>   $(gettext "Learnt") <b>$learnt</b>   $(gettext "Easy") <b>$easy</b>   $(gettext "Learning") <b>$ling</b>   $(gettext "Difficult") <b>$hard</b>"
-    optns=$(yad --form --title="$good$(gettext "Continue")" \
+    info="$(gettext "Left") <b>$left</b>    $(gettext "Learnt") <b>$learnt</b>    $(gettext "Easy") <b>$easy</b>    $(gettext "Learning") <b>$ling</b>    $(gettext "Difficult") <b>$hard</b>"
+    optns=$(yad --form --title="$(gettext "Continue")" \
     --window-icon=idiomind \
     --always-print-result \
     --skip-taskbar --buttons-layout=spread \
     --text-align=center --align=center --center --on-top \
     --text="${info}" "" \
-    --width=450 --height=120 --borders=15 \
+    --width=450 --height=120 --borders=12 \
     --button="$(gettext "Again")!view-refresh!$(gettext "Go back to practice the above items")":1 \
     --button="$(gettext "Continue")!go-next!$(gettext "Practice the next group")":0); ret="$?"
     unset good
