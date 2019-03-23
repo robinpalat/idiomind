@@ -900,7 +900,7 @@ translate_to() {
                 index_to_trad="$(< "$DT/index.trad_tmp")"
                 words_to_trad="$(< "$DT/words.trad_tmp")"
                 translate "${index_to_trad}" "$lgt" "$tl" > "$DT/index.trad"
-                translate "${words_to_trad}" "$lgt" "$tl" > "$DT/words.trad"
+                sleep 1 && translate "${words_to_trad}" "$lgt" "$tl" > "$DT/words.trad"
                 sed -i ':a;N;$!ba;s/\n/ /g' "$DT/index.trad"
                 sed -i "s/${del}n/\n/g" "$DT/index.trad"
                 sed -i "s/${del}/\n/g" "$DT/index.trad"

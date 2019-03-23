@@ -582,6 +582,7 @@ function process() {
         lns="$(cat "$DT_r/select_lines" "$DT_r/wrds" |sed '/^$/d' |wc -l)"
         n=1
         while read -r trgt; do
+            sleep 2 &&
             export trgt="$(clean_2 "${trgt}")"
             if [[ ${ttrgt} = TRUE ]]; then
                 trgt="$(translate "${trgt}" auto $lgt)"
@@ -664,7 +665,7 @@ function process() {
                 if [[ $(wc -l < "${DC_tlt}/data") -ge 200 ]]; then
                     echo -e "$(gettext "Maximum number of notes has been exceeded:")\n$trgt\n\n" >> "$DT_r/wlog"
                 else
-                    export srce="$(translate "${trgt}" auto $lgs)"
+                    export sleep 1 && srce="$(translate "${trgt}" auto $lgs)"
                     [ -z "${srce}" ] && internet
                     export cdid="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
                     mksure "${trgt}" "${srce}"
