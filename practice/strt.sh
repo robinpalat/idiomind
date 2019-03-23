@@ -745,7 +745,7 @@ function decide_group() {
         cleanups ./${pr}.df; export plus${pr}=""
         #good="$(gettext "Very Good!")   "
     fi
-    info="$(gettext "Left") <b>$left</b>    $(gettext "Learnt") <b>$learnt</b>    $(gettext "Easy") <b>$easy</b>    $(gettext "Learning") <b>$ling</b>    $(gettext "Difficult") <b>$hard</b>"
+    info="<small>$(gettext "Left")</small>  <b><big>$left</big></b>    <small>$(gettext "Learnt")</small>  <b><big>$learnt</big></b>    <small>$(gettext "Easy")</small>  <b><big>$easy</big></b>    <small>$(gettext "Learning")</small>  <b><big>$ling</big></b>    <small>$(gettext "Difficult")</small>  <b><big>$hard</big></b>"
     optns=$(yad --form --title="$(gettext "Continue")" \
     --window-icon=idiomind \
     --always-print-result \
