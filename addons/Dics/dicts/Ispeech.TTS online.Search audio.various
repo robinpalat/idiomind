@@ -2,6 +2,6 @@
 
 dlg="$1"
 dir="/usr/share/idiomind/addons/Dics/dicts"
-source "$dir/Ispeech.TTS online.Pronunciation.various"
+source "$dir/Ispeech.TTS online.Convert text to audio.various"
 TLANGS="zh-cn, en, ja, pt, es, ru, it, de, fr"
 

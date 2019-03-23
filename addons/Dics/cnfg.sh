@@ -13,8 +13,8 @@ msgs="$DC/addons/dict/msgs"
 DC_a="$HOME/.config/idiomind/addons"
 check_dir "$msgs"
 
-task=( 'Word pronunciation' 'Pronunciation' 'Translator' \
-'Search definition' 'Search images' 'Download images' '_' )
+task=( 'Search audio' 'Convert text to audio' 'Translate' \
+'Search definition' 'Search image' '_' '_' )
 
 function add_dlg() {
     langs=( 'various' 'zh-cn' 'en' 'fr' \
@@ -147,6 +147,13 @@ function cpfile() {
 }
 
 function dlg() {
+    
+    yad --text="$1 . $2"
+    
+    
+    
+    
+    
     if [ -f "$DT/dicts" ]; then
         (sleep 20 && cleanups "$DT/dicts") & exit 1
     fi

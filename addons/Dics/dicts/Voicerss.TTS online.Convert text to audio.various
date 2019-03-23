@@ -12,8 +12,8 @@ TESTWORD=""
 
 function check_key(){ # remove from active if missing key
     DC_a="$HOME/.config/idiomind/addons"
-    d1="Voicerss.TTS online.Word pronunciation.various"
-    d2="Voicerss.TTS online.Pronunciation.various"
+    d1="Voicerss.TTS online.Search audio.various"
+    d2="Voicerss.TTS online.Convert text to audio.various"
     local fname="$(basename "$0")"
     msgs="$HOME/.config/idiomind/addons/dict/msgs"
     if [ -z "${key}" ] || [[ ${#key} != 32 ]]; then

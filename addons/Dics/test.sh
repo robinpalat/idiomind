@@ -24,7 +24,7 @@ function test_() {
         # TRANSLATORS"
         echo "5"
         
-        for trans in "$DC_d"/*."Traslator online.Translator".*; do
+        for trans in "$DC_d"/*."Traslator online.Translate".*; do
             filename="$(basename "${trans}")"; cleanups "$msgs/$filename"
             trans="$DS_a/Dics/dicts/$filename"
             if [ -f "${trans}" ]; then
@@ -39,7 +39,7 @@ function test_() {
         
         echo "7"
         st="$(gettext "This is a test")"
-        for trans in "$DC_e"/*."Traslator online.Translator".*; do
+        for trans in "$DC_e"/*."Traslator online.Translate".*; do
             filename="$(basename "${trans}")"; cleanups "$msgs/$filename"
             trans="$DS_a/Dics/dicts/$filename"
             if [ -f "${trans}" ]; then
@@ -58,9 +58,9 @@ function test_() {
         # AUDIO - Sentences"
         echo "10"
 
-        if ls "$DC_d"/*."TTS online.Pronunciation".* 1> /dev/null 2>&1; then
+        if ls "$DC_d"/*."TTS online.Convert text to audio".* 1> /dev/null 2>&1; then
             n=10
-            for dict in "$DC_d"/*."TTS online.Pronunciation".*; do
+            for dict in "$DC_d"/*."TTS online.Convert text to audio".*; do
                 audio_file="$DT/dict_test/${n}_audio"
                 filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
                 unset TESTURL; source "$DS_a/Dics/dicts/$filename"
@@ -86,9 +86,9 @@ function test_() {
         
         echo "20"
         
-        if ls "$DC_e"/*."TTS online.Pronunciation".* 1> /dev/null 2>&1; then
+        if ls "$DC_e"/*."TTS online.Convert text to audio".* 1> /dev/null 2>&1; then
              n=20
-            for dict in "$DC_e"/*."TTS online.Pronunciation".*; do
+            for dict in "$DC_e"/*."TTS online.Convert text to audio".*; do
                 audio_file="$DT/dict_test/${n}_audio"
                 filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
                 unset TESTURL; source "$DS_a/Dics/dicts/$filename"
@@ -118,9 +118,9 @@ function test_() {
         # AUDIO - Words"
         echo "50"
 
-        if ls "$DC_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
+        if ls "$DC_d"/*."TTS online.Search audio".* 1> /dev/null 2>&1; then
             n=50
-            for dict in $DC_d/*."TTS online.Word pronunciation".*; do
+            for dict in $DC_d/*."TTS online.Search audio".*; do
                 filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
                 audio_file="$DT/dict_test/${n}_audio"
                 unset TESTURL; source "$DS_a/Dics/dicts/$filename"
@@ -147,9 +147,9 @@ function test_() {
 
         echo "60"
         
-        if ls "$DC_e"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
+        if ls "$DC_e"/*."TTS online.Search audio".* 1> /dev/null 2>&1; then
             n=60
-            for dict in $DC_e/*."TTS online.Word pronunciation".*; do
+            for dict in $DC_e/*."TTS online.Search audio".*; do
                 filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
                 audio_file="$DT/dict_test/${n}_audio"
                 unset TESTURL; source "$DS_a/Dics/dicts/$filename"
@@ -212,8 +212,8 @@ function test_() {
         # IMAGE DOWNLOADER"
         echo "90"
         
-        if ls "$DC_d"/*."Script.Download image".* 1> /dev/null 2>&1; then
-            for Script in "$DC_d"/*."Script.Download image".*; do
+        if ls "$DC_d"/*."Script.Search image".* 1> /dev/null 2>&1; then
+            for Script in "$DC_d"/*."Script.Search image".*; do
                 filename="$(basename "${Script}")"; cleanups "$msgs/$filename"
                 Script="$DS_a/Dics/dicts/$filename"
                 TLANGS=$(grep -o TLANGS=\"[^\"]* "$Script" |grep -o '[^"]*$')
@@ -231,8 +231,8 @@ function test_() {
         fi
 
         echo "95"
-        if ls "$DC_e"/*."Script.Download image".* 1> /dev/null 2>&1; then
-            for Script in "$DC_e"/*."Script.Download image".*; do
+        if ls "$DC_e"/*."Script.Search image".* 1> /dev/null 2>&1; then
+            for Script in "$DC_e"/*."Script.Search image".*; do
                 filename="$(basename "${Script}")"; cleanups "$msgs/$filename"
                 Script="$DS_a/Dics/dicts/$filename"
                 TLANGS=$(grep -o TLANGS=\"[^\"]* "$Script" |grep -o '[^"]*$')
@@ -262,7 +262,7 @@ function test_() {
 
 function dlg_progress_2() {
     yad --progress --title="Idiomind" \
-    --text="<b>$(gettext "Please wait while online resources are being tested...")</b>" \
+    --text="<b>$(gettext "Please wait, this might take a little while.")</b>" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind --align=right \
     --progress-text=" " --pulsate \
@@ -278,8 +278,8 @@ if [[ "$2" = 'silence' ]]; then
     echo -e "\ttesting online resources ok"
 else
     cnf1=$(mktemp "$DT/cnf1.XXXXXX")
-    yad --form --title="$(gettext "Test")" \
-    --text="$(gettext "Options")\n" \
+    yad --form --title="$(gettext "Test online resources")" \
+    --text="$(gettext "Tasks:")\n" \
     --name=Idiomind --class=Idiomind \
     --center --columns=2 --output-by-row \
     --on-top --skip-taskbar \
@@ -299,5 +299,5 @@ else
 fi
 
 if [[ "$1" != 1 ]]; then 
-    "$DS/addons/Dics/cnfg.sh"
+    "$DS/addons/Dics/cnfg.sh" from_test "$c"
 fi
