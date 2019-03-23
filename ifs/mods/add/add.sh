@@ -380,10 +380,10 @@ function translate() {
     [[ -n "$(sqlite3 ${tlngdb} "select "${slng}" from Words where Word is '${t}';")" ]]; then
         sqlite3 ${tlngdb} "select "${slng}" from Words where Word is '${t}' limit 1;"
     else
-        if ! ls "$DC_d"/*."Traslator online.Translator".* 1> /dev/null 2>&1; then
+        if ! ls "$DC_d"/*."Traslator online.Translate".* 1> /dev/null 2>&1; then
             "$DS_a/Dics/cnfg.sh" 2
         fi
-        for trans in "$DC_d"/*."Traslator online.Translator".*; do
+        for trans in "$DC_d"/*."Traslator online.Translate".*; do
             trans="$DS_a/Dics/dicts/$(basename "${trans}")"
             if [ -f "${trans}" ]; then "${trans}" "$@" && break; fi
         done
@@ -482,10 +482,10 @@ function fetch_audio() {
 }
 
 function img_word() {
-    if ls "$DC_d"/*."Script.Download image".* 1> /dev/null 2>&1; then
+    if ls "$DC_d"/*."Script.Search image".* 1> /dev/null 2>&1; then
         if [ ! -e "${DM_tls}/images/${1,,}-1.jpg" -a ! -f "${DM_tlt}/images/${1,,}.jpg" ]; then
             touch "$DT/${1}.img"
-            for Script in "$DC_d"/*."Script.Download image".*; do
+            for Script in "$DC_d"/*."Script.Search image".*; do
                 Script="$DS_a/Dics/dicts/$(basename "${Script}")"
                 [ -f "${Script}" ] && "${Script}" "${1}"
                 if [ -f "$DT/${1}.jpg" ]; then
@@ -497,7 +497,7 @@ function img_word() {
                 fi
             done
             if [ ! -e "$DT/${1}.jpg" ]; then
-                for Script in "$DC_d"/*."Script.Download image".*; do
+                for Script in "$DC_d"/*."Script.Search image".*; do
                     Script="$DS_a/Dics/dicts/$(basename "${Script}")"
                     [ -f "${Script}" ] && "${Script}" "${2}"
                     if [ -f "$DT/${2}.jpg" ]; then
