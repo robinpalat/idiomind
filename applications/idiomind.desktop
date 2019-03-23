@@ -2,11 +2,11 @@
 Version=1.0
 Name=Idiomind
 GenericName=Tutor
-Comment=A help to learn another language
-Comment[es]=Una ayuda para aprender otro idioma
-Comment[fr]=Une aide pour apprendre une autre langue
-Comment[it]=Un aiuto per imparare un'altra lingua
-Comment[pt]=Uma ajuda para aprender outro idioma
+Comment=Language learning tool
+Comment[es]=Herramienta de aprendizaje de idiomas
+Comment[fr]=Outil d'apprentissage des langues
+Comment[it]=Strumento di apprendimento delle lingue
+Comment[pt]=Ferramenta de aprendizado de idiomas
 Exec=idiomind %f
 Terminal=false
 Type=Application

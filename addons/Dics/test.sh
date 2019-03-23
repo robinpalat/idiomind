@@ -285,11 +285,11 @@ else
     --on-top --skip-taskbar \
     --width=400 --height=200 --borders=10 \
     --always-print-result --print-all --align=right \
-    --field=" $(gettext "Translators")":CHK "" \
-    --field=" $(gettext "Sentence Pronunciation")":CHK "" \
-    --field=" $(gettext "Word Pronunciation")":CHK "" \
-    --field=" $(gettext "Web Pages")":CHK "" \
-    --field=" $(gettext "Image Downloader")":CHK "" \
+    --field=" $(gettext "Translate")":CHK "" \
+    --field=" $(gettext "Convert text to audio")":CHK "" \
+    --field=" $(gettext "Search audio")":CHK "" \
+    --field=" $(gettext "Search definition")":CHK "" \
+    --field=" $(gettext "Search image")":CHK "" \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Apply")":0 > "$cnf1"
     ret=$?; [ $ret = 1 ] && exit
