@@ -147,13 +147,6 @@ function cpfile() {
 }
 
 function dlg() {
-    
-    yad --text="$1 . $2"
-    
-    
-    
-    
-    
     if [ -f "$DT/dicts" ]; then
         (sleep 20 && cleanups "$DT/dicts") & exit 1
     fi

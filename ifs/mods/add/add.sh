@@ -426,28 +426,28 @@ dwld2() {
 export -f translate dwld1 dwld2
 
 function tts_sentence() {
-    if ! ls "$DC_d"/*."TTS online.Pronunciation".* 1> /dev/null 2>&1; then
+    if ! ls "$DC_d"/*."TTS online.Convert text to audio".* 1> /dev/null 2>&1; then
         "$DS_a/Dics/cnfg.sh" 1
     fi
     word="${1}"; DT_r="$2"; audio_file="${3}"
-    for dict in "$DC_d"/*."TTS online.Pronunciation".*; do
+    for dict in "$DC_d"/*."TTS online.Convert text to audio".*; do
         dwld2 "$DS_a/Dics"; [ $? = 5 ] && break
     done
 }
 
 function tts_word() {
-    if ! ls "$DC_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
+    if ! ls "$DC_d"/*."TTS online.Search audio".* 1> /dev/null 2>&1; then
         "$DS_a/Dics/cnfg.sh" 0
     fi
     word="${1,,}"; audio_file="${2}/$word.mp3"; audio_dwld="${2}/$word"
-    if ls "$DC_d"/*."TTS online.Word pronunciation".$lgt 1> /dev/null 2>&1; then
-        for dict in $DC_d/*."TTS online.Word pronunciation".$lgt; do
+    if ls "$DC_d"/*."TTS online.Search audio".$lgt 1> /dev/null 2>&1; then
+        for dict in $DC_d/*."TTS online.Search audio".$lgt; do
             dwld1 "$DS_a/Dics"; [ $? = 5 ] && break
         done
     fi
-    if ls "$DC_d"/*."TTS online.Word pronunciation".various 1> /dev/null 2>&1; then
+    if ls "$DC_d"/*."TTS online.Search audio".various 1> /dev/null 2>&1; then
         if [ ! -f "${2}/${1}.mp3" ]; then
-            for dict in $DC_d/*."TTS online.Word pronunciation".various; do
+            for dict in $DC_d/*."TTS online.Search audio".various; do
                 dwld1 "$DS_a/Dics"; [ $? = 5 ] && break
             done
         fi
@@ -455,7 +455,7 @@ function tts_word() {
 }
 
 function fetch_audio() {
-    if ! ls "$DC_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
+    if ! ls "$DC_d"/*."TTS online.Search audio".* 1> /dev/null 2>&1; then
         "$DS_a/Dics/cnfg.sh" 0
     fi
     if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1 ; then 
@@ -465,14 +465,14 @@ function fetch_audio() {
         word="${Word,,}"; export audio_file="$DM_tls/audio/$word.mp3"
         audio_dwld="$DM_tls/audio/$word"
         if [ ! -f "$audio_file" ]; then
-            if ls "$DC_d"/*."TTS online.Word pronunciation".$lgt 1> /dev/null 2>&1; then
-                for dict in "$DC_d"/*."TTS online.Word pronunciation".$lgt; do
+            if ls "$DC_d"/*."TTS online.Search audio".$lgt 1> /dev/null 2>&1; then
+                for dict in "$DC_d"/*."TTS online.Search audio".$lgt; do
                     dwld1 "$DS_a/Dics"; [ $? = 5 ] && break
                 done
             fi
             if [ ! -f "$audio_file" ]; then
-                if ls "$DC_d"/*."TTS online.Word pronunciation".various 1> /dev/null 2>&1; then
-                    for dict in "$DC_d"/*."TTS online.Word pronunciation".various; do
+                if ls "$DC_d"/*."TTS online.Search audio".various 1> /dev/null 2>&1; then
+                    for dict in "$DC_d"/*."TTS online.Search audio".various; do
                         dwld1 "$DS_a/Dics"; [ $? = 5 ] && break
                     done
                 fi

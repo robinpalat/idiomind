@@ -299,5 +299,5 @@ else
 fi
 
 if [[ "$1" != 1 ]]; then 
-    "$DS/addons/Dics/cnfg.sh" from_test "$c"
+    "$DS/addons/Dics/cnfg.sh"
 fi

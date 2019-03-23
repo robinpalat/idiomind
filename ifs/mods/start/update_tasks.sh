@@ -24,33 +24,33 @@ f="$DT/tasks.tmp"; cleanups "$f" "$DT/tasks"
 
 ## topics 
 while read -r tpc; do
-    echo -e "$l1$tpc" >> "$f"
+    [ -n "${tpc}" ] && echo -e "$l1$tpc" >> "$f"
 done < <(cdb "${shrdb}" 5 T1 |tac)
 
 ## practice
 while read -r tpc; do
-    echo -e "$l8$tpc" >> "$f"
+    [ -n "${tpc}" ] && echo -e "$l8$tpc" >> "$f"
 done < <(cdb "${shrdb}" 5 T8 |tac)
 while read -r tpc; do
-    echo -e "$l6$tpc" >> "$f"
+    [ -n "${tpc}" ] && echo -e "$l6$tpc" >> "$f"
 done < <(cdb "${shrdb}" 5 T6 |tac)
 while read -r tpc; do
-    echo -e "$l5$tpc" >> "$f"
+    [ -n "${tpc}" ] && echo -e "$l5$tpc" >> "$f"
 done < <(cdb "${shrdb}" 5 T5 |tac)
 
 ## topics 
 while read -r tpc; do
-    echo -e "$l2$tpc" >> "$f"
+    [ -n "${tpc}" ] && echo -e "$l2$tpc" >> "$f"
 done < <(cdb "${shrdb}" 5 T2 |tac)
 while read -r tpc; do
-    echo -e "$l3$tpc" >> "$f"
+    [ -n "${tpc}" ] && echo -e "$l3$tpc" >> "$f"
 done < <(cdb "${shrdb}" 5 T3 |tac)
 while read -r tpc; do
-    echo -e "$l4$tpc" >> "$f"
+    [ -n "${tpc}" ] && echo -e "$l4$tpc" >> "$f"
 done < <(cdb "${shrdb}" 5 T4 |tac)
 
 while read -r tpc; do
-    echo -e "$l7$tpc" >> "$f"
+    [ -n "${tpc}" ] && echo -e "$l7$tpc" >> "$f"
 done < <(cdb "${shrdb}" 5 T7 |tac)
 
 
