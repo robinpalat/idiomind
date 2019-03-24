@@ -625,7 +625,7 @@ promp_topic_info() {
         slng_err_lbl="\n$(gettext "Native languages do not match.\nYou may have to translate this topic to your own language: click \"Manage\" tab on the main window, click \"Edit\" -> \"Translate\" -> \"Automatic Translation\" ->") \"$slng\"."
         echo -e "$slng_err_lbl" >> "${DC_tlt}/slng.inf"
     fi
-    check_err "${DC_tlt}/slng.inf" "${DC_tlt}/note.err"
+    check_err "${DC_tlt}/slng.inf" "${DC_tlt}/note.inf"
     
 } >/dev/null 2>&1
 

@@ -257,7 +257,7 @@ function check_err() {
             --show-uri --uri-color="#6591AA" \
             --fontname='monospace 9' \
             --fixed --center --on-top \
-            --width=450 --height=180 --borders=5 \
+            --width=500 --height=300 --borders=5 \
             --button="$(gettext "Close")":1
             cleanups "$filerr"
         fi
