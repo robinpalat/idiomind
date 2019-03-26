@@ -215,7 +215,7 @@ for mitem in datalist:
         typee = (fields[13].split('type{'))[1].split('}')[0]
         mark = (fields[8].split('mark{'))[1].split('}')[0]
     except:
-        typee = (fields[23].split('type{'))[1].split('}')[0]
+        typee = (fields[24].split('type{'))[1].split('}')[0]
         mark = (fields[18].split('mark{'))[1].split('}')[0]
     
     if typee == '1':

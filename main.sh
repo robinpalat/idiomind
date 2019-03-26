@@ -161,7 +161,8 @@ function new_session() {
 
 if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
-    slngcurrent="$slng"; source "$DS/ifs/tls.sh"; check_format_1 "${1}"
+    slngcurrent="$slng"; tlngcurrent="$tlng"
+    source "$DS/ifs/tls.sh"; check_format_1 "${1}"
     if [ $? != 19 ]; then
         msg "$(gettext "File format corrupted")\n" error "$(gettext "Information")" & exit 1
     fi
@@ -189,6 +190,15 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
                 msg "$(gettext "Please wait until the current process is finished")...\n" dialog-information
                 sleep 15; cleanups "$DT/in_lk"; exit 1
             fi
+
+            if [[ "$tlng" != "$tlngcurrent" ]]; then
+                msg_2 "$(gettext "Please note the language of this Topic is:") <b>$tlng</b>
+$(gettext "It is recommended to change your language preferences before installing it")" dialog-warning "$(gettext "Ignore")" "$(gettext "OK")" 
+                if [ $? -eq 1 ]; then
+                    cleanups "$DT/in_lk"; exit 1
+                fi
+            fi
+            
             f_lock 1 "$DT/in_lk"
             listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
             ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
@@ -252,7 +262,7 @@ for item in data:
     item = item.replace('}', '}\n')
     fields = re.split('\n',item)
     trgt = (fields[0].split('trgt{'))[1].split('}')[0]
-    type = (fields[23].split('type{'))[1].split('}')[0]
+    type = (fields[24].split('type{'))[1].split('}')[0]
     mark = (fields[18].split('mark{'))[1].split('}')[0]
     if type == '1':
         cur.execute("insert into words (list) values (?)", (trgt,))
@@ -274,6 +284,14 @@ PY
                 mkdir "${DC_tlt}/translations/"
                 echo "$slngtopic" > "${DC_tlt}/translations/active"
                 touch "${DC_tlt}/slng_err"
+            fi
+            if [[ "$tlng" != "$tlngcurrent" ]]; then
+                if [[ -f "$DT/tray.pid" ]]; then
+                    kill -9 $(cat $DT/tray.pid)
+                    kill -9 $(pgrep -f "$DS/ifs/tls.sh itray")
+                    rm -f "$DT/tray.pid"
+                    $DS/ifs/tls.sh itray &
+                fi
             fi
             echo 1 > "${DC_tlt}/stts"
             source /usr/share/idiomind/default/c.conf

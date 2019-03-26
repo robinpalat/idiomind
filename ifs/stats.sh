@@ -351,8 +351,8 @@ function stats() {
     fi
     if [ -f "${no_data}" ]; then
         source "$DS/ifs/cmns.sh"
-        msg "$(gettext "Insufficient data")\n" dialog-information "Idiomind"
-    else
+        sleep 1 && msg "$(gettext "Insufficient data")\n" dialog-information "Idiomind" &
+    fi
         yad --html --uri="file:///$DS/default/pg1.html?lang=$intrf" \
         --title="$(gettext "Statistics")" \
         --name=Idiomind --class=Idiomind \
@@ -360,6 +360,6 @@ function stats() {
         --orient=vert --window-icon=idiomind --center --on-top \
         --width=750 --height=470 --borders=0 \
         --no-buttons
-    fi
+    
     
 } >/dev/null 2>&1

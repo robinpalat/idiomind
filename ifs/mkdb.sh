@@ -40,7 +40,7 @@ function create_tpcdb() {
     echo -n "create table if not exists Data \
     (trgt TEXT, srce TEXT, \
     exmp TEXT, defn TEXT, note TEXT, refr TEXT, tags TEXT, link TEXT, \
-    grmr TEXT, imag TEXT, mark TEXT, cdid TEXT, type TEXT);" |sqlite3 "${tpcdb}"
+    grmr TEXT, imag TEXT, imgr TEXT, mark TEXT, cdid TEXT, type TEXT);" |sqlite3 "${tpcdb}"
     
     echo -n "create table if not exists Translates \
     (trgt TEXT, \
