@@ -625,10 +625,12 @@ function dlg_checklist_3() {
     fkey=$((RANDOM*$$))
     function _list_2() {
         while read -r aitem; do
-            if [ "$(echo "$aitem" |wc -c)" -gt ${sentence_chars} ]; then
-                echo -e "FALSE\n<span color='#995B50'>$aitem</span>"
-            else
-                echo -e "TRUE\n$aitem"
+            if [ -n "$aitem" ]; then
+                if [ "$(echo "$aitem" |wc -c)" -gt ${sentence_chars} ]; then
+                    echo -e "FALSE\n<span color='#995B50'>$aitem</span>"
+                else
+                    echo -e "FALSE\n$aitem"
+                fi
             fi
         done < "${1}"
     }
@@ -648,6 +650,7 @@ function dlg_checklist_3() {
     --skip-taskbar --orient=vert --window-icon=idiomind --center \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --width=${sz[0]} --height=${sz[1]} --borders=5 --splitter=${sz[2]} \
+    --button="$(gettext "Cancel")":1 \
     --button=!'/usr/share/idiomind/images/add_more.png'!"$(gettext "Edit")":2 \
     --button=!'/usr/share/idiomind/images/add.png'!"$(gettext "Add")":0
 }
@@ -713,7 +716,7 @@ function dlg_text_info_1() {
     --skip-taskbar --center --on-top \
     --width=700 --height=450 --borders=5 \
     --button="$(gettext "Cancel")":1 \
-    --button="$(gettext "Save")":0
+    --button="gtk-save!$(gettext "Save")":0
 }
 
 function msg_3() {

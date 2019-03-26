@@ -749,8 +749,8 @@ function decide_group() {
     optns=$(yad --form --title="$(gettext "Continue")" \
     --window-icon=idiomind \
     --always-print-result \
-    --skip-taskbar --buttons-layout=spread \
-    --text-align=center --align=center --center --on-top \
+    --skip-taskbar  \
+    --align=center --center --on-top \
     --text="${info}" "" \
     --width=450 --height=120 --borders=12 \
     --button="$(gettext "Again")!view-refresh!$(gettext "Go back to practice the above items")":1 \

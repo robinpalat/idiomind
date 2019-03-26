@@ -789,7 +789,7 @@ translate_to() {
         --text="$(gettext "The current Native language of this topic is")  <b>$active_trans</b>" \
         --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top --align=left \
-        --width=400 --height=450 --borders=15 \
+        --width=400 --height=400 --borders=15 \
         --field="":LBL " " \
         --field="\n<b>$(gettext "Verified Translations") </b> ":LBL " " \
         --field="$active_trans — $(gettext "The quality of this translation was verified")":CHK "$chk" \
@@ -809,7 +809,7 @@ translate_to() {
         --text="$(gettext "The current Native language of this topic is")  <b>$active_trans</b>" \
         --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top --align=left \
-        --width=400 --height=450 --borders=15 \
+        --width=400 --height=400 --borders=15 \
         --field="":LBL " " \
         --field="\n<b>$(gettext "Verified Translations") </b> ":LBL " " \
         --field="$active_trans — $(gettext "The quality of this translation was verified")":CHK "$chk" \
