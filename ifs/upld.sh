@@ -314,6 +314,7 @@ function upld() {
         export nsnt=${cfg4}
         export orig levl
         export stts=0
+        
         ### copying files
         cd "${DM_tlt}"/
         cp -r ./* "$DT_u/files/"
@@ -393,19 +394,22 @@ function upld() {
         while read -r _item; do
             get_item "${_item}"
              if [ -n "$trgt" ] && [ "$type" = 1 ]; then
-                if [ -e "$DM_tlt/images/${trgt,,}.jpg" ]; then
+                if [ -f "$DM_tlt/images/${trgt,,}.jpg" ]; then
                     ipath="$DM_tlt/images/${trgt,,}.jpg"; export imag=2
-                elif [ -e "$DM_tls/images/${trgt,,}-1.jpg" ]; then
+                elif [ -f "$DM_tls/images/${trgt,,}-1.jpg" ]; then
                     ipath="$DM_tls/images/${trgt,,}-1.jpg"; export imag=1
                 fi
-                if [ -e "${ipath}" ]; then
+                if [ -f "${ipath}" ]; then
                     cp -f "${ipath}" "$DT_u/files/images/${trgt,,}-${imag}.jpg"
                 fi
+                export imgr="${trgt,}"
              else
                 export imag=0
+                imgr=""
             fi
             eval item="$(sed -n 1p "$DS/default/vars")"
             [ -n "${trgt}" ] && echo -en "${item}" >> "${idmnd}"
+            unset imag imgr
         done < <(sed 's|"|\\"|g' < "${DC_tlt}/data")
         export nimg=$(cd "$DT_u/files/images"/; ls *.jpg |wc -l)
         

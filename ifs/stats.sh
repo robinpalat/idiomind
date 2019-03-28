@@ -357,7 +357,7 @@ function stats() {
         --title="$(gettext "Statistics")" \
         --name=Idiomind --class=Idiomind \
         --browser --encoding=UTF-8 \
-        --orient=vert --window-icon=idiomind --center --on-top \
+        --orient=vert --window-icon=idiomind --center \
         --width=750 --height=470 --borders=0 \
         --no-buttons
     
