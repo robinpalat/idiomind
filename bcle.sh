@@ -14,15 +14,17 @@ export tpc DC_tlt cfg f ritem stnrd numer
 export word_rep sentence_rep pause_osd
 export -f include msg tpc_db
 sleep 1
-
 t=0; f=0
-[ $(tpc_db 1 config words) = 'TRUE' ] && t=1
-[ $(tpc_db 1 config sntcs) = 'TRUE' ] && t=1
-[ $(tpc_db 1 config marks) = 'TRUE' ] && t=1
-[ $(tpc_db 1 config learn) = 'TRUE' ] && t=1
-[ $(tpc_db 1 config diffi) = 'TRUE' ] && t=1
 
 [ -f "${DC_tlt}/stts" ] && export stts=$(sed -n 1p "${DC_tlt}/stts")
+if [[ ${stts} -lt 11 ]]; then
+    [ $(tpc_db 1 config words) = 'TRUE' ] && t=1
+    [ $(tpc_db 1 config sntcs) = 'TRUE' ] && t=1
+    [ $(tpc_db 1 config marks) = 'TRUE' ] && t=1
+    [ $(tpc_db 1 config learn) = 'TRUE' ] && t=1
+    [ $(tpc_db 1 config diffi) = 'TRUE' ] && t=1
+fi
+
 if ((stts>=1 && stts<=10)); then 
     if [ ${t} = 0 ]; then f=1; fi
 fi

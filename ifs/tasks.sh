@@ -49,14 +49,15 @@ elif [ "${act}: " = "$l8" ]; then
 
 else
     while read -r addon; do
-        if [ -f "$DC_a/$addon.$tlng" ]; then
-            if grep -o "$arg" "$DC_a/$addon.$tlng"; then
-                "$DS/addons/$addon/cnfg.sh" tasks "$tpt" &
-                modmenu "$arg"
+        if [ -f "$DC_a/$addon${tlng}_tsk" ]; then
+            f="$(grep -oP '(?<=fixed{).*(?=})' \
+            <<< "$DC_a/Podcasts_tasks.cfg")" 
+            if grep -o "$arg" "$DC_a/$addon${tlng}_tsk"; then
+                "$DS/addons/$addon/cnfg.sh" tasks "$1" &
+                [ $f != TRUE ] && modmenu "$arg"
                 break
             fi
         fi
     done < "$DS_a/menu_list"
 fi
-
 exit 0

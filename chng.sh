@@ -2,11 +2,13 @@
 # -*- ENCODING: UTF-8 -*-
 
 if [[ ${1} = 0 ]]; then
-    W=$(tpc_db 1 config words)
-    S=$(tpc_db 1 config sntcs)
-    M=$(tpc_db 1 config marks)
-    L=$(tpc_db 1 config learn)
-    D=$(tpc_db 1 config diffi)
+    if [[ ${stts} -lt 11 ]]; then
+        W=$(tpc_db 1 config words)
+        S=$(tpc_db 1 config sntcs)
+        M=$(tpc_db 1 config marks)
+        L=$(tpc_db 1 config learn)
+        D=$(tpc_db 1 config diffi)
+    fi
     _stop=0
 
     _play() {
