@@ -10,10 +10,13 @@ function check_format_1() {
     file="${1}"
     invalid() {
         echo "Error! Value: ${val}"
-        msg "$(gettext "File is corrupted.") ${1}\n" error & exit 1
+        msg "$(gettext "File is corrupted")\n[${1}]\n" error & exit 1
     }
     if [ ! -f "${file}" ]; then invalid
-    elif [ $(wc -l < "${file}") != 3 ]; then invalid "$(wc -l < "${file}") Lines!"
+    elif ! python -m json.tool < "${file}" >> /dev/null; then
+        invalid "Format"
+    elif [ $(wc -l < "${file}") != 3 ]; then 
+        invalid "$(wc -l < "${file}") Lines!"
     elif [ $(sed -n 1p "$file" |tr -d '"{' |cut -d':' -f1) != 'items' ]; then
         invalid
     fi

@@ -175,11 +175,10 @@ function upld() {
         --always-print-result \
         --window-icon=idiomind  \
         --align=left --center \
-        --width=350 --height=240 --borders=10 \
+        --width=420 --height=240 --borders=10 \
         --text="$info" \
         --field="$info2:lbl" " " \
         --field="$(gettext "Download"):btn" "${cmd_dwl}" \
-        --field="\t\t:lbl" " " \
         --field="\t\t:lbl" " " \
         --button="$(gettext "Export")":2 \
         --button="$(gettext "Close")":4
@@ -192,7 +191,7 @@ function upld() {
         --name=Idiomind --class=Idiomind \
         --window-icon=idiomind \
         --align=left --center \
-        --width=350 --height=240 --borders=10 \
+        --width=420 --height=240 --borders=10 \
         --field="<b>$(gettext "Downloaded files")</b>:lbl" " " \
         --field="\n$(gettext "Size:") ${fsize}":lbl " " \
         --field="\t\t\t\t\t\t\t:lbl" " " \
