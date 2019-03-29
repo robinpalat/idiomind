@@ -582,7 +582,7 @@ function dlg_form_0() {
 }
 
 function dlg_form_1() {
-    cmd_words="$DS/add.sh list_words_dclik $DT_r "\"${txt}\"""
+    cmd_words="$DS/add.sh list_words_dclik $DT_r "\"${trgt}\"""
     yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
@@ -591,7 +591,7 @@ function dlg_form_1() {
     --buttons-layout=spread --align=right --image="${img}" \
     --window-icon=idiomind \
     --width=470 --borders=5 \
-    --field="" "$txt" \
+    --field="" "$trgt" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
     --button=!'/usr/share/idiomind/images/add_clipboard.png'!"$(gettext "Clipboard watcher")":5 \
     --button=!'/usr/share/idiomind/images/add_image.png'!"$(gettext "Screen clipping")":3 \
@@ -601,7 +601,7 @@ function dlg_form_1() {
 }
 
 function dlg_form_2() {
-    cmd_words="$DS/add.sh list_words_dclik $DT_r "\"${txt}\"""
+    cmd_words="$DS/add.sh list_words_dclik $DT_r "\"${trgt}\"""
     yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
@@ -610,7 +610,7 @@ function dlg_form_2() {
     --buttons-layout=spread --align=right --image="${img}" \
     --window-icon=idiomind \
     --width=470 --borders=5 \
-    --field="" "$txt" \
+    --field="" "$trgt" \
     --field="" "$srce" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
     --button=!'/usr/share/idiomind/images/add_clipboard.png'!"$(gettext "Clipboard watcher")":5 \

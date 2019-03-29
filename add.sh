@@ -147,7 +147,7 @@ function new_sentence() {
     export cdid="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
     mksure "${trgt}" "${srce}" "${grmr}" "${wrds}"
 
-    if [ $? = 0 ]; then
+    if [ $? = 1 ]; then
         echo -e "${info3}:\n${trgt}\n\n" >> "${DC_tlt}/note.inf"
         cleanups "$DT_r"; exit 1
     else
@@ -570,9 +570,6 @@ function process() {
         
         if [ -n "$(< "$DT_r/select_lines")" -o -n "$(< "$DT_r/wrds")" ]; then
             number_items=$((cnta+cntb))
-            ( sleep 1; notify-send -i idiomind \
-            "$number_items $(gettext "new notes")" \
-            "$(gettext "Please wait until the current process is finished.")" )
         else
             [ "$conten" != '__words__' ] && cleanups "$DT_r"
             cleanups "$DT/n_s_pr" "$slt" & exit 1
@@ -582,7 +579,7 @@ function process() {
         lns="$(cat "$DT_r/select_lines" "$DT_r/wrds" |sed '/^$/d' |wc -l)"
         n=1
         while read -r trgt; do
-            sleep 2 &&
+            sleep 1 &&
             export trgt="$(clean_2 "${trgt}")"
             if [[ ${ttrgt} = TRUE ]]; then
                 trgt="$(translate "${trgt}" auto $lgt)"

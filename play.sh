@@ -35,7 +35,7 @@ play_sentence() {
 } >/dev/null 2>&1
 
 play_file() {
-    if [ -e "${2}" ]; then
+    if [ -f "${2}" ]; then
         if [[ ${mime} = 0 ]]; then
             exit 1
         else
