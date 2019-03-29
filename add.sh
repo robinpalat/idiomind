@@ -706,7 +706,7 @@ function process() {
             "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
         fi
         
-        [ -n "$log" ] && echo "${info3}:\n$log\n\n" >> "${DC_tlt}/note.inf"
+        [ -n "$log" ] && echo -e "${info3}:\n$log\n\n" >> "${DC_tlt}/note.inf"
     fi
     [ ! -f "$DT_r/__opts__" ] && cleanups "$DT_r"
     cleanups "$DT/n_s_pr" "$slt" & return 0

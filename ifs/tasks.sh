@@ -4,13 +4,13 @@ arg="$1"
 tpt="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg#*:})"
 act="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg%%:*})"
 
-l1="$(gettext "To Review [New]:") "
-l2="$(gettext "To Review [New] [Overdue]:") "
+l1="$(gettext "To Review [new]:") "
+l2="$(gettext "To Review [new] [overdue]:") "
 l3="$(gettext "To Review:") "
-l4="$(gettext "To Review [Overdue]:") "
+l4="$(gettext "To Review [overdue]:") "
 l5="$(gettext "To Practice:") "
 l6="$(gettext "Back to Practice:") "
-l7="$(gettext "Finalize Review [Overdue]:") "
+l7="$(gettext "Finalize Review [overdue]:") "
 l8="$(gettext "Resume Practice:") "
 
 chngtpt(){
