@@ -193,7 +193,7 @@ function dlg() {
             fi
         done < <(ls "$disables"/)
     }
-
+    
     if [ -f "$DC_s/dics_first_run" ]; then
         "$DS_a/Dics/test.sh" 1
         plus="$(gettext "To start is okay select all, later, according to your preferences you can disable some.")\n"
