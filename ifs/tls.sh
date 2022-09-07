@@ -1074,8 +1074,21 @@ itray() {
     export lbl8="$(gettext "Quit")"
     export dirt="$DT/"
     export lgt=${tlangs[$tlng]}
-    python <<PY
-import time, os, os.path, gtk, gio, signal, appindicator
+    python3 <<PY
+import gi
+gi.require_version('Gtk', '3.0')
+gi.require_version('AppIndicator3', '0.1')
+gi.require_version('AyatanaAppIndicator3', '0.1')
+import time, os, os.path, signal, sys
+try:
+    from gi.repository import AyatanaAppIndicator3 as AppIndicator
+except ImportError:
+    try:
+        from gi.repository import AppIndicator3 as AppIndicator
+    except ImportError:
+        from gi.repository import AppIndicator
+from gi.repository import Gtk, Gio
+
 lgt = os.environ['lgt']
 HOME = os.getenv('HOME')
 add = os.environ['lbl1']
@@ -1093,8 +1106,8 @@ f_pid.write(str(my_pid))
 f_pid.close()
 class IdiomindIndicator:
     def __init__(self):
-        self.indicator = appindicator.Indicator(icon, icon, appindicator.CATEGORY_APPLICATION_STATUS)
-        self.indicator.set_status(appindicator.STATUS_ACTIVE)
+        self.indicator = AppIndicator.Indicator.new(icon, "idiomind", AppIndicator.IndicatorCategory.OTHER)
+        self.indicator.set_status(AppIndicator.IndicatorStatus.ACTIVE)
         self.tpc = os.getenv('HOME') + '/.config/idiomind/tpc'
         self.playlck = os.environ['dirt'] + 'playlck'
         self.tasks = os.environ['dirt'] + 'tasks'
@@ -1116,13 +1129,13 @@ class IdiomindIndicator:
             self.stts = 1
         self.change_topic()
     def create_menu_label(self, label):
-        item = gtk.ImageMenuItem()
+        item = Gtk.ImageMenuItem()
         item.set_label(label)
         return item
     def create_menu_icon(self, label, icon_name):
-        image = gtk.Image()
+        image = Gtk.Image()
         image.set_from_icon_name(icon_name, 24)
-        item = gtk.ImageMenuItem()
+        item = Gtk.ImageMenuItem()
         item.set_label(label)
         item.set_image(image)
         item.set_always_show_image(True)
@@ -1137,12 +1150,12 @@ class IdiomindIndicator:
         return menu_items
     def change_topic(self):
         menu_items = self.make_menu_items()
-        popup_menu = gtk.Menu()
-        for label, callback in menu_items:
-            if not label and not callback:
-                item = gtk.SeparatorMenuItem()
+        popup_menu = Gtk.Menu()
+        for Label, callback in menu_items:
+            if not Label and not callback:
+                item = Gtk.SeparatorMenuItem()
             else:
-                item = gtk.ImageMenuItem(label)
+                item = Gtk.ImageMenuItem(label=Label)
                 item.connect('activate', callback)
             popup_menu.append(item)
         try:
@@ -1156,22 +1169,22 @@ class IdiomindIndicator:
             item = self.create_menu_icon(label, "go-home")
             item.connect("activate", self.on_Home)
             popup_menu.append(item)
-        item = gtk.SeparatorMenuItem()
+        item = Gtk.SeparatorMenuItem()
         popup_menu.append(item)
 
         if os.path.exists(self.tasks):
-            listMenu=gtk.Menu()
-            listItems=gtk.MenuItem(tasks)
+            listMenu=Gtk.Menu()
+            listItems=Gtk.MenuItem(tasks)
             listItems.set_submenu(listMenu)
             try:
                 m = open(self.tasks).readlines()
             except:
                 m = []
             for bm in m:
-                label = bm.rstrip('\n')
-                if not label:
-                    label = ""
-                item = self.create_menu_label(label)
+                Label = bm.rstrip('\n')
+                if not Label:
+                    Label = ""
+                item = self.create_menu_label(label=Label)
                 item.connect("activate", self.on_Task)
                 listMenu.append(item)
             
@@ -1182,7 +1195,7 @@ class IdiomindIndicator:
         item = self.create_menu_label(topics)
         item.connect("activate", self.on_Topics_click)
         popup_menu.append(item)
-        item = gtk.SeparatorMenuItem()
+        item = Gtk.SeparatorMenuItem()
         popup_menu.append(item)
         item = self.create_menu_label(settings)
         item.connect("activate", self.on_settings_click)
@@ -1215,45 +1228,46 @@ class IdiomindIndicator:
         os.system("/usr/share/idiomind/cnfg.sh &")
     def on_Quit_click(self, widget):
         os.system("/usr/share/idiomind/stop.sh 1 &")
-        gtk.main_quit()
+        Gtk.main_quit()
     def on_Topic_Changed(self, filemonitor, file, other_file, event_type):
-        if event_type == gio.FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
+        if event_type == Gio.FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
             self._on_menu_update()
     def on_Play_Changed(self, filemonitor, file2, other_file, event_type):
-        if event_type == gio.FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
+        if event_type == Gio.FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
             self._on_menu_update()
     def on_Tasks_Changed(self, filemonitor, file3, other_file, event_type):
-        if event_type == gio.FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
+        if event_type == Gio.FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
             self._on_menu_update()
     
 if __name__ == "__main__":
-    signal.signal(signal.SIGINT, lambda signal, frame: gtk.main_quit())
+    signal.signal(signal.SIGINT, lambda signal, frame: Gtk.main_quit())
     i = IdiomindIndicator()
-    file = gio.File(i.tpc)
-    monitor = file.monitor_file()
-    monitor.connect("changed", i.on_Topic_Changed)
-    file2 = gio.File(i.playlck)
-    monitor2 = file2.monitor_file()
-    monitor2.connect("changed", i.on_Play_Changed)
-    file3 = gio.File(i.tasks)
-    monitor3 = file3.monitor_file()
-    monitor3.connect("changed", i.on_Tasks_Changed)
-    gtk.main()
+    #file = gio.File(i.tpc)
+    #monitor = file.monitor_file()
+    #monitor.connect("changed", i.on_Topic_Changed)
+    #file2 = gio.File(i.playlck)
+    #monitor2 = file2.monitor_file()
+    #monitor2.connect("changed", i.on_Play_Changed)
+    #file3 = gio.File(i.tasks)
+    #monitor3 = file3.monitor_file()
+    #monitor3.connect("changed", i.on_Tasks_Changed)
+    Gtk.main()
 PY
 
 }
 
 about() {
     export _descrip="$(gettext "Language learning tool")"
-    python << ABOUT
-import gtk, os
+    python3 << ABOUT
+from gi.repository import Gtk as gtk
+import os
 app_logo = os.path.join('/usr/share/idiomind/images/logo.png')
 app_icon = os.path.join('/usr/share/icons/hicolor/22x22/apps/idiomind.png')
 app_name = 'Idiomind'
 app_version = os.environ['_version']
 app_website = os.environ['_website']
 app_comments = os.environ['_descrip']
-website_label = os.environ['_website']
+website_label = "hhhhh"
 app_copyright = 'Copyright (c) 2015-2019 Robin Palatnik'
 app_license = (('This program is free software: you can redistribute it and/or modify\n'+
 'it under the terms of the GNU General Public License as published by\n'+
@@ -1267,12 +1281,12 @@ app_license = (('This program is free software: you can redistribute it and/or m
 '\n'+
 'You should have received a copy of the GNU General Public License\n'+
 'along with this program.  If not, see http://www.gnu.org/licenses'))
-app_authors = ['Robin Palatnik <robinpalat@users.sourceforge.net>\nMade with YAD https://sourceforge.net/projects/yad-dialog']
+app_authors = ['Robin Palatnik <robinpalat@users.sourceforge.net> Made with YAD https://sourceforge.net/projects/yad-dialog']
 app_artists = ['Robin Palatnik <robinpalat@users.sourceforge.net>']
 class AboutDialog:
     def __init__(self):
         about = gtk.AboutDialog()
-        about.set_logo(gtk.gdk.pixbuf_new_from_file(app_logo))
+        about.set_logo_icon_name("idiomind")
         about.set_icon_from_file(app_icon)
         about.set_wmclass('Idiomind', 'Idiomind')
         about.set_name(app_name)
@@ -1284,7 +1298,6 @@ class AboutDialog:
         about.set_authors(app_authors)
         about.set_artists(app_artists)
         about.set_website(app_website)
-        about.set_website_label(website_label)
         about.run()
         about.destroy()
 if __name__ == "__main__":
