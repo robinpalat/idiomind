@@ -1,6 +1,8 @@
 #!/bin/bash
 
+
 TLANGS="zh-cn, en, ja, pt, es, ru, it, de, fr"
+
 INFO="Due to limitations of google translate, this script does not
 guarantee that would work properly at all times
 
@@ -46,10 +48,10 @@ if grep -o -E 'ja|zh-cn|ru' <<< "${3}" >/dev/null 2>&1 ; then
     fi
 elif grep -o -E 'de|en|es|fr|it|pt|vi' <<< "${3}" >/dev/null 2>&1 ; then
     if [[ "$4" = singleline ]]; then
-        echo -e "${gtra}" |sed -e 's/\",\".*//g' |sed -e 's/.*\[\[\[\"//g'
+        echo -e "${gtra}" |sed -e 's/\",\".*//g' |sed -e 's/.*\[\[\[\"//g' | awk -F'null' '{print $1}'
     else
         while read t; do
-            echo -n "$(grep -oP '(?<=trgt=\").*(?=\",\")' <<< "${t}")"
+            echo -n "$(grep -oP '(?<=trgt=\").*(?=\",\")' <<< "${t}")"  | awk -F'null' '{print $1}'
         done < <(echo "${gtra}" |sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g')
     fi
 fi

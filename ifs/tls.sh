@@ -1079,7 +1079,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('AppIndicator3', '0.1')
 gi.require_version('AyatanaAppIndicator3', '0.1')
-import time, os, os.path, signal, sys
+import time, os, os.path, sys
 try:
     from gi.repository import AyatanaAppIndicator3 as AppIndicator
 except ImportError:
@@ -1108,9 +1108,10 @@ class IdiomindIndicator:
     def __init__(self):
         self.indicator = AppIndicator.Indicator.new(icon, "idiomind", AppIndicator.IndicatorCategory.OTHER)
         self.indicator.set_status(AppIndicator.IndicatorStatus.ACTIVE)
+        self.DIRT = os.environ['dirt']
         self.tpc = os.getenv('HOME') + '/.config/idiomind/tpc'
-        self.playlck = os.environ['dirt'] + 'playlck'
-        self.tasks = os.environ['dirt'] + 'tasks'
+        self.playlck = self.DIRT + 'playlck'
+        self.tasks = self.DIRT + 'tasks'
         self.menu_items = []
         self.stts = 1
         self.change_topic()
@@ -1171,7 +1172,6 @@ class IdiomindIndicator:
             popup_menu.append(item)
         item = Gtk.SeparatorMenuItem()
         popup_menu.append(item)
-
         if os.path.exists(self.tasks):
             listMenu=Gtk.Menu()
             listItems=Gtk.MenuItem(tasks)
@@ -1187,11 +1187,9 @@ class IdiomindIndicator:
                 item = self.create_menu_label(label=Label)
                 item.connect("activate", self.on_Task)
                 listMenu.append(item)
-            
             popup_menu.append(listItems)
             item.show()
             listItems.show()
-        
         item = self.create_menu_label(topics)
         item.connect("activate", self.on_Topics_click)
         popup_menu.append(item)
@@ -1229,31 +1227,16 @@ class IdiomindIndicator:
     def on_Quit_click(self, widget):
         os.system("/usr/share/idiomind/stop.sh 1 &")
         Gtk.main_quit()
-    def on_Topic_Changed(self, filemonitor, file, other_file, event_type):
-        if event_type == Gio.FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
+    def callback(self, m, f, o, event):
+        if event == Gio.FileMonitorEvent.CHANGES_DONE_HINT:
             self._on_menu_update()
-    def on_Play_Changed(self, filemonitor, file2, other_file, event_type):
-        if event_type == Gio.FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
-            self._on_menu_update()
-    def on_Tasks_Changed(self, filemonitor, file3, other_file, event_type):
-        if event_type == Gio.FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
-            self._on_menu_update()
-    
 if __name__ == "__main__":
-    signal.signal(signal.SIGINT, lambda signal, frame: Gtk.main_quit())
     i = IdiomindIndicator()
-    #file = gio.File(i.tpc)
-    #monitor = file.monitor_file()
-    #monitor.connect("changed", i.on_Topic_Changed)
-    #file2 = gio.File(i.playlck)
-    #monitor2 = file2.monitor_file()
-    #monitor2.connect("changed", i.on_Play_Changed)
-    #file3 = gio.File(i.tasks)
-    #monitor3 = file3.monitor_file()
-    #monitor3.connect("changed", i.on_Tasks_Changed)
+    gdir = Gio.File.new_for_path(i.DIRT)
+    monitor = gdir.monitor_directory(Gio.FileMonitorFlags.NONE, None)
+    monitor.connect("changed", i.callback)
     Gtk.main()
 PY
-
 }
 
 about() {

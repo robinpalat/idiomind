@@ -16,9 +16,7 @@ function dwld() {
     }
     (sleep 0.5 && notify-send -i 'dialog-information' "$(gettext "Downloading")" \
     "$(gettext "When the download completes, the files will be added to topic directory...")" -t 8000) &
-    
     kill -9 $(pgrep -f "yad --form --columns=2")
-    
     mkdir "$DT/download"
     ilnk=$(tpc_db 1 id ilnk)
     tlng=$(tpc_db 1 id tlng)
@@ -75,6 +73,7 @@ function dwld() {
         err & exit 1
     fi
 }
+
 
 function upld() {
     if [ -d "$DT/upload" ]; then
@@ -491,6 +490,7 @@ _export() {
         "$(tail -n 1 <<< "$dlg")" "${tpc}" & return 0
     fi
 } >/dev/null 2>&1
+
 
 case "$1" in
     vsd)

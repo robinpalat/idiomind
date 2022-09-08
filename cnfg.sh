@@ -133,7 +133,7 @@ config_dlg() {
     yad --notebook --key=$KEY --title="$(gettext "Settings")" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind \
-    --tab-pos=left --tab-borders=5 --sticky --center \
+    --tab-pos=right --tab-borders=5 --sticky --center \
     --tab="$(gettext "Preferences")" \
     --tab="$(gettext "More")" \
     --tab="$(gettext "Help")" \
