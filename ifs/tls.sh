@@ -1079,6 +1079,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('AppIndicator3', '0.1')
 gi.require_version('AyatanaAppIndicator3', '0.1')
+gi.require_version('Notify', '0.7')
 import time, os, os.path, sys
 try:
     from gi.repository import AyatanaAppIndicator3 as AppIndicator
@@ -1087,9 +1088,7 @@ except ImportError:
         from gi.repository import AppIndicator3 as AppIndicator
     except ImportError:
         from gi.repository import AppIndicator
-from gi.repository import Gtk, Gio
-
-lgt = os.environ['lgt']
+from gi.repository import Gtk, Gio, Notify
 HOME = os.getenv('HOME')
 add = os.environ['lbl1']
 play = os.environ['lbl2']
@@ -1099,19 +1098,20 @@ topics = os.environ['lbl5']
 tasks = os.environ['lbl9']
 settings = os.environ['lbl10']
 quit = os.environ['lbl8']
-icon = '/usr/share/idiomind/images/flags/' + lgt + '.png'
 my_pid = os.getpid()
 f_pid = open(os.environ['dirt']+'tray.pid', 'w')
 f_pid.write(str(my_pid))
 f_pid.close()
 class IdiomindIndicator:
     def __init__(self):
-        self.indicator = AppIndicator.Indicator.new(icon, "idiomind", AppIndicator.IndicatorCategory.OTHER)
+        self.indicator = AppIndicator.Indicator.new("idiomind", "idiomind", AppIndicator.IndicatorCategory.OTHER)
         self.indicator.set_status(AppIndicator.IndicatorStatus.ACTIVE)
         self.DIRT = os.environ['dirt']
         self.tpc = os.getenv('HOME') + '/.config/idiomind/tpc'
         self.playlck = self.DIRT + 'playlck'
         self.tasks = self.DIRT + 'tasks'
+        Notify.init("Idiomind")
+        self.indicator.set_title("Idiomind")
         self.menu_items = []
         self.stts = 1
         self.change_topic()
@@ -1174,7 +1174,7 @@ class IdiomindIndicator:
         popup_menu.append(item)
         if os.path.exists(self.tasks):
             listMenu=Gtk.Menu()
-            listItems=Gtk.MenuItem(tasks)
+            listItems=Gtk.MenuItem(label=tasks)
             listItems.set_submenu(listMenu)
             try:
                 m = open(self.tasks).readlines()
