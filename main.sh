@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-#  Copyright 2015-2019 Robin Palat
+#  Copyright 2015-2022 Robin Palatnik
 #  Email patapatass@hotmail.com
 #  
 #  This program is free software; you can redistribute it and/or modify

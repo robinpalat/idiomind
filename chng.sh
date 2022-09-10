@@ -112,7 +112,7 @@ if [[ ${1} = 0 ]]; then
 
 elif [[ ${1} != 0 ]]; then
     source /usr/share/idiomind/default/c.conf
-    sz=(560 560); [[ ${swind} = TRUE ]] && sz=(450 420)
+    sz=(510 560); [[ ${swind} = TRUE ]] && sz=(440 420)
     
     if [ -z "${tlng}" -o -z "${slng}" ]; then
         source "$DS/ifs/cmns.sh"

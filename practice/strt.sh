@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/default/c.conf
-sz=(500 470); [[ ${swind} = TRUE ]] && sz=(420 410)
+sz=(470 470); [[ ${swind} = TRUE ]] && sz=(410 410)
 source "$DS/ifs/cmns.sh"
 export -f tpc_db
 dw=$(date +%W |sed 's/^0*//')
@@ -167,9 +167,9 @@ function practice_a() {
         [ ${trgt_f_c} -lt 12 ] && trgt_f_c=12
         [ ${trgt_f_a} -lt 12 ] && trgt_f_a=12
         [ ${srce_f_a} -lt 12 ] && srce_f_a=12
-        question="\n<span font_desc='Comic Sans MS Bold ${trgt_f_c}'>${trgt}</span>"
-        answer1="\n<span font_desc='Comic Sans MS ${trgt_f_a}'>${trgt}</span>"
-        answer2="<span font_desc='Comic Sans MS Bold ${srce_f_a}'><i>${srce}</i></span>"
+        question="\n<span font_desc='Arial Black ${trgt_f_c}'>${trgt}</span>"
+        answer1="\n<span font_desc='Arial ${trgt_f_a}'>${trgt}</span>"
+        answer2="<span font_desc='Arial Black ${srce_f_a}'><i>${srce}</i></span>"
     }
 
     question() {
@@ -250,20 +250,20 @@ function practice_b(){
             ras=$(sort -Ru b.srces |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt}));  [ ${srce_s} -lt 12 ] && srce_s=12
-            question="\n<span font_desc='Comic Sans MS ${srce_s}'><b>${trgt}</b></span>\n\n"
+            question="\n<span font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
         else
             srce="${item}"
             trgt=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
             ras=$(sort -Ru <<< "${cfg3}" |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt})); [ ${srce_s} -lt 12 ] && srce_s=12
-            question="\n<span font_desc='Comic Sans MS ${srce_s}'><b>${trgt}</b></span>\n\n"
+            question="\n<span font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
         fi
     }
 
     ofonts() {
         while read -r name; do
-        echo "<span font_desc='Free Sans 13'> $name </span>"
+        echo "<span font_desc='Arial 13'> $name </span>"
         done <<< "${tmp}"
     }
 
@@ -902,7 +902,7 @@ function strt() {
     
     if [[ "${1}" = 1 ]]; then
         NUMBER="$(wc -l < ${pr}.0)"
-        declare info${icon}="<span font_desc='Arial Bold 12'>$(gettext "Test completed") </span> — "
+        declare info${icon}="<span font_desc='Arial Bold 12'>  —  $(gettext "Test completed") </span>"
         [[ "${pr}" = e ]] && \
         info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed a test of") $NUMBER $(gettext "sentences")</span>\n" \
         || info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed a test of") $NUMBER $(gettext "words")</span>\n"
@@ -922,11 +922,11 @@ function strt() {
     --width=${sz[0]} --height=${sz[1]} --borders=10 \
     --ellipsize=end --wrap-width=200 --ellipsize-cols=1 \
     --column="Action" --column="Pick":IMG --column="Label" \
-    "a" "$DS/images/practice/$(< ./.1).png" "$info1$(gettext "Flashcards") $plusa"  \
-    "b" "$DS/images/practice/$(< ./.2).png" "$info2$(gettext "Multiple-choice") $plusb" \
-    "c" "$DS/images/practice/$(< ./.3).png" "$info3$(gettext "Recognize Pronunciation") $plusc" \
-    "d" "$DS/images/practice/$(< ./.4).png" "$info4$(gettext "Images") $plusd" \
-    "e" "$DS/images/practice/$(< ./.5).png" "$info5$(gettext "Listen and Writing Sentences")" \
+    "a" "$DS/images/practice/$(< ./.1).png" "$(gettext "Flashcards")$info1 $plusa"  \
+    "b" "$DS/images/practice/$(< ./.2).png" "$(gettext "Multiple-choice")$info2 $plusb" \
+    "c" "$DS/images/practice/$(< ./.3).png" "$(gettext "Recognize Pronunciation")$info3 $plusc" \
+    "d" "$DS/images/practice/$(< ./.4).png" "$(gettext "Images")$info4 $plusd" \
+    "e" "$DS/images/practice/$(< ./.5).png" "$(gettext "Listen and Writing Sentences")$info5" \
     --button="$(gettext "Restart")":3 \
     --button="$(gettext "Start")":0)"
     ret=$?

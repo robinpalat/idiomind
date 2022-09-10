@@ -1251,7 +1251,7 @@ app_version = os.environ['_version']
 app_website = os.environ['_website']
 app_comments = os.environ['_descrip']
 website_label = "hhhhh"
-app_copyright = 'Copyright (c) 2015-2019 Robin Palatnik'
+app_copyright = 'Copyright (c) 2015-2022 Robin Palatnik'
 app_license = (('This program is free software: you can redistribute it and/or modify\n'+
 'it under the terms of the GNU General Public License as published by\n'+
 'the Free Software Foundation, either version 3 of the License, or\n'+
@@ -1264,8 +1264,7 @@ app_license = (('This program is free software: you can redistribute it and/or m
 '\n'+
 'You should have received a copy of the GNU General Public License\n'+
 'along with this program.  If not, see http://www.gnu.org/licenses'))
-app_authors = ['Robin Palatnik <robinpalat@users.sourceforge.net> Made with YAD https://sourceforge.net/projects/yad-dialog']
-app_artists = ['Robin Palatnik <robinpalat@users.sourceforge.net>']
+app_authors = ['Robin Palatnik <robinpalat@users.sourceforge.net>']
 class AboutDialog:
     def __init__(self):
         about = gtk.AboutDialog()
@@ -1279,7 +1278,6 @@ class AboutDialog:
         about.set_copyright(app_copyright)
         about.set_license(app_license)
         about.set_authors(app_authors)
-        about.set_artists(app_artists)
         about.set_website(app_website)
         about.run()
         about.destroy()
