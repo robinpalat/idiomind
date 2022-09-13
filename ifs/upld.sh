@@ -423,7 +423,7 @@ function upld() {
         tar czpvf - ./"files" |split -d -b 2500k - ./"${ilnk}.tar.gz"
         rm -fr ./"files"
 
-        python << END
+        python3 << END
 import os, sys, requests, time, xmlrpclib
 reload(sys)
 sys.setdefaultencoding("utf-8")

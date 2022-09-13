@@ -41,7 +41,7 @@ lstp="${items}"
 export dir topics lstp shrdb
 cleanups "$DM_tl/.share/index"
 
-python <<PY
+python3 <<PY
 import os, re, subprocess, sqlite3, sys
 from os import path
 from datetime import datetime, timedelta

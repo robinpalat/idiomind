@@ -127,7 +127,7 @@ function sentence_p() {
     fi
     # sed 's/\s+/\n/g'
     echo "${vrbl}" |sed 's/ ./\U&/g' \
-    |python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
+    |python3 -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
     |sed 's/ /\n/g' |grep -v '^.$' |grep -v '^..$' \
     |tr -d '*)(,;"“”:' |tr -s '_&|{}[]' ' ' \
     |sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \

@@ -771,7 +771,7 @@ mark_to_learn_topic() {
     tpc_db 9 config repass ${steps}
     export data="${DC_tlt}/data" tpcdb
     
-python <<PY
+python3 <<PY
 import os, re, locale, sqlite3, sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -862,7 +862,7 @@ mark_as_learned_topic() {
 
     export data="${DC_tlt}/data" tpcdb
 
-python <<PY
+python3 <<PY
 import os, re, locale, sqlite3, sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -941,7 +941,7 @@ mark_as_learned_topic_ok() {
 
     export data="${DC_tlt}/data" tpcdb
     
-python <<PY
+python3 <<PY
 import os, re, locale, sqlite3, sys
 reload(sys)
 sys.setdefaultencoding("utf-8")

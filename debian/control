@@ -10,7 +10,7 @@ Homepage: http://idiomind.sourceforge.net
 Package: idiomind
 Version: 0.3.0
 Architecture: all
-Depends: ${misc:Depends}, bash (>=4.1), sox, mplayer, imagemagick, wkhtmltopdf, curl, xdg-utils, xclip, python, python-gtk2, python-requests, python-appindicator, espeak, sqlite3, xsltproc, libsox-fmt-mp3, gnome-screenshot, libnotify-bin
+Depends: ${misc:Depends}, bash (>=4.1), sox, mplayer, imagemagick, wkhtmltopdf, curl, xdg-utils, xclip, python3, espeak, sqlite3, xsltproc, libsox-fmt-mp3, gnome-screenshot, libnotify-bin
 Recommends: yad (>=0.39)
 Suggests: tesseract-ocr
 Description: Language learning tool

@@ -12,4 +12,4 @@ GTK+-based desktop environment, bash (>=4.1), yad (>=0.37), mplayer, imagemagick
       
       sudo apt-get install idiomind
 
-If you want to help translate Idiomind for your language, please go to <a href='https://poeditor.com/join/project/oGBLVJULjK'>Poeditor's Idiomind page</a>.
+

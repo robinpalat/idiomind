@@ -245,7 +245,7 @@ $(gettext "It is recommended to change your language preferences before installi
             sed -i 's/^\s*./trgt{/g' "${DC_tlt}/data"
             sed -i '/^$/d' "${DC_tlt}/data"
             export data="${DC_tlt}/data"
-python <<PY
+python3 <<PY
 import os, re, locale, sqlite3, sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -361,7 +361,7 @@ function topic() {
             if grep TRUE "${cnf1}" >/dev/null 2>&1; then
                 f_lock 1 "$DT/tpc_lk"
                 export cnf1 tpcdb
-python <<PY
+python3 <<PY
 import os, re, locale, sqlite3, sys
 reload(sys)
 sys.setdefaultencoding("utf-8")

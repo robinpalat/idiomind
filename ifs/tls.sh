@@ -13,7 +13,7 @@ function check_format_1() {
         msg "$(gettext "File is corrupted")\n[${1}]\n" error & exit 1
     }
     if [ ! -f "${file}" ]; then invalid
-    elif ! python -m json.tool < "${file}" >> /dev/null; then
+    elif ! python3 -m json.tool < "${file}" >> /dev/null; then
         invalid "Format"
     elif [ $(wc -l < "${file}") != 3 ]; then 
         invalid "$(wc -l < "${file}") Lines!"
@@ -192,7 +192,7 @@ check_index() {
         datafile="${DC_tlt}/data"; datatmp="$DT/data"
         export s tpcdb datafile datatmp
 
-        python <<PY
+        python3 <<PY
 import os, re, sqlite3, locale, sys
 enc = locale.getpreferredencoding()
 reload(sys)
@@ -533,27 +533,40 @@ _definition() {
         f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"
     fi
     eval _url="$(< "$DS_a/Dics/dicts/$(basename "$f")")"
-    yad --html --title="$(gettext "Definition")" \
-    --name=Idiomind --class=Idiomind \
-    --browser --uri="${_url}" \
-    --window-icon=idiomind \
-    --fixed --on-top --mouse \
-    --width=700 --height=500 --borders=5 \
-    --button="$(gettext "Close")":1 &
+    
+    zenity --text-info --title="$(gettext "Definition")" \
+	--width=700 --height=500 \
+	--html --url="${_url}" &
+	
+    #yad --html --title="$(gettext "Definition")" \
+    #--name=Idiomind --class=Idiomind \
+    #--browser --uri="${_url}" \
+    #--window-icon=idiomind \
+    #--fixed --on-top --mouse \
+    #--width=700 --height=500 --borders=5 \
+    #--button="$(gettext "Close")":1 &
+    
 } >/dev/null 2>&1
 
 _translation() {
     source "$DS/ifs/cmns.sh"
     source /usr/share/idiomind/default/c.conf
-    local link="https://translate.google.com/?vi=c#view=home&op=translate&sl=$lgt&tl=$lgs&text=${2}"
+    local link="https://translate.google.com/?sl=$lgs&tl=$lgt&text=${2}&op=translate"
+    
+    
 
-    yad --html --title="" \
-    --name=Idiomind --class=Idiomind \
-    --uri="${link}" --browser --encoding='UTF-8' \
-    --window-icon=idiomind \
-    --fixed --on-top --mouse \
-    --width=700 --height=500 --borders=5 \
-    --button="$(gettext "Close")":1 &
+    zenity --text-info --title="$(gettext "Translate")" \
+	--width=700 --height=500 \
+	--html --url="${link}" &
+	
+    #yad --html --title="" \
+    #--name=Idiomind --class=Idiomind \
+    #--uri="${link}" --browser --encoding='UTF-8' \
+    #--window-icon=idiomind \
+    #--fixed --on-top --mouse \
+    #--width=700 --height=500 --borders=5 \
+    #--button="$(gettext "Close")":1 &
+    
 } >/dev/null 2>&1
 
 _help() {
@@ -885,7 +898,7 @@ translate_to() {
                     trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
                     if [ -n "${trgt}" ]; then
                         echo "${trgt}" \
-                        |python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
+                        |python3 -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
                         |sed 's/ /\n/g' |grep -v '^.$' |grep -v '^..$' \
                         |tr -d '*)(,;"“”:' |tr -s '&{}[]' ' ' \
                         |sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
@@ -1019,7 +1032,7 @@ colorize() {
     log2="$(cat "${DC_tlt}/practice"/log2)"
     log1="$(cat "${DC_tlt}/practice"/log1)"
     export chk data learning index marks log1 log2 log3
-python <<PY
+python3 <<PY
 import os, re, locale, sys
 reload(sys)
 sys.setdefaultencoding('utf8')

@@ -36,7 +36,6 @@ function create_tpcdb() {
     echo -n "create table if not exists marks \
     (list TEXT);" |sqlite3 "${tpcdb}"
     
-
     echo -n "create table if not exists Data \
     (trgt TEXT, srce TEXT, \
     exmp TEXT, defn TEXT, note TEXT, refr TEXT, tags TEXT, link TEXT, \
@@ -47,7 +46,6 @@ function create_tpcdb() {
     ch_srce TEXT, de_srce TEXT, en_srce TEXT, es_srce TEXT, \
     fr_srce TEXT, it_srce TEXT, ja_srce TEXT, pt_srce TEXT, \
     ru_srce TEXT, vi_srce TEXT);" |sqlite3 "${tpcdb}"
-    
     
     sqlite3 "${tpcdb}" "pragma busy_timeout=2000;\
     insert into id (name,slng,tlng,autr,cntt,\

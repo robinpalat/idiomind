@@ -167,7 +167,7 @@ function check_list() {
     
     if [ -e ${db} ]; then
         if ls -tNd "$DM_tl"/*/ 1> /dev/null 2>&1; then
-python <<PY
+python3 <<PY
 import os, locale, sqlite3
 en = locale.getpreferredencoding()
 shrdb = os.environ['shrdb']
