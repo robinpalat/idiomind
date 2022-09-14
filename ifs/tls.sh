@@ -193,8 +193,7 @@ check_index() {
         export s tpcdb datafile datatmp
 
         python3 <<PY
-import os, re, sqlite3, locale, sys
-enc = locale.getpreferredencoding()
+import os, re, sqlite3, sys
 count = 1
 s = os.environ['s']
 datafile = os.environ['datafile']
@@ -204,7 +203,7 @@ tpcdb = os.environ['tpcdb']
 db = sqlite3.connect(tpcdb)
 db.text_factory = str
 cur = db.cursor()
-datalist = [line.decode(enc).strip() for line in open(datafile)]
+datalist = [line.strip() for line in open(datafile)]
 for mitem in datalist:
     mitem = str(mitem)
     if count > 200:
