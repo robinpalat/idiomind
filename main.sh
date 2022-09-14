@@ -247,8 +247,6 @@ $(gettext "It is recommended to change your language preferences before installi
             export data="${DC_tlt}/data"
 python3 <<PY
 import os, re, locale, sqlite3, sys
-reload(sys)
-sys.setdefaultencoding("utf-8")
 en = locale.getpreferredencoding()
 data = os.environ['data']
 data.encode(en)
@@ -363,8 +361,6 @@ function topic() {
                 export cnf1 tpcdb
 python3 <<PY
 import os, re, locale, sqlite3, sys
-reload(sys)
-sys.setdefaultencoding("utf-8")
 tags = re.compile(r'<[^>]+>')
 en = locale.getpreferredencoding()
 cnf1 = os.environ['cnf1']

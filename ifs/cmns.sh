@@ -168,16 +168,15 @@ function check_list() {
     if [ -e ${db} ]; then
         if ls -tNd "$DM_tl"/*/ 1> /dev/null 2>&1; then
 python3 <<PY
-import os, locale, sqlite3
-en = locale.getpreferredencoding()
+import os, sqlite3
 shrdb = os.environ['shrdb']
 db = sqlite3.connect(shrdb)
 db.text_factory = str
 cur = db.cursor()
 addons = os.environ['addons']
-addons = addons.decode(en).split('\n')
+addons = addons.split('\n')
 topics = os.environ['topics']
-topics = topics.decode(en).split('\n')
+topics = topics.split('\n')
 cur.execute("delete from topics")
 for tpc in topics:
     if not tpc in addons:

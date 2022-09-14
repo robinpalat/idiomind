@@ -45,8 +45,6 @@ python3 <<PY
 import os, re, subprocess, sqlite3, sys
 from os import path
 from datetime import datetime, timedelta
-reload(sys)
-sys.setdefaultencoding('utf8')
 topics = os.environ['topics']
 dir = os.environ['dir']
 lstp = os.environ['lstp']

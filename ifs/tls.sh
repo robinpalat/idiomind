@@ -195,8 +195,6 @@ check_index() {
         python3 <<PY
 import os, re, sqlite3, locale, sys
 enc = locale.getpreferredencoding()
-reload(sys)
-sys.setdefaultencoding("utf-8")
 count = 1
 s = os.environ['s']
 datafile = os.environ['datafile']
@@ -1033,9 +1031,7 @@ colorize() {
     log1="$(cat "${DC_tlt}/practice"/log1)"
     export chk data learning index marks log1 log2 log3
 python3 <<PY
-import os, re, locale, sys
-reload(sys)
-sys.setdefaultencoding('utf8')
+import os, re, sys
 chk = os.environ['chk']
 data = os.environ['data']
 learning = os.environ['learning']
@@ -1044,10 +1040,9 @@ marks = os.environ['marks']
 log1 = os.environ['log1']
 log2 = os.environ['log2']
 log3 = os.environ['log3']
-en = locale.getpreferredencoding()
-learning = learning.decode(en).split('\n')
-marks = marks.decode(en).split('\n')
-data = [line.decode(en).strip() for line in open(data)]
+learning = learning.split('\n')
+marks = marks.split('\n')
+data = [line.strip() for line in open(data)]
 f = open(index, "w")
 for item in data:
     item = item.replace('}', '}\n')

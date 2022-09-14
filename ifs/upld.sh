@@ -425,8 +425,6 @@ function upld() {
 
         python3 << END
 import os, sys, requests, time, xmlrpclib
-reload(sys)
-sys.setdefaultencoding("utf-8")
 autr = os.environ['autr']
 pssw = os.environ['pass']
 tpc = os.environ['tpc']

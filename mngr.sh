@@ -772,10 +772,7 @@ mark_to_learn_topic() {
     export data="${DC_tlt}/data" tpcdb
     
 python3 <<PY
-import os, re, locale, sqlite3, sys
-reload(sys)
-sys.setdefaultencoding("utf-8")
-en = locale.getpreferredencoding()
+import os, re, sqlite3, sys
 data = os.environ['data']
 tpcdb = os.environ['tpcdb']
 db = sqlite3.connect(tpcdb)
@@ -784,7 +781,7 @@ cur = db.cursor()
 cur.execute("delete from learnt")
 cur.execute("delete from learning")
 db.commit()
-data = [line.decode(en).strip() for line in open(data)]
+data = [line.strip() for line in open(data)]
 for item in data:
     item = item.replace('}', '}\n')
     fields = re.split('\n',item)
@@ -864,8 +861,6 @@ mark_as_learned_topic() {
 
 python3 <<PY
 import os, re, locale, sqlite3, sys
-reload(sys)
-sys.setdefaultencoding("utf-8")
 en = locale.getpreferredencoding()
 data = os.environ['data']
 tpcdb = os.environ['tpcdb']
@@ -875,7 +870,7 @@ cur = db.cursor()
 cur.execute("delete from learnt")
 cur.execute("delete from learning")
 db.commit()
-data = [line.decode(en).strip() for line in open(data)]
+data = [line.strip() for line in open(data)]
 for item in data:
     item = item.replace('}', '}\n')
     fields = re.split('\n',item)
@@ -942,10 +937,7 @@ mark_as_learned_topic_ok() {
     export data="${DC_tlt}/data" tpcdb
     
 python3 <<PY
-import os, re, locale, sqlite3, sys
-reload(sys)
-sys.setdefaultencoding("utf-8")
-en = locale.getpreferredencoding()
+import os, re, sqlite3, sys
 data = os.environ['data']
 tpcdb = os.environ['tpcdb']
 db = sqlite3.connect(tpcdb)
@@ -954,7 +946,7 @@ cur = db.cursor()
 cur.execute("delete from learnt")
 cur.execute("delete from learning")
 db.commit()
-data = [line.decode(en).strip() for line in open(data)]
+data = [line.strip() for line in open(data)]
 for item in data:
     item = item.replace('}', '}\n')
     fields = re.split('\n',item)
