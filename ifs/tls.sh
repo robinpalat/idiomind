@@ -799,20 +799,20 @@ translate_to() {
     if [ ${list_transl_saved_WC} -lt 1 ]; then
         ldgl="$(yad --form --title="$(gettext "Native Language Settings")" \
         --class=Idiomind --name=Idiomind \
-        --text="$(gettext "The current Native language of this topic is")  <b>$active_trans</b>" \
+        --text="$(gettext "The current Native language of this topic is":)  <b>$active_trans</b>"\\n \
         --always-print-result --window-icon=idiomind \
         --buttons-layout=end --center --on-top --align=left \
         --width=400 --height=400 --borders=15 \
         --field="":LBL " " \
         --field="\n<b>$(gettext "Verified Translations") </b> ":LBL " " \
-        --field="$active_trans — $(gettext "The quality of this translation was verified")":CHK "$chk" \
+        --field="$(gettext "The quality of this translation was verified") ( $active_trans )":CHK "$chk" \
         --field="<small>$(gettext "This topic has no verified translations.")</small>":LBL " " \
         --field=" ":LBL " " \
-        --field="<b>$(gettext "Automatic Translation")</b> ":LBL " " \
+        --field="\\n<b>$(gettext "Automatic Translation")</b> ":LBL " " \
         --field="$(gettext "Select native language:")":CB "${list_transl}" \
         --field="<small>$(gettext "Note: translations from google translate service sometimes is inaccurate especially in complex frases.")</small>":LBL " " \
         --field=" ":LBL " " \
-        --field="<b>$(gettext "Manually Translation")</b> ":LBL " " \
+        --field="\\n<b>$(gettext "Manually Translation")</b> ":LBL " " \
         --field="$(gettext "Open")":fbtn "$DS/ifs/tls.sh transl_batch" \
         --button="$(gettext "Apply")"!gtk-apply:0 \
         --button="$(gettext "Cancel")":1)"; ret="$?"

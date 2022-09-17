@@ -143,7 +143,7 @@ function notebook_1() {
     cat "${DC_tlt}/index"; else [ -n "${ls1}" ] && echo -e "${ls1}" | \
     awk '{print ""$0"\nFALSE\n"""}'; fi; }
 
-    list | yad --list --tabnum=1 \
+    list | yad --list --tabnum=1 --window-icon=idiomind \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 1" --grid-lines=hor \
     --print-column=1 --expand-column=1 --no-headers \
@@ -157,13 +157,13 @@ function notebook_1() {
     --expand-column=0 --no-headers \
     --ellipsize=end --wrap-width=${sz[2]} --ellipsize-cols=1 \
     --column=Name:TEXT &
-    yad --text-info --tabnum=3 \
+    yad --text-info --tabnum=3 --window-icon=idiomind \
     --plug=$KEY \
     --always-print-result \
     --show-uri --uri-color="#6591AA" \
     --filename="${note}" --editable --wrap \
     --fontname='vendana 11' --margins=14 > "$cnf3" &
-    yad --form --tabnum=4 \
+    yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
     --text="${lbl1}${info2}\n" \
     --borders=10 --columns=2 \
@@ -206,17 +206,17 @@ function notebook_2() {
     --plug=$KEY \
     --align=center --borders=80 --bar="":NORM $RM &
     ([ -n "${ls2}" ] && echo "${ls2}") |yad --list --tabnum=2 \
-    --plug=$KEY --print-all --separator='|' \
+    --window-icon=idiomind --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2" --grid-lines=hor \
     --expand-column=0 --no-headers --ellipsize=end \
     --search-column=1 --regex-search \
     --column=Name:TEXT &
-    yad --text-info --tabnum=3 \
+    yad --text-info --tabnum=3 --window-icon=idiomind \
     --plug=$KEY \
     --show-uri --uri-color="#6591AA" \
     --filename="${note}" --editable --wrap \
     --fontname='vendana 11' --margins=14 > "$cnf3" &
-    yad --form --tabnum=4 \
+    yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
     --text="$lbl1\n" \
     --borders=10 --columns=2 \

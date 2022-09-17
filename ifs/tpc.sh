@@ -36,10 +36,12 @@ active_topic() {
         :
     elif [[ ${activ} = 1 ]]; then
         echo "${topic}" > "$DC_s/tpc"
+        "$DS/ifs/mods/start/update_tasks.sh"
         ( sleep 1; notify-send -i idiomind \
         "${topic}" "$(gettext "Is now your topic")" -t 4000 ) & exit
     elif [[ -z "$activ" ]]; then
         echo "${topic}" > "$DC_s/tpc"
+        "$DS/ifs/mods/start/update_tasks.sh"
         idiomind topic & exit
     fi
 }

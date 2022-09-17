@@ -42,6 +42,7 @@ done
 if [ ${f} = 1 -a "$1" != 2 ]; then t=0; fi
 
 if [ "${t}" = 1 ]; then
+	echo -e "${tpc}" > "$DT/playlck"
     if [[ "$rplay" = TRUE ]]; then
         while [ 1 ]; do
             "$DS/chng.sh" 0; sleep ${pause_rep}

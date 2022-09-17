@@ -4,6 +4,8 @@ arg="$1"
 tpt="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg#*:})"
 act="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg%%:*})"
 
+
+l0="$(gettext "Listen:") "
 l1="$(gettext "To Review [new]:") "
 l2="$(gettext "To Review [new] [overdue]:") "
 l3="$(gettext "To Review:") "
@@ -26,7 +28,10 @@ modmenu() {
     rm -f "$DT/tasks"; echo "$tpc" > "$DC_s/tpc"; fi
 }
 
-if [ "${act}: " = "$l1" ]; then
+if [ "${act}: " = "$l0" ]; then
+    $DS/stop.sh 2 && sleep 1
+    $DS/bcle.sh &
+elif [ "${act}: " = "$l1" ]; then
     modmenu "$arg"; chngtpt "$tpt"
 elif [ "${act}: " = "$l2" ]; then
     modmenu "$arg"; chngtpt "$tpt"
