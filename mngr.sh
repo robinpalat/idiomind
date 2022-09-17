@@ -494,6 +494,7 @@ edit_list_cmds() {
     fi
     cleanups "$DT/list_output" "$DT/list_input" \
     "$DT/items_to_add" "$DT_r" "$DT/act_restfile" "$DT/edit_list_more"
+    idiomind tasks
     return 1
 } >/dev/null 2>&1
 

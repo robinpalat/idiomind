@@ -548,14 +548,9 @@ _definition() {
 _translation() {
     source "$DS/ifs/cmns.sh"
     source /usr/share/idiomind/default/c.conf
-    local link="https://translate.google.com/?sl=$lgs&tl=$lgt&text=${2}&op=translate"
-    
-    
+    local link="https://translate.google.com/?sl=$lgt&tl=$lgs&text=${2}&op=translate"
+    xdg-open "${link}"
 
-    zenity --text-info --title="$(gettext "Translate")" \
-	--width=700 --height=500 \
-	--html --url="${link}" &
-	
     #yad --html --title="" \
     #--name=Idiomind --class=Idiomind \
     #--uri="${link}" --browser --encoding='UTF-8' \
@@ -573,7 +568,7 @@ _help() {
 
 check_updates() {
     source "$DS/ifs/cmns.sh"; internet
-    link='https://idiomind.sourceforge.io/links/checkversion'
+    link='https://idiomind.sourceforge.io/doc/checkversion'
     nver=$(wget --user-agent "$useragent" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g')
     pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
     d2=$(date +%Y%m%d); cdb ${cfgdb} 3 updt date ${d2}
@@ -594,7 +589,7 @@ a_check_updates() {
     echo -e "\n--- Checking for updates..."
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
-    link='https://idiomind.sourceforge.io/links/checkversion'
+    link='https://idiomind.sourceforge.io/doc/checkversion'
     nver=$(wget --user-agent "$useragent" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g')
     pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
     d1=$(cdb ${cfgdb} 1 updt date)
@@ -1271,7 +1266,7 @@ app_license = (('This program is free software: you can redistribute it and/or m
 '\n'+
 'You should have received a copy of the GNU General Public License\n'+
 'along with this program.  If not, see http://www.gnu.org/licenses'))
-app_authors = ['Robin Palatnik <robinpalat@users.sourceforge.net>']
+app_authors = ['Robin Palatnik <robinpalat@users.sourceforge.io>']
 class AboutDialog:
     def __init__(self):
         about = gtk.AboutDialog()

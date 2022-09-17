@@ -19,7 +19,6 @@
 ./practice/strt.sh
 ./default/attch.css
 ./default/c.conf
-./default/ch.xml
 ./default/dicts
 ./default/gtkrc.cfg
 ./default/js
@@ -28,7 +27,6 @@
 ./default/pg2.html
 ./default/pg3.html
 ./default/sets.cfg
-./default/tmpl.xml
 ./default/vars
 ./ifs/1u.sh
 ./ifs/clipw.sh
@@ -41,7 +39,7 @@
 ./ifs/tls.sh
 ./ifs/tpc.sh
 ./ifs/upld.sh
-./images/a.png
+./images/a0.png
 ./images/add.png
 ./images/add_audio.png
 ./images/add_clipboard.png
@@ -50,7 +48,7 @@
 ./images/add_more.png
 ./images/add_tag.png
 ./images/add_translation.png
-./images/ai.png
+./images/ai0.png
 ./images/bar.png
 ./images/cont.png
 ./images/dl.png
@@ -60,7 +58,6 @@
 ./images/img.1.png
 ./images/img.10.png
 ./images/img.13.png
-./images/img.14.png
 ./images/img.2.png
 ./images/img.3.png
 ./images/img.4.png
@@ -75,7 +72,9 @@
 ./images/no.png
 ./images/nw.png
 ./images/practice
+./images/review.png
 ./images/thumb.png
+./images/trans.png
 ./images/unavailable.png
 ./images/yes.png
 ./main.sh
