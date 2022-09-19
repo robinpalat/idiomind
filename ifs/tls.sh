@@ -530,35 +530,64 @@ _definition() {
         f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"
     fi
     eval _url="$(< "$DS_a/Dics/dicts/$(basename "$f")")"
-    
-    zenity --text-info --title="$(gettext "Definition")" \
-	--width=700 --height=500 \
-	--html --url="${_url}" &
-	
-    #yad --html --title="$(gettext "Definition")" \
-    #--name=Idiomind --class=Idiomind \
-    #--browser --uri="${_url}" \
-    #--window-icon=idiomind \
-    #--fixed --on-top --mouse \
-    #--width=700 --height=500 --borders=5 \
-    #--button="$(gettext "Close")":1 &
+	export _url
+
+python3 <<PY
+import gi, os
+gi.require_version("Gtk", "3.0")
+gi.require_version('WebKit2', '4.0')
+from gi.repository import Gtk, WebKit2 as WebKit
+_url = os.environ['_url']
+class Window():
+	def __init__(self, *args, **kwargs):
+		self._window = Gtk.Window(title = "Idiomind")
+		# self._window.set_icon_from_file('idiomind')
+		self._window.connect('destroy', Gtk.main_quit)
+		self._window.set_default_size(750, 470)
+		self._view = Gtk.ScrolledWindow()
+		self._webview = WebKit.WebView()
+		self._webview.load_uri(_url)
+		self._view.add(self._webview)
+		self.vbox_container = Gtk.VBox()
+		self.vbox_container.pack_start(self._view, True, True, 0)
+		self._window.add(self.vbox_container)
+		self._window.show_all()
+		Gtk.main()
+main = Window()
+PY
     
 } >/dev/null 2>&1
 
 _translation() {
     source "$DS/ifs/cmns.sh"
     source /usr/share/idiomind/default/c.conf
-    local link="https://translate.google.com/?sl=$lgt&tl=$lgs&text=${2}&op=translate"
-    xdg-open "${link}"
+	url="https://translate.google.com/?sl=$lgt&tl=$lgs&text=${2}&op=translate"
+	export url
 
-    #yad --html --title="" \
-    #--name=Idiomind --class=Idiomind \
-    #--uri="${link}" --browser --encoding='UTF-8' \
-    #--window-icon=idiomind \
-    #--fixed --on-top --mouse \
-    #--width=700 --height=500 --borders=5 \
-    #--button="$(gettext "Close")":1 &
-    
+python3 <<PY
+import gi, os
+gi.require_version("Gtk", "3.0")
+gi.require_version('WebKit2', '4.0')
+from gi.repository import Gtk, WebKit2 as WebKit
+url = os.environ['url']
+class Window():
+	def __init__(self, *args, **kwargs):
+		self._window = Gtk.Window(title = "Idiomind")
+		# self._window.set_icon_from_file('idiomind')
+		self._window.connect('destroy', Gtk.main_quit)
+		self._window.set_default_size(750, 470)
+		self._view = Gtk.ScrolledWindow()
+		self._webview = WebKit.WebView()
+		self._webview.load_uri(url)
+		self._view.add(self._webview)
+		self.vbox_container = Gtk.VBox()
+		self.vbox_container.pack_start(self._view, True, True, 0)
+		self._window.add(self.vbox_container)
+		self._window.show_all()
+		Gtk.main()
+main = Window()
+PY
+
 } >/dev/null 2>&1
 
 _help() {

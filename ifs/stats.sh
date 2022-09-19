@@ -353,13 +353,39 @@ function stats() {
         source "$DS/ifs/cmns.sh"
         sleep 1 && msg "$(gettext "Insufficient data")\n" dialog-information "Idiomind" &
     fi
-        yad --html --uri="file:///$DS/default/pg1.html?lang=$intrf" \
-        --title="$(gettext "Statistics")" \
-        --name=Idiomind --class=Idiomind \
-        --browser --encoding=UTF-8 \
-        --orient=vert --window-icon=idiomind --center \
-        --width=750 --height=470 --borders=0 \
-        --no-buttons
     
-    
+	uri_stats="$DS/default/pg1.html?lang=$intrf"
+	export uri_stats
+	
+python3 <<PY
+import gi
+gi.require_version('Gtk', '3.0')
+gi.require_version('WebKit2', '4.0')
+from gi.repository import WebKit2, Gtk, Gdk, Gio, GLib
+import signal, os
+uri = os.environ['uri_stats']
+class MainWin(Gtk.Window):
+    def __init__(self):
+        Gtk.Window.__init__(self, title = "channel", 
+        skip_pager_hint=True, skip_taskbar_hint=True)
+        self.set_size_request(600, 400)
+        self.view = WebKit2.WebView()
+        self.view.load_uri("file://" + uri)
+        box = Gtk.Box()
+        self.add(box)
+        box.pack_start(self.view, True, True, 0)
+        self.connect("destroy", lambda q: Gtk.main_quit())
+        self.show_all()
+def refresh_file(*args):
+    mainwin.view.reload()
+def file_changed(monitor, file, unknown, event):
+    GLib.timeout_add_seconds(2, refresh_file)
+if __name__ == '__main__':
+    gio_file = Gio.File.new_for_path(uri)
+    monitor = gio_file.monitor_file(Gio.FileMonitorFlags.NONE, None)
+    monitor.connect("changed", file_changed)
+    mainwin = MainWin()
+    signal.signal(signal.SIGINT, signal.SIG_DFL) 
+    Gtk.main()
+PY
 } >/dev/null 2>&1
