@@ -353,9 +353,9 @@ function stats() {
         source "$DS/ifs/cmns.sh"
         sleep 1 && msg "$(gettext "Insufficient data")\n" dialog-information "Idiomind" &
     fi
-    
+    titlew="$(gettext "Statistics")"
 	uri_stats="$DS/default/pg1.html?lang=$intrf"
-	export uri_stats
+	export uri_stats titlew
 	
 python3 <<PY
 import gi
@@ -364,9 +364,10 @@ gi.require_version('WebKit2', '4.0')
 from gi.repository import WebKit2, Gtk, Gdk, Gio, GLib
 import signal, os
 uri = os.environ['uri_stats']
+titlew = os.environ['titlew']
 class MainWin(Gtk.Window):
     def __init__(self):
-        Gtk.Window.__init__(self, title = "channel", 
+        Gtk.Window.__init__(self, title = titlew, 
         skip_pager_hint=True, skip_taskbar_hint=True)
         self.set_size_request(600, 400)
         self.view = WebKit2.WebView()
