@@ -3,24 +3,24 @@
     <meta charset="utf-8"/>
     <script src="/usr/share/idiomind/default/js/chart.js"></script>
     <script type="text/javascript" src="/tmp/.idiomind_stats"></script>
-    <style type="text/css">
-        a.cursor {cursor:hand;
-        margin:10;
-        text-decoration:none;}
-        .lbl {
-        text-decoration:none;
-        font-family: "Arial", "DejaVu Sans", Verdana;
-        color:#616161;
-        font-size:12;
-        font-weight:bold;}
-        body {margin:12;padding:10;}
-    </style>
     <script>
     var a = window.location.toString();
     a = a.substring(a.indexOf('lang=')+5);
     function page2() { window.location = "file:////usr/share/idiomind/default/pg2.html?lang="+a; }
     function page3() { window.location = "file:////usr/share/idiomind/default/pg3.html?lang="+a; }
   </script>
+      <style type="text/css">
+        a.cursor {cursor:hand;
+        margin:10;
+        text-decoration:none;}
+        .lbl {
+        text-decoration:none;
+        font-family: "Arial", "DejaVu Sans", Verdana;
+        color:#151515;
+        font-size:14;
+        font-weight:bold;}
+        body {margin:12;padding:10;}
+    </style>
 </head>
 <body>
 <div style="text-align:center">
@@ -33,10 +33,10 @@
 </div>
     </br> </br>
     <div>
-    <font size="1.5" color="#828282"><span style="margin-right:5;border:1px solid rgba(0,0,0,.1);"><svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#C5E8E3" /></svg> <span id="lbl2"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#48B951" /></svg> <span id="lbl3"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#5A8AD8" /></svg> <span id="lbl4"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#F77C48" /></svg> <span id="lbl5"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#CACACA" /></svg> <span id="lbl6"></span>  </span></font>
-    </div>
+    <font size="1.8" color="#535353"><span style="margin-right:5;border:1px solid rgba(0,0,0,.1);"><svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#C5E8E3" /></svg> <span id="lbl2"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#48B951" /></svg> <span id="lbl3"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#5A8AD8" /></svg> <span id="lbl4"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#F77C48" /></svg> <span id="lbl5"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#CACACA" /></svg> <span id="lbl6"></span>  </span></font>
+    </div></br>
     <a onclick="page2(); return false" ><div>
-    <canvas id="canvas" height="270" width="520"></canvas>
+    <canvas id="canvas" height="250" width="520"></canvas>
     </div></a>
 	<script>
     var fdata = JSON.parse(data1);

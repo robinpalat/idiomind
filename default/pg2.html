@@ -10,8 +10,8 @@
         .lbl {
         text-decoration:none;
         font-family: "Arial", "DejaVu Sans", Verdana;
-        color:#616161;
-        font-size:12;
+        color:#151515;
+        font-size:14;
         font-weight:bold;}
         body {margin:12;padding:10;}
     </style>
@@ -33,10 +33,10 @@
 </div>
     </br> </br>
     <div>
-    <font size="1.5" color="#828282"><span id="lbl2"></span> <span style="margin-right:5;border:1px solid rgba(0,0,0,.1);"><svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#A7E17A" /></svg> <span id="lbl3"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#F2A961" /></svg> <span id="lbl4"></span> </span><span id="lbl5"></span> <span style="margin-right:5; border:1px solid rgba(0,0,0,.1);"><svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#48B951" /></svg> <span id="lbl6"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#AF809F" /></svg> <span id="lbl7"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#E56481" /></svg> <span id="lbl8"></span> </span></font>
-    </div>
+    <font size="1.8" color="#535353"><span id="lbl2"></span> <span style="margin-right:5;border:1px solid rgba(0,0,0,.1);"><svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#A7E17A" /></svg> <span id="lbl3"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#F2A961" /></svg> <span id="lbl4"></span> </span><span id="lbl5"></span> <span style="margin-right:5; border:1px solid rgba(0,0,0,.1);"><svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#48B951" /></svg> <span id="lbl6"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#AF809F" /></svg> <span id="lbl7"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4"  fill="#E56481" /></svg> <span id="lbl8"></span> </span></font>
+    </div></br>
     <a onclick="page3(); return false" ><div>
-    <canvas id="canvas" height="270" width="520"></canvas>
+    <canvas id="canvas" height="250" width="520"></canvas>
     </div></a>
 	<script>
     var fdata = JSON.parse(data2);
@@ -83,49 +83,49 @@
         a = a.substring(a.indexOf('lang=')+5);
         if (a == 'es') {
             var lbl1 = 'Reporte semanal de palabras basado en los resultados de las prácticas';
-            var lbl2 = 'Nuevas palabras:';
+            var lbl2 = '<b>Nuevas palabras:</b>';
             var lbl3 = 'Aprendidas';
             var lbl4 = 'Aprendiendo';
-            var lbl5 = 'Palabras repasadas:';
+            var lbl5 = '<b>Palabras repasadas:</b>';
             var lbl6 = 'Superadas';
             var lbl7 = 'Olvidadas';
             var lbl8 = 'Difíciles';
         } else if
             (a == 'it') {
             var lbl1 = 'Rapporto settimanale basato sui risultati delle pratiche';
-            var lbl2 = 'Nuove parole:';
+            var lbl2 = '<b>Nuove parole:</b>';
             var lbl3 = 'Imparate';
             var lbl4 = 'Apprendimento';
-            var lbl5 = 'Parole revisionate:';
+            var lbl5 = '<b>Parole revisionate:</b>';
             var lbl6 = 'Superare';
             var lbl7 = 'Trascurato';
             var lbl8 = 'Difficile';
         } else if
             (a == 'fr') {
             var lbl1 = 'Rapport hebdomadaire des mots basé sur l\'activité de la pratique';
-            var lbl2 = 'Nouveaux mots:';
+            var lbl2 = '<b>Nouveaux mots:</b>';
             var lbl3 = 'Appris';
             var lbl4 = 'J\'apprends';
-            var lbl5 = 'Mots examinés:';
+            var lbl5 = '<b>Mots examinés:</b>';
             var lbl6 = 'Passé';
             var lbl7 = 'Oublié';
             var lbl8 = 'Difficile';
         } else if
             (a == 'pt') {
             var lbl1 = 'Relatório semanal de palavras com base na atividade prática';
-            var lbl2 = 'Novas palavras:';
+            var lbl2 = '<b>Novas palavras:</b>';
             var lbl3 = 'Aprendi';
             var lbl4 = 'Aprendendo';
-            var lbl5 = 'Palavras revistas:';
+            var lbl5 = '<b>Palavras revistas:</b>';
             var lbl6 = 'Passadas';
             var lbl7 = 'Esquecido';
             var lbl8 = 'Difícil';
         } else {
             var lbl1 = 'Weekly report of words based on practice activity';
-            var lbl2 = 'New words:';
+            var lbl2 = '<b>New words:</b>';
             var lbl3 = 'Learned';
             var lbl4 = 'Learning';
-            var lbl5 = 'Words reviewed:';
+            var lbl5 = '<b>Words reviewed:</b>';
             var lbl6 = 'Passed';
             var lbl7 = 'Forgotten';
             var lbl8 = 'Difficult';
