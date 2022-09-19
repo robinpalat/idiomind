@@ -8,7 +8,7 @@ function dlg_form_1() {
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all \
     --separator="|" \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --align=right --text-align=center --columns=2 \
     --buttons-layout=end --center \
     --width=650 --height=400 --borders=10 \
@@ -40,7 +40,7 @@ function dlg_form_2() {
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all \
     --separator="|" \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --buttons-layout=end --align=right --center \
     --width=650 --height=400 --borders=10 \
     --field="$(gettext "Mark")":CHK "$mark" \
@@ -64,7 +64,7 @@ function edit_list_list() {
     --name=Idiomind --class=Idiomind \
     --editable --separator='' \
     --always-print-result --print-all \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --no-headers --center \
     --width=${sz[0]} --height=${sz[1]} --borders=5 \
     --column="" \

@@ -128,7 +128,7 @@ function upld() {
         --text="$text_upld" \
         --name=Idiomind --class=Idiomind \
         --always-print-result \
-        --window-icon=idiomind --buttons-layout=end \
+        --window-icon=$DS/images/logo.png --buttons-layout=end \
         --align=right --center \
         --width=${sz[0]} --height=${sz[1]} --borders=18 \
         --field=" :LBL" "" \
@@ -147,7 +147,7 @@ function upld() {
         --text="$text_upld" \
         --name=Idiomind --class=Idiomind \
         --always-print-result \
-        --window-icon=idiomind  \
+        --window-icon=$DS/images/logo.png  \
         --align=right --center \
         --width=${sz[0]} --height=${sz[1]} --borders=18 --field=" :LBL" "" \
         --field="$(gettext "Category"):CBE" "$_Categories" \
@@ -172,7 +172,7 @@ function upld() {
         yad --form --columns=2 --title="$(gettext "Share")" \
         --name=Idiomind --class=Idiomind \
         --always-print-result \
-        --window-icon=idiomind  \
+        --window-icon=$DS/images/logo.png  \
         --align=left --center \
         --width=420 --height=240 --borders=10 \
         --text="$info" \
@@ -188,7 +188,7 @@ function upld() {
         yad --form --title="$(gettext "Share")" \
         --separator="|" \
         --name=Idiomind --class=Idiomind \
-        --window-icon=idiomind \
+        --window-icon=$DS/images/logo.png \
         --align=left --center \
         --width=420 --height=240 --borders=10 \
         --field="<b>$(gettext "Downloaded files")</b>:lbl" " " \
@@ -475,7 +475,7 @@ fdlg() {
     --field="\t\t\t\t$(gettext "Export to"):CB" "$tpcs" &
     yad --paned --key="$key" --title="$(gettext "Export")" \
     --name=Idiomind --class=Idiomind \
-    --window-icon=idiomind --center --on-top \
+    --window-icon=$DS/images/logo.png --center --on-top \
     --width=650 --height=480 --borders=8 --splitter=370 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Save")":0

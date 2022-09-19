@@ -173,7 +173,7 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
     yad --list --title="$(gettext "My topics")" "${var1}" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-column=2 --separator="" \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --text-align=left $var2 --image-on-top \
     --no-headers --ellipsize=END --expand-column=2 \
     --search-column=2 --regex-search --center \

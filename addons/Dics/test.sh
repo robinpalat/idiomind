@@ -264,7 +264,7 @@ function dlg_progress_2() {
     yad --progress --title="Idiomind" \
     --text="<b>$(gettext "Please wait, this might take a little while.")</b>" \
     --name=Idiomind --class=Idiomind \
-    --window-icon=idiomind --align=right \
+    --window-icon=$DS/images/logo.png --align=right \
     --progress-text=" " --pulsate \
     --percentage="0" --auto-close \
     --no-buttons --on-top --fixed \

@@ -85,7 +85,7 @@ function word_view() {
     yad --form --title=" " \
     --quoted-output \
     --text="${sentence}" \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --skip-taskbar --text-align=center \
     --image-on-top --center \
     --width=630 --height=390 --borders=18 \
@@ -110,7 +110,7 @@ function sentence_view() {
     --print-column=0 \
     --select-action="$DS/play.sh 'play_word'" \
     --dclick-action="$DS/play.sh 'play_word'" \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --skip-taskbar --image-on-top --center \
     --scroll --text-align=left --expand-column=0 --no-headers \
     --width=630 --height=390 --borders=18 \
@@ -179,7 +179,7 @@ function notebook_1() {
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
     --center --align=right \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --tab="  $(gettext "Learning") ($cfg1) " \
     --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
@@ -232,7 +232,7 @@ function notebook_2() {
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
     --center --align=right --ellipsize=END \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --tab="  $(gettext "Review")  " \
     --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
@@ -246,7 +246,7 @@ function dialog_1() {
     --class=idiomind --name=Idiomind \
     --text="$(gettext "<b>Would you like to review it?</b>\n The waiting period already has been completed.")" \
     --image="$DS/images/review.png" \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --buttons-layout=spread --fixed --center --on-top \
     --width=440 --height=115 --borders=8 \
     --button=" $(gettext "Not Yet") ":1 \
@@ -260,7 +260,7 @@ function tpc_view() {
     --no-click --print-column=0 --hide-column=2 --tooltip-column=2 \
     --ellipsize=end --wrap-width=${sz[2]} --ellipsize-cols=0 \
     --dclick-action=":" \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --hide-column=2 --tooltip-column=2 \
     --no-headers --ellipsize=END --center \
     --width=${sz[0]} --height=${sz[1]} --borders=8 \
@@ -273,7 +273,7 @@ function panelini() {
     yad --fixed --form --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
-    --window-icon=idiomind --skip-taskbar --on-top \
+    --window-icon=$DS/images/logo.png --skip-taskbar --on-top \
     --on-top --no-buttons --text-align=left --align=left \
     --width=150 --height=150 ${geometry} --borders=10 \
     --field="$(gettext "New")"!'list-add':btn "$DS/add.sh 'new_items'" \

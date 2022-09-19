@@ -89,7 +89,7 @@ function set_lang() {
 dlg=$(yad --form --title="Idiomind" \
 --text="$text\n" \
 --class=Idiomind --name=Idiomind \
---window-icon=idiomind \
+--window-icon=$DS/images/logo.png \
 --image-on-top --buttons-layout=end --align=right \
 --fixed --geometry="+$sx+$sy" --center --on-top \
 --width=500 --height=260 --borders=15 \

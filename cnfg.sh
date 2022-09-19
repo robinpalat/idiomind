@@ -132,7 +132,7 @@ config_dlg() {
     --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" &
     yad --notebook --key=$KEY --title="$(gettext "Settings")" \
     --name=Idiomind --class=Idiomind \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --tab-pos=right --tab-borders=5 --sticky --center \
     --tab="$(gettext "Preferences")" \
     --tab="$(gettext "More")" \

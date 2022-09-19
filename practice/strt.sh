@@ -520,7 +520,7 @@ function practice_e() {
         --text="${text}" \
         --name=Idiomind --class=Idiomind \
         --separator="" --focus-field=1 \
-        --window-icon=idiomind --image="$DS/images/bar.png" \
+        --window-icon=$DS/images/logo.png --image="$DS/images/bar.png" \
         --buttons-layout=end --skip-taskbar \
         --undecorated --center --on-top \
         --align=center --image-on-top \
@@ -747,7 +747,7 @@ function decide_group() {
     fi
     info="<small>$(gettext "Left")</small>  <b><big>$left</big></b>    <small>$(gettext "Learnt")</small>  <b><big>$learnt</big></b>    <small>$(gettext "Easy")</small>  <b><big>$easy</big></b>    <small>$(gettext "Learning")</small>  <b><big>$ling</big></b>    <small>$(gettext "Difficult")</small>  <b><big>$hard</big></b>"
     optns=$(yad --form --title="$(gettext "Continue")" \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --always-print-result \
     --skip-taskbar  \
     --align=center --center --on-top \
@@ -827,7 +827,7 @@ function practices() {
         if [ ! -e "${pdir}/${pr}.0" ]; then
             optns=$(yad --form --title="$(gettext "Starting")" \
             --always-print-result \
-            --window-icon=idiomind \
+            --window-icon=$DS/images/logo.png \
             --skip-taskbar --buttons-layout=spread \
             --align=center --center --on-top \
             --width=400 --borders=15 \
@@ -916,7 +916,7 @@ function strt() {
     --text="${info}" \
     --class=Idiomind --name=Idiomind \
     --print-column=1 --separator="" \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --buttons-layout=edge --image-on-top --center --on-top --text-align=center \
     --no-headers --expand-column=3 --hide-column=1 \
     --width=${sz[0]} --height=${sz[1]} --borders=10 \

@@ -577,7 +577,7 @@ function dlg_form_0() {
     yad --form --title="$(gettext "New Topic")" \
     --name=Idiomind --class=Idiomind \
     --separator='|' \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --skip-taskbar --fixed --center --on-top \
     --width=450 --height=80 --borders=5 \
     --field="$(gettext "Name")" "$1" \
@@ -592,7 +592,7 @@ function dlg_form_1() {
     --always-print-result --separator="|" \
     --skip-taskbar --fixed --center \
     --buttons-layout=spread --align=right --image="${img}" \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --width=470 --borders=5 \
     --field="" "$trgt" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
@@ -611,7 +611,7 @@ function dlg_form_2() {
     --always-print-result --separator="|" \
     --skip-taskbar --fixed --center \
     --buttons-layout=spread --align=right --image="${img}" \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --width=470 --borders=5 \
     --field="" "$trgt" \
     --field="" "$srce" \
@@ -650,7 +650,7 @@ function dlg_checklist_3() {
     yad --paned --key="$fkey" \
     --title="$(gettext "Found") $(wc -l < "${1}") $(gettext "notes")" \
     --name=Idiomind --class=Idiomind \
-    --skip-taskbar --orient=vert --window-icon=idiomind --center \
+    --skip-taskbar --orient=vert --window-icon=$DS/images/logo.png --center \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --width=${sz[0]} --height=${sz[1]} --borders=5 --splitter=${sz[2]} \
     --button="$(gettext "Cancel")":1 \
@@ -668,7 +668,7 @@ function dlg_checklist_1() {
     }
     list "${1}" | yad --list --checklist --title="$(gettext "Add words")" \
     --name=Idiomind --class=Idiomind \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --mouse --on-top --no-headers \
     --text-align=right --buttons-layout=end \
     --width=380 --height=260 --borders=10  \
@@ -701,7 +701,7 @@ function dlg_checklist_2() {
     --title="$(gettext "Options")" \
     --name=Idiomind --class=Idiomind \
     --skip-taskbar --orient=vert \
-    --window-icon=idiomind --center --on-top \
+    --window-icon=$DS/images/logo.png --center --on-top \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --width=500 --height=260 --borders=10 --splitter=180 \
     --button="$(gettext "Add")!gtk-apply":0 \
@@ -714,7 +714,7 @@ function dlg_text_info_1() {
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --editable \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --wrap --margins=20 --fontname='vendana 11' \
     --skip-taskbar --center --on-top \
     --width=700 --height=450 --borders=5 \
@@ -728,7 +728,7 @@ function msg_3() {
     yad --title="$title" --text="$1" --image="$2" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --image-on-top --on-top --sticky --center \
     --width=400 --height=120 --borders=5 \
     --button="$(gettext "Cancel")":1 \
@@ -740,7 +740,7 @@ function dlg_text_info_3() {
     echo -e "${1}" | yad --text-info \
     --title="$(gettext "Some notes could not be added to your list")" \
     --name=Idiomind --class=Idiomind \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --image="face-worried" \
     --wrap --margins=5 \
     --fixed --center --on-top \
@@ -752,7 +752,7 @@ function dlg_form_3() {
     yad --form --title=$(gettext "Image") "$image" "$label" \
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --buttons-layout=spread --skip-taskbar --image-on-top \
     --align=center --text-align=center --center --on-top \
     --width=420 --height=320 --borders=5 \
@@ -762,7 +762,7 @@ function dlg_form_3() {
 function dlg_progress_1() {
     yad --progress \
     --name=Idiomind --class=Idiomind \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --progress-text="$1" \
     --pulsate --auto-close \
     --undecorated --skip-taskbar --no-buttons \

@@ -13,7 +13,7 @@ function msg() {
     [ -n "${4}" ] && btn="${4}" || btn="$(gettext "OK")"
     yad --title="${title}" --text="${1}" --image="${2}" \
     --name=Idiomind --class=Idiomind \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --image-on-top --sticky --center --fixed --on-top \
     --width=450 --height=100 --borders=5 \
     --button="${btn}":0
@@ -25,7 +25,7 @@ function msg_2() {
     yad --title="${title}" --text="${1}" --image="${2}" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --image-on-top --sticky --center --fixed --on-top \
     --width=450 --height=100 --borders=5 \
     "${btn3}" --button="${4}":1 --button="${3}":0
@@ -38,7 +38,7 @@ function msg_4() {
     done )  | yad --progress --title="${title}" --text="${1}" \
     --name=Idiomind --class=Idiomind \
     --pulsate --auto-close --always-print-result \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --buttons-layout=edge --image-on-top --fixed --on-top --sticky --center \
     --width=380 --height=110 --borders=3 \
     --button="${4}":1 --button="${3}":0
@@ -251,7 +251,7 @@ function check_err() {
             sleep 2; echo "$(< "$filerr")" |yad --text-info \
             --title="Idiomind - $mtitle" \
             --name=Idiomind --class=Idiomind \
-            --window-icon=idiomind \
+            --window-icon=$DS/images/logo.png \
             --wrap --margins=5 \
             --show-uri --uri-color="#6591AA" \
             --fontname='monospace 9' \

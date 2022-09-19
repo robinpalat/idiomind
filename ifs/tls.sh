@@ -298,7 +298,7 @@ add_audio() {
     --text=" $(gettext "Browse to and select the audio file that you want to add.")" \
     --class=Idiomind --name=Idiomind \
     --file-filter="*.mp3" \
-    --window-icon=idiomind --center --on-top \
+    --window-icon=$DS/images/logo.png --center --on-top \
     --width=620 --height=500 --borders=5 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0 |cut -d "|" -f1)"
@@ -394,7 +394,7 @@ videourl() {
     url=$(yad --form --title=" " \
     --name=Idiomind --class=Idiomind \
     --separator="" \
-    --window-icon=idiomind \
+    --window-icon=$DS/images/logo.png \
     --skip-taskbar --center --on-top \
     --width=420 --height=100 --borders=5 \
     --field="$(gettext "URL")" \
@@ -415,7 +415,7 @@ videourl() {
 addFiles() {
     yad --form --title="$(gettext "Resources")" \
     --name=Idiomind --class=Idiomind \
-    ---window-icon=idiomind --center \
+    ---window-icon=$DS/images/logo.png --center \
     --width=320 --height=100 --borders=5 \
     --field="$(gettext "Add files")":FBTN "$DS/ifs/tls.sh 'add_file'" \
     --field="$(gettext "YouTube URL")":FBTN "$DS/ifs/tls.sh 'videourl'" \
@@ -504,7 +504,7 @@ echo "</body></html>" >> "${DC_tlt}/att.html"
          yad --html --title="$(gettext "Resources")" \
         --name=Idiomind --class=Idiomind \
         --encoding=UTF-8 --uri="${DC_tlt}/att.html" --browser \
-        --window-icon=idiomind --center \
+        --window-icon=$DS/images/logo.png --center \
         --width=${sz[0]} --height=${sz[1]} --borders=10 \
         --button="$(gettext "Folder")":"xdg-open \"${DM_tlt}\"/files" \
         --button="$(gettext "Add")":0 \
@@ -756,7 +756,7 @@ function transl_batch() {
     if [ -z "$active_trans" ]; then active_trans="$slng"; fi
 
 echo -e "yad --form --title=\"$(gettext "$tlng") / $active_trans\" \\
---class=Idiomind --name=Idiomind --window-icon=idiomind \\
+--class=Idiomind --name=Idiomind --window-icon=$DS/images/logo.png \\
 --always-print-result --print-all \\
 --width=${sz[0]} --height=${sz[1]} --borders=5 \\
 --on-top --scroll --center --separator='|\n' \\
@@ -824,7 +824,7 @@ translate_to() {
         ldgl="$(yad --form --title="$(gettext "Native Language Settings")" \
         --class=Idiomind --name=Idiomind \
         --text="$(gettext "The current Native language of this topic is":)  <b>$active_trans</b>"\\n \
-        --always-print-result --window-icon=idiomind \
+        --always-print-result --window-icon=$DS/images/logo.png \
         --buttons-layout=end --center --on-top --align=left \
         --width=400 --height=400 --borders=15 \
         --field="":LBL " " \
@@ -844,7 +844,7 @@ translate_to() {
         ldgl="$(yad --form --title="$(gettext "Native Language Settings")" \
         --class=Idiomind --name=Idiomind \
         --text="$(gettext "The current Native language of this topic is")  <b>$active_trans</b>" \
-        --always-print-result --window-icon=idiomind \
+        --always-print-result --window-icon=$DS/images/logo.png \
         --buttons-layout=end --center --on-top --align=left \
         --width=400 --height=400 --borders=15 \
         --field="":LBL " " \

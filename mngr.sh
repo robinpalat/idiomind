@@ -521,7 +521,7 @@ edit_list_more() {
     --gtkrc="$DS/default/gtkrc.cfg" \
     --name=Idiomind --class=Idiomind \
     --expand-column=2 --no-click --no-headers\
-    --window-icon=idiomind --on-top --center \
+    --window-icon=$DS/images/logo.png --on-top --center \
     --width=390 --borders=5 \
     --column="":TXT \
     --button="$(gettext "Apply")"!gtk-apply:0 \
