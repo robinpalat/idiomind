@@ -172,7 +172,7 @@ function notebook_1() {
     --field="$(gettext "Auto-check learned items")\t\t":CHK "$acheck" \
     --field=" ":LBL " " \
     --field="$btn1":FBTN "$cmd1" \
-    --field="$btn2":FBTN "$cmd2" \
+    --field="":LBL "$cmd2" \
     --field="$btn3":FBTN "$cmd3" \
     --field="$btn4":FBTN "$cmd4" > "$cnf4" &
     yad --notebook --title="Idiomind - $tpc" \
@@ -225,7 +225,7 @@ function notebook_2() {
     --field="\t\t\t\t\t\t\t\\t\t\t\t\t\t":LBL "_" \
     --field=" ":LBL " " --field=" ":LBL " " \
     --field="$btn1":FBTN "$cmd1" \
-    --field="$btn2":FBTN "$cmd2" \
+    --field="":LBL "$cmd2" \
     --field="$btn3":FBTN "$cmd3" \
     --field="$btn4":FBTN "$cmd4" > "$cnf4" &
     yad --notebook --title="Idiomind - $tpc" \

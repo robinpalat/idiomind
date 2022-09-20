@@ -74,7 +74,7 @@ set_lang() {
 }
 
 config_dlg() {
-    sz=(520 480); [[ ${swind} = TRUE ]] && sz=(490 460)
+    sz=(400 480)
     show_icon=0; kill_icon=0
     source "$DS/default/sets.cfg"
     
@@ -113,8 +113,8 @@ config_dlg() {
     --field="$(gettext "Smaller windows")":CHK "$swind" \
     --field="$(gettext "Run at startup")":CHK "$stsks" \
     --field="$(gettext "Interface language")":CB "$lst" \
-    --field="<small>$(gettext "Use this speech synthesizer")</small>" "$synth" \
-    --field="<small>$(gettext "Program to convert text to audio")</small>" "$txaud" \
+    --field="<small>$(gettext "Speech synthesizer")</small>" "$synth" \
+    --field="<small>$(gettext "Convert text to audio")</small>" "$txaud" \
     --field="$(gettext "I'm learning")":CB "$(gettext "${tlng}")$list1" \
     --field="$(gettext "My language is")":CB "$(gettext "${slng}")$list2" > "$cnf1" &
     cat "$DS_a/menu_list" |yad --plug=$KEY --tabnum=2 --list \
@@ -133,7 +133,7 @@ config_dlg() {
     yad --notebook --key=$KEY --title="$(gettext "Settings")" \
     --name=Idiomind --class=Idiomind \
     --window-icon=$DS/images/logo.png \
-    --tab-pos=right --tab-borders=5 --sticky --center \
+    --tab-borders=5 --sticky --center \
     --tab="$(gettext "Preferences")" \
     --tab="$(gettext "More")" \
     --tab="$(gettext "Help")" \
