@@ -3,11 +3,11 @@
 
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 
-function dicts() {
+function scripts() {
     dlg=0
     cmsg() {
-        if [ ! -e "$DT/dicts" ]; then
-            touch "$DT/dicts"
+        if [ ! -e "$DT/scripts" ]; then
+            touch "$DT/scripts"
             sleep 3
             if [ ! -e "$DC_s/topics_first_run" ]; then
                 source "$DS/ifs/cmns.sh"
@@ -17,7 +17,7 @@ function dicts() {
                     if ps -A |pgrep -f "yad --form --title"; then 
                         kill -9 $(pgrep -f "yad --form --title") &
                     fi
-                    rm -f "$DT/dicts"; "$DS_a/Dics/cnfg.sh" 6 &
+                    rm -f "$DT/scripts"; "$DS_a/Resources/cnfg.sh" 6 &
                     
                     if ps -A |pgrep -f "/usr/share/idiomind/add.sh"; then 
                         killall add.sh & 
@@ -25,14 +25,14 @@ function dicts() {
                 fi
                 echo "$tlng" > "$DC_a/dict/.dict"
             fi
-            [ -f "$DT/dicts" ] && rm -f "$DT/dicts"
+            [ -f "$DT/scripts" ] && rm -f "$DT/scripts"
         fi
         return 0
     }
     if [ ! -d "$DC_d" -o ! -d "$DC_a/dict/disables" ]; then
         mkdir -p "$DC_d"; mkdir -p "$DC_a/dict/disables"
         echo "$tlng" > "$DC_a/dict/.dict"
-        for re in "$DS_a/Dics/dicts"/*; do
+        for re in "$DS_a/Resources/scripts"/*; do
             > "$DC_a/dict/disables/$(basename "$re")"
         done
     fi
@@ -45,4 +45,4 @@ function dicts() {
     [[ ${dlg} = 1 ]] && cmsg
 }
 
-dicts &
+scripts &
