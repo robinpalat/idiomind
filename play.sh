@@ -18,7 +18,8 @@ play_word() {
         echo "${w}." |${synth}; [ $? != 0 ] && msg_err1
     else
         echo "${w}." |espeak -v ${tlangs[$tlng]} \
-        -a ${sAmplitude} -s ${sSpeed} -p ${sPitch} -g ${sWordgap} -b ${sEncoding} &
+        -a ${sAmplitude} -s ${sSpeed} -p ${sPitch} \
+        -g ${sWordgap} -b ${sEncoding} &
     fi
 } >/dev/null 2>&1
 
@@ -26,11 +27,12 @@ play_sentence() {
     if ps -A | pgrep -f 'play'; then killall 'play'; fi
     if [ -f "${DM_tlt}/$2.mp3" ]; then
         play "${DM_tlt}/$2.mp3" &
-    elif [ -n "$synth" ]; then
-        sed 's/<[^>]*>//g' <<< "${trgt}." |${synth}; [ $? != 0 ] && msg_err1
+    elif [ -e ${synth} ]; then
+        ${synth} "$(sed 's/<[^>]*>//g' <<< "${trgt}.")"; [ $? != 0 ] && msg_err1
     else
         sed 's/<[^>]*>//g' <<< "${trgt}." |espeak -v ${tlangs[$tlng]} \
-        -a ${sAmplitude} -s ${sSpeed} -p ${sPitch} -g ${sWordgap} -b ${sEncoding} &
+        -a ${sAmplitude} -s ${sSpeed} -p ${sPitch} \
+        -g ${sWordgap} -b ${sEncoding} &
     fi
 } >/dev/null 2>&1
 

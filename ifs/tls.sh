@@ -526,10 +526,10 @@ _definition() {
     export query="$(sed 's/<[^>]*>//g' <<<"${2}")"
     f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"
     if [ -z "$f" ]; then 
-        "$DS_a/Dics/cnfg.sh" 3
+        "$DS_a/Resources/cnfg.sh" 3
         f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"
     fi
-    eval _url="$(< "$DS_a/Dics/dicts/$(basename "$f")")"
+    eval _url="$(< "$DS_a/Resources/scripts/$(basename "$f")")"
 	export _url
 
 python3 <<PY
@@ -679,10 +679,10 @@ first_run() {
         fi
     elif [[ "${2}" = 'TRUE' ]]; then
         echo "-- done"
-        touch "$DC_s/topics_first_run" "$DC_s/recommended_dicts_first_run"
+        touch "$DC_s/topics_first_run" "$DC_s/recommended_scripts_first_run"
     elif [[ "${2}" = 'FALSE' ]]; then
         echo "-- done"
-        touch "$DC_s/topics_first_run" "$DC_s/dics_first_run"
+        touch "$DC_s/topics_first_run" "$DC_s/Resources_first_run"
     fi
     return
 }

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 echo -e "\n--- updating dicts..."
-"$DS_a/Dics/cnfg.sh" updt_dicts
-echo -e "\tdicts ok\n"
+"$DS_a/Resources/cnfg.sh" updt_scripts)
+echo -e "\tResources ok\n"
 
 if [ ! -d "$DM_tls" ]; then
     mkdir -p "$DM_tls/audio"

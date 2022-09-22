@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-sz=(560 560 480); [[ ${swind} = TRUE ]] && sz=(480 460 400)
+sz=(530 560 460); [[ ${swind} = TRUE ]] && sz=(450 460 380)
 function vwr() {
     if [ ${1} = 1 ]; then 
         index="$(tpc_db 5 learning)"

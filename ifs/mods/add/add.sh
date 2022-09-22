@@ -381,17 +381,17 @@ function translate() {
         sqlite3 ${tlngdb} "select "${slng}" from Words where Word is '${t}' limit 1;"
     else
         if ! ls "$DC_d"/*."Traslator online.Translate".* 1> /dev/null 2>&1; then
-            "$DS_a/Dics/cnfg.sh" 2
+            "$DS_a/Resources/cnfg.sh" 2
         fi
         for trans in "$DC_d"/*."Traslator online.Translate".*; do
-            trans="$DS_a/Dics/dicts/$(basename "${trans}")"
+            trans="$DS_a/Resources/scripts/$(basename "${trans}")"
             if [ -f "${trans}" ]; then "${trans}" "$@" && break; fi
         done
     fi
 }
 
 dwld1() {
-    URL=""; source "$1/dicts/$(basename "${dict}")"
+    URL=""; source "$1/scripts/$(basename "${dict}")"
     if [ -n "${URL}" -a ! -f "$audio_file" ]; then
         wget -T 51 -q -U "$useragent" -O "$audio_dwld.$EX" "${URL}"
         if [[ ${EX} != 'mp3' ]]; then
@@ -409,7 +409,7 @@ dwld1() {
 }
 
 dwld2() {
-    URL=""; source "$1/dicts/$(basename "${dict}")"
+    URL=""; source "$1/scripts/$(basename "${dict}")"
     if [ -n "${URL}" -a ! -f "${audio_file}" ]; then
         wget -T 51 -q -U "$useragent" -O "$DT_r/audio.mp3" "${URL}"
     fi
@@ -430,28 +430,28 @@ export -f translate dwld1 dwld2
 
 function tts_sentence() {
     if ! ls "$DC_d"/*."TTS online.Convert text to audio".* 1> /dev/null 2>&1; then
-        "$DS_a/Dics/cnfg.sh" 1
+        "$DS_a/Resources/cnfg.sh" 1
     fi
     word="${1}"; DT_r="$2"; audio_file="${3}"
     for dict in "$DC_d"/*."TTS online.Convert text to audio".*; do
-        dwld2 "$DS_a/Dics"; [ $? = 5 ] && break
+        dwld2 "$DS_a/Resources"; [ $? = 5 ] && break
     done
 }
 
 function tts_word() {
     if ! ls "$DC_d"/*."TTS online.Search audio".* 1> /dev/null 2>&1; then
-        "$DS_a/Dics/cnfg.sh" 0
+        "$DS_a/Resources/cnfg.sh" 0
     fi
     word="${1,,}"; audio_file="${2}/$word.mp3"; audio_dwld="${2}/$word"
     if ls "$DC_d"/*."TTS online.Search audio".$lgt 1> /dev/null 2>&1; then
         for dict in $DC_d/*."TTS online.Search audio".$lgt; do
-            dwld1 "$DS_a/Dics"; [ $? = 5 ] && break
+            dwld1 "$DS_a/Resources"; [ $? = 5 ] && break
         done
     fi
     if ls "$DC_d"/*."TTS online.Search audio".various 1> /dev/null 2>&1; then
         if [ ! -f "${2}/${1}.mp3" ]; then
             for dict in $DC_d/*."TTS online.Search audio".various; do
-                dwld1 "$DS_a/Dics"; [ $? = 5 ] && break
+                dwld1 "$DS_a/Resources"; [ $? = 5 ] && break
             done
         fi
     fi
@@ -459,7 +459,7 @@ function tts_word() {
 
 function fetch_audio() {
     if ! ls "$DC_d"/*."TTS online.Search audio".* 1> /dev/null 2>&1; then
-        "$DS_a/Dics/cnfg.sh" 0
+        "$DS_a/Resources/cnfg.sh" 0
     fi
     if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1 ; then 
     words_list="${2}"; else words_list="${1}"; fi
@@ -470,13 +470,13 @@ function fetch_audio() {
         if [ ! -f "$audio_file" ]; then
             if ls "$DC_d"/*."TTS online.Search audio".$lgt 1> /dev/null 2>&1; then
                 for dict in "$DC_d"/*."TTS online.Search audio".$lgt; do
-                    dwld1 "$DS_a/Dics"; [ $? = 5 ] && break
+                    dwld1 "$DS_a/Resources"; [ $? = 5 ] && break
                 done
             fi
             if [ ! -f "$audio_file" ]; then
                 if ls "$DC_d"/*."TTS online.Search audio".various 1> /dev/null 2>&1; then
                     for dict in "$DC_d"/*."TTS online.Search audio".various; do
-                        dwld1 "$DS_a/Dics"; [ $? = 5 ] && break
+                        dwld1 "$DS_a/Resources"; [ $? = 5 ] && break
                     done
                 fi
             fi
@@ -489,7 +489,7 @@ function img_word() {
         if [ ! -e "${DM_tls}/images/${1,,}-1.jpg" -a ! -f "${DM_tlt}/images/${1,,}.jpg" ]; then
             touch "$DT/${1}.img"
             for Script in "$DC_d"/*."Script.Search image".*; do
-                Script="$DS_a/Dics/dicts/$(basename "${Script}")"
+                Script="$DS_a/Resources/scripts/$(basename "${Script}")"
                 [ -f "${Script}" ] && "${Script}" "${1}"
                 if [ -f "$DT/${1}.jpg" ]; then
                     if [[ $(du "$DT/${1}.jpg" |cut -f1) -gt 10 ]]; then
@@ -501,7 +501,7 @@ function img_word() {
             done
             if [ ! -e "$DT/${1}.jpg" ]; then
                 for Script in "$DC_d"/*."Script.Search image".*; do
-                    Script="$DS_a/Dics/dicts/$(basename "${Script}")"
+                    Script="$DS_a/Resources/scripts/$(basename "${Script}")"
                     [ -f "${Script}" ] && "${Script}" "${2}"
                     if [ -f "$DT/${2}.jpg" ]; then
                         if [[ $(du "$DT/${2}.jpg" |cut -f1) -gt 10 ]]; then
