@@ -6,7 +6,7 @@ LANGUAGES="" # Example: Chinese, English
 STATUS="Ok"
 VOICES=""
 CONF="FALSE" 
-FILECONF="" # "$HOME/.config/idiomind/addons/dict/XXXX.cfg"
+FILECONF="" # "$HOME/.config/idiomind/addons/Resources/XXXX.cfg"
 TESTWORD="" # Example: cat
 
 

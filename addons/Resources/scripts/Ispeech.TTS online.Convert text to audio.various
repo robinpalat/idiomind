@@ -6,7 +6,7 @@ LANGUAGES="English, Spanish, Portuguese, Russian, Italian, German, French, Chine
 STATUS="Ok"
 VOICES=""
 CONF="TRUE"
-FILECONF="$HOME/.config/idiomind/addons/dict/Ispeech.cfg"
+FILECONF="$HOME/.config/idiomind/addons/resources/Ispeech.cfg"
 TESTWORD=""
 
 
@@ -15,15 +15,15 @@ function check_key(){ # remove from active if missing key
     d1="Ispeech.TTS online.Search audio.various"
     d2="Ispeech.TTS online.Convert text to audio.various"
     local fname="$(basename "$0")"
-    msgs="$HOME/.config/idiomind/addons/dict/msgs"
+    msgs="$HOME/.config/idiomind/addons/resources/msgs"
     if [ -z "${key}" ] || [[ ${#key} != 32 ]]; then
         echo "$(gettext "Missing key")" > "$msgs/$d1"
         echo "$(gettext "Missing key")" > "$msgs/$d2"
-        if [ -f "$DC_a/dict/enables/${d1}" ] && [ ! -d "$DT/dict_test" ]; then
-            mv -f "$DC_a/dict/enables/${d1}" "$DC_a/dict/disables/${d1}"
+        if [ -f "$DC_a/resources/enables/${d1}" ] && [ ! -d "$DT/resources_test" ]; then
+            mv -f "$DC_a/resources/enables/${d1}" "$DC_a/resources/disables/${d1}"
         fi
-        if [ -f "$DC_a/dict/enables/${d2}" ] && [ ! -d "$DT/dict_test" ]; then
-            mv -f "$DC_a/dict/enables/${d2}" "$DC_a/dict/disables/${d2}"
+        if [ -f "$DC_a/resources/enables/${d2}" ] && [ ! -d "$DT/resources_test" ]; then
+            mv -f "$DC_a/resources/enables/${d2}" "$DC_a/resources/disables/${d2}"
         fi
         return 1
     else

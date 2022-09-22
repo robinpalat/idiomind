@@ -14,7 +14,7 @@ msgs="$DC_a/dict/msgs"
 check_dir "$msgs"
 
 function test_() {
-    f_lock 1 "$DT/dicts_lk"
+    f_lock 1 "$DT/scripts_lk"
     internet
     
     echo "1"
@@ -26,7 +26,7 @@ function test_() {
         
         for trans in "$DC_d"/*."Traslator online.Translate".*; do
             filename="$(basename "${trans}")"; cleanups "$msgs/$filename"
-            trans="$DS_a/Dics/dicts/$filename"
+            trans="$DS_a/Resources/scripts/$filename"
             if [ -f "${trans}" ]; then
                 re="$("${trans}" "This is a test" auto $lgs)"
                 if [ -n "${re}" ]; then
@@ -41,7 +41,7 @@ function test_() {
         st="$(gettext "This is a test")"
         for trans in "$DC_e"/*."Traslator online.Translate".*; do
             filename="$(basename "${trans}")"; cleanups "$msgs/$filename"
-            trans="$DS_a/Dics/dicts/$filename"
+            trans="$DS_a/Resources/scripts/$filename"
             if [ -f "${trans}" ]; then
                 re="$("${trans}" "This is a test" auto $lgs)"
                 if [ -n "${re}" ]; then
@@ -63,7 +63,7 @@ function test_() {
             for dict in "$DC_d"/*."TTS online.Convert text to audio".*; do
                 audio_file="$DT/dict_test/${n}_audio"
                 filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
-                unset TESTURL; source "$DS_a/Dics/dicts/$filename"
+                unset TESTURL; source "$DS_a/Resources/scripts/$filename"
                 if [ -n "${TESTURL}" ]; then
                     wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
                     if [[ ${EX} != 'mp3' ]]; then
@@ -91,7 +91,7 @@ function test_() {
             for dict in "$DC_e"/*."TTS online.Convert text to audio".*; do
                 audio_file="$DT/dict_test/${n}_audio"
                 filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
-                unset TESTURL; source "$DS_a/Dics/dicts/$filename"
+                unset TESTURL; source "$DS_a/Resources/scripts/$filename"
                 if [ -n "${TESTURL}" ]; then
                     wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
                     if [[ ${EX} != 'mp3' ]]; then
@@ -123,7 +123,7 @@ function test_() {
             for dict in $DC_d/*."TTS online.Search audio".*; do
                 filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
                 audio_file="$DT/dict_test/${n}_audio"
-                unset TESTURL; source "$DS_a/Dics/dicts/$filename"
+                unset TESTURL; source "$DS_a/Resources/scripts/$filename"
                 if [ -n "${TESTURL}" ]; then
                     wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
                     if [[ ${EX} != 'mp3' ]]; then
@@ -152,7 +152,7 @@ function test_() {
             for dict in $DC_e/*."TTS online.Search audio".*; do
                 filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
                 audio_file="$DT/dict_test/${n}_audio"
-                unset TESTURL; source "$DS_a/Dics/dicts/$filename"
+                unset TESTURL; source "$DS_a/Resources/scripts/$filename"
                 if [ -n "${TESTURL}" ]; then
                     wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
                     if [[ ${EX} != 'mp3' ]]; then
@@ -184,7 +184,7 @@ function test_() {
         if ls "$DC_d"/*."Link.Search definition".* 1> /dev/null 2>&1; then
             for dict in $DC_d/*."Link.Search definition".*; do
                 filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
-                eval _url="$(< "$DS_a/Dics/dicts/$filename")"
+                eval _url="$(< "$DS_a/Resources/scripts/$filename")"
                 if curl -v "$_url" 2>&1 |grep -m1 "HTTP/1.1" >/dev/null 2>&1; then
                     :
                 else 
@@ -197,7 +197,7 @@ function test_() {
         if ls "$DC_e"/*."Link.Search definition".* 1> /dev/null 2>&1; then
             for dict in $DC_e/*."Link.Search definition".*; do
                 filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
-                eval _url="$(< "$DS_a/Dics/dicts/$filename")"
+                eval _url="$(< "$DS_a/Resources/scripts/$filename")"
                 if curl -v "$_url" 2>&1 |grep -m1 "HTTP/1.1" >/dev/null 2>&1; then
                     :
                 else 
@@ -215,7 +215,7 @@ function test_() {
         if ls "$DC_d"/*."Script.Search image".* 1> /dev/null 2>&1; then
             for Script in "$DC_d"/*."Script.Search image".*; do
                 filename="$(basename "${Script}")"; cleanups "$msgs/$filename"
-                Script="$DS_a/Dics/dicts/$filename"
+                Script="$DS_a/Resources/scripts/$filename"
                 TLANGS=$(grep -o TLANGS=\"[^\"]* "$Script" |grep -o '[^"]*$')
                 TESTWORD=$(grep -o TESTWORD=\"[^\"]* "$Script" |grep -o '[^"]*$')
                 [ -f "${Script}" ] && "${Script}" "${TESTWORD}" "_TEST_"
@@ -234,7 +234,7 @@ function test_() {
         if ls "$DC_e"/*."Script.Search image".* 1> /dev/null 2>&1; then
             for Script in "$DC_e"/*."Script.Search image".*; do
                 filename="$(basename "${Script}")"; cleanups "$msgs/$filename"
-                Script="$DS_a/Dics/dicts/$filename"
+                Script="$DS_a/Resources/scripts/$filename"
                 TLANGS=$(grep -o TLANGS=\"[^\"]* "$Script" |grep -o '[^"]*$')
                 TESTWORD=$(grep -o TESTWORD=\"[^\"]* "$Script" |grep -o '[^"]*$')
                 [ -f "${Script}" ] && "${Script}" "${TESTWORD}" "_TEST_"
@@ -252,12 +252,12 @@ function test_() {
     
     # ---------------------------------------------------
 
-    if [ ! -f "$DC_s/dics_first_run" ]; then
-        cat "$DT/test_fail" >> "$DC_a/dicts.inf"
+    if [ ! -f "$DC_s/Resources_first_run" ]; then
+        cat "$DT/test_fail" >> "$DC_a/scripts.inf"
     fi
     cleanups "$DT/dict_test" "$DT/test_fail"
     echo "100"
-    f_lock 3 "$DT/dicts_lk"
+    f_lock 3 "$DT/scripts_lk"
 }
 
 function dlg_progress_2() {
@@ -299,5 +299,5 @@ else
 fi
 
 if [[ "$1" != 1 ]]; then 
-    "$DS/addons/Dics/cnfg.sh"
+    "$DS/addons/Resources/cnfg.sh"
 fi

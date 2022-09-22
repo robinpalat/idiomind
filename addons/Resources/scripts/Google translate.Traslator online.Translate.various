@@ -38,6 +38,9 @@ link="http://translate.googleapis.com/translate_a/single?client=gtx&sl=$2&tl=$3&
 if [[ "$1" != '_dclk_' ]]; then
     gtra="$(wget -U "$useragent" -qO - "$link")"
 fi
+
+#echo "${gtra}" |sed -e 's/\",\".*//g' |sed -e 's/.*\[\[\[\"//g' | awk -F'null' '{print $1}' > $HOME/ddddd
+
 if grep -o -E 'ja|zh-cn|ru' <<< "${3}" >/dev/null 2>&1 ; then
     if [[ "$4" = singleline ]]; then
         echo -e "${gtra}" |sed -e 's/\",\".*//g' |sed -e 's/.*\[\[\[\"//g'

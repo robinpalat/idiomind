@@ -1,7 +1,7 @@
 #!/bin/bash
 
 dlg="$1"
-dir="/usr/share/idiomind/addons/Dics/dicts"
+dir="/usr/share/idiomind/addons/Resources/scripts"
 source "$dir/Ispeech.TTS online.Convert text to audio.various"
 TLANGS="zh-cn, en, ja, pt, es, ru, it, de, fr"
 
