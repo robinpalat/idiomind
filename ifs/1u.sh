@@ -89,8 +89,8 @@ function set_lang() {
 dlg=$(yad --form --title="Idiomind" \
 --text="$text\n" \
 --class=Idiomind --name=Idiomind \
---image=$DS/images/logo.png \
---window-icon=$DS/images/logo.png \
+--image=/usr/share/idiomind/images/logo.png \
+--window-icon=/usr/share/idiomind/images/logo.png \
 --image-on-top --buttons-layout=end --align=right \
 --fixed --geometry="+$sx+$sy" --center --on-top \
 --width=500 --height=260 --borders=15 \
@@ -100,7 +100,7 @@ dlg=$(yad --form --title="Idiomind" \
 --field="$(gettext "Set recommended Initialization configurations")  :chk" "TRUE" \
 --field=" :LBL" " "  \
 --button="$(gettext "Cancel")":1 \
---button="$(gettext "Save")!gtk-apply":0)
+--button="$(gettext "OK")!gtk-apply":0)
 ret=$?
 
 if [ $ret -eq 1 ]; then

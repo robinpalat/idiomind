@@ -47,10 +47,10 @@ function add_dlg() {
         else
             if [ -f /usr/bin/gksu ]; then
                 gksu -S -m "$(gettext "Idiomind requires admin privileges for this task")" "$DS_a/Resources/cnfg.sh" \
-                cpfile "${add}" "$DS_a/Resources/scripts"/ "$DC_a/dict/disables/$(basename "${add}")"
+                cpfile "${add}" "$DS_a/Resources/scripts"/ "$DC_a/resources/disables/$(basename "${add}")"
             elif [ -f /usr/bin/kdesudo ]; then
                 kdesudo -d --comment="$(gettext "Idiomind requires admin privileges for this task")" "$DS_a/Resources/cnfg.sh" \
-                cpfile "${add}" "$DS_a/Resources/scripts"/ "$DC_a/dict/disables/$(basename "${add}")"
+                cpfile "${add}" "$DS_a/Resources/scripts"/ "$DC_a/resources/disables/$(basename "${add}")"
             else
                 msg "$(gettext "No authentication program found").\n" error \
                 "$(gettext "No authentication program found")"
@@ -95,7 +95,7 @@ function dclk() {
     fi
 
     if [[ "$CONF" = "TRUE" ]]; then
-        fileconf="$DC_a/dict/$3.cfg"
+        fileconf="$DC_a/resources/$3.cfg"
         SPEED=""
         VOICES=""
         [ ! -f "$fileconf" ] && touch "$fileconf"
@@ -150,21 +150,21 @@ function dlg() {
     if [ -f "$DT/scripts" ]; then
         (sleep 20 && cleanups "$DT/scripts") & exit 1
     fi
-    dict_list() {
+    resources_list() {
         sus="${task[$1]}"
         cd "$enables"/
         find . -not -name "*.$lgt" -and -not -name "*.various" -type f \
         -exec mv --target-directory="$disables/" {} +
         
-        while read -r dict; do
-            if [ -n "${dict}" ]; then
+        while read -r res; do
+            if [ -n "${res}" ]; then
                 TLANGS=$(grep -o TLANGS=\"[^\"]* \
-                "$DS_a/Resources/scripts/${dict}" |grep -o '[^"]*$')
+                "$DS_a/Resources/scripts/${res}" |grep -o '[^"]*$')
                 echo 'TRUE'
-                sed 's/\./\n/g' <<< "${dict}"
+                sed 's/\./\n/g' <<< "${res}"
                 if ! echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
                     echo "$DS/addons/Resources/b.png"
-                elif [ ! -f "$msgs/${dict}" ]; then
+                elif [ ! -f "$msgs/${res}" ]; then
                     echo "$DS/addons/Resources/c.png"
                 else
                     echo "$DS/addons/Resources/a.png"
@@ -172,20 +172,20 @@ function dlg() {
             fi
         done < <(ls "$enables"/)
         
-        while read -r dict; do
-            if [ -n "${dict}" ]; then
+        while read -r res; do
+            if [ -n "${res}" ]; then
                 TLANGS=$(grep -o TLANGS=\"[^\"]* \
-                "$DS_a/Resources/scripts/${dict}" |grep -o '[^"]*$')
+                "$DS_a/Resources/scripts/${res}" |grep -o '[^"]*$')
                 echo 'FALSE'
-                if grep -E ".$lgt|.various" <<< "${dict}">/dev/null 2>&1; then
-                    sed 's/\./\n/g' <<< "${dict}" | \
+                if grep -E ".$lgt|.various" <<< "${res}">/dev/null 2>&1; then
+                    sed 's/\./\n/g' <<< "${res}" | \
                     sed "3s|${sus}|<span color='#2BB62D'>${sus}<\/span>|"
                 else 
-                    sed 's/\./\n/g' <<< "${dict}"
+                    sed 's/\./\n/g' <<< "${res}"
                 fi
                 if ! echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
                     echo "$DS/addons/Resources/b.png"
-                elif [ ! -f "$msgs/${dict}" ]; then
+                elif [ ! -f "$msgs/${res}" ]; then
                     echo "$DS/addons/Resources/c.png"
                 else
                     echo "$DS/addons/Resources/a.png"
@@ -206,8 +206,8 @@ function dlg() {
         text="--center"; n=6
     fi
     
-    sel="$(dict_list ${n} |yad --list \
-    --title="$(gettext "Dictionaries")" \
+    sel="$(resources_list ${n} |yad --list \
+    --title="$(gettext "Resources")" \
     --name=Idiomind --class=Idiomind "${text}" \
     --print-all --always-print-result --separator="|" \
     --dclick-action="$DS_a/Resources/cnfg.sh _dclk_" \
@@ -231,12 +231,12 @@ function dlg() {
         if [ $ret -eq 2 ]; then
                 "$DS_a/Resources/cnfg.sh" add_dlg
         elif [ $ret -eq 0  -o $ret -eq 3 ]; then
-            while read -r dict; do
-                name="$(cut -d "|" -f2 <<< "$dict")"
-                type="$(cut -d "|" -f3 <<< "$dict")"
-                tget="$(cut -d "|" -f4 <<< "$dict")"
+            while read -r res; do
+                name="$(cut -d "|" -f2 <<< "$res")"
+                type="$(cut -d "|" -f3 <<< "$res")"
+                tget="$(cut -d "|" -f4 <<< "$res")"
                 
-                if grep 'FALSE' <<< "$dict"; then
+                if grep 'FALSE' <<< "$res"; then
                     if [ ! -f "$disables/$name.$type.$tget.$lgt" ]; then
                         if [ -f "$enables/$name.$type.$tget.$lgt" ]; then 
                             mv -f "$enables/$name.$type.$tget.$lgt" \
@@ -250,7 +250,7 @@ function dlg() {
                         fi
                     fi
                 fi
-                if grep 'TRUE' <<< "$dict"; then
+                if grep 'TRUE' <<< "$res"; then
                     if [ ! -f "$enables/$name.$type.$tget.$lgt" ]; then
                         if [ -f "$disables/$name.$type.$tget.$lgt" ]; then 
                             mv -f "$disables/$name.$type.$tget.$lgt" \
@@ -281,11 +281,11 @@ function update_config_dir() {
     [ ! -d "$disables" ] && mkdir -p "$disables"
     lsResources="$(ls "$DS_a/Resources/scripts/")"
     
-    while read -r dict; do
-        if [ ! -e "$enables/$(basename "${dict}")" \
-            -a ! -e "$disables/$(basename "${dict}")" ]; then
-            echo -e "\tadded dict: $(basename "${dict}")"
-            > "$disables/$(basename "${dict}")"; fi
+    while read -r res; do
+        if [ ! -e "$enables/$(basename "${res}")" \
+            -a ! -e "$disables/$(basename "${res}")" ]; then
+            echo -e "\tresource added: $(basename "${res}")"
+            > "$disables/$(basename "${res}")"; fi
     done <<< "${lsResources}"
     
     if [ -f "$DC_s/recommended_scripts_first_run" ]; then # recommended_scripts_first_run
@@ -296,13 +296,13 @@ function update_config_dir() {
         #lsResources="$(ls "$disables/")"
     
         #"$DS_a/Resources/test.sh" 1 silence
-        #if [ -f "$DC_a/dict/test" ] ; then
-            #test_ok="$(< "$DC_a/dict/test")"
+        #if [ -f "$DC_a/res/test" ] ; then
+            #test_ok="$(< "$DC_a/res/test")"
         #fi
         
-            #if grep "${dict}" <<< "${test_ok}"  >/dev/null 2>&1; then
-                #echo "-- enable dict: ${dict}"
-                #mv -f "$disables/${dict}" "$enables/${dict}"
+            #if grep "${res}" <<< "${test_ok}"  >/dev/null 2>&1; then
+                #echo "-- enable res: ${res}"
+                #mv -f "$disables/${res}" "$enables/${res}"
             #fi
             
         if ls "$disables"/*.various 1> /dev/null 2>&1; then
@@ -313,14 +313,14 @@ function update_config_dir() {
             mv -f "$disables"/*.$lgt "$enables"/
         fi
     fi
-    while read -r dict; do
-        if ! grep "$(basename "${dict}")" <<< "${lsResources}">/dev/null 2>&1; then
-            cleanups "$enables/${dict}"; echo "-- removed: $(basename "${dict}")"
+    while read -r res; do
+        if ! grep "$(basename "${res}")" <<< "${lsResources}">/dev/null 2>&1; then
+            cleanups "$enables/${res}"; echo "-- removed: $(basename "${res}")"
         fi
     done < <(ls "$enables")
-    while read -r dict; do
-        if ! grep "$(basename "${dict}")" <<< "${lsResources}">/dev/null 2>&1; then
-            cleanups "$disables/${dict}"; echo "-- removed: $(basename "${dict}")"
+    while read -r res; do
+        if ! grep "$(basename "${res}")" <<< "${lsResources}">/dev/null 2>&1; then
+            cleanups "$disables/${res}"; echo "-- removed: $(basename "${res}")"
         fi
     done < <(ls "$disables")
 }

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo -e "\n--- updating dicts..."
-"$DS_a/Resources/cnfg.sh" updt_scripts)
+echo -e "\n--- updating resources..."
+"$DS_a/Resources/cnfg.sh" updt_scripts
 echo -e "\tResources ok\n"
 
 if [ ! -d "$DM_tls" ]; then

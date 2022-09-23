@@ -7,10 +7,10 @@ source "$DS/default/sets.cfg"
 lgt=${tlangs[$tlng]}
 lgs=${slangs[$slng]}
 
-mkdir "$DT/dict_test"
-DC_d="$DC_a/dict/disables"
-DC_e="$DC_a/dict/enables"
-msgs="$DC_a/dict/msgs"
+mkdir "$DT/res_test"
+DC_d="$DC_a/resources/disables"
+DC_e="$DC_a/resources/enables"
+msgs="$DC_a/resources/msgs"
 check_dir "$msgs"
 
 function test_() {
@@ -60,9 +60,9 @@ function test_() {
 
         if ls "$DC_d"/*."TTS online.Convert text to audio".* 1> /dev/null 2>&1; then
             n=10
-            for dict in "$DC_d"/*."TTS online.Convert text to audio".*; do
-                audio_file="$DT/dict_test/${n}_audio"
-                filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
+            for res in "$DC_d"/*."TTS online.Convert text to audio".*; do
+                audio_file="$DT/res_test/${n}_audio"
+                filename="$(basename "${res}")"; cleanups "$msgs/$filename"
                 unset TESTURL; source "$DS_a/Resources/scripts/$filename"
                 if [ -n "${TESTURL}" ]; then
                     wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
@@ -88,9 +88,9 @@ function test_() {
         
         if ls "$DC_e"/*."TTS online.Convert text to audio".* 1> /dev/null 2>&1; then
              n=20
-            for dict in "$DC_e"/*."TTS online.Convert text to audio".*; do
-                audio_file="$DT/dict_test/${n}_audio"
-                filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
+            for res in "$DC_e"/*."TTS online.Convert text to audio".*; do
+                audio_file="$DT/res_test/${n}_audio"
+                filename="$(basename "${res}")"; cleanups "$msgs/$filename"
                 unset TESTURL; source "$DS_a/Resources/scripts/$filename"
                 if [ -n "${TESTURL}" ]; then
                     wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
@@ -120,9 +120,9 @@ function test_() {
 
         if ls "$DC_d"/*."TTS online.Search audio".* 1> /dev/null 2>&1; then
             n=50
-            for dict in $DC_d/*."TTS online.Search audio".*; do
-                filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
-                audio_file="$DT/dict_test/${n}_audio"
+            for res in $DC_d/*."TTS online.Search audio".*; do
+                filename="$(basename "${res}")"; cleanups "$msgs/$filename"
+                audio_file="$DT/res_test/${n}_audio"
                 unset TESTURL; source "$DS_a/Resources/scripts/$filename"
                 if [ -n "${TESTURL}" ]; then
                     wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
@@ -135,7 +135,7 @@ function test_() {
                     && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
                         :
                     else
-                        filename="$(basename "${dict}")"
+                        filename="$(basename "${res}")"
                         echo "FAIL" > "$msgs/$filename"
                     fi
                 fi
@@ -149,9 +149,9 @@ function test_() {
         
         if ls "$DC_e"/*."TTS online.Search audio".* 1> /dev/null 2>&1; then
             n=60
-            for dict in $DC_e/*."TTS online.Search audio".*; do
-                filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
-                audio_file="$DT/dict_test/${n}_audio"
+            for res in $DC_e/*."TTS online.Search audio".*; do
+                filename="$(basename "${res}")"; cleanups "$msgs/$filename"
+                audio_file="$DT/res_test/${n}_audio"
                 unset TESTURL; source "$DS_a/Resources/scripts/$filename"
                 if [ -n "${TESTURL}" ]; then
                     wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
@@ -182,8 +182,8 @@ function test_() {
         word="test"
         export query="$word" lgt
         if ls "$DC_d"/*."Link.Search definition".* 1> /dev/null 2>&1; then
-            for dict in $DC_d/*."Link.Search definition".*; do
-                filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
+            for res in $DC_d/*."Link.Search definition".*; do
+                filename="$(basename "${res}")"; cleanups "$msgs/$filename"
                 eval _url="$(< "$DS_a/Resources/scripts/$filename")"
                 if curl -v "$_url" 2>&1 |grep -m1 "HTTP/1.1" >/dev/null 2>&1; then
                     :
@@ -195,8 +195,8 @@ function test_() {
         
         echo "80"
         if ls "$DC_e"/*."Link.Search definition".* 1> /dev/null 2>&1; then
-            for dict in $DC_e/*."Link.Search definition".*; do
-                filename="$(basename "${dict}")"; cleanups "$msgs/$filename"
+            for res in $DC_e/*."Link.Search definition".*; do
+                filename="$(basename "${res}")"; cleanups "$msgs/$filename"
                 eval _url="$(< "$DS_a/Resources/scripts/$filename")"
                 if curl -v "$_url" 2>&1 |grep -m1 "HTTP/1.1" >/dev/null 2>&1; then
                     :
@@ -255,7 +255,7 @@ function test_() {
     if [ ! -f "$DC_s/Resources_first_run" ]; then
         cat "$DT/test_fail" >> "$DC_a/scripts.inf"
     fi
-    cleanups "$DT/dict_test" "$DT/test_fail"
+    cleanups "$DT/res_test" "$DT/test_fail"
     echo "100"
     f_lock 3 "$DT/scripts_lk"
 }

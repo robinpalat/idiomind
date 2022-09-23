@@ -23,24 +23,24 @@ function scripts() {
                         killall add.sh & 
                     fi
                 fi
-                echo "$tlng" > "$DC_a/dict/.dict"
+                echo "$tlng" > "$DC_a/resources/.res"
             fi
             [ -f "$DT/scripts" ] && rm -f "$DT/scripts"
         fi
         return 0
     }
-    if [ ! -d "$DC_d" -o ! -d "$DC_a/dict/disables" ]; then
-        mkdir -p "$DC_d"; mkdir -p "$DC_a/dict/disables"
-        echo "$tlng" > "$DC_a/dict/.dict"
+    if [ ! -d "$DC_d" -o ! -d "$DC_a/resources/disables" ]; then
+        mkdir -p "$DC_d"; mkdir -p "$DC_a/resources/disables"
+        echo "$tlng" > "$DC_a/resources/.res"
         for re in "$DS_a/Resources/scripts"/*; do
-            > "$DC_a/dict/disables/$(basename "$re")"
+            > "$DC_a/resources/disables/$(basename "$re")"
         done
     fi
-    if  [ ! -e "$DC_a/dict/.dict" ]; then
-        echo "$tlng" > "$DC_a/dict/.dict"
+    if  [ ! -e "$DC_a/resources/.res" ]; then
+        echo "$tlng" > "$DC_a/resources/.res"
     fi
     if ! ls "$DC_d"/* 1> /dev/null 2>&1; then dlg=1; fi
-    if  [[ "$(sed -n 1p "$DC_a/dict/.dict")" != $tlng ]] ; then dlg=1; fi
+    if  [[ "$(sed -n 1p "$DC_a/resources/.res")" != $tlng ]] ; then dlg=1; fi
     
     [[ ${dlg} = 1 ]] && cmsg
 }
