@@ -132,7 +132,7 @@ config_dlg() {
     --window-icon=$DS/images/logo.png \
     --tab-borders=5 --sticky --center \
     --tab="$(gettext "Preferences")" \
-    --tab="$(gettext "More")" \
+    --tab="$(gettext "Addons")" \
     --tab="$(gettext "Help")" \
     --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=0 \
     --button="$(gettext "Save")"!"gtk-apply":0 \
