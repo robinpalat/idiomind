@@ -32,7 +32,7 @@ function test_() {
                 if [ -n "${re}" ]; then
                     :
                 else
-                    echo "FAIL" > "$msgs/$filename"
+                    echo "$(gettext "It's not working")" > "$msgs/$filename"
                 fi
             fi
         done
@@ -47,7 +47,7 @@ function test_() {
                 if [ -n "${re}" ]; then
                     :
                 else
-                    echo "FAIL" > "$msgs/$filename"
+                    echo "$(gettext "It's not working")" > "$msgs/$filename"
                 fi
             fi
         done
@@ -75,12 +75,17 @@ function test_() {
                     && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
                         :
                     else 
-                        echo "FAIL" > "$msgs/$filename"
+						if [ -f "$FILECONF" ] && [ -n "$(cat "$FILECONF")" ]; then
+							echo "$(gettext "No key configuration")" > "$msgs/$filename"
+						else
+							echo "$(gettext "It's not working")" > "$msgs/$filename"
+                        fi
                     fi
                 fi
                 
                 cleanups "$audio_file.mp3"
                 let n++
+                echo 10+n
             done
         fi
         
@@ -103,10 +108,58 @@ function test_() {
                     && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
                         :
                     else 
-                        echo "FAIL" > "$msgs/$filename"
+                        if [ -f "$FILECONF" ] && [ -n "$(cat "$FILECONF")" ]; then
+							echo "$(gettext "No key configuration")" > "$msgs/$filename"
+						else
+							echo "$(gettext "It's not working")" > "$msgs/$filename"
+                        fi
                     fi
                 fi
                 
+                cleanups "$audio_file.mp3"
+                let n++
+            done
+        fi
+    
+        # ---------------------------------------------------
+        # AUDIO - offline"
+        echo "25"
+
+        if ls "$DC_d"/*."TTS offline.Convert text to audio".* 1> /dev/null 2>&1; then
+            n=10
+            for res in "$DC_d"/*."TTS offline.Convert text to audio".*; do
+                audio_file="$DT/res_test/${n}_audio"
+                filename="$(basename "${res}")"; cleanups "$msgs/$filename"
+                    "$DS_a/Resources/scripts/$filename" "this is a test" "$audio_file"
+                    if [[ "$audio_file.mp3" ]]; then
+                        mv -f "$audio_file.mp3" "$audio_file.mp3"
+                    elif [[ "$audio_file.wav" ]]; then
+						sox -r 8000 -c 1 "$audio_file.wav" "$audio_file.mp3"
+						mv -f "$audio_file.mp3" "$audio_file.mp3"
+					else
+                        echo "$(gettext "It's not working")" > "$msgs/$filename"
+                    fi
+                cleanups "$audio_file.mp3"
+                let n++
+            done
+        fi
+        
+        echo "35"
+        
+        if ls "$DC_e"/*."TTS offline.Convert text to audio".* 1> /dev/null 2>&1; then
+            n=20
+            for res in "$DC_e"/*."TTS offline.Convert text to audio".*; do
+                audio_file="$DT/res_test/${n}_audio"
+                filename="$(basename "${res}")"; cleanups "$msgs/$filename"
+                    "$DS_a/Resources/scripts/$filename" "this is a test" "$audio_file"
+                    if [[ "$audio_file.mp3" ]]; then
+                        mv -f "$audio_file.mp3" "$audio_file.mp3"
+                    elif [[ "$audio_file.wav" ]]; then
+						sox "$audio_file.wav" "$audio_file.mp3"
+						mv -f "$audio_file.mp3" "$audio_file.mp3"
+					else
+                        echo "$(gettext "It's not working")" > "$msgs/$filename"
+                    fi
                 cleanups "$audio_file.mp3"
                 let n++
             done
@@ -136,7 +189,7 @@ function test_() {
                         :
                     else
                         filename="$(basename "${res}")"
-                        echo "FAIL" > "$msgs/$filename"
+                        echo "$(gettext "It's not working")" > "$msgs/$filename"
                     fi
                 fi
                 
@@ -164,7 +217,7 @@ function test_() {
                     && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
                         :
                     else
-                        echo "FAIL" > "$msgs/$filename"
+                        echo "$(gettext "It's not working")" > "$msgs/$filename"
                     fi
                 fi
                 
@@ -188,7 +241,7 @@ function test_() {
                 if curl -v "$_url" 2>&1 |grep -m1 "HTTP/1.1" >/dev/null 2>&1; then
                     :
                 else 
-                    echo "FAIL" > "$msgs/$filename"
+                    echo "$(gettext "It's not working")" > "$msgs/$filename"
                 fi
             done  
         fi
@@ -201,7 +254,7 @@ function test_() {
                 if curl -v "$_url" 2>&1 |grep -m1 "HTTP/1.1" >/dev/null 2>&1; then
                     :
                 else 
-                    echo "FAIL" > "$msgs/$filename"
+                    echo "$(gettext "It's not working")" > "$msgs/$filename"
                 fi
             done  
         fi
@@ -223,7 +276,7 @@ function test_() {
                     if [[ $(du "$DT/${TESTWORD}.jpg" |cut -f1) -gt 10 ]]; then
                         :
                     else 
-                        echo "FAIL" > "$msgs/$filename"
+                        echo "$(gettext "It's not working")" > "$msgs/$filename"
                     fi
                 fi
                 cleanups "$DT/${TESTWORD}.jpg"
@@ -242,7 +295,7 @@ function test_() {
                     if [[ $(du "$DT/${TESTWORD}.jpg" |cut -f1) -gt 10 ]]; then
                         :
                     else 
-                        echo "FAIL" > "$msgs/$filename"
+                        echo "$(gettext "It's not working")" > "$msgs/$filename"
                     fi
                 fi
                 cleanups "$DT/${TESTWORD}.jpg"
@@ -261,11 +314,11 @@ function test_() {
 }
 
 function dlg_progress_2() {
-    yad --progress --title="Idiomind" \
-    --text="<b>$(gettext "Please wait, this might take a little while.")</b>" \
+    yad --progress --title="$(gettext "Checking resource availability...")" \
+    --text="<b>$(gettext "Please wait.")</b>" \
     --name=Idiomind --class=Idiomind \
     --window-icon=$DS/images/logo.png --align=right \
-    --progress-text=" " --pulsate \
+    --progress-text=" " \
     --percentage="0" --auto-close \
     --no-buttons --on-top --fixed \
     --width=420 --borders=10
@@ -278,8 +331,8 @@ if [[ "$2" = 'silence' ]]; then
     echo -e "\ttesting online resources ok"
 else
     cnf1=$(mktemp "$DT/cnf1.XXXXXX")
-    yad --form --title="$(gettext "Test online resources")" \
-    --text="$(gettext "Tasks:")\n" \
+    yad --form --title="$(gettext "Resource availability")" \
+    --text="$(gettext "Used for:")\n" \
     --name=Idiomind --class=Idiomind \
     --center --columns=2 --output-by-row \
     --on-top --skip-taskbar \
@@ -291,7 +344,7 @@ else
     --field=" $(gettext "Search definition")":CHK "" \
     --field=" $(gettext "Search image")":CHK "" \
     --button="$(gettext "Cancel")":1 \
-    --button="$(gettext "Apply")":0 > "$cnf1"
+    --button="$(gettext "Run")":0 > "$cnf1"
     ret=$?; [ $ret = 1 ] && exit
     export c="$(< "$cnf1")"; cleanups "$cnf1"
     

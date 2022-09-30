@@ -74,9 +74,9 @@ function dclk() {
         "$DS_a/Resources/scripts/${fname}" |grep -o '[^"]*$')
         INFO="$(gettext "Link to web page")"
         if [ ! -f "$msgs/$fname" ]; then
-            STATUS="Ok"
+            STATUS="$(gettext "It seems to work correctly")"
         else
-            STATUS="Break"
+            STATUS="$(gettext "it's not working")"
         fi
         CONF="FALSE"
     else
@@ -85,7 +85,8 @@ function dclk() {
 
     name="<b>$3</b>"
     icon="$DS/addons/Resources/c.png"
- 
+	
+	STATUS="$(gettext "It seems to work correctly")"
     if [ -f "$msgs/$fname" ]; then
         STATUS="$(< "$msgs/$fname")"
         icon="$DS/addons/Resources/a.png"
@@ -108,7 +109,7 @@ function dclk() {
         SPEED="$speed!Slow!Normal!Fast"
 
         c=$(yad --form --title="${3}" \
-        --text="$name\n<small>\n<b>$(gettext "Languages"):</b>\n$LANGUAGES\n\n<b>$(gettext "Information"):</b>\n$INFO\n\n<b>$(gettext "Status:")</b>\n $STATUS</small>\n" \
+        --text="$(gettext "Resource name"): $name\n<small>\n<b>$(gettext "Languages"):</b>\n$LANGUAGES\n\n<b>$(gettext "is used for"):</b>\n$INFO\n\n<b>$(gettext "Status:")</b>\n $STATUS</small>\n" \
         --image=$icon \
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" --center \
@@ -129,7 +130,7 @@ function dclk() {
         fi
     else
         yad --form --title="${3}" \
-        --text="$name\n<small>\n<b>$(gettext "Languages"):</b>\n$LANGUAGES\n\n<b>$(gettext "Information"):</b>\n$INFO\n\n<b>$(gettext "Status:")</b>\n $STATUS</small>\n" \
+        --text="$(gettext "Resource name"): $name\n<small>\n<b>$(gettext "Languages"):</b>\n$LANGUAGES\n\n<b>$(gettext "Is used for"):</b>\n$INFO\n\n<b>$(gettext "Status:")</b>\n $STATUS</small>\n" \
         --image=$icon \
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" --center \
@@ -219,7 +220,7 @@ function dlg() {
     --column="$(gettext "Enable")":CHK \
     --column="$(gettext "Resource")":TEXT \
     --column="$(gettext "Type")":TEXT \
-    --column="$(gettext "Task")":TEXT \
+    --column="$(gettext "Is used for")":TEXT \
     --column="$(gettext "Language")":TEXT \
     --column="$(gettext "Status")":IMG \
     --button="$(gettext "Add")":2 \
@@ -277,6 +278,7 @@ function dlg() {
 } >/dev/null 2>&1
 
 function update_config_dir() {
+	echo -e "\n--- updating resources..."
     [ ! -d "$enables" ] && mkdir -p "$enables"
     [ ! -d "$disables" ] && mkdir -p "$disables"
     lsResources="$(ls "$DS_a/Resources/scripts/")"
@@ -323,6 +325,8 @@ function update_config_dir() {
             cleanups "$disables/${res}"; echo "-- removed: $(basename "${res}")"
         fi
     done < <(ls "$disables")
+    
+    echo -e "\tResources ok\n"
 }
 
 case "$1" in

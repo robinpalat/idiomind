@@ -10,12 +10,22 @@ msg_err1() {
 
 play_word() {
     w="$(sed 's/<[^>]*>//g' <<<"${2}")"
-    if [ -f "${DM_tlt}/$3.mp3" ]; then
-        play "${DM_tlt}/$3.mp3" &
+    
+    if [ -f "$DT/${3}.mp3" ]; then play "$DT/${3}.mp3" &
+    
+    elif [ -f "${DM_tlt}/$3.mp3" ]; then play "${DM_tlt}/$3.mp3" &
+        
     elif [ -f "${DM_tls}/audio/${w,,}.mp3" ]; then
         play "${DM_tls}/audio/${w,,}.mp3" &
-    elif [ -n "$synth" ]; then
-        echo "${w}." |${synth}; [ $? != 0 ] && msg_err1
+        
+    elif ls "$DC_d"/*."TTS offline.Convert text to audio".* 1> /dev/null 2>&1; then
+        for Script in "$DC_d"/*."TTS offline.Convert text to audio".*; do
+			Script="$DS_a/Resources/scripts/$(basename "${Script}")"
+			[ -f "${Script}" ] && "${Script}" "${w}" "$DT/${3}.mp3"
+			if [ -f "$DT/${3}.mp3" ]; then 
+				play "$DT/${3}.mp3"; break & exit
+			fi
+		done
     else
         echo "${w}." |espeak -v ${tlangs[$tlng]} \
         -a ${sAmplitude} -s ${sSpeed} -p ${sPitch} \
@@ -27,8 +37,15 @@ play_sentence() {
     if ps -A | pgrep -f 'play'; then killall 'play'; fi
     if [ -f "${DM_tlt}/$2.mp3" ]; then
         play "${DM_tlt}/$2.mp3" &
-    elif [ -e ${synth} ]; then
-        ${synth} "$(sed 's/<[^>]*>//g' <<< "${trgt}.")"; [ $? != 0 ] && msg_err1
+        
+    elif ls "$DC_d"/*."TTS offline.Convert text to audio".* 1> /dev/null 2>&1; then
+        for Script in "$DC_d"/*."TTS offline.Convert text to audio".*; do
+			Script="$DS_a/Resources/scripts/$(basename "${Script}")"
+			[ -f "${Script}" ] && "${Script}" "${trgt}." "$DT/${trgt}.mp3"
+			if [ -f "$DT/${trgt}.mp3" ]; then 
+				play "$DT/${trgt}.mp3"; break & exit
+			fi
+		done
     else
         sed 's/<[^>]*>//g' <<< "${trgt}." |espeak -v ${tlangs[$tlng]} \
         -a ${sAmplitude} -s ${sSpeed} -p ${sPitch} \
@@ -52,7 +69,7 @@ play_file() {
 } >/dev/null 2>&1
 
 play_list() {
-   
+ 
     tpc="$(sed -n 1p "$HOME/.config/idiomind/tpc")"
     DC_tlt="${DM_tl}/${tpc}/.conf"
     tpcdb="$DC_tlt/tpc"
@@ -206,7 +223,7 @@ play_list() {
             [ -f "$DT/play2lck" ] && rm -f "$DT/play2lck"
             "$DS/stop.sh" 2
             "$DS/bcle.sh" "$2" &
-
+            
         # cmd stop
         elif [ $ret -eq 2 ]; then
             [ -e "$DT/playlck" ] && echo 0 > "$DT/playlck"

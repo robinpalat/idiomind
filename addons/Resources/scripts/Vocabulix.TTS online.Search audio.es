@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TLANGS="es"
-INFO=""
+INFO="Search audio for words"
 LANGUAGES="Spanish"
 STATUS="Ok"
 VOICES=""

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TLANGS="zh-cn, en, ja, pt, es, ru, it, de, fr"
-INFO=""
+INFO="Convert text to audio (online)"
 LANGUAGES="English, Spanish, Portuguese, Russian, Italian, German, French, Chinese"
 STATUS="Ok"
 VOICES=""
@@ -17,8 +17,8 @@ function check_key(){ # remove from active if missing key
     local fname="$(basename "$0")"
     msgs="$HOME/.config/idiomind/addons/resources/msgs"
     if [ -z "${key}" ] || [[ ${#key} != 32 ]]; then
-        echo "$(gettext "Missing key")" > "$msgs/$d1"
-        echo "$(gettext "Missing key")" > "$msgs/$d2"
+        echo "$(gettext "No key configuration")" > "$msgs/$d1"
+        echo "$(gettext "No key configuration")" > "$msgs/$d2"
         if [ -f "$DC_a/resources/enables/${d1}" ] && [ ! -d "$DT/resources_test" ]; then
             mv -f "$DC_a/resources/enables/${d1}" "$DC_a/resources/disables/${d1}"
         fi

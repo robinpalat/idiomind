@@ -99,7 +99,7 @@ config_dlg() {
     list2=$(for i in "${!slangs[@]}"; do echo -n "!$i"; done)
     lnk1='https://idiomind.sourceforge.io/help.html'
     lnk2="https://idiomind.sourceforge.io/contact.html"
-    lnk3="https://poeditor.com/join/project/oGBLVJULjK"
+    lnk3="https://bit.ly/donate_idiomind"
 
     c=$((RANDOM%100000)); KEY=$c
     yad --plug=$KEY --form --tabnum=1 \
@@ -125,6 +125,7 @@ config_dlg() {
     --field=" :LBL" " " --field=" :LBL" " " --field=" :LBL" " " \
     --field="<a href='$lnk1'>$(gettext "Getting started")</a>":LBL "$DS/ifs/tls.sh help" \
     --field="<a href='$lnk2'>$(gettext "Get in touch")</a>":LBL "$DS/ifs/tls.sh fback" \
+    --field="<a href='$lnk3'>$(gettext "Donate!")</a>":LBL "$DS/ifs/tls.sh donate" \
     --field="$(gettext "Program updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
     --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" &
     yad --notebook --key=$KEY --title="$(gettext "Settings")" \

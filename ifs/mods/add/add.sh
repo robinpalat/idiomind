@@ -83,7 +83,8 @@ function index() {
         if [ ! -d "${DC_tlt}" ]; then return 1; fi
         #
         if [ ! -z "${trgt}" ]; then
-            if ! grep -Fo "trgt{${trgt}}" < "${DC_tlt}/data" >/dev/null 2>&1; then
+            if ! grep -Fo "trgt{${trgt}}" \
+            < "${DC_tlt}/data" >/dev/null 2>&1; then
                 if [[ ${1} = 1 ]]; then
                     unset wrds grmr
                     tpc_db 2 learning list "${trgt}"
@@ -128,16 +129,20 @@ function sentence_p() {
     # sed 's/\s+/\n/g'
     echo "${vrbl}" |sed 's/ ./\U&/g' \
     |python3 -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
-    |sed 's/ /\n/g' |grep -v '^.$' |grep -v '^..$' \
+    |tr -d '.' |sed 's/\.//g' |grep -v '^.$' |grep -v '^..$' \
     |tr -d '*)(,;"“”:' |tr -s '_&|{}[]' ' ' \
     |sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
     |sed 's/\]//;s/\[//;s/<[^>]*>//g' |sed "s/'$//;s/^'//" \
-    |sed 's/\.//;s/  / /;s/ /\. /;s/-$//;s/^-//;s/"//g' \
-    |tr -d '.' |sed 's/^ *//; s/ *$//; /^$/d' |sed 's|\/|\n|g' \
-    |sed 's/ \+/ /g' |sed -e ':a;N;$!ba;s/\n/\n/g' > "${aw}"
-    # TODO
-    translate "$(sed '/^$/d' "${aw}")" auto "$lg" singleline |tr -d '!?¿,;.' \
+    |sed 's/  / /;s/ /\. /;s/-$//;s/^-//;s/"//g' \
+    |sed 's/^ *//; s/ *$//; /^$/d' |sed 's|\/|\n|g' \
+    |sed 's/ \+/ /g' |sed -e ':a;N;$!ba;s/\n/\n/g' \
+    |sed -e 's/ /\. /g' |sed -e 's/\.\./\./g' > "${aw}.1"
+    
+    translate "$(sed '/^$/d' "${aw}.1")" auto "$lg" | sed 's/\./\n/g' |tr -d '!?¿,;.' \
     |sed -e 's/ \+/ /g' |sed -e 's/.*\]\[\"//g' |sed -e 's/ *$//; /^$/d' > "${bw}"
+    
+    cat "${aw}.1" | sed 's/\./\n/g' |tr -d '!?¿,;.' | sed 's/^ *//g' \
+    |sed -e 's/ \+/ /g' |sed -e 's/.*\]\[\"//g' |sed -e 's/ *$//; /^$/d' > "${aw}"
     
     while read -r wrd; do
         w="$(tr -d '\.,;“”"' <<< "${wrd,,}" |sed "s|'|''|g")"
@@ -375,6 +380,7 @@ function set_image_2() {
 }
 
 function translate() {
+
     stop=0; t="$(sed "s|'|''|g" <<< "${1}")"
     if [[ $(wc -w <<< ${1}) = 1 ]] && [[ "${ttrgt}" != TRUE ]] && \
     [[ -n "$(sqlite3 ${tlngdb} "select "${slng}" from Words where Word is '${t}';")" ]]; then
@@ -429,12 +435,19 @@ dwld2() {
 export -f translate dwld1 dwld2
 
 function tts_sentence() {
-    if ! ls "$DC_d"/*."TTS online.Convert text to audio".* 1> /dev/null 2>&1; then
+    if ! ls "$DC_d"/*."Convert text to audio".* 1> /dev/null 2>&1; then
         "$DS_a/Resources/cnfg.sh" 1
     fi
     word="${1}"; DT_r="$2"; audio_file="${3}"
+    
+    for Script in "$DC_d"/*."TTS offline.Convert text to audio".*; do
+        Script="$DS_a/Resources/scripts/$(basename "${Script}")"
+        [ -f "${Script}" ] && "${Script}" "${1}" "${3}"
+        if [ -f "${3}" ]; then break & exit; fi
+    done
+    
     for dict in "$DC_d"/*."TTS online.Convert text to audio".*; do
-        dwld2 "$DS_a/Resources"; [ $? = 5 ] && break
+        dwld2 "$DS_a/Resources"; if [ $? = 5 ]; then break & exit; fi
     done
 }
 
@@ -443,11 +456,21 @@ function tts_word() {
         "$DS_a/Resources/cnfg.sh" 0
     fi
     word="${1,,}"; audio_file="${2}/$word.mp3"; audio_dwld="${2}/$word"
+
     if ls "$DC_d"/*."TTS online.Search audio".$lgt 1> /dev/null 2>&1; then
         for dict in $DC_d/*."TTS online.Search audio".$lgt; do
             dwld1 "$DS_a/Resources"; [ $? = 5 ] && break
         done
     fi
+    
+    if [ ! -f "${2}/${1}.mp3" ]; then
+		for Script in "$DC_d"/*."TTS offline.Convert text to audio".*; do
+			Script="$DS_a/Resources/scripts/$(basename "${Script}")"
+			[ -f "${Script}" ] && "${Script}" "${word}" "${audio_file}"
+			if [ -f "${audio_file}" ]; then break & exit; fi
+		done
+    fi
+    
     if ls "$DC_d"/*."TTS online.Search audio".various 1> /dev/null 2>&1; then
         if [ ! -f "${2}/${1}.mp3" ]; then
             for dict in $DC_d/*."TTS online.Search audio".various; do

@@ -624,6 +624,8 @@ case "$1" in
     "$DS/stop.sh" 2 ;;
     update_addons)
     "$DS/ifs/tls.sh" update_addons ;;
+    update_resources)
+    "$DS_a/Resources/cnfg.sh" updt_scripts ;;
     *)
     _start ;;
 esac

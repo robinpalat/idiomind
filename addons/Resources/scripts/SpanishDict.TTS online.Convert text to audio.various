@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 TLANGS="en, es"
-INFO=""
+INFO="Convert text to audio (online)"
 LANGUAGES="English, Spanish"
 STATUS="Ok"
 VOICES=""

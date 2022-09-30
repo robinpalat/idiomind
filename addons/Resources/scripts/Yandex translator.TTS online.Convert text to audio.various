@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TLANGS="en, pt, es, ru, it, de, fr"
-INFO="https://developer.tech.yandex.ru"
+INFO="Convert text to audio (online) https://developer.tech.yandex.ru"
 LANGUAGES="English, Russian"
 STATUS="Ok"
 CONF="FALSE"

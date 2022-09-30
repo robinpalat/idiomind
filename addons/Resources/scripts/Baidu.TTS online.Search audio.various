@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TLANGS="zh-cn, en, ja, pt, es"
-INFO=""
+INFO="Search audio for words"
 LANGUAGES="Chinese, English, Japanese, Portuguese, Spanish"
 STATUS="Ok"
 VOICES=""
