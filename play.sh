@@ -23,7 +23,8 @@ play_word() {
 			Script="$DS_a/Resources/scripts/$(basename "${Script}")"
 			[ -f "${Script}" ] && "${Script}" "${w}" "$DT/${3}.mp3"
 			if [ -f "$DT/${3}.mp3" ]; then 
-				play "$DT/${3}.mp3"; break & exit
+				play "$DT/${3}.mp3"
+				rm -f "$DT/${3}.mp3"; break & exit
 			fi
 		done
     else
@@ -43,7 +44,8 @@ play_sentence() {
 			Script="$DS_a/Resources/scripts/$(basename "${Script}")"
 			[ -f "${Script}" ] && "${Script}" "${trgt}." "$DT/${trgt}.mp3"
 			if [ -f "$DT/${trgt}.mp3" ]; then 
-				play "$DT/${trgt}.mp3"; break & exit
+				play "$DT/${trgt}.mp3"
+				rm -f "$DT/${trgt}.mp3"; break & exit
 			fi
 		done
     else
@@ -60,8 +62,15 @@ play_file() {
         else
             mplayer "${2}" -novideo -noconsolecontrols -title "${3}"
         fi
-    elif [ -n "$synth" ]; then
-        sed 's/<[^>]*>//g' <<<"${3}." |${synth}; [ $? != 0 ] && msg_err1
+    elif ls "$DC_d"/*."TTS offline.Convert text to audio".* 1> /dev/null 2>&1; then
+        for Script in "$DC_d"/*."TTS offline.Convert text to audio".*; do
+			Script="$DS_a/Resources/scripts/$(basename "${Script}")"
+			[ -f "${Script}" ] && "${Script}" "${3}." "$DT/out.mp3"
+			if [ -f "$DT/out.mp3" ]; then 
+				play "$DT/out.mp3"
+				rm -f "$DT/out.mp3"; break & exit
+			fi
+		done
     else
         sed 's/<[^>]*>//g' <<<"${3}." |espeak -v ${tlangs[$tlng]} \
         -a ${sAmplitude} -s ${sSpeed} -p ${sPitch} -g ${sWordgap} -b ${sEncoding}

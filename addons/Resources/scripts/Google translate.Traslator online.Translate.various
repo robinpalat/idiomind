@@ -31,8 +31,6 @@ if [[ "$1" != '_dclk_' ]]; then
     gtra="$(wget -U "$useragent" -qO - "$link")"
 fi
 
-#cat '/home/rovym/ddddd' | sed 's/.*Asumir\"\,\"\(.*\),.*/\1/'  | awk -F[\"] '{print $1}'
-
 if grep -o -E 'ja|zh-cn|ru' <<< "${3}" >/dev/null 2>&1 ; then
     if [[ "$4" = singleline ]]; then
         echo -e "${gtra}" |sed -e 's/\",\".*//g' |sed -e 's/.*\[\[\[\"//g'
@@ -44,13 +42,9 @@ if grep -o -E 'ja|zh-cn|ru' <<< "${3}" >/dev/null 2>&1 ; then
 elif grep -o -E 'de|en|es|fr|it|pt|vi' <<< "${3}" >/dev/null 2>&1 ; then
     if [[ "$4" = singleline ]]; then
         echo -e "${gtra}" |sed -e 's/\",\".*//g' |sed -e 's/.*\[\[\[\"//g' | awk -F'null' '{print $1}'
-    elif [[ "$4" = asitis ]]; then
-		:
     else
         while read t; do
             echo -n "$(grep -oP '(?<=trgt=\").*(?=\",\")' <<< "${t}")"  | awk -F'null' '{print $1}'
         done < <(echo "${gtra}" |sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g')
     fi
-
-
 fi
