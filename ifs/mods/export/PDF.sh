@@ -137,7 +137,7 @@ mkhtml() {
 
 [ -z "${f}" ] && f=0
 export f; mkhtml
-wkhtmltopdf -s A4 -O Portrait "$file" "$DT/export/tmp.pdf"
+wkhtmltopdf --enable-local-file-access -s A4 -O Portrait "$file" "$DT/export/tmp.pdf"
 if [ $f = 2 ]; then
     mv -f "$DT/export/tmp.pdf" "${1} - Test.pdf"
 else

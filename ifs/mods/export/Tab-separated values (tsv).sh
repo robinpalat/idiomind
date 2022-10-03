@@ -3,7 +3,7 @@
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 mkdir -p "$DT/export"
-file="$DT/export/file.csv"
+file="$DT/export/file.tsv"
 
 while read -r _item; do
     [ ! -d "$DT/export" ] && break
@@ -17,5 +17,5 @@ if [ -e "$DT/export/txt" ]; then
     cat "$DT/export/txt" > "$file"
 fi
 
-[ -e "$file" ] && mv -f "$file" "${1}.csv"
+[ -e "$file" ] && mv -f "$file" "${1}.tsv"
 cleanups "$DT/export"

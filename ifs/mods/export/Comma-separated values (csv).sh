@@ -16,11 +16,11 @@ while read -r _item; do
 done < "${DC_tlt}/data"
 
 sed -i 's/\*/\\"/g' "$DT/export/txt"
-if [ -e "$DT/export/txt" ]; then
+if [ -f "$DT/export/txt" ]; then
     cat "$DT/export/txt" > "$file"
 fi
 
-[ -e "$file" ] && mv -f "$file" "${1}.csv"
+[ -f "$file" ] && mv -f "$file" "${1}.csv"
 cleanups "$DT/export"
 
 

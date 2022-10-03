@@ -746,13 +746,13 @@ function decide_group() {
         #good="$(gettext "Very Good!")   "
     fi
     info="<small>$(gettext "Left")</small>  <b><big>$left</big></b>    <small>$(gettext "Learnt")</small>  <b><big>$learnt</big></b>    <small>$(gettext "Easy")</small>  <b><big>$easy</big></b>    <small>$(gettext "Learning")</small>  <b><big>$ling</big></b>    <small>$(gettext "Difficult")</small>  <b><big>$hard</big></b>"
-    optns=$(yad --form --title="$(gettext "Continue")" \
+    optns=$(yad --form --title="$(gettext "Learning mode")" \
     --window-icon=$DS/images/logo.png \
     --always-print-result \
-    --skip-taskbar  \
+    --skip-taskbar  --buttons-layout=spread \
     --align=center --center --on-top \
     --text="${info}" "" \
-    --width=450 --height=120 --borders=12 \
+    --width=450 --height=200 --borders=12 \
     --button="$(gettext "Again")!view-refresh!$(gettext "Go back to practice the above items")":1 \
     --button="$(gettext "Continue")!go-next!$(gettext "Practice the next group")":0); ret="$?"
     unset good
