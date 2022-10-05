@@ -2,9 +2,11 @@ Source: idiomind
 Section: x11
 Priority: optional
 Maintainer: Robin Palatnik <robinpalat@users.sourceforge.net>
-Build-Depends: debhelper (>= 11)
-Standards-Version: 3.9.7
+Build-Depends: debhelper-compat (= 12)
+Standards-Version: 4.4.1
 Homepage: http://idiomind.sourceforge.io
+Vcs-Browser: https://github.com/robinpalat/idiomind
+Vcs-Git: https://github.com/robinpalat/idiomind.git
 
 Package: idiomind
 Architecture: all
