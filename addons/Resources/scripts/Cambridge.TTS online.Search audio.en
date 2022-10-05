@@ -8,6 +8,7 @@ VOICES=""
 CONF="FALSE"
 FILECONF=""
 TESTWORD=""
+EXECUT=""
 
 
 [[ ${#word} -lt 5 ]] && s="${word:0:5}_" || s="${word:0:5}"

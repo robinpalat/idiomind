@@ -249,6 +249,7 @@ function new_word() {
                 cp -f "$DT_r/audtm.mp3" "${DM_tls}/audio/${audio}.mp3"
             fi
         fi
+        
         word_p
         img_word "${trgt}" "${srce}" &
         cleanups "${DT_r}"

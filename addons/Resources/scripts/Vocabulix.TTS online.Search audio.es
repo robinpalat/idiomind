@@ -8,6 +8,7 @@ VOICES=""
 CONF="FALSE"
 FILECONF=""
 TESTWORD=""
+EXECUT=""
 
 
 export TESTURL="http://static.vocabulix.com//speech/dict/spanish/prueba.mp3"

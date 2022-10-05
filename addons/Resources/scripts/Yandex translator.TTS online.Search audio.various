@@ -7,7 +7,7 @@ STATUS="Ok"
 CONF="FALSE"
 FILECONF=""
 TESTWORD=""
-
+EXECUT=""
 
 if [ "$lgt" = "en" ]; then 
     t="en_GB"

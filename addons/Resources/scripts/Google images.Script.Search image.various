@@ -17,6 +17,7 @@ VOICES=""
 CONF="FALSE"
 FILECONF=""
 TESTWORD="house"
+EXECUT=""
 
 
 if [[ "$1" != '_dclk_' ]]; then

@@ -8,6 +8,7 @@ STATUS="Ok"
 CONF="TRUE"
 FILECONF="$HOME/.config/idiomind/addons/resources/Voicerss.cfg"
 TESTWORD=""
+EXECUT=""
 
 
 function check_key(){ # remove from active if missing key

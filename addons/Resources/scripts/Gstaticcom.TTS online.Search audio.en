@@ -8,6 +8,7 @@ VOICES=""
 CONF="FALSE"
 FILECONF=""
 TESTWORD=""
+EXECUT=""
 
 
 export TESTURL="http://ssl.gstatic.com/dictionary/static/sounds/de/0/test.mp3"

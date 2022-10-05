@@ -24,6 +24,7 @@ VOICES=""
 CONF="FALSE"
 FILECONF=""
 TESTWORD=""
+EXECUT=""
 
 
 link="http://translate.googleapis.com/translate_a/single?client=gtx&sl=$2&tl=$3&dt=t&q=$1"

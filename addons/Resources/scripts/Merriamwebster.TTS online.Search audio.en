@@ -8,6 +8,7 @@ VOICES=""
 CONF="FALSE"
 FILECONF=""
 TESTWORD=""
+EXECUT=""
 
 
 if [ ${#word} -lt 6 ]; then

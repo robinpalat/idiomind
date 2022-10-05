@@ -220,11 +220,12 @@ function sentence_p() {
 }
 
 function word_p() {
+	
     table="T`date +%m%y`"
     trgt_q="$(sed "s|'|''|g" <<< "${trgt}")"
     srce_q="$(sed "s|'|''|g" <<< "${srce}")"
     echo -n "create table if not exists ${table} \
-    (Word TEXT, '${slng^}' TEXT);" |sqlite3 ${tlngdb}
+    (Word TEXT, "${slng^}" TEXT);" |sqlite3 ${tlngdb}
     if ! grep -q "${slng}" <<< "$(sqlite3 ${tlngdb} "PRAGMA table_info(${table});")"; then
         sqlite3 ${tlngdb} "alter table ${table} add column '${slng}' TEXT;"
     fi
@@ -232,9 +233,11 @@ function word_p() {
         if [[ -z "$(sqlite3 ${tlngdb} "select Word from Words where Word is '${trgt}';")" ]]; then
             sqlite3 ${tlngdb} "insert into ${table} (Word,'${slng^}') values ('${trgt_q}','${srce_q}');"
             sqlite3 ${tlngdb} "insert into Words (Word,'${slng^}') values ('${trgt_q}','${srce_q}');"
+          
         elif [[ -z "$(sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${trgt}';")" ]]; then
             sqlite3 ${tlngdb} "update Words set '${slng^}'='${srce_q}' where Word='${trgt}';"
         fi
+
         if [ -n "${exmp}" ]; then
             sqlite3 ${tlngdb} "update Words set Example='${exmp}' where Word='${trgt}';"
         fi
@@ -400,8 +403,9 @@ dwld1() {
     URL=""; source "$1/scripts/$(basename "${dict}")"
     if [ -n "${URL}" -a ! -f "$audio_file" ]; then
         wget -T 51 -q -U "$useragent" -O "$audio_dwld.$EX" "${URL}"
+        
         if [[ ${EX} != 'mp3' ]]; then
-            mv -f "$audio_dwld.$EX" "$audio_dwld.mp3"
+			sox -t wav -c 1 "$audio_dwld.$EX" "$audio_dwld.mp3"
         fi
     fi
     if [ -f "$audio_file" ]; then
@@ -435,55 +439,60 @@ dwld2() {
 export -f translate dwld1 dwld2
 
 function tts_sentence() {
-    if ! ls "$DC_d"/*."Convert text to audio".* 1> /dev/null 2>&1; then
-        "$DS_a/Resources/cnfg.sh" 1
-    fi
+
     word="${1}"; DT_r="$2"; audio_file="${3}"
     
-    for Script in "$DC_d"/*."TTS offline.Convert text to audio".*; do
-        Script="$DS_a/Resources/scripts/$(basename "${Script}")"
-        [ -f "${Script}" ] && "${Script}" "${1}" "${3}"
-        if [ -f "${3}" ]; then break & exit; fi
-    done
-    
-    for dict in "$DC_d"/*."TTS online.Convert text to audio".*; do
-        dwld2 "$DS_a/Resources"; if [ $? = 5 ]; then break & exit; fi
-    done
+    if ls "$DC_d"/*."TTS online.Convert text to audio".* 1> /dev/null 2>&1; then
+		for dict in "$DC_d"/*."TTS online.Convert text to audio".*; do
+			dwld2 "$DS_a/Resources"; if [ $? = 5 ]; then break; fi
+		done
+
+    elif ls "$DC_d"/*."TTS offline.Convert text to audio".* 1> /dev/null 2>&1; then
+		for Script in "$DC_d"/*."TTS offline.Convert text to audio".*; do
+			Script="$DS_a/Resources/scripts/$(basename "${Script}")"
+			[ -f "${Script}" ] && "${Script}" "${1}" "${3}"
+			if [ -f "${3}" ]; then break; fi
+		done
+
+	else
+		"$DS_a/Resources/cnfg.sh" 1
+	fi
 }
 
 function tts_word() {
-    if ! ls "$DC_d"/*."TTS online.Search audio".* 1> /dev/null 2>&1; then
-        "$DS_a/Resources/cnfg.sh" 0
-    fi
+	
     word="${1,,}"; audio_file="${2}/$word.mp3"; audio_dwld="${2}/$word"
 
-    if ls "$DC_d"/*."TTS online.Search audio".$lgt 1> /dev/null 2>&1; then
-        for dict in $DC_d/*."TTS online.Search audio".$lgt; do
-            dwld1 "$DS_a/Resources"; [ $? = 5 ] && break
-        done
-    fi
-    
-    if [ ! -f "${2}/${1}.mp3" ]; then
-		for Script in "$DC_d"/*."TTS offline.Convert text to audio".*; do
-			Script="$DS_a/Resources/scripts/$(basename "${Script}")"
-			[ -f "${Script}" ] && "${Script}" "${word}" "${audio_file}"
-			if [ -f "${audio_file}" ]; then break & exit; fi
-		done
-    fi
-    
-    if ls "$DC_d"/*."TTS online.Search audio".various 1> /dev/null 2>&1; then
-        if [ ! -f "${2}/${1}.mp3" ]; then
-            for dict in $DC_d/*."TTS online.Search audio".various; do
-                dwld1 "$DS_a/Resources"; [ $? = 5 ] && break
-            done
-        fi
+	if ! ls "$DC_d"/*."TTS online.Search audio".$lgt 1> /dev/null 2>&1; then
+		"$DS_a/Resources/cnfg.sh" 0
+	else
+	
+		if ls "$DC_d"/*."TTS online.Search audio".$lgt 1> /dev/null 2>&1; then
+			for dict in $DC_d/*."TTS online.Search audio".$lgt; do
+				dwld1 "$DS_a/Resources"; [ $? = 5 ] && break
+			done
+		fi
+		if [ ! -f "${audio_file}" ]; then
+			if ls "$DC_d"/*."TTS offline.Convert text to audio".* 1> /dev/null 2>&1; then
+				for Script in "$DC_d"/*."TTS offline.Convert text to audio".*; do
+					Script="$DS_a/Resources/scripts/$(basename "${Script}")"
+					[ -f "${Script}" ] && "${Script}" "${word}" "${audio_file}"
+					if [ -f "${audio_file}" ]; then break; fi
+				done
+			fi
+		fi
+		if [ ! -f "${audio_file}" ]; then
+			if ls "$DC_d"/*."TTS online.Search audio".various 1> /dev/null 2>&1; then
+				for dict in $DC_d/*."TTS online.Search audio".various; do
+					dwld1 "$DS_a/Resources"; [ $? = 5 ] && break
+				done
+			fi
+		fi
     fi
 }
 
 function fetch_audio() {
-    if ! ls "$DC_d"/*."TTS online.Search audio".* 1> /dev/null 2>&1; then
-        "$DS_a/Resources/cnfg.sh" 0
-    fi
+
     if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1 ; then 
     words_list="${2}"; else words_list="${1}"; fi
     
@@ -515,7 +524,10 @@ function img_word() {
                 Script="$DS_a/Resources/scripts/$(basename "${Script}")"
                 [ -f "${Script}" ] && "${Script}" "${1}"
                 if [ -f "$DT/${1}.jpg" ]; then
-                    if [[ $(du "$DT/${1}.jpg" |cut -f1) -gt 10 ]]; then
+                
+					if file -b --mime-type "$DT/${1}.jpg" \
+					|grep 'image'>/dev/null 2>&1; then
+					
                         break
                     else 
                         rm -f "$DT/${1}.jpg"
@@ -527,7 +539,8 @@ function img_word() {
                     Script="$DS_a/Resources/scripts/$(basename "${Script}")"
                     [ -f "${Script}" ] && "${Script}" "${2}"
                     if [ -f "$DT/${2}.jpg" ]; then
-                        if [[ $(du "$DT/${2}.jpg" |cut -f1) -gt 10 ]]; then
+                        if file -b --mime-type "$DT/${2}.jpg" \
+						|grep 'image'>/dev/null 2>&1; then
                             break
                         else 
                             rm -f "$DT/${2}.jpg"

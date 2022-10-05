@@ -1,0 +1,17 @@
+#!/bin/bash
+# sudo apt install festival
+
+if [ "$1" = "_dclk_" ]; then
+	TLANGS="en" # Example: zh-cn, en, ja, pt, es
+	INFO="Convert text to audio (offline)"
+	LANGUAGES="English" # Example: Chinese, English
+	STATUS="Ok"
+	VOICES=""
+	CONF="FALSE" 
+	FILECONF="" # "$HOME/.config/idiomind/addons/Resources/XXXX.cfg"
+	TESTWORD="Example" # Example: home
+	EXECUT="festival"
+else
+	echo "$1" | text2wave -o "$DT/OUT.wav"
+	sox -t wav -c 1 "$DT/OUT.wav" "$2"
+fi

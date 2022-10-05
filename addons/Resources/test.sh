@@ -32,7 +32,7 @@ function test_() {
                 if [ -n "${re}" ]; then
                     :
                 else
-                    echo "$(gettext "It's not working")" > "$msgs/$filename"
+                    echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
                 fi
             fi
         done
@@ -47,7 +47,8 @@ function test_() {
                 if [ -n "${re}" ]; then
                     :
                 else
-                    echo "$(gettext "It's not working")" > "$msgs/$filename"
+                    echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
+                    mv -f "$DC_e/$filename" "$DC_d/$filename"
                 fi
             fi
         done
@@ -63,26 +64,31 @@ function test_() {
             for res in "$DC_d"/*."TTS online.Convert text to audio".*; do
                 audio_file="$DT/res_test/${n}_audio"
                 filename="$(basename "${res}")"; cleanups "$msgs/$filename"
-                unset TESTURL; source "$DS_a/Resources/scripts/$filename"
-                if [ -n "${TESTURL}" ]; then
-                    wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
-                    if [[ ${EX} != 'mp3' ]]; then
-                        mv -f "$audio_file.$EX" "$audio_file.mp3"
-                    fi
-                fi
-                if [ -f "$audio_file.mp3" ]; then
-                    if file -b --mime-type "$audio_file.mp3" |grep -o -E 'mpeg|mp3|' >/dev/null 2>&1 \
-                    && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
-                        :
-                    else 
-						if [ -f "$FILECONF" ] && [ -n "$(cat "$FILECONF")" ]; then
-							echo "$(gettext "No key configuration")" > "$msgs/$filename"
-						else
-							echo "$(gettext "It's not working")" > "$msgs/$filename"
-                        fi
-                    fi
-                fi
+                unset TESTURL EXECUT; source "$DS_a/Resources/scripts/$filename"
                 
+                if [ -n "$EXECUT" ] && [[ ! $(which $EXECUT) ]]; then
+					echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
+				else
+					if [ -n "${TESTURL}" ]; then
+						wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
+						if [[ ${EX} != 'mp3' ]]; then
+							mv -f "$audio_file.$EX" "$audio_file.mp3"
+						fi
+					fi
+					if [ -f "$audio_file.mp3" ]; then
+						if file -b --mime-type "$audio_file.mp3" |grep 'audio|mpeg|mp3|' >/dev/null 2>&1 \
+						&& [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
+							:
+						else 
+							if [ -f "$FILECONF" ] && [ -n "$(cat "$FILECONF")" ]; then
+								echo "<span color='#C15F27'>$(gettext "No key configuration")</span>" > "$msgs/$filename"
+							else
+								echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
+							fi
+						fi
+					fi
+				fi
+
                 cleanups "$audio_file.mp3"
                 let n++
                 echo 10+n
@@ -96,25 +102,33 @@ function test_() {
             for res in "$DC_e"/*."TTS online.Convert text to audio".*; do
                 audio_file="$DT/res_test/${n}_audio"
                 filename="$(basename "${res}")"; cleanups "$msgs/$filename"
-                unset TESTURL; source "$DS_a/Resources/scripts/$filename"
-                if [ -n "${TESTURL}" ]; then
-                    wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
-                    if [[ ${EX} != 'mp3' ]]; then
-                        mv -f "$audio_file.$EX" "$audio_file.mp3"
-                    fi
-                fi
-                if [ -f "$audio_file.mp3" ]; then
-                    if file -b --mime-type "$audio_file.mp3" |grep -o -E 'mpeg|mp3|' >/dev/null 2>&1 \
-                    && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
-                        :
-                    else 
-                        if [ -f "$FILECONF" ] && [ -n "$(cat "$FILECONF")" ]; then
-							echo "$(gettext "No key configuration")" > "$msgs/$filename"
-						else
-							echo "$(gettext "It's not working")" > "$msgs/$filename"
-                        fi
-                    fi
-                fi
+                unset TESTURL EXECUT; source "$DS_a/Resources/scripts/$filename"
+                
+                if [ -n "$EXECUT" ] && [[ ! $(which $EXECUT) ]]; then
+					echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span>\n$EXECUT" > "$msgs/$filename"
+					mv -f "$DC_e/$filename" "$DC_d/$filename"
+				else
+                
+					if [ -n "${TESTURL}" ]; then
+						wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
+						if [[ ${EX} != 'mp3' ]]; then
+							mv -f "$audio_file.$EX" "$audio_file.mp3"
+						fi
+					fi
+					if [ -f "$audio_file.mp3" ]; then
+						if file -b --mime-type "$audio_file.mp3" |grep 'audio|mpeg|mp3|' >/dev/null 2>&1 \
+						&& [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
+							:
+						else 
+							if [ -f "$FILECONF" ] && [ -n "$(cat "$FILECONF")" ]; then
+								echo "<span color='#C15F27'>$(gettext "No key configuration")</span>" > "$msgs/$filename"
+							else
+								echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
+								mv -f "$DC_e/$filename" "$DC_d/$filename"
+							fi
+						fi
+					fi
+				fi
                 
                 cleanups "$audio_file.mp3"
                 let n++
@@ -130,6 +144,13 @@ function test_() {
             for res in "$DC_d"/*."TTS offline.Convert text to audio".*; do
                 audio_file="$DT/res_test/${n}_audio"
                 filename="$(basename "${res}")"; cleanups "$msgs/$filename"
+                unset TESTURL EXECUT; source "$DS_a/Resources/scripts/$filename"
+
+                if [ -n "$EXECUT" ] && [[ ! $(which $EXECUT) ]]; then
+                
+					echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
+				else
+				
                     "$DS_a/Resources/scripts/$filename" "this is a test" "$audio_file"
                     if [[ "$audio_file.mp3" ]]; then
                         mv -f "$audio_file.mp3" "$audio_file.mp3"
@@ -137,9 +158,10 @@ function test_() {
 						sox -r 8000 -c 1 "$audio_file.wav" "$audio_file.mp3"
 						mv -f "$audio_file.mp3" "$audio_file.mp3"
 					else
-                        echo "$(gettext "It's not working")" > "$msgs/$filename"
+                        echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
                     fi
-                cleanups "$audio_file.mp3"
+					cleanups "$audio_file.mp3"
+                fi
                 let n++
             done
         fi
@@ -151,6 +173,14 @@ function test_() {
             for res in "$DC_e"/*."TTS offline.Convert text to audio".*; do
                 audio_file="$DT/res_test/${n}_audio"
                 filename="$(basename "${res}")"; cleanups "$msgs/$filename"
+                unset TESTURL EXECUT; source "$DS_a/Resources/scripts/$filename"
+                
+                if [ -n "$EXECUT" ] && [[ ! $(which $EXECUT) ]]; then
+         
+					echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
+					mv -f "$DC_e/$filename" "$DC_d/$filename"
+				else
+                
                     "$DS_a/Resources/scripts/$filename" "this is a test" "$audio_file"
                     if [[ "$audio_file.mp3" ]]; then
                         mv -f "$audio_file.mp3" "$audio_file.mp3"
@@ -158,9 +188,11 @@ function test_() {
 						sox "$audio_file.wav" "$audio_file.mp3"
 						mv -f "$audio_file.mp3" "$audio_file.mp3"
 					else
-                        echo "$(gettext "It's not working")" > "$msgs/$filename"
+                        echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
+                        mv -f "$DC_e/$filename" "$DC_d/$filename"
                     fi
-                cleanups "$audio_file.mp3"
+					cleanups "$audio_file.mp3"
+                fi
                 let n++
             done
         fi
@@ -176,24 +208,27 @@ function test_() {
             for res in $DC_d/*."TTS online.Search audio".*; do
                 filename="$(basename "${res}")"; cleanups "$msgs/$filename"
                 audio_file="$DT/res_test/${n}_audio"
-                unset TESTURL; source "$DS_a/Resources/scripts/$filename"
-                if [ -n "${TESTURL}" ]; then
-                    wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
-                    if [[ ${EX} != 'mp3' ]]; then
-                        mv -f "$audio_file.$EX" "$audio_file.mp3"
-                    fi
+                unset TESTURL EXECUT; source "$DS_a/Resources/scripts/$filename"
+                if [ -n "$EXECUT" ] && [[ ! $(which $EXECUT) ]]; then
+					echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
+				else
+					if [ -n "${TESTURL}" ]; then
+						wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
+						if [[ ${EX} != 'mp3' ]]; then
+							mv -f "$audio_file.$EX" "$audio_file.mp3"
+						fi
+					fi
+					if [ -f "$audio_file.mp3" ]; then
+						if file -b --mime-type "$audio_file.mp3" |grep 'audio|mpeg|mp3|' >/dev/null 2>&1 \
+						&& [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
+							:
+						else
+							filename="$(basename "${res}")"
+							echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
+						fi
+					fi
+					cleanups "$audio_file.mp3"
                 fi
-                if [ -f "$audio_file.mp3" ]; then
-                    if file -b --mime-type "$audio_file.mp3" |grep -o -E 'mpeg|mp3|' >/dev/null 2>&1 \
-                    && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
-                        :
-                    else
-                        filename="$(basename "${res}")"
-                        echo "$(gettext "It's not working")" > "$msgs/$filename"
-                    fi
-                fi
-                
-                cleanups "$audio_file.mp3"
                 let n++
             done
         fi
@@ -205,23 +240,29 @@ function test_() {
             for res in $DC_e/*."TTS online.Search audio".*; do
                 filename="$(basename "${res}")"; cleanups "$msgs/$filename"
                 audio_file="$DT/res_test/${n}_audio"
-                unset TESTURL; source "$DS_a/Resources/scripts/$filename"
-                if [ -n "${TESTURL}" ]; then
-                    wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
-                    if [[ ${EX} != 'mp3' ]]; then
-                        mv -f "$audio_file.$EX" "$audio_file.mp3"
-                    fi
-                fi
-                if [ -f "$audio_file.mp3" ]; then
-                    if file -b --mime-type "$audio_file.mp3" |grep -o -E 'mpeg|mp3|' >/dev/null 2>&1 \
-                    && [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
-                        :
-                    else
-                        echo "$(gettext "It's not working")" > "$msgs/$filename"
-                    fi
-                fi
-                
-                cleanups "$audio_file.mp3"
+                unset TESTURL EXECUT; source "$DS_a/Resources/scripts/$filename"
+                if [ -n "$EXECUT" ] && [[ ! $(which $EXECUT) ]]; then
+					echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
+					mv -f "$DC_e/$filename" "$DC_d/$filename"
+				else
+					if [ -n "${TESTURL}" ]; then
+						wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
+						if [[ ${EX} != 'mp3' ]]; then
+							mv -f "$audio_file.$EX" "$audio_file.mp3"
+						fi
+					fi
+					if [ -f "$audio_file.mp3" ]; then
+						if file -b --mime-type "$audio_file.mp3" |grep 'audio|mpeg|mp3|' >/dev/null 2>&1 \
+						&& [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
+							:
+						else
+							echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
+							mv -f "$DC_e/$filename" "$DC_d/$filename"
+						fi
+					fi
+					
+					cleanups "$audio_file.mp3"
+				fi
                 let n++
             done
         fi
@@ -241,7 +282,7 @@ function test_() {
                 if curl -v "$_url" 2>&1 |grep -m1 "HTTP/1.1" >/dev/null 2>&1; then
                     :
                 else 
-                    echo "$(gettext "It's not working")" > "$msgs/$filename"
+                    echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
                 fi
             done  
         fi
@@ -254,7 +295,8 @@ function test_() {
                 if curl -v "$_url" 2>&1 |grep -m1 "HTTP/1.1" >/dev/null 2>&1; then
                     :
                 else 
-                    echo "$(gettext "It's not working")" > "$msgs/$filename"
+                    echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
+                    mv -f "$DC_e/$filename" "$DC_d/$filename"
                 fi
             done  
         fi
@@ -273,10 +315,11 @@ function test_() {
                 TESTWORD=$(grep -o TESTWORD=\"[^\"]* "$Script" |grep -o '[^"]*$')
                 [ -f "${Script}" ] && "${Script}" "${TESTWORD}" "_TEST_"
                 if [ -f "$DT/${TESTWORD}.jpg" ]; then
-                    if [[ $(du "$DT/${TESTWORD}.jpg" |cut -f1) -gt 10 ]]; then
+                    if file -b --mime-type "$DT/${TESTWORD}.jpg" \
+					|grep 'image'>/dev/null 2>&1; then
                         :
                     else 
-                        echo "$(gettext "It's not working")" > "$msgs/$filename"
+                        echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
                     fi
                 fi
                 cleanups "$DT/${TESTWORD}.jpg"
@@ -292,10 +335,12 @@ function test_() {
                 TESTWORD=$(grep -o TESTWORD=\"[^\"]* "$Script" |grep -o '[^"]*$')
                 [ -f "${Script}" ] && "${Script}" "${TESTWORD}" "_TEST_"
                 if [ -f "$DT/${TESTWORD}.jpg" ]; then
-                    if [[ $(du "$DT/${TESTWORD}.jpg" |cut -f1) -gt 10 ]]; then
+                    if file -b --mime-type "$DT/${TESTWORD}.jpg" \
+					|grep 'image'>/dev/null 2>&1; then
                         :
                     else 
-                        echo "$(gettext "It's not working")" > "$msgs/$filename"
+                        echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
+                        mv -f "$DC_e/$filename" "$DC_d/$filename"
                     fi
                 fi
                 cleanups "$DT/${TESTWORD}.jpg"
@@ -332,7 +377,7 @@ if [[ "$2" = 'silence' ]]; then
 else
     cnf1=$(mktemp "$DT/cnf1.XXXXXX")
     yad --form --title="$(gettext "Resource availability")" \
-    --text="$(gettext "Used for:")\n" \
+    --text="<b>$(gettext "Check the used resources for:")</b>\n" \
     --name=Idiomind --class=Idiomind \
     --center --columns=2 --output-by-row \
     --on-top --skip-taskbar \

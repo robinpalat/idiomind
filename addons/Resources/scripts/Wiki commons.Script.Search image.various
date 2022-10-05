@@ -8,6 +8,7 @@ VOICES=""
 CONF="FALSE"
 FILECONF=""
 TESTWORD="cat"
+EXECUT=""
 
 
 if [[ "$2" = '_TEST_' ]]; then

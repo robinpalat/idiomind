@@ -9,6 +9,7 @@ VOICES=""
 CONF="FALSE"
 FILECONF=""
 TESTWORD=""
+EXECUT=""
 
 
 export TESTURL="http://audio1.spanishdict.com/audio?lang=es&text=prueba"

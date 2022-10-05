@@ -8,7 +8,7 @@ VOICES=""
 CONF="FALSE"
 FILECONF=""
 TESTWORD=""
-
+EXECUT=""
 
 if [ "$lgt" = "zh-cn" ]; then
     t="zh"

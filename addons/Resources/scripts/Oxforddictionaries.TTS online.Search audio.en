@@ -8,6 +8,7 @@ VOICES=""
 CONF="FALSE"
 FILECONF=""
 TESTWORD=""
+EXECUT=""
 
 
 export TESTURL="http://s3.amazonaws.com/audio.oxforddictionaries.com/en/mp3/test_gb_1.mp3"
