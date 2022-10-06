@@ -1,15 +1,15 @@
 Source: idiomind
 Section: x11
 Priority: optional
-Maintainer: Robin Palatnik <robinpalat@users.sourceforge.net>
-Build-Depends: debhelper-compat (= 12)
-Standards-Version: 4.4.1
+Maintainer: Robin Palatnik <robinpalat@gmail.com>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.0
 Homepage: http://idiomind.sourceforge.io
 Vcs-Browser: https://github.com/robinpalat/idiomind
 Vcs-Git: https://github.com/robinpalat/idiomind.git
 
 Package: idiomind
-Architecture: all
+Architecture: any
 Depends: ${misc:Depends}, yad (>=0.39), sox, mplayer, imagemagick, wkhtmltopdf, curl, xdg-utils, xclip, python3, espeak, sqlite3, xsltproc, libsox-fmt-mp3, gnome-screenshot, libnotify-bin
 Suggests: tesseract-ocr
 Description: Language learning tool

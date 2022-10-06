@@ -255,7 +255,7 @@ function dialog_1() {
 
 function tpc_view() {
     yad --list --title="Idiomind" \
-    --text="${itxt}" \
+    --text="${itxt}\n" \
     --name=Idiomind --class=Idiomind \
     --no-click --print-column=0 --hide-column=2 --tooltip-column=2 \
     --ellipsize=end --wrap-width=${sz[2]} --ellipsize-cols=0 \
@@ -263,7 +263,8 @@ function tpc_view() {
     --window-icon=$DS/images/logo.png \
     --hide-column=2 --tooltip-column=2 \
     --no-headers --ellipsize=END --center \
-    --width=${sz[0]} --height=${sz[1]} --borders=8 \
+    --width=530 --height=560 \
+    --borders=5 --tab-borders=0 \
     --column=" " --column=" " \
     --button="$(gettext "Install")":0 \
     --button="$(gettext "Close")!gtk-close":1
