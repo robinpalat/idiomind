@@ -663,8 +663,10 @@ function process() {
                 if [[ $(wc -l < "${DC_tlt}/data") -ge 200 ]]; then
                     echo -e "$(gettext "Maximum number of notes has been exceeded:")\n$trgt\n\n" >> "$DT_r/wlog"
                 else
-                    export sleep 1 && srce="$(translate "${trgt}" auto $lgs)"
+					unset srce
+                    export sleep 1 && srce="$(translate "${trgt}" $lgt $lgs)"
                     [ -z "${srce}" ] && internet
+ 
                     export cdid="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
                     mksure "${trgt}" "${srce}"
                     if [ $? = 0 ]; then

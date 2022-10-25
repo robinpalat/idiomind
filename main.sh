@@ -169,9 +169,9 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     file="${1}"
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
     level="${lv[${levl}]}"
-    itxt="<span font_desc='Droid Sans Bold 12'>$name</span><sup>\n$(gettext "Words") $nwrd  \
+    itxt="<span font_desc='Droid Sans Bold 13'>$name</span><small><sup>\n$(gettext "Words") $nwrd  \
 $(gettext "Sentences") $nsnt  $(gettext "Images") $nimg \n$(gettext "Level:") \
-$level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(gettext "$slng")$otranslations</sup>" 
+$level \n$(gettext "Language:") $(gettext "$tlng")\n$(gettext "Translation:") $(gettext "$slng")$otranslations</sup></small>" 
     dclk="$DS/play.sh play_word"
     source "$DS/ifs/mods/main/items_list.sh"
     _lst() {

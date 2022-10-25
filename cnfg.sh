@@ -74,7 +74,7 @@ set_lang() {
 }
 
 config_dlg() {
-    sz=(400 430)
+    sz=(400 450)
     show_icon=0; kill_icon=0
     source "$DS/default/sets.cfg"
     
@@ -116,7 +116,7 @@ config_dlg() {
     --field="$(gettext "I'm learning")":CB "$(gettext "${tlng}")$list1" \
     --field="$(gettext "My language is")":CB "$(gettext "${slng}")$list2" > "$cnf1" &
     cat "$DS_a/menu_list" |yad --plug=$KEY --tabnum=2 --list \
-    --text=" $(gettext "Double-click to configure") " --print-all \
+    --text=" <small>$(gettext "Double-click to configure")</small> " --print-all \
     --dclick-action="$DS/ifs/dclik.sh" \
     --expand-column=2 --no-headers \
     --column=icon:IMG --column=Action &

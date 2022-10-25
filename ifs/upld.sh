@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/default/c.conf
-source "$DS/ifs/cmns.sh"
+source $DS/ifs/cmns.sh
 source $DS/default/sets.cfg
 lgt=${tlangs[$tlng]}
 lgs=${slangs[$slng]}
@@ -323,7 +323,7 @@ function upld() {
         sents="$(tpc_db 5 sentences)"
         uniq <<< "${sents}" \
         |sed 's/\n/ /; s/ /\n/g' \
-        |grep -v '^.$' |grep -v '^..$' \
+        |grep -Pv '^.$' |grep -Pv '^..$' \
         |sed 's/&//; s/,//; s/\?//; s/\¿//; s/;//g' \
         |sed 's/\!//; s/\¡//; s/\]//; s/\[//; s/\.//; s/  / /g' \
         |tr -d ')' |tr -d '(' |tr '[:upper:]' '[:lower:]' |while read -r audio; do
@@ -353,10 +353,10 @@ function upld() {
                 a="$slng"
             fi
             if [ $(cd "$DC_tlt/translations"; ls *.tra |wc -l) -gt 1 ]; then
-                slng="$(for t in "$(cd "$DC_tlt/translations"
-                ls *.tra |sed 's/\.tra//g' |grep -v "$a")"; do
+                slng_="$(for t in "$(cd "$DC_tlt/translations"
+                ls *.tra |sed 's/\.tra//g' |grep -Pv "$a")"; do
                 [ -n "$t" ] && echo "$t"; done |sed ':a;N;$!ba;s/\n/, /g')"
-                slng="${a}, ${slng}"
+                slng="${a}, ${slng_}"
             else
                 slng="${a}"
             fi
@@ -390,7 +390,7 @@ function upld() {
         idmnd="$DT_u/${orig}.idmnd"
         echo -e "{\"items\":{" > "${idmnd}"
         while read -r _item; do
-            get_item "${_item}"
+            get_item "${_item}"; unset ipath
              if [ -n "$trgt" ] && [ "$type" = 1 ]; then
                 if [ -f "$DM_tlt/images/${trgt,,}.jpg" ]; then
                     ipath="$DM_tlt/images/${trgt,,}.jpg"; export imag=2
@@ -424,24 +424,23 @@ function upld() {
         rm -fr ./"files"
 
         python3 << END
-import os, sys, requests, time, xmlrpclib
+import os, sys, requests, time
 autr = os.environ['autr']
 pssw = os.environ['pass']
 tpc = os.environ['tpc']
 body = os.environ['body']
-try:
-    # http://idiomind.net/community/xmlrpc.php
-    server = xmlrpclib.Server('http://idiomind.sourceforge.io/community/xmlrpc.php')
-    nid = server.metaWeblog.newPost('blog', autr, pssw, 
-    {'title': tpc, 'description': body}, True)
-except:
-    sys.exit(3)
+#try:
+    ## http://idiomind.net/community/xmlrpc.php
+    #server = xmlrpclib.Server('http://idiomind.sourceforge.io/community/xmlrpc.php')
+    #nid = server.metaWeblog.newPost('blog', autr, pssw, 
+    #{'title': tpc, 'description': body}, True)
+#except:
+    #sys.exit(3)
 url = requests.get('http://idiomind.sourceforge.net/upload.php').url
 DT_u = os.environ['DT_u']
 volumes = [i for i in os.listdir(DT_u)]
 for f in volumes:
     fl = {'file': open(DT_u + f, 'rb')}
-    print f
     r = requests.post(url, files=fl)
     time.sleep(5)
 END

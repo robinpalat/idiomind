@@ -178,8 +178,8 @@ check_index() {
             if [ -f "$DM/backup/${tpc}.bk" ]; then
                 sed -n '/----- newest/,/----- oldest/p' \
                 "$DM/backup/${tpc}.bk" \
-                |grep -v '\----- newest' \
-                |grep -v '\----- oldest' |head -n200 > "${DC_tlt}/data"
+                |grep -Pv '\----- newest' \
+                |grep -Pv '\----- oldest' |head -n200 > "${DC_tlt}/data"
             else
                 msg "$(gettext "No such file or directory")\n${topic}\n" error & exit 1
             fi
@@ -323,7 +323,7 @@ _backup() {
             if [ -e "${file}" ]; then
                 dt2=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
                 old="$(sed -n '/----- newest/,/----- oldest/p' "${file}" \
-                |grep -v '\----- newest' |grep -v '\----- oldest')"
+                |grep -Pv '\----- newest' |grep -Pv '\----- oldest')"
             fi
             new="$(cat "$DM_tl/${2}/.conf/data")"
             echo "----- newest $dt" > "${file}"
@@ -343,11 +343,11 @@ _restore_backup() {
     touch "$DT/act_restfile"; check_dir "${DM_tl}/${tpc}/.conf"
     if [[ ${3} = 1 ]]; then
         sed -n '/----- newest/,/----- oldest/p' "${file}" \
-        |grep -v '\----- newest' |grep -v '\----- oldest' |head -n200 > \
+        |grep -Pv '\----- newest' |grep -Pv '\----- oldest' |head -n200 > \
         "${DM_tl}/${tpc}/.conf/data"
     elif [[ ${3} = 2 ]]; then
         sed -n '/----- oldest/,/----- end/p' "${file}" \
-        |grep -v '\----- oldest' |grep -v '\----- end' |head -n200 > \
+        |grep -Pv '\----- oldest' |grep -Pv '\----- end' |head -n200 > \
         "${DM_tl}/${tpc}/.conf/data"
     fi
     tpc_db 6 'learning'
@@ -540,7 +540,8 @@ from gi.repository import Gtk, WebKit2 as WebKit
 _url = os.environ['_url']
 class Window():
 	def __init__(self, *args, **kwargs):
-		self._window = Gtk.Window(title = "Idiomind")
+		self._window = Gtk.Window(title = "Idiomind", 
+		skip_pager_hint=True, skip_taskbar_hint=True)
 		# self._window.set_icon_from_file('idiomind')
 		self._window.connect('destroy', Gtk.main_quit)
 		self._window.set_default_size(750, 470)
@@ -572,7 +573,8 @@ from gi.repository import Gtk, WebKit2 as WebKit
 url = os.environ['url']
 class Window():
 	def __init__(self, *args, **kwargs):
-		self._window = Gtk.Window(title = "Idiomind")
+		self._window = Gtk.Window(title = "Idiomind", 
+		skip_pager_hint=True, skip_taskbar_hint=True)
 		# self._window.set_icon_from_file('idiomind')
 		self._window.connect('destroy', Gtk.main_quit)
 		self._window.set_default_size(750, 470)
@@ -920,7 +922,7 @@ translate_to() {
                     if [ -n "${trgt}" ]; then
                         echo "${trgt}" \
                         |python3 -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
-                        |sed 's/ /\n/g' |grep -v '^.$' |grep -v '^..$' \
+                        |sed 's/ /\n/g' |grep -Pv '^.$' |grep -Pv '^..$' \
                         |tr -d '*)(,;"“”:' |tr -s '&{}[]' ' ' \
                         |sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
                         |sed 's/\]//;s/\[//;s/<[^>]*>//g' \
@@ -1281,7 +1283,6 @@ app_name = 'Idiomind'
 app_version = os.environ['_version']
 app_website = os.environ['_website']
 app_comments = os.environ['_descrip']
-website_label = "hhhhh"
 app_copyright = 'Copyright (c) 2015-2022 Robin Palatnik'
 app_license = (('This program is free software: you can redistribute it and/or modify\n'+
 'it under the terms of the GNU General Public License as published by\n'+

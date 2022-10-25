@@ -361,8 +361,8 @@ python3 <<PY
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('WebKit2', '4.0')
-from gi.repository import WebKit2, Gtk, Gdk, Gio, GLib
-import signal, os
+from gi.repository import WebKit2, Gtk
+import os
 uri = os.environ['uri_stats']
 titlew = os.environ['titlew']
 class MainWin(Gtk.Window):
@@ -375,18 +375,9 @@ class MainWin(Gtk.Window):
         box = Gtk.Box()
         self.add(box)
         box.pack_start(self.view, True, True, 0)
-        self.connect("destroy", lambda q: Gtk.main_quit())
         self.show_all()
-def refresh_file(*args):
-    mainwin.view.reload()
-def file_changed(monitor, file, unknown, event):
-    GLib.timeout_add_seconds(2, refresh_file)
 if __name__ == '__main__':
-    gio_file = Gio.File.new_for_path(uri)
-    monitor = gio_file.monitor_file(Gio.FileMonitorFlags.NONE, None)
-    monitor.connect("changed", file_changed)
     mainwin = MainWin()
-    signal.signal(signal.SIGINT, signal.SIG_DFL) 
     Gtk.main()
 PY
 } >/dev/null 2>&1

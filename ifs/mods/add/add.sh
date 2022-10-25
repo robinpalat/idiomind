@@ -129,7 +129,7 @@ function sentence_p() {
     # sed 's/\s+/\n/g'
     echo "${vrbl}" |sed 's/ ./\U&/g' \
     |python3 -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
-    |tr -d '.' |sed 's/\.//g' |grep -v '^.$' |grep -v '^..$' \
+    |tr -d '.' |sed 's/\.//g' \
     |tr -d '*)(,;"“”:' |tr -s '_&|{}[]' ' ' \
     |sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
     |sed 's/\]//;s/\[//;s/<[^>]*>//g' |sed "s/'$//;s/^'//" \
@@ -306,13 +306,13 @@ function clean_4() {
     fi
 }
 
+
 function clean_5() {
     sed -n -e '1x;1!H;${x;s-\n- -gp}' \
     |sed 's/<[^>]*>//g' |sed 's/ \+/ /g' \
     |sed '/^$/d' |sed 's/ \+/ /g' \
     |sed 's/^[ \t]*//;s/[ \t]*$//;s/^ *//; s/ *$//g' \
-    |sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' |grep -v '^..$' \
-    |grep -v '^.$' |sed 's/<[^>]\+>//g' \
+    |sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' |sed 's/<[^>]\+>//g' \
     |sed 's/\&quot;/\"/g' |sed "s/\&#039;/\'/g" \
     |sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
     |sed 's/ — /\n/g' \
@@ -603,7 +603,6 @@ function list_words_3() {
     |sed 's/\[ \.\.\. ] //g' |sed 's/\.//g' \
     |tr -s "[:blank:]" '\n' |tr -d ':,;()' \
     |sed '/^$/d' |sed '/"("/d' \
-    |grep -v '^.$' |grep -v '^..$' \
     |sed 's/[^ ]\+/\L\u&/g' \
     |head -n100 |egrep -v "FALSE" |egrep -v "TRUE" > "$DT_r/lst"
     fi
