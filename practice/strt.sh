@@ -904,8 +904,8 @@ function strt() {
         NUMBER="$(wc -l < ${pr}.0)"
         declare info${icon}="<span font_desc='Arial Bold 12'>  —  $(gettext "Test completed") </span>"
         [[ "${pr}" = e ]] && \
-        info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed a test of") $NUMBER $(gettext "sentences")</span>\n" \
-        || info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed a test of") $NUMBER $(gettext "words")</span>\n"
+        info="\n<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed a test of") $NUMBER $(gettext "sentences")</span>\n" \
+        || info="\n<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed a test of") $NUMBER $(gettext "words")</span>\n"
         echo 21 > .${icon}; export plus${pr}=""; [ -e ./${pr}.df ] && rm ./${pr}.df
     elif [[ "${1}" = 2 ]]; then
         learnt=$(< ./${pr}.l); declare info${icon}="*  "

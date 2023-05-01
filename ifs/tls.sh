@@ -1097,7 +1097,7 @@ itray() {
     [ ! -e "$HOME/.config/idiomind/tpc" ] && \
     touch "$HOME/.config/idiomind/tpc"
     source "$DS/default/sets.cfg"
-    export lbl1="$(gettext "New")"
+    export lbl1="$(gettext "Add")"
     export lbl2="$(gettext "Play")"
     export lbl3="$(gettext "Stop playback")"
     export lbl4="$(gettext "Next")"

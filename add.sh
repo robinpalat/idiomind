@@ -146,12 +146,15 @@ function new_sentence() {
     sentence_p 1
     export cdid="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
     mksure "${trgt}" "${srce}" "${grmr}" "${wrds}"
+    
+	sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,refr,tags,link,grmr,imag,imgr,mark,cdid,type) values ('${trgt}','${srce}','${exmp}','${defn}','${note}','${refr}','${tags}','${link}','${grmr}','${imag}','${imgr}','${mark}','${cdid}','${type}');"
 
     if [ $? = 1 ]; then
         echo -e "${info3}:\n${trgt}\n\n" >> "${DC_tlt}/note.inf"
         cleanups "$DT_r"; exit 1
     else
-        notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000 &
+    
+       notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000 &
        if [ -e "$DT_r/__opts__" ]; then
             opts="$(< "$DT_r/__opts__")"
             export note="$(clean_2 "$(cut -d "|" -f1 <<< "${opts}")")"
@@ -212,6 +215,8 @@ function new_word() {
     export cdid="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
     
     mksure "${trgt}" "${srce}"
+    
+    sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,refr,tags,link,grmr,imag,imgr,mark,cdid,type) values ('${trgt}','${srce}','${exmp}','${defn}','${note}','${refr}','${tags}','${link}','${grmr}','${imag}','${imgr}','${mark}','${cdid}','${type}');"
     
     if [ $? = 1 ]; then
         echo -e "${info3}:\n${trgt}\n\n" >> "${DC_tlt}/note.inf"

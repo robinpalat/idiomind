@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 d=($*)
 q=$((${#d[@]}-1))
 for i in $(seq 0 $q); do

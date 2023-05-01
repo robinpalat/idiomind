@@ -9,7 +9,7 @@ Vcs-Browser: https://github.com/robinpalat/idiomind
 Vcs-Git: https://github.com/robinpalat/idiomind.git
 
 Package: idiomind
-Architecture: any
+Architecture: all
 Depends: ${misc:Depends}, yad (>=0.39), sox, mplayer, imagemagick, wkhtmltopdf, curl, xdg-utils, xclip, python3, espeak, sqlite3, xsltproc, libsox-fmt-mp3, gnome-screenshot, libnotify-bin
 Suggests: tesseract-ocr
 Description: Language learning tool

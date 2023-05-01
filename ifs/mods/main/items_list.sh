@@ -258,7 +258,7 @@ function tpc_view() {
     --text="${itxt}" \
     --name=Idiomind --class=Idiomind \
     --no-click --print-column=0 --hide-column=2 --tooltip-column=2 \
-    --ellipsize=end --wrap-width=${sz[2]} --ellipsize-cols=0 \
+    --ellipsize=end --wrap-width=420 --ellipsize-cols=0 \
     --dclick-action=":" \
     --window-icon=$DS/images/logo.png \
     --hide-column=2 --tooltip-column=2 \

@@ -159,6 +159,7 @@ function new_session() {
     ( source "$DS/ifs/stats.sh"; sleep 5; export val1=0 val2=0; pre_comp ) &
 }
 
+# View / istall tpc
 if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     slngcurrent="$slng"; tlngcurrent="$tlng"

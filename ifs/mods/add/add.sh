@@ -13,7 +13,7 @@ function check_s() {
         tpcs="$(cdb "${shrdb}" 5 topics |tr "\\n" '!' |sed 's/\!*$//g')"
         tpe="$(yad --form --title="$(gettext "No topic selected")" \
         --name=Idiomind --class=Idiomind \
-        --text="$(gettext "Select the Topic to which the notes should be added")" \
+        --text="$(gettext "Select the topic in which the notes should be added")" \
         --gtkrc="$DS/default/gtkrc.cfg" \
         --always-print-result --separator="" \
         --skip-taskbar --fixed --center --on-top --align=right \
@@ -621,7 +621,7 @@ function dlg_form_0() {
 
 function dlg_form_1() {
     cmd_words="$DS/add.sh list_words_dclik $DT_r "\"${trgt}\"""
-    yad --form --title="$(gettext "New note")" \
+    yad --form --title="$(gettext "Add note")" \
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --always-print-result --separator="|" \
@@ -630,7 +630,7 @@ function dlg_form_1() {
     --window-icon=$DS/images/logo.png \
     --width=470 --borders=5 \
     --field="" "$trgt" \
-    --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
+    --field=":CB" "$tpe!$(gettext "Add") *$e$tpcs" \
     --button=!'/usr/share/idiomind/images/add_clipboard.png'!"$(gettext "Clipboard watcher")":5 \
     --button=!'/usr/share/idiomind/images/add_image.png'!"$(gettext "Screen clipping")":3 \
     --button=!'/usr/share/idiomind/images/add_audio.png'!"$(gettext "Add an audio file")":2 \
@@ -640,7 +640,7 @@ function dlg_form_1() {
 
 function dlg_form_2() {
     cmd_words="$DS/add.sh list_words_dclik $DT_r "\"${trgt}\"""
-    yad --form --title="$(gettext "New note")" \
+    yad --form --title="$(gettext "Add note")" \
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --always-print-result --separator="|" \
@@ -650,7 +650,7 @@ function dlg_form_2() {
     --width=470 --borders=5 \
     --field="" "$trgt" \
     --field="" "$srce" \
-    --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
+    --field=":CB" "$tpe!$(gettext "Add") *$e$tpcs" \
     --button=!'/usr/share/idiomind/images/add_clipboard.png'!"$(gettext "Clipboard watcher")":5 \
     --button=!'/usr/share/idiomind/images/add_image.png'!"$(gettext "Screen clipping")":3 \
     --button=!'/usr/share/idiomind/images/add_audio.png'!"$(gettext "Add an audio file")":2 \
@@ -681,7 +681,7 @@ function dlg_checklist_3() {
     --gtkrc="$DS/default/gtkrc.cfg" \
     --separator="" \
     --field=" ":lbl null \
-    --field="$(gettext "Add to"):CB" "$2!$(gettext "New") *$e$tpcs" &
+    --field="$(gettext "Add to"):CB" "$2!$(gettext "Add") *$e$tpcs" &
     yad --paned --key="$fkey" \
     --title="$(gettext "Found") $(wc -l < "${1}") $(gettext "notes")" \
     --name=Idiomind --class=Idiomind \
@@ -730,7 +730,7 @@ function dlg_checklist_2() {
     --gtkrc="$DS/default/gtkrc.cfg" \
     --separator="|" \
     --field="$(gettext "Note")":TXT "${note}" \
-    --field="$(gettext "Example (for words)")":TXT "${pre_exmp}" \
+    --field="$(gettext "Example (applicable for words only)")":TXT "${pre_exmp}" \
     --field="$(gettext "Mark")":CHK "$fl" & \
     yad --paned --orient=hor --key="$fkey" \
     --title="$(gettext "Options")" \
@@ -739,7 +739,7 @@ function dlg_checklist_2() {
     --window-icon=$DS/images/logo.png --center --on-top \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --width=500 --height=260 --borders=10 --splitter=180 \
-    --button="$(gettext "Add")!gtk-apply":0 \
+    --button="$(gettext "Apply")!gtk-apply":0 \
     --button="  $(gettext "Cancel")  ":1
 }
 
@@ -754,7 +754,7 @@ function dlg_text_info_1() {
     --skip-taskbar --center --on-top \
     --width=700 --height=450 --borders=5 \
     --button="$(gettext "Cancel")":1 \
-    --button="gtk-save!$(gettext "Save")":0
+    --button="gtk-apply!$(gettext "Apply")":0
 }
 
 function msg_3() {

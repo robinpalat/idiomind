@@ -83,6 +83,7 @@ function tpc_db() {
     ta="${2}"
     co="$(sed "s|'|''|g" <<< "${3}")"
     va="$(sed "s|'|''|g" <<< "${4}")"
+    
     if [ $1 = 1 ]; then # read
         sqlite3 "$DC_tlt/tpc" "select ${co} from '${ta}';"
     elif [ $1 = 2 ]; then # insert
@@ -109,7 +110,51 @@ function tpc_db() {
         sqlite3 "$DC_tlt/tpc" "update ${ta} set ${co}='${va}';"
     elif [ $1 = 10 ]; then # select specific, first record
         sqlite3 "$DC_tlt/tpc" "select ${co} from '${ta}' asc limit 1;" |tr -s '|' '\n'
+    # Data column
+    elif [ $1 = 20 ]; then # insert Data col
+        sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500; \
+        insert into ${ta} (${co}) values ('${va}');"
+        
+        if ! [[ "${trgt}" =~ [0-9] ]] && [ -n "${trgt}" ] && [ -n "${srce}" ]; then
+			if [[ -z "$(sqlite3 "$DC_tlt/tpc" "select Word from Words where Word is '${trgt}';")" ]]; then
+				sqlite3 ${tlngdb} "insert into Data (trgt,srce,exmp,defn,note,refr,tags,link,grmr,imag,imgr,mark,cdid,type) \
+				values ('${trgt}','${srce}','${exmp}','${defn}','${note}','${refr}','${tags}','${link}','${grmr}','${imag}','${imgr}','${mark}','${cdid}','${type}',);"
+			fi
+		fi
+			  
+			#elif [[ -z "$(sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${trgt}';")" ]]; then
+				#sqlite3 ${tlngdb} "update Words set '${slng^}'='${srce_q}' where Word='${trgt}';"
+			#fi
+
+			#if [ -n "${exmp}" ]; then
+				#sqlite3 ${tlngdb} "update Words set Example='${exmp}' where Word='${trgt}';"
+			#fi
+			#if [ -n "${defn}" ]; then
+				#sqlite3 ${tlngdb} "update Words set Definition='${defn}' where Word='${trgt}';"
+			#fi
+	
+        
+        
+        
+        
+        
+    elif [ $1 = 21 ]; then # mod Data col
+        sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500; \
+        insert into ${ta} (${co}) values ('${va}');"
+        
+    elif [ $1 = 22 ]; then # delete Data col
+        sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500; \
+        insert into ${ta} (${co}) values ('${va}');"
     fi
+    
+    
+
+    
+    
+    
+    
+    
+    
 }
 
 function nmfile() {

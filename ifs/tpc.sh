@@ -1,6 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+
 if [ -z "${1}" ]; then exit 1; fi
 source "$DS/ifs/cmns.sh"
 topic="${1}"
