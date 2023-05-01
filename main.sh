@@ -247,12 +247,9 @@ $(gettext "It is recommended to change your language preferences before installi
             sed -i '/^$/d' "${DC_tlt}/data"
             export data="${DC_tlt}/data"
 python3 <<PY
-import os, re, locale, sqlite3, sys
-en = locale.getpreferredencoding()
+import os, re, sqlite3
 data = os.environ['data']
-data.encode(en)
 tpcdb = os.environ['tpcdb']
-tpcdb.encode(en)
 db = sqlite3.connect(tpcdb)
 db.text_factory = str
 cur = db.cursor()
@@ -261,15 +258,32 @@ for item in data:
     item = item.replace('}', '}\n')
     fields = re.split('\n',item)
     trgt = (fields[0].split('trgt{'))[1].split('}')[0]
-    type = (fields[24].split('type{'))[1].split('}')[0]
+    srce = (fields[1].split('srce{'))[1].split('}')[0]
+    exmp = (fields[12].split('exmp{'))[1].split('}')[0]
+    defn = (fields[13].split('defn{'))[1].split('}')[0]
+    note = (fields[14].split('note{'))[1].split('}')[0]
+    wrds = (fields[15].split('wrds{'))[1].split('}')[0]
+    grmr = (fields[16].split('grmr{'))[1].split('}')[0]
+    tags = (fields[17].split('tags{'))[1].split('}')[0]
     mark = (fields[18].split('mark{'))[1].split('}')[0]
+    refr = (fields[19].split('refr{'))[1].split('}')[0]
+    imag = (fields[20].split('imag{'))[1].split('}')[0]
+    imgr = (fields[21].split('imgr{'))[1].split('}')[0]
+    link = (fields[22].split('link{'))[1].split('}')[0]
+    cdid = (fields[23].split('cdid{'))[1].split('}')[0]
+    type = (fields[24].split('type{'))[1].split('}')[0]
+
     if type == '1':
         cur.execute("insert into words (list) values (?)", (trgt,))
     elif type == '2':
         cur.execute("insert into sentences (list) values (?)", (trgt,))
     if mark == 'TRUE':
         cur.execute("insert into marks (list) values (?)", (trgt,))
+
     cur.execute("insert into learning (list) values (?)", (trgt,))
+    
+    cur.execute('INSERT INTO Data (trgt,srce,exmp,defn,note,wrds,grmr,tags,mark,refr,imag,imgr,link,cdid,type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', (trgt,srce,exmp,defn,note,wrds,grmr,tags,mark,refr,imag,imgr,link,cdid,type))
+
 db.commit()
 db.close()
 PY
