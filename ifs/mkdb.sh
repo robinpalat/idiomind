@@ -41,6 +41,21 @@ function create_tpcdb() {
     exmp TEXT, defn TEXT, note TEXT, wrds TEXT, grmr TEXT, tags TEXT, mark TEXT, refr TEXT, \
     imag TEXT, imgr TEXT, link TEXT, cdid TEXT, type TEXT);" |sqlite3 "${tpcdb}"
     
+    echo -n "create table if not exists Pract1 (items_0 TEXT);" |sqlite3 "${tpcdb}"
+    echo -n "create table if not exists Pract2 (items_0 TEXT);" |sqlite3 "${tpcdb}"
+    echo -n "create table if not exists Pract3 (items_0 TEXT);" |sqlite3 "${tpcdb}"
+    echo -n "create table if not exists Pract4 (items_0 TEXT);" |sqlite3 "${tpcdb}"
+    echo -n "create table if not exists Pract5 (items_0 TEXT);" |sqlite3 "${tpcdb}"
+    echo -n "create table if not exists Practice_stats (Pract1_icon INTEGER, \
+    Pract2_icon INTEGER, Pract3_icon INTEGER, Pract4_icon INTEGER, \
+    Pract5_icon INTEGER, Pract1_sess INTEGER, Pract2_sess INTEGER, \
+    Pract3_sess INTEGER, Pract4_sess INTEGER, Pract5_sess INTEGER);" |sqlite3 "${tpcdb}"
+
+    sqlite3 "${tpcdb}" "pragma busy_timeout=2000;\
+    insert into Practice_stats (Pract1_icon,Pract2_icon,Pract3_icon,Pract4_icon,\
+    Pract5_icon,Pract1_sess,Pract2_sess,Pract3_sess,Pract4_sess,Pract5_sess) \
+    values (0,0,0,0,0,0,0,0,0,0);"
+
     echo -n "create table if not exists Translates \
     (trgt TEXT, \
     ch_srce TEXT, de_srce TEXT, en_srce TEXT, es_srce TEXT, \
