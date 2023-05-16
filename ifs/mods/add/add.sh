@@ -463,14 +463,27 @@ function tts_word() {
 	
     word="${1,,}"; audio_file="${2}/$word.mp3"; audio_dwld="${2}/$word"
 
-	if ! ls "$DC_d"/*."TTS online.Search audio".$lgt 1> /dev/null 2>&1; then
-		"$DS_a/Resources/cnfg.sh" 0
+	if ! ls "$DC_d"/*."TTS online.Search audio".$lgt 1> /dev/null 2>&1 &&\
+	! ls "$DC_d"/*."TTS offline.Convert text to audio".* 1> /dev/null 2>&1 &&\
+	! ls "$DC_d"/*."TTS online.Convert text to audio".* 1> /dev/null 2>&1 &&\
+	! ls "$DC_d"/*."TTS online.Search audio".various 1> /dev/null 2>&1;
+	  then
+		"$DS_a/Resources/cnfg.sh"
 	else
 	
 		if ls "$DC_d"/*."TTS online.Search audio".$lgt 1> /dev/null 2>&1; then
 			for dict in $DC_d/*."TTS online.Search audio".$lgt; do
 				dwld1 "$DS_a/Resources"; [ $? = 5 ] && break
 			done
+		fi
+		if [ ! -f "${audio_file}" ]; then
+			if ls "$DC_d"/*."TTS online.Convert text to audio".* 1> /dev/null 2>&1; then
+				for Script in "$DC_d"/*."TTS online.Convert text to audio".*; do
+					Script="$DS_a/Resources/scripts/$(basename "${Script}")"
+					[ -f "${Script}" ] && "${Script}" "${word}" "${audio_file}"
+					if [ -f "${audio_file}" ]; then break; fi
+				done
+			fi
 		fi
 		if [ ! -f "${audio_file}" ]; then
 			if ls "$DC_d"/*."TTS offline.Convert text to audio".* 1> /dev/null 2>&1; then
@@ -630,7 +643,7 @@ function dlg_form_1() {
     --window-icon=$DS/images/logo.png \
     --width=470 --borders=5 \
     --field="" "$trgt" \
-    --field=":CB" "$tpe!$(gettext "Add") *$e$tpcs" \
+    --field=":CB" "$tpe!$(gettext "New topic") *$e$tpcs" \
     --button=!'/usr/share/idiomind/images/add_clipboard.png'!"$(gettext "Clipboard watcher")":5 \
     --button=!'/usr/share/idiomind/images/add_image.png'!"$(gettext "Screen clipping")":3 \
     --button=!'/usr/share/idiomind/images/add_audio.png'!"$(gettext "Add an audio file")":2 \
@@ -650,7 +663,7 @@ function dlg_form_2() {
     --width=470 --borders=5 \
     --field="" "$trgt" \
     --field="" "$srce" \
-    --field=":CB" "$tpe!$(gettext "Add") *$e$tpcs" \
+    --field=":CB" "$tpe!$(gettext "New topic") *$e$tpcs" \
     --button=!'/usr/share/idiomind/images/add_clipboard.png'!"$(gettext "Clipboard watcher")":5 \
     --button=!'/usr/share/idiomind/images/add_image.png'!"$(gettext "Screen clipping")":3 \
     --button=!'/usr/share/idiomind/images/add_audio.png'!"$(gettext "Add an audio file")":2 \
@@ -681,7 +694,7 @@ function dlg_checklist_3() {
     --gtkrc="$DS/default/gtkrc.cfg" \
     --separator="" \
     --field=" ":lbl null \
-    --field="$(gettext "Add to"):CB" "$2!$(gettext "Add") *$e$tpcs" &
+    --field="$(gettext "Add to"):CB" "$2!$(gettext "New topic") *$e$tpcs" &
     yad --paned --key="$fkey" \
     --title="$(gettext "Found") $(wc -l < "${1}") $(gettext "notes")" \
     --name=Idiomind --class=Idiomind \

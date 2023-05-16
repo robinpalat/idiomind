@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/default/c.conf
-sz=(470 470); [[ ${swind} = TRUE ]] && sz=(410 410)
+sz=(440 470); [[ ${swind} = TRUE ]] && sz=(410 410)
 source "$DS/ifs/cmns.sh"
 export -f tpc_db
 dw=$(date +%W |sed 's/^0*//')
@@ -110,27 +110,27 @@ function _log() {
         if [ -f ./${1}.2 ]; then
             if [ -f ./${1}.3 ]; then
                 lg2="$(grep -Fvxf ./${1}.3 < ./${1}.2)"
-                [ -n "${lg2}" ] && erw="${t2},</span> " || erw=""
+                [ -n "${lg2}" ] && erw="${t2} </span> " || erw=""
                 lg3="$(< ./${1}.3)"
                 echo "w2.$(tr -s '\n' '|' <<< "${lg2}").w2.<${stts}>" \
                 |sed '/\.\./d' >> "$log"
                 echo "w3.$(tr -s '\n' '|' <<< "${lg3}").w3.<${stts}>" \
                 |sed '/\.\./d' >> "$log"
-                i2="${t2}$(echo "${lg2}" |head -n8 |sed -e ':a;N;$!ba;s/\n/, /g')</span>"
-                i3="${t3}$(echo "${lg3}" |head -n8 |sed -e ':a;N;$!ba;s/\n/, /g')</span>"
+                i2="${t2}$(echo "${lg2}" |head -n8 |sed -e ':a;N;$!ba;s/\n/  /g')</span>"
+                i3="${t3}$(echo "${lg3}" |head -n8 |sed -e ':a;N;$!ba;s/\n/  /g')</span>"
                 echo -n "${i2}${erw}${i3}" > ./${1}.df
             else
                 lg2="$(< ./${1}.2)"
                  echo "w2.$(tr -s '\n' '|' <<< "${lg2}").w2.<${stts}>" \
                 |sed '/\.\./d' >> "$log"
-                i2="$t2$(echo "${lg2}" |head -n16 |sed -e ':a;N;$!ba;s/\n/, /g') </span>"
+                i2="$t2$(echo "${lg2}" |head -n16 |sed -e ':a;N;$!ba;s/\n/  /g') </span>"
                 echo -n "${i2}" > ./${1}.df
             fi
         elif [ -f ./${1}.3 ]; then
             lg3="$(< ./${1}.3)"
             echo "w3.$(tr -s '\n' '|' <<< "${lg3}").w3.<${stts}>" \
             |sed '/\.\./d' >> "$log"
-            i3="$t3$(head -n16 <<< "${lg3}") |sed -e ':a;N;$!ba;s/\n/, /g')</span>"
+            i3="$t3$(head -n16 <<< "${lg3}") |sed -e ':a;N;$!ba;s/\n/  /g')</span>"
             echo -n "${i3}" > ./${1}.df
         fi
 
@@ -528,7 +528,7 @@ function practice_e() {
         --field="" "" \
         --button="!window-close":1 \
         --button="!$DS/images/listen.png":"$cmd_play" \
-        --button="    $(gettext "Check")    ":0)
+        --button="	>	":0)
     }
         
     check() {
@@ -539,10 +539,10 @@ function practice_e() {
         --window-icon=idiomind \
         --skip-taskbar --wrap --image-on-top --center --on-top \
         --undecorated --buttons-layout=end \
-        --width=530 --height=220 --borders=15 \
+        --width=530 --height=220 --borders=18 \
         --field="":lbl "" \
-        --field="<span font_desc='Arial 9'>$OK\n\n$prc $hits</span>":lbl \
-        --button="!media-seek-forward":2
+        --field="<span font_desc='Arial 7'>$OK\n\n$prc $hits</span>":lbl \
+        --button="	>	":2
     }
     
     get_text() {
@@ -871,7 +871,7 @@ function practices() {
     else
         cleanups "${pdir}/${pr}.2" "${pdir}/${pr}.3"
         img_cont="$DS/images/cont.png"
-        img_no="$DS/images/no.png"
+        img_no="$DS/images/nou.png"
         img_yes="$DS/images/yes.png"
         echo "0p.$tpc.p0" >> "$log"
         practice_${pr}
@@ -893,7 +893,7 @@ function strt() {
     fi
     for i in a b c d; do
         if [ -f ./${i}.df ]; then
-        declare plus${i}=" | $(< ./${i}.df)"
+        declare plus${i}=" /  $(< ./${i}.df)"
         fi
     done
     
@@ -902,35 +902,38 @@ function strt() {
     
     if [[ "${1}" = 1 ]]; then
         NUMBER="$(wc -l < ${pr}.0)"
-        declare info${icon}="<span font_desc='Arial Bold 12'>  —  $(gettext "Test completed") </span>"
+        declare congr${icon}="<span font_desc='Arial Bold 12'>  —  $(gettext "Test completed") </span>"
         [[ "${pr}" = e ]] && \
-        info="\n<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed a test of") $NUMBER $(gettext "sentences")</span>\n" \
-        || info="\n<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed a test of") $NUMBER $(gettext "words")</span>\n"
+        info="\n<span font_desc='Arial 11'>$(gettext "Congratulations, You have completed a test of") $NUMBER $(gettext "sentences!")</span>\n" \
+        || info="\n<span font_desc='Arial 11'>$(gettext "Congratulations, You have completed a test of") $NUMBER $(gettext "words!")</span>\n"
         echo 21 > .${icon}; export plus${pr}=""; [ -e ./${pr}.df ] && rm ./${pr}.df
+        align=left
     elif [[ "${1}" = 2 ]]; then
-        learnt=$(< ./${pr}.l); declare info${icon}="*  "
-        info="<small>$(gettext "Total")</small> <b><big>$all</big></b>    <small>$(gettext "Learnt")</small> <b><big>$learnt</big></b>    <small>$(gettext "Easy")</small> <b><big>$easy</big></b>    <small>$(gettext "Learning")</small> <b><big>$ling</big></b>    <small>$(gettext "Difficult")</small> <b><big>$hard</big></b>\n"
+        learnt=$(< ./${pr}.l); declare info${icon}="  *  "
+        info=" <b><small>$(gettext "Learnt")</small> <big>$learnt</big>    <small>$(gettext "Easy")</small> <big>$easy</big>    <small>$(gettext "Learning")</small> <big>$ling</big>    <small>$(gettext "Difficult")</small> <big>$hard</big></b>  \n"
+        align=right
     fi
-
-    pr="$(yad --list --title="$(gettext "Practice ") - $tpc"\
+	[ -z $all ] && t="$(gettext "Practice ")" || t="$(gettext "Practice ") -  $all $(gettext "notes")"
+    pr="$(yad --list --title="$t"\
     --text="${info}" \
     --class=Idiomind --name=Idiomind \
     --print-column=1 --separator="" \
     --window-icon=$DS/images/logo.png \
-    --buttons-layout=edge --image-on-top --center --on-top --text-align=center \
+    --buttons-layout=edge --image-on-top --center --on-top --text-align=$align \
     --no-headers --expand-column=3 --hide-column=1 \
     --width=${sz[0]} --height=${sz[1]} --borders=10 \
     --ellipsize=end --wrap-width=200 --ellipsize-cols=1 \
     --column="Action" --column="Pick":IMG --column="Label" \
-    "a" "$DS/images/practice/$(< ./.1).png" "$(gettext "Flashcards")$info1 $plusa"  \
-    "b" "$DS/images/practice/$(< ./.2).png" "$(gettext "Multiple-choice")$info2 $plusb" \
-    "c" "$DS/images/practice/$(< ./.3).png" "$(gettext "Recognize Pronunciation")$info3 $plusc" \
-    "d" "$DS/images/practice/$(< ./.4).png" "$(gettext "Images")$info4 $plusd" \
-    "e" "$DS/images/practice/$(< ./.5).png" "$(gettext "Listen and Writing Sentences")$info5" \
+    "a" "$DS/images/practice/$(< ./.1).png" "$info1$(gettext "Flashcards")$congr1 <small>$plusa</small>"  \
+    "b" "$DS/images/practice/$(< ./.2).png" "$info2$(gettext "Multiple-choice")$congr2 <small>$plusb</small>" \
+    "c" "$DS/images/practice/$(< ./.3).png" "$info3$(gettext "Recognize Pronunciation")$congr3 <small>$plusc</small>" \
+    "d" "$DS/images/practice/$(< ./.4).png" "$info4$(gettext "Images")$congr4 <small>$plusd</small>" \
+    "e" "$DS/images/practice/$(< ./.5).png" "$info5$(gettext "Listen and Writing Sentences")$congr5" \
     --button="$(gettext "Restart")":3 \
     --button="$(gettext "Start")":0)"
     ret=$?
-    unset info info1 info2 info3 info4 info5 title_act_pract
+    unset info info1 info2 info3 info4 info5 title_act_pract \
+    congr1 congr2 congr3 congr4 congr5
 
     if [ $ret -eq 0 ]; then
         if [ -z "$pr" ]; then

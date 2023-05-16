@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-#  Copyright 2015-2022 Robin Palatnik
+#  Copyright 2015-2023 Robin Palatnik
 #  Email patapatass@hotmail.com
 #  
 #  This program is free software; you can redistribute it and/or modify
@@ -307,6 +307,7 @@ PY
                 fi
             fi
             echo 1 > "${DC_tlt}/stts"
+            cleanups "$DC_s/topics_first_run"
             source /usr/share/idiomind/default/c.conf
             "$DS/mngr.sh" mkmn 1
             "$DS/ifs/tpc.sh" "${name}" 1 &

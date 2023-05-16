@@ -147,7 +147,7 @@ function new_sentence() {
     export cdid="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
     mksure "${trgt}" "${srce}" "${grmr}" "${wrds}"
     
-	sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,refr,tags,link,grmr,imag,imgr,mark,cdid,type) values ('${trgt}','${srce}','${exmp}','${defn}','${note}','${refr}','${tags}','${link}','${grmr}','${imag}','${imgr}','${mark}','${cdid}','${type}');"
+	sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,refr,tags,link,grmr,imag,imgr,mark,cdid,type) values ('${trgt}','${srce}','${exmp}','${defn}','${note}','${refr}','${tags}','${link}',\"${grmr}\",'${imag}','${imgr}','${mark}','${cdid}','${type}');"
 
     if [ $? = 1 ]; then
         echo -e "${info3}:\n${trgt}\n\n" >> "${DC_tlt}/note.inf"
@@ -551,7 +551,7 @@ function process() {
         check_s "${tpe}"
         unset link
         touch "$DT_r/select_lines"
-        if [ "${tpe}" = "$(gettext "New") *" ]; then
+        if [ "${tpe}" = "$(gettext "New topic") *" ]; then
             new_topic
             source "$DS/default/c.conf"
         else
@@ -789,11 +789,13 @@ new_items() {
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
         
     elif [ $ret -eq 0 -o $ret -eq 4 -o  $ret -eq 5 ]; then
+    
         if [ $ret -eq 5 ]; then "$DS/ifs/tls.sh" clipw & return; fi
         if [ -z "${tpe}" ]; then
             check_s "${tpe}"; [ -z "${tpe}" ] && exit 1
         fi
-        if [ "${tpe}" = "$(gettext "New") *" ]; then
+        
+        if [ "${tpe}" = "$(gettext "New topic") *" ]; then
             "$DS/add.sh" new_topic
             source "$DS/default/c.conf"
         else

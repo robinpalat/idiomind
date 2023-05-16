@@ -27,6 +27,7 @@ play_word() {
 				rm -f "$DT/${3}.mp3"; break & exit
 			fi
 		done
+		
     else
         echo "${w}." |espeak -v ${tlangs[$tlng]} \
         -a ${sAmplitude} -s ${sSpeed} -p ${sPitch} \
