@@ -74,7 +74,7 @@ set_lang() {
 }
 
 config_dlg() {
-    sz=(350 410)
+    sz=(380 410)
     show_icon=0; kill_icon=0
     source "$DS/default/sets.cfg"
     
