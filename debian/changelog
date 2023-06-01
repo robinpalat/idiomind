@@ -1,3 +1,9 @@
+idiomind (0.3.2-1) jammy; urgency=medium
+
+  * Various fixes
+
+ -- Robin Palatnik <robinpalat@gmail.com>  Thu, 01 Jun 2023 18:11:56 -0400
+
 idiomind (0.3.1-1) jammy; urgency=medium
 
   * Various fixes and improvements

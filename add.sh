@@ -146,7 +146,6 @@ function new_sentence() {
     sentence_p 1
     export cdid="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
     mksure "${trgt}" "${srce}" "${grmr}" "${wrds}"
-    
 	sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,refr,tags,link,grmr,imag,imgr,mark,cdid,type) values ('${trgt}','${srce}','${exmp}','${defn}','${note}','${refr}','${tags}','${link}',\"${grmr}\",'${imag}','${imgr}','${mark}','${cdid}','${type}');"
 
     if [ $? = 1 ]; then
@@ -291,6 +290,7 @@ function list_words_edit() {
             srce=$(< "$DT_r/tr"); [ -z "${srce}" ] && internet
             export srce="$(clean_0 "${srce}")"
             export cdid="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
+            sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,refr,tags,link,grmr,imag,imgr,mark,cdid,type) values ('${trgt}','${srce}','${exmp}','${defn}','${note}','${refr}','${tags}','${link}',\"${grmr}\",'${imag}','${imgr}','${mark}','${cdid}','${type}');"
             mksure "${trgt}" "${srce}"
 
             if [ $? = 0 ]; then
@@ -345,6 +345,7 @@ function list_words_sentence() {
             srce=$(< "$DT_r/tr.$c"); [ -z "${srce}" ] && internet
             export srce="$(clean_0 "${srce}")"
             export cdid="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
+            sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,refr,tags,link,grmr,imag,imgr,mark,cdid,type) values ('${trgt}','${srce}','${exmp}','${defn}','${note}','${refr}','${tags}','${link}',\"${grmr}\",'${imag}','${imgr}','${mark}','${cdid}','${type}');"
             mksure "${trgt}" "${srce}"
             
             if [ $? = 0 ]; then
@@ -401,11 +402,14 @@ function list_words_dclik() {
         fi
     else
         if [[ -n "$wrds" ]]; then
+        
             slt="$(dlg_checklist_1 "${wrds}")"
             if [ $? -eq 0 ]; then
                 while read -r chkst; do
+					
                     if [ -n "$chkst" ]; then
-                    sed 's/TRUE//;s/<[^>]*>//g;s/|//g' <<< "${chkst}" >> "$DT_r/wrds"
+                    wrds="$(sed 's/TRUE//;s/<[^>]*>//g;s/|//g' <<< "${chkst}")" 
+                    echo "$wrds" >> "$DT_r/wrds"
                     echo "${words}" >> "$DT_r/wrdsls"
                     fi
                 done <<< "${slt}"
@@ -576,6 +580,7 @@ function process() {
         
         if [ -n "$(< "$DT_r/select_lines")" -o -n "$(< "$DT_r/wrds")" ]; then
             number_items=$((cnta+cntb))
+            
         else
             [ "$conten" != '__words__' ] && cleanups "$DT_r"
             cleanups "$DT/n_s_pr" "$slt" & exit 1
@@ -595,6 +600,7 @@ function process() {
             [ -z "${srce}" ] && internet
             export srce="$(clean_2 "${srce}")"
             export cdid="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "" "")"
+            #sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,refr,tags,link,grmr,imag,imgr,mark,cdid,type) values ('${trgt}','${srce}','${exmp}','${defn}','${note}','${refr}','${tags}','${link}',\"${grmr}\",'${imag}','${imgr}','${mark}','${cdid}','${type}');"
             
             if [[ $(wc -l < "${DC_tlt}/data") -ge 200 ]]; then
                 echo -e "$(gettext "Maximum number of notes has been exceeded:")\n$trgt\n\n" >> "$DT_r/slog"
@@ -635,6 +641,7 @@ function process() {
                         export DT_r; sentence_p 1
                         export cdid="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
                         mksure "${trgt}" "${srce}" "${wrds}" "${grmr}"
+                        sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,refr,tags,link,grmr,imag,imgr,mark,cdid,type) values ('${trgt}','${srce}','${exmp}','${defn}','${note}','${refr}','${tags}','${link}',\"${grmr}\",'${imag}','${imgr}','${mark}','${cdid}','${type}');"
                         
                         if [ $? = 0 ]; then
                             index 2
@@ -661,6 +668,7 @@ function process() {
         if [ -s "$DT_r/wrds" ]; then
             n=1
             while read -r trgt; do
+            
                 export exmp=$(sed -n ${n}p "$DT_r/wrdsls" |sed 's/\[ \.\.\. \]//g')
                 export trgt=$(echo "${trgt,,}" |sed 's/^\s*./\U&\E/g')
                 audio="${trgt,,}"
@@ -669,10 +677,13 @@ function process() {
                     echo -e "$(gettext "Maximum number of notes has been exceeded:")\n$trgt\n\n" >> "$DT_r/wlog"
                 else
 					unset srce
-                    export sleep 1 && srce="$(translate "${trgt}" $lgt $lgs)"
+		
+                    sleep 1 && srce="$(translate "${trgt}" $lgt $lgs)"
+                    
                     [ -z "${srce}" ] && internet
  
                     export cdid="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
+                    sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,refr,tags,link,grmr,imag,imgr,mark,cdid,type) values ('${trgt}','${srce}','${exmp}','${defn}','${note}','${refr}','${tags}','${link}',\"${grmr}\",'${imag}','${imgr}','${mark}','${cdid}','${type}');"
                     mksure "${trgt}" "${srce}"
                     if [ $? = 0 ]; then
                         index 1
