@@ -92,7 +92,7 @@ play_list() {
         msg "$(gettext "No topic is active")\n" dialog-information & exit 1
     fi
 
-    [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
+    [ ! -d "$DT" ] && mkdir "$DT"; cd ~ && cd "$DT"
     [ ! -e $DT/playlck ] && echo 0 > $DT/playlck
     
     btn1="$(gettext "Play"):0"

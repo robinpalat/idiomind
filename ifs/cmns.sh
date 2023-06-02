@@ -110,33 +110,6 @@ function tpc_db() {
         sqlite3 "$DC_tlt/tpc" "update ${ta} set ${co}='${va}';"
     elif [ $1 = 10 ]; then # select specific, first record
         sqlite3 "$DC_tlt/tpc" "select ${co} from '${ta}' asc limit 1;" |tr -s '|' '\n'
-    # Data column
-    elif [ $1 = 20 ]; then # insert Data col
-        sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500; \
-        insert into ${ta} (${co}) values ('${va}');"
-        
-        if ! [[ "${trgt}" =~ [0-9] ]] && [ -n "${trgt}" ] && [ -n "${srce}" ]; then
-			if [[ -z "$(sqlite3 "$DC_tlt/tpc" "select Word from Words where Word is '${trgt}';")" ]]; then
-				sqlite3 ${tlngdb} "insert into Data (trgt,srce,exmp,defn,note,refr,tags,link,grmr,imag,imgr,mark,cdid,type) \
-				values ('${trgt}','${srce}','${exmp}','${defn}','${note}','${refr}','${tags}','${link}','${grmr}','${imag}','${imgr}','${mark}','${cdid}','${type}',);"
-			fi
-		fi
-			  
-			#elif [[ -z "$(sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${trgt}';")" ]]; then
-				#sqlite3 ${tlngdb} "update Words set '${slng^}'='${srce_q}' where Word='${trgt}';"
-			#fi
-
-			#if [ -n "${exmp}" ]; then
-				#sqlite3 ${tlngdb} "update Words set Example='${exmp}' where Word='${trgt}';"
-			#fi
-			#if [ -n "${defn}" ]; then
-				#sqlite3 ${tlngdb} "update Words set Definition='${defn}' where Word='${trgt}';"
-			#fi
-	
-        
-        
-        
-        
         
     elif [ $1 = 21 ]; then # mod Data col
         sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500; \
@@ -176,6 +149,8 @@ function yad_kill() {
     for X in "${@}"; do kill -9 $(pgrep -f "$X") & done
 }
 
+
+#TODO
 function f_lock() {
     brk=0
     if [ $1 = 0 -o $1 = 1 ]; then
@@ -206,7 +181,7 @@ function check_index1() {
 }
 
 function check_list() {
-    export topics="$(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
+    export topics="$(cd ~ && cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
     -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')" \
     addons="$(ls -1a "$DS/addons/")" db="$DM_tls/data/config"
     
@@ -308,7 +283,7 @@ function check_err() {
     done &
 }
 
-function calculate_review() { # TODO check count rows and fix
+function calculate_review() { #TODO check count rows
     [ -z ${notice} ] && source "$DS/default/sets.cfg"
     export DC_tlt="$DM_tl/${1}/.conf"
     steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"

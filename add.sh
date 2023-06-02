@@ -18,7 +18,7 @@ new_topic() {
     [ -z "$2" ] && mode=1 || mode=$2
     [ -z "$3" ] && activ=1 || activ=$3
     [ -n "$4" ] && name="${4}"
-    listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
+    listt="$(cd ~ && cd "$DM_tl"; find ./ -maxdepth 1 -type d \
     ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
 
     if [[ $(wc -l <<< "${listt}") -ge 120 ]]; then
@@ -85,7 +85,7 @@ function new_item() {
     
     if [ ! -d "$DT_r" ]; then
         DT_r="$DT/$(base64 <<< $((RANDOM%100000)) |head -c 32)"
-        check_dir "$DT_r"; cd "$DT_r"
+        check_dir "$DT_r"; cd ~ && cd "$DT_r"
     fi
     
     if [ -z "${trgt}" ]; then trgt="${3}"; fi
@@ -146,7 +146,6 @@ function new_sentence() {
     sentence_p 1
     export cdid="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
     mksure "${trgt}" "${srce}" "${grmr}" "${wrds}"
-	sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,refr,tags,link,grmr,imag,imgr,mark,cdid,type) values ('${trgt}','${srce}','${exmp}','${defn}','${note}','${refr}','${tags}','${link}',\"${grmr}\",'${imag}','${imgr}','${mark}','${cdid}','${type}');"
 
     if [ $? = 1 ]; then
         echo -e "${info3}:\n${trgt}\n\n" >> "${DC_tlt}/note.inf"
@@ -215,8 +214,6 @@ function new_word() {
     
     mksure "${trgt}" "${srce}"
     
-    sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,refr,tags,link,grmr,imag,imgr,mark,cdid,type) values ('${trgt}','${srce}','${exmp}','${defn}','${note}','${refr}','${tags}','${link}','${grmr}','${imag}','${imgr}','${mark}','${cdid}','${type}');"
-    
     if [ $? = 1 ]; then
         echo -e "${info3}:\n${trgt}\n\n" >> "${DC_tlt}/note.inf"
         cleanups "$DT_r"; exit 1
@@ -264,9 +261,10 @@ function list_words_edit() {
     include "$DS/ifs/mods/add"
     tpe="${tpc}"
     exmp="${3}"
+    type=1
     [ -z "${exmp}" ] && exmp="${trgt}"
     check_s "${tpe}"
-    DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
+    DT_r=$(mktemp -d "$DT/XXXXXX"); cd ~ && cd "$DT_r"
     words="$(list_words_2 "${2}")"
     slt="$(dlg_checklist_1 "${words}")"
     if [ $? -eq 0 ]; then
@@ -290,7 +288,7 @@ function list_words_edit() {
             srce=$(< "$DT_r/tr"); [ -z "${srce}" ] && internet
             export srce="$(clean_0 "${srce}")"
             export cdid="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
-            sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,refr,tags,link,grmr,imag,imgr,mark,cdid,type) values ('${trgt}','${srce}','${exmp}','${defn}','${note}','${refr}','${tags}','${link}',\"${grmr}\",'${imag}','${imgr}','${mark}','${cdid}','${type}');"
+
             mksure "${trgt}" "${srce}"
 
             if [ $? = 0 ]; then
@@ -312,6 +310,7 @@ function list_words_edit() {
 
 function list_words_sentence() {
     exmp="${trgt}"
+    type=1
     c=$((RANDOM%100))
     DT_r=$(mktemp -d "$DT/XXXXXX")
     wrds="$(list_words_2 "${wrds}")"
@@ -345,7 +344,7 @@ function list_words_sentence() {
             srce=$(< "$DT_r/tr.$c"); [ -z "${srce}" ] && internet
             export srce="$(clean_0 "${srce}")"
             export cdid="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
-            sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,refr,tags,link,grmr,imag,imgr,mark,cdid,type) values ('${trgt}','${srce}','${exmp}','${defn}','${note}','${refr}','${tags}','${link}',\"${grmr}\",'${imag}','${imgr}','${mark}','${cdid}','${type}');"
+
             mksure "${trgt}" "${srce}"
             
             if [ $? = 0 ]; then
@@ -366,6 +365,7 @@ function list_words_sentence() {
 function list_words_dclik() {
     source "$DS/ifs/mods/add/add.sh"
     words="$(sed 's/<[^>]*>//g' <<< "${3}")"
+    type=1
     [[ -d "$2"  ]] && DT_r="$2"
     [ ! -d "$DT_r" ] && check_dir "$DT_r"
     export DT_r
@@ -422,7 +422,7 @@ function list_words_dclik() {
 
 function process() {
     if [ ! -d "$DT_r" ] ; then
-        check_dir "$DT_r"; cd "$DT_r"
+        check_dir "$DT_r"; cd ~ && cd "$DT_r"
     fi
     
     echo "${tpe}" > "$DT/n_s_pr"
@@ -479,9 +479,9 @@ function process() {
         else
             lenght() {
                 if [ $(wc -c <<< "${1}") -le ${sentence_chars} ]; then
-                    [ ${#1} -gt 1 ] && echo -e "${1}" >> "$DT_r/xlines"
+                    [ ${#1} -gt 1 ] && echo -e "${1%%[,.-]*}" >> "$DT_r/xlines"
                 else
-                    echo -e "${1}" >> "$DT_r/xlines"
+                    echo -e "${1%%[,.-]*}" >> "$DT_r/xlines"
                 fi
             }
         fi
@@ -522,7 +522,7 @@ function process() {
             sed -i '/^$/d' "$DT_r/xlines"
         fi
     else 
-        echo "${2}" > "$DT_r/xlines"
+        echo "${2%%[,.-]*}" > "$DT_r/xlines"
         sed -i '/^$/d' "$DT_r/xlines"
     fi
     if [ -z "$(< "$DT_r/xlines")" ] && [[ $conten != '__words__' ]]; then
@@ -600,8 +600,7 @@ function process() {
             [ -z "${srce}" ] && internet
             export srce="$(clean_2 "${srce}")"
             export cdid="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "" "")"
-            #sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,refr,tags,link,grmr,imag,imgr,mark,cdid,type) values ('${trgt}','${srce}','${exmp}','${defn}','${note}','${refr}','${tags}','${link}',\"${grmr}\",'${imag}','${imgr}','${mark}','${cdid}','${type}');"
-            
+
             if [[ $(wc -l < "${DC_tlt}/data") -ge 200 ]]; then
                 echo -e "$(gettext "Maximum number of notes has been exceeded:")\n$trgt\n\n" >> "$DT_r/slog"
             else
@@ -638,10 +637,11 @@ function process() {
                         echo -e "\n\n$n) [$(gettext "Sentence too long")] $trgt" >> "$DT_r/slog"
                     else
                         ( export db="$DS/default/dicts/$lgt"
+                        type=2
                         export DT_r; sentence_p 1
                         export cdid="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
                         mksure "${trgt}" "${srce}" "${wrds}" "${grmr}"
-                        sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,refr,tags,link,grmr,imag,imgr,mark,cdid,type) values ('${trgt}','${srce}','${exmp}','${defn}','${note}','${refr}','${tags}','${link}',\"${grmr}\",'${imag}','${imgr}','${mark}','${cdid}','${type}');"
+                        
                         
                         if [ $? = 0 ]; then
                             index 2
@@ -667,6 +667,7 @@ function process() {
         
         if [ -s "$DT_r/wrds" ]; then
             n=1
+            type=1
             while read -r trgt; do
             
                 export exmp=$(sed -n ${n}p "$DT_r/wrdsls" |sed 's/\[ \.\.\. \]//g')
@@ -683,7 +684,7 @@ function process() {
                     [ -z "${srce}" ] && internet
  
                     export cdid="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
-                    sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,refr,tags,link,grmr,imag,imgr,mark,cdid,type) values ('${trgt}','${srce}','${exmp}','${defn}','${note}','${refr}','${tags}','${link}',\"${grmr}\",'${imag}','${imgr}','${mark}','${cdid}','${type}');"
+
                     mksure "${trgt}" "${srce}"
                     if [ $? = 0 ]; then
                         index 1
@@ -790,7 +791,7 @@ new_items() {
     if [ $ret -eq 3 ]; then
         [ -d "$2" ] && DT_r="$2" || check_dir "$DT_r"
         ! grep '*' <<< "${tpe}" >/dev/null 2>&1 && echo "${tpe}" > "$DT/tpe"
-        cd "$DT_r" && set_image_1
+        cd ~ && cd "$DT_r" && set_image_1
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
         
     elif [ $ret -eq 2 ]; then
@@ -818,7 +819,8 @@ new_items() {
             check_dir "$DT_r"
         fi
         
-        export DT_r; cd "$DT_r" &&
+        export DT_r
+        cd ~ && cd "$DT_r"
         xclip -i /dev/null
         if [ -z "${tpe}" ] && [[ ${3} != 3 ]]; then cleanups "$DT_r"
             msg "$(gettext "No topic is active")\n" \

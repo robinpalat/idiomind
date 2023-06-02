@@ -131,7 +131,7 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
         
     remove_d() {
         source "$DS/ifs/cmns.sh"
-        ins="$(cd "/usr/share/idiomind/addons/"; set -- */; printf "%s\n" "${@%/}")"
+        ins="$(cd ~ && cd "/usr/share/idiomind/addons/"; set -- */; printf "%s\n" "${@%/}")"
         old="$(cat "$DC_a/menu_list")"
         while read -r _rm; do
             if [ -n "${_rm}" ]; then
@@ -148,7 +148,7 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
     }
     
     if [ ! -e "$DC_a/menu_list" ]; then
-        ins="$(cd "/usr/share/idiomind/addons/"; set -- */; printf "%s\n" "${@%/}")"
+        ins="$(cd ~ && cd "/usr/share/idiomind/addons/"; set -- */; printf "%s\n" "${@%/}")"
         echo "${ins}" > "$DC_a/menu_list"
     fi
     

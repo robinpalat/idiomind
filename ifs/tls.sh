@@ -317,7 +317,7 @@ _backup() {
     check_dir "$HOME/.idiomind/backup"
     file="$HOME/.idiomind/backup/${2}.bk"
     
-    if ! grep "${2}.bk" < <(cd "$HOME/.idiomind/backup"/; \
+    if ! grep "${2}.bk" < <(cd ~ && cd "$HOME/.idiomind/backup"/; \
     find . -maxdepth 1 -name '*.bk' -mtime -2); then
         if [ -s "$DM_tl/${2}/.conf/data" ]; then
             if [ -e "${file}" ]; then

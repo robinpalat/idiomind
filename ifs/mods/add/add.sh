@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 # -*- ENCODING: UTF-8 -*-
 
 if [ -z "${tlng}" -o -z "${slng}" ]; then
@@ -53,10 +53,11 @@ function mksure() {
 }
 
 function index() {
-    brk=0; while true; do
-    if [ ! -f "$DT/i_lk" -o ${brk} -gt 20 ]; then > "$DT/i_lk" & break
-    elif [ -f "$DT/i_lk" ]; then sleep 1; fi
-    let brk++; done
+	
+	lockfile="$DT/i_lk"
+	# bloqueo exclusivo
+	exec 9>"$lockfile"
+	flock -x 9
 
     if [[ ${1} = edit ]]; then
         DC_tlt="$DM_tl/${2}/.conf"
@@ -71,11 +72,11 @@ function index() {
         done
 
         if [ -d "${DC_tlt}/practice" ]; then
-            cd "${DC_tlt}/practice"
+            cd ~ && cd "${DC_tlt}/practice"
             while read -r file_pr; do
                 sust "${file_pr}"
             done < <(ls ./*)
-            cd /
+            cd ~
         fi
     else
         DC_tlt="${DM_tl}/${tpe}/.conf"; type=${1}
@@ -85,24 +86,36 @@ function index() {
         if [ ! -z "${trgt}" ]; then
             if ! grep -Fo "trgt{${trgt}}" \
             < "${DC_tlt}/data" >/dev/null 2>&1; then
-                if [[ ${1} = 1 ]]; then
-                    unset wrds grmr
+				type="$1"
+                if [[ ${type} = 1 ]]; then
+                    unset wrds grmr link defn
                     tpc_db 2 learning list "${trgt}"
                     tpc_db 2 words list "${trgt}"
-                elif [[ ${1} = 2 ]]; then
+                    # write to tpc db data column (store note data)
+                    sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,tags,mark,refr,imag,link,cdid,type) values (\"${trgt}\",\"${srce}\",\"${exmp}\",\"${defn}\",\"${note}\",'${tags}','${mark}','${refr}','${imag}',\"${link}\",'${cdid}','${type}');"
+                    # write to text file index
+                    echo -e "${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
+                    # write to text file data (store note data)
+                    eval newline="$(sed -n 2p $DS/default/vars)"
+                    echo "${newline}" >> "${DC_tlt}/data"
+                
+                elif [[ ${type} = 2 ]]; then
+                    unset defn
                     tpc_db 2 learning list "${trgt}"
                     tpc_db 2 sentences list "${trgt}"
+                    # write to tpc db data column (store note data)
+                    sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,note,wrds,grmr,tags,mark,refr,imag,link,cdid,type) values (\"${trgt}\",\"${srce}\",\"${note}\",\"${wrds}\",\"${grmr}\",'${tags}','${mark}','${refr}','${imag}',\"${link}\",'${cdid}','${type}');"
+                    # write to text file index
+                    echo -e "${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
+                    # write to text file data (store note data)
+                    eval newline="$(sed -n 2p $DS/default/vars)"
+                   echo "${newline}" >> "${DC_tlt}/data"
                 fi
-                echo -e "${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
-                [[ ${1} = 1 ]] && unset link
-                unset defn
-                eval newline="$(sed -n 2p $DS/default/vars)"
-                echo "${newline}" >> "${DC_tlt}/data"
             fi
         fi
     fi
-    sleep 0.5
-    rm -f "$DT/i_lk"
+    #Liberar el bloqueo
+	flock -u 9
 }
 
 function sentence_p() {
@@ -267,13 +280,14 @@ function clean_1() {
 
 function clean_2() {
     if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1 ; then
-    echo "${1}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
+    echo "${1%%[,.-]*}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
     |sed "s/’/'/g" |sed 's/quot\;/"/g' \
     |tr -d '*' |tr -s '&|{}[]<>+' ' ' \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g;s/<[^>]*>//g;s/^\s*./\U&\E/g'
     else
-    echo "${1}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
+
+    echo "${1%%[,.-]*}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
     |sed "s/’/'/g" |sed 's/quot\;/"/g' \
     |tr -s '*&|{}[]<>+' ' ' \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
@@ -283,7 +297,7 @@ function clean_2() {
 }
 
 function clean_3() {
-    echo "${1}" |cut -d "|" -f1 |sed 's/!//;s/&//;s/\://g' \
+    echo "${1%%[,.-]*}" |cut -d "|" -f1 |sed 's/!//;s/&//;s/\://g' \
     |sed "s/^[ \t]*//;s/[ \t]*$//;s/‘/'/g" |sed -e 's|/|\\/|g' \
     |sed 's/^\s*./\U&\E/g' \
     |sed 's/\：//g;s/<[^>]*>//g' \
@@ -361,7 +375,7 @@ function clean_8() {
 }
 
 function clean_9() {
-    echo "${1}" |sed 's/\\n/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
+    echo "${1%%[,.-]*}" |sed 's/\\n/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
     |sed "s/’/'/g" \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g' |sed 's/^\s*./\U&\E/g' \
@@ -617,8 +631,9 @@ function list_words_3() {
     |tr -s "[:blank:]" '\n' |tr -d ':,;()' \
     |sed '/^$/d' |sed '/"("/d' \
     |sed 's/[^ ]\+/\L\u&/g' \
-    |head -n100 |egrep -v "FALSE" |egrep -v "TRUE" > "$DT_r/lst"
+    |sed '11,$ d; s/"//g' |egrep -v "FALSE" |egrep -v "TRUE" > "$DT_r/lst"
     fi
+    
 } >/dev/null 2>&1
 
 function dlg_form_0() {

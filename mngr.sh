@@ -24,7 +24,7 @@ mkmn() {
             ! [[ ${stts} =~ $numer ]] && stts=13
         fi
         echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$index"
-    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
+    done < <(cd ~ && cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
     -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d'; \
     find ./ -maxdepth 1 -mtime +79 -type d -not -path '*/\.*' \
     -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
@@ -44,7 +44,7 @@ delete_item_ok() {
         sed -i "/trgt{${trgt}}/d" "${DC_tlt}/data"
         
         if [ -d "${DC_tlt}/practice" ]; then
-            cd "${DC_tlt}/practice"
+            cd ~ && cd "${DC_tlt}/practice"
             while read -r file_pr; do
                 if grep -Fxq "${trgt}" "${file_pr}"; then
                     grep -vxF "${trgt}" "${file_pr}" > ./rm.tmp
@@ -83,7 +83,7 @@ delete_item() {
             sed -i "/trgt{${trgt}}/d" "${DC_tlt}/data"
             
             if [ -d "${DC_tlt}/practice" ]; then
-                cd "${DC_tlt}/practice"
+                cd ~ && cd "${DC_tlt}/practice"
                 while read file_pr; do
                     if grep -Fxq "${trgt}" "${file_pr}"; then
                         grep -vxF "${trgt}" "${file_pr}" > ./rm.tmp
@@ -688,7 +688,7 @@ delete_topic() {
 
 rename_topic() {
     source "$DS/ifs/mods/add/add.sh"
-    listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
+    listt="$(cd ~ && cd "$DM_tl"; find ./ -maxdepth 1 -type d \
     ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
     name="$(clean_3 "${2}")"
     
@@ -925,7 +925,7 @@ mark_as_learned_topic_ok() {
         fi
         
         if [ -d "${DC_tlt}/practice" ]; then
-            (cd "${DC_tlt}/practice"; rm ./.*; rm ./*
+            (cd ~ && cd "${DC_tlt}/practice"; rm ./.*; rm ./*
             touch ./log1 ./log2 ./log3)
         fi
         if [[ $((stts%2)) = 0 ]]; then

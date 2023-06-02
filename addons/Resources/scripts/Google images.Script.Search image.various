@@ -21,6 +21,7 @@ EXECUT=""
 
 
 if [[ "$1" != '_dclk_' ]]; then
+	echo "Addon: search google image..."
     useragent='Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0'
     link="www.google.com/search?q=${1}\&tbm=isch"
     imagelink=$(wget -e robots=off --user-agent "$useragent" -qO - "$link" \

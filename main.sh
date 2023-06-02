@@ -62,7 +62,7 @@ function new_session() {
     check_list
     # 
     if ls "$DC_s"/*.p 1> /dev/null 2>&1; then
-    cd "$DC_s"/; rename 's/\.p$//' *.p; fi; cd /
+    cd ~ && cd "$DC_s"/; rename 's/\.p$//' *.p; fi; cd /
     # check database
     if [ ! -e ${tlngdb} ]; then
         [ ! -d "$DM_tls/data" ] && mkdir -p "$DM_tls/data" 
@@ -143,7 +143,7 @@ function new_session() {
                 fi
             fi
         fi
-    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
+    done < <(cd ~ && cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
     -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
     rm -f "$DT/ps_lk"
     
@@ -201,7 +201,7 @@ $(gettext "It is recommended to change your language preferences before installi
             fi
             
             f_lock 1 "$DT/in_lk"
-            listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
+            listt="$(cd ~ && cd "$DM_tl"; find ./ -maxdepth 1 -type d \
             ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
             if [ $(wc -l <<< "$listt") -ge 120 ]; then
                 msg "$(gettext "Maximum number of topics reached.")\n" \
