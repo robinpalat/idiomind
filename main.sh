@@ -349,9 +349,9 @@ function topic() {
         export cnf3=$(mktemp "$DT/cnf3.XXXXXX")
         export cnf4=$(mktemp "$DT/cnf4.XXXXXX")
         if [ -n "$dtei" ]; then 
-            export infolbl="$(gettext "Review") $repass  $(gettext "Installed on") $dtei\n$(gettext "Created by") $autr"
+            export infolbl="$(gettext "Review"): <big>$repass</big>\n<small>$(gettext "Installed on") $dtei\n$(gettext "Created by") $autr</small>"
         else 
-            export infolbl="$(gettext "Review") $repass  $(gettext "Created on") $dtec"
+            export infolbl="$(gettext "Review"): <big>$repass</big>\n<small>$(gettext "Created on") $dtec</small>"
         fi
         export lbl1="<span font_desc='Free Sans 15'>${tpc}</span><sup>\n$(gettext "Sentences") $cfg4  $(gettext "Words") $cfg3\n$infolbl</sup>"
     }
