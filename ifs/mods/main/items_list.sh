@@ -271,14 +271,14 @@ function tpc_view() {
 }
 
 function panelini() {
-    yad --fixed --form --title="Idiomind" \
+    yad --fixed --form --title="" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
     --window-icon=$DS/images/logo.png --skip-taskbar --on-top \
     --on-top --no-buttons --text-align=left --align=left \
     --width=150 --height=150 ${geometry} --borders=10 \
-    --field="$(gettext "New")"!'list-add':btn "$DS/add.sh 'new_items'" \
-    --field="$(gettext "Home")"!'go-home':btn "idiomind 'topic'" \
-    --field="$(gettext "Index")"!'gtk-index':btn "$DS/chng.sh" \
-    --field="$(gettext "Options")"!'gtk-preferences':btn "$DS/cnfg.sh"
+    --field="  $(gettext "New")"!'list-add':btn "$DS/add.sh 'new_items'" \
+    --field="  $(gettext "Home")"!'go-home':btn "idiomind 'topic'" \
+    --field="  $(gettext "Index")"!'gtk-index':btn "$DS/chng.sh" \
+    --field="  $(gettext "Options")"!'gtk-preferences':btn "$DS/cnfg.sh"
 }
