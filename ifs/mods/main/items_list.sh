@@ -276,9 +276,8 @@ function panelini() {
     --always-print-result \
     --window-icon=$DS/images/logo.png --skip-taskbar --on-top \
     --on-top --no-buttons --text-align=left --align=left \
-    --width=150 --height=150 ${geometry} --borders=10 \
-    --field="  $(gettext "New")"!'list-add':btn "$DS/add.sh 'new_items'" \
+    ${geometry} --borders=15 \
+    --field="  $(gettext "Add")"!'list-add':btn "$DS/add.sh 'new_items'" \
     --field="  $(gettext "Home")"!'go-home':btn "idiomind 'topic'" \
-    --field="  $(gettext "Index")"!'gtk-index':btn "$DS/chng.sh" \
-    --field="  $(gettext "Options")"!'gtk-preferences':btn "$DS/cnfg.sh"
+    --field="  $(gettext "Index")"!'gtk-index':btn "$DS/chng.sh"
 }

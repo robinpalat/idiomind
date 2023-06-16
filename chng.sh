@@ -180,6 +180,7 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
     --width=${sz[0]} --height=${sz[1]} --borders=5 \
     --column=img:IMG \
     --column=File:TEXT \
+    --button="$(gettext "Settings")"!gtk-preferences:$DS/cnfg.sh \
     --button="$(gettext "Stats")":"'$DS/ifs/tls.sh' _stats" \
     --button="$(gettext "New")"!document-new:3 \
     --button="$(gettext "Apply")":2 \

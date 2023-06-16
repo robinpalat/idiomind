@@ -125,7 +125,7 @@ config_dlg() {
     --tab="$(gettext "Addons")" \
     --width=${sz[0]} --height=${sz[1]} \
     --borders=9 --tab-borders=0 \
-    --button="$(gettext "     Help     ")":"$DS/ifs/tls.sh 'about'" \
+    --button="$(gettext "     About     ")":"$DS/ifs/tls.sh 'about'" \
     --button="$(gettext "Save")"!"gtk-apply":0 \
     --button="$(gettext "Close")":1
     ret=$?

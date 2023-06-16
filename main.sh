@@ -349,11 +349,11 @@ function topic() {
         export cnf3=$(mktemp "$DT/cnf3.XXXXXX")
         export cnf4=$(mktemp "$DT/cnf4.XXXXXX")
         if [ -n "$dtei" ]; then 
-            export infolbl="$(gettext "Review"): <big>$repass</big>\n<small>$(gettext "Installed on") $dtei\n$(gettext "Created by") $autr</small>"
+            export infolbl="$(gettext "Review"): <big>$repass</big>\n<small><sub>$(gettext "Installed on") $dtei\n$(gettext "Created by") $autr</sub></small>"
         else 
-            export infolbl="$(gettext "Review"): <big>$repass</big>\n<small>$(gettext "Created on") $dtec</small>"
+            export infolbl="$(gettext "Review"): <big>$repass</big>\n<small><sub>$(gettext "Created on") $dtec</sub></small>"
         fi
-        export lbl1="<span font_desc='Free Sans 15'>${tpc}</span><sup>\n$(gettext "Sentences") $cfg4  $(gettext "Words") $cfg3\n$infolbl</sup>"
+        export lbl1="<span font_desc='Free Sans 15'>${tpc}</span><sup>\n$(gettext "Sentences"): $cfg4  $(gettext "Words"): $cfg3\n$infolbl</sup>"
     }
     
     oclean() { cleanups "$cnf1" "$cnf3" "$cnf4" "$DT/tpc_lk"; }

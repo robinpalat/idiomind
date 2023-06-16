@@ -1204,8 +1204,6 @@ class IdiomindIndicator:
             item = self.create_menu_icon(label, "go-home")
             item.connect("activate", self.on_Home)
             popup_menu.append(item)
-        item = Gtk.SeparatorMenuItem()
-        popup_menu.append(item)
         if os.path.exists(self.tasks):
             listMenu=Gtk.Menu()
             listItems=Gtk.MenuItem(label=tasks)
@@ -1228,9 +1226,6 @@ class IdiomindIndicator:
         item.connect("activate", self.on_Topics_click)
         popup_menu.append(item)
         item = Gtk.SeparatorMenuItem()
-        popup_menu.append(item)
-        item = self.create_menu_label(settings)
-        item.connect("activate", self.on_settings_click)
         popup_menu.append(item)
         item = self.create_menu_label(quit)
         item.connect("activate", self.on_Quit_click)
@@ -1256,8 +1251,6 @@ class IdiomindIndicator:
         self.stts = 1
         os.system("/usr/share/idiomind/stop.sh 2 &")
         self._on_menu_update()
-    def on_settings_click(self, widget):
-        os.system("/usr/share/idiomind/cnfg.sh &")
     def on_Quit_click(self, widget):
         os.system("/usr/share/idiomind/stop.sh 1 &")
         Gtk.main_quit()
@@ -1275,35 +1268,26 @@ PY
 
 about() {
 
-source /usr/share/idiomind/default/c.conf
-source "$DS/default/sets.cfg"
-
     lnk1='https://idiomind.sourceforge.io/help.html'
     lnk2="https://idiomind.sourceforge.io/contact.html"
     lnk3="https://idiomind.sourceforge.io/donate.html"
     lnk4="https://idiomind.sourceforge.io/license.html"
 
-yad --form --text-align=center --align=center --scroll \
---image=$DS/images/about.png \
---title="$(gettext "About")" --image-on-top \
---width=350 --height=400 --borders=10 --image-on-top \
---window-icon=$DS/images/logo.png \
---name=Idiomind --class=Idiomind \
---field="<b><big><big>Idiomind</big></big></b>":LBL "" \
---field="$_version":LBL "" \
---field="$_descrip":LBL "" \
---field=" ":LBL "" \
---field="<small><a href='$lnk1'>$(gettext "Getting started")</a></small>":LBL "" \
---field="<small><a href='$lnk2'>$(gettext "Get in touch")</a></small>":LBL "" \
---field="<small><a href='$lnk3'>$(gettext "Donate!")</a></small>":LBL "" \
---field="<small><a href='$lnk4'>$(gettext "License")</a></small>":LBL "" \
---field="<small>$(gettext "Program updates")</small>":BTN "$DS/ifs/tls.sh 'check_updates'" \
---field=" ":LBL "" \
---field="<small>$_copyright</small>":LBL "" \
---no-buttons 
-
-
-
+	yad --form --text-align=center --align=center --scroll \
+	--image=$DS/images/about.png \
+	--title="$(gettext "About")" --image-on-top \
+	--width=350 --height=400 --borders=10 --image-on-top \
+	--window-icon=$DS/images/logo.png \
+	--name=Idiomind --class=Idiomind \
+	--field="<b><big><big>Idiomind</big></big></b>":LBL "" \
+	--field="$_version":LBL "" \
+	--field="$_descrip":LBL "" \
+	--field=" ":LBL "" \
+	--field="<small><a href='$_website'>$(gettext "Website")</a></small>":LBL "" \
+	--field="<small>$(gettext "Program updates")</small>":BTN "$DS/ifs/tls.sh 'check_updates'" \
+	--field=" ":LBL "" \
+	--field="<small>$_copyright</small>":LBL "" \
+	--no-buttons 
 
 } >/dev/null 2>&1
 
