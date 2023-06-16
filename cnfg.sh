@@ -74,7 +74,7 @@ set_lang() {
 }
 
 config_dlg() {
-    sz=(380 410)
+    sz=(400 450)
     show_icon=0; kill_icon=0
     source "$DS/default/sets.cfg"
     
@@ -97,9 +97,6 @@ config_dlg() {
         list1="${list1}${emrk}${clocal}"
     done
     list2=$(for i in "${!slangs[@]}"; do echo -n "!$i"; done)
-    lnk1='https://idiomind.sourceforge.io/help.html'
-    lnk2="https://idiomind.sourceforge.io/contact.html"
-    lnk3="https://idiomind.sourceforge.io/donate.html"
 
     c=$((RANDOM%100000)); KEY=$c
     yad --plug=$KEY --form --tabnum=1 \
@@ -120,22 +117,15 @@ config_dlg() {
     --dclick-action="$DS/ifs/dclik.sh" \
     --expand-column=2 --no-headers \
     --column=icon:IMG --column=Action &
-     yad --plug=$KEY --form --tabnum=3 \
-    --align=center --scroll \
-    --field=" :LBL" " " --field=" :LBL" " " --field=" :LBL" " " \
-    --field="<a href='$lnk1'>$(gettext "Getting started")</a>":LBL "$DS/ifs/tls.sh help" \
-    --field="<a href='$lnk2'>$(gettext "Get in touch")</a>":LBL "$DS/ifs/tls.sh fback" \
-    --field="<a href='$lnk3'>$(gettext "Donate!")</a>":LBL "$DS/ifs/tls.sh donate" \
-    --field="$(gettext "Program updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
-    --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" &
     yad --notebook --key=$KEY --title="$(gettext "Settings")" \
     --name=Idiomind --class=Idiomind \
     --window-icon=$DS/images/logo.png \
     --tab-borders=5 --sticky --center \
     --tab="$(gettext "Preferences")" \
     --tab="$(gettext "Addons")" \
-    --tab="$(gettext "Help")" \
-    --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=0 \
+    --width=${sz[0]} --height=${sz[1]} \
+    --borders=9 --tab-borders=0 \
+    --button="$(gettext "     Help     ")":"$DS/ifs/tls.sh 'about'" \
     --button="$(gettext "Save")"!"gtk-apply":0 \
     --button="$(gettext "Close")":1
     ret=$?

@@ -92,7 +92,7 @@ function index() {
                     tpc_db 2 learning list "${trgt}"
                     tpc_db 2 words list "${trgt}"
                     # write to tpc db data column (store note data)
-                    sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,tags,mark,refr,imag,link,cdid,type) values (\"${trgt}\",\"${srce}\",\"${exmp}\",\"${defn}\",\"${note}\",'${tags}','${mark}','${refr}','${imag}',\"${link}\",'${cdid}','${type}');"
+                    #sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,tags,mark,refr,imag,link,cdid,type) values (\"${trgt}\",\"${srce}\",\"${exmp}\",\"${defn}\",\"${note}\",'${tags}','${mark}','${refr}','${imag}',\"${link}\",'${cdid}','${type}');"
                     # write to text file index
                     echo -e "${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
                     # write to text file data (store note data)
@@ -104,7 +104,7 @@ function index() {
                     tpc_db 2 learning list "${trgt}"
                     tpc_db 2 sentences list "${trgt}"
                     # write to tpc db data column (store note data)
-                    sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,note,wrds,grmr,tags,mark,refr,imag,link,cdid,type) values (\"${trgt}\",\"${srce}\",\"${note}\",\"${wrds}\",\"${grmr}\",'${tags}','${mark}','${refr}','${imag}',\"${link}\",'${cdid}','${type}');"
+                    #sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,note,wrds,grmr,tags,mark,refr,imag,link,cdid,type) values (\"${trgt}\",\"${srce}\",\"${note}\",\"${wrds}\",\"${grmr}\",'${tags}','${mark}','${refr}','${imag}',\"${link}\",'${cdid}','${type}');"
                     # write to text file index
                     echo -e "${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
                     # write to text file data (store note data)

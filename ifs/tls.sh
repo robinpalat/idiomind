@@ -637,6 +637,7 @@ a_check_updates() {
         if [ ${#nver} -lt 9 ] && [ ${#_version} -lt 9 ] \
         && [ ${#nver} -ge 3 ] && [ ${#_version} -ge 3 ] \
         && [[ ${nver} != ${_version} ]]; then
+			sleep 50
             msg_2 " <b>$(gettext "A new version of Idiomind available\!")\t\n</b> $(gettext "Do you want to download it now?")\n" \
             dialog-information "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "New Version")" "$(gettext "Ignore")"
             ret=$?
@@ -1273,50 +1274,37 @@ PY
 }
 
 about() {
-    export _descrip="$(gettext "Language learning tool")"
-    python3 << ABOUT
-from gi.repository import Gtk as gtk
-import os
-app_logo = os.path.join('/usr/share/idiomind/images/logo.png')
-app_icon = os.path.join('/usr/share/icons/hicolor/22x22/apps/idiomind.png')
-app_name = 'Idiomind'
-app_version = os.environ['_version']
-app_website = os.environ['_website']
-app_comments = os.environ['_descrip']
-app_copyright = os.environ['_copyright']
-app_license = (('This program is free software: you can redistribute it and/or modify\n'+
-'it under the terms of the GNU General Public License as published by\n'+
-'the Free Software Foundation, either version 3 of the License, or\n'+
-'(at your option) any later version.\n'+
-'\n'+
-'This program is distributed in the hope that it will be useful,\n'+
-'but WITHOUT ANY WARRANTY; without even the implied warranty of\n'+
-'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n'+
-'GNU General Public License for more details.\n'+
-'\n'+
-'You should have received a copy of the GNU General Public License\n'+
-'along with this program.  If not, see http://www.gnu.org/licenses'))
-app_authors = ['Robin Palatnik <robinpalat@users.sourceforge.io>']
-class AboutDialog:
-    def __init__(self):
-        about = gtk.AboutDialog()
-        about.set_logo_icon_name("idiomind")
-        about.set_icon_from_file(app_icon)
-        about.set_wmclass('Idiomind', 'Idiomind')
-        about.set_name(app_name)
-        about.set_program_name(app_name)
-        about.set_version(app_version)
-        about.set_comments(app_comments)
-        about.set_copyright(app_copyright)
-        about.set_license(app_license)
-        about.set_authors(app_authors)
-        about.set_website(app_website)
-        about.run()
-        about.destroy()
-if __name__ == "__main__":
-    AboutDialog = AboutDialog()
-    main()
-ABOUT
+
+source /usr/share/idiomind/default/c.conf
+source "$DS/default/sets.cfg"
+
+    lnk1='https://idiomind.sourceforge.io/help.html'
+    lnk2="https://idiomind.sourceforge.io/contact.html"
+    lnk3="https://idiomind.sourceforge.io/donate.html"
+    lnk4="https://idiomind.sourceforge.io/license.html"
+
+yad --form --text-align=center --align=center --scroll \
+--image=$DS/images/about.png \
+--title="$(gettext "About")" --image-on-top \
+--width=350 --height=400 --borders=10 --image-on-top \
+--window-icon=$DS/images/logo.png \
+--name=Idiomind --class=Idiomind \
+--field="<b><big><big>Idiomind</big></big></b>":LBL "" \
+--field="$_version":LBL "" \
+--field="$_descrip":LBL "" \
+--field=" ":LBL "" \
+--field="<small><a href='$lnk1'>$(gettext "Getting started")</a></small>":LBL "" \
+--field="<small><a href='$lnk2'>$(gettext "Get in touch")</a></small>":LBL "" \
+--field="<small><a href='$lnk3'>$(gettext "Donate!")</a></small>":LBL "" \
+--field="<small><a href='$lnk4'>$(gettext "License")</a></small>":LBL "" \
+--field="<small>$(gettext "Program updates")</small>":BTN "$DS/ifs/tls.sh 'check_updates'" \
+--field=" ":LBL "" \
+--field="<small>$_copyright</small>":LBL "" \
+--no-buttons 
+
+
+
+
 } >/dev/null 2>&1
 
 
