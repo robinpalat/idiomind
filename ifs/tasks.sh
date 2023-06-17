@@ -5,7 +5,7 @@ tpt="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg#*:})"
 act="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg%%:*})"
 
 
-l0="$(gettext "Listen:") "
+l0="$(gettext "Play"): "
 l1="$(gettext "To Review [new]:") "
 l2="$(gettext "To Review [new] [overdue]:") "
 l3="$(gettext "To Review:") "

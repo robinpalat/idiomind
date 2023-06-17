@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-# 0 Listen and Practice (tpc)| tpc.sh
+# 0 Play and Practice (tpc)| tpc.sh
 # 1 To review (new) | main.sh
 # 2 Need review (new) | main.sh
 # 3 To review | main.sh
@@ -27,7 +27,7 @@ f="$DT/tasks.tmp"; cleanups "$f" "$DT/tasks"
 if [ -n "${tpc}" ]; then
 	export -f tpc_db
 	if [ "$(tpc_db 5 learning | wc -l)" -gt 0 ];then
-		echo -e "$(gettext "Listen:") $tpc" >> "$f"
+		echo -e "$(gettext "Play"): $tpc" >> "$f"
 		echo -e "$(gettext "To Practice:") $tpc" >> "$f"
 	fi
 fi
