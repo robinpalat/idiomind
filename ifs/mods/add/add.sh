@@ -656,10 +656,11 @@ function dlg_form_1() {
     --skip-taskbar --fixed --center \
     --buttons-layout=spread --align=right --image="${img}" \
     --window-icon=$DS/images/logo.png \
-    --width=470 --borders=5 \
+    --width=470 --borders=1 \
     --field="" "$trgt" \
     --field=":CB" "$tpe!$(gettext "New topic") *$e$tpcs" \
     --button=!'/usr/share/idiomind/images/add_clipboard.png'!"$(gettext "Clipboard watcher")":5 \
+    --button=!'/usr/share/idiomind/images/add_ocr.png'!"$(gettext "Optical character recognition")":1 \
     --button=!'/usr/share/idiomind/images/add_image.png'!"$(gettext "Screen clipping")":3 \
     --button=!'/usr/share/idiomind/images/add_audio.png'!"$(gettext "Add an audio file")":2 \
     --button=!'/usr/share/idiomind/images/add_more.png'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
@@ -675,11 +676,12 @@ function dlg_form_2() {
     --skip-taskbar --fixed --center \
     --buttons-layout=spread --align=right --image="${img}" \
     --window-icon=$DS/images/logo.png \
-    --width=470 --borders=5 \
+    --width=470 --borders=1 \
     --field="" "$trgt" \
     --field="" "$srce" \
     --field=":CB" "$tpe!$(gettext "New topic") *$e$tpcs" \
     --button=!'/usr/share/idiomind/images/add_clipboard.png'!"$(gettext "Clipboard watcher")":5 \
+     --button=!'/usr/share/idiomind/images/add_ocr.png'!"$(gettext "Optical character recognition")":1 \
     --button=!'/usr/share/idiomind/images/add_image.png'!"$(gettext "Screen clipping")":3 \
     --button=!'/usr/share/idiomind/images/add_audio.png'!"$(gettext "Add an audio file")":2 \
     --button=!'/usr/share/idiomind/images/add_more.png'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \

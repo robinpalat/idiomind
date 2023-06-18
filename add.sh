@@ -443,8 +443,8 @@ function process() {
         if [[ $1 = image ]]; then
             if which tesseract >/dev/null; then
                 pars="$DT_r/txt"
-                # /usr/bin/import "$DT_r/img_.png"
-                gnome-screenshot -a --file="$DT_r/img_.png"
+                /usr/bin/import "$DT_r/img_.png"
+                # gnome-screenshot -a --file="$DT_r/img_.png"
                 /usr/bin/convert "$DT_r/img_.png" -shave 1x1 "$pars.png"
                 ( echo "#"
                 mogrify -modulate 100,0 -resize 400% "$pars.png"
@@ -794,6 +794,11 @@ new_items() {
         cd ~ && cd "$DT_r" && set_image_1
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
         
+    elif [ $ret -eq 1 ]; then
+        [ -d "$2" ] && DT_r="$2" || check_dir "$DT_r"
+        ! grep '*' <<< "${tpe}" >/dev/null 2>&1 && echo "${tpe}" > "$DT/tpe"
+        unset trgt; process image && exit
+        
     elif [ $ret -eq 2 ]; then
         [ -d "$2" ] && DT_r="$2" || check_dir "$DT_r"
         ! grep '*' <<< "${tpe}" >/dev/null 2>&1 && echo "${tpe}" > "$DT/tpe"
@@ -827,9 +832,8 @@ new_items() {
             "face-worried" "$(gettext "Information")" & exit 1; fi
         if [ -z "${trgt}" ]; then
             cleanups "$DT_r"; exit 1; fi
-        if [[ ${trgt,,} = ocr ]] || [[ ${trgt^} = I ]]; then
-            unset trgt; process image
-        elif [[ ${#trgt} = 1 ]]; then
+  
+        if [[ ${#trgt} = 1 ]]; then
             process ${trgt:0:2}
         elif [[ ${#trgt} -gt ${sentence_chars} ]]; then #TODO
             process

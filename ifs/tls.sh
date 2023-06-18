@@ -1299,13 +1299,13 @@ clipw() {
     if [ -n "${tpe}" ]; then
         info="$(gettext "Notes will be added to:") \"$tpe\""
     else
-        info="$(gettext "No topic selected or active")"
+        info=""
     fi
     if [[ ! -e $DT/clipw  ]]; then
         "$DS/ifs/clipw.sh" &
         sleep 1
-        notify-send -i info "$(gettext "Information")" \
-"$(gettext "The clipboard watcher is enabled for 5 minutes...")
+        notify-send -i idiomind "$(gettext "Information")" \
+"$(gettext "The clipboard watcher remains active for a period of 5 minutes")
  $info" -t 8000
     else 
         "$DS/ifs/clipw.sh" 1
