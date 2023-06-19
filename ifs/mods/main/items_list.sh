@@ -165,14 +165,14 @@ function notebook_1() {
     --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
-    --text="${lbl1}${info2}\n" \
+    --text="${lbl1}${info2}" \
     --borders=10 --columns=2 \
-    --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field=" $(gettext "Mark as learnt") "!'gtk-apply':FBTN "$cmd_mark" \
     --field="$(gettext "Auto-check learned items")\t\t":CHK "$acheck" \
+    --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field=" ":LBL " " \
+    --field="$infolbl":LBL "$cmd2" \
     --field="$btn1":FBTN "$cmd1" \
-    --field="":LBL "$cmd2" \
     --field="$btn3":FBTN "$cmd3" \
     --field="$btn4":FBTN "$cmd4" > "$cnf4" &
     yad --notebook --title="Idiomind - $tpc" \
@@ -218,14 +218,14 @@ function notebook_2() {
     --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
-    --text="$lbl1\n" \
+    --text="$lbl1" \
     --borders=10 --columns=2 \
-    --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field=" $(gettext "Review") "!'view-refresh':FBTN "$cmd_mark" \
     --field="\t\t\t\t\t\t\t\\t\t\t\t\t\t":LBL "_" \
+    --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field=" ":LBL " " --field=" ":LBL " " \
+    --field="$infolbl":LBL "$cmd2" \
     --field="$btn1":FBTN "$cmd1" \
-    --field="":LBL "$cmd2" \
     --field="$btn3":FBTN "$cmd3" \
     --field="$btn4":FBTN "$cmd4" > "$cnf4" &
     yad --notebook --title="Idiomind - $tpc" \
@@ -271,13 +271,22 @@ function tpc_view() {
 }
 
 function panelini() {
-    yad --fixed --form --title="" \
-    --name=Idiomind --class=Idiomind \
-    --always-print-result \
-    --window-icon=$DS/images/logo.png --skip-taskbar --on-top \
-    --on-top --no-buttons --text-align=left --align=left \
-    ${geometry} --borders=15 \
-    --field="  $(gettext "Add")"!'list-add':btn "$DS/add.sh 'new_items'" \
-    --field="  $(gettext "Home")"!'go-home':btn "idiomind 'topic'" \
-    --field="  $(gettext "Index")"!'gtk-index':btn "$DS/chng.sh"
+	
+    cat "$DT/tasks" | yad --list --title="Idiomind" \
+    --name=Idiomind --class=Idiomind --dclick-action="" \
+    --separator="" --expander="$(gettext "Tasks")" --scroll \
+    --select-action="/usr/share/idiomind/ifs/tasks.sh" --grid-lines=hor \
+    --dclick-action="/usr/share/idiomind/ifs/tasks.sh" \
+    --window-icon=$DS/images/logo.png \
+    --expand-column=1 --no-click --no-headers \
+    --on-top --text-align=left --align=left --buttons-layout=spread \
+    ${geometry} --borders=5  --column=Name:TEXT --fixed --width=20 --height=20 \
+    --button="$(gettext "Add")"!'list-add':"$DS/add.sh 'new_items'" \
+    --button="$(gettext "Home")"!'go-home':"idiomind 'topic'" \
+    --button="$(gettext "Index")"!'gtk-index':"$DS/chng.sh"
 }
+
+
+
+
+

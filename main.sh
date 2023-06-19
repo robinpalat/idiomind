@@ -348,12 +348,13 @@ function topic() {
         export cnf1=$(mktemp "$DT/cnf1.XXXXXX")
         export cnf3=$(mktemp "$DT/cnf3.XXXXXX")
         export cnf4=$(mktemp "$DT/cnf4.XXXXXX")
+        export infolbl="$(gettext "Review"): <big>$repass</big>"
         if [ -n "$dtei" ]; then 
-            export infolbl="$(gettext "Review"): <big>$repass</big>\n<small><sub>$(gettext "Installed on") $dtei\n$(gettext "Created by") $autr</sub></small>"
+            export infolbl5="<small><sub>$(gettext "Installed on") $dtei, $(gettext "Created by") $autr</sub></small>"
         else 
-            export infolbl="$(gettext "Review"): <big>$repass</big>\n<small><sub>$(gettext "Created on") $dtec</sub></small>"
+            export infolbl5="<small><sub>$(gettext "Created on") $dtec</sub></small>"
         fi
-        export lbl1="<span font_desc='Free Sans 15'>${tpc}</span><sup>\n$(gettext "Sentences"): $cfg4  $(gettext "Words"): $cfg3\n$infolbl</sup>"
+        export lbl1="<span font_desc='Free Sans 15'>${tpc}</span><sup>\n$(gettext "Sentences"): $cfg4  $(gettext "Words"): $cfg3</sup>\n$infolbl5\n"
     }
     
     oclean() { cleanups "$cnf1" "$cnf3" "$cnf4" "$DT/tpc_lk"; }
@@ -365,7 +366,7 @@ function topic() {
                 then echo -e "\n${note_mod}" > "${note}"
                 else echo "${note_mod}" > "${note}"; fi
             fi
-            acheck_mod=$(cut -d '|' -f 3 < "${cnf4}")
+            acheck_mod=$(cut -d '|' -f 2 < "${cnf4}")
             if [[ $acheck_mod != $acheck ]] && [ -n "$acheck_mod" ]; then
                 tpc_db 3 config acheck "$acheck_mod"
             fi
@@ -401,7 +402,7 @@ PY
                 coll_tpc_stats 0
             fi
             
-            ntpc=$(cut -d '|' -f 1 < "${cnf4}")
+            ntpc=$(cut -d '|' -f 3 < "${cnf4}")
             if [ "${tpc}" != "${ntpc}" -a -n "$ntpc" ]; then
             if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/tpc")" ]]; then
             msg "$(gettext "Sorry, this topic is currently not active.")\n" \

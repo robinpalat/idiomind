@@ -910,10 +910,10 @@ function strt() {
         align=left
     elif [[ "${1}" = 2 ]]; then
         learnt=$(< ./${pr}.l); declare info${icon}="  *  "
-        info=" <b><small>$(gettext "Learnt")</small> <big>$learnt</big>    <small>$(gettext "Easy")</small> <big>$easy</big>    <small>$(gettext "Learning")</small> <big>$ling</big>    <small>$(gettext "Difficult")</small> <big>$hard</big></b>  \n"
+        info=" <b><small>$(gettext "Learnt")</small> <b>$learnt</b>    <small>$(gettext "Easy")</small> <b>$easy</b>    <small>$(gettext "Learning")</small> <b>$ling</b>    <small>$(gettext "Difficult")</small> <b>$hard</b></b>  \n"
         align=right
     fi
-	[ -z $all ] && t="$(gettext "Practice ")" || t="$(gettext "Practice ") -  $all $(gettext "notes")"
+	[ -z $all ] && t="$(gettext "Practice ") - $tpc" || t="$(gettext "Practice ") -  $all $(gettext "notes")"
     pr="$(yad --list --title="$t"\
     --text="${info}" \
     --class=Idiomind --name=Idiomind \
