@@ -217,7 +217,10 @@ config_dlg() {
             rm -f "$DT/tray.pid"
         fi
         if [ $show_icon = 1 ]; then
+			kill -9 $(pgrep -f "yad --list --title="Idiomind"")
             $DS/ifs/tls.sh itray &
+        else 
+			idiomind
         fi
         
     fi
