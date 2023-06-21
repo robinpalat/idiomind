@@ -106,7 +106,7 @@ config_dlg() {
     --field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
     --field="$(gettext "Download audio pronunciation")":CHK "$dlaud" \
     --field="$(gettext "Detect language of source text (inaccurate)")":CHK "$ttrgt" \
-    --field="$(gettext "Show icon in the notification area")":CHK "$itray" \
+    --field="$(gettext "Start in the system tray instead of the widget")":CHK "$itray" \
     --field="$(gettext "Smaller windows")":CHK "$swind" \
     --field="$(gettext "Run at startup")":CHK "$stsks" \
     --field="$(gettext "Interface language")":CB "$lst" \

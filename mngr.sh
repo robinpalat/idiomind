@@ -502,8 +502,7 @@ edit_list_cmds() {
 edit_list_more() {
     touch "$DT/edit_list_more"
     file="$HOME/.idiomind/backup/${tpc}.bk"
-    
-    cols1="$(gettext "Reverse items order")!$(gettext "Remove all items")!$(gettext "Restart topic status")!$(gettext "Show short sentences in word's view")"
+
     dt1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
     dt2=$(grep '\----- oldest' "${file}" |cut -d' ' -f3)
     if [ -n "$dt2" ]; then
@@ -513,11 +512,11 @@ edit_list_more() {
     else
         cols2=""
     fi
-    optns="$(ls "$DS/ifs/mods/topic"/ |tr '\n' '!' |sed 's/\.sh//g')${cols1}${cols2}"
-    optns="$(sed '/^$/d' <<< "$optns")"
+
+    optns="$(sed '/^$/d' <<< "$cols2")"
     
-    more="$(yad --form --title="$(gettext "More options")" \
-    --field=":CB" "!${optns}" --separator="" \
+    more="$(yad --form --title="$(gettext "Backups")" \
+    --field=":CB" "${optns}" --separator="" \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --name=Idiomind --class=Idiomind \
     --expand-column=2 --no-click --no-headers\
@@ -549,24 +548,7 @@ edit_list_more() {
                 cleanups "$DT/edit_list_more"
                 [ -d "${DM_tlt}" -a -n "$tpc" ] && rm "$DM_tlt"/*.mp3
             fi
-        elif grep "$(gettext "Restart topic status")" <<< "${more}"; then
-            _war; if [ $? = 0 ]; then
-                cleanups "$DT/list_output" "$DT/list_input"
-                yad_kill "yad --list --title="
-                echo 1 > "${DC_tlt}/stts"
-                tpc_db 6 'reviews'; tpc_db 6 'learnt'; tpc_db 6 'learning'
-                
-                while read -r item_; do
-                    item="$(sed 's/}/}\n/g' <<< "${item_}")"
-                    trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
-                    if [ -n "${trgt}" ]; then
-                        tpc_db 2 learning list "${trgt}"
-                    fi
-                done < "${DC_tlt}/data"
-                tpc_db 3 config repass 0
-                "$DS/mngr.sh" mkmn 1; "$DS/ifs/tls.sh" colorize 0
-                cleanups "$DT/edit_list_more"
-            fi
+
         elif grep "$(gettext "Show short sentences in word's view")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
                 yad_kill "yad --list --title="
@@ -594,6 +576,32 @@ edit_list_more() {
         cleanups "$DT/items_to_add"  \
         "$DT/act_restfile" "$DT/edit_list_more"
     fi
+} >/dev/null 2>&1
+
+
+restart_topic() {
+	
+     msg_2 "<b>\"$tpc\"</b>\n\n$(gettext "Are you sure you want to restart topic status?")\n" \
+     gtk-refresh "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
+  
+	if [ $? = 0 ]; then
+		cleanups "$DT/list_output" "$DT/list_input"
+		yad_kill "yad --list --title="
+		echo 1 > "${DC_tlt}/stts"
+		tpc_db 6 'reviews'; tpc_db 6 'learnt'; tpc_db 6 'learning'
+		
+		while read -r item_; do
+			item="$(sed 's/}/}\n/g' <<< "${item_}")"
+			trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
+			if [ -n "${trgt}" ]; then
+				tpc_db 2 learning list "${trgt}"
+			fi
+		done < "${DC_tlt}/data"
+		tpc_db 3 config repass 0
+		"$DS/mngr.sh" mkmn 1; "$DS/ifs/tls.sh" colorize 0
+		cleanups "$DT/edit_list_more"
+	fi
+
 } >/dev/null 2>&1
 
 
@@ -751,12 +759,16 @@ mark_to_learn_topic() {
     export lns=$(cat "${DC_tlt}/data" |wc -l)
     stts=$(sed -n 1p "${DC_tlt}/stts")
     ! [[ ${stts} =~ ${numer} ]] && stts=1
-
+	repass=$(tpc_db 1 config repass)
+	
     calculate_review "${tpc}"
-    if [ $((stts%2)) = 0 ]; then
+
+    if [[ $repass -eq 8 ]]; then
+	    echo 2 > "${DC_tlt}/stts"
+    elif [ $((stts%2)) = 0 ]; then
         echo 6 > "${DC_tlt}/stts"
     else
-        if [ ${RM} -ge 50 ]; then
+        if [ ${days_to_review_porcent} -ge 50 ]; then
             echo 5 > "${DC_tlt}/stts"
         else
             echo 1 > "${DC_tlt}/stts"
@@ -768,8 +780,8 @@ mark_to_learn_topic() {
         "yad --list " "yad --text-info " "yad --notebook "
     fi
     
-    steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
-    tpc_db 9 config repass ${steps}
+    date_reviews_count="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
+    tpc_db 9 config repass ${date_reviews_count}
     export data="${DC_tlt}/data" tpcdb
     
 python3 <<PY
@@ -801,7 +813,7 @@ PY
     [[ ${3} = 1 ]] && idiomind topic &
     
     for n in {1..10}; do sqlite3 ${shrdb} \
-        "delete from T${n} where list='${tpc}';"; done
+    "delete from T${n} where list=\"${tpc}\";"; done
     idiomind tasks
 }
 
@@ -819,24 +831,26 @@ mark_as_learned_topic() {
     stts=$(sed -n 1p "${DC_tlt}/stts")
     ! [[ ${stts} =~ ${numer} ]] && stts=1
 
-    if ! echo ${stts} |grep -E '3|4|7|8|9|10'; then
+    if ! echo ${stts} |grep -E '4|7|8|9|10'; then
 
         calculate_review "${tpc}"
-        steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
+        date_reviews_count="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
+        repass=$(tpc_db 1 config repass)
         datex=$(date +%m/%d/%Y)
-        if [ ${steps} -gt 0 ]; then
-            ! [[ ${steps} =~ ${numer} ]] && steps=1
-            if [ ${steps} -eq 4 ]; then
+        if [ ${date_reviews_count} -gt 0 ]; then
+            ! [[ ${date_reviews_count} =~ ${numer} ]] && date_reviews_count=1
+            if [ ${date_reviews_count} -eq 4 ]; then
                 stts=$((stts+1))
             fi
-            if [ ${RM} -ge 50 ]; then
-                if [ ${steps} -eq 8 ]; then
+            if [ ${days_to_review_porcent} -ge 50 ]; then
+                if [ ${date_reviews_count} -eq 8 ]; then
                     tpc_db 9 reviews date8 ${datex}
-                elif [ ${steps} -gt 8 ]; then
+                    
+                elif [ ${date_reviews_count} -gt 8 ]; then
                     tpc_db 9 reviews date8 ${datex}
                 else
-                    steps=$((steps+1))
-                    tpc_db 9 reviews date${steps} ${datex} # FIX 
+                    date_reviews_count=$((date_reviews_count+1))
+                    tpc_db 9 reviews date${date_reviews_count} ${datex} # FIX 
                 fi
             fi
         else
@@ -846,7 +860,9 @@ mark_as_learned_topic() {
             (cd "${DC_tlt}/practice"; rm ./.*; rm ./*
             touch ./log1 ./log2 ./log3)
         fi
-        if [[ $((stts%2)) = 0 ]]; then
+        if [[ $repass -eq 8 ]]; then
+			echo 2 > "${DC_tlt}/stts"
+        elif [[ $((stts%2)) = 0 ]]; then
             echo 4 > "${DC_tlt}/stts"
         else
             echo 3 > "${DC_tlt}/stts"
@@ -888,7 +904,7 @@ PY
     ( sleep 1; "$DS/ifs/tls.sh" colorize 0 ) &
     
     for n in {1..10}; do sqlite3 ${shrdb} \
-        "delete from T${n} where list='${tpc}';"; done
+    "delete from T${n} where list=\"${tpc}\";"; done
     idiomind tasks
 }
 
@@ -902,25 +918,25 @@ mark_as_learned_topic_ok() {
 
     if ! echo "$stts" |grep -E '3|4|7|8|9|10'; then
         calculate_review "${tpc}"
-        steps="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
-        ! [[ ${steps} =~ ${numer} ]] && steps=0
+        date_reviews_count="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
+        ! [[ ${date_reviews_count} =~ ${numer} ]] && date_reviews_count=0
         datex=$(date +%m/%d/%Y)
 
-        if [ ${steps} -gt 0 ]; then
-            if [ ${steps} -eq 4 ]; then
+        if [ ${date_reviews_count} -gt 0 ]; then
+            if [ ${date_reviews_count} -eq 4 ]; then
                 stts=$((stts+1))
             fi
-            if [ ${RM} -ge 50 ]; then
-                if [ ${steps} -eq 8 ]; then
+            if [ ${days_to_review_porcent} -ge 50 ]; then
+                if [ ${date_reviews_count} -eq 8 ]; then
                     tpc_db 9 reviews date8 ${datex}
-                elif [ ${steps} -gt 8 ]; then
+                elif [ ${date_reviews_count} -gt 8 ]; then
                     tpc_db 9 reviews date8 ${datex}
                 else
-                    tpc_db 9 reviews date${steps} ${datex} # FIX 
+                    tpc_db 9 reviews date${date_reviews_count} ${datex} # FIX 
                 fi
             fi
         else
-            steps=$((steps+1))
+            date_reviews_count=$((date_reviews_count+1))
             tpc_db 9 reviews date1 ${datex}
         fi
         
@@ -928,7 +944,10 @@ mark_as_learned_topic_ok() {
             (cd ~ && cd "${DC_tlt}/practice"; rm ./.*; rm ./*
             touch ./log1 ./log2 ./log3)
         fi
-        if [[ $((stts%2)) = 0 ]]; then
+        
+        if [[ $repass -eq 8 ]]; then
+			echo 2 > "${DC_tlt}/stts"
+        elif [[ $((stts%2)) = 0 ]]; then
             echo 4 > "${DC_tlt}/stts"
         else
             echo 3 > "${DC_tlt}/stts"
@@ -961,7 +980,7 @@ PY
     ( sleep 1; mv -f "${DC_tlt}/note.bk" "${DC_tlt}/note" ) &
     
     for n in {1..10}; do sqlite3 ${shrdb} \
-    "delete from T${n} where list='${tpc}';"; done
+    "delete from T${n} where list=\"${tpc}\";"; done
     idiomind tasks
 }
 
@@ -980,6 +999,8 @@ case "$1" in
     edit_list_cmds "$@" ;;
     edit_list_more)
     edit_list_more ;;
+    restartTopic)
+    restart_topic "$@" ;;
     edit_feeds)
     edit_feeds "$@" ;;
     colorize)

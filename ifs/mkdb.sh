@@ -19,7 +19,7 @@ function create_tpcdb() {
     
     echo -n "create table if not exists reviews \
     (date1 TEXT,date2 TEXT,date3 TEXT,date4 TEXT,date5 TEXT,\
-    date6 TEXT,date7 TEXT,date8 TEXT);" |sqlite3 "${tpcdb}"
+    date6 TEXT,date7 TEXT,date8 TEXT,date9 TEXT,date10 TEXT);" |sqlite3 "${tpcdb}"
     
     echo -n "create table if not exists learning \
     (list TEXT);" |sqlite3 "${tpcdb}"

@@ -295,7 +295,7 @@ PY
 add_audio() {
     cd "$HOME"
     aud="$(yad --file --title="$(gettext "Add Audio")" \
-    --text=" $(gettext "Browse to and select the audio file that you want to add.")" \
+    --text="\n$(gettext "Browse to and select the audio file that you want to add...")\n\n" \
     --class=Idiomind --name=Idiomind \
     --file-filter="*.mp3" \
     --window-icon=$DS/images/logo.png --center --on-top \
@@ -709,7 +709,7 @@ set_image() {
         btn2="--button=!gtk-delete!$(gettext "Remove image"):2"
         image="--image=$ifile"
     else
-        btn2="--button=!$DS/images/add_image.png!"$(gettext "Add an image by screen clipping")":0"
+        btn2="--button=!add!"$(gettext "Add an image by screen clipping")":0"
         image="--image=$DS/images/bar.png"
     fi
     export btn2 image
@@ -826,41 +826,41 @@ translate_to() {
     if [ ${list_transl_saved_WC} -lt 1 ]; then
         ldgl="$(yad --form --title="$(gettext "Native Language Settings")" \
         --class=Idiomind --name=Idiomind \
-        --text="$(gettext "The current Native language of this topic is":)  <b>$active_trans</b>"\\n \
+        --text="<big><b>$active_trans</b></big>"\\n \
         --always-print-result --window-icon=$DS/images/logo.png \
         --buttons-layout=end --center --on-top --align=left \
         --width=400 --height=400 --borders=15 \
         --field="":LBL " " \
-        --field="\n<b>$(gettext "Verified Translations") </b> ":LBL " " \
+        --field="\n<b>$(gettext "Translation quality") </b> ":LBL " " \
         --field="$(gettext "The quality of this translation was verified") ( $active_trans )":CHK "$chk" \
         --field="<small>$(gettext "This topic has no verified translations.")</small>":LBL " " \
         --field=" ":LBL " " \
         --field="\\n<b>$(gettext "Automatic Translation")</b> ":LBL " " \
         --field="$(gettext "Select native language:")":CB "${list_transl}" \
-        --field="<small>$(gettext "Note: translations from google translate service sometimes is inaccurate especially in complex frases.")</small>":LBL " " \
+        --field="<small>$(gettext "Note: translations from google translate service sometimes is inaccurate.")</small>":LBL " " \
         --field=" ":LBL " " \
-        --field="\\n<b>$(gettext "Manually Translation")</b> ":LBL " " \
-        --field="$(gettext "Open")":fbtn "$DS/ifs/tls.sh transl_batch" \
+        --field="<b>$(gettext "Manually Translation")</b>":fbtn "$DS/ifs/tls.sh transl_batch" \
+        --field=" ":LBL " " \
         --button="$(gettext "Apply")"!gtk-apply:0 \
         --button="$(gettext "Cancel")":1)"; ret="$?"
     else
         ldgl="$(yad --form --title="$(gettext "Native Language Settings")" \
         --class=Idiomind --name=Idiomind \
-        --text="$(gettext "The current Native language of this topic is")  <b>$active_trans</b>" \
+        --text="<big><b>$active_trans</b></big>"\\n \
         --always-print-result --window-icon=$DS/images/logo.png \
         --buttons-layout=end --center --on-top --align=left \
         --width=400 --height=400 --borders=15 \
         --field="":LBL " " \
-        --field="\n<b>$(gettext "Verified Translations") </b> ":LBL " " \
+        --field="\n<b>$(gettext "Translation quality") </b> ":LBL " " \
         --field="$active_trans — $(gettext "The quality of this translation was verified")":CHK "$chk" \
         --field="$(gettext "Change native language:")":CB "!${list_transl_saved}" \
         --field=" ":LBL " " \
         --field="<b>$(gettext "Automatic Translation")</b> ":LBL " " \
         --field="$(gettext "Select native language:")":CB "${list_transl}" \
-        --field="<small>$(gettext "Note: translations from google translate service sometimes is inaccurate especially in complex frases.")</small>":LBL " " \
+        --field="<small>$(gettext "Note: translations from google translate service sometimes is inaccurate.")</small>":LBL " " \
         --field=" ":LBL " " \
-        --field="<b>$(gettext "Manually Translation")</b> ":LBL " " \
-        --field="$(gettext "Open")":fbtn "$DS/ifs/tls.sh transl_batch" \
+        --field="<b>$(gettext "Manually Translation")</b>":fbtn "$DS/ifs/tls.sh transl_batch" \
+        --field=" ":LBL " " \
         --button="$(gettext "Apply")"!gtk-apply:0 \
         --button="$(gettext "Cancel")":1)"; ret="$?"
     fi
@@ -1276,7 +1276,7 @@ about() {
 	yad --form --text-align=center --align=center --scroll \
 	--image=$DS/images/about.png \
 	--title="$(gettext "About")" --image-on-top \
-	--width=350 --height=400 --borders=10 --image-on-top \
+	--width=350 --height=360 --borders=10 --image-on-top \
 	--window-icon=$DS/images/logo.png \
 	--name=Idiomind --class=Idiomind \
 	--field="<b><big><big>Idiomind</big></big></b>":LBL "" \
@@ -1297,16 +1297,18 @@ clipw() {
         tpe="$(sed -n 1p $DT/tpe |sed -e 's/^ *//' -e 's/ *$//')"
     fi
     if [ -n "${tpe}" ]; then
-        info="$(gettext "Notes will be added to:") \"$tpe\""
+        info="
+$(gettext "Notes will be added to:")
+\"$tpe\"
+"
+
     else
         info=""
     fi
     if [[ ! -e $DT/clipw  ]]; then
         "$DS/ifs/clipw.sh" &
         sleep 1
-        notify-send -i idiomind "$(gettext "Information")" \
-"$(gettext "The clipboard watcher remains active for a period of 5 minutes")
- $info" -t 8000
+        notify-send -i idiomind "$(gettext "Clipboard watcher active for 5 minutes")" "$info" -t 8000
     else 
         "$DS/ifs/clipw.sh" 1
     fi

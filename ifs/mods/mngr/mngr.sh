@@ -25,7 +25,7 @@ function dlg_form_1() {
     --field="$(gettext "Note")":TXT "${note}" \
     --button="$(gettext "Image")":"${cmd_image}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
-    --button="!$DS/images/listen.png!$(gettext "Listen")":"${cmd_play}" \
+    --button="!audio-volume-high!$(gettext "Listen")":"${cmd_play}" \
     --button="!media-seek-forward":2 \
     --button="$(gettext "Close")":0
 }
@@ -52,7 +52,7 @@ function dlg_form_2() {
     --field="\t\t\t$(gettext "Topic")":CB "${tpc_list}" \
     --field="$(gettext "Audio")":FL "${audf}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
-    --button="!$DS/images/listen.png!$(gettext "Listen")":"${cmd_play}" \
+    --button="!audio-volume-high!$(gettext "Listen")":"${cmd_play}" \
     --button="!media-seek-forward":2 \
     --button="$(gettext "Close")":0
 }
@@ -68,9 +68,9 @@ function edit_list_list() {
     --no-headers --center \
     --width=${sz[0]} --height=${sz[1]} --borders=5 \
     --column="" \
-    --button="$(gettext "More")":"$DS/mngr.sh edit_list_more" \
+    --button="$(gettext "Backups")":"$DS/mngr.sh edit_list_more" \
     --button="$(gettext "Translate")":2 \
-    --button="$(gettext "Save")!gtk-apply":0 \
+    --button="$(gettext "Save")!gtk-save":0 \
     --button="$(gettext "Cancel")":1
 }
 

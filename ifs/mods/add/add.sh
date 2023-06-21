@@ -659,13 +659,14 @@ function dlg_form_1() {
     --width=470 --borders=1 \
     --field="" "$trgt" \
     --field=":CB" "$tpe!$(gettext "New topic") *$e$tpcs" \
-    --button=!'/usr/share/idiomind/images/add_clipboard.png'!"$(gettext "Clipboard watcher")":5 \
-    --button=!'/usr/share/idiomind/images/add_ocr.png'!"$(gettext "Optical character recognition")":1 \
-    --button=!'/usr/share/idiomind/images/add_image.png'!"$(gettext "Screen clipping")":3 \
-    --button=!'/usr/share/idiomind/images/add_audio.png'!"$(gettext "Add an audio file")":2 \
-    --button=!'/usr/share/idiomind/images/add_more.png'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
-    --button=!'/usr/share/idiomind/images/add.png'!"$(gettext "Add")":0
+    --button=!'edit-paste'!"$(gettext "Clipboard watcher")":5 \
+    --button=!'edit-select-all'!"$(gettext "Optical character recognition")":1 \
+    --button=!'image-x-generic'!"$(gettext "Screen clipping")":3 \
+    --button=!'microphone-sensivity-high'!"$(gettext "Add an audio file")":2 \
+    --button=!'edit'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
+    --button=!'add'!"$(gettext "Add")":0
 }
+
 
 function dlg_form_2() {
     cmd_words="$DS/add.sh list_words_dclik $DT_r "\"${trgt}\"""
@@ -680,12 +681,12 @@ function dlg_form_2() {
     --field="" "$trgt" \
     --field="" "$srce" \
     --field=":CB" "$tpe!$(gettext "New topic") *$e$tpcs" \
-    --button=!'/usr/share/idiomind/images/add_clipboard.png'!"$(gettext "Clipboard watcher")":5 \
-     --button=!'/usr/share/idiomind/images/add_ocr.png'!"$(gettext "Optical character recognition")":1 \
-    --button=!'/usr/share/idiomind/images/add_image.png'!"$(gettext "Screen clipping")":3 \
-    --button=!'/usr/share/idiomind/images/add_audio.png'!"$(gettext "Add an audio file")":2 \
-    --button=!'/usr/share/idiomind/images/add_more.png'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
-    --button=!'/usr/share/idiomind/images/add.png'!"$(gettext "Add")":0
+    --button=!'edit-paste'!"$(gettext "Clipboard watcher")":5 \
+    --button=!'edit-select-all'!"$(gettext "Optical character recognition")":1 \
+    --button=!'image-x-generic'!"$(gettext "Screen clipping")":3 \
+    --button=!'microphone-sensivity-high'!"$(gettext "Add an audio file")":2 \
+    --button=!'edit'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
+    --button=!'add'!"$(gettext "Add")":0
 }
 
 function dlg_checklist_3() {
@@ -713,14 +714,13 @@ function dlg_checklist_3() {
     --field=" ":lbl null \
     --field="$(gettext "Add to"):CB" "$2!$(gettext "New topic") *$e$tpcs" &
     yad --paned --key="$fkey" \
-    --title="$(gettext "Found") $(wc -l < "${1}") $(gettext "notes")" \
+    --title="$(wc -l < "${1}") $(gettext "notes found")" \
     --name=Idiomind --class=Idiomind \
     --skip-taskbar --orient=vert --window-icon=$DS/images/logo.png --center \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --width=${sz[0]} --height=${sz[1]} --borders=5 --splitter=${sz[2]} \
-    --button="$(gettext "Cancel")":1 \
-    --button=!'/usr/share/idiomind/images/add_more.png'!"$(gettext "Edit")":2 \
-    --button=!'/usr/share/idiomind/images/add.png'!"$(gettext "Add")":0
+    --button=!'edit'!"$(gettext "Edit")":2 \
+    --button=!'add'!"$(gettext "Add")":0
 }
 
 function dlg_checklist_1() {

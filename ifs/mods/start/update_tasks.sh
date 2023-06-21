@@ -53,7 +53,7 @@ done < <(cdb "${shrdb}" 5 T5 |tac)
 
 ## topics 
 while read -r tpc_in_list; do
-    if [ -n "${tpc_in_list}" ] && [ "${tpc_in_list}" != "${tpc}" ]; then
+    if [ -n "${tpc_in_list}" ]; then
     echo -e "$l2$tpc_in_list" >> "$f"; fi
 done < <(cdb "${shrdb}" 5 T2 |tac)
 while read -r tpc_in_list; do

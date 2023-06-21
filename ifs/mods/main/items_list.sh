@@ -2,6 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 sz=(530 560 460); [[ ${swind} = TRUE ]] && sz=(450 460 380)
+
 function vwr() {
     if [ ${1} = 1 ]; then 
         index="$(tpc_db 5 learning)"
@@ -91,7 +92,7 @@ function word_view() {
     --width=630 --height=390 --borders=18 \
     "${field_tag}" "${field_exmp}" "${field_defn}" "${field_note}" \
     --button="!gtk-edit":4 \
-    --button="!$DS/images/listen.png":"$cmd_listen" \
+    --button="!audio-volume-high":"$cmd_listen" \
     --button="!media-seek-forward":2
     
 } >/dev/null 2>&1
@@ -118,7 +119,7 @@ function sentence_view() {
     --column="":TEXT \
     --button="!gtk-edit":4 \
     --button="!format-justify-left!$(gettext "Words")":"$cmd_words" \
-    --button="!$DS/images/listen.png":"$cmd_listen" \
+    --button="!audio-volume-high":"$cmd_listen" \
     --button="!media-seek-forward":2
     
 } >/dev/null 2>&1
@@ -171,7 +172,7 @@ function notebook_1() {
     --field="$(gettext "Auto-check learned items")\t\t":CHK "$acheck" \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field=" ":LBL " " \
-    --field="$infolbl":LBL "$cmd2" \
+    --field="$label_review\n$label_level":LBL "$cmd2" \
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn3":FBTN "$cmd3" \
     --field="$btn4":FBTN "$cmd4" > "$cnf4" &
@@ -204,7 +205,7 @@ function notebook_2() {
     yad --multi-progress --tabnum=1 \
     --text="$pres" \
     --plug=$KEY \
-    --align=center --borders=80 --bar="":NORM $RM &
+    --align=center --borders=80 --bar="":NORM $days_to_review_porcent &
     ([ -n "${ls2}" ] && echo "${ls2}") |yad --list --tabnum=2 \
     --window-icon=idiomind --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2" --grid-lines=hor \
@@ -221,10 +222,10 @@ function notebook_2() {
     --text="$lbl1" \
     --borders=10 --columns=2 \
     --field=" $(gettext "Review") "!'view-refresh':FBTN "$cmd_mark" \
-    --field="\t\t\t\t\t\t\t\\t\t\t\t\t\t":LBL "_" \
+    --field="\t\t\t\t\t\t\t\\t\t\t":LBL "_" \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field=" ":LBL " " --field=" ":LBL " " \
-    --field="$infolbl":LBL "$cmd2" \
+    --field="$label_review\n$label_level":LBL "$cmd2" \
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn3":FBTN "$cmd3" \
     --field="$btn4":FBTN "$cmd4" > "$cnf4" &
@@ -233,7 +234,7 @@ function notebook_2() {
     --always-print-result \
     --center --align=right --ellipsize=END \
     --window-icon=$DS/images/logo.png \
-    --tab="  $(gettext "Review")  " \
+    --tab="  $(gettext "Review") ($repass) " \
     --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Manage")  " \
@@ -272,7 +273,7 @@ function tpc_view() {
 
 function panelini() {
 	
-    cat "$DT/tasks" | yad --list --title="Idiomind" \
+    cat "$DT/tasks" | yad --title="Idiomind" --list \
     --name=Idiomind --class=Idiomind --dclick-action="" \
     --separator="" --expander="$(gettext "Tasks")" --scroll \
     --select-action="/usr/share/idiomind/ifs/tasks.sh" --grid-lines=hor \
@@ -281,9 +282,9 @@ function panelini() {
     --expand-column=1 --no-click --no-headers \
     --on-top --text-align=left --align=left --buttons-layout=spread \
     ${geometry} --borders=5  --column=Name:TEXT --fixed --width=20 --height=20 \
-    --button="$(gettext "Add")"!'list-add':"$DS/add.sh 'new_items'" \
-    --button="$(gettext "Home")"!'go-home':"idiomind 'topic'" \
-    --button="$(gettext "Index")"!'gtk-index':"$DS/chng.sh"
+    --button=""!'list-add'!"$(gettext "Add Note, which can be a word or a sentence")":"$DS/add.sh 'new_items'" \
+    --button=""!'go-home'!"$(gettext "My Active Topic")":"idiomind 'topic'" \
+    --button=""!'gtk-index'!"$(gettext "My topics")":"$DS/chng.sh"  
 }
 
 

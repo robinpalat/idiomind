@@ -102,11 +102,11 @@ function new_session() {
                 calculate_review "${line}"
                 
                 if [[ $((stts%2)) = 0 ]]; then
-                    if [ ${RM} -ge 180 -a ${stts} = 8 ]; then
+                    if [ ${days_to_review_porcent} -ge 180 -a ${stts} = 8 ]; then
                         echo 10 > "${dir}/stts"; touch "${dim}"
                         cdb ${shrdb} 2 T2 list "${line}"
                         
-                    elif [ ${RM} -ge 100 -a ${stts} -lt 8 ]; then
+                    elif [ ${days_to_review_porcent} -ge 100 -a ${stts} -lt 8 ]; then
                         echo 8 > "${dir}/stts"; touch "${dim}"
                         cdb ${shrdb} 2 T1 list "${line}"
                         
@@ -118,11 +118,11 @@ function new_session() {
                     fi
                     
                 elif [[ $((stts%2)) = 1 ]]; then
-                    if [ ${RM} -ge 180 -a ${stts} = 7 ]; then
+                    if [ ${days_to_review_porcent} -ge 180 -a ${stts} = 7 ]; then
                         echo 9 > "${dir}/stts"; touch "${dim}"
                         cdb ${shrdb} 2 T2 list "${line}"
                         
-                    elif [ ${RM} -ge 100 -a ${stts} -lt 7 ]; then
+                    elif [ ${days_to_review_porcent} -ge 100 -a ${stts} -lt 7 ]; then
                         echo 7 > "${dir}/stts"; touch "${dim}"
                         cdb ${shrdb} 2 T1 list "${line}"
                         
@@ -272,21 +272,19 @@ for item in data:
     link = (fields[22].split('link{'))[1].split('}')[0]
     cdid = (fields[23].split('cdid{'))[1].split('}')[0]
     type = (fields[24].split('type{'))[1].split('}')[0]
-
     if type == '1':
         cur.execute("insert into words (list) values (?)", (trgt,))
     elif type == '2':
         cur.execute("insert into sentences (list) values (?)", (trgt,))
     if mark == 'TRUE':
         cur.execute("insert into marks (list) values (?)", (trgt,))
-
     cur.execute("insert into learning (list) values (?)", (trgt,))
-    
-    cur.execute('INSERT INTO Data (trgt,srce,exmp,defn,note,wrds,grmr,tags,mark,refr,imag,imgr,link,cdid,type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', (trgt,srce,exmp,defn,note,wrds,grmr,tags,mark,refr,imag,imgr,link,cdid,type))
+    cur.execute('INSERT INTO Data (trgt,srce,exmp,defn,note,wrds,grmr,tags,mark,refr,imag,link,cdid,type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)', (trgt,srce,exmp,defn,note,wrds,grmr,tags,mark,refr,imag,link,cdid,type))
 
 db.commit()
 db.close()
 PY
+
             "$DS/ifs/tls.sh" colorize 1
             f_lock 3 "$DT/in_lk"
             
@@ -348,7 +346,19 @@ function topic() {
         export cnf1=$(mktemp "$DT/cnf1.XXXXXX")
         export cnf3=$(mktemp "$DT/cnf3.XXXXXX")
         export cnf4=$(mktemp "$DT/cnf4.XXXXXX")
-        export infolbl="$(gettext "Review"): <big>$repass</big>"
+
+        labels_level=( "$(gettext "Fresh topic")" "$(gettext "Recently learned")" "$(gettext "Recently learned")" "$(gettext "Recently learned")" "$(gettext "Familiar topic")" "$(gettext "Familiar topic")" "$(gettext "Intermediate-level")" "$(gettext "intermediate-level")" "$(gettext "Mastered topic")" )
+		export label_level="<sup>$(gettext "Learning level: ")<b>${labels_level[$repass]}</b></sup>"
+		
+		if [ $stts = 5 ] || [ $stts = 6 ]; then
+			labels_review=("$(gettext "Learning topic")" "$(gettext "First review")" "$(gettext "Second review")" "$(gettext "Third review")" "$(gettext "Fourth review")" "$(gettext "Fifth review")" "$(gettext "Sixth review")" "$(gettext "Seventh review")" "$(gettext "Eighth review")" "$(gettext "Ninth review")")
+			label_review="<sup><b>${labels_review[$repass]}</b></sup>"
+		else
+			labels_status=( "" "$(gettext "Learning")" "$(gettext "Reviewing ")" "$(gettext "Learnt, waiting to review")" "$(gettext "Learnt, waiting to review")" "$(gettext "Reviewing")" "$(gettext "Reviewing")" "$(gettext "Firt notice to review")" "$(gettext "Firt notice to review")" "$(gettext "Second notice to review")" "$(gettext "Second notice to review")")
+			label_review="<sup>$(gettext "Status: ")<b>${labels_status[$stts]}</b></sup>"
+		fi
+		export label_review
+
         if [ -n "$dtei" ]; then 
             export infolbl5="<small><sub>$(gettext "Installed on") $dtei, $(gettext "Created by") $autr</sub></small>"
         else 
@@ -444,7 +454,7 @@ PY
                     fi
                 fi
                 
-                pres="<u><b>$(gettext "Topic learnt")</b></u>  $(gettext "* however you have new notes") ($cfg1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
+                pres="<u><b>$(gettext "Topic learnt")</b></u>  $(gettext "* however you have new notes") ($cfg1).\\n$(gettext "Time set to review:") $days_to_review $(gettext "days")"
                 echo "N2 / ${cfg0} / ${cfg1} / ${cfg2}"
                 notebook_2
 
@@ -483,7 +493,7 @@ PY
                 fi 
             fi
 
-            pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
+            pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $days_to_review $(gettext "days")"
             echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
             notebook_2; ret=$?
             
@@ -522,7 +532,7 @@ PY
         
             calculate_review "${tpc}"
             
-            pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
+            pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $days_to_review $(gettext "days")"
             echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
             notebook_2; ret=$?
         fi
@@ -641,6 +651,8 @@ case "$1" in
     "$DS/stop.sh" 2 ;;
     update_addons)
     "$DS/ifs/tls.sh" update_addons ;;
+    restart_topic)
+    "$DS/mngr.sh" restartTopic ;;
     update_resources)
     "$DS_a/Resources/cnfg.sh" updt_scripts ;;
     *)
