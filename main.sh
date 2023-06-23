@@ -358,11 +358,14 @@ function topic() {
 		
 		if [ $stts = 5 ] || [ $stts = 6 ]; then
 			labels_review=("$(gettext "Learning topic")" "$(gettext "First review")" "$(gettext "Second review")" "$(gettext "Third review")" "$(gettext "Fourth review")" "$(gettext "Fifth review")" "$(gettext "Sixth review")" "$(gettext "Seventh review")" "$(gettext "Eighth review")" "$(gettext "Ninth review")")
-			label_review="<sup><b> ${labels_review[$repass]}</b></sup>"
+			label_review="<sup><b> ${labels_review[$repass]}</b></sup>\n"
 		else
 			labels_status=( "" "$(gettext "Learning")" "$(gettext "Periodic review ")" "$(gettext "Learnt, waiting to review")" "$(gettext "Learnt, waiting to review")" "$(gettext "Reviewing")" "$(gettext "Reviewing")" "$(gettext "Firt reminder to review")" "$(gettext "Firt reminder to review")" "$(gettext "Second reminder to review")" "$(gettext "Second reminder to review")")
-			label_review="<sup> $(gettext "Status: ")<b>${labels_status[$stts]}</b></sup>"
+			label_review="<sup> $(gettext "Status: ")<b>${labels_status[$stts]}</b></sup>\n"
 		fi
+		
+		[ $stts -eq 2 ] && label_review=""
+		
 		export label_review
 
         if [ -n "$dtei" ]; then 
@@ -382,7 +385,7 @@ function topic() {
                 then echo -e "\n${note_mod}" > "${note}"
                 else echo "${note_mod}" > "${note}"; fi
             fi
-            acheck_mod=$(cut -d '|' -f 2 < "${cnf4}")
+            acheck_mod=$(cut -d '|' -f 4 < "${cnf4}")
             if [[ $acheck_mod != $acheck ]] && [ -n "$acheck_mod" ]; then
                 tpc_db 3 config acheck "$acheck_mod"
             fi
@@ -500,14 +503,19 @@ PY
                 fi 
             fi
 			if echo "$stts" |grep -E '2'; then
-				pres="<u><big><b>$(gettext "Mastered topic")</b></big></u>\\n\\n$(gettext "Set the number of months to review it:")"
+				pres="<u><big><b>$(gettext "Mastered topic")</b></big></u>\\n\\n$(gettext "The user has attained a level of mastery in the topic.")"
 			else
 				pres="<u><big><b>$(gettext "Topic learnt")</b></big></u>\\n\\n$(gettext "Time set to review:") $days_to_review $(gettext "days")"
             fi
             echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
+            
             notebook_2; ret=$?
             
-            if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
+            if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
+            
+            if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 ]; then 
+				apply
+            fi
 
         fi
 

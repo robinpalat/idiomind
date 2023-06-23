@@ -295,7 +295,7 @@ PY
 add_audio() {
     cd "$HOME"
     aud="$(yad --file --title="$(gettext "Add Audio")" \
-    --text="\n$(gettext "Browse to and select the audio file that you want to add...")\n\n" \
+    --text="\n  $(gettext "Browse to and select the audio file that you want to add...")\n\n" \
     --class=Idiomind --name=Idiomind \
     --file-filter="*.mp3" \
     --window-icon=$DS/images/logo.png --center --on-top \
@@ -659,10 +659,10 @@ promp_topic_info() {
         active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
     fi
     if [ -n "$active_trans" -a "$active_trans" != "$slng" ]; then
-        slng_err_lbl="\n$(gettext "Native languages do not match.\nYou may have to translate this topic to your own language: click \"Manage\" tab on the main window, click \"Edit\" -> \"Translate\" -> \"Automatic Translation\" ->") \"$slng\"."
+        slng_err_lbl="\n$(gettext "Native languages do not match.\nYou may have to translate this topic to your own language: click \"Manage\" tab on the main window, -> \"Edit\" -> \"Translate\"")."
         echo -e "$slng_err_lbl" >> "${DC_tlt}/slng.inf"
     elif [ -z "$active_trans" -a "$(tpc_db 1 id slng)" != "$slng" ]; then
-        slng_err_lbl="\n$(gettext "Native languages do not match.\nYou may have to translate this topic to your own language: click \"Manage\" tab on the main window, click \"Edit\" -> \"Translate\" -> \"Automatic Translation\" ->") \"$slng\"."
+        slng_err_lbl="\n$(gettext "Native languages do not match.\nYou may have to translate this topic to your own language: click \"Manage\" tab on the main window, -> \"Edit\" -> \"Translate\"")."
         echo -e "$slng_err_lbl" >> "${DC_tlt}/slng.inf"
     fi
     check_err "${DC_tlt}/slng.inf" "${DC_tlt}/note.inf"

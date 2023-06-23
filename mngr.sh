@@ -579,32 +579,6 @@ edit_list_more() {
 } >/dev/null 2>&1
 
 
-restart_topic() {
-	
-     msg_2 "<b>\"$tpc\"</b>\n\n$(gettext "Are you sure you want to restart topic status?")\n" \
-     gtk-refresh "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
-  
-	if [ $? = 0 ]; then
-		cleanups "$DT/list_output" "$DT/list_input"
-		yad_kill "yad --list --title="
-		echo 1 > "${DC_tlt}/stts"
-		tpc_db 6 'reviews'; tpc_db 6 'learnt'; tpc_db 6 'learning'
-		
-		while read -r item_; do
-			item="$(sed 's/}/}\n/g' <<< "${item_}")"
-			trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
-			if [ -n "${trgt}" ]; then
-				tpc_db 2 learning list "${trgt}"
-			fi
-		done < "${DC_tlt}/data"
-		tpc_db 3 config repass 0
-		"$DS/mngr.sh" mkmn 1; "$DS/ifs/tls.sh" colorize 0
-		cleanups "$DT/edit_list_more"
-	fi
-
-} >/dev/null 2>&1
-
-
 edit_list_dlg() {
     direc="$DM_tl/${2}/.conf"
     
@@ -651,6 +625,32 @@ edit_list_dlg() {
         fi
     fi
 }
+
+
+restart_topic() {
+	
+     msg_2 "<b>\"$tpc\"</b>\n\n$(gettext "Are you sure you want to restart topic status?")\n" \
+     gtk-refresh "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
+  
+	if [ $? = 0 ]; then
+
+		yad_kill "yad --list --title="
+		echo 1 > "${DC_tlt}/stts"
+		tpc_db 6 'reviews'; tpc_db 6 'learnt'; tpc_db 6 'learning'
+		
+		while read -r item_; do
+			item="$(sed 's/}/}\n/g' <<< "${item_}")"
+			trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
+			if [ -n "${trgt}" ]; then
+				tpc_db 2 learning list "${trgt}"
+			fi
+		done < "${DC_tlt}/data"
+		tpc_db 3 config repass 0
+		"$DS/mngr.sh" mkmn 1; "$DS/ifs/tls.sh" colorize 0
+		cleanups "$DT/edit_list_more"
+	fi
+
+} >/dev/null 2>&1
 
 
 delete_topic() {

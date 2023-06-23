@@ -167,12 +167,15 @@ function notebook_1() {
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
     --text="${lbl1}${info2}" \
-    --borders=15 --columns=2 \
+    --borders=25 --columns=2 \
     --field=" $(gettext "Mark as learnt") "!'gtk-apply':FBTN "$cmd_mark" \
-    --field="$(gettext "Auto-check learned items")\t\t":CHK "$acheck" \
-    --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field=" ":LBL " " \
-    --field="$label_review\n$label_level":LBL "$cmd2" \
+    --field="<small>$(gettext "Rename")</small>" "${tpc}" \
+    --field="$(gettext "Auto-check learned items")\t\t":CHK "$acheck" \
+    --field=" ":LBL " " \
+    --field=" ":LBL " " \
+    --field="$label_review$label_level":LBL "$cmd2" \
+    --field=" ":LBL " " \
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn3":FBTN "$cmd3" \
     --field="$btn4":FBTN "$cmd4" > "$cnf4" &
@@ -192,6 +195,7 @@ function notebook_1() {
 } >/dev/null 2>&1
 
 function notebook_2() {
+	cmd_play="$DS/play.sh play_list"
     cmd_mark="'$DS/mngr.sh' 'mark_to_learn' "\"${tpc}\"" 1"
     btn1="$(gettext "Edit")"
     btn2="$(gettext "Resources")"
@@ -203,11 +207,8 @@ function notebook_2() {
     cmd4="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
 
 	if [ $stts -eq 2 ]; then
-		yad --scale --tabnum=1 --min-value=0 --max-value=180 --value=60 \
+		yad --form --tabnum=1  \
 		--text="$pres" --hide-value \
-		--mark="$(gettext "Never")":0 --mark="1":30 --mark="2":60 \
-		--mark="3":90 --mark="4":120 \
-		--mark="5":150 --mark="6":180 \
 		--plug=$KEY \
 		--align=center --borders=80  &
 	else
@@ -227,15 +228,46 @@ function notebook_2() {
     --show-uri --uri-color="#6591AA" \
     --filename="${note}" --editable --wrap \
     --fontname='vendana 11' --margins=14 > "$cnf3" &
+    if [ $stts -eq 2 ]; then
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
     --text="$lbl1" \
-    --borders=15 --columns=2 \
+    --borders=25 --columns=2 \
+    --field=" ":LBL "$cmd_mark" \
+    --field="\t\t\t\t\t\t\t\\t\t\t":LBL "_" \
+    --field="<small>$(gettext "Rename")</small>" "${tpc}" \
+    --field=" ":LBL " " \
+    --field=" ":LBL " " \
+    --field="$label_review\n$label_level":LBL "$cmd2" \
+    --field=" ":LBL " " \
+    --field="$btn1":FBTN "$cmd1" \
+    --field="$btn3":FBTN "$cmd3" \
+    --field="$btn4":FBTN "$cmd4" > "$cnf4" &
+    yad --notebook --title="Idiomind - $tpc" \
+    --name=Idiomind --class=Idiomind --key=$KEY \
+    --always-print-result \
+    --center --align=right --ellipsize=END \
+    --window-icon=$DS/images/logo.png \
+    --tab="  $(gettext "Review") ($repass) " \
+    --tab="  $(gettext "Learnt") ($cfg2) " \
+    --tab="  $(gettext "Note")  " \
+    --tab="  $(gettext "Manage")  " \
+    --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=0 \
+    --button="$(gettext "Play")":"$cmd_play" \
+    --button="$(gettext "Practice")":3 \
+    --button="$(gettext "Close")"!'window-close':2
+    else
+    yad --form --tabnum=4 --window-icon=idiomind \
+    --plug=$KEY \
+    --text="$lbl1" \
+    --borders=25 --columns=2 \
     --field=" $(gettext "Review") "!'view-refresh':FBTN "$cmd_mark" \
     --field="\t\t\t\t\t\t\t\\t\t\t":LBL "_" \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
-    --field=" ":LBL " " --field=" ":LBL " " \
-    --field="$label_review\n$label_level":LBL "$cmd2" \
+    --field=" ":LBL " " \
+    --field=" ":LBL " " \
+    --field="$label_review$label_level":LBL "$cmd2" \
+    --field=" ":LBL " " \
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn3":FBTN "$cmd3" \
     --field="$btn4":FBTN "$cmd4" > "$cnf4" &
@@ -250,7 +282,10 @@ function notebook_2() {
     --tab="  $(gettext "Manage")  " \
     --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=0 \
     --button="$(gettext "Close")"!'window-close':2
+    fi
+    
 } >/dev/null 2>&1
+
 
 function dialog_1() {
     yad --title="$(gettext "Review")  \"${tpc}\"" \
