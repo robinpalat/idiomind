@@ -95,14 +95,14 @@ play_list() {
     [ ! -d "$DT" ] && mkdir "$DT"; cd ~ && cd "$DT"
     [ ! -e $DT/playlck ] && echo 0 > $DT/playlck
     
-    btn1="$(gettext "Play"):0"
+    btn1="!media-playback-start!$(gettext "Play"):0"
     if [ "$(< $DT/playlck)" = 0 ]; then
         title="$(gettext "Play")"
-        [ ${stts} -ge 1 -a -n "${tpc}" ] && title="${tpc}"
+        #[ ${stts} -ge 1 -a -n "${tpc}" ] && title="${tpc}"
     else
         tpp="$(gettext "Playing:") \"$(sed -n 1p "$DT/playlck")\""
-        [[ ${#tpp} -gt 40 ]] && title="${tpp:0:40}..." || title="${tpp}"
-        btn1="$(gettext "Stop"):2"
+        title="$(gettext "Play")"
+        btn1="!media-playback-stop!$(gettext "Stop"):2"
     fi
     ntosd=""; audio=""
     lbls=( 'Words' 'Sentences' 'Marked' 'Learning' 'Difficult' )
@@ -180,7 +180,7 @@ play_list() {
     --tab=" $(gettext "Lists") " \
     --tab="$(gettext "Options")" \
     --width=400 --height=260 --borders=5 \
-    --button="$btn1" --button="$(gettext "Close")":1
+    --button="$btn1" 
     ret=$?
         [ $ret -eq 1 ] && exit 0
         [ $ret -eq 0 ] && echo "${tpc}" > "$DT/playlck"

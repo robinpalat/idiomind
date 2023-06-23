@@ -167,7 +167,7 @@ function notebook_1() {
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
     --text="${lbl1}${info2}" \
-    --borders=10 --columns=2 \
+    --borders=15 --columns=2 \
     --field=" $(gettext "Mark as learnt") "!'gtk-apply':FBTN "$cmd_mark" \
     --field="$(gettext "Auto-check learned items")\t\t":CHK "$acheck" \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
@@ -202,10 +202,20 @@ function notebook_2() {
     cmd3="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd4="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
 
-    yad --multi-progress --tabnum=1 \
-    --text="$pres" \
-    --plug=$KEY \
-    --align=center --borders=80 --bar="":NORM $days_to_review_porcent &
+	if [ $stts -eq 2 ]; then
+		yad --scale --tabnum=1 --min-value=0 --max-value=180 --value=60 \
+		--text="$pres" --hide-value \
+		--mark="$(gettext "Never")":0 --mark="1":30 --mark="2":60 \
+		--mark="3":90 --mark="4":120 \
+		--mark="5":150 --mark="6":180 \
+		--plug=$KEY \
+		--align=center --borders=80  &
+	else
+		yad --multi-progress --tabnum=1 \
+		--text="$pres" \
+		--plug=$KEY \
+		--align=center --borders=80 --bar="":NORM $days_to_review_porcent &
+    fi
     ([ -n "${ls2}" ] && echo "${ls2}") |yad --list --tabnum=2 \
     --window-icon=idiomind --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2" --grid-lines=hor \
@@ -220,7 +230,7 @@ function notebook_2() {
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
     --text="$lbl1" \
-    --borders=10 --columns=2 \
+    --borders=15 --columns=2 \
     --field=" $(gettext "Review") "!'view-refresh':FBTN "$cmd_mark" \
     --field="\t\t\t\t\t\t\t\\t\t\t":LBL "_" \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \

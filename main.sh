@@ -147,9 +147,15 @@ function new_session() {
     -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
     rm -f "$DT/ps_lk"
     
+	$DS/ifs/mods/start/update_tasks.sh
+    
     # run startups scripts
     for strt in "$DS/ifs/mods/start"/*; do
-    ( sleep 5 && "${strt}" ); done &
+		if grep tasks <<<"$strt"; then :
+		else
+			( sleep 2 && "${strt}" )
+		fi
+	done &
     
     # make index
     "$DS/mngr.sh" mkmn 0 &
@@ -348,14 +354,14 @@ function topic() {
         export cnf4=$(mktemp "$DT/cnf4.XXXXXX")
 
         labels_level=( "$(gettext "Fresh topic")" "$(gettext "Recently learned")" "$(gettext "Recently learned")" "$(gettext "Recently learned")" "$(gettext "Familiar topic")" "$(gettext "Familiar topic")" "$(gettext "Intermediate-level")" "$(gettext "intermediate-level")" "$(gettext "Mastered topic")" )
-		export label_level="<sup>$(gettext "Learning level: ")<b>${labels_level[$repass]}</b></sup>"
+		export label_level="<sup> $(gettext "Your learning level: ")<b>${labels_level[$repass]}</b></sup>"
 		
 		if [ $stts = 5 ] || [ $stts = 6 ]; then
 			labels_review=("$(gettext "Learning topic")" "$(gettext "First review")" "$(gettext "Second review")" "$(gettext "Third review")" "$(gettext "Fourth review")" "$(gettext "Fifth review")" "$(gettext "Sixth review")" "$(gettext "Seventh review")" "$(gettext "Eighth review")" "$(gettext "Ninth review")")
-			label_review="<sup><b>${labels_review[$repass]}</b></sup>"
+			label_review="<sup><b> ${labels_review[$repass]}</b></sup>"
 		else
-			labels_status=( "" "$(gettext "Learning")" "$(gettext "Reviewing ")" "$(gettext "Learnt, waiting to review")" "$(gettext "Learnt, waiting to review")" "$(gettext "Reviewing")" "$(gettext "Reviewing")" "$(gettext "Firt notice to review")" "$(gettext "Firt notice to review")" "$(gettext "Second notice to review")" "$(gettext "Second notice to review")")
-			label_review="<sup>$(gettext "Status: ")<b>${labels_status[$stts]}</b></sup>"
+			labels_status=( "" "$(gettext "Learning")" "$(gettext "Periodic review ")" "$(gettext "Learnt, waiting to review")" "$(gettext "Learnt, waiting to review")" "$(gettext "Reviewing")" "$(gettext "Reviewing")" "$(gettext "Firt reminder to review")" "$(gettext "Firt reminder to review")" "$(gettext "Second reminder to review")" "$(gettext "Second reminder to review")")
+			label_review="<sup> $(gettext "Status: ")<b>${labels_status[$stts]}</b></sup>"
 		fi
 		export label_review
 
@@ -419,28 +425,29 @@ PY
             dialog-information "$(gettext "Information")"
             else "$DS/mngr.sh" rename_topic "${ntpc}"; fi; fi
         }
-        
+       
     if ((stts>=1 && stts<=10)); then
         if [ -f "${DC_tlt}/tpc-journal" ]; then exit 1; else readd; fi
         
         # empty topic
         if [ ${cfg0} -lt 1 ]; then
             echo "Empty topic N1 / ${cfg0} / ${cfg1} / ${cfg2}"
+            
             notebook_1; ret=$?
             
             if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
             
             if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
 
-        elif [ ${cfg1} -ge 1 ] || [ ${cfg1} -gt 0 -a ${cfg0} -ge 10 ]; then
-      
+        elif [ ${cfg1} -ge 1 ] || [ ${cfg1} -gt 0 ] && [ ${cfg0} -gt 10 ]; then
+       
             if echo "$stts" |grep -E '3|4|7|8|9|10'; then
             
                 calculate_review "${tpc}"; 
 
-                if [[ ${RM} -ge 100 ]]; then
+                if [[ ${days_to_review_porcent} -ge 100 ]]; then
 
-                    RM=100; dialog_1; ret=$?
+                    days_to_review_porcent=100; dialog_1; ret=$?
                     
                     if [ $ret -eq 2 ]; then
                     
@@ -454,32 +461,32 @@ PY
                     fi
                 fi
                 
-                pres="<u><b>$(gettext "Topic learnt")</b></u>  $(gettext "* however you have new notes") ($cfg1).\\n$(gettext "Time set to review:") $days_to_review $(gettext "days")"
+                pres="<u><big><b>$(gettext "Topic learnt")</b></big></u>  <sup>$(gettext "* however you have new notes") ($cfg1).</sup>\\n\\n$(gettext "Time set to review:") $days_to_review $(gettext "days")"
                 echo "N2 / ${cfg0} / ${cfg1} / ${cfg2}"
                 notebook_2
 
             else
+            
                 echo "N1 / ${cfg0} / ${cfg1} / ${cfg2}"
                 notebook_1
             fi
                 ret=$?
                 
-                if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
+                if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 ] || [ $ret -eq 3 ]; then apply; fi
                 
                 if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
 
-        elif [ ${cfg1} -eq 0 -a ${cfg0} -ge 10 ]; then
+        elif [ ${cfg1} -eq 0 ] && [ ${cfg0} -ge 10 ]; then
         
-             if  ! echo "$stts" |grep -E '3|4|7|8|9|10'; then
-            
+            if  ! echo "$stts" |grep -E '3|4|7|8|9|10'; then
                 "$DS/mngr.sh" mark_as_learned "${tpc}" 0
-                
-            fi
+			fi
+			
             calculate_review "${tpc}"
             
-            if [[ ${RM} -ge 100 ]]; then
+            if [[ ${days_to_review_porcent} -ge 100 ]]; then
             
-                RM=100; dialog_1; ret=$?
+                days_to_review_porcent=100; dialog_1; ret=$?
                 
                 if [ $ret -eq 2 ]; then
                 
@@ -492,8 +499,11 @@ PY
                     oclean & return 1
                 fi 
             fi
-
-            pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $days_to_review $(gettext "days")"
+			if echo "$stts" |grep -E '2'; then
+				pres="<u><big><b>$(gettext "Mastered topic")</b></big></u>\\n\\n$(gettext "Set the number of months to review it:")"
+			else
+				pres="<u><big><b>$(gettext "Topic learnt")</b></big></u>\\n\\n$(gettext "Time set to review:") $days_to_review $(gettext "days")"
+            fi
             echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
             notebook_2; ret=$?
             
@@ -615,7 +625,7 @@ _start() {
             idiomind topic
         fi
     else
-        if ! pgrep -f "yad --fixed --form --title="Idiomind""; then
+        if ! pgrep -f "yad --fixed --form --title=Idiomind"; then
             ipanel &
         else
             idiomind topic

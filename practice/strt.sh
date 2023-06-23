@@ -355,7 +355,7 @@ function practice_c() {
         (sleep 0.5 && "$DS/play.sh" play_word "${trgt}" ${cdid}) &
 
         yad --form --title=" " \
-        --text="$lquestion" \
+        --text="<small>$(gettext "Do you recognize this word?")</small>\n\n$lquestion" \
         --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --image-on-top --undecorated \
         --width=390 --height=220 --borders=8 \
@@ -364,6 +364,7 @@ function practice_c() {
         --button="  $(gettext "No")  !$img_no":3 \
         --button="  $(gettext "Yes")  !$img_yes":2
     }
+"$(gettext "Do you recognize this word?")"
 
     p=1
     while read trgt; do
