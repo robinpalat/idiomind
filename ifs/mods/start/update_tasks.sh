@@ -13,13 +13,13 @@
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 echo -e "\n--- updating tasks..."
-l1="$(gettext "To Review [new]:") "
-l2="$(gettext "To Review [new] [overdue]:") "
-l3="$(gettext "To Review:") "
-l4="$(gettext "To Review [overdue]:") "
+l1="$(gettext "To Review [firt reminder]:") "
+l2="$(gettext "To Review [second reminder]:") "
+l3="$(gettext "To Review [firt reminder]:") "
+l4="$(gettext "To Review [second reminder]:") "
 l5="$(gettext "To Practice:") "
 l6="$(gettext "Back to Practice:") "
-l7="$(gettext "Finalize Review [overdue]:") "
+l4="$(gettext "To Review [second reminder]:") "
 l8="$(gettext "Resume Practice:") "
 f="$DT/tasks.tmp"; cleanups "$f" "$DT/tasks"
 

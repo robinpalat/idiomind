@@ -108,8 +108,13 @@ play_list() {
     lbls=( 'Words' 'Sentences' 'Marked' 'Learning' 'Difficult' )
     in=( 'in0' 'in1' 'in2' 'in3' 'in4' )
     iteml=( "$(gettext "No repeat")" "$(gettext "Words")" "$(gettext "Sentences")" )
-
-    if [[ ${stts} -lt 10 ]]; then
+    
+    
+        sents=""; words=""; marks=""; learn=""; leart=""
+        in0=0; in1=0; in2=0; in3=0; in4=0
+        opts="$(tpc_db 5 config |head -n9)"
+    
+    if  echo "$stts" |grep -E '1|2|5|6'; then
         sents="$(tpc_db 5 sentences)"
         words="$(tpc_db 5 words)"
         marks="$(tpc_db 5 marks)"
@@ -129,23 +134,38 @@ play_list() {
         done
     fi
     setting_1() {
-        n=0
-        while [ ${n} -le 4 ]; do
-            arr="in${n}"
-            [[ ${!arr} -lt 1 ]] && echo "$DS/images/ai0.png" ||echo "$DS/images/a0.png"
-            echo "${!psets[${n}]}"
-            echo "  $(gettext "${lbls[$n]}")"
-            let n++
-        done
-        for ad in "$DS/ifs/mods/play"/*; do
-            source "${ad}"
-            for item in "${!items[@]}"; do
-                echo "$DS/images/${items[$item]}.png"
-                grep -o ${items[$item]}=\"[^\"]* "${file_cfg}" |grep -o '[^"]*$'
-                echo "  $(gettext "${item}") <i><small>${aname}</small></i>"
-            done
-            unset items
-        done
+		
+	    if [ ${stts} -gt 10 ]; then # addons 1 (addon_name)
+			for ad in "$DS/ifs/mods/play"/*; do # addons 2
+				source "${ad}"
+				for item in "${!items[@]}"; do 
+					echo "$DS/images/${items[$item]}.png"
+					grep -o ${items[$item]}=\"[^\"]* "${file_cfg}" |grep -o '[^"]*$'
+					echo "  $(gettext "${item}")"
+				done
+				unset items
+			done
+		else
+			n=0
+			while [ ${n} -le 4 ]; do # sentences, words, ect.
+				arr="in${n}"
+				[[ ${!arr} -lt 1 ]] && echo "$DS/images/ai0.png" ||echo "$DS/images/a0.png"
+				echo "${!psets[${n}]}"
+				echo "  $(gettext "${lbls[$n]}")"
+				let n++
+			done
+			for ad in "$DS/ifs/mods/play"/*; do # including a type of addons (list_name)
+				source "${ad}"
+				if [ -z "$addon_name" ]; then
+					for item in "${!items[@]}"; do
+						echo "$DS/images/${items[$item]}.png"
+						grep -o ${items[$item]}=\"[^\"]* "${file_cfg}" |grep -o '[^"]*$'
+						echo "  $(gettext "${item}") <i><small>${list_name}</small></i>"
+					done
+					unset items
+				fi
+			done
+        fi
     }
 
     [ -z "$rword" ] && rword=0

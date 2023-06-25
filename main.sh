@@ -323,7 +323,8 @@ function topic() {
     source "$DS/ifs/cmns.sh"
     f_lock 0 "$DT/tpc_lk"
     export -f tpc_db msg
-    [ -f "${DC_tlt}/stts" ] && export stts=$(sed -n 1p "${DC_tlt}/stts")
+    [ -f "${DC_tlt}/stts" ] && stts=$(sed -n 1p "${DC_tlt}/stts")
+
     if ! [[ ${stts} =~ $numer ]]; then return 1; fi
 
     readd(){
@@ -346,14 +347,22 @@ function topic() {
         repass=$(tpc_db 1 config repass)
         acheck=$(tpc_db 1 config acheck)
 
-        [ -z "$repass" ] && repass=0; export repass acheck
+        if [ "$repass" -gt 8  ]; then 
+			echo 2 > "${DC_tlt}/stts"
+			export stts=2; repass=8
+			"$DS/mngr.sh" mkmn 1
+		elif [ -z "$repass" ]; then
+			repass=0
+        fi
+        export repass acheck stts
+        
         ( sleep 2 && "$DS/ifs/tls.sh" promp_topic_info ) &
         c=$((RANDOM%100000)); export KEY=$c
         export cnf1=$(mktemp "$DT/cnf1.XXXXXX")
         export cnf3=$(mktemp "$DT/cnf3.XXXXXX")
         export cnf4=$(mktemp "$DT/cnf4.XXXXXX")
 
-        labels_level=( "$(gettext "Fresh topic")" "$(gettext "Recently learned")" "$(gettext "Recently learned")" "$(gettext "Recently learned")" "$(gettext "Familiar topic")" "$(gettext "Familiar topic")" "$(gettext "Intermediate-level")" "$(gettext "intermediate-level")" "$(gettext "Mastered topic")" )
+        labels_level=( "$(gettext "Fresh topic")" "$(gettext "Recently learned")" "$(gettext "Recently learned")" "$(gettext "Recently learned")" "$(gettext "Familiar topic")" "$(gettext "Familiar topic")" "$(gettext "Intermediate-level")" "$(gettext "intermediate-level")" "$(gettext "Mastered topic")" "$(gettext "Mastered topic")" )
 		export label_level="<sup> $(gettext "Your learning level: ")<b>${labels_level[$repass]}</b></sup>"
 		
 		if [ $stts = 5 ] || [ $stts = 6 ]; then
@@ -428,10 +437,20 @@ PY
             dialog-information "$(gettext "Information")"
             else "$DS/mngr.sh" rename_topic "${ntpc}"; fi; fi
         }
-       
-    if ((stts>=1 && stts<=10)); then
-        if [ -f "${DC_tlt}/tpc-journal" ]; then exit 1; else readd; fi
         
+       
+    if [ -f "${DC_tlt}/tpc-journal" ]; then exit 1; else readd; fi
+    
+    if ((stts==2)); then
+    
+    notebook_3; ret=$?
+    
+        if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
+            
+        if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
+       
+    elif ((stts>=1 && stts<=10)); then
+
         # empty topic
         if [ ${cfg0} -lt 1 ]; then
             echo "Empty topic N1 / ${cfg0} / ${cfg1} / ${cfg2}"

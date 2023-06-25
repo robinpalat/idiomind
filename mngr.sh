@@ -634,7 +634,7 @@ restart_topic() {
   
 	if [ $? = 0 ]; then
 
-		yad_kill "yad --list --title="
+		yad_kill "yad --list --title="$(gettext "Edit list")""
 		echo 1 > "${DC_tlt}/stts"
 		tpc_db 6 'reviews'; tpc_db 6 'learnt'; tpc_db 6 'learning'
 		
@@ -763,7 +763,7 @@ mark_to_learn_topic() {
 	
     calculate_review "${tpc}"
 
-    if [[ $repass -eq 8 ]]; then
+    if [[ $repass -ge 8 ]]; then
 	    echo 2 > "${DC_tlt}/stts"
     elif [ $((stts%2)) = 0 ]; then
         echo 6 > "${DC_tlt}/stts"
@@ -860,7 +860,7 @@ mark_as_learned_topic() {
             (cd "${DC_tlt}/practice"; rm ./.*; rm ./*
             touch ./log1 ./log2 ./log3)
         fi
-        if [[ $repass -eq 8 ]]; then
+        if [[ $repass -ge 8 ]]; then
 			echo 2 > "${DC_tlt}/stts"
         elif [[ $((stts%2)) = 0 ]]; then
             echo 4 > "${DC_tlt}/stts"
@@ -945,7 +945,7 @@ mark_as_learned_topic_ok() {
             touch ./log1 ./log2 ./log3)
         fi
         
-        if [[ $repass -eq 8 ]]; then
+        if [[ $repass -ge 8 ]]; then
 			echo 2 > "${DC_tlt}/stts"
         elif [[ $((stts%2)) = 0 ]]; then
             echo 4 > "${DC_tlt}/stts"

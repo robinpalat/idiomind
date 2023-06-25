@@ -206,17 +206,10 @@ function notebook_2() {
     cmd3="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd4="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
 
-	if [ $stts -eq 2 ]; then
-		yad --form --tabnum=1  \
-		--text="$pres" --hide-value \
-		--plug=$KEY \
-		--align=center --borders=80  &
-	else
-		yad --multi-progress --tabnum=1 \
-		--text="$pres" \
-		--plug=$KEY \
-		--align=center --borders=80 --bar="":NORM $days_to_review_porcent &
-    fi
+	yad --multi-progress --tabnum=1 \
+	--text="$pres" \
+	--plug=$KEY \
+	--align=center --borders=80 --bar="":NORM $days_to_review_porcent &
     ([ -n "${ls2}" ] && echo "${ls2}") |yad --list --tabnum=2 \
     --window-icon=idiomind --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2" --grid-lines=hor \
@@ -228,35 +221,6 @@ function notebook_2() {
     --show-uri --uri-color="#6591AA" \
     --filename="${note}" --editable --wrap \
     --fontname='vendana 11' --margins=14 > "$cnf3" &
-    if [ $stts -eq 2 ]; then
-    yad --form --tabnum=4 --window-icon=idiomind \
-    --plug=$KEY \
-    --text="$lbl1" \
-    --borders=25 --columns=2 \
-    --field=" ":LBL "$cmd_mark" \
-    --field="\t\t\t\t\t\t\t\\t\t\t":LBL "_" \
-    --field="<small>$(gettext "Rename")</small>" "${tpc}" \
-    --field=" ":LBL " " \
-    --field=" ":LBL " " \
-    --field="$label_review\n$label_level":LBL "$cmd2" \
-    --field=" ":LBL " " \
-    --field="$btn1":FBTN "$cmd1" \
-    --field="$btn3":FBTN "$cmd3" \
-    --field="$btn4":FBTN "$cmd4" > "$cnf4" &
-    yad --notebook --title="Idiomind - $tpc" \
-    --name=Idiomind --class=Idiomind --key=$KEY \
-    --always-print-result \
-    --center --align=right --ellipsize=END \
-    --window-icon=$DS/images/logo.png \
-    --tab="  $(gettext "Review") ($repass) " \
-    --tab="  $(gettext "Learnt") ($cfg2) " \
-    --tab="  $(gettext "Note")  " \
-    --tab="  $(gettext "Manage")  " \
-    --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=0 \
-    --button="$(gettext "Play")":"$cmd_play" \
-    --button="$(gettext "Practice")":3 \
-    --button="$(gettext "Close")"!'window-close':2
-    else
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
     --text="$lbl1" \
@@ -282,8 +246,59 @@ function notebook_2() {
     --tab="  $(gettext "Manage")  " \
     --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=0 \
     --button="$(gettext "Close")"!'window-close':2
-    fi
+  
     
+} >/dev/null 2>&1
+
+
+function notebook_3() {
+	
+	cmd_play="$DS/play.sh play_list"
+    cmd_mark="'$DS/mngr.sh' 'mark_to_learn' "\"${tpc}\"" 1"
+    btn1="$(gettext "Edit")"
+    btn2="$(gettext "Resources")"
+    btn3="$(gettext "Share")"
+    btn4="$(gettext "Delete")"
+    cmd1="'$DS/mngr.sh' edit_list "\"${tpc}\"""
+    cmd2="'$DS/ifs/tls.sh' attatchs"
+    cmd3="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
+    cmd4="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
+
+    ([ -n "${ls1}" ] && echo "${ls1}") |yad --list --tabnum=1 \
+    --window-icon=idiomind --plug=$KEY --print-all --separator='|' \
+    --dclick-action="$DS/vwr.sh 2" --grid-lines=hor \
+    --expand-column=0 --no-headers --ellipsize=end \
+    --search-column=1 --regex-search \
+    --column=Name:TEXT &
+    yad --text-info --tabnum=2 --window-icon=idiomind \
+    --plug=$KEY \
+    --show-uri --uri-color="#6591AA" \
+    --filename="${note}" --editable --wrap \
+    --fontname='vendana 11' --margins=14 > "$cnf3" &
+    yad --form --tabnum=3 --window-icon=idiomind \
+    --plug=$KEY \
+    --text="$lbl1" \
+    --borders=25 --columns=2 \
+    --field="$label_level ":LBL "$cmd_mark" \
+    --field="\t\t\t\t\t\t\t\\t\t\t":LBL "_" \
+    --field="<small>$(gettext "Rename")</small>" "${tpc}" \
+    --field=" ":LBL " " \
+    --field=" ":LBL " " \
+    --field=" ":LBL "$cmd2" \
+    --field=" ":LBL " " \
+    --field="$btn1":FBTN "$cmd1" \
+    --field="$btn3":FBTN "$cmd3" \
+    --field="$btn4":FBTN "$cmd4" > "$cnf4" &
+    yad --notebook --title="Idiomind - $tpc" \
+    --name=Idiomind --class=Idiomind --key=$KEY \
+    --always-print-result \
+    --center --align=right --ellipsize=END \
+    --window-icon=$DS/images/logo.png \
+    --tab="  $(gettext "Learnt") ($cfg1) " \
+    --tab="  $(gettext "Note")  " \
+    --tab="  $(gettext "Manage")  " \
+    --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=0 \
+    --button="$(gettext "Close")"!'window-close':2
 } >/dev/null 2>&1
 
 
@@ -331,7 +346,6 @@ function panelini() {
     --button=""!'go-home'!"$(gettext "My Active Topic")":"idiomind 'topic'" \
     --button=""!'gtk-index'!"$(gettext "My topics")":"$DS/chng.sh"  
 }
-
 
 
 

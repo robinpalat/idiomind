@@ -24,6 +24,11 @@ chek_topic() {
     if [ ! -f "${tpcdb}" ]; then
         "$DS/ifs/mkdb.sh" tpc "${topic}"
     fi
+    
+    repass=$(tpc_db 1 config repass)
+    if [ "$repass" -gt 8  ]; then
+		echo 2 > "${DC_tlt}/stts"
+	fi
 
     touch "${DC_tlt}/data"
     if [ ! -f "$DT/n_s_pr" ]; then
