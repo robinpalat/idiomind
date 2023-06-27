@@ -25,10 +25,12 @@ f="$DT/tasks.tmp"; cleanups "$f" "$DT/tasks"
 
 #current topic
 if [ -n "${tpc}" ]; then
-	export -f tpc_db
-	if [ "$(tpc_db 5 learning | wc -l)" -gt 0 ];then
-		echo -e "$(gettext "Play"): $tpc" >> "$f"
-		echo -e "$(gettext "To Practice:") $tpc" >> "$f"
+	if [[ -z "$(sqlite3 ${shrdb} "select list from T10 where list is '${tpc}';")" ]]; then
+		export -f tpc_db
+		if [ "$(tpc_db 5 learning | wc -l)" -gt 0 ];then
+			echo -e "$(gettext "Play"): $tpc" >> "$f"
+			echo -e "$(gettext "To Practice:") $tpc" >> "$f"
+		fi
 	fi
 fi
 

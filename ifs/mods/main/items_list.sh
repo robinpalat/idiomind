@@ -298,6 +298,8 @@ function notebook_3() {
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Manage")  " \
     --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=0 \
+    --button="$(gettext "Play")":"$cmd_play" \
+    --button="$(gettext "Practice")":3 \
     --button="$(gettext "Close")"!'window-close':2
 } >/dev/null 2>&1
 

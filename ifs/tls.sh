@@ -658,10 +658,10 @@ promp_topic_info() {
     if [ -f "${DC_tlt}/translations/active" ]; then
         active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
     fi
-    if [ -n "$active_trans" -a "$active_trans" != "$slng" ]; then
+    if [ -n "$active_trans" ] &&  [ "$active_trans" != "$slng" ]; then
         slng_err_lbl="\n$(gettext "Native languages do not match.\nYou may have to translate this topic to your own language: click \"Manage\" tab on the main window, -> \"Edit\" -> \"Translate\"")."
         echo -e "$slng_err_lbl" >> "${DC_tlt}/slng.inf"
-    elif [ -z "$active_trans" -a "$(tpc_db 1 id slng)" != "$slng" ]; then
+    elif [ -z "$active_trans" ] && [ "$(tpc_db 1 id slng)" != "$slng" ]; then
         slng_err_lbl="\n$(gettext "Native languages do not match.\nYou may have to translate this topic to your own language: click \"Manage\" tab on the main window, -> \"Edit\" -> \"Translate\"")."
         echo -e "$slng_err_lbl" >> "${DC_tlt}/slng.inf"
     fi

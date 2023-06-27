@@ -88,6 +88,7 @@ function new_session() {
     fi
     echo -e "\n--- checking topics..."
     tdate=$(date +%Y%m%d)
+    
     while read -r line; do
         if [ -n "$line" ]; then
             unset stts
@@ -134,6 +135,12 @@ function new_session() {
                     fi
                 fi
                 
+            elif [ $((stts)) = 2 ]; then
+
+				if [[ -z "$(sqlite3 ${shrdb} "select list from T10 where list is '${line}';")" ]]; then
+					cdb ${shrdb} 2 T10 list "${line}"
+				fi
+
             elif [[ $((stts+stts%2)) = 6 ]]; then
             
                 datedir=$(stat -c %y "$dir" |cut -d ' ' -f1)
@@ -147,11 +154,14 @@ function new_session() {
     -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
     rm -f "$DT/ps_lk"
     
-	$DS/ifs/mods/start/update_tasks.sh
+    if ps -A |pgrep -f "yad --title=Idiomind --list"; then
+    kill -9 $(pgrep -f "yad --title="Idiomind" --list") >/dev/null 2>&1 & fi
     
+	$DS/ifs/mods/start/update_tasks.sh
+
     # run startups scripts
     for strt in "$DS/ifs/mods/start"/*; do
-		if grep tasks <<<"$strt"; then :
+		if grep tasks <<<"$strt">/dev/null 2>&1; then :
 		else
 			( sleep 2 && "${strt}" )
 		fi
@@ -356,7 +366,8 @@ function topic() {
         fi
         export repass acheck stts
         
-        ( sleep 2 && "$DS/ifs/tls.sh" promp_topic_info ) &
+        if [ $((stts)) -lt 10 ]; then 
+			( sleep 2 && "$DS/ifs/tls.sh" promp_topic_info ) & fi
         c=$((RANDOM%100000)); export KEY=$c
         export cnf1=$(mktemp "$DT/cnf1.XXXXXX")
         export cnf3=$(mktemp "$DT/cnf3.XXXXXX")

@@ -220,7 +220,8 @@ config_dlg() {
 			kill -9 $(pgrep -f "yad --title="Idiomind" --list")
             $DS/ifs/tls.sh itray &
         else 
-			idiomind
+			if ! ps -A |pgrep -f "yad --title=Idiomind --list"; then
+			idiomind; fi
         fi
         
     fi

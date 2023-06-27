@@ -96,13 +96,13 @@ play_list() {
     [ ! -e $DT/playlck ] && echo 0 > $DT/playlck
     
     btn1="!media-playback-start!$(gettext "Play"):0"
-    if [ "$(< $DT/playlck)" = 0 ]; then
-        title="$(gettext "Play")"
-        #[ ${stts} -ge 1 -a -n "${tpc}" ] && title="${tpc}"
-    else
-        tpp="$(gettext "Playing:") \"$(sed -n 1p "$DT/playlck")\""
+    title="$(gettext "Play")"
+    [ ${stts} -ge 1 ] && [ -n "${tpc}" ] && title="$(gettext "Play") - ${tpc}"
+    if [ "$(< $DT/playlck)" != 0 ]; then
+        tpp="--text=<small><b>   $(gettext "Playing:")</b> \"$(sed -n 1p "$DT/playlck")\"...</small>"
         title="$(gettext "Play")"
         btn1="!media-playback-stop!$(gettext "Stop"):2"
+        title="$(gettext "Playing")"
     fi
     ntosd=""; audio=""
     lbls=( 'Words' 'Sentences' 'Marked' 'Learning' 'Difficult' )
@@ -147,7 +147,9 @@ play_list() {
 			done
 		else
 			n=0
+
 			while [ ${n} -le 4 ]; do # sentences, words, ect.
+				if ((stts==2 && n==3)); then break; fi
 				arr="in${n}"
 				[[ ${!arr} -lt 1 ]] && echo "$DS/images/ai0.png" ||echo "$DS/images/a0.png"
 				echo "${!psets[${n}]}"
@@ -191,7 +193,7 @@ play_list() {
     --field="$(gettext "Use desktop notifications")":CHK "$ntosd" \
     --field="$(gettext "Pause between items (sec)")":SCL "$loop" \
     --field="$(gettext "Repeat sounding out")":CB "$lst_opts1" > "$tab2" &
-    yad --notebook --key=$KEY --title="$title" \
+    yad --notebook --key=$KEY --title="$title" "$tpp"\
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all \
     --window-icon=$DS/images/logo.png \
@@ -216,14 +218,16 @@ play_list() {
         done
         for ad in "$DS/ifs/mods/play"/*; do
             source "${ad}"
+            n=1; addons_count=0
             for item in "${!items[@]}"; do
-                val=$(sed -n $((n+1))p <<< "${out1}" |cut -d "|" -f2)
+                val=$(sed -n $((n))p <<< "${out1}" |cut -d "|" -f2)
                 [ -n "${val}" ] && sed -i "s/${items[$item]}=.*/${items[$item]}=\"$val\"/g" "${file_cfg}"
-                [ "$val" = TRUE ] && count=$((count+1))
+                [ "$val" = TRUE ] && addons_count=$((addons_count+1))
                 let n++
             done
             unset items
         done
+        count=$((count+addons_count))
         for co in "${psets[@]:5:9}"; do
             val="$(cut -d "|" -f${f} <<< "${out2}")"
             [ -n "${val}" ] && tpc_db 9 config "${co}" "${val}"
