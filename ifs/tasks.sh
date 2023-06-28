@@ -6,13 +6,13 @@ act="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg%%:*})"
 
 
 l0="$(gettext "Play"): "
-l1="$(gettext "To Review [firt reminder]:") "
-l2="$(gettext "To Review [second reminder]:") "
-l3="$(gettext "To Review [firt reminder]:") "
-l4="$(gettext "To Review [second reminder]:") "
+l1="[!] $(gettext "To Review:") "
+l2="[!] $(gettext "To Review:") "
+l3="[!] $(gettext "To Review:") "
+l4="[!] $(gettext "To Review:") "
 l5="$(gettext "To Practice:") "
 l6="$(gettext "Back to Practice:") "
-l7="$(gettext "Finalize Review [second reminder]:") "
+l7="[!] $(gettext "Finalize Review:") "
 l8="$(gettext "Resume Practice:") "
 
 chngtpt(){

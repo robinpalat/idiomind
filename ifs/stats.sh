@@ -369,6 +369,7 @@ class MainWin(Gtk.Window):
     def __init__(self):
         Gtk.Window.__init__(self, title = titlew, 
         skip_pager_hint=True, skip_taskbar_hint=True)
+        self.set_icon_from_file("/usr/share/idiomind/images/logo.png")
         self.set_size_request(600, 400)
         self.view = WebKit2.WebView()
         self.view.load_uri("file://" + uri)

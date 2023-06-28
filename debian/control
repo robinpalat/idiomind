@@ -10,8 +10,7 @@ Vcs-Git: https://github.com/robinpalat/idiomind.git
 
 Package: idiomind
 Architecture: all
-Depends: ${misc:Depends}, yad (>=0.39), sox, mplayer, imagemagick, wkhtmltopdf, curl, xdg-utils, xclip, python3, espeak, sqlite3, xsltproc, libsox-fmt-mp3, gnome-screenshot, libnotify-bin
-Suggests: tesseract-ocr
+Depends: ${misc:Depends}, yad (>=0.39), sox, mplayer, imagemagick, wkhtmltopdf, curl, xdg-utils, xclip, python3, espeak, sqlite3, xsltproc, libsox-fmt-mp3, tesseract-ocr, libnotify-bin
 Description: Language learning tool
  Idiomind is a small program aimed to help you learn another language.
  Idiomind is based on shell scripts and YAD (GUI).

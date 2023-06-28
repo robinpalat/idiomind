@@ -542,7 +542,7 @@ class Window():
 	def __init__(self, *args, **kwargs):
 		self._window = Gtk.Window(title = "Idiomind", 
 		skip_pager_hint=True, skip_taskbar_hint=True)
-		# self._window.set_icon_from_file('idiomind')
+		self._window.set_icon_from_file("/usr/share/idiomind/images/logo.png")
 		self._window.connect('destroy', Gtk.main_quit)
 		self._window.set_default_size(750, 470)
 		self._view = Gtk.ScrolledWindow()
@@ -575,7 +575,7 @@ class Window():
 	def __init__(self, *args, **kwargs):
 		self._window = Gtk.Window(title = "Idiomind", 
 		skip_pager_hint=True, skip_taskbar_hint=True)
-		# self._window.set_icon_from_file('idiomind')
+		self._window.set_icon_from_file("/usr/share/idiomind/images/logo.png")
 		self._window.connect('destroy', Gtk.main_quit)
 		self._window.set_default_size(750, 470)
 		self._view = Gtk.ScrolledWindow()
