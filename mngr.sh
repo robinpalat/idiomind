@@ -532,13 +532,14 @@ edit_list_more() {
 
         if grep "$(gettext "Reverse items order")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
-                yad_kill "yad --list --title="
+                yad_kill "yad --editable --list"
+                "$DS/stop.sh" 5
                 edit_list_cmds 2 "${tpc}"
                 cleanups "$DT/edit_list_more"
             fi
         elif grep "$(gettext "Remove all items")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
-                yad_kill "yad --list --title="
+                yad_kill "yad --editable --list"
                 cleanups "$DT/list_output" "$DT/list_input"
                 cleanups "${DC_tlt}/data" "${DC_tlt}/index"
                 tpc_db 6 'sentences'; tpc_db 6 'words'
@@ -551,14 +552,14 @@ edit_list_more() {
 
         elif grep "$(gettext "Show short sentences in word's view")" <<< "${more}"; then
             _war; if [ $? = 0 ]; then
-                yad_kill "yad --list --title="
+                yad_kill "yad --editable --list"
                 edit_list_cmds 4 "${tpc}"
                 cleanups "$DT/edit_list_more"
             fi
         elif grep "$(gettext "Restore backup:")" <<< "${more}"; then
              _war; if [ $? = 0 ]; then
                 cleanups "$DT/list_output" "$DT/list_input"
-                yad_kill "yad --list --title="
+                yad_kill "yad --editable --list"
                 if grep ${dt1} <<< "${more}"; then
                     export line=1
                 elif grep ${dt2} <<< "${more}"; then
@@ -634,7 +635,8 @@ restart_topic() {
   
 	if [ $? = 0 ]; then
 
-		yad_kill "yad --list --title="$(gettext "Edit list")""
+		yad_kill "yad --editable --list"  "yad --notebook"
+		"$DS/stop.sh" 5
 		echo 1 > "${DC_tlt}/stts"
 		tpc_db 6 'reviews'; tpc_db 6 'learnt'; tpc_db 6 'learning'
 		
@@ -686,7 +688,7 @@ delete_topic() {
         cdb "${shrdb}" 4 topics list "${tpc}"
         idiomind tasks
         
-        yad_kill "yad --list " "yad --text-info " \
+        yad_kill "yad --editable --list" "yad --text-info " \
         "yad --form " "yad --notebook "
         "$DS/mngr.sh" mkmn 1 &
     fi
@@ -777,7 +779,7 @@ mark_to_learn_topic() {
     
     if [[ ${3} = 1 ]]; then
         yad_kill "yad --form " "yad --multi-progress " \
-        "yad --list " "yad --text-info " "yad --notebook "
+        "yad --editable --list" "yad --text-info " "yad --notebook "
     fi
     
     date_reviews_count="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
@@ -870,7 +872,7 @@ mark_as_learned_topic() {
     fi
 
     if [[ ${3} = 1 ]]; then
-        yad_kill "yad --form " "yad --list " \
+        yad_kill "yad --form " "yad --editable --list" \
         "yad --text-info " "yad --notebook "
     fi
 

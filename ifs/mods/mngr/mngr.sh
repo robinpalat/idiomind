@@ -59,10 +59,10 @@ function dlg_form_2() {
 
 function edit_list_list() {
     sz=(580 450); [[ ${swind} = TRUE ]] && sz=(480 440)
-    yad --list --title="$(gettext "Edit list")" \
+    yad --editable --list --title="$(gettext "Edit list")" \
     --text="<small>$(gettext "Try double click, right-click and drag and drop.")</small>" \
     --name=Idiomind --class=Idiomind \
-    --editable --separator='' \
+    --separator='' \
     --always-print-result --print-all \
     --window-icon=$DS/images/logo.png \
     --no-headers --center \
