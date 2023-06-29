@@ -80,7 +80,13 @@ while read -r addon; do
     fi
 done < "$DS_a/menu_list"
 
+if [ -f $DT/tasks_init ]; then  
+echo "$(gettext "Getting started with Idiomind")" > "$f"
+cleanups $DT/tasks_init
+fi
+
 [ -f "$f" ] && mv -f "$f" "$DT/tasks"
+
 echo -e "\ttasks ok\n"
 
 exit 0

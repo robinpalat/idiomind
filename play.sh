@@ -99,7 +99,7 @@ play_list() {
     title="$(gettext "Play")"
     [ ${stts} -ge 1 ] && [ -n "${tpc}" ] && title="$(gettext "Play") - ${tpc}"
     if [ "$(< $DT/playlck)" != 0 ]; then
-        tpp="--text=<small><b>   $(gettext "Playing:")</b> \"$(sed -n 1p "$DT/playlck")\"</small>"
+        tpp="--text=<small>  \"$(sed -n 1p "$DT/playlck")\"</small>"
         title="$(gettext "Play")"
         btn1="!media-playback-stop!$(gettext "Stop"):2"
         title="$(gettext "Playing...")"

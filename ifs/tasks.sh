@@ -28,7 +28,12 @@ modmenu() {
     rm -f "$DT/tasks"; echo "$tpc" > "$DC_s/tpc"; fi
 }
 
-if [ "${act}: " = "$l0" ]; then
+
+if [ "${act}" = "$(gettext "Getting started with Idiomind")" ]; then
+
+ xdg-open 'https://idiomind.sourceforge.io/help.html'
+
+elif [ "${act}: " = "$l0" ]; then
     $DS/stop.sh 2 && sleep 1
     $DS/bcle.sh &
 elif [ "${act}: " = "$l1" ]; then

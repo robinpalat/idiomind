@@ -335,7 +335,9 @@ function tpc_view() {
 
 function panelini() {
 	
-    cat "$DT/tasks" | yad --title="Idiomind" --list \
+	(if [ -s "$DT/tasks"  ]; then cat "$DT/tasks"; \
+	else echo "$(gettext "no tasks")"; fi) \
+	| yad --title="Idiomind" --list \
     --name=Idiomind --class=Idiomind --dclick-action="" \
     --separator="" --expander="$(gettext "Tasks")" --scroll \
     --select-action="/usr/share/idiomind/ifs/tasks.sh" --grid-lines=hor \
@@ -343,12 +345,10 @@ function panelini() {
     --window-icon=$DS/images/logo.png \
     --expand-column=1 --no-click --no-headers \
     --on-top --text-align=left --align=left --buttons-layout=spread \
-    ${geometry} --borders=5  --column=Name:TEXT --fixed --width=20 --height=20 \
+    ${geometry} --borders=6  --column=Name:TEXT --fixed --width=20 --height=20 \
     --button=""!'list-add'!"$(gettext "Add Note, which can be a word or a sentence")":"$DS/add.sh 'new_items'" \
     --button=""!'go-home'!"$(gettext "My Active Topic")":"idiomind 'topic'" \
     --button=""!'gtk-index'!"$(gettext "My topics")":"$DS/chng.sh"  
 }
-
-
 
 

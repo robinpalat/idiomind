@@ -673,6 +673,7 @@ first_run() {
     source /usr/share/idiomind/default/c.conf
     NOTE3="$(gettext "To start adding notes you need to have a Topic.\nCreate one using the "New" button...")"
 
+    
     if [[ ${2} = topics ]]; then
         "$DS/chng.sh" "$NOTE3"; sleep 1
         source /usr/share/idiomind/default/c.conf
@@ -682,10 +683,12 @@ first_run() {
         fi
     elif [[ "${2}" = 'TRUE' ]]; then
         echo "-- done"
-        touch "$DC_s/topics_first_run" "$DC_s/recommended_scripts_first_run"
+        touch "$DC_s/topics_first_run" "$DC_s/recommended_scripts_first_run" "$DT/tasks_init"
+
     elif [[ "${2}" = 'FALSE' ]]; then
         echo "-- done"
-        touch "$DC_s/topics_first_run" "$DC_s/Resources_first_run"
+        touch "$DC_s/topics_first_run" "$DC_s/Resources_first_run" "$DT/tasks_init"
+
     fi
     return
 }

@@ -133,6 +133,7 @@ elif [ $ret -eq 0 ]; then
     fi
     DM_t="$HOME/.idiomind/topics"
     DC_s="$HOME/.config/idiomind"
+    DT=/tmp/.idiomind-$USER
 
     [ ! -d  "$DC_s" ] && mkdir -p "$DC_s/addons"
     touch "$DC_s/tpc"
@@ -151,12 +152,13 @@ elif [ $ret -eq 0 ]; then
     set_lang "${tlng}"
     
     if ! grep -q "${slng}" <<<"$(sqlite3 ${tlngdb} "PRAGMA table_info(Words);")"; then
-        sqlite3 ${tlngdb} "alter table Words add column '${slng}' TEXT;"
+        sqlite3 ${tlngdb} "alter table Words add column '${slng}' TEXT;"es
     fi
 
     if echo "$target" |grep -oE 'Chinese|Japanese|Russian'; then _info; fi
     
     /usr/share/idiomind/ifs/tls.sh first_run "$iniset"
+    
     export u=1
     idiomind -s
 fi
