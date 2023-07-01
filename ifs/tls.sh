@@ -428,7 +428,7 @@ addFiles() {
 }
 
 attatchments() {
-    sz=(580 450); [[ ${swind} = TRUE ]] && sz=(480 440)
+    sz=(580 450)
     source "$DS/ifs/mods/cmns.sh"
     mkindex() {
 rename 's/_/ /g' "${DM_tlt}/files"/*
@@ -671,7 +671,7 @@ promp_topic_info() {
 
 first_run() {
     source /usr/share/idiomind/default/c.conf
-    NOTE3="$(gettext "To start adding notes you need to have a Topic.\nCreate one using the "New" button...")"
+    NOTE3="$(gettext "To start adding notes, you need to have a Topic.\nCreate one using the \"New\" button.")"
 
     
     if [[ ${2} = topics ]]; then
@@ -738,7 +738,7 @@ set_image() {
 
 function transl_batch() {
     source /usr/share/idiomind/default/c.conf
-    sz=(580 450); [[ ${swind} = TRUE ]] && sz=(480 440)
+    sz=(580 450)
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
     if [ -e "$DT/transl_batch_lk" ]; then

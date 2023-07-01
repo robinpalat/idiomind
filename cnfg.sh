@@ -75,7 +75,7 @@ set_lang() {
 
 config_dlg() {
     sz=(400 450)
-    show_icon=0; kill_icon=0
+    kill_icon=0
     source "$DS/default/sets.cfg"
     
     if [ $(cdb "${cfgdb}" 5 opts |wc -l) != 12 ]; then
@@ -91,10 +91,10 @@ config_dlg() {
     lst="$intrf"$(sed "s/\!$intrf//g" <<<"!Default!en!es!fr!it!pt")""
     if [ "$ntosd" != TRUE ]; then audio=TRUE; fi
     if [ "$trans" != TRUE ]; then ttrgt=FALSE; fi
-    emrk='!'
+    e='!'
     for val in "${!tlangs[@]}"; do
         declare clocal="$(gettext "${val}")"
-        list1="${list1}${emrk}${clocal}"
+        list1="${list1}${e}${clocal}"
     done
     list2=$(for i in "${!slangs[@]}"; do echo -n "!$i"; done)
 
@@ -107,7 +107,7 @@ config_dlg() {
     --field="$(gettext "Download audio pronunciation")":CHK "$dlaud" \
     --field="$(gettext "Detect language of source text (inaccurate)")":CHK "$ttrgt" \
     --field="$(gettext "Start in the system tray instead of the widget")":CHK "$itray" \
-    --field="$(gettext "Smaller windows")":CHK "$swind" \
+    --field="$(gettext "Show notifications when notes are added")":CHK "$swind" \
     --field="$(gettext "Run at startup")":CHK "$stsks" \
     --field="$(gettext "Interface language")":CB "$lst" \
     --field="$(gettext "I'm learning")":CB "$(gettext "${tlng}")$list1" \
@@ -126,7 +126,7 @@ config_dlg() {
     --width=${sz[0]} --height=${sz[1]} \
     --borders=9 --tab-borders=0 \
     --button="$(gettext "     About     ")"!gtk-about:"$DS/ifs/tls.sh 'about'" \
-    --button="$(gettext "Save")"!gtk-apply:0 \
+    --button="$(gettext "Save")"!gtk-save:0 \
     --button="$(gettext "Close")"!gtk-close:1
     ret=$?
     
@@ -145,7 +145,17 @@ config_dlg() {
             dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Idiomind")"
             if [ $? -eq 0 ]; then 
                 cdb "${cfgdb}" 3 opts intrf "${val}"
-                kill_icon=1; show_icon=1; export intrf=$val
+                
+                 if pgrep -f "$DS/ifs/tls.sh itray"; then
+					kill -9 $(cat $DT/tray.pid)
+					kill -9 $(pgrep -f "$DS/ifs/tls.sh itray")
+					rm -f "$DT/tray.pid"
+				fi
+				if  pgrep -f "yad --title="Idiomind" --list"; then
+           			kill -9 $(pgrep -f "yad --title="Idiomind" --list")
+           		fi
+
+                export intrf=$val
                 idiomind tasks &
             else
                 cdb "${cfgdb}" 3 opts intrf "${intrf}"
@@ -154,10 +164,11 @@ config_dlg() {
         
         #Icon tray
         if [[ "$(cdb ${cfgdb} 1 opts itray)"  = TRUE ]] && [[ ! -f "$DT/tray.pid" ]]; then
-            if lsb_release -i -c | grep juno; then
+			show_icon=1
+            if ! echo $DESKTOP_SESSION  | grep -E "xfce|xfce"; then # TODO
                 msg "$(gettext "Sorry, your System not support icon tray")" dialog-warning
+                show_icon=0; kill_icon=1
             fi
-            show_icon=1
         elif [[ "$(cdb ${cfgdb} 1 opts itray)"  = FALSE ]] && [[ -f "$DT/tray.pid" ]]; then
             kill_icon=1
         fi
@@ -190,10 +201,6 @@ config_dlg() {
             confirm "$info2$info3" dialog-question ${tlng}
             if [ $? -eq 0 ]; then 
                 set_lang ${tlng}; 
-                # icon tray change
-                if [ "$(cdb ${cfgdb} 1 opts itray)"  = TRUE ]; then
-                    kill_icon=1; show_icon=1
-                fi
             fi
         fi
         

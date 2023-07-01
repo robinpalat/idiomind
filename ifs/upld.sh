@@ -6,7 +6,7 @@ source $DS/ifs/cmns.sh
 source $DS/default/sets.cfg
 lgt=${tlangs[$tlng]}
 lgs=${slangs[$slng]}
-sz=(450 450); [[ ${swind} = TRUE ]] && sz=(410 410)
+sz=(450 450)
 
 function dwld() {
     err() {

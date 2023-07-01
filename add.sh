@@ -10,6 +10,7 @@ include "$DS/ifs/mods/add"
 trans="$(cdb "${cfgdb}" 1 opts trans)"
 ttrgt="$(cdb "${cfgdb}" 1 opts ttrgt)"
 dlaud="$(cdb "${cfgdb}" 1 opts dlaud)"
+notif="$(cdb "${cfgdb}" 1 opts swind)"
 [ -z "$trans" ] && trans='FALSE'
 export ttrgt trans lgt lgs
 info3="$(gettext "This note was not added")"
@@ -152,7 +153,9 @@ function new_sentence() {
         cleanups "$DT_r"; exit 1
     else
     
-       notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000 &
+       if [ $notif = TRUE ]; then 
+	       notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000 &
+       fi
        if [ -e "$DT_r/__opts__" ]; then
             opts="$(< "$DT_r/__opts__")"
             export note="$(clean_2 "$(cut -d "|" -f1 <<< "${opts}")")"
@@ -225,7 +228,9 @@ function new_word() {
             export mark="$(clean_2 "$(cut -d "|" -f3 <<< "${opts}")")"
         fi
         export type; index ${type}
-        notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
+        if [ $notif = TRUE ]; then 
+            notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000 &
+        fi
         if [ -e "$DT_r/img.jpg" ]; then
             if [ -e "${DM_tls}/images/${trgt,,}-1.jpg" ]; then
                 n=$(ls "${DM_tls}/images/${trgt,,}-"*.jpg |wc -l); n=$(($n+1))
@@ -722,8 +727,10 @@ function process() {
         adds=$(cat "$DT_r/adds" "$DT_r/addw" |sed '/^$/d' |wc -l)
         
         if [[ ${adds} -ge 1 ]]; then
-            notify-send -i idiomind "${tpe}" \
+            if [ $notif = TRUE ]; then 
+				notify-send -i idiomind "${tpe}" \
             "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
+            fi
         fi
         
         [ -n "$log" ] && echo -e "${info3}:\n$log\n\n" >> "${DC_tlt}/note.inf"

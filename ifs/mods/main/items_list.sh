@@ -1,7 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-sz=(530 560 460); [[ ${swind} = TRUE ]] && sz=(450 460 380)
 
 function vwr() {
     if [ ${1} = 1 ]; then 
@@ -148,7 +147,7 @@ function notebook_1() {
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 1" --grid-lines=hor \
     --print-column=1 --expand-column=1 --no-headers \
-    --ellipsize=end --wrap-width=${sz[2]} --ellipsize-cols=2 \
+    --ellipsize=end --wrap-width=460 --ellipsize-cols=2 \
     --search-column=1 --regex-search --hide-column=3 --tooltip-column=3 \
     --column=Name:TEXT \
     --column=Learned:CHK --column=@back@:TIP > "$cnf1" &
@@ -156,7 +155,7 @@ function notebook_1() {
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2"  \
     --expand-column=0 --no-headers \
-    --ellipsize=end --wrap-width=${sz[2]} --ellipsize-cols=1 \
+    --ellipsize=end --wrap-width=460 --ellipsize-cols=1 \
     --column=Name:TEXT &
     yad --text-info --tabnum=3 --window-icon=idiomind \
     --plug=$KEY \
@@ -188,11 +187,12 @@ function notebook_1() {
     --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Manage")  " \
-    --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=0 \
+    --width=530 --height=560 --borders=5 --tab-borders=0 \
     --button="$(gettext "Play")":"$cmd_play" \
     --button="$(gettext "Practice")":3 \
     --button="$(gettext "Close")"!'window-close':2
 } >/dev/null 2>&1
+
 
 function notebook_2() {
 	cmd_play="$DS/play.sh play_list"
@@ -244,7 +244,7 @@ function notebook_2() {
     --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Manage")  " \
-    --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=0 \
+    --width=530 --height=560 --borders=5 --tab-borders=0 \
     --button="$(gettext "Close")"!'window-close':2
   
     
@@ -297,7 +297,7 @@ function notebook_3() {
     --tab="  $(gettext "Learnt") ($cfg1) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Manage")  " \
-    --width=${sz[0]} --height=${sz[1]} --borders=5 --tab-borders=0 \
+    --width=530 --height=560 --borders=5 --tab-borders=0 \
     --button="$(gettext "Play")":"$cmd_play" \
     --button="$(gettext "Practice")":3 \
     --button="$(gettext "Close")"!'window-close':2

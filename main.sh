@@ -198,8 +198,6 @@ $level \n$(gettext "Language:") $(gettext "$tlng")\n$(gettext "Translation:") $(
         done < <(sed -n 2p "${file}"|sed 's/},/\n/g'|tr -d '\\'|sed '/^$/d')
     }
 
-    export swind=$(cdb ${cfgdb} 1 opts swind) 
-    sz=(580 560 540); [[ ${swind} = TRUE ]] && sz=(480 460 440)
     _lst | tpc_view
     ret=$?
         if [ $ret -eq 0 ]; then
@@ -632,7 +630,6 @@ ipanel() {
     if [ -n "$geometry" ]; then
     geometry="--geometry=$geometry"
     else geometry="--mouse"; fi
-    export swind=$(cdb ${cfgdb} 1 opts swind)
     (panelini; if [ $? != 0 ] && ! pgrep -f "$DS/ifs/tls.sh itray"; then \
     "$DS/stop.sh" 1 & fi; exit ) & set_geom
 }
@@ -655,7 +652,6 @@ _start() {
     ( if [[ "${cu}" = TRUE ]]; then
     "$DS/ifs/tls.sh" a_check_updates & fi ) &
 
-    export swind=$(cdb ${cfgdb} 1 opts swind) 
     if [[ $(cdb ${cfgdb} 1 opts itray) = TRUE ]]; then
         if ! pgrep -f "$DS/ifs/tls.sh itray"; then
             $DS/ifs/tls.sh itray &
@@ -663,7 +659,7 @@ _start() {
             idiomind topic
         fi
     else
-        if ! pgrep -f "yad --fixed --form --title=Idiomind"; then
+        if ! pgrep -f "yad --title="Idiomind" --list"; then
             ipanel &
         else
             idiomind topic

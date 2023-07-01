@@ -1,6 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+
 TEXTDOMAIN=idiomind
 TEXTDOMAINDIR=/usr/share/locale
 export TEXTDOMAINDIR TEXTDOMAIN
@@ -77,8 +78,8 @@ function set_lang() {
         echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${tlngdb}
     fi
     
-    sqlite3 ${cfgdb} "update lang set tlng='${tlng}';"
-    sqlite3 ${cfgdb} "update lang set slng='${slng}';"
+    sqlite3 ${cfgdb} "update lang set tlng=\"${tlng}\";"
+    sqlite3 ${cfgdb} "update lang set slng=\"${slng}\";"
     
     shrdb="$DM_t/$tlng/.share/data/config"
     if [ ! -f "${shrdb}" ]; then
@@ -142,7 +143,7 @@ elif [ $ret -eq 0 ]; then
     if [ ! -f "${cfgdb}" ]; then
         "/usr/share/idiomind/ifs/mkdb.sh" config "$iniset"
     fi
-
+    
     for val in "${lt[@]}"; do
         if [[ "${target}" = $(gettext ${val}) ]]; then
             export tlng="$val"
@@ -152,9 +153,9 @@ elif [ $ret -eq 0 ]; then
     set_lang "${tlng}"
     
     if ! grep -q "${slng}" <<<"$(sqlite3 ${tlngdb} "PRAGMA table_info(Words);")"; then
-        sqlite3 ${tlngdb} "alter table Words add column '${slng}' TEXT;"es
+        sqlite3 ${tlngdb} "alter table Words add column '${slng}' TEXT;"
     fi
-
+    
     if echo "$target" |grep -oE 'Chinese|Japanese|Russian'; then _info; fi
     
     /usr/share/idiomind/ifs/tls.sh first_run "$iniset"
