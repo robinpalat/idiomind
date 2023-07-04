@@ -23,6 +23,14 @@ l4="[!] $(gettext "To Review:") "
 l8="$(gettext "Resume Practice:") "
 f="$DT/tasks.tmp"; cleanups "$f" "$DT/tasks"
 
+
+if [ -f $DT/tasks_init ]; then
+	echo "$(gettext "Getting started with Idiomind")" > "$f"
+	if [ $(stat -c %Y $DT/tasks_init) -lt $(date -d '3 days ago' +%s) ]; then
+		cleanups $DT/tasks_init
+	fi
+fi
+
 #current topic
 if [ -n "${tpc}" ]; then
 	if [[ -z "$(sqlite3 ${shrdb} "select list from T10 where list is '${tpc}';")" ]]; then
@@ -80,10 +88,6 @@ while read -r addon; do
     fi
 done < "$DS_a/menu_list"
 
-if [ -f $DT/tasks_init ]; then  
-echo "$(gettext "Getting started with Idiomind")" > "$f"
-cleanups $DT/tasks_init
-fi
 
 [ -f "$f" ] && mv -f "$f" "$DT/tasks"
 

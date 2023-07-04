@@ -662,9 +662,9 @@ function dlg_form_1() {
     --button=!'edit-paste'!"$(gettext "Clipboard watcher")":5 \
     --button=!'edit-select-all'!"$(gettext "Optical character recognition")":1 \
     --button=!'image-x-generic'!"$(gettext "Screen clipping")":3 \
-    --button=!'microphone-sensivity-high'!"$(gettext "Add an audio file")":2 \
-    --button=!'edit'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
-    --button=!'add'!"$(gettext "Add")":0
+    --button=!'audio-x-generic'!"$(gettext "Add an audio file")":2 \
+    --button=!'gtk-edit'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
+    --button=!'gtk-save'!"$(gettext "Add")":0
 }
 
 
@@ -684,9 +684,9 @@ function dlg_form_2() {
     --button=!'edit-paste'!"$(gettext "Clipboard watcher")":5 \
     --button=!'edit-select-all'!"$(gettext "Optical character recognition")":1 \
     --button=!'image-x-generic'!"$(gettext "Screen clipping")":3 \
-    --button=!'microphone-sensivity-high'!"$(gettext "Add an audio file")":2 \
-    --button=!'edit'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
-    --button=!'add'!"$(gettext "Add")":0
+    --button=!'audio-x-generic'!"$(gettext "Add an audio file")":2 \
+    --button=!'gtk-edit'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
+    --button=!'gtk-save'!"$(gettext "Add")":0
 }
 
 function dlg_checklist_3() {
@@ -719,8 +719,8 @@ function dlg_checklist_3() {
     --skip-taskbar --orient=vert --window-icon=$DS/images/logo.png --center \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --width=${sz[0]} --height=${sz[1]} --borders=5 --splitter=${sz[2]} \
-    --button=!'edit'!"$(gettext "Edit")":2 \
-    --button=!'add'!"$(gettext "Add")":0
+    --button=!'gtk-edit'!"$(gettext "Edit")":2 \
+    --button=!'gtk-save'!"$(gettext "Add")":0
 }
 
 function dlg_checklist_1() {

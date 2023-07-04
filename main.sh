@@ -170,6 +170,7 @@ function new_session() {
     # make index
     "$DS/mngr.sh" mkmn 0 &
     echo -e "\ttopics ok\n"
+    echo 0 > "$DT/playlck"
     
     # statistics
     ( source "$DS/ifs/stats.sh"; sleep 5; export val1=0 val2=0; pre_comp ) &

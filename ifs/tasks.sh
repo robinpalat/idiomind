@@ -4,7 +4,6 @@ arg="$1"
 tpt="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg#*:})"
 act="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg%%:*})"
 
-
 l0="$(gettext "Play"): "
 l1="[!] $(gettext "To Review:") "
 l2="[!] $(gettext "To Review:") "
@@ -60,11 +59,10 @@ elif [ "${act}: " = "$l8" ]; then
 else
     while read -r addon; do
         if [ -f "$DC_a/$addon${tlng}_tsk" ]; then
-            pinitm=$(grep -o "fixed"=\"[^\"]* \
-            "$DC_a/Podcasts_tasks.cfg" |grep -o '[^"]*$')
+            p=$(grep -o "fixed"=\"[^\"]* "$DC_a/Podcasts_tasks.cfg" |grep -o '[^"]*$')
             if grep -o "$arg" "$DC_a/$addon${tlng}_tsk"; then
                 "$DS/addons/$addon/cnfg.sh" tasks "${1}" &
-                [[ $pinitm != TRUE ]] && modmenu "$arg"
+                [[ $p != TRUE ]] && modmenu "$arg"
                 break
             fi
         fi
