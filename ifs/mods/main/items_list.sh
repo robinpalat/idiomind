@@ -193,7 +193,7 @@ function notebook_1() {
     --button="$(gettext "Close")"!'window-close':2
 } >/dev/null 2>&1
 
-
+# TODO
 function notebook_2() {
 	cmd_play="$DS/play.sh play_list"
     cmd_mark="'$DS/mngr.sh' 'mark_to_learn' "\"${tpc}\"" 1"

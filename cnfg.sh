@@ -102,11 +102,11 @@ config_dlg() {
     yad --plug=$KEY --form --tabnum=1 \
     --align=right --scroll \
     --separator='|' --always-print-result --print-all \
-    --field="$(gettext "Use color to highlight grammar")":CHK "$gramr" \
+    --field="$(gettext "Use color to highlight grammar in sentences")":CHK "$gramr" \
     --field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
     --field="$(gettext "Download audio pronunciation")":CHK "$dlaud" \
     --field="$(gettext "Detect language of source text (inaccurate)")":CHK "$ttrgt" \
-    --field="$(gettext "Start in the system tray instead of the widget")":CHK "$itray" \
+    --field="$(gettext "Use a system tray icon instead of the start panel")":CHK "$itray" \
     --field="$(gettext "Show notifications when notes are added")":CHK "$swind" \
     --field="$(gettext "Run at startup")":CHK "$stsks" \
     --field="$(gettext "Interface language")":CB "$lst" \
