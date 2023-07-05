@@ -145,6 +145,8 @@ config_dlg() {
             dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Idiomind")"
             if [ $? -eq 0 ]; then 
                 cdb "${cfgdb}" 3 opts intrf "${val}"
+                export intrf=$val
+                idiomind tasks wait
                 
                  if pgrep -f "$DS/ifs/tls.sh itray"; then
 					kill -9 $(cat $DT/tray.pid)
@@ -154,9 +156,6 @@ config_dlg() {
 				if  pgrep -f "yad --title="Idiomind" --list"; then
            			kill -9 $(pgrep -f "yad --title="Idiomind" --list")
            		fi
-
-                export intrf=$val
-                idiomind tasks &
             else
                 cdb "${cfgdb}" 3 opts intrf "${intrf}"
             fi
@@ -226,9 +225,14 @@ config_dlg() {
         if [ $show_icon = 1 ]; then
 			kill -9 $(pgrep -f "yad --title="Idiomind" --list")
             $DS/ifs/tls.sh itray &
+            ( sleep 4; if ! pgrep -f "$DS/ifs/tls.sh itray"; then
+				msg "$(gettext "Sorry, your System not support icon tray")" dialog-warning
+				if ! ps -A |pgrep -f "yad --title=Idiomind --list"; then
+				idiomind panel; fi
+			fi )
         else 
 			if ! ps -A |pgrep -f "yad --title=Idiomind --list"; then
-			idiomind; fi
+			idiomind panel; fi
         fi
         
     fi

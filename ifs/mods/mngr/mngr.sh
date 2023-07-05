@@ -72,7 +72,7 @@ function edit_list_list() {
     --button="$(gettext "Backups")":"$DS/mngr.sh edit_list_more" \
     --button="$(gettext "Translate")":2 \
     --button="$(gettext "Save")!gtk-save":0 \
-    --button="$(gettext "Cancel")":1
+    --button="$(gettext "Close")":1
 }
 
 function progr_3() {

@@ -158,6 +158,7 @@ function notebook_1() {
     --ellipsize=end --wrap-width=460 --ellipsize-cols=1 \
     --column=Name:TEXT &
     yad --text-info --tabnum=3 --window-icon=idiomind \
+    --text="<small>$(gettext "Enter your text here, use it as a notice or scratch board")</small>" \
     --plug=$KEY \
     --always-print-result \
     --show-uri --uri-color="#6591AA" \
@@ -218,6 +219,7 @@ function notebook_2() {
     --column=Name:TEXT &
     yad --text-info --tabnum=3 --window-icon=idiomind \
     --plug=$KEY \
+    --text="<small>$(gettext "Enter your text here, use it as a notice or scratch board")</small>" \
     --show-uri --uri-color="#6591AA" \
     --filename="${note}" --editable --wrap \
     --fontname='vendana 11' --margins=14 > "$cnf3" &
@@ -271,6 +273,7 @@ function notebook_3() {
     --search-column=1 --regex-search \
     --column=Name:TEXT &
     yad --text-info --tabnum=2 --window-icon=idiomind \
+    --text="<small>$(gettext "Enter your text here, use it as a notice or scratch board")</small>" \
     --plug=$KEY \
     --show-uri --uri-color="#6591AA" \
     --filename="${note}" --editable --wrap \

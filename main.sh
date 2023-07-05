@@ -449,9 +449,11 @@ PY
         }
         
        
-    if [ -f "${DC_tlt}/tpc-journal" ]; then exit 1; else readd; fi
+    if [ -f "${DC_tlt}/tpc-journal" ]; then 
+		exit 1
+	else readd; fi
     
-    if ((stts==2)); then
+    if ((stts==2)); then # If mastered learning topic
     
     notebook_3; ret=$?
     
@@ -459,10 +461,9 @@ PY
             
         if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
        
-    elif ((stts>=1 && stts<=10)); then
+    elif ((stts>=1 && stts<=10)); then # If standar status topic
 
-        # empty topic
-        if [ ${cfg0} -lt 1 ]; then
+        if [ ${cfg0} -lt 1 ]; then  # empty topic
             echo "Empty topic N1 / ${cfg0} / ${cfg1} / ${cfg2}"
             
             notebook_1; ret=$?
@@ -471,9 +472,9 @@ PY
             
             if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
 
-        elif [ ${cfg1} -ge 1 ] || [ ${cfg1} -gt 0 ] && [ ${cfg0} -gt 10 ]; then
+        elif [ ${cfg1} -gt 0 ]; then # if have content to learn
        
-            if echo "$stts" |grep -E '3|4|7|8|9|10'; then
+            if echo "$stts" |grep -E '3|4|7|8|9|10'; then # If there is new content to learn, even if the topic has already been learned or is waiting for review.
             
                 calculate_review "${tpc}"; 
 
@@ -495,6 +496,7 @@ PY
                 
                 pres="<u><big><b>$(gettext "Topic learnt")</b></big></u>  <sup>$(gettext "* however you have new notes") ($cfg1).</sup>\\n\\n$(gettext "Time set to review:") $days_to_review $(gettext "days")"
                 echo "N2 / ${cfg0} / ${cfg1} / ${cfg2}"
+                
                 notebook_2
 
             else
@@ -508,7 +510,8 @@ PY
                 
                 if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
 
-        elif [ ${cfg1} -eq 0 ] && [ ${cfg0} -ge 10 ]; then
+        elif [ ${cfg1} -eq 0 ] && [ ${cfg0} -ge 10 ]; then # if not content to learn
+        
         
             if  ! echo "$stts" |grep -E '3|4|7|8|9|10'; then
                 "$DS/mngr.sh" mark_as_learned "${tpc}" 0
@@ -531,11 +534,9 @@ PY
                     oclean & return 1
                 fi 
             fi
-			if echo "$stts" |grep -E '2'; then
-				pres="<u><big><b>$(gettext "Mastered topic")</b></big></u>\\n\\n$(gettext "The user has attained a level of mastery in the topic.")"
-			else
-				pres="<u><big><b>$(gettext "Topic learnt")</b></big></u>\\n\\n$(gettext "Time set to review:") $days_to_review $(gettext "days")"
-            fi
+            
+			pres="<u><big><b>$(gettext "Topic learnt")</b></big></u>\\n\\n$(gettext "Time set to review:") $days_to_review $(gettext "days")"
+            
             echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
             
             notebook_2; ret=$?
@@ -656,14 +657,14 @@ _start() {
     if [[ $(cdb ${cfgdb} 1 opts itray) = TRUE ]]; then
         if ! pgrep -f "$DS/ifs/tls.sh itray"; then
             $DS/ifs/tls.sh itray &
-        else
-            idiomind topic
+             ( sleep 4; if ! pgrep -f "$DS/ifs/tls.sh itray"; then
+				msg "$(gettext "Sorry, your System not support icon tray")" dialog-warning
+				idiomind panel
+			 fi )
         fi
     else
         if ! pgrep -f "yad --title="Idiomind" --list"; then
-            ipanel &
-        else
-            idiomind topic
+            idiomind panel &
         fi
     fi
 }
@@ -686,8 +687,6 @@ case "$1" in
    "$DS/add.sh" new_items "${dir}" 2 "${2}" ;;
     add)
     "$DS/add.sh" new_item '__cmd__' "${@}" ;;
-    feeds)
-    "$DS/mngr.sh" edit_feeds "${tpc}" ;;
     tasks)
     "$DS/ifs/mods/start/update_tasks.sh" ;;
     panel)
