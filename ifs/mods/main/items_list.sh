@@ -323,8 +323,8 @@ function tpc_view() {
     yad --list --title="Idiomind" \
     --text="${itxt}" \
     --name=Idiomind --class=Idiomind \
-    --no-click --print-column=0 --hide-column=2 --tooltip-column=2 \
-    --ellipsize=end --wrap-width=420 --ellipsize-cols=0 \
+    --no-click --print-column=0 \
+    --wrap-width=420 --ellipsize-cols=0 \
     --dclick-action=":" \
     --window-icon=$DS/images/logo.png \
     --hide-column=2 --tooltip-column=2 \
@@ -348,7 +348,7 @@ function panelini() {
     --window-icon=$DS/images/logo.png \
     --expand-column=1 --no-click --no-headers \
     --on-top --text-align=left --align=left --buttons-layout=spread \
-    ${geometry} --borders=6  --column=Name:TEXT --fixed --width=20 --height=20 \
+    ${geometry} --borders=2  --column=Name:TEXT --fixed --width=20 --height=20 \
     --button=""!'list-add'!"$(gettext "Add Note, which can be a word or a sentence")":"$DS/add.sh 'new_items'" \
     --button=""!'go-home'!"$(gettext "My Active Topic")":"idiomind 'topic'" \
     --button=""!'gtk-index'!"$(gettext "My topics")":"$DS/chng.sh"  
