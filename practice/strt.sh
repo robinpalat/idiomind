@@ -162,14 +162,14 @@ function practice_a() {
             trgt="$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")"
         fi
         trgt_f_c=$((38-${#trgt}))
-        trgt_f_a=$((25-${#trgt}))
+        trgt_f_a=$((18-${#trgt}))
         srce_f_a=$((38-${#srce}))
         [ ${trgt_f_c} -lt 12 ] && trgt_f_c=12
         [ ${trgt_f_a} -lt 12 ] && trgt_f_a=12
         [ ${srce_f_a} -lt 12 ] && srce_f_a=12
-        question="\n<span font_desc='Arial Black ${trgt_f_c}'>${trgt}</span>"
-        answer1="\n<span font_desc='Arial ${trgt_f_a}'>${trgt}</span>"
-        answer2="<span font_desc='Arial Black ${srce_f_a}'><i>${srce}</i></span>"
+        question="\n<span font_desc='Arial Bold ${trgt_f_c}'>${trgt}</span>"
+        answer1="\n<span font_desc='Arial Bold ${trgt_f_a}'>${trgt}</span>\n"
+        answer2="<span font_desc='Arial ${srce_f_a}'><i>${srce}</i></span>"
     }
 
     question() {
@@ -862,10 +862,10 @@ function practices() {
             msg "$(gettext "There are not enough items to practice") \n" \
             dialog-information " " "$(gettext "OK")"
         elif grep -o -E 'a|b|c|d' <<< ${pr}; then
-            msg "$(gettext "There are no words in the \"Learning\" list, but there are still sentences"). \n" \
+            msg "$(gettext "There are no words in the \"Learning\" list"). \n" \
             dialog-information " " "$(gettext "OK")"
         elif grep -o 'e' <<< ${pr}; then
-            msg "$(gettext "There are no sentences in the \"Learning\" list, but there are still words"). \n" \
+            msg "$(gettext "There are no sentences in the \"Learning\" list"). \n" \
             dialog-information " " "$(gettext "OK")"
         fi
         strt 0 & return
