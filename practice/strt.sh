@@ -176,7 +176,7 @@ function practice_a() {
         yad --form --title=" " \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
-        --width=400 --height=255 --borders=8 \
+        --width=405 --height=260 --borders=16 \
         --field="\n$question":lbl "" \
         --field="":lbl "" \
         --button="!window-close":1 \
@@ -187,7 +187,7 @@ function practice_a() {
         yad --form --title=" " \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
-        --width=400 --height=255 --borders=8 \
+        --width=405 --height=260 --borders=16 \
         --field="$answer1":lbl "" \
         --field="":lbl "" \
         --field="$answer2":lbl "" \
@@ -271,10 +271,10 @@ function practice_b(){
         dlg="$(ofonts | yad --list --title=" " \
         --text="${question}" \
         --separator=" " --always-print-result \
-        --skip-taskbar --text-align=center --center --on-top \
+        --skip-taskbar --no-scroll --text-align=center --center --on-top \
         --buttons-layout=edge --undecorated \
         --no-headers \
-        --width=400 --height=300 --borders=8 \
+        --width=400 --height=320 --borders=16 \
         --column=Option \
         --button="!window-close":1 \
         --button="!media-seek-forward":0)"
@@ -355,16 +355,16 @@ function practice_c() {
         (sleep 0.5 && "$DS/play.sh" play_word "${trgt}" ${cdid}) &
 
         yad --form --title=" " \
-        --text="<small>$(gettext "Do you recognize this word?")</small>\n\n$lquestion" \
+        --text="<small><small>$(gettext "Do you recognize this word?")</small></small>\n\n$lquestion" \
         --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --image-on-top --undecorated \
-        --width=390 --height=220 --borders=8 \
-        --field="!$DS/images/listen.png":BTN "$cmd_play" \
+        --width=400 --height=260 --borders=16 \
+        --field="!audio-volume-high":BTN "$cmd_play" \
         --button="!window-close":1 \
-        --button="  $(gettext "No")  !$img_no":3 \
+        --button="       $(gettext "No")       !$img_no":3 \
         --button="  $(gettext "Yes")  !$img_yes":2
     }
-"$(gettext "Do you recognize this word?")"
+
 
     p=1
     while read trgt; do
@@ -421,8 +421,8 @@ function practice_d() {
             srce=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
         fi
         [ ! -e "$img" ] && img="$DS/images/imgmiss.jpg"
-        cuest="<span font_desc='Arial Bold 12'> ${trgt} </span>"
-        aswer="<span font_desc='Arial Bold 12'> ${trgt}</span> <i>/ ${srce}</i> "
+        cuest="<span font_desc='Arial Bold 12'> ${trgt} </span>\n"
+        aswer="<span font_desc='Arial Bold 12'> ${trgt}</span> <i>/ ${srce}</i> \n"
     }
 
     question() {
@@ -431,7 +431,7 @@ function practice_d() {
         --skip-taskbar --text-align=center \
         --skip-taskbar --align=center --center --on-top \
         --image-on-top --undecorated --buttons-layout=spread \
-        --width=418 --height=360 --borders=8 \
+        --width=418 --height=370 --borders=16 \
         --field="$cuest":lbl "" \
         --field="":lbl "" \
         --button="!window-close":1 \
@@ -444,7 +444,7 @@ function practice_d() {
         --skip-taskbar --text-align=center \
         --align=center --center --on-top \
         --image-on-top --undecorated --buttons-layout=spread \
-        --width=418 --height=360 --borders=8 \
+        --width=418 --height=370 --borders=16 \
         --field="$aswer":lbl "" \
         --field="":lbl "" \
         --button="$(gettext "I did not know it")!$img_no":3 \
@@ -508,14 +508,13 @@ function practice_e() {
                 |sed 's/\b\(.\)/\u\1/g' |sed 's/ /      /g' \
                 |sed "s|[a-z]|\.|g" \
                 |sed 's|\.|\ .|g' \
-                |tr "[:upper:]" "[:lower:]" \
                 |sed 's/^\s*./\U&\E/g' \
                 |sed "s|\.|<span color='#868686'>\.<\/span>|g")"
             fi
         else
             hint="$(echo "$@")"
         fi
-        text="<span font_desc='Serif Bold 12'>$hint</span>\n"
+        text="<small><small>$(gettext "Do you recognize this word?")</small></small>\n\n<span color='#818181' font_desc='Verdana Bold 12'>$hint</span>\n"
         
         entry=$(>/dev/null | yad --form --title=" " \
         --text="${text}" \
@@ -525,25 +524,26 @@ function practice_e() {
         --buttons-layout=end --skip-taskbar \
         --undecorated --center --on-top \
         --align=center --image-on-top \
-        --width=550 --height=220 --borders=10 \
+        --width=550 --height=220 --borders=16 \
         --field="" "" \
         --button="!window-close":1 \
-        --button="!$DS/images/listen.png":"$cmd_play" \
-        --button="	>	":0)
+        --button="!audio-volume-high":"$cmd_play" \
+        --button="!media-seek-forward":0)
     }
         
     check() {
         sz=$((sz+3))
         yad --form --title=" " \
-        --text="<span font_desc='Arial 12'>${wes^}</span>\\n" \
+        --text="<small><small>$(gettext "Do you recognize this word?")</small></small>\n\n<span font_desc='Arial 12'>${wes^}</span>\\n" \
         --name=Idiomind --class=Idiomind \
         --window-icon=idiomind \
         --skip-taskbar --wrap --image-on-top --center --on-top \
         --undecorated --buttons-layout=end \
-        --width=530 --height=220 --borders=18 \
+        --width=530 --height=220 --borders=16 \
         --field="":lbl "" \
         --field="<span font_desc='Arial 7'>$OK\n\n$prc $hits</span>":lbl \
-        --button="	>	":2
+        --button="!audio-volume-high":"$cmd_play" \
+        --button="!media-seek-forward":2
     }
     
     get_text() {
@@ -750,10 +750,10 @@ function decide_group() {
     optns=$(yad --form --title="$(gettext "Learning mode")" \
     --window-icon=$DS/images/logo.png \
     --always-print-result \
-    --skip-taskbar  --buttons-layout=spread \
-    --align=center --center --on-top \
+    --skip-taskbar  --fixed --buttons-layout=spread \
+    --align=center --text-align=center --center --on-top \
     --text="${info}" "" \
-    --width=450 --height=200 --borders=12 \
+    --width=450 --height=120 --borders=12 \
     --button="$(gettext "Again")!view-refresh!$(gettext "Go back to practice the above items")":1 \
     --button="$(gettext "Continue")!go-next!$(gettext "Practice the next group")":0); ret="$?"
     unset good
