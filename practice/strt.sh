@@ -347,7 +347,7 @@ function practice_c() {
             lst="<span color='#757575'>${trgt}</span>"
         fi
         s=$((30-${#trgt}));  [ ${s} -lt 12 ] && s=12
-        lquestion="\n<span font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n"
+        lquestion="\n<span color='#818181' font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n"
     }
 
     question() {
@@ -747,7 +747,7 @@ function decide_group() {
         #good="$(gettext "Very Good!")   "
     fi
     info="<small>$(gettext "Left")</small>  <b><big>$left</big></b>    <small>$(gettext "Learnt")</small>  <b><big>$learnt</big></b>    <small>$(gettext "Easy")</small>  <b><big>$easy</big></b>    <small>$(gettext "Learning")</small>  <b><big>$ling</big></b>    <small>$(gettext "Difficult")</small>  <b><big>$hard</big></b>"
-    optns=$(yad --form --title="$(gettext "Learning mode")" \
+    optns=$(yad --form --title="$(gettext "Learning Mode")" \
     --window-icon=$DS/images/logo.png \
     --always-print-result \
     --skip-taskbar  --fixed --buttons-layout=spread \
@@ -831,9 +831,10 @@ function practices() {
             --window-icon=$DS/images/logo.png \
             --skip-taskbar --buttons-layout=spread \
             --align=center --center --on-top \
-            --width=400 --borders=15 \
-            --field=" $(gettext "Learning mode")":CHK "" \
+            --width=400 --height=150 --borders=10 \
+            --field=" $(gettext "Learning mode, practica en grupos de 10 tarjetas")":CHK "" \
             --field=" ":LBL "" \
+            --field=" $(gettext "Elije el idioma del desafio:")":LBL "" \
             --button="      $(gettext "$slng")      !!$(gettext "Questions in") $(gettext "$slng") / $(gettext "Answers in") $(gettext "$tlng")":3 \
             --button="      $(gettext "$tlng")      !!$(gettext "Questions in") $(gettext "$tlng") / $(gettext "Answers in") $(gettext "$slng")":2); ret="$?"
             
@@ -905,8 +906,8 @@ function strt() {
         NUMBER="$(wc -l < ${pr}.0)"
         declare congr${icon}="<span font_desc='Arial Bold 12'>  —  $(gettext "Test completed") </span>"
         [[ "${pr}" = e ]] && \
-        info="\n<span font_desc='Arial 11'>$(gettext "Congratulations, You have completed a test of") $NUMBER $(gettext "sentences!")</span>\n" \
-        || info="\n<span font_desc='Arial 11'>$(gettext "Congratulations, You have completed a test of") $NUMBER $(gettext "words!")</span>\n"
+        info="\n<span font_desc='Arial Bold 11'>$(gettext "Congratulations, You have completed a test of") $NUMBER $(gettext "sentences!")</span>\n" \
+        || info="\n<span font_desc='Arial Bold  11'>$(gettext "Congratulations, You have completed a test of") $NUMBER $(gettext "words!")</span>\n"
         echo 21 > .${icon}; export plus${pr}=""; [ -e ./${pr}.df ] && rm ./${pr}.df
         align=left
     elif [[ "${1}" = 2 ]]; then

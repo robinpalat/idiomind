@@ -174,7 +174,7 @@ function upld() {
         --always-print-result \
         --window-icon=$DS/images/logo.png  \
         --align=left --center \
-        --width=420 --height=240 --borders=10 \
+        --width=450 --borders=10 \
         --text="$info" \
         --field="$info2:lbl" " " \
         --field="$(gettext "Download"):btn" "${cmd_dwl}" \
