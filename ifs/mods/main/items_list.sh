@@ -13,7 +13,7 @@ function vwr() {
     re='^[0-9]+$'; index_pos="$3"
     
     if ! [[ ${index_pos} =~ $re ]]; then
-        index_pos=`grep -Fxon -m 1 "${item_name}" <<< "${index}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+        index_pos="grep -Fxon -m 1 \"${item_name}\" <<< \"${index}\" |sed -n 's/^\([0-9]*\)[:].*/\1/p'"
         if ! [[ ${index_pos} =~ $re ]]; then
             index_pos="$(awk 'match($0,v){print NR; exit}' v="${item_name}" <<< "${index}")"
         fi
@@ -171,7 +171,7 @@ function notebook_1() {
     --field=" $(gettext "Mark as learnt") "!'gtk-apply':FBTN "$cmd_mark" \
     --field=" ":LBL " " \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
-    --field="$(gettext "Auto-check learned items")\t\t":CHK "$acheck" \
+    --field="$(gettext "Auto-check learned notes")\t\t":CHK "$acheck" \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
     --field="$label_review$label_level":LBL "$cmd2" \

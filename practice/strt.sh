@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/default/c.conf
-sz=(440 470); [[ ${swind} = TRUE ]] && sz=(410 410)
+sz=(440 470)
 source "$DS/ifs/cmns.sh"
 export -f tpc_db
 dw=$(date +%W |sed 's/^0*//')
@@ -21,7 +21,7 @@ declare -A prcts=( ['a']='Flashcards' ['b']='Multiple-choice' \
 t2="<span color='#C15F27' font_desc='Verdana 8'>"
 t3="<span color='#AE3259' font_desc='Verdana 8'>"
 
-if [ -e "${DC_tlt}/translations/active" ]; then
+if [ -f "${DC_tlt}/translations/active" ]; then
     act=$(sed -n 1p "${DC_tlt}/translations/active")
     [ -n "$act" ] && slng="$act"
 fi
@@ -59,7 +59,7 @@ function scoreschk() {
 
 function score() {
     rm ./*.tmp
-    [ ! -e ./${pr}.l ] && touch ./${pr}.l
+    [ ! -f ./${pr}.l ] && touch ./${pr}.l
     if [[ $(($(< ./${pr}.l)+easy)) -ge ${all} ]]; then
         _log ${pr}; play "$pdirs/all.mp3" &
         echo "1p.$tpc.p1" >> "$log"
@@ -67,7 +67,7 @@ function score() {
         save_score 0 & echo 21 > .${icon}
         strt 1
     else
-        [ -e ./${pr}.l ] && \
+        [ -f ./${pr}.l ] && \
         echo $(($(< ./${pr}.l)+easy)) > ./${pr}.l || \
         echo ${easy} > ./${pr}.l; _log ${pr}
         s=$(< ./${pr}.l)
@@ -103,7 +103,7 @@ function _log() {
 
     if [ ${1} != 'e' ]; then
     
-        if [ -e ./${1}.1 ]; then
+        if [ -f ./${1}.1 ]; then
             echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1.<${stts}>" \
             |sed '/\.\./d' >> "$log"
         fi
@@ -112,40 +112,33 @@ function _log() {
                 lg2="$(grep -Fvxf ./${1}.3 < ./${1}.2)"
                 [ -n "${lg2}" ] && erw="${t2} </span> " || erw=""
                 lg3="$(< ./${1}.3)"
-                echo "w2.$(tr -s '\n' '|' <<< "${lg2}").w2.<${stts}>" \
-                |sed '/\.\./d' >> "$log"
-                echo "w3.$(tr -s '\n' '|' <<< "${lg3}").w3.<${stts}>" \
-                |sed '/\.\./d' >> "$log"
+                echo "w2.$(tr -s '\n' '|' <<< "${lg2}").w2.<${stts}>" |sed '/\.\./d' >> "$log"
+                echo "w3.$(tr -s '\n' '|' <<< "${lg3}").w3.<${stts}>" |sed '/\.\./d' >> "$log"
                 i2="${t2}$(echo "${lg2}" |head -n8 |sed -e ':a;N;$!ba;s/\n/  /g')</span>"
                 i3="${t3}$(echo "${lg3}" |head -n8 |sed -e ':a;N;$!ba;s/\n/  /g')</span>"
                 echo -n "${i2}${erw}${i3}" > ./${1}.df
             else
                 lg2="$(< ./${1}.2)"
-                 echo "w2.$(tr -s '\n' '|' <<< "${lg2}").w2.<${stts}>" \
-                |sed '/\.\./d' >> "$log"
+                echo "w2.$(tr -s '\n' '|' <<< "${lg2}").w2.<${stts}>" |sed '/\.\./d' >> "$log"
                 i2="$t2$(echo "${lg2}" |head -n16 |sed -e ':a;N;$!ba;s/\n/  /g') </span>"
                 echo -n "${i2}" > ./${1}.df
             fi
         elif [ -f ./${1}.3 ]; then
             lg3="$(< ./${1}.3)"
-            echo "w3.$(tr -s '\n' '|' <<< "${lg3}").w3.<${stts}>" \
-            |sed '/\.\./d' >> "$log"
+            echo "w3.$(tr -s '\n' '|' <<< "${lg3}").w3.<${stts}>" |sed '/\.\./d' >> "$log"
             i3="$t3$(head -n16 <<< "${lg3}") |sed -e ':a;N;$!ba;s/\n/  /g')</span>"
             echo -n "${i3}" > ./${1}.df
         fi
 
     elif [ ${1} = 'e' ]; then
-        if [ -e ./${1}.1 ]; then
-            echo "s1.$(tr -s '\n' '|' < ./${1}.1).s1.<${stts}>" \
-            |sed '/\.\./d' >> "$log"
+        if [ -f ./${1}.1 ]; then
+            echo "s1.$(tr -s '\n' '|' < ./${1}.1).s1.<${stts}>" |sed '/\.\./d' >> "$log"
         fi
-        if [ -e ./${1}.2 ]; then
-            echo "s2.$(tr -s '\n' '|' < ./${1}.2).s2.<${stts}>" \
-            |sed '/\.\./d' >> "$log"
+        if [ -f ./${1}.2 ]; then
+            echo "s2.$(tr -s '\n' '|' < ./${1}.2).s2.<${stts}>" |sed '/\.\./d' >> "$log"
         fi
-        if [ -e ./${1}.3 ]; then
-            echo "s3.$(tr -s '\n' '|' < ./${1}.3).s3.<${stts}>" \
-            |sed '/\.\./d' >> "$log"
+        if [ -f ./${1}.3 ]; then
+            echo "s3.$(tr -s '\n' '|' < ./${1}.3).s3.<${stts}>" |sed '/\.\./d' >> "$log"
         fi
     fi
 }
@@ -176,7 +169,7 @@ function practice_a() {
         yad --form --title=" " \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
-        --width=405 --height=260 --borders=16 \
+        --width=460 --height=280 --borders=16 \
         --field="\n$question":lbl "" \
         --field="":lbl "" \
         --button="!window-close":1 \
@@ -187,12 +180,12 @@ function practice_a() {
         yad --form --title=" " \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
-        --width=405 --height=260 --borders=16 \
+        --width=460 --height=280 --borders=16 \
         --field="$answer1":lbl "" \
         --field="":lbl "" \
         --field="$answer2":lbl "" \
-        --button="$(gettext "I did not know it")!$img_no":3 \
-        --button="$(gettext "I Knew it")!$img_yes":2
+        --button="    $(gettext "I did not know it")   !$img_no":3 \
+        --button="    $(gettext "I Knew it")   !$img_yes":2
     }
 
     while read item; do
@@ -213,7 +206,7 @@ function practice_a() {
             fi
         fi
     done < ./a.tmp
-    if [ ! -e ./a.2 ]; then
+    if [ ! -f ./a.2 ]; then
         export hard ling
         scoreschk
     else
@@ -274,7 +267,7 @@ function practice_b(){
         --skip-taskbar --no-scroll --text-align=center --center --on-top \
         --buttons-layout=edge --undecorated \
         --no-headers \
-        --width=400 --height=320 --borders=16 \
+        --width=450 --height=320 --borders=16 \
         --column=Option \
         --button="!window-close":1 \
         --button="!media-seek-forward":0)"
@@ -297,7 +290,7 @@ function practice_b(){
             break & score & return
         fi
     done < ./b.tmp
-    if [ ! -e ./b.2 ]; then
+    if [ ! -f ./b.2 ]; then
         export hard ling
         scoreschk
     else
@@ -358,11 +351,11 @@ function practice_c() {
         --text="<small><small>$(gettext "Do you recognize this word?")</small></small>\n\n$lquestion" \
         --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --image-on-top --undecorated \
-        --width=400 --height=260 --borders=16 \
-        --field="!audio-volume-high":BTN "$cmd_play" \
+        --width=450 --height=270 --borders=16 \
         --button="!window-close":1 \
-        --button="       $(gettext "No")       !$img_no":3 \
-        --button="  $(gettext "Yes")  !$img_yes":2
+        --button="      $(gettext "No")     !$img_no":3 \
+        --button="      $(gettext "Yes")    !$img_yes":2 \
+        --button="!audio-volume-high":"$cmd_play"
     }
 
 
@@ -382,7 +375,7 @@ function practice_c() {
             break & score && return
         fi
     done < ./c.tmp
-    if [ ! -e ./c.2 ]; then
+    if [ ! -f ./c.2 ]; then
         export hard ling
         scoreschk
     else
@@ -409,7 +402,7 @@ function practice_c() {
 function practice_d() {
 
     fonts() {
-        [ -e "$DM_tlt/images/${item,,}.jpg" ] && \
+        [ -f "$DM_tlt/images/${item,,}.jpg" ] && \
         img="$DM_tlt/images/${item,,}.jpg" || \
         img="$DM_tls/images/${item,,}-1.jpg"
         _item="$(grep -F -m 1 "trgt{${item}}" "${cfg0}" |sed 's/}/}\n/g')"
@@ -420,7 +413,7 @@ function practice_d() {
             trgt="${item}"
             srce=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
         fi
-        [ ! -e "$img" ] && img="$DS/images/imgmiss.jpg"
+        [ ! -f "$img" ] && img="$DS/images/imgmiss.jpg"
         cuest="<span font_desc='Arial Bold 12'> ${trgt} </span>\n"
         aswer="<span font_desc='Arial Bold 12'> ${trgt}</span> <i>/ ${srce}</i> \n"
     }
@@ -469,7 +462,7 @@ function practice_d() {
             fi
         fi
     done < ./d.tmp
-    if [ ! -e ./d.2 ]; then
+    if [ ! -f ./d.2 ]; then
         export hard ling
         scoreschk
     else
@@ -514,17 +507,18 @@ function practice_e() {
         else
             hint="$(echo "$@")"
         fi
-        text="<small><small>$(gettext "Do you recognize this word?")</small></small>\n\n<span color='#818181' font_desc='Verdana Bold 12'>$hint</span>\n"
+        text="<small><small>$(gettext "Listen and then try to write this sentence")</small></small>\n\n<span color='#818181' font_desc='Verdana Bold 12'>$hint</span>\n"
         
-        entry=$(>/dev/null | yad --form --title=" " \
+        entry=$(>/dev/null |yad --form --title=" " \
         --text="${text}" \
         --name=Idiomind --class=Idiomind \
         --separator="" --focus-field=1 \
-        --window-icon=$DS/images/logo.png --image="$DS/images/bar.png" \
+        --window-icon=$DS/images/logo.png \
+        --image="$DS/images/bar.png" \
         --buttons-layout=end --skip-taskbar \
         --undecorated --center --on-top \
         --align=center --image-on-top \
-        --width=550 --height=220 --borders=16 \
+        --width=560 --height=250 --borders=16 \
         --field="" "" \
         --button="!window-close":1 \
         --button="!audio-volume-high":"$cmd_play" \
@@ -534,12 +528,12 @@ function practice_e() {
     check() {
         sz=$((sz+3))
         yad --form --title=" " \
-        --text="<small><small>$(gettext "Do you recognize this word?")</small></small>\n\n<span font_desc='Arial 12'>${wes^}</span>\\n" \
+        --text="<small><small>$(gettext "Result:")</small></small>\n\n<span font_desc='Arial 12'>${wes^}</span>\\n" \
         --name=Idiomind --class=Idiomind \
         --window-icon=idiomind \
         --skip-taskbar --wrap --image-on-top --center --on-top \
         --undecorated --buttons-layout=end \
-        --width=530 --height=220 --borders=16 \
+        --width=560 --height=250 --borders=16 \
         --field="":lbl "" \
         --field="<span font_desc='Arial 7'>$OK\n\n$prc $hits</span>":lbl \
         --button="!audio-volume-high":"$cmd_play" \
@@ -570,17 +564,15 @@ function practice_e() {
         for line in `sed 's/ /\n/g' <<< "$out"`; do
             if grep -Fxq "${line}" <<< "$in"; then
                 sed -i "s/"${line}"/<b>"${line}"<\/b>/g" ./chk.tmp # TODO
-                [ -n "${line}" ] && echo \
-                "<span color='#3A9000'><b>${line^}</b></span>  " >> ./words.tmp
+                [ -n "${line}" ] && echo "<span color='#3A9000'><b>${line^}</b></span>  " >> ./words.tmp
                 [ -n "${line}" ] && echo "${line}" >> ./mtch.tmp
             else
-                [ -n "${line}" ] && echo \
-                "<span color='#984C42'><b>${line^}</b></span>  " >> ./words.tmp
+                [ -n "${line}" ] && echo "<span color='#984C42'><b>${line^}</b></span>  " >> ./words.tmp
             fi
         done
         OK=$(tr '\n' ' ' < ./words.tmp)
         sed 's/ /\n/g' < ./chk.tmp > ./all.tmp; touch ./mtch.tmp
-        val1=$(cat ./mtch.tmp |wc -l)
+        val1=$(< ./mtch.tmp |wc -l)
         val2=$(wc -l < ./all.tmp)
         porc=$((100*val1/val2))
         
@@ -604,8 +596,7 @@ function practice_e() {
     
     step=2
     while read -r trgt; do
-        pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${cfg0}" \
-        |sed -n 's/^\([0-9]*\)[:].*/\1/p')
+        pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
         item=$(sed -n ${pos}p "${cfg0}" |sed 's/}/}\n/g')
         if [[ ${lang_question} = 1 ]]; then
             push=$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")
@@ -656,7 +647,7 @@ function get_list() {
             sed '/^$/d' <<< "${cfg1}" > "${pdir}/${pr}.0"
         fi
         if [ ${pr} = b ]; then
-            if [ ! -e "${pdir}/b.srces" ]; then
+            if [ ! -f "${pdir}/b.srces" ]; then
             (echo "#"
             while read word; do
                 item="$(grep -F -m 1 "trgt{${word}}" "${cfg0}" |sed 's/}/}\n/g')"
@@ -704,14 +695,14 @@ function get_list() {
             fi
         done < "${pdir}/${pr}.0.tmp"
         if [ ${inf} = 1 ]; then
-            msg "$(gettext "Some sentences could not be listed because they are too long")\n" info
+            msg "$(gettext "Some sentences could not be added because they are too long")\n" info
         fi
         > "${pdir}/${pr}.1"
     fi
 }
 
 function lock() {
-    if [ -e "${pdir}/${pr}.lock" ]; then
+    if [ -f "${pdir}/${pr}.lock" ]; then
         local lock="${pdir}/${pr}.lock"
         if ! grep 'wait' <<< "$(< "${lock}")"; then
             text_dlg="<b>$(gettext "Practice Completed")</b>\\n$(< "${lock}")"
@@ -722,7 +713,7 @@ function lock() {
             if [ $(grep -o "wait"=\"[^\"]* "${lock}" |grep -o '[^"]*$') != $(date +%d) ]; then
                 rm "${lock}" & return 0
             else
-                msg_2 "$(gettext "Consider waiting a while before resuming to practice some items") \n" \
+                msg_2 "$(gettext "Consider waiting a while before resuming to practice some notes") \n" \
                 dialog-information "$(gettext "OK")" "$(gettext "Practice")"
                 ret=$?; [ $ret = 1 ] && ret=4; [ $ret = 0 ] && ret=5
             fi
@@ -740,13 +731,14 @@ function lock() {
 }
 
 function decide_group() {
-    [ -e ./${pr}.l ] && learnt=$(($(< ./${pr}.l)+easy)) || learnt=${easy}
+    [ -f ./${pr}.l ] && learnt=$(($(< ./${pr}.l)+easy)) || learnt=${easy}
     preeasy=$((learnt+easy)); left=$((all-learnt))
     if [[ ${easy} = 10 ]]; then
         cleanups ./${pr}.df; export plus${pr}=""
-        #good="$(gettext "Very Good!")   "
     fi
+    
     info="<small>$(gettext "Left")</small>  <b><big>$left</big></b>    <small>$(gettext "Learnt")</small>  <b><big>$learnt</big></b>    <small>$(gettext "Easy")</small>  <b><big>$easy</big></b>    <small>$(gettext "Learning")</small>  <b><big>$ling</big></b>    <small>$(gettext "Difficult")</small>  <b><big>$hard</big></b>"
+    
     optns=$(yad --form --title="$(gettext "Learning Mode")" \
     --window-icon=$DS/images/logo.png \
     --always-print-result \
@@ -754,10 +746,9 @@ function decide_group() {
     --align=center --text-align=center --center --on-top \
     --text="${info}" "" \
     --width=450 --height=120 --borders=12 \
-    --button="$(gettext "Again")!view-refresh!$(gettext "Go back to practice the above items")":1 \
+    --button="$(gettext "Again")!view-refresh!$(gettext "Go back to practice the above notes")":1 \
     --button="$(gettext "Continue")!go-next!$(gettext "Practice the next group")":0); ret="$?"
-    unset good
-
+    
     if [ $ret -eq 0 ]; then
         grep -Fxvf "${pdir}/${pr}.1" "${pdir}/${pr}.group" \
         |sed '/^$/d' > "${pdir}/${pr}.tmp"
@@ -792,7 +783,7 @@ function practices() {
     export easy hard ling step
     group=""; split=""; lang_question=""
     if [ -f "${pdir}/$pr" ]; then 
-    optns="$(cat "${pdir}/$pr")"
+    optns="$(< "${pdir}/$pr")"
     group="$(cut -d "|" -f1 <<< "${optns}")"
     split="$(cut -d "|" -f2 <<< "${optns}")"
     lang_question="$(cut -d "|" -f3 <<< "${optns}")"
@@ -805,7 +796,7 @@ function practices() {
     else exit; fi
     lock
     
-    if [ -e "${pdir}/${pr}.0" -a -e "${pdir}/${pr}.1" ]; then
+    if [ -f "${pdir}/${pr}.0" ] && [ -f "${pdir}/${pr}.1" ]; then
     
         export all=$(egrep -cv '#|^$' "${pdir}/${pr}.0")
     
@@ -825,16 +816,16 @@ function practices() {
             fi
         fi
     else
-        if [ ! -e "${pdir}/${pr}.0" ]; then
+        if [ ! -f "${pdir}/${pr}.0" ]; then
             optns=$(yad --form --title="$(gettext "Starting")" \
             --always-print-result \
             --window-icon=$DS/images/logo.png \
             --skip-taskbar --buttons-layout=spread \
             --align=center --center --on-top \
-            --width=400 --height=150 --borders=10 \
-            --field=" $(gettext "Learning mode, practica en grupos de 10 tarjetas")":CHK "" \
+            --width=420 --height=120 --borders=10 \
+            --field=" $(gettext "Learning mode, practice in sets of 10 notes")":CHK "" \
             --field=" ":LBL "" \
-            --field=" $(gettext "Elije el idioma del desafio:")":LBL "" \
+            --field=" $(gettext "Choose the challenge language:")\n":LBL "" \
             --button="      $(gettext "$slng")      !!$(gettext "Questions in") $(gettext "$slng") / $(gettext "Answers in") $(gettext "$tlng")":3 \
             --button="      $(gettext "$tlng")      !!$(gettext "Questions in") $(gettext "$tlng") / $(gettext "Answers in") $(gettext "$slng")":2); ret="$?"
             
@@ -860,13 +851,13 @@ function practices() {
     fi
     if [[ ${all} -lt 1 ]]; then
         if [ "$(egrep -cv '#|^$' <<< "${cfg1}")" -lt 1 ]; then
-            msg "$(gettext "There are not enough items to practice") \n" \
+            msg "$(gettext "There are not enough notes to practice.") \n" \
             dialog-information " " "$(gettext "OK")"
         elif grep -o -E 'a|b|c|d' <<< ${pr}; then
-            msg "$(gettext "There are no words in the \"Learning\" list"). \n" \
+            msg "$(gettext "There are not enough words for this practice in the \"Learning\" list"). \n" \
             dialog-information " " "$(gettext "OK")"
         elif grep -o 'e' <<< ${pr}; then
-            msg "$(gettext "There are no sentences in the \"Learning\" list"). \n" \
+            msg "$(gettext "There are not enough sentences for this practice in the \"Learning\" list"). \n" \
             dialog-information " " "$(gettext "OK")"
         fi
         strt 0 & return
@@ -884,7 +875,7 @@ function strt() {
     check_dir "${pdir}"; cd "${pdir}"
 
     for i in {1..5}; do
-        if [[ ! -e ./.${i} ]]; then
+        if [[ ! -f ./.${i} ]]; then
         echo 1 > ./.${i}
         fi
     done
@@ -908,7 +899,7 @@ function strt() {
         [[ "${pr}" = e ]] && \
         info="\n<span font_desc='Arial Bold 11'>$(gettext "Congratulations, You have completed a test of") $NUMBER $(gettext "sentences!")</span>\n" \
         || info="\n<span font_desc='Arial Bold  11'>$(gettext "Congratulations, You have completed a test of") $NUMBER $(gettext "words!")</span>\n"
-        echo 21 > .${icon}; export plus${pr}=""; [ -e ./${pr}.df ] && rm ./${pr}.df
+        echo 21 > .${icon}; export plus${pr}=""; [ -f ./${pr}.df ] && rm ./${pr}.df
         align=left
     elif [[ "${1}" = 2 ]]; then
         learnt=$(< ./${pr}.l); declare info${icon}="  *  "

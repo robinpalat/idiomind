@@ -325,7 +325,7 @@ _backup() {
                 old="$(sed -n '/----- newest/,/----- oldest/p' "${file}" \
                 |grep -Pv '\----- newest' |grep -Pv '\----- oldest')"
             fi
-            new="$(cat "$DM_tl/${2}/.conf/data")"
+            new="$(< "$DM_tl/${2}/.conf/data")"
             echo "----- newest $dt" > "${file}"
             echo "${new}" >> "${file}"
             echo "----- oldest $dt2" >> "${file}"
@@ -758,7 +758,7 @@ function transl_batch() {
     fi
     touch "${DC_tlt}/translations/active"
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
-    lns=$(cat "${DC_tlt}/data" |wc -l)
+    lns=$(< "${DC_tlt}/data" |wc -l)
     if [ -z "$active_trans" ]; then active_trans="$slng"; fi
 
 echo -e "yad --form --title=\"$(gettext "$tlng") / $active_trans\" \\
@@ -780,7 +780,7 @@ echo -e "yad --form --title=\"$(gettext "$tlng") / $active_trans\" \\
     done < "${DC_tlt}/data") |progress "progress"
     sed -i 's/\*/\\\"/g' "$DT/dlg"
     
-    dlg="$(cat "$DT/dlg")"; eval "${dlg}" > "$DT/transl_batch_out"; ret="$?"
+    dlg="$(< "$DT/dlg")"; eval "${dlg}" > "$DT/transl_batch_out"; ret="$?"
     
     if [ $ret = 0 ]; then
         cp -f "${DC_tlt}/data" "$DT/data"
@@ -916,7 +916,7 @@ translate_to() {
             if [ -n "$l" ]; then lgt=${tlangs[$l]}; else lgt=${tlangs[$tlng]}; fi
             tl=${slangs[$autom_trans]}
             include "$DS/ifs/mods/add"
-            c1=$(cat "${DC_tlt}/data" |wc -l)
+            c1=$(< "${DC_tlt}/data" |wc -l)
 
             pretrans() {
                 while read -r item_; do
@@ -960,19 +960,19 @@ translate_to() {
             
             pretrans 
 
-            c2=$(cat "$DT/index.trad" | wc -l)
+            c2=$(< "$DT/index.trad" | wc -l)
             if [[ ${c1} != ${c2} ]]; then
                 > "$DT/words.trad_tmp"; > "$DT/index.trad_tmp"
                 del='||'; pretrans
-                c2=$(cat "$DT/index.trad" | wc -l)
+                c2=$(< "$DT/index.trad" | wc -l)
                 if [[ ${c1} != ${c2} ]]; then
                     > "$DT/words.trad_tmp"; > "$DT/index.trad_tmp"
                     del=":"; pretrans
-                    c2=$(cat "$DT/index.trad" | wc -l)
+                    c2=$(< "$DT/index.trad" | wc -l)
                     if [[ ${c1} != ${c2} ]]; then
                         > "$DT/words.trad_tmp"; > "$DT/index.trad_tmp"
                         del="_"; pretrans
-                        c2=$(cat "$DT/index.trad" | wc -l)
+                        c2=$(< "$DT/index.trad" | wc -l)
                         if [[ ${c1} != ${c2} ]]; then
                         msg "$(gettext "There was a problem with the translation;\nSome items were not translated correctly.")\n" 'dialog-warning'
                         fi
@@ -1053,11 +1053,12 @@ colorize() {
     if [[ "$reviews" -ge 2 ]] && \
     [[ "$acheck" = TRUE ]] && [[ ${2} = 1 ]]; 
     then chk=TRUE; else chk=FALSE; fi
+    
     data="${DC_tlt}/data"
     index="${DC_tlt}/index"
-    log3="$(cat "${DC_tlt}/practice"/log3)"
-    log2="$(cat "${DC_tlt}/practice"/log2)"
-    log1="$(cat "${DC_tlt}/practice"/log1)"
+    log3="$(< "${DC_tlt}/practice"/log3)"
+    log2="$(< "${DC_tlt}/practice"/log2)"
+    log1="$(< "${DC_tlt}/practice"/log1)"
     export chk data learning index marks log1 log2 log3
 python3 <<PY
 import os, re, sys
