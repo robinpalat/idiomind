@@ -166,15 +166,14 @@ function notebook_1() {
     --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
-    --text="${lbl1}${info2}" \
+    --text="${lbl1}${info2}\n$label_review$label_level" \
     --borders=25 --columns=2 \
     --field=" $(gettext "Mark as learnt") "!'gtk-apply':FBTN "$cmd_mark" \
     --field=" ":LBL " " \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
-    --field="$(gettext "Auto-check learned notes")\t\t":CHK "$acheck" \
+    --field="$(gettext "Auto-check learned notes")\t\t\t\t\t":CHK "$acheck" \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
-    --field="$label_review$label_level":LBL "$cmd2" \
     --field=" ":LBL " " \
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn3":FBTN "$cmd3" \
@@ -225,14 +224,14 @@ function notebook_2() {
     --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
-    --text="$lbl1" \
+    --text="$lbl1\n$label_review$label_level" \
     --borders=25 --columns=2 \
     --field=" $(gettext "Review") "!'view-refresh':FBTN "$cmd_mark" \
-    --field="\t\t\t\t\t\t\t\\t\t\t":LBL "_" \
+    --field=" ":LBL " " \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
+    --field="\t\t\t\t\t\t\t\\t\t\t\t\t":LBL "_" \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
-    --field="$label_review$label_level":LBL "$cmd2" \
     --field=" ":LBL " " \
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn3":FBTN "$cmd3" \
@@ -282,12 +281,12 @@ function notebook_3() {
     --plug=$KEY \
     --text="$lbl1" \
     --borders=25 --columns=2 \
-    --field="$label_level ":LBL "$cmd_mark" \
-    --field="\t\t\t\t\t\t\t\\t\t\t":LBL "_" \
+    --field="$label_level\n":LBL " " \
+    --field=" ":LBL " " \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
+    --field="\t\t\t\t\t\t\t\\t\t\t\t\t\t":LBL "_" \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
-    --field=" ":LBL "$cmd2" \
     --field=" ":LBL " " \
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn3":FBTN "$cmd3" \
@@ -346,6 +345,7 @@ function panelini() {
     --select-action="/usr/share/idiomind/ifs/tasks.sh" --grid-lines=hor \
     --dclick-action="/usr/share/idiomind/ifs/tasks.sh" \
     --window-icon=$DS/images/logo.png \
+    --hscroll-policy=auto --vscroll-policy=never \
     --expand-column=1 --no-click --no-headers \
     --on-top --text-align=left --align=left --buttons-layout=spread \
     ${geometry} --borders=2  --column=Name:TEXT --fixed --width=20 --height=20 \

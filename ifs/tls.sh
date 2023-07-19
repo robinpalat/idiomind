@@ -1046,14 +1046,12 @@ colorize() {
     f_lock 1 "$DT/co_lk"
     cleanups "${DC_tlt}/index"
     touch "${DM_tlt}"
-    reviews="$(tpc_db 5 reviews |wc -l)"
     acheck="$(tpc_db 1 config acheck)"
     marks="$(tpc_db 5 marks)"
     learning="$(tpc_db 5 learning)"
-    if [[ "$reviews" -ge 2 ]] && \
-    [[ "$acheck" = TRUE ]] && [[ ${2} = 1 ]]; 
-    then chk=TRUE; else chk=FALSE; fi
-    
+    if [ "$acheck" = TRUE ] && [[ ${2} = 1 ]]; then 
+		chk=TRUE; else chk=FALSE
+	fi
     data="${DC_tlt}/data"
     index="${DC_tlt}/index"
     log3="$(< "${DC_tlt}/practice"/log3)"
@@ -1095,6 +1093,7 @@ for item in data:
 f.close()
 PY
     f_lock 3 "$DT/co_lk"
+
 } >/dev/null 2>&1
 
 itray() {

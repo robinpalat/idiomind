@@ -60,7 +60,7 @@ delete_item_ok() {
         done
         cleanups "${DC_tlt}/lst"
     fi
-    if [[ $(wc -l < "${DC_tlt}/data") -lt 200 ]] && [ -e "${DC_tlt}/lk" ]; then
+    if [[ $(wc -l < "${DC_tlt}/data") -lt 200 ]] && [ -f "${DC_tlt}/lk" ]; then
         cleanups "${DC_tlt}/lk"
     fi
     "$DS/ifs/tls.sh" colorize 1 &

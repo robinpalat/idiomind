@@ -27,6 +27,7 @@ if [ -f "${DC_tlt}/translations/active" ]; then
 fi
 export -f f_lock
 
+# stats for icons 
 function stats() {
     n=1; c=1
     while [ ${n} -le 21 ]; do
@@ -67,9 +68,8 @@ function score() {
         save_score 0 & echo 21 > .${icon}
         strt 1
     else
-        [ -f ./${pr}.l ] && \
-        echo $(($(< ./${pr}.l)+easy)) > ./${pr}.l || \
-        echo ${easy} > ./${pr}.l; _log ${pr}
+        [ -f ./${pr}.l ] && echo $(($(< ./${pr}.l)+easy)) > ./${pr}.l \
+        || echo ${easy} > ./${pr}.l; _log ${pr}
         s=$(< ./${pr}.l)
         v=$((100*s/all))
         n=1; c=1
@@ -87,18 +87,40 @@ function score() {
 }
     
 function save_score() {
+
     if [[ ${1} = 0 ]]; then 
         > ./${pr}.2; > ./${pr}.3
     fi
+    
     [ -f ./*.1 ] && cat ./*.1 > ./log1
+    
     if [[ ${step} = 1 ]]; then
         [ -f ./*.2 ] && cat ./*.2 > ./log2
+        
     elif [[ ${step} = 2 ]]; then
         [ -f ./*.2 ] && cat ./*.2 > ./log2
         [ -f ./*.3 ] && cat ./*.3 > ./log3
     fi
+    
+	while read -r rem; do
+		if grep -Fxq "${rem}" ./log1; then
+			grep -vxF "${rem}" ./log1 > ./rm.tmp
+			sed '/^$/d' ./rm.tmp > ./log1
+		fi	
+	done < <(cat ./log2 ./log3)
+	
+	while read -r rem; do
+		if grep -Fxq "${rem}" ./log2; then
+			grep -vxF "${rem}" ./log2 > ./rm.tmp
+			sed '/^$/d' ./rm.tmp > ./log2
+		fi	
+	done < <(cat./log3)
+	
+	cleanups ./rm.tmp
+
 }
 
+# just for stats
 function _log() { 
 
     if [ ${1} != 'e' ]; then
@@ -169,7 +191,7 @@ function practice_a() {
         yad --form --title=" " \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
-        --width=460 --height=280 --borders=16 \
+        --width=460 --height=280 --borders=16  \
         --field="\n$question":lbl "" \
         --field="":lbl "" \
         --button="!window-close":1 \
@@ -180,7 +202,7 @@ function practice_a() {
         yad --form --title=" " \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
-        --width=460 --height=280 --borders=16 \
+        --width=460 --height=280 --borders=16  \
         --field="$answer1":lbl "" \
         --field="":lbl "" \
         --field="$answer2":lbl "" \
@@ -206,9 +228,9 @@ function practice_a() {
             fi
         fi
     done < ./a.tmp
+    
     if [ ! -f ./a.2 ]; then
-        export hard ling
-        scoreschk
+        export hard ling; scoreschk
     else
         step=2
         while read item; do
@@ -227,8 +249,8 @@ function practice_a() {
                 fi
             fi
         done < ./a.2
-        export hard ling
-        scoreschk
+        
+        export hard ling; scoreschk
     fi
 }
 
@@ -264,9 +286,10 @@ function practice_b(){
         dlg="$(ofonts | yad --list --title=" " \
         --text="${question}" \
         --separator=" " --always-print-result \
-        --skip-taskbar --no-scroll --text-align=center --center --on-top \
+        --skip-taskbar --no-scroll --vscroll-policy=never \
+        --text-align=center --center --on-top \
         --buttons-layout=edge --undecorated \
-        --no-headers \
+        --no-headers --select-action=: \
         --width=450 --height=320 --borders=16 \
         --column=Option \
         --button="!window-close":1 \
@@ -287,12 +310,12 @@ function practice_b(){
         elif [ $ret = 1 ]; then
             ling=${hard}; hard=0
             export hard ling
-            break & score & return
+            break & score && return
         fi
     done < ./b.tmp
+    
     if [ ! -f ./b.2 ]; then
-        export hard ling
-        scoreschk
+        export hard ling; scoreschk
     else
         step=2; P=2; s=12
         while read -r item; do
@@ -310,8 +333,8 @@ function practice_b(){
                 break & score && return
             fi
         done < ./b.2
-        export hard ling
-        scoreschk
+        
+        export hard ling; scoreschk
     fi
 }
 
@@ -375,9 +398,9 @@ function practice_c() {
             break & score && return
         fi
     done < ./c.tmp
+    
     if [ ! -f ./c.2 ]; then
-        export hard ling
-        scoreschk
+        export hard ling; scoreschk
     else
         step=2; p=2
         while read trgt; do
@@ -393,8 +416,8 @@ function practice_c() {
                 break & score && return
             fi
         done < ./c.2
-        export hard ling
-        scoreschk
+        
+        export hard ling; scoreschk
     fi
 }
 
@@ -462,9 +485,9 @@ function practice_d() {
             fi
         fi
     done < ./d.tmp
+    
     if [ ! -f ./d.2 ]; then
-        export hard ling
-        scoreschk
+        export hard ling; scoreschk
     else
         step=2
         while read -r item; do
@@ -483,8 +506,8 @@ function practice_d() {
                 fi
             fi
         done < ./d.2
-        export hard ling
-        scoreschk
+        
+        export hard ling; scoreschk
     fi
 }
 
@@ -631,8 +654,8 @@ function practice_e() {
             fi
         fi
     done < ./e.tmp
-    export hard ling
-    scoreschk
+    
+    export hard ling; scoreschk
 }
 
 function get_list() {
@@ -763,8 +786,7 @@ function decide_group() {
         mv -f "${pdir}/${pr}.1tmp" "${pdir}/${pr}.1"
         sed '/^$/d' "${pdir}/${pr}.1" \
         |awk '!a[$0]++' |wc -l > "${pdir}/${pr}.l"
-        easy=0; hard=0; ling=0; step=1
-        export easy hard ling step
+        export easy=0 hard=0 ling=0 step=1
     elif [ $ret -gt 1 ]; then
         score && return
     fi
@@ -779,8 +801,7 @@ function practices() {
     cfg1="$(tpc_db 5 learning)"
     hits="$(gettext "hits")"
     touch "${pdir}/log1" "${pdir}/log2" "${pdir}/log3"
-    easy=0; hard=0; ling=0; step=1
-    export easy hard ling step
+    export easy=0 hard=0 ling=0 step=1
     group=""; split=""; lang_question=""
     if [ -f "${pdir}/$pr" ]; then 
     optns="$(< "${pdir}/$pr")"
@@ -872,10 +893,12 @@ function practices() {
 }
 
 function strt() {
-    check_dir "${pdir}"; cd "${pdir}"
+	
+    check_dir "${pdir}"
+    cd ~ && cd "${pdir}"
 
     for i in {1..5}; do
-        if [[ ! -f ./.${i} ]]; then
+        if [ ! -f ./.${i} ]; then
         echo 1 > ./.${i}
         fi
     done

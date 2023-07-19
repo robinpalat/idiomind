@@ -14,7 +14,7 @@ while read -r tpc; do
 done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime +80 -type d \
 -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
 
-[ ! -e "$DC_s/log" ] && exit 1 || log="$DC_s/log"
+[ ! -f "$DC_s/log" ] && exit 1 || log="$DC_s/log"
 items=$(mktemp "$DT/w1.XXXX")
 words=$(grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' \
 |sort |uniq -dc |sort -n -r |sed 's/ \+/ /g')
@@ -128,7 +128,7 @@ for tpc in topics:
                         i="<b><big>"+item+"</big></b>"
                     else:
                         i=item
-                    if item in lstp and auto_mrk == True and reviews > 3:
+                    if item in lstp and auto_mrk == True:
                         chk = 'TRUE'
                     else:
                         chk = 'FALSE'
