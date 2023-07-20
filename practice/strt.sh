@@ -182,8 +182,18 @@ function practice_a() {
         [ ${trgt_f_c} -lt 12 ] && trgt_f_c=12
         [ ${trgt_f_a} -lt 12 ] && trgt_f_a=12
         [ ${srce_f_a} -lt 12 ] && srce_f_a=12
+
+        if [ $step -eq 2 ]; then 
+        question="\n<span color='#E5801D' font_desc='Arial Bold ${trgt_f_c}'>${trgt}</span>"
+        answer1="\n<span color='#E5801D' font_desc='Arial Bold ${trgt_f_a}'>${trgt}</span>\n"
+        elif [ $step -eq 3 ];then
+        question="\n<span color='#D11B5D' font_desc='Arial Bold ${trgt_f_c}'>${trgt}</span>"
+        answer1="\n<span color='#D11B5D' font_desc='Arial Bold ${trgt_f_a}'>${trgt}</span>\n"
+        else
         question="\n<span font_desc='Arial Bold ${trgt_f_c}'>${trgt}</span>"
         answer1="\n<span font_desc='Arial Bold ${trgt_f_a}'>${trgt}</span>\n"
+        fi
+        
         answer2="<span font_desc='Arial ${srce_f_a}'><i>${srce}</i></span>"
     }
 
@@ -249,7 +259,31 @@ function practice_a() {
                 fi
             fi
         done < ./a.2
+
+     fi
+
+     if [ ! -f ./a.3 ]; then
+        export hard ling; scoreschk
+    else
+        step=3
+        while read item; do
+            fonts; question
+            if [ $? = 1 ]; then
+                export hard ling
+                break & score && return
+            else
+                answer
+                ans=$?
+                if [ ${ans} = 2 ]; then
+                    hard=$((hard-1))
+                    ling=$((ling+1))
+                elif [ ${ans} = 3 ]; then
+                    echo "${item}" >> a.3.tmp
+                fi
+            fi
+        done < ./a.3
         
+        mv -f a.3.tmp a.3
         export hard ling; scoreschk
     fi
 }
@@ -266,16 +300,29 @@ function practice_b(){
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt}));  [ ${srce_s} -lt 12 ] && srce_s=12
             question="\n<span font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
+            if [ $step -eq 2 ]; then 
+				question="\n<span color='#E5801D' font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
+				elif [ $step -eq 3 ];then
+				question="\n<span color='#D11B5D' font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
+				else
+				question="\n<span font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
+			fi
         else
             srce="${item}"
             trgt=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
             ras=$(sort -Ru <<< "${cfg3}" |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt})); [ ${srce_s} -lt 12 ] && srce_s=12
-            question="\n<span font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
+            if [ $step -eq 2 ]; then 
+				question="\n<span color='#E5801D' font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
+				elif [ $step -eq 3 ];then
+				question="\n<span color='#D11B5D' font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
+				else
+				question="\n<span font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
+			fi
         fi
     }
-
+    
     ofonts() {
         while read -r name; do
         echo "<span font_desc='Arial 13'> $name </span>"
@@ -333,7 +380,29 @@ function practice_b(){
                 break & score && return
             fi
         done < ./b.2
-        
+    fi
+    
+    if [ ! -f ./b.3 ]; then
+        export hard ling; scoreschk
+    else
+        step=3; P=2; s=12
+        while read -r item; do
+            fonts; mchoise
+            if [ $? = 0 ]; then
+                if grep -o "$srce" <<< "${dlg}"; then
+                    hard=$((hard-1))
+                    ling=$((ling+1))
+                else
+                    play "$snd" &
+                    echo "${item}" >> b.3.tmp
+                fi
+            elif [ $? = 1 ]; then
+                export hard ling
+                break & score && return
+            fi
+        done < ./b.3
+
+		mv -f b.3.tmp b.3
         export hard ling; scoreschk
     fi
 }
@@ -363,7 +432,14 @@ function practice_c() {
             lst="<span color='#757575'>${trgt}</span>"
         fi
         s=$((30-${#trgt}));  [ ${s} -lt 12 ] && s=12
-        lquestion="\n<span color='#818181' font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n"
+        
+        if [ $step -eq 2 ]; then 
+			lquestion="\n<span color='#E5801D' font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n"
+		elif [ $step -eq 3 ];then
+			lquestion="\n<span color='#D11B5D' font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n"
+		else
+			lquestion="\n<span color='#818181' font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n"
+		fi
     }
 
     question() {
@@ -380,7 +456,6 @@ function practice_c() {
         --button="      $(gettext "Yes")    !$img_yes":2 \
         --button="!audio-volume-high":"$cmd_play"
     }
-
 
     p=1
     while read trgt; do
@@ -416,9 +491,30 @@ function practice_c() {
                 break & score && return
             fi
         done < ./c.2
+    fi
+    
+    if [ ! -f ./c.3 ]; then
+        export hard ling; scoreschk
+    else
+        step=3; p=2
+        while read trgt; do
+            fonts; question
+            ans=$?
+            if [ ${ans} = 2 ]; then
+                hard=$((hard-1))
+                ling=$((ling+1))
+            elif [ ${ans} = 3 ]; then
+                echo "${trgt}" >> c.3.tmp
+            elif [ ${ans} = 1 ]; then
+                export hard ling
+                break & score && return
+            fi
+        done < ./c.3
         
+        mv -f c.3.tmp c.3
         export hard ling; scoreschk
     fi
+    
 }
 
 # practice D
@@ -438,7 +534,17 @@ function practice_d() {
         fi
         [ ! -f "$img" ] && img="$DS/images/imgmiss.jpg"
         cuest="<span font_desc='Arial Bold 12'> ${trgt} </span>\n"
-        aswer="<span font_desc='Arial Bold 12'> ${trgt}</span> <i>/ ${srce}</i> \n"
+        
+        if [ $step -eq 2 ]; then 
+			cuest="<span color='#E5801D' font_desc='Arial Bold 12'> ${trgt} </span>\n"
+			aswer="<span color='#E5801D' font_desc='Arial Bold 12'> ${trgt}</span> <i>/ ${srce}</i> \n"
+		elif [ $step -eq 3 ];then
+			cuest="<span color='#D11B5D' font_desc='Arial Bold 12'> ${trgt} </span>\n"
+			aswer="<span color='#D11B5D' font_desc='Arial Bold 12'> ${trgt}</span> <i>/ ${srce}</i> \n"
+		else
+			cuest="<span font_desc='Arial Bold 12'> ${trgt} </span>\n"
+			aswer="<span font_desc='Arial Bold 12'> ${trgt}</span> <i>/ ${srce}</i> \n"
+		fi
     }
 
     question() {
@@ -506,7 +612,31 @@ function practice_d() {
                 fi
             fi
         done < ./d.2
+
+    fi
+    
+    if [ ! -f ./d.3 ]; then
+        export hard ling; scoreschk
+    else
+        step=3
+        while read -r item; do
+            fonts; question
+            if [ $? = 1 ]; then
+                export hard ling
+                break & score && return
+            else
+                answer
+                ans=$?
+                if [ ${ans} = 2 ]; then
+                    hard=$((hard-1))
+                    ling=$((ling+1))
+                elif [ ${ans} = 3 ]; then
+                    echo "${item}" >> d.3.tmp
+                fi
+            fi
+        done < ./d.3
         
+        mv -f d.3.tmp d.3
         export hard ling; scoreschk
     fi
 }

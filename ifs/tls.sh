@@ -832,7 +832,7 @@ translate_to() {
         --text="<big><b>$active_trans</b></big>"\\n \
         --always-print-result --window-icon=$DS/images/logo.png \
         --buttons-layout=end --center --on-top --align=left \
-        --width=400 --height=400 --borders=15 \
+        --width=400 --height=470 --borders=15 \
         --field="":LBL " " \
         --field="\n<b>$(gettext "Translation quality") </b> ":LBL " " \
         --field="$(gettext "The quality of this translation was verified") ( $active_trans )":CHK "$chk" \
@@ -852,7 +852,7 @@ translate_to() {
         --text="<big><b>$active_trans</b></big>"\\n \
         --always-print-result --window-icon=$DS/images/logo.png \
         --buttons-layout=end --center --on-top --align=left \
-        --width=400 --height=400 --borders=15 \
+        --width=400 --height=470 --borders=15 \
         --field="":LBL " " \
         --field="\n<b>$(gettext "Translation quality") </b> ":LBL " " \
         --field="$active_trans — $(gettext "The quality of this translation was verified")":CHK "$chk" \
@@ -1087,7 +1087,7 @@ for item in data:
         elif item in log2:
             f.write("<span color='#C15F27'>"+i+"</span>\nFALSE\n"+srce+"\n")
         elif item in log1:
-            f.write("<span color='#4C8C12'>"+i+"</span>\n"+chk+"\n"+srce+"\n")
+            f.write(i+"\n"+chk+"\n"+srce+"\n")
         else:
             f.write(i+"\nFALSE\n"+srce+"\n")
 f.close()

@@ -138,7 +138,7 @@ for tpc in topics:
                         index.write("<span color='#C15F27'>"+i+"</span>\nFALSE\n"+srce+"\n")
                     elif item in log1:
                         print chk + ' -> ' + item
-                        index.write("<span color='#4C8C12'>"+i+"</span>\n"+chk+"\n"+srce+"\n")
+                        index.write(i+"\n"+chk+"\n"+srce+"\n")
                     else:
                         index.write(i+"\nFALSE\n"+srce+"\n")
                     if chk == 'TRUE':

@@ -613,6 +613,7 @@ bground_session() {
 
 ipanel() {
     source "$DS/ifs/mods/main/items_list.sh"
+    source "$DS/ifs/cmns.sh"
     set_geom(){
         sleep 1
         spost=$(xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4)
