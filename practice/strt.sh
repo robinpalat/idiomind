@@ -101,8 +101,9 @@ function save_score() {
 
     if [[ ${step} = 3 ]]; then # si se ha llegado al nivel 3 (palabras dificiles de aprender)
     
-		[ -f ./*.2 ] && sort -u ./*.2 > ./log2
-        [ -f ./*.3 ] && sort -u ./*.3 > ./log3
+		if ls ./*.2 >/dev/null 2>&1; then sort -u ./*.2 > ./log2; fi
+		if ls ./*.3 >/dev/null 2>&1; then sort -u ./*.3 > ./log3; fi
+
         while read -r rem; do # se quitan todas las notas del nivel 2 que estan en el nivel 3
 			if grep -Fxq "${rem}" ./log2; then
 				grep -vxF "${rem}" ./log2 >> ./rm.tmp
@@ -112,7 +113,7 @@ function save_score() {
 		[ -f ./rm.tmp ] && rm ./rm.tmp
 		
 	elif [[ ${step} = 2 ]]; then 
-		[ -f ./*.2 ] && sort -u ./*.2 > ./log2
+		if ls ./*.2 >/dev/null 2>&1; then sort -u ./*.2 > ./log2; fi
     fi
 }
 
