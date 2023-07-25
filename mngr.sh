@@ -296,6 +296,7 @@ edit_item() {
                     ${edit_pos}s|grmr{$grmr}|grmr{$grmr_mod}|;
                     ${edit_pos}s|mark{$mark}|mark{$mark_mod}|;
                     ${edit_pos}s|cdid{$cdid}|cdid{$cdid_mod}|g" "${cfg0}"
+                    
                     if [ "${audf}" != "${audf_mod}" ]; then
                         if [ ${type_mod} = 1 ]; then
                             cp -f "${audf_mod}" "${DM_tls}/audio/${trgt_mod,,}.mp3"
@@ -649,7 +650,7 @@ restart_topic() {
 		done < "${DC_tlt}/data"
 		tpc_db 3 config repass 0
 		"$DS/mngr.sh" mkmn 1; "$DS/ifs/tls.sh" colorize 0
-		cleanups "$DT/edit_list_more"
+		cleanups "$DT/edit_list_more" "${DC_tlt}/practice"
 	fi
 
 } >/dev/null 2>&1

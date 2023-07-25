@@ -34,7 +34,7 @@ function stats() {
         if [ ${n} -eq 21 ]; then
             echo $((n-1)) > .${icon}; break
         elif [ ${v} -le ${c} ]; then
-            echo ${n} > ./.${icon}; break
+            echo ${n} > .${icon}; break
         fi
         ((c=c+5))
         let n++
@@ -92,32 +92,28 @@ function save_score() {
         > ./${pr}.2; > ./${pr}.3
     fi
     
-    [ -f ./*.1 ] && cat ./*.1 > ./log1
-    
-    if [[ ${step} = 1 ]]; then
-        [ -f ./*.2 ] && cat ./*.2 > ./log2
-        
-    elif [[ ${step} = 2 ]]; then
-        [ -f ./*.2 ] && cat ./*.2 > ./log2
-        [ -f ./*.3 ] && cat ./*.3 > ./log3
-    fi
-    
-	while read -r rem; do
-		if grep -Fxq "${rem}" ./log1; then
-			grep -vxF "${rem}" ./log1 > ./rm.tmp
-			sed '/^$/d' ./rm.tmp > ./log1
-		fi	
-	done < <(cat ./log2 ./log3)
-	
-	while read -r rem; do
-		if grep -Fxq "${rem}" ./log2; then
-			grep -vxF "${rem}" ./log2 > ./rm.tmp
-			sed '/^$/d' ./rm.tmp > ./log2
-		fi	
-	done < <(cat./log3)
-	
-	cleanups ./rm.tmp
+    > ./log1
+    if [ $(ls *.1 | wc -l) -ge 3  ]; then # si hay 3 o mas practicas con notas aprendidas
+    	while read -r note; do
+			[ $(grep "$note" *.1 | wc -l) -ge 3 ] && echo "$note" >> ./log1 # se listan solo las notas que han pasado mas 3 practicas
+		done <<< $(sort -u *.1) # se listan las notas de la lista "aprendiendo"
+	fi
 
+    if [[ ${step} = 3 ]]; then # si se ha llegado al nivel 3 (palabras dificiles de aprender)
+    
+		[ -f ./*.2 ] && sort -u ./*.2 > ./log2
+        [ -f ./*.3 ] && sort -u ./*.3 > ./log3
+        while read -r rem; do # se quitan todas las notas del nivel 2 que estan en el nivel 3
+			if grep -Fxq "${rem}" ./log2; then
+				grep -vxF "${rem}" ./log2 >> ./rm.tmp
+			fi	
+		done < ./log3
+		sed '/^$/d' ./rm.tmp | sort -u > ./log2
+		[ -f ./rm.tmp ] && rm ./rm.tmp
+		
+	elif [[ ${step} = 2 ]]; then 
+		[ -f ./*.2 ] && sort -u ./*.2 > ./log2
+    fi
 }
 
 # just for stats
@@ -1029,7 +1025,7 @@ function strt() {
 
     for i in {1..5}; do
         if [ ! -f ./.${i} ]; then
-        echo 1 > ./.${i}
+			echo 1 > ./.${i}
         fi
     done
     [[ ${hard} -lt 0 ]] && hard=0
@@ -1039,7 +1035,7 @@ function strt() {
     fi
     for i in a b c d; do
         if [ -f ./${i}.df ]; then
-        declare plus${i}=" /  $(< ./${i}.df)"
+			declare plus${i}=" /  $(< ./${i}.df)"
         fi
     done
     
@@ -1052,7 +1048,8 @@ function strt() {
         [[ "${pr}" = e ]] && \
         info="\n<span font_desc='Arial Bold 11'>$(gettext "Congratulations, You have completed a test of") $NUMBER $(gettext "sentences!")</span>\n" \
         || info="\n<span font_desc='Arial Bold  11'>$(gettext "Congratulations, You have completed a test of") $NUMBER $(gettext "words!")</span>\n"
-        echo 21 > .${icon}; export plus${pr}=""; [ -f ./${pr}.df ] && rm ./${pr}.df
+        echo 21 > .${icon}; export plus${pr}=""
+        [ -f ./${pr}.df ] && rm ./${pr}.df
         align=left
     elif [[ "${1}" = 2 ]]; then
         learnt=$(< ./${pr}.l); declare info${icon}="  *  "

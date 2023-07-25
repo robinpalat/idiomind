@@ -377,10 +377,10 @@ function topic() {
 		
 		if [ $stts = 5 ] || [ $stts = 6 ]; then
 			labels_review=("$(gettext "Learning topic")" "$(gettext "First review")" "$(gettext "Second review")" "$(gettext "Third review")" "$(gettext "Fourth review")" "$(gettext "Fifth review")" "$(gettext "Sixth review")" "$(gettext "Seventh review")" "$(gettext "Eighth review")" "$(gettext "Ninth review")")
-			label_review="<sup><b> ${labels_review[$repass]}</b></sup>\n"
+			label_review="<sup><b> ${labels_review[$repass]}</b></sup>"
 		else
 			labels_status=( "" "$(gettext "Learning")" "$(gettext "Periodic review ")" "$(gettext "Learnt, waiting to review")" "$(gettext "Learnt, waiting to review")" "$(gettext "Reviewing")" "$(gettext "Reviewing")" "$(gettext "Firt reminder to review")" "$(gettext "Firt reminder to review")" "$(gettext "Second reminder to review")" "$(gettext "Second reminder to review")")
-			label_review="<sup> $(gettext "Status: ")<b>${labels_status[$stts]}</b></sup>\n"
+			label_review="<sup> $(gettext "Status: ")<b>${labels_status[$stts]}</b></sup>"
 		fi
 		
 		[ $stts -eq 2 ] && label_review=""
