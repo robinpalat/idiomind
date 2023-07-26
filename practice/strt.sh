@@ -13,8 +13,8 @@ if [[ -n "$1" ]]; then
     stts=$(< "${DC_tlt}/stts")
     tpcdb="$DC_tlt/tpc"
 fi
-pdir="${DC_tlt}/practice"
-pdirs="$DS/practice"
+PDIREC="${DC_tlt}/practice"
+PDIRECs="$DS/practice"
 check_dir "$DC_s/logs"
 declare -A prcts=( ['a']='Flashcards' ['b']='Multiple-choice' \
 ['c']='Recognize Pronunciation' ['d']='Images' ['e']='Listen and Writing Sentences')
@@ -47,7 +47,7 @@ function scoreschk() {
         if [ $ret = 1 ]; then
             practices ${pr}
         elif [ $ret = 0 ]; then
-            if [[ "$(egrep -cv '#|^$' < "${pdir}/${pr}.group")" = 0 ]]; then
+            if [[ "$(egrep -cv '#|^$' < "${PDIREC}/${pr}.group")" = 0 ]]; then
                 export group=0; score
             else
                 practices ${pr}
@@ -61,8 +61,9 @@ function scoreschk() {
 function score() {
     rm ./*.tmp
     [ ! -f ./${pr}.l ] && touch ./${pr}.l
+    
     if [[ $(($(< ./${pr}.l)+easy)) -ge ${all} ]]; then
-        _log ${pr}; play "$pdirs/all.mp3" &
+        _log ${pr}; play "$PDIRECs/all.mp3" &
         echo "1p.$tpc.p1" >> "$log"
         date "+%a %d %B" > ./${pr}.lock
         save_score 0 & echo 21 > .${icon}
@@ -82,7 +83,8 @@ function score() {
             ((c=c+5))
             let n++
         done
-        save_score 1 & stats; strt 2
+        save_score 1 & stats
+        strt 2
     fi
 }
     
@@ -204,7 +206,7 @@ function practice_a() {
         --button="!window-close":1 \
         --button="!media-seek-forward":0
     }
-
+    
     answer() {
         yad --form --title=" " \
         --skip-taskbar --text-align=center --center --on-top \
@@ -287,7 +289,7 @@ function practice_a() {
 
 # practice B
 function practice_b(){
-    snd="$pdirs/no.mp3"
+    snd="$PDIRECs/no.mp3"
     fonts() {
         _item="$(grep -F -m 1 "trgt{${item}}" "${cfg0}" |sed 's/}/}\n/g')"
         if [[ ${lang_question} != 1 ]]; then
@@ -435,7 +437,7 @@ function practice_c() {
 		elif [ $step -eq 3 ];then
 			lquestion="\n<span color='#D11B5D' font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n"
 		else
-			lquestion="\n<span color='#818181' font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n"
+			lquestion="\n<span color='#989898' font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n"
 		fi
     }
 
@@ -652,7 +654,7 @@ function practice_e() {
                 |sed "s|[a-z]|\.|g" \
                 |sed 's|\.|\ .|g' \
                 |sed 's/^\s*./\U&\E/g' \
-                |sed "s|\.|<span color='#868686'>\.<\/span>|g")"
+                |sed "s|\.|<span color='#989898'>\.<\/span>|g")"
             fi
         else
             hint="$(echo "$@")"
@@ -668,7 +670,7 @@ function practice_e() {
         --buttons-layout=end --skip-taskbar \
         --undecorated --center --on-top \
         --align=center --image-on-top \
-        --width=560 --height=250 --borders=16 \
+        --width=600 --height=250 --borders=15 \
         --field="" "" \
         --button="!window-close":1 \
         --button="!audio-volume-high":"$cmd_play" \
@@ -683,7 +685,7 @@ function practice_e() {
         --window-icon=idiomind \
         --skip-taskbar --wrap --image-on-top --center --on-top \
         --undecorated --buttons-layout=end \
-        --width=560 --height=250 --borders=16 \
+        --width=600 --height=250 --borders=15 \
         --field="":lbl "" \
         --field="<span font_desc='Arial 7'>$OK\n\n$prc $hits</span>":lbl \
         --button="!audio-volume-high":"$cmd_play" \
@@ -692,7 +694,7 @@ function practice_e() {
     
     get_text() {
         trgt=$(echo "${1}" |sed 's/^ *//;s/ *$//')
-        chk=`echo "${trgt}" |awk '{print tolower($0)}'`
+        chk="$(echo "${trgt}" |awk '{print tolower($0)}')"
     }
 
     _clean() {
@@ -717,16 +719,17 @@ function practice_e() {
                 [ -n "${line}" ] && echo "<span color='#3A9000'><b>${line^}</b></span>  " >> ./words.tmp
                 [ -n "${line}" ] && echo "${line}" >> ./mtch.tmp
             else
-                [ -n "${line}" ] && echo "<span color='#984C42'><b>${line^}</b></span>  " >> ./words.tmp
+                [ -n "${line}" ] && echo "<span color='#984245'><b>${line^}</b></span>  " >> ./words.tmp
             fi
         done
         OK=$(tr '\n' ' ' < ./words.tmp)
-        sed 's/ /\n/g' < ./chk.tmp > ./all.tmp; touch ./mtch.tmp
-        val1=$(< ./mtch.tmp |wc -l)
+        sed 's/ /\n/g' < ./chk.tmp > ./all.tmp
+        touch ./mtch.tmp
+        val1=$(wc -l < ./mtch.tmp)
         val2=$(wc -l < ./all.tmp)
         porc=$((100*val1/val2))
         
-        if [ ${porc} -ge 70 ]; then
+        if [ ${porc} -ge 90 ]; then
             echo "${trgt}" >> ./e.1
             export easy=$((easy+1))
             color="#3AB452"
@@ -751,9 +754,11 @@ function practice_e() {
         if [[ ${lang_question} = 1 ]]; then
             push=$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")
         else 
-            push="${trgt}"; fi
+            push="${trgt}"
+        fi
         cdid=$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")
-        export trgt; get_text "${trgt}"
+        export trgt
+        get_text "${trgt}"
         cmd_play="$DS/play.sh play_sentence ${cdid}"
         ( sleep 0.5 && "$DS/play.sh" play_sentence ${cdid} ) &
 
@@ -769,40 +774,40 @@ function practice_e() {
             result "${trgt}"
             check "${trgt}"
             ret=$?
+            rm -f ./mtch.tmp ./words.tmp
             if [ $ret = 1 ]; then
                 break &
                 if ps -A |pgrep -f 'play'; then killall play & fi
-                rm -f ./mtch.tmp ./words.tmp
                 export hard ling
                 score && return
             elif [ $ret -eq 2 ]; then
                 if ps -A |pgrep -f 'play'; then killall play & fi
-                rm -f ./mtch.tmp ./words.tmp &
             fi
         fi
     done < ./e.tmp
     
-    export hard ling; scoreschk
+    export hard ling
+    scoreschk
 }
 
-function get_list() {
+function get_notes() {
     
     if grep -o -E 'a|b|c' <<< ${pr}; then
-        > "${pdir}/${pr}.0"
+        > "${PDIREC}/${pr}.0"
         if [[ $(wc -l <<< "${cfg4}") -gt 0 ]]; then
             grep -Fvx "${cfg4}" <<< "${cfg1}" > "$DT/${pr}.0"
-            sed '/^$/d' < "$DT/${pr}.0" > "${pdir}/${pr}.0"
+            sed '/^$/d' < "$DT/${pr}.0" > "${PDIREC}/${pr}.0"
             rm -f "$DT/${pr}.0"
         else
-            sed '/^$/d' <<< "${cfg1}" > "${pdir}/${pr}.0"
+            sed '/^$/d' <<< "${cfg1}" > "${PDIREC}/${pr}.0"
         fi
         if [ ${pr} = b ]; then
-            if [ ! -f "${pdir}/b.srces" ]; then
+            if [ ! -f "${PDIREC}/b.srces" ]; then
             (echo "#"
             while read word; do
                 item="$(grep -F -m 1 "trgt{${word}}" "${cfg0}" |sed 's/}/}\n/g')"
-                echo "$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")" >> "${pdir}/b.srces"
-            done < "${pdir}/${pr}.0") | yad --progress \
+                echo "$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")" >> "${PDIREC}/b.srces"
+            done < "${PDIREC}/${pr}.0") | yad --progress \
             --undecorated --pulsate --auto-close \
             --skip-taskbar --center --no-buttons
             fi
@@ -814,14 +819,14 @@ function get_list() {
         else
             echo "${cfg1}" > "$DT/images"
         fi
-        > "${pdir}/${pr}.0"
+        > "${PDIREC}/${pr}.0"
     
         (echo "#"
         while read -r itm; do
         _item="$(grep -F -m 1 "trgt{${itm}}" "${cfg0}" |sed 's/}/}\n/g')"
         if [ -f "$DM_tls/images/${itm,,}-1.jpg" \
         -o -f "$DM_tlt/images/${itm,,}.jpg" ]; then
-            [ -n "${itm}" ] && echo "${itm}" >> "${pdir}/${pr}.0"
+            [ -n "${itm}" ] && echo "${itm}" >> "${PDIREC}/${pr}.0"
         fi
         done < "$DT/images") | yad --progress \
         --undecorated --pulsate --auto-close \
@@ -830,30 +835,30 @@ function get_list() {
     elif [ ${pr} = e ]; then
         if [[ $(wc -l <<< "${cfg3}") -gt 0 ]]; then
             grep -Fxv "${cfg3}" <<< "${cfg1}" > "$DT/slist"
-            sed '/^$/d' < "$DT/slist" > "${pdir}/${pr}.0.tmp"
+            sed '/^$/d' < "$DT/slist" > "${PDIREC}/${pr}.0.tmp"
             rm -f "$DT/slist"
         else
-            sed '/^$/d' <<< "${cfg1}" > "${pdir}/${pr}.0.tmp"
+            sed '/^$/d' <<< "${cfg1}" > "${PDIREC}/${pr}.0.tmp"
             
         fi
          inf=0; while read -r itm; do
             cnt="$(echo "$itm" |wc -c)"
             if [ ${cnt} -lt 90 ]; then
-                echo "$itm" >> "${pdir}/${pr}.0"
+                echo "$itm" >> "${PDIREC}/${pr}.0"
             else
                 inf=1
             fi
-        done < "${pdir}/${pr}.0.tmp"
+        done < "${PDIREC}/${pr}.0.tmp"
         if [ ${inf} = 1 ]; then
             msg "$(gettext "Some sentences could not be added because they are too long")\n" info
         fi
-        > "${pdir}/${pr}.1"
+        > "${PDIREC}/${pr}.1"
     fi
 }
 
 function lock() {
-    if [ -f "${pdir}/${pr}.lock" ]; then
-        local lock="${pdir}/${pr}.lock"
+    if [ -f "${PDIREC}/${pr}.lock" ]; then
+        local lock="${PDIREC}/${pr}.lock"
         if ! grep 'wait' <<< "$(< "${lock}")"; then
             text_dlg="<b>$(gettext "Practice Completed")</b>\\n$(< "${lock}")"
             msg_2 "$text_dlg" \
@@ -900,19 +905,19 @@ function decide_group() {
     --button="$(gettext "Continue")!go-next!$(gettext "Practice the next group")":0); ret="$?"
     
     if [ $ret -eq 0 ]; then
-        grep -Fxvf "${pdir}/${pr}.1" "${pdir}/${pr}.group" \
-        |sed '/^$/d' > "${pdir}/${pr}.tmp"
-        mv -f "${pdir}/${pr}.tmp" "${pdir}/${pr}.group"
-        head -n ${split} "${pdir}/${pr}.group" > "${pdir}/${pr}.tmp"
-        sed '/^$/d' "${pdir}/${pr}.1" \
-        |awk '!a[$0]++' |wc -l > "${pdir}/${pr}.l"
+        grep -Fxvf "${PDIREC}/${pr}.1" "${PDIREC}/${pr}.group" \
+        |sed '/^$/d' > "${PDIREC}/${pr}.tmp"
+        mv -f "${PDIREC}/${pr}.tmp" "${PDIREC}/${pr}.group"
+        head -n ${split} "${PDIREC}/${pr}.group" > "${PDIREC}/${pr}.tmp"
+        sed '/^$/d' "${PDIREC}/${pr}.1" \
+        |awk '!a[$0]++' |wc -l > "${PDIREC}/${pr}.l"
     elif [ $ret -eq 1 ]; then
-        head -n ${split} "${pdir}/${pr}.group" > "${pdir}/${pr}.tmp"
-        grep -Fxvf "${pdir}/${pr}.tmp" "${pdir}/${pr}.1" \
-        |sed '/^$/d' > "${pdir}/${pr}.1tmp"
-        mv -f "${pdir}/${pr}.1tmp" "${pdir}/${pr}.1"
-        sed '/^$/d' "${pdir}/${pr}.1" \
-        |awk '!a[$0]++' |wc -l > "${pdir}/${pr}.l"
+        head -n ${split} "${PDIREC}/${pr}.group" > "${PDIREC}/${pr}.tmp"
+        grep -Fxvf "${PDIREC}/${pr}.tmp" "${PDIREC}/${pr}.1" \
+        |sed '/^$/d' > "${PDIREC}/${pr}.1tmp"
+        mv -f "${PDIREC}/${pr}.1tmp" "${PDIREC}/${pr}.1"
+        sed '/^$/d' "${PDIREC}/${pr}.1" \
+        |awk '!a[$0]++' |wc -l > "${PDIREC}/${pr}.l"
         export easy=0 hard=0 ling=0 step=1
     elif [ $ret -gt 1 ]; then
         score && return
@@ -927,11 +932,11 @@ function practices() {
     cfg3="$(tpc_db 5 words)"
     cfg1="$(tpc_db 5 learning)"
     hits="$(gettext "hits")"
-    touch "${pdir}/log1" "${pdir}/log2" "${pdir}/log3"
+    touch "${PDIREC}/log1" "${PDIREC}/log2" "${PDIREC}/log3"
     export easy=0 hard=0 ling=0 step=1
     group=""; split=""; lang_question=""
-    if [ -f "${pdir}/$pr" ]; then 
-    optns="$(< "${pdir}/$pr")"
+    if [ -f "${PDIREC}/$pr" ]; then 
+    optns="$(< "${PDIREC}/$pr")"
     group="$(cut -d "|" -f1 <<< "${optns}")"
     split="$(cut -d "|" -f2 <<< "${optns}")"
     lang_question="$(cut -d "|" -f3 <<< "${optns}")"
@@ -944,19 +949,19 @@ function practices() {
     else exit; fi
     lock
     
-    if [ -f "${pdir}/${pr}.0" ] && [ -f "${pdir}/${pr}.1" ]; then
+    if [ -f "${PDIREC}/${pr}.0" ] && [ -f "${PDIREC}/${pr}.1" ]; then
     
-        export all=$(egrep -cv '#|^$' "${pdir}/${pr}.0")
+        export all=$(egrep -cv '#|^$' "${PDIREC}/${pr}.0")
     
         if [[ ${group} = 1 ]]; then
-            head -n ${split} "${pdir}/${pr}.group" \
-            |grep -Fxvf "${pdir}/${pr}.1" \
-            |sed '/^$/d' > "${pdir}/${pr}.tmp"
+            head -n ${split} "${PDIREC}/${pr}.group" \
+            |grep -Fxvf "${PDIREC}/${pr}.1" \
+            |sed '/^$/d' > "${PDIREC}/${pr}.tmp"
         else
-            grep -Fxvf "${pdir}/${pr}.1" "${pdir}/${pr}.0" \
-            |sed '/^$/d' > "${pdir}/${pr}.tmp"
+            grep -Fxvf "${PDIREC}/${pr}.1" "${PDIREC}/${pr}.0" \
+            |sed '/^$/d' > "${PDIREC}/${pr}.tmp"
         fi
-        if [[ "$(egrep -cv '#|^$' < "${pdir}/${pr}.tmp")" = 0 ]]; then
+        if [[ "$(egrep -cv '#|^$' < "${PDIREC}/${pr}.tmp")" = 0 ]]; then
             if [[ ${group} = 1 ]]; then 
                 export easy=0; decide_group
             else 
@@ -964,7 +969,7 @@ function practices() {
             fi
         fi
     else
-        if [ ! -f "${pdir}/${pr}.0" ]; then
+        if [ ! -f "${PDIREC}/${pr}.0" ]; then
             optns=$(yad --form --title="$(gettext "Starting")" \
             --always-print-result \
             --window-icon=$DS/images/logo.png \
@@ -987,15 +992,15 @@ function practices() {
             fi
         fi
         
-        export group split lang_question; get_list
+        export group split lang_question; get_notes
         
         if [[ ${group} = 1 ]]; then
-            head -n ${split} "${pdir}/${pr}.0" > "${pdir}/${pr}.tmp"
-            cp -f "${pdir}/${pr}.0" "${pdir}/${pr}.group"
+            head -n ${split} "${PDIREC}/${pr}.0" > "${PDIREC}/${pr}.tmp"
+            cp -f "${PDIREC}/${pr}.0" "${PDIREC}/${pr}.group"
         else
-            cp -f "${pdir}/${pr}.0" "${pdir}/${pr}.tmp"
+            cp -f "${PDIREC}/${pr}.0" "${PDIREC}/${pr}.tmp"
         fi
-        export all=$(egrep -cv '#|^$' "${pdir}/${pr}.0")
+        export all=$(egrep -cv '#|^$' "${PDIREC}/${pr}.0")
     fi
     if [[ ${all} -lt 1 ]]; then
         if [ "$(egrep -cv '#|^$' <<< "${cfg1}")" -lt 1 ]; then
@@ -1010,7 +1015,7 @@ function practices() {
         fi
         strt 0 & return
     else
-        cleanups "${pdir}/${pr}.2" "${pdir}/${pr}.3"
+        cleanups "${PDIREC}/${pr}.2" "${PDIREC}/${pr}.3"
         img_cont="$DS/images/cont.png"
         img_no="$DS/images/nou.png"
         img_yes="$DS/images/yes.png"
@@ -1021,8 +1026,9 @@ function practices() {
 
 function strt() {
 	
-    check_dir "${pdir}"
-    cd ~ && cd "${pdir}"
+	touch "${DM_tlt}"
+    check_dir "${PDIREC}"
+    cd ~ && cd "${PDIREC}"
 
     for i in {1..5}; do
         if [ ! -f ./.${i} ]; then
@@ -1088,8 +1094,8 @@ function strt() {
         fi
     elif [ $ret -eq 3 ]; then
         unset plusa plusb plusc plusd pr
-        if [ -d "${pdir}" ]; then
-            cd "${pdir}"/; rm ./.[^.]; rm ./*
+        if [ -d "${PDIREC}" ]; then
+            cd "${PDIREC}"/; rm ./.[^.]; rm ./*
             touch ./log1 ./log2 ./log3
         fi
         strt 0
@@ -1106,5 +1112,4 @@ function strt() {
     fi
 }
 
-touch "${DM_tlt}"
-strt 0 & exit 0
+strt 0 & exit

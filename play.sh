@@ -191,7 +191,7 @@ play_list() {
     --field="$(gettext "Repeat")":CHK "$rplay" \
     --field="$(gettext "Play audio")":CHK "$audio" \
     --field="$(gettext "Use desktop notifications")":CHK "$ntosd" \
-    --field="$(gettext "Pause between items (sec)")":SCL "$loop" \
+    --field="$(gettext "Pause between notes (sec)")":SCL "$loop" \
     --field="$(gettext "Repeat sounding out")":CB "$lst_opts1" > "$tab2" &
     yad --notebook --key=$KEY --title="$title" "$tpp"\
     --name=Idiomind --class=Idiomind \
