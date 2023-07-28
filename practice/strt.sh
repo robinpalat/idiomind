@@ -61,7 +61,6 @@ function scoreschk() {
 function score() {
     rm ./*.tmp
     [ ! -f ./${pr}.l ] && touch ./${pr}.l
-    
     if [[ $(($(< ./${pr}.l)+easy)) -ge ${all} ]]; then
         _log ${pr}; play "$PDIRECs/all.mp3" &
         echo "1p.$tpc.p1" >> "$log"
@@ -100,12 +99,13 @@ function save_score() {
 			[ $(grep "$note" *.1 | wc -l) -ge 3 ] && echo "$note" >> ./log1 # se listan solo las notas que han pasado mas 3 practicas
 		done <<< $(sort -u *.1) # se listan las notas de la lista "aprendiendo"
 	fi
+	
+	if [[ -f ./e.1 ]]; then sort -u ./e.1 >> ./log1; fi
+	if ls ./*.2 >/dev/null 2>&1; then sort -u ./*.2 > ./log2; fi
+	if ls ./*.3 >/dev/null 2>&1; then sort -u ./*.3 > ./log3; fi
 
     if [[ ${step} = 3 ]]; then # si se ha llegado al nivel 3 (palabras dificiles de aprender)
-    
-		if ls ./*.2 >/dev/null 2>&1; then sort -u ./*.2 > ./log2; fi
-		if ls ./*.3 >/dev/null 2>&1; then sort -u ./*.3 > ./log3; fi
-
+ 
         while read -r rem; do # se quitan todas las notas del nivel 2 que estan en el nivel 3
 			if grep -Fxq "${rem}" ./log2; then
 				grep -vxF "${rem}" ./log2 >> ./rm.tmp
@@ -113,10 +113,9 @@ function save_score() {
 		done < ./log3
 		sed '/^$/d' ./rm.tmp | sort -u > ./log2
 		[ -f ./rm.tmp ] && rm ./rm.tmp
+	fi
 		
-	elif [[ ${step} = 2 ]]; then 
-		if ls ./*.2 >/dev/null 2>&1; then sort -u ./*.2 > ./log2; fi
-    fi
+
 }
 
 # just for stats
@@ -670,7 +669,7 @@ function practice_e() {
         --buttons-layout=end --skip-taskbar \
         --undecorated --center --on-top \
         --align=center --image-on-top \
-        --width=600 --height=250 --borders=15 \
+        --width=620 --height=250 --borders=15 \
         --field="" "" \
         --button="!window-close":1 \
         --button="!audio-volume-high":"$cmd_play" \
@@ -685,7 +684,7 @@ function practice_e() {
         --window-icon=idiomind \
         --skip-taskbar --wrap --image-on-top --center --on-top \
         --undecorated --buttons-layout=end \
-        --width=600 --height=250 --borders=15 \
+        --width=620 --height=250 --borders=15 \
         --field="":lbl "" \
         --field="<span font_desc='Arial 7'>$OK\n\n$prc $hits</span>":lbl \
         --button="!audio-volume-high":"$cmd_play" \
@@ -807,7 +806,7 @@ function get_notes() {
             while read word; do
                 item="$(grep -F -m 1 "trgt{${word}}" "${cfg0}" |sed 's/}/}\n/g')"
                 echo "$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")" >> "${PDIREC}/b.srces"
-            done < "${PDIREC}/${pr}.0") | yad --progress \
+            done <<< "${cfg3}") | yad --progress \
             --undecorated --pulsate --auto-close \
             --skip-taskbar --center --no-buttons
             fi

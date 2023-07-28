@@ -11,6 +11,8 @@ trans="$(cdb "${cfgdb}" 1 opts trans)"
 ttrgt="$(cdb "${cfgdb}" 1 opts ttrgt)"
 dlaud="$(cdb "${cfgdb}" 1 opts dlaud)"
 notif="$(cdb "${cfgdb}" 1 opts swind)"
+Level="$(cdb "${cfgdb}" 1 opts level)"
+
 [ -z "$trans" ] && trans='FALSE'
 export ttrgt trans lgt lgs
 info3="$(gettext "This note was not added")"
@@ -540,7 +542,7 @@ function process() {
         tpcs="$(cdb "${shrdb}" 5 topics)"
         export tpcs="$(grep -vFx "${tpe}" <<< "$tpcs" |tr "\\n" '!' |sed 's/\!*$//g')"
         [ -n "$tpcs" ] && export e='!'
-        tpe="$(dlg_checklist_3 "$DT_r/xlines" "${tpe}")"
+        tpe="$(dlg_checklist_3 "$DT_r/xlines" "${tpe}" "$title" "$info")"
         ret="$?"
     fi
     
@@ -770,7 +772,17 @@ new_items() {
     
     [ -d "${2}" ] && DT_r="${2}"
     [ -n "${5}" ] && srce="${5}" || srce=""
-
+    
+    level_control=False
+    if [ "$Level" = "0" ] && [ "$(wc -w <<< "$trgt")" -gt ${sentence_words_level1} ]; then
+		level_control=True
+	elif [ "$Level" = "1" ] && [ "$(wc -w <<< "$trgt")" -gt ${sentence_words_level2} ]; then
+		level_control=True
+	fi
+	
+	if [ $level_control = True ]; then
+		process & return
+	fi
     if [ ${#trgt} -le ${sentence_chars} ] && \
     [ $(echo -e "${trgt}" |wc -l) -gt ${sentence_lines} ]; then 
         process & return

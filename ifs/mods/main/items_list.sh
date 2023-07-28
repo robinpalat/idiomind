@@ -145,8 +145,8 @@ function notebook_1() {
 
     list | yad --list --tabnum=1 --window-icon=idiomind \
     --plug=$KEY --print-all --separator='|' \
-    --dclick-action="$DS/vwr.sh 1" --grid-lines=hor \
-    --print-column=1 --expand-column=1 --no-headers \
+    --dclick-action="$DS/vwr.sh 1" --select-action="/usr/share/idiomind/play.sh play_word" \
+    --print-column=1 --expand-column=1 --grid-lines=hor  --no-headers \
     --ellipsize=end --wrap-width=460 --ellipsize-cols=2 \
     --search-column=1 --regex-search --hide-column=3 --tooltip-column=3 \
     --column=Name:TEXT \
@@ -267,8 +267,8 @@ function notebook_3() {
 
     ([ -n "${ls1}" ] && echo "${ls1}") |yad --list --tabnum=1 \
     --window-icon=idiomind --plug=$KEY --print-all --separator='|' \
-    --dclick-action="$DS/vwr.sh 2" --grid-lines=hor \
-    --expand-column=0 --no-headers --ellipsize=end \
+    --dclick-action="$DS/vwr.sh 1" --select-action="/usr/share/idiomind/play.sh play_word" \
+    --expand-column=0 --no-headers --grid-lines=hor --ellipsize=end \
     --search-column=1 --regex-search \
     --column=Name:TEXT &
     yad --text-info --tabnum=2 --window-icon=idiomind \

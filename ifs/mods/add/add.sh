@@ -690,7 +690,7 @@ function dlg_form_2() {
 }
 
 function dlg_checklist_3() {
-    sz=(700 400 300 350); [[ ${swind} = TRUE ]] && sz=(600 340 240 250)
+    sz=(700 400 300 350)
     fkey=$((RANDOM*$$))
     function _list_2() {
         while read -r aitem; do
@@ -703,11 +703,15 @@ function dlg_checklist_3() {
             fi
         done < "${1}"
     }
+    if [ $Level -lt 2 ]; then
+        inf="$(gettext "Sentence too complex for your learning level, please edit it to simplify or shorten it.")\n"
+        img="--image=$DS/images/info.png"
+    fi
     _list_2 "${1}" | yad --list --checklist --tabnum=1 --plug="$fkey" \
     --dclick-action="$DS/add.sh 'list_words_dclik'" --multiple \
     --ellipsize=end --wrap-width=${sz[3]} --ellipsize-cols=1 \
-    --no-headers --text-align=right \
-    --column=" " --column=" " |sed '/^$/d' > "$slt" &
+    $img --text="<small>$inf</small>" --no-headers --text-align=left \
+    --image-on-top --column=" " --column=" " |sed '/^$/d' > "$slt" &
     yad --form --tabnum=2 --plug="$fkey" --columns=2 \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --separator="" \

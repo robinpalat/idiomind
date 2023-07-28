@@ -649,8 +649,10 @@ restart_topic() {
 			fi
 		done < "${DC_tlt}/data"
 		tpc_db 3 config repass 0
-		"$DS/mngr.sh" mkmn 1; "$DS/ifs/tls.sh" colorize 0
+		"$DS/mngr.sh" mkmn 1
 		cleanups "$DT/edit_list_more" "${DC_tlt}/practice"
+		"$DS/ifs/tls.sh" colorize 0
+		idiomind topic
 	fi
 
 } >/dev/null 2>&1

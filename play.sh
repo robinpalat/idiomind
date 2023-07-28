@@ -9,51 +9,73 @@ msg_err1() {
 }
 
 play_word() {
+
     w="$(sed 's/<[^>]*>//g' <<<"${2}")"
+    if ps -A | pgrep -f 'play'; then killall 'play'; fi
+    if ps -A | pgrep -f 'espeak'; then killall 'espeak'; fi
     
-    if [ -f "$DT/${3}.mp3" ]; then play "$DT/${3}.mp3" &
-    
-    elif [ -f "${DM_tlt}/$3.mp3" ]; then play "${DM_tlt}/$3.mp3" &
-        
+    if [ -f "$DT/${3}.mp3" ]; then 
+		play "$DT/${3}.mp3" &
+    elif [ -f "${DM_tlt}/$3.mp3" ]; then
+		play "${DM_tlt}/$3.mp3" &
     elif [ -f "${DM_tls}/audio/${w,,}.mp3" ]; then
         play "${DM_tls}/audio/${w,,}.mp3" &
-        
     elif ls "$DC_d"/*."TTS offline.Convert text to audio".* 1> /dev/null 2>&1; then
         for Script in "$DC_d"/*."TTS offline.Convert text to audio".*; do
 			Script="$DS_a/Resources/scripts/$(basename "${Script}")"
 			[ -f "${Script}" ] && "${Script}" "${w}" "$DT/${3}.mp3"
 			if [ -f "$DT/${3}.mp3" ]; then 
-				play "$DT/${3}.mp3"
-				rm -f "$DT/${3}.mp3"; break & exit
+				break
 			fi
 		done
-		
+		if [ -f "$DT/${3}.mp3" ]; then 
+			play "$DT/${3}.mp3" && rm -f "$DT/${3}.mp3"
+		else
+			# si hubo error al procesar tts offline se opta por espeak
+			sed 's/<[^>]*>//g' <<< "${w}." |espeak -v ${tlangs[$tlng]} \
+			-a ${sAmplitude} -s ${sSpeed} -p ${sPitch} \
+			-g ${sWordgap} -b ${sEncoding} &
+		fi
     else
         echo "${w}." |espeak -v ${tlangs[$tlng]} \
         -a ${sAmplitude} -s ${sSpeed} -p ${sPitch} \
         -g ${sWordgap} -b ${sEncoding} &
     fi
+    
+    exit
+    
 } >/dev/null 2>&1
 
 play_sentence() {
+	
     if ps -A | pgrep -f 'play'; then killall 'play'; fi
+    if ps -A | pgrep -f 'espeak'; then killall 'espeak'; fi
+    
     if [ -f "${DM_tlt}/$2.mp3" ]; then
-        play "${DM_tlt}/$2.mp3" &
-        
+        play "${DM_tlt}/$2.mp3" & 
     elif ls "$DC_d"/*."TTS offline.Convert text to audio".* 1> /dev/null 2>&1; then
         for Script in "$DC_d"/*."TTS offline.Convert text to audio".*; do
 			Script="$DS_a/Resources/scripts/$(basename "${Script}")"
 			[ -f "${Script}" ] && "${Script}" "${trgt}." "$DT/${trgt}.mp3"
 			if [ -f "$DT/${trgt}.mp3" ]; then 
-				play "$DT/${trgt}.mp3"
-				rm -f "$DT/${trgt}.mp3"; break & exit
+				break
 			fi
 		done
+		if [ -f "$DT/${trgt}.mp3" ]; then
+			play "$DT/${trgt}.mp3" && rm -f "$DT/${trgt}.mp3"
+		else
+			sed 's/<[^>]*>//g' <<< "${trgt}." |espeak -v ${tlangs[$tlng]} \
+			-a ${sAmplitude} -s ${sSpeed} -p ${sPitch} \
+			-g ${sWordgap} -b ${sEncoding} &
+		fi
     else
         sed 's/<[^>]*>//g' <<< "${trgt}." |espeak -v ${tlangs[$tlng]} \
         -a ${sAmplitude} -s ${sSpeed} -p ${sPitch} \
         -g ${sWordgap} -b ${sEncoding} &
     fi
+
+    exit 
+    
 } >/dev/null 2>&1
 
 play_file() {

@@ -117,9 +117,9 @@ function create_cfgdb() {
     (date TEXT,ignr TEXT);" |sqlite3 "${cfgdb}"
     sqlite3 "${cfgdb}" "pragma busy_timeout=500;\
     insert into opts (gramr,trans,dlaud,ttrgt,itray,\
-    swind,stsks,intrf,synth,txaud,tlang,slang) \
+    swind,stsks,intrf,synth,txaud,tlang,level,slang) \
     values ('"$2"','"$2"','"$2"','FALSE','FALSE',\
-    'FALSE','"$2"','default','','','','');"
+    'FALSE','"$2"','default','','','','','');"
     sqlite3 "${cfgdb}" "insert into lang (tlng,slng) values ('','');"
     sqlite3 "${cfgdb}" "insert into user (autr,pass) values ('','');"
     sqlite3 "${cfgdb}" "insert into geom (vals) values ('');"

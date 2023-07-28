@@ -74,7 +74,7 @@ set_lang() {
 }
 
 config_dlg() {
-    sz=(400 450)
+    sz=(400 480)
     kill_icon=0
     source "$DS/default/sets.cfg"
     
@@ -87,8 +87,8 @@ config_dlg() {
         declare "$get"="$val"
     done
 
-    if [ -z "$intrf" ]; then intrf=Default; fi
-    lst="$intrf"$(sed "s/\!$intrf//g" <<<"!Default!en!es!fr!it!pt")""
+    [ -z "$intrf" ] && intrf=Default
+    interface_lang_list="$intrf"$(sed "s/\!$intrf//g" <<<"!Default!en!es!fr!it!pt")""
     if [ "$ntosd" != TRUE ]; then audio=TRUE; fi
     if [ "$trans" != TRUE ]; then ttrgt=FALSE; fi
     e='!'
@@ -97,6 +97,11 @@ config_dlg() {
         list1="${list1}${e}${clocal}"
     done
     list2=$(for i in "${!slangs[@]}"; do echo -n "!$i"; done)
+    
+    levels=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
+    Level="${levels[${level}]}"
+    [ -z "$Level" ] && Level=" "
+    levels_list="$Level"$(sed "s/\!$Level//g" <<< "!${levels[0]}!${levels[1]}!${levels[2]}")""
 
     c=$((RANDOM%100000)); KEY=$c
     yad --plug=$KEY --form --tabnum=1 \
@@ -109,8 +114,9 @@ config_dlg() {
     --field="$(gettext "Use a system tray icon instead of the start panel")":CHK "$itray" \
     --field="$(gettext "Show notifications when notes are added")":CHK "$swind" \
     --field="$(gettext "Run at startup")":CHK "$stsks" \
-    --field="$(gettext "Interface language")":CB "$lst" \
+    --field="$(gettext "Interface language")":CB "$interface_lang_list" \
     --field="$(gettext "I'm learning")":CB "$(gettext "${tlng}")$list1" \
+    --field="$(gettext "My learning level")":CB "$levels_list" \
     --field="$(gettext "My language is")":CB "$(gettext "${slng}")$list2" > "$cnf1" &
     cat "$DS_a/menu_list" |yad --plug=$KEY --tabnum=2 --list \
     --text=" <small>$(gettext "Double-click to configure")</small> " --print-all \
@@ -132,13 +138,13 @@ config_dlg() {
     
     if [ $ret -eq 0 ]; then
         n=1
-        while [ ${n} -le 9 ]; do
+        while [ ${n} -le 10 ]; do
             val=$(cut -d "|" -f${n} < "$cnf1")
             cdb "${cfgdb}" 3 opts "${csets[$((n-1))]}" "${val}"
            let n++
         done
         
-        ## Interface Language
+        # Interface Language
         val=$(cut -d "|" -f8 < "$cnf1")
         if [[ "$val" != "$intrf" ]]; then
             msg_2 "$(gettext "Are you sure you want to change the interface language?")\n" \
@@ -161,7 +167,7 @@ config_dlg() {
             fi
         fi
         
-        #Icon tray
+        # Icon tray
         if [[ "$(cdb ${cfgdb} 1 opts itray)"  = TRUE ]] && [[ ! -f "$DT/tray.pid" ]]; then
 			show_icon=1
             if ! echo $DESKTOP_SESSION  | grep -E "xfce|xfce"; then # TODO
@@ -172,7 +178,7 @@ config_dlg() {
             kill_icon=1
         fi
         
-        #Autostart
+        # Autostart
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
@@ -185,8 +191,8 @@ config_dlg() {
                 rm "$config_dir/idiomind.desktop"
             fi
         fi
-        
-        #Languages source and target 
+
+        # Language target 
         ntlang=$(cut -d "|" -f9 < "$cnf1")
         if [[ $(gettext ${tlng}) != ${ntlang} ]]; then
             for val in "${lt[@]}"; do
@@ -203,7 +209,21 @@ config_dlg() {
             fi
         fi
         
-        nslang=$(cut -d "|" -f10 < "$cnf1")
+        # learning level
+        nlevel=$(cut -d "|" -f10 < "$cnf1")
+        ind=-1
+		for i in "${!levels[@]}"; do
+			if [ "${levels[$i]}" = "$nlevel" ]; then
+				ind="$i"
+				break
+			fi
+		done
+        if [[ $(gettext ${level}) != ${nlevel} ]]; then
+			cdb "${cfgdb}" 3 opts level "${ind}"
+        fi
+        
+        # Language source 
+        nslang=$(cut -d "|" -f11 < "$cnf1")
         if [[ "${slng}" != "${nslang}" ]]; then
             slng="${nslang}"
             confirm "$info2" dialog-question "${slng}"
