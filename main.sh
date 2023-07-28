@@ -185,11 +185,12 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
         msg "$(gettext "File format corrupted")\n" error "$(gettext "Information")" & exit 1
     fi
     file="${1}"
+    c=$((RANDOM%100000)); export KEY=$c
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
     level="${lv[${levl}]}"
-    itxt="<span font_desc='Droid Sans Bold 13'>$name</span><small><sup>\n$(gettext "Words") $nwrd  \
-$(gettext "Sentences") $nsnt  $(gettext "Images") $nimg \n$(gettext "Level:") \
-$level \n$(gettext "Language:") $(gettext "$tlng")\n$(gettext "Translation:") $(gettext "$slng")$otranslations</sup></small>" 
+    itxt="<span font_desc='Droid Sans Bold 11'>$name</span><small>\n<sup>\n$(gettext "Notes:")  $nwrd $(gettext "Words"),  \
+$nsnt $(gettext "Sentences"),  $nimg $(gettext "Images")\n$(gettext "Level:") \
+$level \n$(gettext "Language:") $(gettext "$tlng"),  $(gettext "Translation:") $(gettext "$slng")$otranslations</sup>\n</small>" 
     dclk="$DS/play.sh play_word"
     source "$DS/ifs/mods/main/items_list.sh"
     _lst() {
@@ -198,8 +199,16 @@ $level \n$(gettext "Language:") $(gettext "$tlng")\n$(gettext "Translation:") $(
         cut -d ':' -f3 <<< "${line}" |sed 's/\"*//;s/\"$//;s/\",\"slch//'
         done < <(sed -n 2p "${file}"|sed 's/},/\n/g'|tr -d '\\'|sed '/^$/d')
     }
+    
+    _info() {
+        while read -r line; do
+        cut -d ':' -f1 <<< "${line}" |sed 's/\"*//;s/\"$//'
+        cut -d ':' -f3 <<< "${line}" |sed 's/\"*//;s/\"$//;s/\",\"slch//'
+        done < <(sed -n 3p "${file}"|sed 's/},/\n/g'|tr -d '\\'|sed '/^$/d')
+    }
 
-    _lst | tpc_view
+	export -f _lst _info
+    tpc_view
     ret=$?
         if [ $ret -eq 0 ]; then
             if [ -e "$DT/in_lk" ]; then
@@ -373,14 +382,14 @@ function topic() {
         export cnf4=$(mktemp "$DT/cnf4.XXXXXX")
 
         labels_level=( "$(gettext "Fresh topic")" "$(gettext "Recently learned")" "$(gettext "Recently learned")" "$(gettext "Recently learned")" "$(gettext "Familiar topic")" "$(gettext "Familiar topic")" "$(gettext "Intermediate-level")" "$(gettext "intermediate-level")" "$(gettext "Mastered topic")" "$(gettext "Mastered topic")" )
-		export label_level="<sup> $(gettext "Your learning level: ")<b>${labels_level[$repass]}</b></sup>"
+		export label_level="<small> $(gettext "Your learning level: ")<b>${labels_level[$repass]}</b></small>"
 		
 		if [ $stts = 5 ] || [ $stts = 6 ]; then
 			labels_review=("$(gettext "Learning topic")" "$(gettext "First review")" "$(gettext "Second review")" "$(gettext "Third review")" "$(gettext "Fourth review")" "$(gettext "Fifth review")" "$(gettext "Sixth review")" "$(gettext "Seventh review")" "$(gettext "Eighth review")" "$(gettext "Ninth review")")
-			label_review="<sup><b> ${labels_review[$repass]}</b></sup>"
+			label_review="<small><b> ${labels_review[$repass]}</b></small>"
 		else
 			labels_status=( "" "$(gettext "Learning")" "$(gettext "Periodic review ")" "$(gettext "Learnt, waiting to review")" "$(gettext "Learnt, waiting to review")" "$(gettext "Reviewing")" "$(gettext "Reviewing")" "$(gettext "Firt reminder to review")" "$(gettext "Firt reminder to review")" "$(gettext "Second reminder to review")" "$(gettext "Second reminder to review")")
-			label_review="<sup> $(gettext "Status: ")<b>${labels_status[$stts]}</b></sup>"
+			label_review="<small> $(gettext "Status: ")<b>${labels_status[$stts]}</b></small>"
 		fi
 		
 		[ $stts -eq 2 ] && label_review=""
@@ -388,11 +397,11 @@ function topic() {
 		export label_review
 
         if [ -n "$dtei" ]; then 
-            export infolbl5="<small><sub>$(gettext "Installed on") $dtei, $(gettext "Created by") $autr</sub></small>"
+            export infolbl5="<small>$(gettext "Installed on") $dtei, $(gettext "Created by") $autr</small>"
         else 
-            export infolbl5="<small><sub>$(gettext "Created on") $dtec</sub></small>"
+            export infolbl5="<small>$(gettext "Created on") $dtec</small>"
         fi
-        export lbl1="<span font_desc='Free Sans 15'>${tpc}</span><sup>\n$(gettext "Sentences"): $cfg4  $(gettext "Words"): $cfg3</sup>\n$infolbl5\n"
+        export lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span><small>\n$(gettext "Notes:") $cfg4 $(gettext "Sentences"),  $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
     }
     
     oclean() { cleanups "$cnf1" "$cnf3" "$cnf4" "$DT/tpc_lk"; }

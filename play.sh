@@ -10,11 +10,19 @@ msg_err1() {
 
 play_word() {
 
-    w="$(sed 's/<[^>]*>//g' <<<"${2}")"
+	w="$(sed 's/<[^>]*>//g' <<<"${2}")"
+	item="$(grep -F -m 1 "trgt{${w}}" "$DC_tlt/data" |sed 's/}/}\n/g')"
+    type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
+    cdid="$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")"
+   
     if ps -A | pgrep -f 'play'; then killall 'play'; fi
     if ps -A | pgrep -f 'espeak'; then killall 'espeak'; fi
     
-    if [ -f "$DT/${3}.mp3" ]; then 
+    if [ -f "$DT/${cdid}.mp3" ]; then 
+		play "$DT/${cdid}.mp3" &
+    elif [ -f "${DM_tlt}/$cdid.mp3" ]; then
+		play "${DM_tlt}/$cdid.mp3" &
+    elif [ -f "$DT/${3}.mp3" ]; then 
 		play "$DT/${3}.mp3" &
     elif [ -f "${DM_tlt}/$3.mp3" ]; then
 		play "${DM_tlt}/$3.mp3" &

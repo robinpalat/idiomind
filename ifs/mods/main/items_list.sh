@@ -318,22 +318,55 @@ function dialog_1() {
     --button=" $(gettext "Yes") ":2
 }
 
+#function tpc_view() {
+    #yad --list --title="Idiomind" \
+    #--text="${itxt}" --select-action="/usr/share/idiomind/play.sh play_word" \
+    #--name=Idiomind --class=Idiomind \
+    #--no-click --print-column=0 \
+    #--wrap-width=420 --ellipsize-cols=0 \
+    #--dclick-action=":" \
+    #--window-icon=$DS/images/logo.png \
+    #--hide-column=2 --tooltip-column=2 \
+    #--no-headers --ellipsize=END --center \
+    #--width=510 --height=560 \
+    #--borders=8 --tab-borders=0 \
+    #--column=" " --column=" " \
+    #--button="$(gettext "Install")":0 \
+    #--button="$(gettext "Close")!gtk-close":1
+#}
+
+
 function tpc_view() {
-    yad --list --title="Idiomind" \
+
+    _lst | yad --list --tabnum=1 --window-icon=idiomind \
+    --plug=$KEY --print-all --separator='|' \
+    --dclick-action="$DS/vwr.sh 1" --select-action="/usr/share/idiomind/play.sh play_word" \
+    --print-column=1 --expand-column=1 --grid-lines=hor  --no-headers \
+    --ellipsize=end --wrap-width=460 --ellipsize-cols=2 \
+    --search-column=1 --regex-search --hide-column=3 --tooltip-column=3 \
+    --column=Name:TEXT \
+    --column=Learned:CHK --column=@back@:TIP &
+    _info | yad --text-info --tabnum=2 --window-icon=idiomind \
     --text="${itxt}" \
-    --name=Idiomind --class=Idiomind \
-    --no-click --print-column=0 \
-    --wrap-width=420 --ellipsize-cols=0 \
-    --dclick-action=":" \
+    --plug=$KEY --borders=10 \
+    --always-print-result \
+    --show-uri --uri-color="#6591AA" \
+    --filename="${note}" --editable --wrap \
+    --fontname='vendana 11' --margins=14  &
+    yad --notebook --title="$name" \
+    --name=Idiomind --class=Idiomind --key=$KEY \
+    --always-print-result \
+    --center --align=right \
     --window-icon=$DS/images/logo.png \
-    --hide-column=2 --tooltip-column=2 \
-    --no-headers --ellipsize=END --center \
-    --width=510 --height=560 \
-    --borders=8 --tab-borders=0 \
-    --column=" " --column=" " \
+    --tab="  $(gettext "Notes") " \
+    --tab="  $(gettext "Info")  " \
+    --width=530 --height=560 --borders=5 --tab-borders=0 \
     --button="$(gettext "Install")":0 \
     --button="$(gettext "Close")!gtk-close":1
-}
+} >/dev/null 2>&1
+
+
+
 
 function panelini() {
 	
