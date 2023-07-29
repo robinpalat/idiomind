@@ -28,16 +28,17 @@ fi
 if ((stts>=1 && stts<=10)); then 
     if [ ${t} = 0 ]; then f=1; fi
 fi
-
-for ad in "$DS/ifs/mods/play"/*; do
-    source "${ad}"
-    for item in "${!items[@]}"; do
-        val="$(grep -o ${items[$item]}=\"[^\"]* "${file_cfg}" |grep -o '[^"]*$')"
-        if [ "$val" = 'TRUE' ]; then t=1; fi
-        declare t=${t};
-    done
-    unset items
-done
+if [ $stts -gt 10 ]; then
+	for ad in "$DS/ifs/mods/play"/*; do
+		source "${ad}"
+		for item in "${!items[@]}"; do
+			val="$(grep -o ${items[$item]}=\"[^\"]* "${file_cfg}" |grep -o '[^"]*$')"
+			if [ "$val" = 'TRUE' ]; then t=1; fi
+			declare t=${t};
+		done
+		unset items
+	done
+fi
 
 if [ ${f} = 1 -a "$1" != 2 ]; then t=0; fi
 

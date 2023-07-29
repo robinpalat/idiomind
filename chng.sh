@@ -107,8 +107,10 @@ if [[ ${1} = 0 ]]; then
             done < <(sort |uniq "${DC_tlt}/practice/log3")
         fi
     fi
-    include "$DS/ifs/mods/chng"
-    echo ${_stop} > $DT/playlck
+    if [ $stts -gt 10 ]; then
+		include "$DS/ifs/mods/chng"
+		echo ${_stop} > $DT/playlck
+    fi
 
 elif [[ ${1} != 0 ]]; then
     source /usr/share/idiomind/default/c.conf

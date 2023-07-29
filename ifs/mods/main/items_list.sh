@@ -340,18 +340,18 @@ function tpc_view() {
 
     _lst | yad --list --tabnum=1 --window-icon=idiomind \
     --plug=$KEY --print-all --separator='|' \
-    --dclick-action="$DS/vwr.sh 1" --select-action="/usr/share/idiomind/play.sh play_word" \
+    --dclick-action="/usr/share/idiomind/play.sh play_word" \
+    --select-action="/usr/share/idiomind/play.sh play_word" \
     --print-column=1 --expand-column=1 --grid-lines=hor  --no-headers \
     --ellipsize=end --wrap-width=460 --ellipsize-cols=2 \
-    --search-column=1 --regex-search --hide-column=3 --tooltip-column=3 \
-    --column=Name:TEXT \
-    --column=Learned:CHK --column=@back@:TIP &
-    _info | yad --text-info --tabnum=2 --window-icon=idiomind \
+    --search-column=1 --regex-search --hide-column=2 --tooltip-column=2 \
+    --column=Name:TEXT --column=@back@:TIP &
+    echo "$note" | yad --text-info --tabnum=2 --window-icon=idiomind \
     --text="${itxt}" \
     --plug=$KEY --borders=10 \
     --always-print-result \
     --show-uri --uri-color="#6591AA" \
-    --filename="${note}" --editable --wrap \
+    --wrap \
     --fontname='vendana 11' --margins=14  &
     yad --notebook --title="$name" \
     --name=Idiomind --class=Idiomind --key=$KEY \
@@ -359,7 +359,7 @@ function tpc_view() {
     --center --align=right \
     --window-icon=$DS/images/logo.png \
     --tab="  $(gettext "Notes") " \
-    --tab="  $(gettext "Info")  " \
+    --tab="  $(gettext "Details")  " \
     --width=530 --height=560 --borders=5 --tab-borders=0 \
     --button="$(gettext "Install")":0 \
     --button="$(gettext "Close")!gtk-close":1

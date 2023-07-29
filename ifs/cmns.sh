@@ -120,15 +120,6 @@ function tpc_db() {
         sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500; \
         insert into ${ta} (${co}) values ('${va}');"
     fi
-    
-    
-
-    
-    
-    
-    
-    
-    
 }
 
 function nmfile() {

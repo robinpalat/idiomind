@@ -33,8 +33,10 @@ if [ "${act}" = "$(gettext "Getting started with Idiomind")" ]; then
  xdg-open 'https://idiomind.sourceforge.io/help.html'
 
 elif [ "${act}: " = "$l0" ]; then
-    $DS/stop.sh 2 && sleep 1
-    $DS/bcle.sh &
+	source "$DS/ifs/cmns.sh"
+	export -f tpc_db
+	export stts=$(sed -n 1p "${DC_tlt}/stts")
+    $DS/play.sh  play_list &
 elif [ "${act}: " = "$l1" ]; then
     modmenu "$arg"; chngtpt "$tpt"
 elif [ "${act}: " = "$l2" ]; then

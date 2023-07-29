@@ -59,6 +59,7 @@ function check_format_1() {
             if ! [[ $val =~ $numer ]] || [ ${#val} -gt 2 ]; then invalid $n; fi
          elif [[ ${n} = 17 ]]; then
             if [ ${#val} -gt 10240 ]; then invalid $n; fi
+            export note="$val"
         elif [[ ${n} = 18 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 40 ] || \
             [ "$(grep -o -E '\*|\/|\@|$|=|-' <<< "${val}")" ]; then invalid $n; fi

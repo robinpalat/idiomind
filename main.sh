@@ -188,9 +188,9 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     c=$((RANDOM%100000)); export KEY=$c
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
     level="${lv[${levl}]}"
-    itxt="<span font_desc='Droid Sans Bold 11'>$name</span><small>\n<sup>\n$(gettext "Notes:")  $nwrd $(gettext "Words"),  \
+    itxt="<span font_desc='Droid Sans Bold 12'>$name</span><small>\n$(gettext "Notes:")  $nwrd $(gettext "Words"),  \
 $nsnt $(gettext "Sentences"),  $nimg $(gettext "Images")\n$(gettext "Level:") \
-$level \n$(gettext "Language:") $(gettext "$tlng"),  $(gettext "Translation:") $(gettext "$slng")$otranslations</sup>\n</small>" 
+$level \n$(gettext "Language:") $(gettext "$tlng"),  $(gettext "Translation:") $(gettext "$slng")$otranslations</small>" 
     dclk="$DS/play.sh play_word"
     source "$DS/ifs/mods/main/items_list.sh"
     _lst() {

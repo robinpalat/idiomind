@@ -109,7 +109,7 @@ play_file() {
 } >/dev/null 2>&1
 
 play_list() {
- 
+	
     tpc="$(sed -n 1p "$HOME/.config/idiomind/tpc")"
     DC_tlt="${DM_tl}/${tpc}/.conf"
     tpcdb="$DC_tlt/tpc"
@@ -127,6 +127,7 @@ play_list() {
     
     btn1="!media-playback-start!$(gettext "Play"):0"
     title="$(gettext "Play")"
+    
     [ ${stts} -ge 1 ] && [ -n "${tpc}" ] && title="$(gettext "Play") - ${tpc}"
     if [ "$(< $DT/playlck)" != 0 ]; then
         tpp="--text=<small>  \"$(sed -n 1p "$DT/playlck")\"</small>"
@@ -153,6 +154,7 @@ play_list() {
         in0="$(grep -Fxv "${sents}" <<< "${learn}" |wc -l)"
         in1="$(grep -Fxv "${words}" <<< "${learn}" |wc -l)"
         in2="$(grep -Fxv "${leart}" <<< "${marks}" |wc -l)"
+        in2=$((in2-1))
         in3="$(egrep -cv '#|^$' "${DC_tlt}/practice/log2")"
         in4="$(egrep -cv '#|^$' "${DC_tlt}/practice/log3")"
         opts="$(tpc_db 5 config |head -n9)"
@@ -169,7 +171,7 @@ play_list() {
 			for ad in "$DS/ifs/mods/play"/*; do # addons 2
 				source "${ad}"
 				for item in "${!items[@]}"; do 
-					echo "$DS/images/${items[$item]}.png"
+					echo "$DS/images/a0.png"
 					grep -o ${items[$item]}=\"[^\"]* "${file_cfg}" |grep -o '[^"]*$'
 					echo "  $(gettext "${item}")"
 				done
@@ -177,20 +179,21 @@ play_list() {
 			done
 		else
 			n=0
-
 			while [ ${n} -le 4 ]; do # sentences, words, ect.
 				if ((stts==2 && n==3)); then break; fi
 				arr="in${n}"
-				[[ ${!arr} -lt 1 ]] && echo "$DS/images/ai0.png" ||echo "$DS/images/a0.png"
-				echo "${!psets[${n}]}"
-				echo "  $(gettext "${lbls[$n]}")"
+				if [[ ${!arr} -ge 1 ]]; then
+					echo "$DS/images/${lbls[$n]}.png"
+					echo "${!psets[${n}]}"
+					echo "  $(gettext "${lbls[$n]}")"
+				fi
 				let n++
 			done
 			for ad in "$DS/ifs/mods/play"/*; do # including a type of addons (list_name)
 				source "${ad}"
 				if [ -z "$addon_name" ]; then
 					for item in "${!items[@]}"; do
-						echo "$DS/images/${items[$item]}.png"
+						echo "$DS/images/a0.png"
 						grep -o ${items[$item]}=\"[^\"]* "${file_cfg}" |grep -o '[^"]*$'
 						echo "  $(gettext "${item}") <i><small>${list_name}</small></i>"
 					done
@@ -211,7 +214,7 @@ play_list() {
     [[ ${ntosd} != TRUE ]] && [[ ${audio} != TRUE ]] && audio=TRUE
     setting_1 | yad --plug=$KEY --tabnum=1 --list \
     --print-all --always-print-result --separator="|" \
-    --center --expand-column=3 --no-headers \
+    --center --expand-column=2 --no-headers \
     --column=IMG:IMG \
     --column=CHK:CHK \
     --column=TXT:TXT > "$tab1" &
@@ -241,23 +244,25 @@ play_list() {
         [ -f "$tab1" ] && rm -f "$tab1"; [ -f "$tab2" ] && rm -f "$tab2"
         f=1; n=0; count=0
         for co in "${psets[@]:0:5}"; do
-            val=$(sed -n $((n+1))p <<< "${out1}" |cut -d "|" -f2)
+            val=$(sed -n $((n+1))p <<< "${out1}" |cut -d "|" -f1)
             [ -n "${val}" ] && tpc_db 9 config "${co}" "${val}"
             [ "$val" = TRUE ] && count=$((count+$(wc -l |sed '/^$/d' <<< "${!in[${n}]}")))
             let n++
         done
-        for ad in "$DS/ifs/mods/play"/*; do
-            source "${ad}"
-            n=1; addons_count=0
-            for item in "${!items[@]}"; do
-                val=$(sed -n $((n))p <<< "${out1}" |cut -d "|" -f2)
-                [ -n "${val}" ] && sed -i "s/${items[$item]}=.*/${items[$item]}=\"$val\"/g" "${file_cfg}"
-                [ "$val" = TRUE ] && addons_count=$((addons_count+1))
-                let n++
-            done
-            unset items
-        done
-        count=$((count+addons_count))
+        if [ $stts -gt 10 ]; then
+			for ad in "$DS/ifs/mods/play"/*; do
+				source "${ad}"
+				n=1; addons_count=0
+				for item in "${!items[@]}"; do
+					val=$(sed -n $((n))p <<< "${out1}" |cut -d "|" -f1)
+					[ -n "${val}" ] && sed -i "s/${items[$item]}=.*/${items[$item]}=\"$val\"/g" "${file_cfg}"
+					[ "$val" = TRUE ] && addons_count=$((addons_count+1))
+					let n++
+				done
+				unset items
+			done
+			count=$((count+addons_count))
+        fi
         for co in "${psets[@]:5:9}"; do
             val="$(cut -d "|" -f${f} <<< "${out2}")"
             [ -n "${val}" ] && tpc_db 9 config "${co}" "${val}"
