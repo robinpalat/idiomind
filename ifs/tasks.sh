@@ -11,7 +11,7 @@ l3="[!] $(gettext "To Review:") "
 l4="[!] $(gettext "To Review:") "
 l5="$(gettext "To Practice:") "
 l6="$(gettext "Back to Practice:") "
-l7="[!] $(gettext "Finalize Review:") "
+l7="$(gettext "Finalize Review:") "
 l8="$(gettext "Resume Practice:") "
 
 chngtpt(){
