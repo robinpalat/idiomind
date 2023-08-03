@@ -347,7 +347,7 @@ function tpc_view() {
     --search-column=1 --regex-search --hide-column=2 --tooltip-column=2 \
     --column=Name:TEXT --column=@back@:TIP &
     echo "$note" | yad --text-info --tabnum=2 --window-icon=idiomind \
-    --text="${itxt}" \
+    --text="${itxt}\n" \
     --plug=$KEY --borders=10 \
     --always-print-result \
     --show-uri --uri-color="#6591AA" \

@@ -120,7 +120,7 @@ function upld() {
             msg "$(gettext "Sorry, this topic is currently not active.")" \
             dialog-information & exit 1
         fi
-        internet
+        
     }
 
     dlg_getuser() {
@@ -423,6 +423,8 @@ function upld() {
         tar czpvf - ./"files" |split -d -b 2500k - ./"${ilnk}.tar.gz"
         rm -fr ./"files"
 
+		internet
+		
         python3 << END
 import os, sys, requests, time
 autr = os.environ['autr']

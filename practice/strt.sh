@@ -171,9 +171,16 @@ function practice_a() {
         if [[ ${lang_question} != 1 ]]; then
             trgt="${item}"
             srce="$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")"
+            if [ -z "$srce" ]; then
+				srce="$(sqlite3 ${tlngdb} "select "${slng}" from Words where Word is '${srce}' limit 1;")"
+            fi
         else
             srce="${item}"
             trgt="$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")"
+            if [ -z "$trgt" ]; then
+				trgt="$(sqlite3 ${tlngdb} "select "${slng}" from Words where Word is '${srce}' limit 1;")"
+            fi
+            
         fi
         trgt_f_c=$((38-${#trgt}))
         trgt_f_a=$((18-${#trgt}))
@@ -295,6 +302,9 @@ function practice_b(){
         if [[ ${lang_question} != 1 ]]; then
             trgt="${item}"
             srce=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
+            if [ -z "$srce" ]; then
+				srce="$(sqlite3 ${tlngdb} "select "${slng}" from Words where Word is '${srce}' limit 1;")"
+            fi
             ras=$(sort -Ru b.srces |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt}));  [ ${srce_s} -lt 12 ] && srce_s=12
@@ -309,6 +319,9 @@ function practice_b(){
         else
             srce="${item}"
             trgt=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
+            if [ -z "$trgt" ]; then
+				trgt="$(sqlite3 ${tlngdb} "select "${slng}" from Words where Word is '${srce}' limit 1;")"
+            fi
             ras=$(sort -Ru <<< "${list_words}" |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt})); [ ${srce_s} -lt 12 ] && srce_s=12
@@ -787,7 +800,7 @@ function practice_e() {
             fi
         fi
     done < ./e.tmp
-    
+
     export count_hard count_learn
     scoreschk
 }
@@ -803,6 +816,11 @@ function get_notes() {
         else
             sed '/^$/d' <<< "${list_learn}" > "${dir_practice}/$active_practice.0"
         fi
+        
+        if [ -f "${dir_practice}/0.s" ]; then
+			cat "${dir_practice}/0.s" >> "${dir_practice}/$active_practice.0"
+		fi
+        
         if [ $active_practice = b ]; then
             if [ ! -f "${dir_practice}/b.srces" ]; then
             (echo "#"
@@ -813,6 +831,12 @@ function get_notes() {
             --undecorated --pulsate --auto-close \
             --skip-taskbar --center --no-buttons
             fi
+            #TODO
+            if [ -f "${dir_practice}/0.s" ]; then # buscar srces para palabras de las oraciones
+				while read word; do
+					:
+				done < "${dir_practice}/0.s"
+			fi
         fi
     elif [ $active_practice = d ]; then
         > "$DT/images"
