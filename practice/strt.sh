@@ -5,7 +5,7 @@ source /usr/share/idiomind/default/c.conf
 sz=(440 470)
 source "$DS/ifs/cmns.sh"
 export -f tpc_db
-dw=$(date +%W |sed 's/^0*//')
+date_week=$(date +%W |sed 's/^0*//')
 if [[ -n "$1" ]]; then
     tpc="$1"
     DM_tlt="$DM_tl/$1"
@@ -62,7 +62,8 @@ function score() {
     rm ./*.tmp
     [ ! -f ./$active_practice.l ] && touch ./$active_practice.l
     if [[ $(($(< ./$active_practice.l)+count_easy)) -ge ${all} ]]; then
-		cleanups ./$active_practice.0 ./$active_practice.1 ./$active_practice.2 ./$active_practice.3
+		cleanups ./$active_practice.0
+		> ./$active_practice.2; > ./$active_practice.3
         _log $active_practice; play "$dir_practices/all.mp3" &
         echo "1p.$tpc.p1" >> "$log"
         date "+%a %d %B" > ./$active_practice.lock
@@ -91,10 +92,6 @@ function score() {
 
 function save_score() {
 
-    if [[ ${1} = 0 ]]; then 
-        > ./$active_practice.2; > ./$active_practice.3
-    fi
-    
     > ./log1
     if [ $(ls *.1 | wc -l) -ge 3  ]; then # si hay 3 o mas practicas con notas aprendidas
     	while read -r note; do
@@ -166,6 +163,7 @@ function _log() {
 
 # practice A
 function practice_a() {
+	
     fonts() {
         _item="$(grep -F -m 1 "trgt{${item}}" "${list_data}" |sed 's/}/}\n/g')"
         if [[ ${lang_question} != 1 ]]; then
@@ -180,7 +178,6 @@ function practice_a() {
             if [ -z "$trgt" ]; then
 				trgt="$(sqlite3 ${tlngdb} "select "${slng}" from Words where Word is '${srce}' limit 1;")"
             fi
-            
         fi
         trgt_f_c=$((38-${#trgt}))
         trgt_f_a=$((18-${#trgt}))
@@ -838,6 +835,7 @@ function get_notes() {
 				done < "${dir_practice}/0.s"
 			fi
         fi
+        
     elif [ $active_practice = d ]; then
         > "$DT/images"
         if [[ $(wc -l <<< "${list_sents}") -gt 0 ]]; then
@@ -858,6 +856,7 @@ function get_notes() {
         --undecorated --pulsate --auto-close \
         --skip-taskbar --center --no-buttons
         cleanups "$DT/images"
+        
     elif [ $active_practice = e ]; then
         if [[ $(wc -l <<< "${list_words}") -gt 0 ]]; then
             grep -Fxv "${list_words}" <<< "${list_learn}" > "$DT/slist"
@@ -867,14 +866,15 @@ function get_notes() {
             sed '/^$/d' <<< "${list_learn}" > "${dir_practice}/$active_practice.0.tmp"
             
         fi
-         inf=0; while read -r itm; do
-            cnt="$(echo "$itm" |wc -c)"
-            if [ ${cnt} -lt 90 ]; then
+         inf=0
+         while read -r itm; do
+            if [ $(wc -c <<< "$itm") -lt 90 ]; then
                 echo "$itm" >> "${dir_practice}/$active_practice.0"
             else
                 inf=1
             fi
         done < "${dir_practice}/$active_practice.0.tmp"
+        
         if [ ${inf} = 1 ]; then
             msg "$(gettext "Some sentences could not be added because they are too long")\n" info
         fi
@@ -950,8 +950,9 @@ function decide_group() {
 }
 
 function practices() {
-    pr=${1}
-    log="$DC_s/logs/$dw.log"
+    #pr=${1}
+    log="$DC_s/logs/$date_week.log"
+    export count_check_tasks1="$(grep "1p.$tpc.p1" "$log" | wc -l)"
     list_data="$DC_tlt/data"
     list_sents="$(tpc_db 5 sentences)"
     list_words="$(tpc_db 5 words)"
@@ -986,6 +987,7 @@ function practices() {
             grep -Fxvf "${dir_practice}/$active_practice.1" "${dir_practice}/$active_practice.0" \
             |sed '/^$/d' > "${dir_practice}/$active_practice.tmp"
         fi
+        
         if [[ "$(egrep -cv '#|^$' < "${dir_practice}/$active_practice.tmp")" = 0 ]]; then
             if [[ ${group} = 1 ]]; then 
                 export count_easy=0; decide_group
@@ -1010,7 +1012,6 @@ function practices() {
             if [ $ret = 3 -o $ret = 2 ]; then
                 if grep 'TRUE' <<< "${optns}"; then group=1; split=10; fi
                 if [ $ret = 3 ]; then lang_question=1; else lang_question=0; fi
-                
                 echo -e "$group|$split|$lang_question" > $active_practice
             else
                 strt & return
@@ -1028,6 +1029,9 @@ function practices() {
         export all=$(egrep -cv '#|^$' "${dir_practice}/$active_practice.0")
     fi
     if [[ ${all} -lt 1 ]]; then
+    
+		touch "${dir_practice}/$active_practice.0"
+		
         if [ "$(egrep -cv '#|^$' <<< "${list_learn}")" -lt 1 ]; then
             msg "$(gettext "There are not enough notes to practice.") \n" \
             dialog-information " " "$(gettext "OK")"
@@ -1068,7 +1072,10 @@ function strt() {
     
     count_a=0; count_b=0; count_c=0; count_d=0; count_e=0
     for practice in a b c d e; do
-        if [ -f ./$practice.1 ]; then
+    
+		if [ -f ./$practice.lock ]; then
+			declare label_count_${practice}=""
+        elif [ -f ./$practice.1 ]; then
 			declare label_count_${practice}="<i>( $(($(wc -l < ./$practice.0) - $(wc -l < ./$practice.1))) )</i>"
 		elif [ -f ./$practice.0 ]; then
 			declare label_count_${practice}="<i>( $(($(wc -l < ./$practice.0))) )</i>"
@@ -1125,7 +1132,7 @@ function strt() {
     ret=$?
     unset info info1 info2 info3 info4 info5 title_act_pract \
     congr1 congr2 congr3 congr4 congr5
-
+    
     if [ $ret -eq 0 ]; then
         if [ -z "$active_practice" ]; then
             msg " $(gettext "You must choose a practice.")\n" dialog-information
@@ -1148,7 +1155,14 @@ function strt() {
         elif [ "${1}" = 1 ]; then
             cdb ${shrdb} 4 T8 list "${tpc}"
         fi &
-        idiomind tasks
+        #idiomind tasks
+        count_check_tasks2="$(grep "1p.$tpc.p1" "$log" | wc -l)"
+        if [ $count_check_tasks2 -gt $count_check_tasks1 ]; then
+			grep -vxE "$(gettext "To Practice:") $tpc|$(gettext "Back to Practice:") $tpc|$(gettext "Resume Practice:") $tpc" $DT/tasks >> $DT/tasks.tmp
+			sed '/^$/d' $DT/tasks.tmp > $DT/tasks
+			rm -f $DT/tasks.tmp
+		fi
+
         "$DS/ifs/tls.sh" colorize 1 & exit 0
     fi
 }

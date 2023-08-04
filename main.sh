@@ -509,7 +509,6 @@ PY
                 notebook_2
 
             else
-            
                 echo "N1 / ${cfg0} / ${cfg1} / ${cfg2}"
                 notebook_1
             fi

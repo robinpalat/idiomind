@@ -38,7 +38,7 @@ if [[ ${1} = 0 ]]; then
             fi
         else
             echo -e "${trgt}" > "$DT/playlck"
-            [ ${mime} = 1 ] && notify-send -i "${icon}" "${trgt}" "${srce}" -t 5000 &
+            notify-send -i "${icon}" "${trgt}" "${srce}" -t 5000 &
             "$DS/play.sh" play_file "${file}" "${trgt}"
         fi
         [[ ${n} = TRUE ]] && [[ ${l} -lt ${pause_osd} ]] && l=${pause_osd}

@@ -167,13 +167,14 @@ play_list() {
     fi
     setting_1() {
 		
-	    if [ ${stts} -gt 10 ]; then # addons 1 (addon_name)
+	    if [ ${stts} -gt 10 ]; then # addons 1 (addon_name) exclusive play panel
 			for ad in "$DS/ifs/mods/play"/*; do # addons 2
 				source "${ad}"
 				for item in "${!items[@]}"; do 
 					echo "$DS/images/a0.png"
 					grep -o ${items[$item]}=\"[^\"]* "${file_cfg}" |grep -o '[^"]*$'
 					echo "  $(gettext "${item}")"
+					echo $item
 				done
 				unset items
 			done
@@ -186,6 +187,7 @@ play_list() {
 					echo "$DS/images/${lbls[$n]}.png"
 					echo "${!psets[${n}]}"
 					echo "  $(gettext "${lbls[$n]}")"
+					echo $n
 				fi
 				let n++
 			done
@@ -196,6 +198,7 @@ play_list() {
 						echo "$DS/images/a0.png"
 						grep -o ${items[$item]}=\"[^\"]* "${file_cfg}" |grep -o '[^"]*$'
 						echo "  $(gettext "${item}") <i><small>${list_name}</small></i>"
+						echo $item
 					done
 					unset items
 				fi
@@ -214,13 +217,14 @@ play_list() {
     [[ ${ntosd} != TRUE ]] && [[ ${audio} != TRUE ]] && audio=TRUE
     setting_1 | yad --plug=$KEY --tabnum=1 --list \
     --print-all --always-print-result --separator="|" \
-    --center --expand-column=2 --no-headers \
+    --center --expand-column=2 --hide-column=4 --no-headers \
     --column=IMG:IMG \
     --column=CHK:CHK \
+    --column=TXT:TXT \
     --column=TXT:TXT > "$tab1" &
     yad --plug=$KEY --form --tabnum=2 \
     --align=right --center \
-    --separator='|' --always-print-result --print-all \
+    --separator="|" --always-print-result --print-all \
     --field="$(gettext "Repeat")":CHK "$rplay" \
     --field="$(gettext "Play audio")":CHK "$audio" \
     --field="$(gettext "Use desktop notifications")":CHK "$ntosd" \
@@ -237,24 +241,47 @@ play_list() {
     --width=400 --height=260 --borders=5 \
     --button="$btn1" 
     ret=$?
+    
         [ $ret -eq 1 ] && exit 0
         [ $ret -eq 0 ] && echo "${tpc}" > "$DT/playlck"
         [ $ret -eq 2 ] && echo "0" > "$DT/playlck"
         out1=$(< $tab1); out2=$(< $tab2)
-        [ -f "$tab1" ] && rm -f "$tab1"; [ -f "$tab2" ] && rm -f "$tab2"
-        f=1; n=0; count=0
-        for co in "${psets[@]:0:5}"; do
-            val=$(sed -n $((n+1))p <<< "${out1}" |cut -d "|" -f1)
-            [ -n "${val}" ] && tpc_db 9 config "${co}" "${val}"
-            [ "$val" = TRUE ] && count=$((count+$(wc -l |sed '/^$/d' <<< "${!in[${n}]}")))
-            let n++
-        done
-        if [ $stts -gt 10 ]; then
+        [ -f "$tab1" ] && rm -f "$tab1"
+        [ -f "$tab2" ] && rm -f "$tab2"
+        
+        
+        if [ $stts -lt 10 ]; then # words sentences market learnt difficult
+			f=1; n=0; count=0
+			for selec_conf in "${psets[@]:0:5}"; do
+				count_select=$(wc -l |sed '/^$/d' <<< "${!in[${n}]}")
+				val=$(sed -n $((n+1))p <<< "${out1}" |cut -d "|" -f2)
+				hide_num=$(sed -n $((n+1))p <<< "${out1}" |cut -d "|" -f4)
+				if [ -n "$hide_num" ]; then
+					[ -n "${val}" ] && tpc_db 9 config "${psets[hide_num]}" "${val}"
+					[ "$val" = TRUE ] && count=$((count+$count_select))
+				fi
+					
+				let n++
+			done
+			
+			# config de segunda tab
+			for selec_conf in "${psets[@]:5:9}"; do
+				val="$(cut -d "|" -f${f} <<< "${out2}")"
+				[ -n "${val}" ] && tpc_db 9 config "${selec_conf}" "${val}"
+				let f++
+			done
+			pval="$(cut -d "|" -f5 <<< "${out2}")" # si repetir notas oraciones o palabras
+			if [[ "$pval" = "$(gettext "Words")" ]]; then  val=1
+			elif [[ "$pval" = "$(gettext "Sentences")" ]]; then  val=2
+			else  val=0; fi
+			[ -n "${val}" ] && tpc_db 9 config "rword" "${val}"
+
+        elif [ $stts -gt 10 ]; then  # for addons
 			for ad in "$DS/ifs/mods/play"/*; do
 				source "${ad}"
 				n=1; addons_count=0
 				for item in "${!items[@]}"; do
-					val=$(sed -n $((n))p <<< "${out1}" |cut -d "|" -f1)
+					val=$(sed -n $((n))p <<< "${out1}" |cut -d "|" -f2)
 					[ -n "${val}" ] && sed -i "s/${items[$item]}=.*/${items[$item]}=\"$val\"/g" "${file_cfg}"
 					[ "$val" = TRUE ] && addons_count=$((addons_count+1))
 					let n++
@@ -263,16 +290,6 @@ play_list() {
 			done
 			count=$((count+addons_count))
         fi
-        for co in "${psets[@]:5:9}"; do
-            val="$(cut -d "|" -f${f} <<< "${out2}")"
-            [ -n "${val}" ] && tpc_db 9 config "${co}" "${val}"
-            let f++
-        done
-        pval="$(cut -d "|" -f5 <<< "${out2}")"
-        if [[ "$pval" = "$(gettext "Words")" ]]; then  val=1
-        elif [[ "$pval" = "$(gettext "Sentences")" ]]; then  val=2
-        else  val=0; fi
-        [ -n "${val}" ] && tpc_db 9 config "rword" "${val}"
 
         # cmd play
         if [ $ret -eq 0 ]; then

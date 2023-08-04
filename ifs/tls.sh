@@ -1268,7 +1268,9 @@ if __name__ == "__main__":
     monitor.connect("changed", i.callback)
     Gtk.main()
 PY
+
 }
+
 
 about() {
 
