@@ -135,11 +135,11 @@ play_list() {
         btn1="!media-playback-stop!$(gettext "Stop"):2"
         title="$(gettext "Playing...")"
     fi
+    
     ntosd=""; audio=""
     lbls=( 'Words' 'Sentences' 'Marked' 'Learning' 'Difficult' )
     in=( 'in0' 'in1' 'in2' 'in3' 'in4' )
     iteml=( "$(gettext "No repeat")" "$(gettext "Words")" "$(gettext "Sentences")" )
-    
     
         sents=""; words=""; marks=""; learn=""; leart=""
         in0=0; in1=0; in2=0; in3=0; in4=0
@@ -165,8 +165,8 @@ play_list() {
             let n++
         done
     fi
+    
     setting_1() {
-		
 	    if [ ${stts} -gt 10 ]; then # addons 1 (addon_name) exclusive play panel
 			for ad in "$DS/ifs/mods/play"/*; do # addons 2
 				source "${ad}"
@@ -246,21 +246,22 @@ play_list() {
         [ $ret -eq 0 ] && echo "${tpc}" > "$DT/playlck"
         [ $ret -eq 2 ] && echo "0" > "$DT/playlck"
         out1=$(< $tab1); out2=$(< $tab2)
+        
         [ -f "$tab1" ] && rm -f "$tab1"
         [ -f "$tab2" ] && rm -f "$tab2"
-        
         
         if [ $stts -lt 10 ]; then # words sentences market learnt difficult
 			f=1; n=0; count=0
 			for selec_conf in "${psets[@]:0:5}"; do
-				count_select=$(wc -l |sed '/^$/d' <<< "${!in[${n}]}")
-				val=$(sed -n $((n+1))p <<< "${out1}" |cut -d "|" -f2)
 				hide_num=$(sed -n $((n+1))p <<< "${out1}" |cut -d "|" -f4)
+				count_select=$(wc -l |sed '/^$/d' <<< "${!in[${hide_num}]}")
+				val=$(sed -n $((n+1))p <<< "${out1}" |cut -d "|" -f2)
 				if [ -n "$hide_num" ]; then
-					[ -n "${val}" ] && tpc_db 9 config "${psets[hide_num]}" "${val}"
-					[ "$val" = TRUE ] && count=$((count+$count_select))
+					if [ -n "$val" ]; then 
+						tpc_db 9 config "${psets[hide_num]}" "$val"
+						[ "$val" = TRUE ] && count=$((count+$count_select))
+					fi
 				fi
-					
 				let n++
 			done
 			
@@ -320,6 +321,7 @@ play_list() {
 }
 
 play_stop() {
+	
     source "/usr/share/idiomind/default/c.conf"
     if [ -f "$DT/playlck" ]; then
         if [ "$(< $DT/playlck)" = '0' ]; then

@@ -98,10 +98,10 @@ config_dlg() {
     done
     list2=$(for i in "${!slangs[@]}"; do echo -n "!$i"; done)
     
-    levels=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
+    levels=( "$(gettext "Beginner")" "$(gettext "Intermediate-Advanced")" )
     Level="${levels[${level}]}"
     [ -z "$Level" ] && Level=" "
-    levels_list="$Level"$(sed "s/\!$Level//g" <<< "!${levels[0]}!${levels[1]}!${levels[2]}")""
+    levels_list="$Level"$(sed "s/\!$Level//g" <<< "!${levels[0]}!${levels[1]}")""
 
     c=$((RANDOM%100000)); KEY=$c
     yad --plug=$KEY --form --tabnum=1 \

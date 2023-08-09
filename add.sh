@@ -773,16 +773,6 @@ new_items() {
     [ -d "${2}" ] && DT_r="${2}"
     [ -n "${5}" ] && srce="${5}" || srce=""
     
-    level_control=False
-    if [ "$Level" = "0" ] && [ "$(wc -w <<< "$trgt")" -gt ${sentence_words_level1} ]; then
-		level_control=True
-	elif [ "$Level" = "1" ] && [ "$(wc -w <<< "$trgt")" -gt ${sentence_words_level2} ]; then
-		level_control=True
-	fi
-	
-	if [ $level_control = True ]; then
-		process & return
-	fi
     if [ ${#trgt} -le ${sentence_chars} ] && \
     [ $(echo -e "${trgt}" |wc -l) -gt ${sentence_lines} ]; then 
         process & return
@@ -790,6 +780,15 @@ new_items() {
     if [ ${#trgt} -gt ${sentence_chars} ]; then 
         process & return
     fi
+
+    level_control=False
+    if [ "$Level" = "0" ] && [ "$(wc -w <<< "$trgt")" -gt ${sentence_words_level0} ]; then
+		level_control=True
+	fi
+	
+	if [ $level_control = True ]; then
+		process & return
+	fi
 
     [ -e "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" || img="$DS/images/nw.png"
     export img

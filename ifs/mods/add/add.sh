@@ -129,8 +129,8 @@ function sentence_p() {
     table="T`date +%m%y`"
     echo -n "create table if not exists ${table} \
     (Word TEXT, "${slng^}" TEXT);" |sqlite3 ${tlngdb}
-    if ! grep -q "${slng}" <<< "$(sqlite3 ${tlngdb} "PRAGMA table_info(${table});")"; then
-        sqlite3 ${tlngdb} "alter table ${table} add column '${slng}' TEXT;"
+    if ! grep -q "${slng^}" <<< "$(sqlite3 ${tlngdb} "PRAGMA table_info(${table});")"; then
+        sqlite3 ${tlngdb} "alter table ${table} add column '${slng^}' TEXT;"
     fi
     r=$((RANDOM%10000))
     touch "$DT_r/swrd.$r" "$DT_r/twrd.$r"
@@ -239,8 +239,8 @@ function word_p() {
     srce_q="$(sed "s|'|''|g" <<< "${srce}")"
     echo -n "create table if not exists ${table} \
     (Word TEXT, "${slng^}" TEXT);" |sqlite3 ${tlngdb}
-    if ! grep -q "${slng}" <<< "$(sqlite3 ${tlngdb} "PRAGMA table_info(${table});")"; then
-        sqlite3 ${tlngdb} "alter table ${table} add column '${slng}' TEXT;"
+    if ! grep -q "${slng^}" <<< "$(sqlite3 ${tlngdb} "PRAGMA table_info(${table});")"; then
+        sqlite3 ${tlngdb} "alter table ${table} add column '${slng^}' TEXT;"
     fi
     if ! [[ "${trgt}" =~ [0-9] ]] && [ -n "${trgt}" ] && [ -n "${srce}" ]; then
         if [[ -z "$(sqlite3 ${tlngdb} "select Word from Words where Word is '${trgt}';")" ]]; then
@@ -280,19 +280,18 @@ function clean_1() {
 
 function clean_2() {
     if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1 ; then
-    echo "${1%%[,.-]*}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
-    |sed "s/’/'/g" |sed 's/quot\;/"/g' \
-    |tr -d '*' |tr -s '&|{}[]<>+' ' ' \
-    |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
-    |sed 's/^ *//;s/ *$//g;s/<[^>]*>//g;s/^\s*./\U&\E/g'
+		echo "${1%%[.-]*}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
+		|sed "s/’/'/g" |sed 's/quot\;/"/g' \
+		|tr -d '*' |tr -s '&|{}[]<>+' ' ' \
+		|sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
+		|sed 's/^ *//;s/ *$//g;s/<[^>]*>//g;s/^\s*./\U&\E/g'
     else
-
-    echo "${1%%[,.-]*}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
-    |sed "s/’/'/g" |sed 's/quot\;/"/g' \
-    |tr -s '*&|{}[]<>+' ' ' \
-    |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
-    |sed 's/^ *//;s/ *$//g; s/^\s*./\U&\E/g' \
-    |sed 's/<[^>]*>//g;s/^\s*./\U&\E/g'
+		echo "${1%%[.-]*}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
+		|sed "s/’/'/g" |sed 's/quot\;/"/g' \
+		|tr -s '*&|{}[]<>+' ' ' \
+		|sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
+		|sed 's/^ *//;s/ *$//g; s/^\s*./\U&\E/g' \
+		|sed 's/<[^>]*>//g;s/^\s*./\U&\E/g'
     fi
 }
 
@@ -400,8 +399,8 @@ function translate() {
 
     stop=0; t="$(sed "s|'|''|g" <<< "${1}")"
     if [[ $(wc -w <<< ${1}) = 1 ]] && [[ "${ttrgt}" != TRUE ]] && \
-    [[ -n "$(sqlite3 ${tlngdb} "select "${slng}" from Words where Word is '${t}';")" ]]; then
-        sqlite3 ${tlngdb} "select "${slng}" from Words where Word is '${t}' limit 1;"
+    [[ -n "$(sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${t}';")" ]]; then
+        sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${t}' limit 1;"
     else
         if ! ls "$DC_d"/*."Traslator online.Translate".* 1> /dev/null 2>&1; then
             "$DS_a/Resources/cnfg.sh" 2
@@ -703,7 +702,7 @@ function dlg_checklist_3() {
             fi
         done < "${1}"
     }
-    if [ $Level -lt 2 ]; then
+    if [ $Level = 0 ]; then
         inf="$(gettext "Sentence too complex for your learning level, please edit it to simplify or shorten it.")\n"
         img="--image=$DS/images/info.png"
     fi

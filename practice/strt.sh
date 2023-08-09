@@ -169,16 +169,30 @@ function practice_a() {
         if [[ ${lang_question} != 1 ]]; then
             trgt="${item}"
             srce="$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")"
-            if [ -z "$srce" ]; then
-				srce="$(sqlite3 ${tlngdb} "select "${slng}" from Words where Word is '${srce}' limit 1;")"
+            
+            if [ -z "${srce##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
+				wrds="$(grep -oP '(?<=wrds{).*(?=})' <<< "${_item}")"
+				srce="$(sed "s/.*"$trgt"_//; s/_.*//" <<<"$wrds")"
             fi
+            
+            if [ -z "${srce##+([[:space:]])}" ]; then # busca traduccion en en share db 
+				srce="$(sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${trgt^}' limit 1;")"
+            fi
+            
         else
             srce="${item}"
             trgt="$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")"
-            if [ -z "$trgt" ]; then
-				trgt="$(sqlite3 ${tlngdb} "select "${slng}" from Words where Word is '${srce}' limit 1;")"
+            
+            if [ -z "${trgt##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
+				wrds="$(grep -oP '(?<=wrds{).*(?=})' <<< "${_item}")"
+				trgt="$(sed "s/.*"$trgt"_//; s/_.*//" <<<"$wrds")"
+            fi
+
+            if [ -z "${trgt##+([[:space:]])}" ]; then # busca traduccion en en share db 
+				trgt="$(sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${srce^}' limit 1;")"
             fi
         fi
+        
         trgt_f_c=$((38-${#trgt}))
         trgt_f_a=$((18-${#trgt}))
         srce_f_a=$((38-${#srce}))
@@ -187,14 +201,14 @@ function practice_a() {
         [ ${srce_f_a} -lt 12 ] && srce_f_a=12
 
         if [ $step -eq 2 ]; then 
-        question="\n<span color='#E5801D' font_desc='Arial Bold ${trgt_f_c}'>${trgt}</span>"
-        answer1="\n<span color='#E5801D' font_desc='Arial Bold ${trgt_f_a}'>${trgt}</span>\n"
+			question="\n<span color='#E5801D' font_desc='Arial Bold ${trgt_f_c}'>${trgt}</span>"
+			answer1="\n<span color='#E5801D' font_desc='Arial Bold ${trgt_f_a}'>${trgt}</span>\n"
         elif [ $step -eq 3 ];then
-        question="\n<span color='#D11B5D' font_desc='Arial Bold ${trgt_f_c}'>${trgt}</span>"
-        answer1="\n<span color='#D11B5D' font_desc='Arial Bold ${trgt_f_a}'>${trgt}</span>\n"
+			question="\n<span color='#D11B5D' font_desc='Arial Bold ${trgt_f_c}'>${trgt}</span>"
+			answer1="\n<span color='#D11B5D' font_desc='Arial Bold ${trgt_f_a}'>${trgt}</span>\n"
         else
-        question="\n<span font_desc='Arial Bold ${trgt_f_c}'>${trgt}</span>"
-        answer1="\n<span font_desc='Arial Bold ${trgt_f_a}'>${trgt}</span>\n"
+			question="\n<span font_desc='Arial Bold ${trgt_f_c}'>${trgt}</span>"
+			answer1="\n<span font_desc='Arial Bold ${trgt_f_a}'>${trgt}</span>\n"
         fi
         
         answer2="<span font_desc='Arial ${srce_f_a}'><i>${srce}</i></span>"
@@ -297,37 +311,52 @@ function practice_b(){
     fonts() {
         _item="$(grep -F -m 1 "trgt{${item}}" "${list_data}" |sed 's/}/}\n/g')"
         if [[ ${lang_question} != 1 ]]; then
+        
             trgt="${item}"
             srce=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
-            if [ -z "$srce" ]; then
-				srce="$(sqlite3 ${tlngdb} "select "${slng}" from Words where Word is '${srce}' limit 1;")"
+            
+            if [ -z "${srce##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
+				wrds="$(grep -oP '(?<=wrds{).*(?=})' <<< "${_item}")"
+				srce="$(sed "s/.*"$trgt"_//; s/_.*//" <<<"$wrds")"
             fi
+            
+            if [ -z "${srce##+([[:space:]])}" ]; then
+				srce="$(sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${trgt^}' limit 1;")"
+            fi
+            
             ras=$(sort -Ru b.srces |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt}));  [ ${srce_s} -lt 12 ] && srce_s=12
             question="\n<span font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
             if [ $step -eq 2 ]; then 
-				question="\n<span color='#E5801D' font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
+					question="\n<span color='#E5801D' font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
 				elif [ $step -eq 3 ];then
-				question="\n<span color='#D11B5D' font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
+					question="\n<span color='#D11B5D' font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
 				else
-				question="\n<span font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
+					question="\n<span font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
 			fi
         else
             srce="${item}"
             trgt=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
-            if [ -z "$trgt" ]; then
-				trgt="$(sqlite3 ${tlngdb} "select "${slng}" from Words where Word is '${srce}' limit 1;")"
+            
+            if [ -z "${trgt##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
+				wrds="$(grep -oP '(?<=wrds{).*(?=})' <<< "${_item}")"
+				trgt="$(sed "s/.*"$trgt"_//; s/_.*//" <<<"$wrds")"
             fi
+            
+            if [ -z "${trgt##+([[:space:]])}" ]; then
+				trgt="$(sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${srce^}' limit 1;")"
+            fi
+            
             ras=$(sort -Ru <<< "${list_words}" |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt})); [ ${srce_s} -lt 12 ] && srce_s=12
             if [ $step -eq 2 ]; then 
 				question="\n<span color='#E5801D' font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
 				elif [ $step -eq 3 ];then
-				question="\n<span color='#D11B5D' font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
+					question="\n<span color='#D11B5D' font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
 				else
-				question="\n<span font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
+					question="\n<span font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
 			fi
         fi
     }
@@ -534,13 +563,34 @@ function practice_d() {
         img="$DM_tlt/images/${item,,}.jpg" || \
         img="$DM_tls/images/${item,,}-1.jpg"
         _item="$(grep -F -m 1 "trgt{${item}}" "${list_data}" |sed 's/}/}\n/g')"
-        if [[ ${lang_question} = 1 ]]; then
-            srce="${item}"
-            trgt=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
-        else
+        if [[ ${lang_question} != 1 ]]; then
+        
             trgt="${item}"
             srce=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
+            
+	        if [ -z "${srce##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
+				wrds="$(grep -oP '(?<=wrds{).*(?=})' <<< "${_item}")"
+				srce="$(sed "s/.*"$trgt"_//; s/_.*//" <<<"$wrds")"
+            fi
+            
+            if [ -z "${srce##+([[:space:]])}" ]; then
+				srce="$(sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${trgt^}' limit 1;")"
+            fi
+            
+        else
+            srce="${item}"
+            trgt=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
+            
+            if [ -z "${trgt##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
+				wrds="$(grep -oP '(?<=wrds{).*(?=})' <<< "${_item}")"
+				trgt="$(sed "s/.*"$trgt"_//; s/_.*//" <<<"$wrds")"
+            fi
+            
+            if [ -z "${trgt##+([[:space:]])}" ]; then
+				trgt="$(sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${srce^}' limit 1;")"
+            fi
         fi
+        
         [ ! -f "$img" ] && img="$DS/images/imgmiss.jpg"
         cuest="<span font_desc='Arial Bold 12'> ${trgt} </span>\n"
         
@@ -723,6 +773,8 @@ function practice_e() {
             in=$(awk '{print tolower($0)}' <<< "${check_trgt}" |_clean)
         fi
         echo "${check_trgt}" > ./check_trgt.tmp; touch ./words.tmp
+        tr -s '[:space:]' '\n' < check_trgt.tmp > ./all_words.tmp # prepara para listar las palabras para practicar individualmente
+        
         for line in `sed 's/ /\n/g' <<< "$out"`; do
             if grep -Fxq "${line}" <<< "$in"; then
                 sed -i "s/"${line}"/<b>"${line}"<\/b>/g" ./check_trgt.tmp # TODO
@@ -730,9 +782,10 @@ function practice_e() {
                 [ -n "${line}" ] && echo "${line}" >> ./mtch.tmp
             else
                 [ -n "${line}" ] && echo "<span color='#984245'><b>${line^}</b></span>  " >> ./words.tmp
-                [ -n "${line}" ] && echo "${line}" >> ./0.s
+               
             fi
         done
+        
         green_words=$(tr '\n' ' ' < ./words.tmp)
         sed 's/ /\n/g' < ./check_trgt.tmp > ./all.tmp
         touch ./mtch.tmp
@@ -740,6 +793,12 @@ function practice_e() {
         val2=$(wc -l < ./all.tmp)
         porcent_match=$((100*val1/val2))
         
+        # lista las palabras para practicar individualmente
+        if [ ${porcent_match} -ge 10 ]; then
+			grep -xvf ./mtch.tmp ./all_words.tmp >> ./0.s
+			sed -i -e 's/^\(.\)/\U\1/; /^.$/d' ./0.s
+        fi
+
         if [ ${porcent_match} -ge 90 ]; then
             echo "${trgt}" >> ./e.1
             export count_easy=$((count_easy+1))
@@ -810,14 +869,16 @@ function get_notes() {
             grep -Fvx "${list_sents}" <<< "${list_learn}" > "$DT/$active_practice.0"
             sed '/^$/d' < "$DT/$active_practice.0" > "${dir_practice}/$active_practice.0"
             rm -f "$DT/$active_practice.0"
+  
         else
             sed '/^$/d' <<< "${list_learn}" > "${dir_practice}/$active_practice.0"
         fi
         
-        if [ -f "${dir_practice}/0.s" ]; then
-			cat "${dir_practice}/0.s" >> "${dir_practice}/$active_practice.0"
+        if [ -f "${dir_practice}/0.s" ]; then # si hay palabras no aprendidas desde el test de oraciones
+			notify-send -i idiomind "$(gettext "Practice")" "$(gettext "Words were added from the sentence practice.")" -t 1000
+			cat "${dir_practice}/0.s" | sort -u >> "${dir_practice}/$active_practice.0"
 		fi
-        
+
         if [ $active_practice = b ]; then
             if [ ! -f "${dir_practice}/b.srces" ]; then
             (echo "#"
@@ -900,7 +961,8 @@ function lock() {
         fi
         if [ $ret -eq 0 ]; then
             cleanups "${lock}" ./$active_practice.0 ./$active_practice.1 \
-            ./$active_practice.2 ./$active_practice.3 ./$active_practice.srces ./$active_practice ./$active_practice.df
+            ./$active_practice.2 ./$active_practice.3 ./$active_practice.srces \
+            ./$active_practice ./$active_practice.df
             echo 1 > ./.${icon}; echo 0 > ./$active_practice.l
         elif [ $ret -eq 4 ]; then
             cleanups "${lock}"
@@ -1018,7 +1080,9 @@ function practices() {
             fi
         fi
         
-        export group split lang_question; get_notes
+        export group split lang_question
+        
+        get_notes
         
         if [[ ${group} = 1 ]]; then
             head -n ${split} "${dir_practice}/$active_practice.0" > "${dir_practice}/$active_practice.tmp"
