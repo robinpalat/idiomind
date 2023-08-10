@@ -167,25 +167,23 @@ function practice_a() {
     fonts() {
         _item="$(grep -F -m 1 "trgt{${item}}" "${list_data}" |sed 's/}/}\n/g')"
         if [[ ${lang_question} != 1 ]]; then
+        
             trgt="${item}"
             srce="$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")"
-            
+
             if [ -z "${srce##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
-				wrds="$(grep -oP '(?<=wrds{).*(?=})' <<< "${_item}")"
-				srce="$(sed "s/.*"$trgt"_//; s/_.*//" <<<"$wrds")"
+				srce="$(grep -F -m 1 "$trgt"_ "$list_data" | sed "s/.*"$trgt"_//; s/_.*//")"
             fi
-            
+
             if [ -z "${srce##+([[:space:]])}" ]; then # busca traduccion en en share db 
 				srce="$(sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${trgt^}' limit 1;")"
             fi
-            
         else
             srce="${item}"
             trgt="$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")"
             
             if [ -z "${trgt##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
-				wrds="$(grep -oP '(?<=wrds{).*(?=})' <<< "${_item}")"
-				trgt="$(sed "s/.*"$trgt"_//; s/_.*//" <<<"$wrds")"
+				trgt="$(grep -F -m 1 "$trgt"_ "$list_data" | sed "s/.*"$trgt"_//; s/_.*//")"
             fi
 
             if [ -z "${trgt##+([[:space:]])}" ]; then # busca traduccion en en share db 
@@ -276,7 +274,6 @@ function practice_a() {
                 fi
             fi
         done < ./a.2
-
      fi
 
      if [ ! -f ./a.3 ]; then
@@ -316,8 +313,7 @@ function practice_b(){
             srce=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
             
             if [ -z "${srce##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
-				wrds="$(grep -oP '(?<=wrds{).*(?=})' <<< "${_item}")"
-				srce="$(sed "s/.*"$trgt"_//; s/_.*//" <<<"$wrds")"
+				srce="$(grep -F -m 1 "$trgt"_ "$list_data" | sed "s/.*"$trgt"_//; s/_.*//")"
             fi
             
             if [ -z "${srce##+([[:space:]])}" ]; then
@@ -340,8 +336,7 @@ function practice_b(){
             trgt=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
             
             if [ -z "${trgt##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
-				wrds="$(grep -oP '(?<=wrds{).*(?=})' <<< "${_item}")"
-				trgt="$(sed "s/.*"$trgt"_//; s/_.*//" <<<"$wrds")"
+				trgt="$(grep -F -m 1 "$trgt"_ "$list_data" | sed "s/.*"$trgt"_//; s/_.*//")"
             fi
             
             if [ -z "${trgt##+([[:space:]])}" ]; then
@@ -526,7 +521,7 @@ function practice_c() {
                 echo "${trgt}" >> c.3
             elif [ ${ans} = 1 ]; then
                 export count_hard count_learn
-                break & score && return
+                break & score && return-F -m 1
             fi
         done < ./c.2
     fi
@@ -569,8 +564,7 @@ function practice_d() {
             srce=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
             
 	        if [ -z "${srce##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
-				wrds="$(grep -oP '(?<=wrds{).*(?=})' <<< "${_item}")"
-				srce="$(sed "s/.*"$trgt"_//; s/_.*//" <<<"$wrds")"
+				srce="$(grep -F -m 1 "$trgt"_ "$list_data" | sed "s/.*"$trgt"_//; s/_.*//")"
             fi
             
             if [ -z "${srce##+([[:space:]])}" ]; then
@@ -582,8 +576,7 @@ function practice_d() {
             trgt=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
             
             if [ -z "${trgt##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
-				wrds="$(grep -oP '(?<=wrds{).*(?=})' <<< "${_item}")"
-				trgt="$(sed "s/.*"$trgt"_//; s/_.*//" <<<"$wrds")"
+				trgt="$(grep -F -m 1 "$trgt"_ "$list_data" | sed "s/.*"$trgt"_//; s/_.*//")"
             fi
             
             if [ -z "${trgt##+([[:space:]])}" ]; then
@@ -795,8 +788,14 @@ function practice_e() {
         
         # lista las palabras para practicar individualmente
         if [ ${porcent_match} -ge 10 ]; then
-			grep -xvf ./mtch.tmp ./all_words.tmp >> ./0.s
-			sed -i -e 's/^\(.\)/\U\1/; /^.$/d' ./0.s
+			vrbl="$(grep -xvf ./mtch.tmp ./all_words.tmp)"
+			echo "${vrbl}" |tr -d '.' \
+			|tr -d '*)(,;"“”:' |tr -s '_&|{}[]' ' ' \
+			|sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
+			|sed 's/\]//;s/\[//;s/<[^>]*>//g' |sed "s/'$//;s/^'//" \
+			|sed 's/-$//;s/^-//;s/"//g' \
+			|sed 's/^ *//; s/ *$//; /^$/d; s/^\(.\)/\U\1/; /^.$/d' \
+			|sed 's/ \+/ /g' |sed -e ':a;N;$!ba;s/\n/\n/g' >> ./0.s
         fi
 
         if [ ${porcent_match} -ge 90 ]; then
@@ -875,8 +874,8 @@ function get_notes() {
         fi
         
         if [ -f "${dir_practice}/0.s" ]; then # si hay palabras no aprendidas desde el test de oraciones
-			notify-send -i idiomind "$(gettext "Practice")" "$(gettext "Words were added from the sentence practice.")" -t 1000
-			cat "${dir_practice}/0.s" | sort -u >> "${dir_practice}/$active_practice.0"
+			notify-send -i idiomind "$(gettext "Practice")" "$(gettext "Words were added from the sentence practice.")"
+			cat "${dir_practice}/0.s" |sort -u >> "${dir_practice}/$active_practice.0"
 		fi
 
         if [ $active_practice = b ]; then
