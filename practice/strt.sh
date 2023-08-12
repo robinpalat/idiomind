@@ -174,7 +174,7 @@ function practice_a() {
             srce="$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")"
 
             if [ -z "${srce##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
-				srce="$(grep -o -m 1 "_${trgt}_[^_]*_"  "$list_data" |awk -F '_' '{print $3}')"
+				srce="$(grep -o -m 1 "_${trgt}_[^_]*_"  "$list_data" |awk -F '_' '{print $3}' |head -n 1)"
             fi
 
             if [ -z "${srce##+([[:space:]])}" ]; then # busca traduccion en en share db 
@@ -185,7 +185,7 @@ function practice_a() {
             trgt="$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")"
             
             if [ -z "${trgt##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
-				trgt="$(grep -o -m 1 "_${trgt}_[^_]*_"  "$list_data" |awk -F '_' '{print $3}')"
+				trgt="$(grep -o -m 1 "_${trgt}_[^_]*_"  "$list_data" |awk -F '_' '{print $3}' |head -n 1)"
             fi
 
             if [ -z "${trgt##+([[:space:]])}" ]; then # busca traduccion en en share db 
@@ -315,7 +315,7 @@ function practice_b(){
             srce=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
             
             if [ -z "${srce##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
-				srce="$(grep -o -m 1 "_${trgt}_[^_]*_"  "$list_data" |awk -F '_' '{print $3}')"
+				srce="$(grep -o -m 1 "_${trgt}_[^_]*_"  "$list_data" |awk -F '_' '{print $3}' |head -n 1)"
             fi
             
             if [ -z "${srce##+([[:space:]])}" ]; then
@@ -338,7 +338,7 @@ function practice_b(){
             trgt=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
             
             if [ -z "${trgt##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
-				trgt="$(grep -o -m 1 "_${trgt}_[^_]*_"  "$list_data" |awk -F '_' '{print $3}')"
+				trgt="$(grep -o -m 1 "_${trgt}_[^_]*_"  "$list_data" |awk -F '_' '{print $3}' |head -n 1)"
             fi
             
             if [ -z "${trgt##+([[:space:]])}" ]; then
@@ -566,7 +566,7 @@ function practice_d() {
             srce=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
             
 	        if [ -z "${srce##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
-				srce="$(grep -o -m 1 "_${trgt}_[^_]*_"  "$list_data" |awk -F '_' '{print $3}')"
+				srce="$(grep -o -m 1 "_${trgt}_[^_]*_"  "$list_data" |awk -F '_' '{print $3}' |head -n 1)"
             fi
             
             if [ -z "${srce##+([[:space:]])}" ]; then
@@ -578,7 +578,7 @@ function practice_d() {
             trgt=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
             
             if [ -z "${trgt##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
-				trgt="$(grep -o -m 1 "_${trgt}_[^_]*_"  "$list_data" |awk -F '_' '{print $3}')"
+				trgt="$(grep -o -m 1 "_${trgt}_[^_]*_"  "$list_data" |awk -F '_' '{print $3}' |head -n 1)"
             fi
             
             if [ -z "${trgt##+([[:space:]])}" ]; then
@@ -1124,6 +1124,11 @@ function strt() {
 	touch "${DM_tlt}"
     check_dir "${dir_practice}"
     cd ~ && cd "${dir_practice}"
+    label_pra=$(gettext "Flashcards")
+	label_prb=$(gettext "Multiple-choice")
+	label_prc=$(gettext "Recognize Pronunciation")
+	label_prd=$(gettext "Images")
+	label_pre=$(gettext "Listen and Writing Sentences")
 
     for i in {1..5}; do
         if [ ! -f ./.${i} ]; then
@@ -1136,6 +1141,11 @@ function strt() {
         echo -e "wait=\"$(date +%d)\"" > ./$active_practice.lock
     fi
     
+    unset words_added
+	if [ -f "${dir_practice}/0.s" ]; then
+		words_added="<small><small>$(gettext "Selected words were added from the sentence practice.")</small></small>"
+	fi
+
     count_a=0; count_b=0; count_c=0; count_d=0; count_e=0
     for practice in a b c d e; do
 		if [ -f ./$practice.lock ]; then
@@ -1146,6 +1156,7 @@ function strt() {
 			declare label_count_${practice}="<i>( $(($(wc -l < ./$practice.0))) )</i>"
 		else
 			declare label_count_${practice}=""
+
         fi
     done
     
@@ -1156,12 +1167,7 @@ function strt() {
     done
     
     include "$DS/ifs/mods/practice"
-    
-    unset words_added
-	if [ -f "${dir_practice}/0.s" ]; then
-		words_added="<small>$(gettext "Selected words were added from the sentence practice.")</small>"
-	fi
-    
+
     if [[ "${1}" = 1 ]]; then
 		 unset words_added
         count_active_practice="$(wc -l < $active_practice.0)"
@@ -1178,10 +1184,21 @@ function strt() {
     elif [[ "${1}" = 2 ]]; then
         count_learnt=$(< ./$active_practice.l); 
         if [ -f ./$active_practice.1 ] || [ -f ./$active_practice.2 ] || [ -f ./$active_practice.3 ]; then
-			declare label_count_${active_practice}="  *  "
 			info=" <b><small>$(gettext "learnt")</small> <b>$count_learnt</b>    <small>$(gettext "easy")</small> <b>$count_easy</b>    <small>$(gettext "Learning")</small> <b>$count_learn</b>    <small>$(gettext "Difficult")</small> <b>$count_hard</b></b>  \n"
+			if [ $active_practice = "a" ] ; then
+				label_pra="<b>*  $(gettext "Flashcards")</b>"
+			elif [ $active_practice = "b" ] ; then
+				label_prb="<b>*  $(gettext "Multiple-choice")</b>"
+			elif [ $active_practice = "c" ] ; then
+				label_prc="<b>*  $(gettext "Recognize Pronunciation")</b>"
+			elif [ $active_practice = "d" ] ; then
+				label_prd="<b>*  $(gettext "Images")</b>"
+			elif [ $active_practice = "e" ] ; then
+				label_pre="<b>*  $(gettext "Listen and Writing Sentences")</b>"
+			fi
 		fi
-		[ $active_practice != "e" ] && unset words_added
+		declare label_count_${active_practice}=""
+		#[ $active_practice != "e" ] && unset words_added
     fi
 
     active_practice="$(yad --list --title="$(gettext "Practice ") - $tpc" \
@@ -1194,11 +1211,11 @@ function strt() {
     --width=${sz[0]} --height=${sz[1]} --borders=10 \
     --ellipsize=end --wrap-width=200 --ellipsize-cols=1 \
     --column="Action" --column="Pick":IMG --column="Label" \
-    "a" "$DS/images/practice/$(< ./.1).png" "$label_count_a $(gettext "Flashcards")$congr1 <small>$plusa</small>"  \
-    "b" "$DS/images/practice/$(< ./.2).png" "$label_count_b $(gettext "Multiple-choice")$congr2 <small>$plusb</small>" \
-    "c" "$DS/images/practice/$(< ./.3).png" "$label_count_c $(gettext "Recognize Pronunciation")$congr3 <small>$plusc</small>" \
-    "d" "$DS/images/practice/$(< ./.4).png" "$label_count_d $(gettext "Images")$congr4 <small>$plusd</small>" \
-    "e" "$DS/images/practice/$(< ./.5).png" "$label_count_e $(gettext "Listen and Writing Sentences") $congr5" \
+    "a" "$DS/images/practice/$(< ./.1).png" "$label_count_a $label_pra$congr1 <small>$plusa</small>"  \
+    "b" "$DS/images/practice/$(< ./.2).png" "$label_count_b $label_prb$congr2 <small>$plusb</small>" \
+    "c" "$DS/images/practice/$(< ./.3).png" "$label_count_c $label_prc$congr3 <small>$plusc</small>" \
+    "d" "$DS/images/practice/$(< ./.4).png" "$label_count_d $label_prd$congr4 <small>$plusd</small>" \
+    "e" "$DS/images/practice/$(< ./.5).png" "$label_count_e $label_pre$congr5" \
     --button="$(gettext "Restart")":3 \
     --button="$(gettext "Start")":0)"
     ret=$?
