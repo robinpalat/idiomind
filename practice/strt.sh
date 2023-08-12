@@ -2,6 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/default/c.conf
+source $DS/default/sets.cfg
 sz=(440 470)
 source "$DS/ifs/cmns.sh"
 export -f tpc_db
@@ -16,6 +17,7 @@ fi
 dir_practice="${DC_tlt}/practice"
 dir_practices="$DS/practice"
 check_dir "$DC_s/logs"
+Level="$(cdb "${cfgdb}" 1 opts level)"
 declare -A prcts=( ['a']='Flashcards' ['b']='Multiple-choice' \
 ['c']='Recognize Pronunciation' ['d']='Images' ['e']='Listen and Writing Sentences')
 t2="<span color='#C15F27' font_desc='Verdana 8'>"
@@ -172,7 +174,7 @@ function practice_a() {
             srce="$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")"
 
             if [ -z "${srce##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
-				srce="$(grep -F -m 1 "$trgt"_ "$list_data" | sed "s/.*"$trgt"_//; s/_.*//")"
+				srce="$(grep -o -m 1 "_${trgt}_[^_]*_"  "$list_data" |awk -F '_' '{print $3}')"
             fi
 
             if [ -z "${srce##+([[:space:]])}" ]; then # busca traduccion en en share db 
@@ -183,7 +185,7 @@ function practice_a() {
             trgt="$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")"
             
             if [ -z "${trgt##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
-				trgt="$(grep -F -m 1 "$trgt"_ "$list_data" | sed "s/.*"$trgt"_//; s/_.*//")"
+				trgt="$(grep -o -m 1 "_${trgt}_[^_]*_"  "$list_data" |awk -F '_' '{print $3}')"
             fi
 
             if [ -z "${trgt##+([[:space:]])}" ]; then # busca traduccion en en share db 
@@ -313,7 +315,7 @@ function practice_b(){
             srce=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
             
             if [ -z "${srce##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
-				srce="$(grep -F -m 1 "$trgt"_ "$list_data" | sed "s/.*"$trgt"_//; s/_.*//")"
+				srce="$(grep -o -m 1 "_${trgt}_[^_]*_"  "$list_data" |awk -F '_' '{print $3}')"
             fi
             
             if [ -z "${srce##+([[:space:]])}" ]; then
@@ -336,7 +338,7 @@ function practice_b(){
             trgt=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
             
             if [ -z "${trgt##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
-				trgt="$(grep -F -m 1 "$trgt"_ "$list_data" | sed "s/.*"$trgt"_//; s/_.*//")"
+				trgt="$(grep -o -m 1 "_${trgt}_[^_]*_"  "$list_data" |awk -F '_' '{print $3}')"
             fi
             
             if [ -z "${trgt##+([[:space:]])}" ]; then
@@ -564,7 +566,7 @@ function practice_d() {
             srce=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
             
 	        if [ -z "${srce##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
-				srce="$(grep -F -m 1 "$trgt"_ "$list_data" | sed "s/.*"$trgt"_//; s/_.*//")"
+				srce="$(grep -o -m 1 "_${trgt}_[^_]*_"  "$list_data" |awk -F '_' '{print $3}')"
             fi
             
             if [ -z "${srce##+([[:space:]])}" ]; then
@@ -576,7 +578,7 @@ function practice_d() {
             trgt=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
             
             if [ -z "${trgt##+([[:space:]])}" ]; then # busca traduccion en en tpc data file 
-				trgt="$(grep -F -m 1 "$trgt"_ "$list_data" | sed "s/.*"$trgt"_//; s/_.*//")"
+				trgt="$(grep -o -m 1 "_${trgt}_[^_]*_"  "$list_data" |awk -F '_' '{print $3}')"
             fi
             
             if [ -z "${trgt##+([[:space:]])}" ]; then
@@ -874,7 +876,6 @@ function get_notes() {
         fi
         
         if [ -f "${dir_practice}/0.s" ]; then # si hay palabras no aprendidas desde el test de oraciones
-			notify-send -i idiomind "$(gettext "Practice")" "$(gettext "Words were added from the sentence practice.")"
 			cat "${dir_practice}/0.s" |sort -u >> "${dir_practice}/$active_practice.0"
 		fi
 
@@ -928,10 +929,12 @@ function get_notes() {
         fi
          inf=0
          while read -r itm; do
-            if [ $(wc -c <<< "$itm") -lt 90 ]; then
-                echo "$itm" >> "${dir_practice}/$active_practice.0"
-            else
-                inf=1
+			if [ ${Level} = 0 ]; then
+				if [ $(wc -w <<< "$itm") -le ${sentence_words_level0} ]; then
+					echo "$itm" >> "${dir_practice}/$active_practice.0"
+				else
+					inf=1
+				fi
             fi
         done < "${dir_practice}/$active_practice.0.tmp"
         
@@ -978,7 +981,7 @@ function decide_group() {
         cleanups ./$active_practice.df; export plus$active_practice=""
     fi
     
-    info="<small>$(gettext "Left")</small>  <b><big>$left</big></b>    <small>$(gettext "count_learnt")</small>  <b><big>$count_learnt</big></b>    <small>$(gettext "count_easy")</small>  <b><big>$count_easy</big></b>    <small>$(gettext "Learning")</small>  <b><big>$count_learn</big></b>    <small>$(gettext "Difficult")</small>  <b><big>$count_hard</big></b>"
+    info="$(gettext "Left")  <b><big>$left</big></b>    $(gettext "Learnt")  <b><big>$count_learnt</big></b>    $(gettext "Easy")  <b><big>$count_easy</big></b>    $(gettext "Learning")  <b><big>$count_learn</big></b>    $(gettext "Difficult")  <b><big>$count_hard</big></b>"
     
     optns=$(yad --form --title="$(gettext "Learning Mode")" \
     --window-icon=$DS/images/logo.png \
@@ -1135,7 +1138,6 @@ function strt() {
     
     count_a=0; count_b=0; count_c=0; count_d=0; count_e=0
     for practice in a b c d e; do
-    
 		if [ -f ./$practice.lock ]; then
 			declare label_count_${practice}=""
         elif [ -f ./$practice.1 ]; then
@@ -1155,32 +1157,39 @@ function strt() {
     
     include "$DS/ifs/mods/practice"
     
+    unset words_added
+	if [ -f "${dir_practice}/0.s" ]; then
+		words_added="<small>$(gettext "Selected words were added from the sentence practice.")</small>"
+	fi
+    
     if [[ "${1}" = 1 ]]; then
+		 unset words_added
         count_active_practice="$(wc -l < $active_practice.0)"
         declare congr${icon}="<span font_desc='Arial Bold 12'>  —  $(gettext "Test completed") </span>"
-        [[ "$active_practice" = e ]] && \
-        info="\n<span font_desc='Arial Bold 11'>$(gettext "Congratulations, You have completed a test of") $count_active_practice $(gettext "sentences!")</span>\n" \
-        || info="\n<span font_desc='Arial Bold  11'>$(gettext "Congratulations, You have completed a test of") $count_active_practice $(gettext "words!")</span>\n"
+        if [[ "$active_practice" = e ]]; then
+			info="\n<span font_desc='Arial Bold 11'>$(gettext "Congratulations, You have completed a test of") $count_active_practice $(gettext "sentences!")</span>\n"
+		else
+			info="\n<span font_desc='Arial Bold  11'>$(gettext "Congratulations, You have completed a test of") $count_active_practice $(gettext "words!")</span>\n"
+		fi
         echo 21 > .${icon}; export plus$active_practice=""
         declare label_count_${active_practice}=""
         all=""
         [ -f ./$active_practice.df ] && rm ./$active_practice.df
-        align=left
     elif [[ "${1}" = 2 ]]; then
         count_learnt=$(< ./$active_practice.l); 
         if [ -f ./$active_practice.1 ] || [ -f ./$active_practice.2 ] || [ -f ./$active_practice.3 ]; then
 			declare label_count_${active_practice}="  *  "
 			info=" <b><small>$(gettext "learnt")</small> <b>$count_learnt</b>    <small>$(gettext "easy")</small> <b>$count_easy</b>    <small>$(gettext "Learning")</small> <b>$count_learn</b>    <small>$(gettext "Difficult")</small> <b>$count_hard</b></b>  \n"
-			align=right
 		fi
+		[ $active_practice != "e" ] && unset words_added
     fi
 
     active_practice="$(yad --list --title="$(gettext "Practice ") - $tpc" \
-    --text="${info}" \
+    --text="${info}$words_added" \
     --class=Idiomind --name=Idiomind \
     --print-column=1 --separator="" \
     --window-icon=$DS/images/logo.png \
-    --buttons-layout=edge --image-on-top --center --on-top --text-align=$align \
+    --buttons-layout=edge --image-on-top --center --on-top --text-align=left \
     --no-headers --expand-column=3 --hide-column=1 \
     --width=${sz[0]} --height=${sz[1]} --borders=10 \
     --ellipsize=end --wrap-width=200 --ellipsize-cols=1 \

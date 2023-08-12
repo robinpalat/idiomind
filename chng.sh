@@ -23,7 +23,7 @@ if [[ ${1} = 0 ]]; then
             if ! grep 'TRUE' <<< "$W$S$M$L$D">/dev/null 2>&1; then "$DS"/stop.sh 2 & exit 1; fi
             
             if [ ${n} = TRUE ]; then
-                notify-send -i "${icon}" "${trgt}" "${srce}" &
+                notify-send -i "${icon}" "${trgt}" "${srce}" -t $((4000+${pause_osd}000)) &
             fi
             if [ ${a} = TRUE ]; then sleep 0.2; sle=0.1; spn=1
                 [ ${type} = 1 -a ${rw} = 1 ] && spn=${word_rep}
@@ -38,10 +38,11 @@ if [[ ${1} = 0 ]]; then
             fi
         else
             echo -e "${trgt}" > "$DT/playlck"
-            notify-send -i "${icon}" "${trgt}" "${srce}" -t 5000 &
+            notify-send -i "${icon}" "${trgt}" "${srce}" -t $((4000+${pause_osd}000)) &
             "$DS/play.sh" play_file "${file}" "${trgt}"
+            
         fi
-        [[ ${n} = TRUE ]] && [[ ${l} -lt ${pause_osd} ]] && l=${pause_osd}
+        if [[ ${n} = TRUE ]] && [[ ${l} -lt ${pause_osd} ]]; then l=${pause_osd}; fi
         [[ ${stnrd} = 1 ]] && sleep ${l}
     }
     export -f _play
@@ -67,11 +68,11 @@ if [[ ${1} = 0 ]]; then
         fi
     }
     if [[ ${stts} -lt 11 ]]; then
-    sents="$(tpc_db 5 sentences)"
-    words="$(tpc_db 5 words)"
-    marks="$(tpc_db 5 marks)"
-    learn="$(tpc_db 5 learning)"
-    leart="$(tpc_db 5 learnt)"
+		sents="$(tpc_db 5 sentences)"
+		words="$(tpc_db 5 words)"
+		marks="$(tpc_db 5 marks)"
+		learn="$(tpc_db 5 learning)"
+		leart="$(tpc_db 5 learnt)"
     fi
 
     if [ ! -e "$DT/play2lck" ]; then
