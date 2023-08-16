@@ -39,8 +39,8 @@ function stats() {
         elif [ ${v} -le ${c} ]; then
             echo ${n} > .${icon}; break
         fi
-        ((c=c+5))
-        let n++
+        (( c=c+5 ))
+        (( n++ ))
     done
 }
 
@@ -50,7 +50,7 @@ function scoreschk() {
         if [ $ret = 1 ]; then
             practices $active_practice
         elif [ $ret = 0 ]; then
-            if [[ "$(egrep -cv '#|^$' < "${dir_practice}/$active_practice.group")" = 0 ]]; then
+            if [[ "$(grep -Ecv '#|^$' < "${dir_practice}/$active_practice.group")" = 0 ]]; then
                 export group=0; score
             else
                 practices $active_practice
@@ -85,8 +85,8 @@ function score() {
             elif [ ${v} -le ${c} ]; then
                 echo ${n} > ./.${icon}; break
             fi
-            ((c=c+5))
-            let n++
+            (( c=c+5 ))
+            (( n++ ))
         done
         save_score 1 & stats
         strt 2
@@ -237,7 +237,7 @@ function practice_a() {
         --button="    $(gettext "I Knew it")   !$img_yes":2
     }
 
-    while read item; do
+    while read -r item; do
         fonts; question
         if [ $? = 1 ]; then
             count_learn=${count_hard}; count_hard=0
@@ -260,7 +260,7 @@ function practice_a() {
         export count_hard count_learn; scoreschk
     else
         step=2
-        while read item; do
+        while read -r item; do
             fonts; question
             if [ $? = 1 ]; then
                 export count_hard count_learn
@@ -282,7 +282,7 @@ function practice_a() {
         export count_hard count_learn; scoreschk
     else
         step=3
-        while read item; do
+        while read -r item; do
             fonts; question
             if [ $? = 1 ]; then
                 export count_hard count_learn
@@ -322,7 +322,7 @@ function practice_b(){
 				srce="$(sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${trgt^}' limit 1;")"
             fi
             
-            ras=$(sort -Ru b.srces |egrep -v "$srce" |head -${P})
+            ras=$(sort -Ru b.srces |grep -Ev "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt}));  [ ${srce_s} -lt 12 ] && srce_s=12
             question="\n<span font_desc='Arial ${srce_s}'><b>${trgt}</b></span>\n\n"
@@ -345,7 +345,7 @@ function practice_b(){
 				trgt="$(sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${srce^}' limit 1;")"
             fi
             
-            ras=$(sort -Ru <<< "${list_words}" |egrep -v "$srce" |head -${P})
+            ras=$(sort -Ru <<< "${list_words}" |grep -Ev "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt})); [ ${srce_s} -lt 12 ] && srce_s=12
             if [ $step -eq 2 ]; then 
@@ -493,7 +493,7 @@ function practice_c() {
     }
 
     p=1
-    while read trgt; do
+    while read -r trgt; do
         fonts; question
         ans=$?
         if [ ${ans} = 2 ]; then
@@ -513,7 +513,7 @@ function practice_c() {
         export count_hard count_learn; scoreschk
     else
         step=2; p=2
-        while read trgt; do
+        while read -r trgt; do
             fonts; question
             ans=$?
             if [ ${ans} = 2 ]; then
@@ -532,7 +532,7 @@ function practice_c() {
         export count_hard count_learn; scoreschk
     else
         step=3; p=2
-        while read trgt; do
+        while read -r trgt; do
             fonts; question
             ans=$?
             if [ ${ans} = 2 ]; then
@@ -711,7 +711,7 @@ function practice_e() {
                 |sed "s|\.|<span color='#989898'>\.<\/span>|g")"
             fi
         else
-            hint="$(echo "$@")"
+            hint="$@"
         fi
         text="<small><small>$(gettext "Listen and then try to write this sentence")</small></small>\n\n<span color='#818181' font_desc='Verdana Bold 13'>$hint</span>\n"
         
@@ -769,14 +769,13 @@ function practice_e() {
         echo "${check_trgt}" > ./check_trgt.tmp; touch ./words.tmp
         tr -s '[:space:]' '\n' < check_trgt.tmp > ./all_words.tmp # prepara para listar las palabras para practicar individualmente
         
-        for line in `sed 's/ /\n/g' <<< "$out"`; do
+        for line in "$(sed 's/ /\n/g' <<< "$out")"; do
             if grep -Fxq "${line}" <<< "$in"; then
                 sed -i "s/"${line}"/<b>"${line}"<\/b>/g" ./check_trgt.tmp # TODO
                 [ -n "${line}" ] && echo "<span color='#3A9000'><b>${line^}</b></span>  " >> ./words.tmp
                 [ -n "${line}" ] && echo "${line}" >> ./mtch.tmp
             else
                 [ -n "${line}" ] && echo "<span color='#984245'><b>${line^}</b></span>  " >> ./words.tmp
-               
             fi
         done
         
@@ -885,7 +884,7 @@ function get_notes() {
         fi
 
         if [ "$1" = "restart" ] && [ -f "${dir_practice}/0.s" ]; then # si hay palabras no aprendidas desde el test de oraciones
-			cat "${dir_practice}/0.s" |sort -u >> "${dir_practice}/$active_practice.0"
+			sort -u < "${dir_practice}/0.s" >> "${dir_practice}/$active_practice.0"
 			count_tmp=$(wc -l < "${dir_practice}/0.s")
 			notify-send "Idiomind - $(gettext "Notice")" "$count_tmp $(gettext "Selected words from the sentence test have been added to this practice.")" -i info
 		fi
@@ -893,16 +892,16 @@ function get_notes() {
         if [ $active_practice = b ]; then
             if [ ! -f "${dir_practice}/b.srces" ]; then
             (echo "#"
-            while read word; do
+            while read -r word; do
                 item="$(grep -F -m 1 "trgt{${word}}" "${list_data}" |sed 's/}/}\n/g')"
-                echo "$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")" >> "${dir_practice}/b.srces"
+                grep -oP '(?<=srce{).*(?=})' <<< "${item}" >> "${dir_practice}/b.srces"
             done <<< "${list_words}") | yad --progress \
             --undecorated --pulsate --auto-close \
             --skip-taskbar --center --no-buttons
             fi
             #TODO
             if [ -f "${dir_practice}/0.s" ]; then # buscar srces para palabras de las oraciones
-				while read word; do
+				while read -r word; do
 					:
 				done < "${dir_practice}/0.s"
 			fi
@@ -920,8 +919,7 @@ function get_notes() {
         (echo "#"
         while read -r itm; do
         _item="$(grep -F -m 1 "trgt{${itm}}" "${list_data}" |sed 's/}/}\n/g')"
-        if [ -f "$DM_tls/images/${itm,,}-1.jpg" \
-        -o -f "$DM_tlt/images/${itm,,}.jpg" ]; then
+        if [ -f "$DM_tls/images/${itm,,}-1.jpg" ] || [ -f "$DM_tlt/images/${itm,,}.jpg" ]; then
             [ -n "${itm}" ] && echo "${itm}" >> "${dir_practice}/$active_practice.0"
         fi
         done < "$DT/images") | yad --progress \
@@ -1041,7 +1039,7 @@ function practices() {
     export count_easy=0 count_hard=0 count_learn=0 step=1
     group=""; split=""; lang_question=""
 
-	export count_seccion_active_practice=$(egrep -cv '#|^$' "${dir_practice}/$active_practice.0")
+	export count_seccion_active_practice=$(grep -Ecv '#|^$' "${dir_practice}/$active_practice.0")
     if [ ! -f "${dir_practice}/$active_practice" ] && [[ ${count_seccion_active_practice} -gt 0 ]]; then # establecer las opciones de la practica activa si esta contiene notas
 		optns=$(yad --form --title="$(gettext "Starting")" \
 		--always-print-result \
@@ -1055,7 +1053,7 @@ function practices() {
 		--button="      $(gettext "$slng")      !!$(gettext "Questions in") $(gettext "$slng") / $(gettext "Answers in") $(gettext "$tlng")":3 \
 		--button="      $(gettext "$tlng")      !!$(gettext "Questions in") $(gettext "$tlng") / $(gettext "Answers in") $(gettext "$slng")":2); ret="$?"
 		
-		if [ $ret = 3 -o $ret = 2 ]; then
+		if [ $ret = 3 ] || [ $ret = 2 ]; then
 			if grep 'TRUE' <<< "${optns}"; then group=1; split=10; fi
 			if [ $ret = 3 ]; then lang_question=1; else lang_question=0; fi
 			echo -e "$group|$split|$lang_question" > $active_practice
@@ -1087,7 +1085,7 @@ function practices() {
             |sed '/^$/d' > "${dir_practice}/$active_practice.tmp"
         fi
         
-        if [[ "$(egrep -cv '#|^$' < "${dir_practice}/$active_practice.tmp")" = 0 ]]; then
+        if [[ "$(grep -Ecv '#|^$' < "${dir_practice}/$active_practice.tmp")" = 0 ]]; then
             if [[ ${group} = 1 ]]; then 
                 export count_easy=0; decide_group
             else 
@@ -1101,13 +1099,13 @@ function practices() {
         else
             cp -f "${dir_practice}/$active_practice.0" "${dir_practice}/$active_practice.tmp"
         fi
-        export count_seccion_active_practice=$(egrep -cv '#|^$' "${dir_practice}/$active_practice.0")
+        export count_seccion_active_practice=$(grep -Ecv '#|^$' "${dir_practice}/$active_practice.0")
     fi
     if [[ ${count_seccion_active_practice} -lt 1 ]]; then
     
 		touch "${dir_practice}/$active_practice.0"
 		
-        if [ "$(egrep -cv '#|^$' <<< "${list_learn}")" -lt 1 ]; then
+        if [ "$(grep -Ecv '#|^$' <<< "${list_learn}")" -lt 1 ]; then
             msg "$(gettext "There are not enough notes to practice.") \n" \
             dialog-information " " "$(gettext "OK")"
         elif grep -o -E 'a|b|c|d' <<< $active_practice; then
