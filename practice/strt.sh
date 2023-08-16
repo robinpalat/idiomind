@@ -769,7 +769,7 @@ function practice_e() {
         echo "${check_trgt}" > ./check_trgt.tmp; touch ./words.tmp
         tr -s '[:space:]' '\n' < check_trgt.tmp > ./all_words.tmp # prepara para listar las palabras para practicar individualmente
         
-        for line in "$(sed 's/ /\n/g' <<< "$out")"; do
+        for line in $(sed 's/ /\n/g' <<< "$out"); do
             if grep -Fxq "${line}" <<< "$in"; then
                 sed -i "s/"${line}"/<b>"${line}"<\/b>/g" ./check_trgt.tmp # TODO
                 [ -n "${line}" ] && echo "<span color='#3A9000'><b>${line^}</b></span>  " >> ./words.tmp
