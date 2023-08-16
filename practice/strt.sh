@@ -7,12 +7,13 @@ sz=(440 470)
 source "$DS/ifs/cmns.sh"
 export -f tpc_db
 date_week=$(date +%W |sed 's/^0*//')
+
 if [[ -n "$1" ]]; then
     tpc="$1"
     DM_tlt="$DM_tl/$1"
     DC_tlt="$DM_tlt/.conf"
     stts=$(< "${DC_tlt}/stts")
-    tpcdb="$DC_tlt/tpc"all
+    tpcdb="$DC_tlt/tpc"
 fi
 dir_practice="${DC_tlt}/practice"
 dir_practices="$DS/practice"
@@ -63,7 +64,8 @@ function scoreschk() {
 function score() {
     rm ./*.tmp
     [ ! -f ./$active_practice.l ] && touch ./$active_practice.l
-    if [[ $(($(< ./$active_practice.l)+count_easy)) -ge ${all} ]]; then
+    if [[ $(($(< ./$active_practice.l)+count_easy)) -ge ${count_seccion_active_practice} ]] && \
+    [[ ${count_seccion_active_practice} -gt 0 ]]; then
 		cleanups ./$active_practice.0
 		> ./$active_practice.2; > ./$active_practice.3
         _log $active_practice; play "$dir_practices/all.mp3" &
@@ -75,7 +77,7 @@ function score() {
         [ -f ./$active_practice.l ] && echo $(($(< ./$active_practice.l)+count_easy)) > ./$active_practice.l \
         || echo ${count_easy} > ./$active_practice.l; _log $active_practice
         s=$(< ./$active_practice.l)
-        v=$((100*s/all))
+        v=$((100*s/count_seccion_active_practice))
         n=1; c=1
         while [ ${n} -le 21 ]; do
             if [ ${n} -eq 21 ]; then
@@ -90,7 +92,6 @@ function score() {
         strt 2
     fi
 }
-
 
 function save_score() {
 
@@ -116,7 +117,6 @@ function save_score() {
 		[ -f ./rm.tmp ] && rm ./rm.tmp
 	fi
 }
-
 
 # just for stats
 function _log() { 
@@ -523,7 +523,7 @@ function practice_c() {
                 echo "${trgt}" >> c.3
             elif [ ${ans} = 1 ]; then
                 export count_hard count_learn
-                break & score && return-F -m 1
+                break & score && return
             fi
         done < ./c.2
     fi
@@ -572,7 +572,6 @@ function practice_d() {
             if [ -z "${srce##+([[:space:]])}" ]; then
 				srce="$(sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${trgt^}' limit 1;")"
             fi
-            
         else
             srce="${item}"
             trgt=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
@@ -698,7 +697,7 @@ function practice_d() {
 # practice E
 function practice_e() {
     
-    dialog2() {
+    dlg_question() {
         if [[ ${lang_question} != 1 ]]; then
             if grep -o -E 'Japanese|Chinese|Russian' <<< ${tlng}; then
                 hint=" "
@@ -834,10 +833,19 @@ function practice_e() {
         cmd_play="$DS/play.sh play_sentence ${cdid}"
         ( sleep 0.5 && "$DS/play.sh" play_sentence ${cdid} ) &
 
-        dialog2 "${push}"
+        dlg_question "${push}"
         ret=$?
         if [ $ret = 1 ]; then
             break &
+            if [ -f "${dir_practice}/0.s" ]; then
+			    msg_2 "$(gettext "There are selected words from the sentence practice that can be added to the word practices.")\n" info "$(gettext "No add")" "$(gettext "Add these words")"
+			     if [ $? = 0 ]; then
+					cleanups "${dir_practice}/0.s"
+				 else 
+					count_tmp=$(wc -l < "${dir_practice}/0.s")
+					notify-send "Idiomind - $(gettext "Notice")" "$count_tmp $(gettext "new words have been added for practice in new sections")" -i info
+				fi
+		    fi
             if ps -A |pgrep -f 'play'; then killall play & fi
             export count_hard count_learn
             score && return
@@ -850,6 +858,7 @@ function practice_e() {
             if [ $ret = 1 ]; then
                 break &
                 if ps -A |pgrep -f 'play'; then killall play & fi
+
                 export count_hard count_learn
                 score && return
             elif [ $ret -eq 2 ]; then
@@ -864,19 +873,21 @@ function practice_e() {
 
 function get_notes() {
 
+	echo -e "\n--- get notes....\t-> $active_practice\n "
     if grep -o -E 'a|b|c' <<< $active_practice; then
         > "${dir_practice}/$active_practice.0"
         if [[ $(wc -l <<< "${list_sents}") -gt 0 ]]; then
             grep -Fvx "${list_sents}" <<< "${list_learn}" > "$DT/$active_practice.0"
             sed '/^$/d' < "$DT/$active_practice.0" > "${dir_practice}/$active_practice.0"
             rm -f "$DT/$active_practice.0"
-  
         else
             sed '/^$/d' <<< "${list_learn}" > "${dir_practice}/$active_practice.0"
         fi
-        
-        if [ -f "${dir_practice}/0.s" ]; then # si hay palabras no aprendidas desde el test de oraciones
+
+        if [ "$1" = "restart" ] && [ -f "${dir_practice}/0.s" ]; then # si hay palabras no aprendidas desde el test de oraciones
 			cat "${dir_practice}/0.s" |sort -u >> "${dir_practice}/$active_practice.0"
+			count_tmp=$(wc -l < "${dir_practice}/0.s")
+			notify-send "Idiomind - $(gettext "Notice")" "$count_tmp $(gettext "Selected words from the sentence test have been added to this practice.")" -i info
 		fi
 
         if [ $active_practice = b ]; then
@@ -925,7 +936,6 @@ function get_notes() {
             rm -f "$DT/slist"
         else
             sed '/^$/d' <<< "${list_learn}" > "${dir_practice}/$active_practice.0.tmp"
-            
         fi
          inf=0
          while read -r itm; do
@@ -939,7 +949,7 @@ function get_notes() {
         done < "${dir_practice}/$active_practice.0.tmp"
         
         if [ ${inf} = 1 ]; then
-            msg "$(gettext "Some sentences could not be added because they are too long")\n" info
+            notify-send "Idiomind - $(gettext "Listen and Writing Sentences")" "$(gettext "Some sentences could not be added because they are too long")" -i info
         fi
     fi
 }
@@ -954,29 +964,34 @@ function lock() {
             ret=$?
         else
             if [ $(grep -o "wait"=\"[^\"]* "${lock}" |grep -o '[^"]*$') != $(date +%d) ]; then
-                rm "${lock}" & return 0
+                rm "${lock}" & strt 0
             else
                 msg_2 "$(gettext "Consider waiting a while before resuming to practice some notes") \n" \
                 dialog-information "$(gettext "OK")" "$(gettext "Practice")"
                 ret=$?; [ $ret = 1 ] && ret=4; [ $ret = 0 ] && ret=5
             fi
         fi
-        if [ $ret -eq 0 ]; then
+        
+        if [ $ret -eq 0 ]; then # restart
             cleanups "${lock}" ./$active_practice.0 ./$active_practice.1 \
             ./$active_practice.2 ./$active_practice.3 ./$active_practice.srces \
             ./$active_practice ./$active_practice.df
             echo 1 > ./.${icon}; echo 0 > ./$active_practice.l
+            get_notes restart && strt 0
         elif [ $ret -eq 4 ]; then
             cleanups "${lock}"
-            return 0
+            strt 0
+            
+        elif [ $ret -eq 1 ]; then
+			strt 0
         fi
-        strt 0
+
     fi
 }
 
 function decide_group() {
     [ -f ./$active_practice.l ] && count_learnt=$(($(< ./$active_practice.l)+count_easy)) || count_learnt=${count_easy}
-    precount_easy=$((count_learnt+count_easy)); left=$((all-count_learnt))
+    precount_easy=$((count_learnt+count_easy)); left=$((count_seccion_active_practice-count_learnt))
     if [[ ${count_easy} = 10 ]]; then
         cleanups ./$active_practice.df; export plus$active_practice=""
     fi
@@ -1009,12 +1024,12 @@ function decide_group() {
         |awk '!a[$0]++' |wc -l > "${dir_practice}/$active_practice.l"
         export count_easy=0 count_hard=0 count_learn=0 step=1
     elif [ $ret -gt 1 ]; then
-        score && return
+        score && strt
     fi
 }
 
 function practices() {
-    #pr=${1}
+
     log="$DC_s/logs/$date_week.log"
     export count_check_tasks1="$(grep "1p.$tpc.p1" "$log" | wc -l)"
     list_data="$DC_tlt/data"
@@ -1025,12 +1040,34 @@ function practices() {
     touch "${dir_practice}/log1" "${dir_practice}/log2" "${dir_practice}/log3"
     export count_easy=0 count_hard=0 count_learn=0 step=1
     group=""; split=""; lang_question=""
-    if [ -f "${dir_practice}/$active_practice" ]; then 
+
+	export count_seccion_active_practice=$(egrep -cv '#|^$' "${dir_practice}/$active_practice.0")
+    if [ ! -f "${dir_practice}/$active_practice" ] && [[ ${count_seccion_active_practice} -gt 0 ]]; then # establecer las opciones de la practica activa si esta contiene notas
+		optns=$(yad --form --title="$(gettext "Starting")" \
+		--always-print-result \
+		--window-icon=$DS/images/logo.png \
+		--skip-taskbar --buttons-layout=spread \
+		--align=center --center --on-top \
+		--width=420 --height=120 --borders=10 \
+		--field=" $(gettext "Learning mode, practice in sets of 10 notes")":CHK "" \
+		--field=" ":LBL "" \
+		--field=" $(gettext "Choose the challenge language:")\n":LBL "" \
+		--button="      $(gettext "$slng")      !!$(gettext "Questions in") $(gettext "$slng") / $(gettext "Answers in") $(gettext "$tlng")":3 \
+		--button="      $(gettext "$tlng")      !!$(gettext "Questions in") $(gettext "$tlng") / $(gettext "Answers in") $(gettext "$slng")":2); ret="$?"
+		
+		if [ $ret = 3 -o $ret = 2 ]; then
+			if grep 'TRUE' <<< "${optns}"; then group=1; split=10; fi
+			if [ $ret = 3 ]; then lang_question=1; else lang_question=0; fi
+			echo -e "$group|$split|$lang_question" > $active_practice
+		else
+			strt & exit
+		fi
+    fi
     optns="$(< "${dir_practice}/$active_practice")"
     group="$(cut -d "|" -f1 <<< "${optns}")"
     split="$(cut -d "|" -f2 <<< "${optns}")"
     lang_question="$(cut -d "|" -f3 <<< "${optns}")"
-    fi
+
     if [ $active_practice = a ]; then icon=1; title_act_pract="- $(gettext "Flashcards")"
     elif [ $active_practice = b ]; then icon=2; title_act_pract="- $(gettext "Multiple-choice")"
     elif [ $active_practice = c ]; then icon=3; title_act_pract="- $(gettext "Recognize Pronunciation")"
@@ -1040,9 +1077,7 @@ function practices() {
     lock
     
     if [ -f "${dir_practice}/$active_practice.0" ] && [ -f "${dir_practice}/$active_practice.1" ]; then
-    
-        export all=$(egrep -cv '#|^$' "${dir_practice}/$active_practice.0")
-    
+
         if [[ ${group} = 1 ]]; then
             head -n ${split} "${dir_practice}/$active_practice.group" \
             |grep -Fxvf "${dir_practice}/$active_practice.1" \
@@ -1060,41 +1095,15 @@ function practices() {
             fi
         fi
     else
-        if [ ! -f "${dir_practice}/$active_practice.0" ]; then
-            optns=$(yad --form --title="$(gettext "Starting")" \
-            --always-print-result \
-            --window-icon=$DS/images/logo.png \
-            --skip-taskbar --buttons-layout=spread \
-            --align=center --center --on-top \
-            --width=420 --height=120 --borders=10 \
-            --field=" $(gettext "Learning mode, practice in sets of 10 notes")":CHK "" \
-            --field=" ":LBL "" \
-            --field=" $(gettext "Choose the challenge language:")\n":LBL "" \
-            --button="      $(gettext "$slng")      !!$(gettext "Questions in") $(gettext "$slng") / $(gettext "Answers in") $(gettext "$tlng")":3 \
-            --button="      $(gettext "$tlng")      !!$(gettext "Questions in") $(gettext "$tlng") / $(gettext "Answers in") $(gettext "$slng")":2); ret="$?"
-            
-            if [ $ret = 3 -o $ret = 2 ]; then
-                if grep 'TRUE' <<< "${optns}"; then group=1; split=10; fi
-                if [ $ret = 3 ]; then lang_question=1; else lang_question=0; fi
-                echo -e "$group|$split|$lang_question" > $active_practice
-            else
-                strt & return
-            fi
-        fi
-        
-        export group split lang_question
-        
-        get_notes
-        
         if [[ ${group} = 1 ]]; then
             head -n ${split} "${dir_practice}/$active_practice.0" > "${dir_practice}/$active_practice.tmp"
             cp -f "${dir_practice}/$active_practice.0" "${dir_practice}/$active_practice.group"
         else
             cp -f "${dir_practice}/$active_practice.0" "${dir_practice}/$active_practice.tmp"
         fi
-        export all=$(egrep -cv '#|^$' "${dir_practice}/$active_practice.0")
+        export count_seccion_active_practice=$(egrep -cv '#|^$' "${dir_practice}/$active_practice.0")
     fi
-    if [[ ${all} -lt 1 ]]; then
+    if [[ ${count_seccion_active_practice} -lt 1 ]]; then
     
 		touch "${dir_practice}/$active_practice.0"
 		
@@ -1108,7 +1117,7 @@ function practices() {
             msg "$(gettext "There are not enough sentences for this practice in the \"Learning\" list"). \n" \
             dialog-information " " "$(gettext "OK")"
         fi
-        strt 0 & return
+        strt 0
     else
         cleanups "${dir_practice}/$active_practice.2" "${dir_practice}/$active_practice.3"
         img_cont="$DS/images/cont.png"
@@ -1130,58 +1139,54 @@ function strt() {
 	label_prd=$(gettext "Images")
 	label_pre=$(gettext "Listen and Writing Sentences")
 
-    for i in {1..5}; do
-        if [ ! -f ./.${i} ]; then
-			echo 1 > ./.${i}
-        fi
-    done
     [[ ${count_hard} -lt 0 ]] && count_hard=0
     if [[ ${step} -gt 1 ]] && [[ ${count_learn} -ge 1 ]] && \
     [[ ${count_hard} = 0 ]] && [[ ${group} != 1 ]]; then
         echo -e "wait=\"$(date +%d)\"" > ./$active_practice.lock
     fi
     
-    unset words_added
-	if [ -f "${dir_practice}/0.s" ]; then
-		words_added="<small><small>$(gettext "Selected words were added from the sentence practice.")</small></small>"
-	fi
-
+    list_data="$DC_tlt/data"
+	list_sents="$(tpc_db 5 sentences)"
+	list_words="$(tpc_db 5 words)"
+	list_learn="$(tpc_db 5 learning)"
     count_a=0; count_b=0; count_c=0; count_d=0; count_e=0
+    
+    i=1
     for practice in a b c d e; do
-		if [ -f ./$practice.lock ]; then
-			declare label_count_${practice}=""
-        elif [ -f ./$practice.1 ]; then
+		if [ ! -f "./$practice.0" ]; then
+			active_practice=${practice}; get_notes start
+		fi
+        if [ -f ./$practice.1 ]; then
 			declare label_count_${practice}="<i>( $(($(wc -l < ./$practice.0) - $(wc -l < ./$practice.1))) )</i>"
 		elif [ -f ./$practice.0 ]; then
 			declare label_count_${practice}="<i>( $(($(wc -l < ./$practice.0))) )</i>"
 		else
 			declare label_count_${practice}=""
-
         fi
-    done
-    
-    for i in a b c d; do
-        if [ -f ./${i}.df ]; then
-			declare plus${i}=" /  $(< ./${i}.df)"
+        if [ -f ./$practice.lock ] && ! grep -o "wait" < ./$practice.lock; then
+			declare label_count_${practice}=""
+		fi
+		if [ -f ./${practice}.df ]; then
+			declare plus${practice}=" /  $(< ./${practice}.df)"
         fi
+        if [ ! -f ./.${i} ]; then echo 1 > ./.${i}; fi
+        ((i=i+1))
     done
     
     include "$DS/ifs/mods/practice"
+    count_active_practice="$(wc -l < $active_practice.0)"
 
     if [[ "${1}" = 1 ]]; then
-		 unset words_added
-        count_active_practice="$(wc -l < $active_practice.0)"
+
         declare congr${icon}="<span font_desc='Arial Bold 12'>  —  $(gettext "Test completed") </span>"
-        if [[ "$active_practice" = e ]]; then
-			info="\n<span font_desc='Arial Bold 11'>$(gettext "Congratulations, You have completed a test of") $count_active_practice $(gettext "sentences!")</span>\n"
-		else
-			info="\n<span font_desc='Arial Bold  11'>$(gettext "Congratulations, You have completed a test of") $count_active_practice $(gettext "words!")</span>\n"
-		fi
+		info="\n<span font_desc='Arial Bold  11'>$(gettext "Congratulations!")</span>\n"
         echo 21 > .${icon}; export plus$active_practice=""
         declare label_count_${active_practice}=""
-        all=""
+        count_seccion_active_practice=""
         [ -f ./$active_practice.df ] && rm ./$active_practice.df
+        
     elif [[ "${1}" = 2 ]]; then
+    
         count_learnt=$(< ./$active_practice.l); 
         if [ -f ./$active_practice.1 ] || [ -f ./$active_practice.2 ] || [ -f ./$active_practice.3 ]; then
 			info=" <b><small>$(gettext "learnt")</small> <b>$count_learnt</b>    <small>$(gettext "easy")</small> <b>$count_easy</b>    <small>$(gettext "Learning")</small> <b>$count_learn</b>    <small>$(gettext "Difficult")</small> <b>$count_hard</b></b>  \n"
@@ -1198,11 +1203,10 @@ function strt() {
 			fi
 		fi
 		declare label_count_${active_practice}=""
-		#[ $active_practice != "e" ] && unset words_added
     fi
 
     active_practice="$(yad --list --title="$(gettext "Practice ") - $tpc" \
-    --text="${info}$words_added" \
+    --text="${info}" \
     --class=Idiomind --name=Idiomind \
     --print-column=1 --separator="" \
     --window-icon=$DS/images/logo.png \
@@ -1222,21 +1226,25 @@ function strt() {
     unset info info1 info2 info3 info4 info5 title_act_pract \
     congr1 congr2 congr3 congr4 congr5
     
-    if [ $ret -eq 0 ]; then
+    if [ $ret -eq 0 ]; then # start a selected practice
         if [ -z "$active_practice" ]; then
             msg " $(gettext "You must choose a practice.")\n" dialog-information
             strt 0
         else
             practices $active_practice
         fi
-    elif [ $ret -eq 3 ]; then
+        
+    elif [ $ret -eq 3 ]; then # restar all practices
         unset plusa plusb plusc plusd pr
         if [ -d "${dir_practice}" ]; then
-            cd "${dir_practice}"/; rm ./.[^.]; rm ./*
+            cd ~ && cd "${dir_practice}"/
+            find . -exec rm {} \;
             touch ./log1 ./log2 ./log3
         fi
+
         strt 0
-    else
+        
+    else # exit (save data)
         if [ "${1}" = 2 ]; then
             if [[ -z "$(cdb ${shrdb} 8 T8 list "${tpc}")" ]]; then
                 cdb ${shrdb} 2 T8 list "${tpc}"
@@ -1244,7 +1252,7 @@ function strt() {
         elif [ "${1}" = 1 ]; then
             cdb ${shrdb} 4 T8 list "${tpc}"
         fi &
-        #idiomind tasks
+        # idiomind tasks
         count_check_tasks2="$(grep "1p.$tpc.p1" "$log" | wc -l)"
         if [ $count_check_tasks2 -gt $count_check_tasks1 ]; then
 			grep -vxE "$(gettext "To Practice:") $tpc|$(gettext "Back to Practice:") $tpc|$(gettext "Resume Practice:") $tpc" $DT/tasks >> $DT/tasks.tmp
