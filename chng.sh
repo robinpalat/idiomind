@@ -100,12 +100,12 @@ if [[ ${1} = 0 ]]; then
             echo -e "${tpc}" > "$DT/playlck"
             while read item; do _stop=1; getitem; _play
             done < <(grep -Fxvf "${DC_tlt}/practice/log3" \
-            "${DC_tlt}/practice/log2" |sort |uniq)
+            "${DC_tlt}/practice/log2" |uniq)
         fi
         if [[ ${D} = TRUE ]]; then
             echo -e "${tpc}" > "$DT/playlck"
             while read item; do _stop=1; getitem; _play
-            done < <(sort |uniq "${DC_tlt}/practice/log3")
+            done < <(uniq "${DC_tlt}/practice/log3")
         fi
     fi
     if [ $stts -gt 10 ]; then

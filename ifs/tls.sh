@@ -1280,7 +1280,7 @@ about() {
     lnk4="https://idiomind.sourceforge.io/license.html"
 
 	yad --form --text-align=center --align=center --scroll \
-	--image=$DS/images/about.png \
+	--image=$DS/images/about.png --center \
 	--title="$(gettext "About")" --image-on-top \
 	--width=350 --height=360 --borders=10 --image-on-top \
 	--window-icon=$DS/images/logo.png \

@@ -318,24 +318,6 @@ function dialog_1() {
     --button=" $(gettext "Yes") ":2
 }
 
-#function tpc_view() {
-    #yad --list --title="Idiomind" \
-    #--text="${itxt}" --select-action="/usr/share/idiomind/play.sh play_word" \
-    #--name=Idiomind --class=Idiomind \
-    #--no-click --print-column=0 \
-    #--wrap-width=420 --ellipsize-cols=0 \
-    #--dclick-action=":" \
-    #--window-icon=$DS/images/logo.png \
-    #--hide-column=2 --tooltip-column=2 \
-    #--no-headers --ellipsize=END --center \
-    #--width=510 --height=560 \
-    #--borders=8 --tab-borders=0 \
-    #--column=" " --column=" " \
-    #--button="$(gettext "Install")":0 \
-    #--button="$(gettext "Close")!gtk-close":1
-#}
-
-
 function tpc_view() {
 
     _lst | yad --list --tabnum=1 --window-icon=idiomind \

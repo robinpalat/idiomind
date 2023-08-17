@@ -151,12 +151,13 @@ play_list() {
         marks="$(tpc_db 5 marks)"
         learn="$(tpc_db 5 learning)"
         leart="$(tpc_db 5 learnt)"
-        in0="$(grep -Fxv "${sents}" <<< "${learn}" |wc -l)"
-        in1="$(grep -Fxv "${words}" <<< "${learn}" |wc -l)"
-        in2="$(grep -Fxv "${leart}" <<< "${marks}" |wc -l)"
-        in2=$((in2-1))
-        in3="$(egrep -cv '#|^$' "${DC_tlt}/practice/log2")"
-        in4="$(egrep -cv '#|^$' "${DC_tlt}/practice/log3")"
+        in0="$(grep -Fxv "${sents}" <<< "${learn}" |grep -Ecv '#|^$')"
+        in1="$(grep -Fxv "${words}" <<< "${learn}" |grep -Ecv '#|^$')"
+        in2="$(grep -Fxv "${leart}" <<< "${marks}" |grep -Ecv '#|^$')"
+        in3_tmp="$(grep -Fxvf "${DC_tlt}/practice/log3" "${DC_tlt}/practice/log2" |uniq)"
+        in3="$(grep -Ecv '#|^$' <<< "${in3_tmp}")"
+        in4="$(grep -Ecv '#|^$' "${DC_tlt}/practice/log3")"
+
         opts="$(tpc_db 5 config |head -n9)"
         n=0
         while [ ${n} -le 9 ]; do

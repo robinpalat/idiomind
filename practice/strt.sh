@@ -947,7 +947,7 @@ function get_notes() {
         done < "${dir_practice}/$active_practice.0.tmp"
         
         if [ ${inf} = 1 ]; then
-            notify-send "Idiomind - $(gettext "Listen and Writing Sentences")" "$(gettext "Some sentences could not be added because they are too long")" -i info
+            notify-send "Idiomind - $(gettext "Listen and Writing Sentences")" "$(gettext "Some sentences were set aside because they are too complex for your learning level.")" -i info
         fi
     fi
 }
@@ -1173,32 +1173,35 @@ function strt() {
     
     include "$DS/ifs/mods/practice"
     count_active_practice="$(wc -l < $active_practice.0)"
+    
+    if [[ "${1}" = 1 ]] || [[ "${1}" = 2 ]]; then
+    	if [ $active_practice = "a" ] ; then
+			label_pra="<b>*  $(gettext "Flashcards")</b>"
+		elif [ $active_practice = "b" ] ; then
+			label_prb="<b>*  $(gettext "Multiple-choice")</b>"
+		elif [ $active_practice = "c" ] ; then
+			label_prc="<b>*  $(gettext "Recognize Pronunciation")</b>"
+		elif [ $active_practice = "d" ] ; then
+			label_prd="<b>*  $(gettext "Images")</b>"
+		elif [ $active_practice = "e" ] ; then
+			label_pre="<b>*  $(gettext "Listen and Writing Sentences")</b>"
+		fi
+	fi
 
     if [[ "${1}" = 1 ]]; then
 
         declare congr${icon}="<span font_desc='Arial Bold 12'>  —  $(gettext "Test completed") </span>"
-		info="\n<span font_desc='Arial Bold  11'>$(gettext "Congratulations!")</span>\n"
+		info="<span font_desc='Arial Bold  11'>$(gettext "Congratulations!")</span> "
         echo 21 > .${icon}; export plus$active_practice=""
         declare label_count_${active_practice}=""
         count_seccion_active_practice=""
         [ -f ./$active_practice.df ] && rm ./$active_practice.df
-        
+
     elif [[ "${1}" = 2 ]]; then
     
         count_learnt=$(< ./$active_practice.l); 
         if [ -f ./$active_practice.1 ] || [ -f ./$active_practice.2 ] || [ -f ./$active_practice.3 ]; then
-			info=" <b><small>$(gettext "learnt")</small> <b>$count_learnt</b>    <small>$(gettext "easy")</small> <b>$count_easy</b>    <small>$(gettext "Learning")</small> <b>$count_learn</b>    <small>$(gettext "Difficult")</small> <b>$count_hard</b></b>  \n"
-			if [ $active_practice = "a" ] ; then
-				label_pra="<b>*  $(gettext "Flashcards")</b>"
-			elif [ $active_practice = "b" ] ; then
-				label_prb="<b>*  $(gettext "Multiple-choice")</b>"
-			elif [ $active_practice = "c" ] ; then
-				label_prc="<b>*  $(gettext "Recognize Pronunciation")</b>"
-			elif [ $active_practice = "d" ] ; then
-				label_prd="<b>*  $(gettext "Images")</b>"
-			elif [ $active_practice = "e" ] ; then
-				label_pre="<b>*  $(gettext "Listen and Writing Sentences")</b>"
-			fi
+			info=" <b><small>$(gettext "learnt")</small> <b>$count_learnt</b>    <small>$(gettext "easy")</small> <b>$count_easy</b>    <small>$(gettext "Learning")</small> <b>$count_learn</b>    <small>$(gettext "Difficult")</small> <b>$count_hard</b></b>  "
 		fi
 		declare label_count_${active_practice}=""
     fi
@@ -1208,7 +1211,8 @@ function strt() {
     --class=Idiomind --name=Idiomind \
     --print-column=1 --separator="" \
     --window-icon=$DS/images/logo.png \
-    --buttons-layout=edge --image-on-top --center --on-top --text-align=left \
+    --buttons-layout=edge --image-on-top --center \
+    --on-top --text-align=center \
     --no-headers --expand-column=3 --hide-column=1 \
     --width=${sz[0]} --height=${sz[1]} --borders=10 \
     --ellipsize=end --wrap-width=200 --ellipsize-cols=1 \
