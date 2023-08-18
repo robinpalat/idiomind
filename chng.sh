@@ -2,13 +2,20 @@
 # -*- ENCODING: UTF-8 -*-
 
 if [[ ${1} = 0 ]]; then
-    if [[ ${stts} -lt 11 ]]; then
+
+    if [ $stts = 1 ] || [ $stts = 2 ] || [ $stts = 5 ] || [ $stts = 6 ]; then
         W=$(tpc_db 1 config words)
         S=$(tpc_db 1 config sntcs)
         M=$(tpc_db 1 config marks)
         L=$(tpc_db 1 config learn)
         D=$(tpc_db 1 config diffi)
+        sents="$(tpc_db 5 sentences)"
+		words="$(tpc_db 5 words)"
+		marks="$(tpc_db 5 marks)"
+		learn="$(tpc_db 5 learning)"
+		leart="$(tpc_db 5 learnt)"
     fi
+    
     _stop=0
 
     _play() {
@@ -17,15 +24,20 @@ if [[ ${1} = 0 ]]; then
             n=$(tpc_db 1 config ntosd)
             l=$(tpc_db 1 config loop); ! [[ ${l} =~ $numer ]] && l=0
             rw=$(tpc_db 1 config rword); ! [[ ${rw} =~ $numer ]] && rw=0
-            [ ! -e "$DT"/playlck ] && echo 0 > "$DT"/playlck
+            [ ! -f "$DT"/playlck ] && echo 0 > "$DT"/playlck
 
-            if [ ${n} != TRUE -a ${a} != TRUE -a ${stnrd} = 1 ]; then a=TRUE; fi
-            if ! grep 'TRUE' <<< "$W$S$M$L$D">/dev/null 2>&1; then "$DS"/stop.sh 2 & exit 1; fi
+            if [ ${n} != TRUE ] && [ ${a} != TRUE ] && [ ${stnrd} = 1 ]; then a=TRUE; fi
+            
+            if ! grep 'TRUE' <<< "$W$S$M$L$D">/dev/null 2>&1; then
+				"$DS"/stop.sh 2  & exit 1
+            fi
             
             if [ ${n} = TRUE ]; then
                 notify-send -i "${icon}" "${trgt}" "${srce}" -t $((4000+${pause_osd}000)) &
             fi
-            if [ ${a} = TRUE ]; then sleep 0.2; sle=0.1; spn=1
+            
+            if [ ${a} = TRUE ]; then 
+				sleep 0.2; sle=0.1; spn=1
                 [ ${type} = 1 -a ${rw} = 1 ] && spn=${word_rep}
                 [ ${type} = 2 -a ${rw} = 2 ] && spn=${sentence_rep} && sle=1
                 ( while [ ${ritem} -lt ${spn} ]; do
@@ -40,8 +52,8 @@ if [[ ${1} = 0 ]]; then
             echo -e "${trgt}" > "$DT/playlck"
             notify-send -i "${icon}" "${trgt}" "${srce}" -t $((4000+${pause_osd}000)) &
             "$DS/play.sh" play_file "${file}" "${trgt}"
-            
         fi
+        
         if [[ ${n} = TRUE ]] && [[ ${l} -lt ${pause_osd} ]]; then l=${pause_osd}; fi
         [[ ${stnrd} = 1 ]] && sleep ${l}
     }
@@ -67,50 +79,43 @@ if [[ ${1} = 0 ]]; then
             let f++
         fi
     }
-    if [[ ${stts} -lt 11 ]]; then
-		sents="$(tpc_db 5 sentences)"
-		words="$(tpc_db 5 words)"
-		marks="$(tpc_db 5 marks)"
-		learn="$(tpc_db 5 learning)"
-		leart="$(tpc_db 5 learnt)"
-    fi
-
-    if [ ! -e "$DT/play2lck" ]; then
+    
+    if [ ! -f "$DT/play2lck" ]; then
         if [[ ${W} = TRUE ]] && [[ ${S} = TRUE ]]; then
             echo -e "${tpc}" > "$DT/playlck"
-            while read item; do _stop=1; getitem; _play
+            while read -r item; do _stop=1; getitem; _play
             done <<< "$learn"
         fi
         if [[ ${W} = TRUE ]] && [[ ${S} = FALSE ]]; then
             echo -e "${tpc}" > "$DT/playlck"
-            while read item; do _stop=1; getitem; _play
+            while read -r item; do _stop=1; getitem; _play
             done < <(grep -Fxv "${sents}" <<< "${learn}")
         fi
         if [[ ${W} = FALSE ]] && [[ ${S} = TRUE ]]; then
             echo -e "${tpc}" > "$DT/playlck"
-            while read item; do _stop=1; getitem; _play
+            while read -r item; do _stop=1; getitem; _play
             done < <(grep -Fxv "${words}" <<< "${learn}")
         fi
         if [[ ${M} = TRUE ]]; then
             echo -e "${tpc}" > "$DT/playlck"
-            while read item; do _stop=1; getitem; _play
+            while read -r item; do _stop=1; getitem; _play
             done <<< "${marks}"
         fi
         if [[ ${L} = TRUE ]]; then
             echo -e "${tpc}" > "$DT/playlck"
-            while read item; do _stop=1; getitem; _play
+            while read -r item; do _stop=1; getitem; _play
             done < <(grep -Fxvf "${DC_tlt}/practice/log3" \
             "${DC_tlt}/practice/log2" |uniq)
         fi
         if [[ ${D} = TRUE ]]; then
             echo -e "${tpc}" > "$DT/playlck"
-            while read item; do _stop=1; getitem; _play
+            while read -r item; do _stop=1; getitem; _play
             done < <(uniq "${DC_tlt}/practice/log3")
         fi
     fi
     if [ $stts -gt 10 ]; then
 		include "$DS/ifs/mods/chng"
-		echo ${_stop} > $DT/playlck
+		#echo ${_stop} > $DT/playlck
     fi
 
 elif [[ ${1} != 0 ]]; then

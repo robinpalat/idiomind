@@ -9,7 +9,7 @@ _head(){
     cat <<!EOF
 <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="/usr/share/idiomind/default/pdf.css">
-</head><body><h2>$tpc</h2><hr><br>
+</head><body><h1>$tpc</h1><hr><br>
 !EOF
 }
 

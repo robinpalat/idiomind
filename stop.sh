@@ -101,7 +101,7 @@ on_play3() {
 
 on_practice() {
     dir="/usr/share/idiomind/practice"
-    if ps -A |pgrep -f "$dir/prct.sh"; then killall "$dir/prct.sh" & fi
+    if ps -A |pgrep -f "$dir/strt.sh"; then killall "$dir/strt.sh" & fi
     if ps -A |pgrep -f play; then  killall play & fi
     return
 }

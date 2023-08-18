@@ -936,15 +936,20 @@ function get_notes() {
             sed '/^$/d' <<< "${list_learn}" > "${dir_practice}/$active_practice.0.tmp"
         fi
          inf=0
-         while read -r itm; do
-			if [ ${Level} = 0 ]; then
-				if [ $(wc -w <<< "$itm") -le ${sentence_words_level0} ]; then
-					echo "$itm" >> "${dir_practice}/$active_practice.0"
-				else
-					inf=1
+         if [ -s "${dir_practice}/$active_practice.0.tmp" ]; then
+			 while read -r itm; do
+				if [ ${Level} = 0 ]; then
+					if [ $(wc -w <<< "$itm") -le ${sentence_words_level0} ]; then
+						echo "$itm" >> "${dir_practice}/$active_practice.0"
+					else
+						inf=1
+					fi
 				fi
-            fi
-        done < "${dir_practice}/$active_practice.0.tmp"
+			done < "${dir_practice}/$active_practice.0.tmp"
+		else 
+			cleanups "${dir_practice}/$active_practice.0.tmp"
+			touch "${dir_practice}/$active_practice.0"
+        fi
         
         if [ ${inf} = 1 ]; then
             notify-send "Idiomind - $(gettext "Listen and Writing Sentences")" "$(gettext "Some sentences were set aside because they are too complex for your learning level.")" -i info

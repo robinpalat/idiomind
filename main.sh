@@ -98,7 +98,8 @@ function new_session() {
             stts=$(sed -n 1p "${dir}/stts")
             ! [[ ${stts} =~ $numer ]] && stts=1
             [[ ${stts} = 0 ]] && continue
-            if grep -E '3|4|7|8|9|10' <<< "$stts" >/dev/null 2>&1; then
+
+            if [ $stts = 3 ] || [ $stts = 4 ] || [ $stts = 7 ] || [ $stts = 8 ] || [ $stts = 9 ] || [ $stts = 10 ]; then
 
                 calculate_review "${line}"
                 
@@ -483,7 +484,7 @@ PY
 
         elif [ ${cfg1} -gt 0 ]; then # if have content to learn
        
-            if echo "$stts" |grep -E '3|4|7|8|9|10'; then # If there is new content to learn, even if the topic has already been learned or is waiting for review.
+            if [ $stts = 3 ] || [ $stts = 4 ] || [ $stts = 7 ] || [ $stts = 8 ] || [ $stts = 9 ] || [ $stts = 10 ]; then # If there is new content to learn, even if the topic has already been learned or is waiting for review.
             
                 calculate_review "${tpc}"; 
 
@@ -521,7 +522,7 @@ PY
         elif [ ${cfg1} -eq 0 ] && [ ${cfg0} -ge 10 ]; then # if not content to learn
         
         
-            if  ! echo "$stts" |grep -E '3|4|7|8|9|10'; then
+            if [ $stts = 1 ] || [ $stts = 2 ] || [ $stts = 5 ] || [ $stts = 6 ]; then
                 "$DS/mngr.sh" mark_as_learned "${tpc}" 0
 			fi
 			
@@ -571,7 +572,7 @@ PY
 
         elif [ ${cfg1} -ge 1 ]; then
         
-            if echo "$stts" |grep -E '3|4|7|8|9|10'; then
+            if [ $stts = 3 ] || [ $stts = 4 ] || [ $stts = 7 ] || [ $stts = 8 ] || [ $stts = 9 ] || [ $stts = 10 ]; then
                 echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
                 notebook_2
             else

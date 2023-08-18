@@ -113,7 +113,7 @@ play_list() {
     tpc="$(sed -n 1p "$HOME/.config/idiomind/tpc")"
     DC_tlt="${DM_tl}/${tpc}/.conf"
     tpcdb="$DC_tlt/tpc"
-    if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
+    if [ -f "$DT/ps_lk" ] || [ -f "$DT/el_lk" ]; then
         msg "$(gettext "Please wait until the current process is finished.")...\n" \
         dialog-information
         (sleep 50; cleanups "$DT/ps_lk" "$DT/el_lk") & exit 1
@@ -123,7 +123,7 @@ play_list() {
     fi
 
     [ ! -d "$DT" ] && mkdir "$DT"; cd ~ && cd "$DT"
-    [ ! -e $DT/playlck ] && echo 0 > $DT/playlck
+    [ ! -f $DT/playlck ] && echo 0 > $DT/playlck
     
     btn1="!media-playback-start!$(gettext "Play"):0"
     title="$(gettext "Play")"
@@ -140,12 +140,11 @@ play_list() {
     lbls=( 'Words' 'Sentences' 'Marked' 'Learning' 'Difficult' )
     in=( 'in0' 'in1' 'in2' 'in3' 'in4' )
     iteml=( "$(gettext "No repeat")" "$(gettext "Words")" "$(gettext "Sentences")" )
+    sents=""; words=""; marks=""; learn=""; leart=""
+    in0=0; in1=0; in2=0; in3=0; in4=0
+    opts="$(tpc_db 5 config |head -n9)"
     
-        sents=""; words=""; marks=""; learn=""; leart=""
-        in0=0; in1=0; in2=0; in3=0; in4=0
-        opts="$(tpc_db 5 config |head -n9)"
-    
-    if  echo "$stts" |grep -E '1|2|5|6'; then
+    if [ $stts = 1 ] || [ $stts = 2 ] || [ $stts = 5 ] || [ $stts = 6 ]; then
         sents="$(tpc_db 5 sentences)"
         words="$(tpc_db 5 words)"
         marks="$(tpc_db 5 marks)"
@@ -223,14 +222,20 @@ play_list() {
     --column=CHK:CHK \
     --column=TXT:TXT \
     --column=TXT:TXT > "$tab1" &
-    yad --plug=$KEY --form --tabnum=2 \
-    --align=right --center \
-    --separator="|" --always-print-result --print-all \
-    --field="$(gettext "Repeat")":CHK "$rplay" \
-    --field="$(gettext "Play audio")":CHK "$audio" \
-    --field="$(gettext "Use desktop notifications")":CHK "$ntosd" \
-    --field="$(gettext "Pause between notes (sec)")":SCL "$loop" \
-    --field="$(gettext "Repeat sounding out")":CB "$lst_opts1" > "$tab2" &
+    if [ $stts -lt 10 ]; then
+		yad --plug=$KEY --form --tabnum=2 \
+		--align=right --center \
+		--separator="|" --always-print-result --print-all \
+		--field="$(gettext "Repeat")":CHK "$rplay" \
+		--field="$(gettext "Play audio")":CHK "$audio" \
+		--field="$(gettext "Use desktop notifications")":CHK "$ntosd" \
+		--field="$(gettext "Pause between notes (sec)")":SCL "$loop" \
+		--field="$(gettext "Repeat sounding out")":CB "$lst_opts1" > "$tab2" &
+    else
+		yad --plug=$KEY --form --tabnum=2 \
+		--align=right --center \
+		--separator="|" --always-print-result --print-all &
+    fi 
     yad --notebook --key=$KEY --title="$title" "$tpp"\
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all \
@@ -314,8 +319,8 @@ play_list() {
             
         # cmd stop
         elif [ $ret -eq 2 ]; then
-            [ -e "$DT/playlck" ] && echo 0 > "$DT/playlck"
-            [ -e "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
+            [ -f "$DT/playlck" ] && echo 0 > "$DT/playlck"
+            [ -f "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
             "$DS/stop.sh" 2 &
         fi
     exit 0

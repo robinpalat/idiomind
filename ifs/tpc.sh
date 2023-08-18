@@ -82,7 +82,8 @@ if [ -d "${DM_tlt}" ]; then
             
             touch "${DM_tlt}"
             
-            if echo "$stts" |grep -E '3|4|7|8|9|10'; then
+            if [ $stts = 3 ] || [ $stts = 4 ] || [ $stts = 7 ] || [ $stts = 8 ] || [ $stts = 9 ] || [ $stts = 10 ]; then
+            
                 calculate_review "${topic}"
                 if [[ $((stts%2)) = 0 ]]; then
                     if [ ${RM} -ge 180 -a ${stts} = 8 ]; then

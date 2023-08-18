@@ -836,7 +836,7 @@ mark_as_learned_topic() {
     stts=$(sed -n 1p "${DC_tlt}/stts")
     ! [[ ${stts} =~ ${numer} ]] && stts=1
 
-    if ! echo ${stts} |grep -E '4|7|8|9|10'; then
+    if [ $stts = 1 ] || [ $stts = 2 ] || [ $stts = 5 ] || [ $stts = 6 ]; then
 
         calculate_review "${tpc}"
         date_reviews_count="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
@@ -921,7 +921,7 @@ mark_as_learned_topic_ok() {
     stts=$(sed -n 1p "${DC_tlt}/stts")
     ! [[ ${stts} =~ ${numer} ]] && stts=1
 
-    if ! echo "$stts" |grep -E '3|4|7|8|9|10'; then
+    if [ $stts = 1 ] || [ $stts = 2 ] || [ $stts = 5 ] || [ $stts = 6 ]; then
         calculate_review "${tpc}"
         date_reviews_count="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
         ! [[ ${date_reviews_count} =~ ${numer} ]] && date_reviews_count=0
