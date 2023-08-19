@@ -130,7 +130,7 @@ play_list() {
     
     [ ${stts} -ge 1 ] && [ -n "${tpc}" ] && title="$(gettext "Play") - ${tpc}"
     if [ "$(< $DT/playlck)" != 0 ]; then
-        tpp="--text=<small>  \"$(sed -n 1p "$DT/playlck")\"</small>"
+        tpp="--text=<b><small>  \"$(sed -n 1p "$DT/playlck")\"</small></b>"
         title="$(gettext "Play")"
         btn1="!media-playback-stop!$(gettext "Stop"):2"
         title="$(gettext "Playing...")"
@@ -215,13 +215,19 @@ play_list() {
     tab2=$(mktemp "$DT/XXXXXX")
     c=$((RANDOM%100000)); KEY=$c
     [[ ${ntosd} != TRUE ]] && [[ ${audio} != TRUE ]] && audio=TRUE
-    setting_1 | yad --plug=$KEY --tabnum=1 --list \
-    --print-all --always-print-result --separator="|" \
-    --center --expand-column=2 --hide-column=4 --no-headers \
-    --column=IMG:IMG \
-    --column=CHK:CHK \
-    --column=TXT:TXT \
-    --column=TXT:TXT > "$tab1" &
+
+    if [ $(( in0+in1+in2+in3+in4 )) = 0 ] && [ $stts -lt 10 ]; then
+		echo " $(gettext "Nothing to play")" | \
+		yad --plug=$KEY --tabnum=1 --text-info --center  &
+    else
+       setting_1 | yad --plug=$KEY --tabnum=1 --list \
+		--print-all --always-print-result --separator="|" \
+		--center --expand-column=2 --hide-column=4 --no-headers \
+		--column=IMG:IMG \
+		--column=CHK:CHK \
+		--column=TXT:TXT \
+		--column=TXT:TXT > "$tab1" &
+    fi
     if [ $stts -lt 10 ]; then
 		yad --plug=$KEY --form --tabnum=2 \
 		--align=right --center \

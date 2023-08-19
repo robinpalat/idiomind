@@ -104,7 +104,7 @@ function create_cfgdb() {
     echo -n "pragma busy_timeout=800;create table if not exists opts \
     (gramr TEXT, trans TEXT, dlaud TEXT, ttrgt TEXT, itray TEXT, \
     swind TEXT, stsks TEXT, intrf TEXT, synth TEXT, txaud TEXT, \
-    tlang TEXT, slang TEXT);" |sqlite3 "${cfgdb}"
+    tlang TEXT, level TEXT, slang TEXT);" |sqlite3 "${cfgdb}"
     echo -n "pragma busy_timeout=500;create table if not exists lang \
     (tlng TEXT, slng TEXT);" |sqlite3 "${cfgdb}"
     echo -n "pragma busy_timeout=500; create table if not exists geom \

@@ -193,6 +193,7 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
     --button="$(gettext "Apply")":2 \
     --button="$(gettext "Close")"!window-close:1)
     ret=$?
+
     if [ $ret -eq 3 ]; then
             "$DS/add.sh" new_topic
     elif [ -n "${tpc}" ]; then

@@ -11,7 +11,7 @@ source $DS/default/sets.cfg
 lang1="${!tlangs[@]}"; lt=( $lang1 )
 lang2="${!slangs[@]}"; ls=( $lang2 )
 if [ ! -f "${cfgdb}" ]; then "$DS/ifs/mkdb.sh" config; fi
-if ! file "${cfgdb}" |grep 'SQLite'; then "$DS/ifs/mkdb.sh" config; fi
+if ! file "${cfgdb}" |grep 'SQLite' >/dev/null 2>&1; then "$DS/ifs/mkdb.sh" config; fi
 desktopfile="[Desktop Entry]
 Name=Idiomind
 GenericName=Learning Tool
@@ -78,7 +78,7 @@ config_dlg() {
     kill_icon=0
     source "$DS/default/sets.cfg"
     
-    if [ $(cdb "${cfgdb}" 5 opts |wc -l) != 12 ]; then
+    if [ $(cdb "${cfgdb}" 5 opts |wc -l) != 13 ]; then
         rm "${cfgdb}"; "$DS/ifs/mkdb.sh" config
     fi
 
@@ -260,7 +260,7 @@ config_dlg() {
 
     exit
 
-}  >/dev/null 2>&1
+}  
 
-config_dlg
+config_dlg >/dev/null 2>&1
 

@@ -377,11 +377,12 @@ if [[ "$2" = 'silence' ]]; then
 else
     cnf1=$(mktemp "$DT/cnf1.XXXXXX")
     yad --form --title="$(gettext "Resource availability")" \
-    --text="<b>$(gettext "Check the used resources for:")</b>\n" \
+    --text="<b>\n$(gettext "Check the used resources for:")</b>\n" \
+    --window-icon=$DS/images/logo.png \
     --name=Idiomind --class=Idiomind \
-    --center --columns=2 --output-by-row \
+    --center --columns=1 --output-by-row \
     --on-top --skip-taskbar \
-    --width=400 --height=200 --borders=10 \
+    --width=460 --height=300 --borders=10 \
     --always-print-result --print-all --align=right \
     --field=" $(gettext "Translate")":CHK "" \
     --field=" $(gettext "Convert text to audio")":CHK "" \
@@ -390,7 +391,8 @@ else
     --field=" $(gettext "Search image")":CHK "" \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Run")":0 > "$cnf1"
-    ret=$?; [ $ret = 1 ] && exit
+    
+    ret=$?; [ $ret != 0 ] && exit
     export c="$(< "$cnf1")"; cleanups "$cnf1"
     
     ( echo "1"; echo "#  "; test_ ) | dlg_progress_2
