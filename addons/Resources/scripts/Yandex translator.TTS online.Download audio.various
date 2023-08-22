@@ -1,0 +1,38 @@
+#!/bin/bash
+
+TLANGS="en, pt, es, ru, it, de, fr"
+INFO="Convert text to audio (online) https://developer.tech.yandex.ru"
+LANGUAGES="English, Russian"
+STATUS="Ok"
+CONF="FALSE"
+FILECONF=""
+TESTWORD=""
+EXECUT=""
+
+if [ "$lgt" = "en" ]; then 
+    t="en_GB"
+    _test="test"
+elif [ "$lgt" = "es" ]; then 
+    t="es_ES"
+    _test="prueba"
+elif [ "$lgt" = "pt" ]; then 
+    t="pt_PT"
+    _test="teste"
+elif [ "$lgt" = "ru" ]; then 
+    t="ru_RU"
+    _test="тест"
+elif [ "$lgt" = "it" ]; then 
+    t="it_IT"
+    _test="prova"
+elif [ "$lgt" = "de" ]; then 
+    t="de_DE"
+    _test="Prüfung"
+elif [ "$lgt" = "fr" ]; then 
+    t="fr_FR"
+    _test="tester"
+fi
+
+export TESTURL="http://tts.voicetech.yandex.net/tts?format=mp3&quality=hi&platform=web&application=translate&lang=$t&text=${_test}"
+export URL="http://tts.voicetech.yandex.net/tts?format=mp3&quality=hi&platform=web&application=translate&lang=$t&text=${word}"
+export EX='mp3'
+
