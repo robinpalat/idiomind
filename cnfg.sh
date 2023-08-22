@@ -78,6 +78,35 @@ config_dlg() {
     kill_icon=0
     source "$DS/default/sets.cfg"
     
+    start_mode() {
+		if [ "$1" = panel ]; then
+            if ! ps -A |pgrep -f "yad --title=Idiomind --list"; then
+				idiomind panel
+			fi
+			(if ps -A |pgrep -f "$DS/ifs/tls.sh itray"; then
+				sleep 0.5
+				kill -9 $(< $DT/tray.pid)
+				kill -9 $(pgrep -f "$DS/ifs/tls.sh itray")
+				rm -f "$DT/tray.pid"
+            fi) &
+		elif [ "$1" = icon ]; then
+			if ps -A |pgrep -f "yad --title=Idiomind --list"; then
+				kill -9 $(pgrep -f "yad --title="Idiomind" --list")
+            fi
+            if ! ps -A |pgrep -f "$DS/ifs/tls.sh itray"; then
+				$DS/ifs/tls.sh itray &
+				( sleep 2
+				if ! pgrep -f "$DS/ifs/tls.sh itray"; then
+					msg "$(gettext "Sorry, your System not support icon tray")" dialog-warning
+					if ! ps -A |pgrep -f "yad --title=Idiomind --list"; then
+						idiomind panel
+					fi
+				fi
+				)
+			fi
+		fi
+        }
+
     if [ $(cdb "${cfgdb}" 5 opts |wc -l) != 13 ]; then
         rm "${cfgdb}"; "$DS/ifs/mkdb.sh" config
     fi
@@ -146,7 +175,9 @@ config_dlg() {
         
         # Interface Language
         val=$(cut -d "|" -f8 < "$cnf1")
+        restart=FALSE
         if [[ "$val" != "$intrf" ]]; then
+			restart=TRUE
             msg_2 "$(gettext "Are you sure you want to change the interface language?")\n" \
             dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Idiomind")"
             if [ $? -eq 0 ]; then 
@@ -154,12 +185,12 @@ config_dlg() {
                 export intrf=$val
                 idiomind tasks wait
                 
-                 if pgrep -f "$DS/ifs/tls.sh itray"; then
+                 if ps -A |pgrep -f "$DS/ifs/tls.sh itray"; then
 					kill -9 $(cat $DT/tray.pid)
 					kill -9 $(pgrep -f "$DS/ifs/tls.sh itray")
 					rm -f "$DT/tray.pid"
 				fi
-				if  pgrep -f "yad --title="Idiomind" --list"; then
+				if  ps -A |pgrep -f "yad --title=Idiomind --list"; then
            			kill -9 $(pgrep -f "yad --title="Idiomind" --list")
            		fi
             else
@@ -168,15 +199,7 @@ config_dlg() {
         fi
         
         # Icon tray
-        if [[ "$(cdb ${cfgdb} 1 opts itray)"  = TRUE ]] && [[ ! -f "$DT/tray.pid" ]]; then
-			show_icon=1
-            if ! echo $DESKTOP_SESSION  | grep -E "xfce|xfce"; then # TODO
-                msg "$(gettext "Sorry, your System not support icon tray")" dialog-warning
-                show_icon=0; kill_icon=1
-            fi
-        elif [[ "$(cdb ${cfgdb} 1 opts itray)"  = FALSE ]] && [[ -f "$DT/tray.pid" ]]; then
-            kill_icon=1
-        fi
+        show_icon="$(cdb ${cfgdb} 1 opts itray)"
         
         # Autostart
         [ ! -d  "$HOME/.config/autostart" ] \
@@ -236,23 +259,11 @@ config_dlg() {
                 fi
             fi
         fi
-        
-        if [ $kill_icon = 1 ]; then
-            kill -9 $(cat $DT/tray.pid)
-            kill -9 $(pgrep -f "$DS/ifs/tls.sh itray")
-            rm -f "$DT/tray.pid"
-        fi
-        if [ $show_icon = 1 ]; then
-			kill -9 $(pgrep -f "yad --title="Idiomind" --list")
-            $DS/ifs/tls.sh itray &
-            ( sleep 4; if ! pgrep -f "$DS/ifs/tls.sh itray"; then
-				msg "$(gettext "Sorry, your System not support icon tray")" dialog-warning
-				if ! ps -A |pgrep -f "yad --title=Idiomind --list"; then
-				idiomind panel; fi
-			fi )
-        else 
-			if ! ps -A |pgrep -f "yad --title=Idiomind --list"; then
-			idiomind panel; fi
+
+        if [ $show_icon = TRUE ]; then
+			start_mode icon $restart
+        else
+			start_mode panel $restart
         fi
         
     fi

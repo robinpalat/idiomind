@@ -341,6 +341,8 @@ _restore_backup() {
     [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/cmns.sh"
     file="$HOME/.idiomind/backup/${tpc}.bk"
+    yad_kill "yad --editable --list"  "yad --notebook"
+	"$DS/stop.sh" 5
     touch "$DT/act_restfile"; check_dir "${DM_tl}/${tpc}/.conf"
     if [[ ${3} = 1 ]]; then
         sed -n '/----- newest/,/----- oldest/p' "${file}" \
@@ -359,6 +361,7 @@ _restore_backup() {
         echo 13 > "$DM_tl/${tpc}/.conf/stts"; stts=13
     fi
     "$DS/ifs/tpc.sh" "${tpc}" ${stts} 0 &
+    idiomind topic & exit
     
 } >/dev/null 2>&1
 
@@ -1263,6 +1266,10 @@ class IdiomindIndicator:
             self._on_menu_update()
 if __name__ == "__main__":
     i = IdiomindIndicator()
+    if not os.path.exists(os.environ['dirt']+'tray.pid'):
+        f_pid = open(os.environ['dirt']+'tray.pid', 'w')
+        f_pid.write(str(my_pid))
+        f_pid.close()
     gdir = Gio.File.new_for_path(i.DIRT)
     monitor = gdir.monitor_directory(Gio.FileMonitorFlags.NONE, None)
     monitor.connect("changed", i.callback)

@@ -170,16 +170,12 @@ function new_sentence() {
         if [ -e "$DT_r/img.jpg" ]; then
             set_image_2 "$DT_r/img.jpg" "${DM_tlt}/images/${trgt,,}.jpg"
         fi
+
         if [ ! -e "$DT_r/audtm.mp3" ]; then
             if [[ ${dlaud} = TRUE ]]; then
                 tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$cdid.mp3"
-                if [ ! -e "${DM_tlt}/$cdid.mp3" ]; then
-                    voice "${trgt}" "$DT_r" "${DM_tlt}/$cdid.mp3"
-                fi
-            else
-                voice "${trgt}" "$DT_r" "${DM_tlt}/$cdid.mp3"
-                if [ $? = 1 ]; then
-                    [[ ${dlaud} = TRUE ]] && tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$cdid.mp3"
+                if [ ! -f "${DM_tlt}/$cdid.mp3" ]; then
+                    notify-send -i idiomind "$(gettext "The audio for the note couldn't be retrieved")" "$(gettext "Please check the speech synthesizer configuration in the resource setting.")"
                 fi
             fi
         else
@@ -233,8 +229,8 @@ function new_word() {
         if [ $notif = TRUE ]; then 
             notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000 &
         fi
-        if [ -e "$DT_r/img.jpg" ]; then
-            if [ -e "${DM_tls}/images/${trgt,,}-1.jpg" ]; then
+        if [ -f "$DT_r/img.jpg" ]; then
+            if [ -f "${DM_tls}/images/${trgt,,}-1.jpg" ]; then
                 n=$(ls "${DM_tls}/images/${trgt,,}-"*.jpg |wc -l); n=$(($n+1))
                 name_img="${DM_tls}/images/${trgt,,}-"${n}.jpg
             else
@@ -242,12 +238,12 @@ function new_word() {
             fi
             set_image_2 "$DT_r/img.jpg" "$name_img"
         fi
-        if [ ! -e "$DT_r/audtm.mp3" ]; then
-            if [ ! -e "${DM_tls}/audio/${audio}.mp3" ]; then
+        if [ ! -f "$DT_r/audtm.mp3" ]; then
+            if [ ! -f "${DM_tls}/audio/${audio}.mp3" ]; then
                 [[ ${dlaud} = TRUE ]] && tts_word "${audio}" "${DM_tls}/audio"
             fi
         else
-            if [ -e "${DM_tls}/audio/${audio}.mp3" ]; then
+            if [ -f "${DM_tls}/audio/${audio}.mp3" ]; then
                 msg_3 "$(gettext "A file named "${audio}.mp3" already exists, do you want to replace it?")\n" \
                 dialog-question "${trgt}"
                 if [ $? -eq 0 ]; then
@@ -300,7 +296,7 @@ function list_words_edit() {
 
             if [ $? = 0 ]; then
                 index 1
-                if [ ! -e "$DM_tls/audio/$audio.mp3" ]; then
+                if [ ! -f "$DM_tls/audio/$audio.mp3" ]; then
                     ( [[ ${dlaud} = TRUE ]] && tts_word "$audio" "${DM_tls}/audio" )
                 fi
                 ( img_word "${trgt}" "${srce}" ) &
@@ -337,7 +333,7 @@ function list_words_sentence() {
             cleanups "$DT_r"
             exit 1
         fi
-    [ ! -e "$DT_r/select_lines" ] && return 1
+    [ ! -f "$DT_r/select_lines" ] && return 1
     n=1
     while read -r trgt; do
         if [ $(wc -l < "${DC_tlt}/data") -ge 200 ]; then
@@ -356,7 +352,7 @@ function list_words_sentence() {
             
             if [ $? = 0 ]; then
                 index 1
-                if [ ! -e "$DM_tls/audio/$audio.mp3" ]; then
+                if [ ! -f "$DM_tls/audio/$audio.mp3" ]; then
                     ( [[ ${dlaud} = TRUE ]] && tts_word "${audio}" "${DM_tls}/audio" )
                 fi
                 ( img_word "${trgt}" "${srce}" ) &
@@ -474,7 +470,7 @@ function process() {
                 echo "${conten}" |clean_8 > "$DT_r/xxlines"; epa=1
             fi
         fi
-        [ -e "$DT_r/xlines" ] && rm -f "$DT_r/xlines"
+        [ -f "$DT_r/xlines" ] && rm -f "$DT_r/xlines"
         if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then
             lenght() {
                 if [ $(wc -c <<< "${1}") -le ${sentence_chars} ]; then
@@ -625,10 +621,10 @@ function process() {
                     if [ $? = 0 ]; then
                         index 1
                         ( [[ ${dlaud} = TRUE ]] && tts_word "${audio}" "${DM_tlt}" ) &&
-                        if [ -e "${DM_tlt}/${audio}.mp3" ]; then
+                        if [ -f "${DM_tlt}/${audio}.mp3" ]; then
                             mv "${DM_tlt}/${audio}.mp3" "${DM_tlt}/$cdid.mp3"
                         else
-                            if [ -e "${DM_tls}/audio/${audio}.mp3" ]; then
+                            if [ -f "${DM_tls}/audio/${audio}.mp3" ]; then
                             cp "${DM_tls}/audio/${audio}.mp3" "${DM_tlt}/$cdid.mp3"
                             fi
                         fi
@@ -654,10 +650,10 @@ function process() {
                             index 2
                             if [[ ${dlaud} = TRUE ]]; then
                                 tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$cdid.mp3"
-                                [ ! -e "${DM_tlt}/$cdid.mp3" ] && voice "${trgt}" "$DT_r" "${DM_tlt}/$cdid.mp3"
-                            else 
-                                voice "${trgt}" "${DT_r}" "${DM_tlt}/$cdid.mp3"
-                            fi #TODO
+                                if [ ! -f "${DM_tlt}/$cdid.mp3" ]; then
+									notify-send -i idiomind "$(gettext "The audio for the note couldn't be retrieved")" "$(gettext "Please check the speech synthesizer configuration in the resource setting.")"
+								fi
+                            fi
                             ( [[ ${dlaud} = TRUE ]] && fetch_audio "$aw" "$bw" )
                             echo "${trgt}" >> "$DT_r/adds"
                             ((adds=adds+1))
@@ -695,7 +691,7 @@ function process() {
                     mksure "${trgt}" "${srce}"
                     if [ $? = 0 ]; then
                         index 1
-                        if [ ! -e "${DM_tls}/audio/$audio.mp3" ]; then
+                        if [ ! -f "${DM_tls}/audio/$audio.mp3" ]; then
                         ( [[ ${dlaud} = TRUE ]] && tts_word "$audio" "${DM_tls}/audio" )
                         ( img_word "${trgt}" "${srce}" ) & fi
                         echo "${trgt}" >> "$DT_r/addw"
@@ -745,7 +741,7 @@ function process() {
 new_items() {
 
     itemdir=$(base64 <<< $((RANDOM%100000)) | head -c 32)
-    if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
+    if [ -f "$DT/ps_lk" ] || [ -f "$DT/el_lk" ]; then
         msg "$(gettext "Please wait until the current process is finished")...\n" \
         dialog-information
         (sleep 50; cleanups "$DT/ps_lk" "$DT/el_lk") & exit 1
@@ -754,14 +750,14 @@ new_items() {
     if [ -f "$DT/clipw" ]; then 
         "$DS/ifs/clipw.sh" 1 & exit 1
     fi
-    if [ ! -e "$DT/tpe" ]; then
+    if [ ! -f "$DT/tpe" ]; then
         tpc="$(sed -n 1p "$DC_s/tpc")"
         if ! ls -1a "$DS/addons/" |grep -Fxo "${tpc}" >/dev/null 2>&1; then
             [ ! -L "$DM_tl/${tpc}" ] && echo "${tpc}" > "$DT/tpe"
         fi
         tpe="$(sed -n 1p "$DT/tpe")"
     fi
-    if [ -e "$DC_s/topics_first_run" ]; then
+    if [ -f "$DC_s/topics_first_run" ]; then
         "$DS/ifs/tls.sh" first_run topics & exit 1
     fi
 
@@ -790,7 +786,7 @@ new_items() {
 		process & return
 	fi
 
-    [ -e "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" || img="$DS/images/nw.png"
+    [ -f "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" || img="$DS/images/nw.png"
     export img
     tpcs="$(cdb "${shrdb}" 5 topics)"
     tpcs="$(grep -vFx "${tpe}" <<< "$tpcs" |tr "\\n" '!' |sed 's/\!*$//g')"
@@ -823,7 +819,7 @@ new_items() {
         "$DS/ifs/tls.sh" add_audio "$DT_r"
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
         
-    elif [ $ret -eq 0 -o $ret -eq 4 -o  $ret -eq 5 ]; then
+    elif [ $ret -eq 0 ] || [ $ret -eq 4 ] || [ $ret -eq 5 ]; then
     
         if [ $ret -eq 5 ]; then "$DS/ifs/tls.sh" clipw & return; fi
         if [ -z "${tpe}" ]; then

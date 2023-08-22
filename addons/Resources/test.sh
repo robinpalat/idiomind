@@ -203,9 +203,9 @@ function test_() {
         # AUDIO - Words"
         echo "50"
 
-        if ls "$DC_d"/*."TTS online.Search audio".* 1> /dev/null 2>&1; then
+        if ls "$DC_d"/*."TTS online.Download audio".* 1> /dev/null 2>&1; then
             n=50
-            for res in $DC_d/*."TTS online.Search audio".*; do
+            for res in $DC_d/*."TTS online.Download audio".*; do
                 filename="$(basename "${res}")"; cleanups "$msgs/$filename"
                 audio_file="$DT/res_test/${n}_audio"
                 unset TESTURL EXECUT; source "$DS_a/Resources/scripts/$filename"
@@ -235,9 +235,9 @@ function test_() {
 
         echo "60"
         
-        if ls "$DC_e"/*."TTS online.Search audio".* 1> /dev/null 2>&1; then
+        if ls "$DC_e"/*."TTS online.Download audio".* 1> /dev/null 2>&1; then
             n=60
-            for res in $DC_e/*."TTS online.Search audio".*; do
+            for res in $DC_e/*."TTS online.Download audio".*; do
                 filename="$(basename "${res}")"; cleanups "$msgs/$filename"
                 audio_file="$DT/res_test/${n}_audio"
                 unset TESTURL EXECUT; source "$DS_a/Resources/scripts/$filename"
@@ -307,8 +307,8 @@ function test_() {
         # IMAGE DOWNLOADER"
         echo "90"
         
-        if ls "$DC_d"/*."Script.Search image".* 1> /dev/null 2>&1; then
-            for Script in "$DC_d"/*."Script.Search image".*; do
+        if ls "$DC_d"/*."Script.Download image".* 1> /dev/null 2>&1; then
+            for Script in "$DC_d"/*."Script.Download image".*; do
                 filename="$(basename "${Script}")"; cleanups "$msgs/$filename"
                 Script="$DS_a/Resources/scripts/$filename"
                 TLANGS=$(grep -o TLANGS=\"[^\"]* "$Script" |grep -o '[^"]*$')
@@ -327,8 +327,8 @@ function test_() {
         fi
 
         echo "95"
-        if ls "$DC_e"/*."Script.Search image".* 1> /dev/null 2>&1; then
-            for Script in "$DC_e"/*."Script.Search image".*; do
+        if ls "$DC_e"/*."Script.Download image".* 1> /dev/null 2>&1; then
+            for Script in "$DC_e"/*."Script.Download image".*; do
                 filename="$(basename "${Script}")"; cleanups "$msgs/$filename"
                 Script="$DS_a/Resources/scripts/$filename"
                 TLANGS=$(grep -o TLANGS=\"[^\"]* "$Script" |grep -o '[^"]*$')
@@ -382,13 +382,13 @@ else
     --name=Idiomind --class=Idiomind \
     --center --columns=1 --output-by-row \
     --on-top --skip-taskbar \
-    --width=460 --height=300 --borders=10 \
+    --width=400 --height=300 --borders=10 \
     --always-print-result --print-all --align=right \
     --field=" $(gettext "Translate")":CHK "" \
     --field=" $(gettext "Convert text to audio")":CHK "" \
-    --field=" $(gettext "Search audio")":CHK "" \
+    --field=" $(gettext "Download audio (only for words)")":CHK "" \
     --field=" $(gettext "Search definition")":CHK "" \
-    --field=" $(gettext "Search image")":CHK "" \
+    --field=" $(gettext "Download image (only for words)")":CHK "" \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Run")":0 > "$cnf1"
     

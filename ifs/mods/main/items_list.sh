@@ -166,7 +166,7 @@ function notebook_1() {
     --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
-    --text="${lbl1}${info2}\n$label_review$label_level" \
+    --text="${lbl1}${info2}\n\n$label_review$label_level" \
     --borders=25 --columns=2 \
     --field=" $(gettext "Mark as learnt") "!'gtk-apply':FBTN "$cmd_mark" \
     --field=" ":LBL " " \
@@ -207,9 +207,9 @@ function notebook_2() {
     cmd4="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
 
 	yad --multi-progress --tabnum=1 \
-	--text="$pres" \
+	--text="$pres\n" \
 	--plug=$KEY \
-	--align=center --borders=80 --bar="":NORM $days_to_review_porcent &
+	--align=center --borders=80 --bar="<small>$(gettext "Wait") </small>":NORM $days_to_review_porcent &
     ([ -n "${ls2}" ] && echo "${ls2}") |yad --list --tabnum=2 \
     --window-icon=idiomind --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2" --grid-lines=hor \
@@ -224,7 +224,7 @@ function notebook_2() {
     --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
-    --text="$lbl1\n$label_review$label_level" \
+    --text="$lbl1\n\n$label_review$label_level" \
     --borders=25 --columns=2 \
     --field=" $(gettext "Review") "!'view-refresh':FBTN "$cmd_mark" \
     --field=" ":LBL " " \
@@ -350,12 +350,12 @@ function tpc_view() {
 
 function panelini() {
 	
+	 #--select-action="/usr/share/idiomind/ifs/tasks.sh"
 	(if [ -s "$DT/tasks"  ]; then cat "$DT/tasks"; \
 	else echo "$(gettext "no tasks")"; fi) \
 	| yad --title="Idiomind" --list \
     --name=Idiomind --class=Idiomind --dclick-action="" \
-    --separator="" --expander="$(gettext "Tasks")" --scroll \
-    --select-action="/usr/share/idiomind/ifs/tasks.sh" --grid-lines=hor \
+    --separator="" --expander="$(gettext "Tasks")" --scroll --grid-lines=hor \
     --dclick-action="/usr/share/idiomind/ifs/tasks.sh" \
     --window-icon=$DS/images/logo.png \
     --hscroll-policy=auto --vscroll-policy=never \

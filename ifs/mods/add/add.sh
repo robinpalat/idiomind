@@ -595,20 +595,6 @@ function img_word() {
     fi
 }
 
-function voice() {
-    txaud="$(cdb "${cfgdb}" 1 opts txaud)"
-    if [ -n "${txaud}" ]; then
-        echo "${1}" |sed 's/<[^>]*>//g' |$txaud "$DT_r/f.wav"
-        if [ $? != 0 ]; then
-            local info="$(gettext "Please check the speech synthesizer configuration in the preferences dialog.")"
-            msg "$info" error Info & exit 1
-        fi
-        mv "$DT_r"/*.wav "${3}"
-    else
-        return 1
-    fi
-}
-
 function list_words_2() {
     if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then
         echo "${1}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \

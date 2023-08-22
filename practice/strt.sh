@@ -1206,7 +1206,7 @@ function strt() {
     
         count_learnt=$(< ./$active_practice.l); 
         if [ -f ./$active_practice.1 ] || [ -f ./$active_practice.2 ] || [ -f ./$active_practice.3 ]; then
-			info=" <b><small>$(gettext "learnt")</small> <b>$count_learnt</b>    <small>$(gettext "easy")</small> <b>$count_easy</b>    <small>$(gettext "Learning")</small> <b>$count_learn</b>    <small>$(gettext "Difficult")</small> <b>$count_hard</b></b>  "
+			info=" <b><small>$(gettext "learnt")</small> <b>$count_learnt</b>    <small>$(gettext "Learning")</small> <b>$count_learn</b>    <small>$(gettext "Difficult")</small> <b>$count_hard</b></b>  "
 		fi
 		declare label_count_${active_practice}=""
     fi
