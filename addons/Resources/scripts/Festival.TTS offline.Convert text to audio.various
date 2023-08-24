@@ -1,6 +1,9 @@
 #!/bin/bash
 # sudo apt install festival
 
+TESTSTRING="Example"
+EXECUT="festival"
+EX=mp3
 if [ "$1" = "_dclk_" ]; then
 	TLANGS="en" # Example: zh-cn, en, ja, pt, es
 	INFO="Convert text to audio (offline)"

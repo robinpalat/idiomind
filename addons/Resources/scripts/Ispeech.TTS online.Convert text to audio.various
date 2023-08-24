@@ -7,8 +7,9 @@ STATUS="Ok"
 VOICES=""
 CONF="TRUE"
 FILECONF="$HOME/.config/idiomind/addons/resources/Ispeech.cfg"
-TESTWORD=""
+TESTSTRING="test"
 EXECUT=""
+EX='mp3'
 
 
 function check_key(){ # remove from active if missing key

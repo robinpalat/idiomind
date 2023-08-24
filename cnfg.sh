@@ -183,8 +183,8 @@ config_dlg() {
             if [ $? -eq 0 ]; then 
                 cdb "${cfgdb}" 3 opts intrf "${val}"
                 export intrf=$val
-                idiomind tasks wait
-                
+                idiomind tasks &&
+				( sleep 1
                  if ps -A |pgrep -f "$DS/ifs/tls.sh itray"; then
 					kill -9 $(cat $DT/tray.pid)
 					kill -9 $(pgrep -f "$DS/ifs/tls.sh itray")
@@ -193,6 +193,7 @@ config_dlg() {
 				if  ps -A |pgrep -f "yad --title=Idiomind --list"; then
            			kill -9 $(pgrep -f "yad --title="Idiomind" --list")
            		fi
+           		)
             else
                 cdb "${cfgdb}" 3 opts intrf "${intrf}"
             fi

@@ -6,7 +6,7 @@ LANGUAGES="English, Russian"
 STATUS="Ok"
 CONF="FALSE"
 FILECONF=""
-TESTWORD=""
+TESTSTRING=""
 EXECUT=""
 
 

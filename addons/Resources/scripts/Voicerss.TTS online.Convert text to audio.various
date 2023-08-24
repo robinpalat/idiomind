@@ -5,10 +5,12 @@ INFO="Text-to-speech (TTS) API Documentation
 http://www.voicerss.org/api/documentation.aspx"
 LANGUAGES="English, Spanish, Portuguese, Russian, Italian, German, French, Chinese"
 STATUS="Ok"
+VOICES=""
 CONF="TRUE"
 FILECONF="$HOME/.config/idiomind/addons/resources/Voicerss.cfg"
-TESTWORD=""
+TESTSTRING="test"
 EXECUT=""
+EX='mp3'
 
 
 function check_key(){ # remove from active if missing key

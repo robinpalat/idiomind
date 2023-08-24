@@ -457,7 +457,7 @@ function tts_sentence() {
     
     if ls "$DC_d"/*."TTS online.Convert text to audio".* 1> /dev/null 2>&1; then
 		for dict in "$DC_d"/*."TTS online.Convert text to audio".*; do
-			dwld2 "$DS_a/Resources"; if [ $? = 5 ]; then break; fi
+			dwld1 "$DS_a/Resources"; if [ $? = 5 ]; then break; fi
 		done
 
     elif ls "$DC_d"/*."TTS offline.Convert text to audio".* 1> /dev/null 2>&1; then

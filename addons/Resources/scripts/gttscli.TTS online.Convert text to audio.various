@@ -1,6 +1,10 @@
 #!/bin/bash
 # sudo apt install gtts-cli
 
+EXECUT="gtts-cli"
+TESTSTRING="this is an example"
+EX="mp3"
+
 if [ "$1" = "_dclk_" ]; then
 	TLANGS="en" # Example: zh-cn, en, ja, pt, es
 	INFO="Convert text to audio (offline)"
@@ -9,8 +13,6 @@ if [ "$1" = "_dclk_" ]; then
 	VOICES=""
 	CONF="FALSE" 
 	FILECONF="" # "$HOME/.config/idiomind/addons/Resources/XXXX.cfg"
-	TESTWORD="Example" # Example: home
-	EXECUT="gtts-cli"
 else
-	gtts-cli "$1" --output "$2"
+	gtts-cli -o "$2" "$1"
 fi
