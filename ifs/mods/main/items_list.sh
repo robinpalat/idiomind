@@ -166,9 +166,9 @@ function notebook_1() {
     --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
-    --text="${lbl1}${info2}\n\n$label_review$label_level" \
+    --text="${lbl1}${info2}\n<small>$(gettext "Status:")</small> $label_review" \
     --borders=25 --columns=2 \
-    --field=" $(gettext "Mark as learnt") "!'gtk-apply':FBTN "$cmd_mark" \
+    --field=" $btn_review "!'gtk-apply':FBTN "$cmd_mark" \
     --field=" ":LBL " " \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field="$(gettext "Auto-check learned notes")\t\t\t\t\t":CHK "$acheck" \
@@ -222,11 +222,12 @@ function notebook_2() {
     --show-uri --uri-color="#6591AA" \
     --filename="${note}" --editable --wrap \
     --fontname='vendana 11' --margins=14 > "$cnf3" &
+    if [ $stts = 7 ] || [ $stts = 8 ] || [ $stts = 9 ] || [ $stts = 10 ]; then 
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
-    --text="$lbl1\n\n$label_review$label_level" \
+    --text="$lbl1\n<small>$(gettext "Status:")</small> $label_review" \
     --borders=25 --columns=2 \
-    --field=" $(gettext "Review") "!'view-refresh':FBTN "$cmd_mark" \
+    --field=" $btn_review  "!'view-refresh':FBTN "$cmd_mark" \
     --field=" ":LBL " " \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field="\t\t\t\t\t\t\t\\t\t\t\t\t":LBL "_" \
@@ -236,12 +237,28 @@ function notebook_2() {
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn3":FBTN "$cmd3" \
     --field="$btn4":FBTN "$cmd4" > "$cnf4" &
+    else
+    yad --form --tabnum=4 --window-icon=idiomind \
+    --plug=$KEY \
+    --text="$lbl1\n<small>$(gettext "Status:")</small> $label_review" \
+    --borders=25 --columns=2 \
+    --field=" ":LBL " " \
+    --field=" ":LBL " " \
+    --field="<small>$(gettext "Rename")</small>" "${tpc}" \
+    --field="\t\t\t\t\t\t\t\\t\t\t\t\t":LBL "_" \
+    --field=" ":LBL " " \
+    --field=" ":LBL " " \
+    --field=" ":LBL " " \
+    --field="$btn1":FBTN "$cmd1" \
+    --field="$btn3":FBTN "$cmd3" \
+    --field="$btn4":FBTN "$cmd4" > "$cnf4" &
+    fi
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
     --center --align=right --ellipsize=END \
     --window-icon=$DS/images/logo.png \
-    --tab="  $(gettext "Review") ($repass) " \
+    --tab="  $(gettext "Learning") (0) " \
     --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Manage")  " \
@@ -281,7 +298,7 @@ function notebook_3() {
     --plug=$KEY \
     --text="$lbl1" \
     --borders=25 --columns=2 \
-    --field="$label_level\n":LBL " " \
+    --field="\n":LBL " " \
     --field=" ":LBL " " \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field="\t\t\t\t\t\t\t\\t\t\t\t\t\t":LBL "_" \

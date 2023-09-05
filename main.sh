@@ -363,7 +363,7 @@ function topic() {
         autr=$(tpc_db 1 id autr)
         dtec=$(tpc_db 1 id dtec)
         dtei=$(tpc_db 1 id dtei)
-        repass=$(tpc_db 1 config repass)
+        repass="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
         acheck=$(tpc_db 1 config acheck)
 
         if [ "$repass" -gt 8  ]; then 
@@ -382,19 +382,33 @@ function topic() {
         export cnf3=$(mktemp "$DT/cnf3.XXXXXX")
         export cnf4=$(mktemp "$DT/cnf4.XXXXXX")
 
-        labels_level=( "$(gettext "Fresh topic")" "$(gettext "Recently learned")" "$(gettext "Recently learned")" "$(gettext "Recently learned")" "$(gettext "Familiar topic")" "$(gettext "Familiar topic")" "$(gettext "Intermediate-level")" "$(gettext "intermediate-level")" "$(gettext "Mastered topic")" "$(gettext "Mastered topic")" )
-		export label_level="<small> $(gettext "Your learning level: ")<b>${labels_level[$repass]}</b></small>"
+        labels_level=( "$(gettext "Fresh topic")" "$(gettext "Fresh topic")" "$(gettext "Fresh topic")" "$(gettext "Familiar topic")" "$(gettext "Familiar topic")" "$(gettext "Familiar topic")" "$(gettext "Intermediate-level")" "$(gettext "intermediate-level")" "$(gettext "To mastered topic")" "$(gettext "Mastered topic")" )
+
+        if [ "$stts" -eq 1 ]; then
+			labels_status=("$(gettext "Learning")" "$(gettext "Reviewing (First review out of 9)")" "$(gettext "Reviewing (Second review out of 9)")" "$(gettext "Reviewing (Third review out of 9)")" "$(gettext "Reviewing (Fourth review out of 9)")" "$(gettext "Reviewing (Fifth review out of 9)")" "$(gettext "Reviewing (Sixth review out of 9)")" "$(gettext "Reviewing (Seventh review out of 9)")" "$(gettext "Reviewing (Eighth review out of 9)")" "$(gettext "Reviewing (Final review)")")
+			[ "$repass" -gt 0 ] && btn_review="$(gettext "Finalize Review")" || btn_review="$(gettext "Mark as learnt")"
+			
+		elif [ "$stts" -eq 3 ] || [ "$stts" -eq 4 ] ; then
+			
+			labels_status=( " " "$(gettext "Waiting to review for the first time")" "$(gettext "Waiting to review for the second time")" "$(gettext "Waiting to review for the third time")" "$(gettext "Waiting to review for the fourth time")" "$(gettext "Waiting to review for the fifth time")" "$(gettext "Waiting to review for the sixth time")" "$(gettext "Waiting to review for the seventh time")" "$(gettext "Waiting to review for the eighth time")" "$(gettext "Waiting to review for the ninth time")" "$(gettext "Second reminder to review")")
+			[ "$repass" -gt 0 ] && btn_review="$(gettext "Back to review")" || btn_review="$(gettext "Review")"
+			
+		elif [ $stts = 5 ] || [ $stts = 6 ]; then
 		
-		if [ $stts = 5 ] || [ $stts = 6 ]; then
-			labels_review=("$(gettext "Learning topic")" "$(gettext "First review")" "$(gettext "Second review")" "$(gettext "Third review")" "$(gettext "Fourth review")" "$(gettext "Fifth review")" "$(gettext "Sixth review")" "$(gettext "Seventh review")" "$(gettext "Eighth review")" "$(gettext "Ninth review")")
-			label_review="<small><b> ${labels_review[$repass]}</b></small>"
-		else
-			labels_status=( "" "$(gettext "Learning")" "$(gettext "Periodic review ")" "$(gettext "Learnt, waiting to review")" "$(gettext "Learnt, waiting to review")" "$(gettext "Reviewing")" "$(gettext "Reviewing")" "$(gettext "Firt reminder to review")" "$(gettext "Firt reminder to review")" "$(gettext "Second reminder to review")" "$(gettext "Second reminder to review")")
-			label_review="<small> $(gettext "Status: ")<b>${labels_status[$stts]}</b></small>"
-		fi
-		
+			labels_status=("$(gettext "Learning")" "$(gettext "Reviewing (First review out of 9)")" "$(gettext "Reviewing (Second review out of 9)")" "$(gettext "Reviewing (Third review out of 9)")" "$(gettext "Reviewing (Fourth review out of 9)")" "$(gettext "Reviewing (Fifth review out of 9)")" "$(gettext "Reviewing (Sixth review out of 9)")" "$(gettext "Reviewing (Seventh review out of 9)")" "$(gettext "Reviewing (Eighth review out of 9)")" "$(gettext "Reviewing (Final review)")")
+			label_review="${labels_review[$repass]}"
+			btn_review="$(gettext "Finalize review")"
+
+		elif [ "$stts" -gt 5 ] && [ "$stts" -lt 11 ]; then
+			
+			labels_status=( " " "$(gettext "Waiting to review for the first time")" "$(gettext "Waiting to review for the second time")" "$(gettext "Waiting to review for the third time")" "$(gettext "Waiting to review for the fourth time")" "$(gettext "Waiting to review for the fifth time")" "$(gettext "Waiting to review for the sixth time")" "$(gettext "Waiting to review for the seventh time")" "$(gettext "Waiting to review for the eighth time")" "$(gettext "Waiting to review for the ninth time")" "$(gettext "Second reminder to review")")
+			btn_review="$(gettext "Back to review")"
+        fi
+
+		export label_level="${labels_level[$repass]}"
+		[ "$stts" -eq 2 ] && label_level="$(gettext "Mastered topic")"
+		label_review="${labels_status[$repass]}"
 		[ $stts -eq 2 ] && label_review=""
-		
 		export label_review
 
         if [ -n "$dtei" ]; then 
@@ -402,7 +416,7 @@ function topic() {
         else 
             export infolbl5="<small>$(gettext "Created on") $dtec</small>"
         fi
-        export lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span><small>\n$(gettext "Notes:") $cfg4 $(gettext "Sentences"),  $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
+        export lbl1="<span font_desc='Free Sans Bold 12'>${tpc} $stts - $repass</span>\n<small><i>$label_level</i></small>\n\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"),  $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
     }
     
     oclean() { cleanups "$cnf1" "$cnf3" "$cnf4" "$DT/tpc_lk"; }
@@ -511,6 +525,7 @@ PY
 
             else
                 echo "N1 / ${cfg0} / ${cfg1} / ${cfg2}"
+                
                 notebook_1
             fi
                 ret=$?
@@ -544,7 +559,7 @@ PY
                 fi 
             fi
             
-			pres="<u><big><b>$(gettext "Topic learnt")</b></big></u>\\n\\n$(gettext "Time set to review:") $days_to_review $(gettext "days")"
+			pres="<u><big><b>$(gettext "Topic learnt")</b></big></u>\n\n$label_review\n<sub>$(gettext "Time set:") $days_to_review $(gettext "days")</sub>"
             
             echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
             
@@ -564,6 +579,7 @@ PY
         
         if [ ${cfg0} -lt 1 ]; then
             echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
+            
             notebook_1; ret=$?
             
             if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
@@ -574,9 +590,11 @@ PY
         
             if [ $stts = 3 ] || [ $stts = 4 ] || [ $stts = 7 ] || [ $stts = 8 ] || [ $stts = 9 ] || [ $stts = 10 ]; then
                 echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
+                
                 notebook_2
             else
                 echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
+                
                 notebook_1
             fi
             ret=$?
@@ -591,6 +609,7 @@ PY
             
             pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $days_to_review $(gettext "days")"
             echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
+            
             notebook_2; ret=$?
         fi
         

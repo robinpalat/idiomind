@@ -640,6 +640,7 @@ restart_topic() {
 		"$DS/stop.sh" 5
 		echo 1 > "${DC_tlt}/stts"
 		tpc_db 6 'reviews'; tpc_db 6 'learnt'; tpc_db 6 'learning'
+		sqlite3 "${tpcdb}" "pragma busy_timeout=2000; insert into reviews (date1) values ('');"
 		
 		while read -r item_; do
 			item="$(sed 's/}/}\n/g' <<< "${item_}")"
@@ -825,23 +826,26 @@ PY
 mark_as_learned_topic() {
     if [[ "${3}" != 0 ]]; then
         if [ "${tpc}" != "${2}" ]; then
-        msg "$(gettext "Sorry, this topic is currently not active.")\n " \
-        dialog-information "$(gettext "Information")" & exit; fi
+			msg "$(gettext "Sorry, this topic is currently not active.")\n " \
+			dialog-information "$(gettext "Information")" & exit
+		fi
         if [ $((cfg3+cfg4)) -lt 10 ]; then
-        msg "$(gettext "Insufficient number of items to perform this action").\t\n " \
-        dialog-information "$(gettext "Information")" & exit; fi
+			msg "$(gettext "Insufficient number of items to perform this action").\t\n " \
+			dialog-information "$(gettext "Information")" & exit
+		fi
     fi
     [ ! -s "${DC_tlt}/data" ] && exit 1
     
     stts=$(sed -n 1p "${DC_tlt}/stts")
     ! [[ ${stts} =~ ${numer} ]] && stts=1
 
-    if [ $stts = 1 ] || [ $stts = 2 ] || [ $stts = 5 ] || [ $stts = 6 ]; then
+    if [ $stts = 1 ] || [ $stts = 5 ] || [ $stts = 6 ]; then
 
         calculate_review "${tpc}"
         date_reviews_count="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
         repass=$(tpc_db 1 config repass)
         datex=$(date +%m/%d/%Y)
+        
         if [ ${date_reviews_count} -gt 0 ]; then
             ! [[ ${date_reviews_count} =~ ${numer} ]] && date_reviews_count=1
             if [ ${date_reviews_count} -eq 4 ]; then
@@ -861,6 +865,7 @@ mark_as_learned_topic() {
         else
             tpc_db 9 reviews date1 ${datex}
         fi
+        
         if [ -d "${DC_tlt}/practice" ]; then
             (cd "${DC_tlt}/practice"; rm ./.*; rm ./*
             touch ./log1 ./log2 ./log3)
@@ -921,7 +926,7 @@ mark_as_learned_topic_ok() {
     stts=$(sed -n 1p "${DC_tlt}/stts")
     ! [[ ${stts} =~ ${numer} ]] && stts=1
 
-    if [ $stts = 1 ] || [ $stts = 2 ] || [ $stts = 5 ] || [ $stts = 6 ]; then
+    if [ $stts = 1 ] || [ $stts = 5 ] || [ $stts = 6 ]; then
         calculate_review "${tpc}"
         date_reviews_count="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
         ! [[ ${date_reviews_count} =~ ${numer} ]] && date_reviews_count=0
