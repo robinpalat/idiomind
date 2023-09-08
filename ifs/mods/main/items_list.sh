@@ -205,11 +205,13 @@ function notebook_2() {
     cmd2="'$DS/ifs/tls.sh' attatchs"
     cmd3="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd4="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
+    
+    [[ ${days_to_review_porcent} -ge 100 ]] && info6="$(gettext "Ready")" || info6="$(gettext "Wait")"
 
 	yad --multi-progress --tabnum=1 \
 	--text="$pres\n" \
 	--plug=$KEY \
-	--align=center --borders=80 --bar="<small>$(gettext "Wait") </small>":NORM $days_to_review_porcent &
+	--align=center --borders=80 --bar="<small>$info6 </small>":NORM $days_to_review_porcent &
     ([ -n "${ls2}" ] && echo "${ls2}") |yad --list --tabnum=2 \
     --window-icon=idiomind --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2" --grid-lines=hor \
@@ -222,7 +224,7 @@ function notebook_2() {
     --show-uri --uri-color="#6591AA" \
     --filename="${note}" --editable --wrap \
     --fontname='vendana 11' --margins=14 > "$cnf3" &
-    if [ $stts = 7 ] || [ $stts = 8 ] || [ $stts = 9 ] || [ $stts = 10 ]; then 
+    if [ $stts = 7 ] || [ $stts = 8 ] || [ $stts = 9 ] || [ $stts = 10 ] || [ ${days_to_review_porcent} -ge 100 ]; then 
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
     --text="$lbl1\n<small>$(gettext "Status:")</small> $label_review" \
@@ -282,7 +284,7 @@ function notebook_3() {
     cmd3="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd4="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
 
-    ([ -n "${ls1}" ] && echo "${ls1}") |yad --list --tabnum=1 \
+    ([ -n "${ls2}" ] && echo "${ls2}") |yad --list --tabnum=1 \
     --window-icon=idiomind --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 1" \
     --expand-column=0 --no-headers --grid-lines=hor --ellipsize=end \
@@ -313,7 +315,7 @@ function notebook_3() {
     --always-print-result \
     --center --align=right --ellipsize=END \
     --window-icon=$DS/images/logo.png \
-    --tab="  $(gettext "Learnt") ($cfg1) " \
+    --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Manage")  " \
     --width=530 --height=560 --borders=5 --tab-borders=0 \
