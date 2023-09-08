@@ -382,10 +382,10 @@ function topic() {
         export cnf3=$(mktemp "$DT/cnf3.XXXXXX")
         export cnf4=$(mktemp "$DT/cnf4.XXXXXX")
 
-        labels_level=( "$(gettext "Fresh topic")" "$(gettext "Fresh topic")" "$(gettext "Fresh topic")" "$(gettext "Familiar topic")" "$(gettext "Familiar topic")" "$(gettext "Familiar topic")" "$(gettext "Intermediate-level")" "$(gettext "intermediate-level")" "$(gettext "To mastered topic")" "$(gettext "Mastered topic")" )
+        labels_level=( "$(gettext "Fresh topic")" "$(gettext "Fresh topic")" "$(gettext "Fresh topic")" "$(gettext "Fresh topic")" "$(gettext "Familiar topic")" "$(gettext "Familiar topic")" "$(gettext "Familiar topic")" "$(gettext "Familiar topic")" "$(gettext "Familiar topic")" "$(gettext "Mastered topic")" )
 
         if [ "$stts" -eq 1 ]; then
-			labels_status=("$(gettext "Learning...")" "$(gettext "Reviewing, first out of 9 ...")" "$(gettext "Reviewing, second out of 9 ...")" "$(gettext "Reviewing, third out of 9 ...")" "$(gettext "Reviewing, fourth out of 9 ...")" "$(gettext "Reviewing, Fifth out of 9 ...")" "$(gettext "Reviewing, Sixth out of 9 ...")" "$(gettext "Reviewing, seventh out of 9 ...")" "$(gettext "Reviewing, final review")" "$(gettext "Reviewing, final review")")
+			labels_status=("$(gettext "Learning...")" "$(gettext "Reviewing for the first time ...")" "$(gettext "Reviewing for the second time ...")" "$(gettext "Reviewing for the third time ...")" "$(gettext "Reviewing for the fourth time ...")" "$(gettext "Reviewing for the fifth time ...")" "$(gettext "Reviewing for the sixth time ...")" "$(gettext "Reviewing for the seventh time ...")" "$(gettext "Reviewing, final review")" "$(gettext "Reviewing, final review")")
 			[ "$repass" -gt 0 ] && btn_review="$(gettext "Finalize Review")" || btn_review="$(gettext "Mark as Learnt")"
 			
 		elif [ "$stts" -eq 3 ] || [ "$stts" -eq 4 ] ; then
@@ -395,7 +395,7 @@ function topic() {
 			
 		elif [ $stts = 5 ] || [ $stts = 6 ]; then
 		
-			labels_status=("$(gettext "Learning...")" "$(gettext "Reviewing, first out of 9 ...")" "$(gettext "Reviewing, second out of 9 ...")" "$(gettext "Reviewing, third out of 9 ...")" "$(gettext "Reviewing, fourth out of 9 ...")" "$(gettext "Reviewing, Fifth out of 9 ...")" "$(gettext "Reviewing, Sixth out of 9 ...")" "$(gettext "Reviewing, seventh out of 9 ...")" "$(gettext "Reviewing, final review")" "$(gettext "Reviewing, final review")")
+			labels_status=("$(gettext "Learning...")" "$(gettext "Reviewing for the first time ...")" "$(gettext "Reviewing for the second time ...")" "$(gettext "Reviewing for the third time ...")" "$(gettext "Reviewing for the fourth time ...")" "$(gettext "Reviewing for the fifth time ...")" "$(gettext "Reviewing for the sixth time ...")" "$(gettext "Reviewing for the seventh time ...")" "$(gettext "Reviewing, final review")" "$(gettext "Reviewing, final review")")
 			label_review="${labels_review[$repass]}"
 			btn_review="$(gettext "Finalize Review")"
 
@@ -416,7 +416,14 @@ function topic() {
         else 
             export infolbl5="<small>$(gettext "Created on") $dtec</small>"
         fi
-        export lbl1="<span font_desc='Free Sans Bold 12'>${tpc} $stts - $repass</span>\n<small><i>$label_level</i></small>\n\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"),  $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
+        if  [[ $stts = 2 ]]; then
+        	lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<b><span color='#805D9D'>$label_level</span></b>\n\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"),  $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
+        elif [[ $((stts%2)) = 0 ]] then
+        	lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#A37053'>$label_level</span></i></small>\n\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"),  $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
+        else
+			lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#A2DFE7'>$label_level</span></i></small>\n\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"),  $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
+        fi
+        export lbl1
     }
     
     oclean() { cleanups "$cnf1" "$cnf3" "$cnf4" "$DT/tpc_lk"; }

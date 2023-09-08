@@ -752,6 +752,7 @@ rename_topic() {
 
 
 mark_to_learn_topic() {
+	
     [ ! -s "${DC_tlt}/data" ] && exit 1
     if [ "${tpc}" != "${2}" ]; then
         msg "$(gettext "Sorry, this topic is currently not active.")\n " \
@@ -765,20 +766,16 @@ mark_to_learn_topic() {
     export lns=$(cat "${DC_tlt}/data" |wc -l)
     stts=$(sed -n 1p "${DC_tlt}/stts")
     ! [[ ${stts} =~ ${numer} ]] && stts=1
-	repass=$(tpc_db 1 config repass)
+	date_reviews_count="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
 	
     calculate_review "${tpc}"
 
-    if [[ $repass -ge 8 ]]; then
+    if [[ $date_reviews_count -ge 9 ]]; then
 	    echo 2 > "${DC_tlt}/stts"
     elif [ $((stts%2)) = 0 ]; then
         echo 6 > "${DC_tlt}/stts"
     else
-        if [ ${days_to_review_porcent} -ge 50 ]; then
-            echo 5 > "${DC_tlt}/stts"
-        else
-            echo 1 > "${DC_tlt}/stts"
-        fi
+        echo 5 > "${DC_tlt}/stts"
     fi
     
     if [[ ${3} = 1 ]]; then
@@ -786,7 +783,6 @@ mark_to_learn_topic() {
         "yad --editable --list" "yad --text-info " "yad --notebook "
     fi
     
-    date_reviews_count="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
     tpc_db 9 config repass ${date_reviews_count}
     export data="${DC_tlt}/data" tpcdb
     
@@ -824,6 +820,7 @@ PY
 }
 
 mark_as_learned_topic() {
+	
     if [[ "${3}" != 0 ]]; then
         if [ "${tpc}" != "${2}" ]; then
 			msg "$(gettext "Sorry, this topic is currently not active.")\n " \
@@ -843,25 +840,23 @@ mark_as_learned_topic() {
 
         calculate_review "${tpc}"
         date_reviews_count="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
-        repass=$(tpc_db 1 config repass)
         datex=$(date +%m/%d/%Y)
         
         if [ ${date_reviews_count} -gt 0 ]; then
             ! [[ ${date_reviews_count} =~ ${numer} ]] && date_reviews_count=1
-            if [ ${date_reviews_count} -eq 4 ]; then
+            if [ ${date_reviews_count} -eq 3 ]; then
                 stts=$((stts+1))
             fi
-            if [ ${days_to_review_porcent} -ge 50 ]; then
-                if [ ${date_reviews_count} -eq 8 ]; then
-                    tpc_db 9 reviews date8 ${datex}
-                    
-                elif [ ${date_reviews_count} -gt 8 ]; then
-                    tpc_db 9 reviews date8 ${datex}
-                else
-                    date_reviews_count=$((date_reviews_count+1))
-                    tpc_db 9 reviews date${date_reviews_count} ${datex} # FIX 
-                fi
-            fi
+
+			if [ ${date_reviews_count} -eq 9 ]; then
+				tpc_db 9 reviews date9 ${datex}
+				
+			elif [ ${date_reviews_count} -gt 9 ]; then
+				tpc_db 9 reviews date9 ${datex}
+			else
+				date_reviews_count=$((date_reviews_count+1))
+				tpc_db 9 reviews date${date_reviews_count} ${datex} # FIX 
+			fi
         else
             tpc_db 9 reviews date1 ${datex}
         fi
@@ -870,7 +865,7 @@ mark_as_learned_topic() {
             (cd "${DC_tlt}/practice"; rm ./.*; rm ./*
             touch ./log1 ./log2 ./log3)
         fi
-        if [[ $repass -ge 8 ]]; then
+        if [[ $date_reviews_count -ge 9 ]]; then
 			echo 2 > "${DC_tlt}/stts"
         elif [[ $((stts%2)) = 0 ]]; then
             echo 4 > "${DC_tlt}/stts"
@@ -933,18 +928,18 @@ mark_as_learned_topic_ok() {
         datex=$(date +%m/%d/%Y)
 
         if [ ${date_reviews_count} -gt 0 ]; then
-            if [ ${date_reviews_count} -eq 4 ]; then
+            if [ ${date_reviews_count} -eq 3 ]; then
                 stts=$((stts+1))
             fi
-            if [ ${days_to_review_porcent} -ge 50 ]; then
-                if [ ${date_reviews_count} -eq 8 ]; then
-                    tpc_db 9 reviews date8 ${datex}
-                elif [ ${date_reviews_count} -gt 8 ]; then
-                    tpc_db 9 reviews date8 ${datex}
-                else
-                    tpc_db 9 reviews date${date_reviews_count} ${datex} # FIX 
-                fi
+
+            if [ ${date_reviews_count} -eq 9 ]; then
+                tpc_db 9 reviews date9 ${datex}
+            elif [ ${date_reviews_count} -gt 9 ]; then
+                tpc_db 9 reviews date9 ${datex}
+            else
+                tpc_db 9 reviews date${date_reviews_count} ${datex} # FIX 
             fi
+	
         else
             date_reviews_count=$((date_reviews_count+1))
             tpc_db 9 reviews date1 ${datex}
@@ -955,7 +950,7 @@ mark_as_learned_topic_ok() {
             touch ./log1 ./log2 ./log3)
         fi
         
-        if [[ $repass -ge 8 ]]; then
+        if [[ $date_reviews_count -ge 9 ]]; then
 			echo 2 > "${DC_tlt}/stts"
         elif [[ $((stts%2)) = 0 ]]; then
             echo 4 > "${DC_tlt}/stts"

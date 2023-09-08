@@ -382,8 +382,7 @@ function test_() {
 }
 
 function dlg_progress_2() {
-    yad --progress --title="$(gettext "Checking resource availability...")" \
-    --text="<b>$(gettext "Please wait.")</b>" \
+    yad --progress --title="$(gettext "Run tests, please wait...")" \
     --name=Idiomind --class=Idiomind \
     --window-icon=$DS/images/logo.png --align=right \
     --progress-text=" " \
