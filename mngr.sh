@@ -766,11 +766,11 @@ mark_to_learn_topic() {
     export lns=$(cat "${DC_tlt}/data" |wc -l)
     stts=$(sed -n 1p "${DC_tlt}/stts")
     ! [[ ${stts} =~ ${numer} ]] && stts=1
-	date_reviews_count="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
+	count_date_reviews="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
 	
     calculate_review "${tpc}"
 
-    if [[ $date_reviews_count -ge 9 ]]; then
+    if [[ $count_date_reviews -ge 9 ]]; then
 	    echo 2 > "${DC_tlt}/stts"
     elif [ $((stts%2)) = 0 ]; then
         echo 6 > "${DC_tlt}/stts"
@@ -783,7 +783,7 @@ mark_to_learn_topic() {
         "yad --editable --list" "yad --text-info " "yad --notebook "
     fi
     
-    tpc_db 9 config repass ${date_reviews_count}
+    tpc_db 9 config repass ${count_date_reviews}
     export data="${DC_tlt}/data" tpcdb
     
 python3 <<PY
@@ -839,38 +839,43 @@ mark_as_learned_topic() {
     if [ $stts = 1 ] || [ $stts = 5 ] || [ $stts = 6 ]; then
 
         calculate_review "${tpc}"
-        date_reviews_count="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
-        datex=$(date +%m/%d/%Y)
-        
-        if [ ${date_reviews_count} -gt 0 ]; then
-            ! [[ ${date_reviews_count} =~ ${numer} ]] && date_reviews_count=1
-            if [ ${date_reviews_count} -eq 3 ]; then
+        date_current=$(date +%m/%d/%Y)
+        count_date_reviews="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
+        ! [[ ${count_date_reviews} =~ ${numer} ]] && count_date_reviews=0
+        [ ${count_date_reviews} = 8 ] && mast=TRUE || mast=FALSE
+
+        if [ ${count_date_reviews} -gt 0 ]; then
+           
+            if [ ${count_date_reviews} -eq 3 ]; then # cambiar de fresh to familiar tpc
                 stts=$((stts+1))
             fi
 
-			if [ ${date_reviews_count} -eq 9 ]; then
-				tpc_db 9 reviews date9 ${datex}
+			if [ ${count_date_reviews} -eq 9 ]; then
+				tpc_db 9 reviews date9 ${date_current}
+				echo 2 > "${DC_tlt}/stts"
 				
-			elif [ ${date_reviews_count} -gt 9 ]; then
-				tpc_db 9 reviews date9 ${datex}
+			elif [ ${count_date_reviews} -gt 9 ]; then
+				tpc_db 9 reviews date9 ${date_current}
+				echo 2 > "${DC_tlt}/stts"
+				
 			else
-				date_reviews_count=$((date_reviews_count+1))
-				tpc_db 9 reviews date${date_reviews_count} ${datex} # FIX 
+				count_date_reviews=$((count_date_reviews+1))
+				tpc_db 9 reviews date${count_date_reviews} ${date_current}
+				
+				if [[ $((stts%2)) = 0 ]]; then
+					echo 4 > "${DC_tlt}/stts"
+				else
+					echo 3 > "${DC_tlt}/stts"
+				fi
 			fi
         else
-            tpc_db 9 reviews date1 ${datex}
+            tpc_db 9 reviews date1 ${date_current}
+            echo 3 > "${DC_tlt}/stts"
         fi
         
         if [ -d "${DC_tlt}/practice" ]; then
-            (cd "${DC_tlt}/practice"; rm ./.*; rm ./*
+            (cd ~ && cd "${DC_tlt}/practice"; rm ./.*; rm ./*
             touch ./log1 ./log2 ./log3)
-        fi
-        if [[ $date_reviews_count -ge 9 ]]; then
-			echo 2 > "${DC_tlt}/stts"
-        elif [[ $((stts%2)) = 0 ]]; then
-            echo 4 > "${DC_tlt}/stts"
-        else
-            echo 3 > "${DC_tlt}/stts"
         fi
     fi
 
@@ -879,13 +884,14 @@ mark_as_learned_topic() {
         "yad --text-info " "yad --notebook "
     fi
 
-    export data="${DC_tlt}/data" tpcdb
-
+    export data="${DC_tlt}/data" tpcdb mast
+	
 python3 <<PY
 import os, re, locale, sqlite3, sys
 en = locale.getpreferredencoding()
 data = os.environ['data']
 tpcdb = os.environ['tpcdb']
+mast = os.environ['mast']
 db = sqlite3.connect(tpcdb)
 db.text_factory = str
 cur = db.cursor()
@@ -898,7 +904,10 @@ for item in data:
     fields = re.split('\n',item)
     trgt = (fields[0].split('trgt{'))[1].split('}')[0]
     if trgt and trgt != ' ':
-        cur.execute("insert into learnt (list) values (?)", (trgt,))
+        if mast == 'TRUE':
+            cur.execute("insert into learning (list) values (?)", (trgt,))
+        else:
+            cur.execute("insert into learnt (list) values (?)", (trgt,))
 db.commit()
 db.close()
 PY
@@ -922,49 +931,55 @@ mark_as_learned_topic_ok() {
     ! [[ ${stts} =~ ${numer} ]] && stts=1
 
     if [ $stts = 1 ] || [ $stts = 5 ] || [ $stts = 6 ]; then
+    
         calculate_review "${tpc}"
-        date_reviews_count="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
-        ! [[ ${date_reviews_count} =~ ${numer} ]] && date_reviews_count=0
-        datex=$(date +%m/%d/%Y)
-
-        if [ ${date_reviews_count} -gt 0 ]; then
-            if [ ${date_reviews_count} -eq 3 ]; then
+        date_current=$(date +%m/%d/%Y)
+        count_date_reviews="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
+        ! [[ ${count_date_reviews} =~ ${numer} ]] && count_date_reviews=0
+        [ ${count_date_reviews} = 8 ] && mast=TRUE || mast=FALSE
+        
+        if [ ${count_date_reviews} -gt 0 ]; then
+        
+            if [ ${count_date_reviews} -eq 3 ]; then # cambiar de fresh to familiar tpc
                 stts=$((stts+1))
             fi
 
-            if [ ${date_reviews_count} -eq 9 ]; then
-                tpc_db 9 reviews date9 ${datex}
-            elif [ ${date_reviews_count} -gt 9 ]; then
-                tpc_db 9 reviews date9 ${datex}
+            if [ ${count_date_reviews} -eq 9 ]; then
+                tpc_db 9 reviews date9 ${date_current}
+                echo 2 > "${DC_tlt}/stts"
+                
+            elif [ ${count_date_reviews} -gt 9 ]; then
+                tpc_db 9 reviews date9 ${date_current}
+                echo 2 > "${DC_tlt}/stts"
+                
             else
-                tpc_db 9 reviews date${date_reviews_count} ${datex} # FIX 
+				count_date_reviews=$((count_date_reviews+1))
+                tpc_db 9 reviews date${count_date_reviews} ${date_current}
+                
+                if [[ $((stts%2)) = 0 ]]; then
+					echo 4 > "${DC_tlt}/stts"
+				else
+					echo 3 > "${DC_tlt}/stts"
+				fi
             fi
-	
         else
-            date_reviews_count=$((date_reviews_count+1))
-            tpc_db 9 reviews date1 ${datex}
+            tpc_db 9 reviews date1 ${date_current}
+            echo 3 > "${DC_tlt}/stts"
         fi
         
         if [ -d "${DC_tlt}/practice" ]; then
             (cd ~ && cd "${DC_tlt}/practice"; rm ./.*; rm ./*
             touch ./log1 ./log2 ./log3)
         fi
-        
-        if [[ $date_reviews_count -ge 9 ]]; then
-			echo 2 > "${DC_tlt}/stts"
-        elif [[ $((stts%2)) = 0 ]]; then
-            echo 4 > "${DC_tlt}/stts"
-        else
-            echo 3 > "${DC_tlt}/stts"
-        fi
     fi
 
-    export data="${DC_tlt}/data" tpcdb
+    export data="${DC_tlt}/data" tpcdb mast
     
 python3 <<PY
 import os, re, sqlite3, sys
 data = os.environ['data']
 tpcdb = os.environ['tpcdb']
+mast = os.environ['mast']
 db = sqlite3.connect(tpcdb)
 db.text_factory = str
 cur = db.cursor()
@@ -977,7 +992,10 @@ for item in data:
     fields = re.split('\n',item)
     trgt = (fields[0].split('trgt{'))[1].split('}')[0]
     if trgt and trgt != ' ':
-        cur.execute("insert into learnt (list) values (?)", (trgt,))
+        if mast == 'TRUE':
+            cur.execute("insert into learning (list) values (?)", (trgt,))
+        else:
+            cur.execute("insert into learnt (list) values (?)", (trgt,))
 db.commit()
 db.close()
 PY

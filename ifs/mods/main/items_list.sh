@@ -284,7 +284,7 @@ function notebook_3() {
     cmd3="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd4="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
 
-    ([ -n "${ls2}" ] && echo "${ls2}") |yad --list --tabnum=1 \
+    ([ -n "${ls1}" ] && echo "${ls1}") |yad --list --tabnum=1 \
     --window-icon=idiomind --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 1" \
     --expand-column=0 --no-headers --grid-lines=hor --ellipsize=end \
@@ -315,7 +315,7 @@ function notebook_3() {
     --always-print-result \
     --center --align=right --ellipsize=END \
     --window-icon=$DS/images/logo.png \
-    --tab="  $(gettext "Learnt") ($cfg2) " \
+    --tab="  $(gettext "Learnt") ($cfg1) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Manage")  " \
     --width=530 --height=560 --borders=5 --tab-borders=0 \
