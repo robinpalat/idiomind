@@ -630,9 +630,9 @@ edit_list_dlg() {
 
 
 restart_topic() {
-	
-     msg_2 "<b>\"$tpc\"</b>\n\n$(gettext "Are you sure you want to restart topic status?")\n" \
-     gtk-refresh "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
+		
+	 msg_2 "<b>\"$tpc\"</b>\n\n$(gettext "Are you sure you want to restart topic status?")\n" \
+	 gtk-refresh "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
   
 	if [ $? = 0 ]; then
 

@@ -278,22 +278,23 @@ function check_err() {
 function calculate_review() { #TODO check count rows
     [ -z ${notice} ] && source "$DS/default/sets.cfg"
     export DC_tlt="$DM_tl/${1}/.conf"
-    count_reviews="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
-    if [ ${count_reviews} -ge 1 ]; then
-        date_review=""; date_review=$(tpc_db 1 reviews date${count_reviews})
+    count_date_reviews="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
+    if [ ${count_date_reviews} -ge 1 ]; then
+        date_review=""; date_review=$(tpc_db 1 reviews date${count_date_reviews})
         
         if ! [[ ${date_review} =~ ^[0-9]{2}/[0-9]{2}/[0-9]{4}$ ]]; then
             echo "--error: $1"
             tpc_db 6 reviews
             tpc_db 8 reviews date1 "$(date +%m/%d/%Y)"
             date_review=$(tpc_db 1 reviews date1)
-            count_reviews=0
+            count_date_reviews=0
         fi
 
         TM=$((($(date +%s)-$(date -d ${date_review} +%s))/(24*60*60)))
-        days_to_review=${notice[${count_reviews}]}
+        days_to_review=${notice[${count_date_reviews}]}
         days_to_review_porcent=$((100*TM/days_to_review))
-        export days_to_review
+
+        export days_to_review 
         return ${days_to_review_porcent}
     fi
 }

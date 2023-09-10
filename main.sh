@@ -424,7 +424,17 @@ function topic() {
         else
 			lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#A2DFE7'>$label_level</span></i></small>\n\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"),  $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
         fi
-        export lbl1
+        
+        [ ${count_date_reviews} = 1 ] && label_serie="<u><b>4</b></u> | 7 | 7 | 10 | 15 | 15 | 20 | 30"
+		[ ${count_date_reviews} = 2 ] && label_serie="4 | <u><b>7</b></u> | 7 | 10 | 15 | 15 | 20 | 30"
+		[ ${count_date_reviews} = 3 ] && label_serie="4 | 7 | <u><b>7</b></u> | 10 | 15 | 15 | 20 | 30"
+		[ ${count_date_reviews} = 4 ] && label_serie="4 | 7 | 7 | <u><b>10</b></u> | 15 | 15 | 20 | 30"
+		[ ${count_date_reviews} = 5 ] && label_serie="4 | 7 | 7 | 10 | <u><b>15</b></u> | 15 | 20 | 30"
+		[ ${count_date_reviews} = 6 ] && label_serie="4 | 7 | 7 | 10 | 15 | <u><b>15</b></u> | 20 | 30"
+		[ ${count_date_reviews} = 7 ] && label_serie="4 | 7 | 7 | 10 | 15 | 15 | <u><b>20</b></u> | 30"
+		[ ${count_date_reviews} = 8 ] && label_serie="4 | 7 | 7 | 10 | 15 | 15 | 20 | <u><b>30</b></u>"
+
+        export lbl1 label_serie
     }
     
     oclean() { cleanups "$cnf1" "$cnf3" "$cnf4" "$DT/tpc_lk"; }
@@ -529,7 +539,7 @@ PY
                 
                 [[ ${days_to_review_porcent} -ge 100 ]] && info5="$(gettext "(completado)")"
 
-                pres="<u><big><b>$(gettext "Topic learnt")</b></big></u>  <sup>$(gettext "* however you have new notes") ($cfg1).</sup>\\n\\n<sub>$(gettext "Time set to review:") $days_to_review $(gettext "days") $info5</sub>"
+                pres="<u><big><b>$(gettext "Topic learnt")</b></big></u>  <sup>$(gettext "* however you have new notes").</sup>\n$label_review\n\n<sub>$(gettext "Waiting days:")  $label_serie</sub>"
                 echo "N2 / ${cfg0} / ${cfg1} / ${cfg2}"
                 
                 notebook_2
@@ -571,7 +581,7 @@ PY
             fi
             
             [ ${days_to_review_porcent} -ge 100 ] && info5="$(gettext "(completado)")"
-			pres="<u><big><b>$(gettext "Topic learnt")</b></big></u>\n\n$label_review\n<sub>$(gettext "Time set:") $days_to_review $(gettext "days") $info5</sub>"
+			pres="<u><big><b>$(gettext "Topic learnt")</b></big></u>\n$label_review\n\n<sub>$(gettext "Waiting days:")  $label_serie</sub>"
             
             echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
             
@@ -619,7 +629,7 @@ PY
         
             calculate_review "${tpc}"
             
-            pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $days_to_review $(gettext "days")"
+            pres="<u><b>$(gettext "Topic learnt")</b></u>\n$label_review\n\n<sub>$(gettext "Waiting days:")  $label_serie</sub>"
             echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
             
             notebook_2; ret=$?
