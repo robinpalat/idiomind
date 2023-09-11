@@ -104,11 +104,11 @@ function new_session() {
                 calculate_review "${line}"
                 
                 if [[ $((stts%2)) = 0 ]]; then
-                    if [ ${days_to_review_porcent} -ge 180 -a ${stts} = 8 ]; then
+                    if [ ${days_to_review_porcent} -ge 110 ] && [ ${stts} = 8 ]; then
                         echo 10 > "${dir}/stts"; touch "${dim}"
                         cdb ${shrdb} 2 T2 list "${line}"
                         
-                    elif [ ${days_to_review_porcent} -ge 100 -a ${stts} -lt 8 ]; then
+                    elif [ ${days_to_review_porcent} -ge 100 ] && [ ${stts} -lt 8 ]; then
                         echo 8 > "${dir}/stts"; touch "${dim}"
                         cdb ${shrdb} 2 T1 list "${line}"
                         
@@ -120,11 +120,11 @@ function new_session() {
                     fi
                     
                 elif [[ $((stts%2)) = 1 ]]; then
-                    if [ ${days_to_review_porcent} -ge 180 -a ${stts} = 7 ]; then
+                    if [ ${days_to_review_porcent} -ge 110 ] && [ ${stts} = 7 ]; then
                         echo 9 > "${dir}/stts"; touch "${dim}"
                         cdb ${shrdb} 2 T2 list "${line}"
                         
-                    elif [ ${days_to_review_porcent} -ge 100 -a ${stts} -lt 7 ]; then
+                    elif [ ${days_to_review_porcent} -ge 100 ] && [ ${stts} -lt 7 ]; then
                         echo 7 > "${dir}/stts"; touch "${dim}"
                         cdb ${shrdb} 2 T1 list "${line}"
                         
@@ -136,7 +136,7 @@ function new_session() {
                     fi
                 fi
                 
-            elif [ $((stts)) = 2 ]; then
+            elif [ ${stts} = 2 ]; then
 
 				if [[ -z "$(sqlite3 ${shrdb} "select list from T10 where list is '${line}';")" ]]; then
 					cdb ${shrdb} 2 T10 list "${line}"
@@ -418,21 +418,21 @@ function topic() {
             export infolbl5="<small>$(gettext "Created on") $dtec</small>"
         fi
         if  [[ ${stts} = 2 ]]; then
-        	lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#805D9D'>$label_level</span></i></small>\n\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"),  $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
+        	lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#805D9D'>$label_level</span></i></small>\n\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"), $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
         elif [[ $((stts%2)) = 0 ]] then
-        	lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#A37053'>$label_level</span></i></small>\n\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"),  $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
+        	lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#A37053'>$label_level</span></i></small>\n\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"), $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
         else
-			lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#A2DFE7'>$label_level</span></i></small>\n\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"),  $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
+			lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#A2DFE7'>$label_level</span></i></small>\n\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"), $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
         fi
         
-        [ ${count_date_reviews} = 1 ] && label_serie="<u><b>4</b></u> | 7 | 7 | 10 | 15 | 15 | 20 | 30"
-		[ ${count_date_reviews} = 2 ] && label_serie="4 | <u><b>7</b></u> | 7 | 10 | 15 | 15 | 20 | 30"
-		[ ${count_date_reviews} = 3 ] && label_serie="4 | 7 | <u><b>7</b></u> | 10 | 15 | 15 | 20 | 30"
-		[ ${count_date_reviews} = 4 ] && label_serie="4 | 7 | 7 | <u><b>10</b></u> | 15 | 15 | 20 | 30"
-		[ ${count_date_reviews} = 5 ] && label_serie="4 | 7 | 7 | 10 | <u><b>15</b></u> | 15 | 20 | 30"
-		[ ${count_date_reviews} = 6 ] && label_serie="4 | 7 | 7 | 10 | 15 | <u><b>15</b></u> | 20 | 30"
-		[ ${count_date_reviews} = 7 ] && label_serie="4 | 7 | 7 | 10 | 15 | 15 | <u><b>20</b></u> | 30"
-		[ ${count_date_reviews} = 8 ] && label_serie="4 | 7 | 7 | 10 | 15 | 15 | 20 | <u><b>30</b></u>"
+        [ ${count_date_reviews} = 1 ] && label_serie="<u><b>4</b></u> <span color='#888888'>| 7 | 7 | 10 | 15 | 15 | 20 | 30</span>"
+		[ ${count_date_reviews} = 2 ] && label_serie="<span color='#888888'>4 |</span> <u><b>7</b></u> <span color='#888888'>| 7 | 10 | 15 | 15 | 20 | 30</span>"
+		[ ${count_date_reviews} = 3 ] && label_serie="<span color='#888888'>4 | 7 |</span> <u><b>7</b></u> <span color='#888888'>| 10 | 15 | 15 | 20 | 30</span>"
+		[ ${count_date_reviews} = 4 ] && label_serie="<span color='#888888'>4 | 7 | 7 |</span> <u><b>10</b></u> <span color='#888888'>| 15 | 15 | 20 | 30</span>"
+		[ ${count_date_reviews} = 5 ] && label_serie="<span color='#888888'>4 | 7 | 7 | 10 |</span> <u><b>15</b></u> <span color='#888888'>| 15 | 20 | 30</span>"
+		[ ${count_date_reviews} = 6 ] && label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 |</span> <u><b>15</b></u> <span color='#888888'>| 20 | 30</span>"
+		[ ${count_date_reviews} = 7 ] && label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 | 15 |</span> <u><b>20</b></u> <span color='#888888'>| 30</span>"
+		[ ${count_date_reviews} = 8 ] && label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 | 15 | 20 |</span> <u><b>30</b></u>"
 
         export lbl1 label_serie
     }
@@ -539,7 +539,7 @@ PY
                 
                 [[ ${days_to_review_porcent} -ge 100 ]] && info5="$(gettext "(completado)")"
 
-                pres="<u><big><b>$(gettext "Topic learnt")</b></big></u>  <sup>$(gettext "* however you have new notes").</sup>\n$label_review\n\n<sub>$(gettext "Waiting days:")  $label_serie</sub>"
+                pres="<big><b>$(gettext "Topic learnt")</b></big>  <sup>$(gettext "* however you have new notes").</sup>\n<small>$label_review</small>\n\n<sub>$(gettext "Waiting days:")  $label_serie</sub>"
                 echo "N2 / ${cfg0} / ${cfg1} / ${cfg2}"
                 
                 notebook_2
@@ -581,7 +581,7 @@ PY
             fi
             
             [ ${days_to_review_porcent} -ge 100 ] && info5="$(gettext "(completado)")"
-			pres="<u><big><b>$(gettext "Topic learnt")</b></big></u>\n$label_review\n\n<sub>$(gettext "Waiting days:")  $label_serie</sub>"
+			pres="<big><b>$(gettext "Topic learnt")</b></big>\n<small>$label_review</small>\n\n<sub>$(gettext "Waiting days:")  $label_serie</sub>"
             
             echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
             
@@ -629,7 +629,7 @@ PY
         
             calculate_review "${tpc}"
             
-            pres="<u><b>$(gettext "Topic learnt")</b></u>\n$label_review\n\n<sub>$(gettext "Waiting days:")  $label_serie</sub>"
+            pres="<big><b>$(gettext "Topic learnt")</b></big>\n<small>$label_review</small>\n\n<sub>$(gettext "Waiting days:")  $label_serie</sub>"
             echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
             
             notebook_2; ret=$?

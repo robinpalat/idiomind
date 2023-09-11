@@ -166,7 +166,7 @@ function notebook_1() {
     --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
-    --text="${lbl1}${info2}\n<small>$(gettext "Status:")</small> $label_review" \
+    --text="${lbl1}${info2}\n<small>$(gettext "Status:") $label_review</small>" \
     --borders=25 --columns=2 \
     --field=" $btn_review "!'gtk-apply':FBTN "$cmd_mark" \
     --field=" ":LBL " " \
@@ -227,7 +227,7 @@ function notebook_2() {
     if [ $stts = 7 ] || [ $stts = 8 ] || [ $stts = 9 ] || [ $stts = 10 ] || [ ${days_to_review_porcent} -ge 100 ]; then 
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
-    --text="$lbl1\n<small>$(gettext "Status:")</small> $label_review" \
+    --text="$lbl1\n<small>$(gettext "Status:") $label_review</small>" \
     --borders=25 --columns=2 \
     --field=" $btn_review  "!'view-refresh':FBTN "$cmd_mark" \
     --field=" ":LBL " " \
@@ -242,7 +242,7 @@ function notebook_2() {
     else
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
-    --text="$lbl1\n<small>$(gettext "Status:")</small> $label_review" \
+    --text="$lbl1\n<small>$(gettext "Status:") $label_review</small>" \
     --borders=25 --columns=2 \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
