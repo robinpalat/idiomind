@@ -104,7 +104,7 @@ function new_session() {
                 calculate_review "${line}"
                 
                 if [[ $((stts%2)) = 0 ]]; then
-                    if [ ${days_to_review_porcent} -ge 110 ] && [ ${stts} = 8 ]; then
+                    if [ ${days_to_review_porcent} -ge 150 ] && [ ${stts} = 8 ]; then
                         echo 10 > "${dir}/stts"; touch "${dim}"
                         cdb ${shrdb} 2 T2 list "${line}"
                         
@@ -120,7 +120,7 @@ function new_session() {
                     fi
                     
                 elif [[ $((stts%2)) = 1 ]]; then
-                    if [ ${days_to_review_porcent} -ge 110 ] && [ ${stts} = 7 ]; then
+                    if [ ${days_to_review_porcent} -ge 150 ] && [ ${stts} = 7 ]; then
                         echo 9 > "${dir}/stts"; touch "${dim}"
                         cdb ${shrdb} 2 T2 list "${line}"
                         
@@ -397,12 +397,11 @@ function topic() {
 		elif [ ${stts} = 5 ] || [ ${stts} = 6 ]; then
 		
 			labels_status=("$(gettext "Learning...")" "$(gettext "Reviewing for the first time ...")" "$(gettext "Reviewing for the second time ...")" "$(gettext "Reviewing for the third time ...")" "$(gettext "Reviewing for the fourth time ...")" "$(gettext "Reviewing for the fifth time ...")" "$(gettext "Reviewing for the sixth time ...")" "$(gettext "Reviewing for the seventh time ...")" "$(gettext "Reviewing, final review")" "$(gettext "Reviewing, final review")")
-			label_review="${labels_review[${count_date_reviews}]}"
 			btn_review="$(gettext "Finalize Review")"
 
-		elif [ ${stts} -gt 5 ] && [ ${stts} -lt 11 ]; then
+		elif [ ${stts} -gt 6 ] && [ ${stts} -lt 11 ]; then
 			
-			labels_status=( " " "$(gettext "Waiting to review for the first time")" "$(gettext "Waiting to review for the second time")" "$(gettext "Waiting to review for the third time")" "$(gettext "Waiting to review for the fourth time")" "$(gettext "Waiting to review for the fifth time")" "$(gettext "Waiting to review for the sixth time")" "$(gettext "Waiting to review for the seventh time")" "$(gettext "Waiting to review for the eighth time")" "$(gettext "Waiting to review for the ninth time")" "$(gettext "Second reminder to review")")
+			labels_status=( " " "$(gettext "Ready for the first review")" "$(gettext "Ready for the second review")" "$(gettext "Ready for the third review")" "$(gettext "Ready for the fourth review")" "$(gettext "Ready for the fifth review")" "$(gettext "Ready for the sixth review")" "$(gettext "Ready for the seventh review")" "$(gettext "Ready for the Eighth review")" "$(gettext "Ready for the final review")" "$(gettext "Second reminder to review")")
 			btn_review="$(gettext "Back to Review")"
         fi
 
@@ -418,11 +417,11 @@ function topic() {
             export infolbl5="<small>$(gettext "Created on") $dtec</small>"
         fi
         if  [[ ${stts} = 2 ]]; then
-        	lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#805D9D'>$label_level</span></i></small>\n\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"), $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
-        elif [[ $((stts%2)) = 0 ]] then
-        	lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#A37053'>$label_level</span></i></small>\n\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"), $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
+        	lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#805D9D'>$label_level</span></i></small>\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"), $cfg3 $(gettext "Words")</small>\n$infolbl5\n\n"
+        elif [[ $((stts%2)) = 0 ]]; then
+        	lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#A37053'>$label_level</span></i></small>\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"), $cfg3 $(gettext "Words")</small>\n$infolbl5\n\n"
         else
-			lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#A2DFE7'>$label_level</span></i></small>\n\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"), $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
+			lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#A2DFE7'>$label_level</span></i></small>\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"), $cfg3 $(gettext "Words")</small>\n$infolbl5\n\n"
         fi
         
         [ ${count_date_reviews} = 1 ] && label_serie="<u><b>4</b></u> <span color='#888888'>| 7 | 7 | 10 | 15 | 15 | 20 | 30</span>"
@@ -539,7 +538,7 @@ PY
                 
                 [[ ${days_to_review_porcent} -ge 100 ]] && info5="$(gettext "(completado)")"
 
-                pres="<big><b>$(gettext "Topic learnt")</b></big>  <sup>$(gettext "* however you have new notes").</sup>\n<small>$label_review</small>\n\n<sub>$(gettext "Waiting days:")  $label_serie</sub>"
+                pres="<big><b>$(gettext "Topic learnt")</b></big>  <sup>$(gettext "* however you have new notes").</sup>\n<small>$label_review</small>\n\n<sub>$(gettext "Waiting Days:")  $days_to_review</sub>\n<sub>$(gettext "Spacing Intervals for Review:") $label_serie</sub>"
                 echo "N2 / ${cfg0} / ${cfg1} / ${cfg2}"
                 
                 notebook_2
@@ -581,7 +580,7 @@ PY
             fi
             
             [ ${days_to_review_porcent} -ge 100 ] && info5="$(gettext "(completado)")"
-			pres="<big><b>$(gettext "Topic learnt")</b></big>\n<small>$label_review</small>\n\n<sub>$(gettext "Waiting days:")  $label_serie</sub>"
+			pres="<big><b>$(gettext "Topic learnt")</b></big>\n<small>$label_review</small>\n\n<sub>$(gettext "Waiting Days:")  $days_to_review</sub>\n<sub>$(gettext "Spacing Intervals for Review:") $label_serie</sub>"
             
             echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
             
@@ -629,7 +628,7 @@ PY
         
             calculate_review "${tpc}"
             
-            pres="<big><b>$(gettext "Topic learnt")</b></big>\n<small>$label_review</small>\n\n<sub>$(gettext "Waiting days:")  $label_serie</sub>"
+            pres="<big><b>$(gettext "Topic learnt")</b></big>\n<small>$label_review</small>\n\n<sub>$(gettext "Waiting Days:")  $days_to_review</sub>\n<sub>$(gettext "Spacing Intervals for Review:") $label_serie</sub>"
             echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
             
             notebook_2; ret=$?

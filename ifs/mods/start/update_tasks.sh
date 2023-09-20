@@ -13,15 +13,17 @@
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 echo -e "\n--- updating tasks..."
-l1="[!] $(gettext "To Review:") "
+l1="$(gettext "To Review:") "
 l2="[!] $(gettext "To Review:") "
-l3="[!] $(gettext "To Review:") "
+l3="$(gettext "To Review:") "
 l4="[!] $(gettext "To Review:") "
 l5="$(gettext "To Practice:") "
 l6="$(gettext "Back to Practice:") "
 l7="$(gettext "Finalize Review:") "
 l4="[!] $(gettext "To Review:") "
 l8="$(gettext "Resume Practice:") "
+
+list_mast="$(sqlite3 ${shrdb} "select list from T10" | sed ':a;N;$!ba;s/\n/ /g')"
 f="$DT/tasks.tmp"; cleanups "$f" "$DT/tasks"
 
 
@@ -32,9 +34,10 @@ if [ -f $DT/tasks_init ]; then
 	fi
 fi
 
+
 #current topic
 if [ -n "${tpc}" ]; then
-	if [[ -z "$(sqlite3 ${shrdb} "select list from T10 where list is '${tpc}';")" ]]; then
+	if [[ ! "$list_mast" =~ "${tpc##+([[:space:]])}" ]]; then
 		export -f tpc_db
 		if [ "$(tpc_db 5 learning | wc -l)" -gt 0 ];then
 			echo -e "$(gettext "Play"): $tpc" >> "$f"
@@ -50,15 +53,15 @@ done < <(cdb "${shrdb}" 5 T1 |tac)
 
 ## practice
 while read -r tpc_in_list; do
-    if [ -n "${tpc_in_list}" ] && [ "${tpc_in_list}" != "${tpc}" ]; then
+    if [ -n "${tpc_in_list}" ] && [ "${tpc_in_list}" != "${tpc}" ] && [[ ! "$list_mast" =~ "${tpc_in_list##+([[:space:]])}" ]]; then
     echo -e "$l8$tpc_in_list" >> "$f"; fi
 done < <(cdb "${shrdb}" 5 T8 |tac)
 while read -r tpc_in_list; do
-    if [ -n "${tpc_in_list}" ] && [ "${tpc_in_list}" != "${tpc}" ]; then
+    if [ -n "${tpc_in_list}" ] && [ "${tpc_in_list}" != "${tpc}" ] && [[ ! "$list_mast" =~ "${tpc_in_list##+([[:space:]])}" ]]; then
     echo -e "$l6$tpc_in_list" >> "$f"; fi
 done < <(cdb "${shrdb}" 5 T6 |tac)
 while read -r tpc_in_list; do
-    if [ -n "${tpc_in_list}" ] && [ "${tpc_in_list}" != "${tpc}" ]; then
+    if [ -n "${tpc_in_list}" ] && [ "${tpc_in_list}" != "${tpc}" ] && [[ ! "$list_mast" =~ "${tpc_in_list##+([[:space:]])}" ]]; then
     echo -e "$l5$tpc_in_list" >> "$f"; fi
 done < <(cdb "${shrdb}" 5 T5 |tac)
 

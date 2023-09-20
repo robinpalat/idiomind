@@ -5,9 +5,9 @@ tpt="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg#*:})"
 act="$(sed -e 's/^ *//' -e 's/ *$//' <<< ${arg%%:*})"
 
 l0="$(gettext "Play"): "
-l1="[!] $(gettext "To Review:") "
+l1="$(gettext "To Review:") "
 l2="[!] $(gettext "To Review:") "
-l3="[!] $(gettext "To Review:") "
+l3="$(gettext "To Review:") "
 l4="[!] $(gettext "To Review:") "
 l5="$(gettext "To Practice:") "
 l6="$(gettext "Back to Practice:") "
@@ -47,7 +47,6 @@ elif [ "${act}: " = "$l4" ]; then
     modmenu "$arg"; chngtpt "$tpt"
 elif [ "${act}: " = "$l7" ]; then
     modmenu "$arg"; chngtpt "$tpt"
-
 elif [ "${act}: " = "$l5" ]; then
     modmenu "$arg"
     "$DS/practice/strt.sh" "$tpt" &

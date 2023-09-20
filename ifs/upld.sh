@@ -431,13 +431,13 @@ autr = os.environ['autr']
 pssw = os.environ['pass']
 tpc = os.environ['tpc']
 body = os.environ['body']
-#try:
-    ## http://idiomind.net/community/xmlrpc.php
-    #server = xmlrpclib.Server('http://idiomind.sourceforge.io/community/xmlrpc.php')
-    #nid = server.metaWeblog.newPost('blog', autr, pssw, 
-    #{'title': tpc, 'description': body}, True)
-#except:
-    #sys.exit(3)
+try:
+    http://idiomind.net/community/xmlrpc.php
+    server = xmlrpclib.Server('http://idiomind.sourceforge.io/community/xmlrpc.php')
+    nid = server.metaWeblog.newPost('blog', autr, pssw, 
+    {'title': tpc, 'description': body}, True)
+except:
+    sys.exit(3)
 url = requests.get('http://idiomind.sourceforge.net/upload.php').url
 DT_u = os.environ['DT_u']
 volumes = [i for i in os.listdir(DT_u)]
