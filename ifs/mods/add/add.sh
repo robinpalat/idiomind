@@ -55,7 +55,6 @@ function mksure() {
 function index() {
 	
 	lockfile="$DT/i_lk"
-	# bloqueo exclusivo
 	exec 9>"$lockfile"
 	flock -x 9
 
@@ -114,7 +113,6 @@ function index() {
             fi
         fi
     fi
-    #Liberar el bloqueo
 	flock -u 9
 }
 
@@ -149,14 +147,14 @@ function sentence_p() {
     |sed 's/  / /;s/ /\. /;s/-$//;s/^-//;s/"//g' \
     |sed 's/^ *//; s/ *$//; /^$/d' |sed 's|\/|\n|g' \
     |sed 's/ \+/ /g' |sed -e ':a;N;$!ba;s/\n/\n/g' \
-    |sed -e 's/ /\. /g' |sed -e 's/\.\./\./g' > "${aw}.1"
+    |sed -e 's/ /\. /g' |sed -e 's/\.\./\./g'|sed 's/\b\w\b \?//g' > "${aw}.1"
     
     translate "$(sed '/^$/d' "${aw}.1")" auto "$lg" | sed 's/\./\n/g' |tr -d '!?¿,;.' \
     |sed -e 's/ \+/ /g' |sed -e 's/.*\]\[\"//g' |sed -e 's/ *$//; /^$/d' > "${bw}"
     
     cat "${aw}.1" | sed 's/\./\n/g' |tr -d '!?¿,;.' | sed 's/^ *//g' \
     |sed -e 's/ \+/ /g' |sed -e 's/.*\]\[\"//g' |sed -e 's/ *$//; /^$/d' > "${aw}"
-    
+
     while read -r wrd; do
         w="$(tr -d '\.,;“”"' <<< "${wrd,,}" |sed "s|'|''|g")"
         if [[ `sqlite3 $db "select items from pronouns where items is '${w}';"` ]]; then

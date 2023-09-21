@@ -538,7 +538,7 @@ PY
                 
                 [[ ${days_to_review_porcent} -ge 100 ]] && info5="$(gettext "(completado)")"
 
-                pres="<big><b>$(gettext "Topic learnt")</b></big>  <sup>$(gettext "* however you have new notes").</sup>\n<small>$label_review</small>\n\n<sub>$(gettext "Waiting Days:")  $days_to_review</sub>\n<sub>$(gettext "Spacing Intervals for Review:") $label_serie</sub>"
+                pres="<big><b>$(gettext "Topic learnt")</b></big>  <sup>$(gettext "* however you have new notes").</sup>\n   <small>$label_review</small>\n\n<sub>$(gettext "Waiting Days:")  $days_to_review</sub>\n<sub>$(gettext "Spacing Intervals for Review:") $label_serie</sub>"
                 echo "N2 / ${cfg0} / ${cfg1} / ${cfg2}"
                 
                 notebook_2
@@ -580,7 +580,7 @@ PY
             fi
             
             [ ${days_to_review_porcent} -ge 100 ] && info5="$(gettext "(completado)")"
-			pres="<big><b>$(gettext "Topic learnt")</b></big>\n<small>$label_review</small>\n\n<sub>$(gettext "Waiting Days:")  $days_to_review</sub>\n<sub>$(gettext "Spacing Intervals for Review:") $label_serie</sub>"
+			pres="<big><b>$(gettext "Topic learnt")</b></big>\n   <small>$label_review</small>\n\n<sub>$(gettext "Waiting Days:")  $days_to_review</sub>\n<sub>$(gettext "Spacing Intervals for Review:") $label_serie</sub>"
             
             echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
             
@@ -628,7 +628,7 @@ PY
         
             calculate_review "${tpc}"
             
-            pres="<big><b>$(gettext "Topic learnt")</b></big>\n<small>$label_review</small>\n\n<sub>$(gettext "Waiting Days:")  $days_to_review</sub>\n<sub>$(gettext "Spacing Intervals for Review:") $label_serie</sub>"
+            pres="<big><b>$(gettext "Topic learnt")</b></big>\n   <small>$label_review</small>\n\n<sub>$(gettext "Waiting Days:")  $days_to_review</sub>\n<sub>$(gettext "Spacing Intervals for Review:") $label_serie</sub>"
             echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
             
             notebook_2; ret=$?
