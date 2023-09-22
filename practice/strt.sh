@@ -71,6 +71,7 @@ function score() {
         _log $active_practice; play "$dir_practices/all.mp3" &
         echo "1p.$tpc.p1" >> "$log"
         date "+%a %d %B" > ./$active_practice.lock
+        [ -f ./$active_practice.df ] && rm ./$active_practice.df
         save_score 0 & echo 21 > .${icon}
         strt 1
     else
@@ -971,10 +972,12 @@ function lock() {
             else
                 msg_2 "$(gettext "Consider waiting a while before resuming to practice some notes") \n" \
                 dialog-information "$(gettext "OK")" "$(gettext "Practice")"
-                ret=$?; [ $ret = 1 ] && ret=4; [ $ret = 0 ] && ret=5
+                ret=$?
+                [ $ret = 0 ] && ret=4
+                [ $ret = 1 ] && ret=5
             fi
         fi
-        
+
         if [ $ret -eq 0 ]; then # restart
             cleanups "${lock}" ./$active_practice.0 ./$active_practice.1 \
             ./$active_practice.2 ./$active_practice.3 ./$active_practice.srces \
@@ -1170,7 +1173,9 @@ function strt() {
 			declare label_count_${practice}=""
 		fi
 		if [ -f ./${practice}.df ]; then
-			declare plus${practice}=" /  $(< ./${practice}.df)"
+            declare plus${practice}=" /  $(< ./${practice}.df)"
+        else 
+            unset plus${practice}
         fi
         if [ ! -f ./.${i} ]; then echo 1 > ./.${i}; fi
         ((i=i+1))
@@ -1201,6 +1206,7 @@ function strt() {
         declare label_count_${active_practice}=""
         count_seccion_active_practice=""
         [ -f ./$active_practice.df ] && rm ./$active_practice.df
+        unset plus${practice}
 
     elif [[ "${1}" = 2 ]]; then
     
