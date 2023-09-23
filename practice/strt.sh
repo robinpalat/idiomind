@@ -873,7 +873,6 @@ function practice_e() {
 
 function get_notes() {
 
-	echo -e "\n--- get notes....\t-> $active_practice\n "
     if grep -o -E 'a|b|c' <<< $active_practice; then
         > "${dir_practice}/$active_practice.0"
         if [[ $(wc -l <<< "${list_sents}") -gt 0 ]]; then
@@ -885,10 +884,10 @@ function get_notes() {
         fi
 
         if [ "$1" = "restart" ] && [ -f "${dir_practice}/0.s" ]; then # si hay palabras no aprendidas desde el test de oraciones
-			sort -u < "${dir_practice}/0.s" >> "${dir_practice}/$active_practice.0"
-			count_tmp=$(wc -l < "${dir_practice}/0.s")
-			notify-send "Idiomind - $(gettext "Notice")" "$count_tmp $(gettext "Selected words from the sentence test have been added to this practice.")" -i info
-		fi
+            sort -u < "${dir_practice}/0.s" >> "${dir_practice}/$active_practice.0"
+            count_tmp=$(wc -l < "${dir_practice}/0.s")
+            notify-send "Idiomind - $(gettext "Notice")" "$count_tmp $(gettext "Selected words from the sentence test have been added to this practice.")" -i info
+        fi
 
         if [ $active_practice = b ]; then
             if [ ! -f "${dir_practice}/b.srces" ]; then
@@ -902,10 +901,10 @@ function get_notes() {
             fi
             #TODO
             if [ -f "${dir_practice}/0.s" ]; then # buscar srces para palabras de las oraciones
-				while read -r word; do
-					:
-				done < "${dir_practice}/0.s"
-			fi
+               while read -r word; do
+                    :
+                done < "${dir_practice}/0.s"
+            fi
         fi
         
     elif [ $active_practice = d ]; then
@@ -938,18 +937,23 @@ function get_notes() {
         fi
          inf=0
          if [ -s "${dir_practice}/$active_practice.0.tmp" ]; then
-			 while read -r itm; do
-				if [ ${Level} = 0 ]; then
-					if [ $(wc -w <<< "$itm") -le ${sentence_words_level0} ]; then
-						echo "$itm" >> "${dir_practice}/$active_practice.0"
-					else
-						inf=1
-					fi
-				fi
-			done < "${dir_practice}/$active_practice.0.tmp"
-		else 
-			cleanups "${dir_practice}/$active_practice.0.tmp"
-			touch "${dir_practice}/$active_practice.0"
+
+             while read -r itm; do 
+             
+                if [ ${Level} = 0 ]; then # selecciona solo oraciones cortas (learning level beginner))
+                    if [ $(wc -w <<< "$itm") -le ${sentence_words_level0} ]; then
+                        echo "$itm" >> "${dir_practice}/$active_practice.0"
+                    else
+                        inf=1
+                    fi
+                elif [ ${Level} = 1 ]; then
+                    echo "$itm" >> "${dir_practice}/$active_practice.0"
+                fi
+
+            done < "${dir_practice}/$active_practice.0.tmp"
+            cleanups "${dir_practice}/$active_practice.0.tmp"
+        else 
+            touch "${dir_practice}/$active_practice.0"
         fi
         
         if [ ${inf} = 1 ]; then
@@ -1157,10 +1161,13 @@ function strt() {
 	list_learn="$(tpc_db 5 learning)"
     count_a=0; count_b=0; count_c=0; count_d=0; count_e=0
     
+     
+    
     i=1
     for practice in a b c d e; do
 		if [ ! -f "./$practice.0" ]; then
 			active_practice=${practice}; get_notes start
+            unset active_practice
 		fi
         if [ -f ./$practice.1 ]; then
 			declare label_count_${practice}="<i>( $(($(wc -l < ./$practice.0) - $(wc -l < ./$practice.1))) )</i>"
@@ -1180,10 +1187,11 @@ function strt() {
         if [ ! -f ./.${i} ]; then echo 1 > ./.${i}; fi
         ((i=i+1))
     done
+
     
     include "$DS/ifs/mods/practice"
     count_active_practice="$(wc -l < $active_practice.0)"
-    
+   
     if [[ "${1}" = 1 ]] || [[ "${1}" = 2 ]]; then
     	if [ $active_practice = "a" ] ; then
 			label_pra="<b>*  $(gettext "Flashcards")</b>"
@@ -1205,14 +1213,12 @@ function strt() {
         echo 21 > .${icon}; export plus$active_practice=""
         declare label_count_${active_practice}=""
         count_seccion_active_practice=""
-        [ -f ./$active_practice.df ] && rm ./$active_practice.df
-        unset plus${practice}
 
     elif [[ "${1}" = 2 ]]; then
     
         count_learnt=$(< ./$active_practice.l); 
         if [ -f ./$active_practice.1 ] || [ -f ./$active_practice.2 ] || [ -f ./$active_practice.3 ]; then
-			info=" <b><small>$(gettext "learnt")</small> <b>$count_learnt</b>    <small>$(gettext "Learning")</small> <b>$count_learn</b>    <small>$(gettext "Difficult")</small> <b>$count_hard</b></b>  "
+			info=" <b><small>$(gettext "Easy")</small> <b>$count_learnt</b>    <small>$(gettext "Learning")</small> <b>$count_learn</b>    <small>$(gettext "Difficult")</small> <b>$count_hard</b></b>  "
 		fi
 		declare label_count_${active_practice}=""
     fi

@@ -286,6 +286,7 @@ function notebook_3() {
 
     ([ -n "${ls1}" ] && echo "${ls1}") |yad --list --tabnum=1 \
     --window-icon=idiomind --plug=$KEY --print-all --separator='|' \
+    --image="$DS/images/bebel.png" --image-on-top \
     --dclick-action="$DS/vwr.sh 1" \
     --expand-column=0 --no-headers --grid-lines=hor --ellipsize=end \
     --search-column=1 --regex-search \
@@ -300,7 +301,7 @@ function notebook_3() {
     --plug=$KEY \
     --text="$lbl1" \
     --borders=25 --columns=2 \
-    --field="\n":LBL " " \
+    --field=" ":LBL " " \
     --field=" ":LBL " " \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field="\t\t\t\t\t\t\t\\t\t\t\t\t\t":LBL "_" \
