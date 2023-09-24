@@ -141,7 +141,6 @@ function yad_kill() {
     for X in "${@}"; do kill -9 $(pgrep -f "$X") & done
 }
 
-
 #TODO
 function f_lock() {
     brk=0

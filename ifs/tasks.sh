@@ -27,8 +27,7 @@ modmenu() {
     rm -f "$DT/tasks"; echo "$tpc" > "$DC_s/tpc"; fi
 }
 
-
-if [ "${act}" = "$(gettext "Getting started with Idiomind")" ]; then
+if [ "${act}" = "$(gettext "Learn how to use Idiomind")" ]; then
 
  xdg-open 'https://idiomind.sourceforge.io/help.html'
 
@@ -56,7 +55,6 @@ elif [ "${act}: " = "$l6" ]; then
 elif [ "${act}: " = "$l8" ]; then
     modmenu "$arg"
     "$DS/practice/strt.sh" "$tpt" &
-
 else
     while read -r addon; do
         if [ -f "$DC_a/$addon${tlng}_tsk" ]; then

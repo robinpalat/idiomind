@@ -145,6 +145,7 @@ function notebook_1() {
 
     list | yad --list --tabnum=1 --window-icon=idiomind \
     --plug=$KEY --print-all --separator='|' \
+    --image="$DS/images/$((stts%2)).png" --image-on-top \
     --dclick-action="$DS/vwr.sh 1" \
     --print-column=1 --expand-column=1 --grid-lines=hor  --no-headers \
     --ellipsize=end --wrap-width=460 --ellipsize-cols=2 \
@@ -286,7 +287,7 @@ function notebook_3() {
 
     ([ -n "${ls1}" ] && echo "${ls1}") |yad --list --tabnum=1 \
     --window-icon=idiomind --plug=$KEY --print-all --separator='|' \
-    --image="$DS/images/bebel.png" --image-on-top \
+    --image="$DS/images/2.png" --image-on-top \
     --dclick-action="$DS/vwr.sh 1" \
     --expand-column=0 --no-headers --grid-lines=hor --ellipsize=end \
     --search-column=1 --regex-search \

@@ -383,7 +383,7 @@ function topic() {
         export cnf3=$(mktemp "$DT/cnf3.XXXXXX")
         export cnf4=$(mktemp "$DT/cnf4.XXXXXX")
 
-        labels_level=( "$(gettext "Fresh topic")" "$(gettext "Fresh topic")" "$(gettext "Fresh topic")" "$(gettext "Fresh topic")" "$(gettext "Familiar topic")" "$(gettext "Familiar topic")" "$(gettext "Familiar topic")" "$(gettext "Familiar topic")" "$(gettext "Familiar topic")" "$(gettext "Mastered topic")" )
+        labels_level=( "$(gettext "Fresh Topic")" "$(gettext "Fresh Topic")" "$(gettext "Fresh Topic")" "$(gettext "Fresh Topic")" "$(gettext "Familiar Topic")" "$(gettext "Familiar Topic")" "$(gettext "Familiar Topic")" "$(gettext "Familiar Topic")" "$(gettext "Familiar Topic")" "$(gettext "Mastered Topic")" )
 
         if [ ${stts} -eq 1 ]; then
 			labels_status=("$(gettext "Learning...")" "$(gettext "Reviewing for the first time ...")" "$(gettext "Reviewing for the second time ...")" "$(gettext "Reviewing for the third time ...")" "$(gettext "Reviewing for the fourth time ...")" "$(gettext "Reviewing for the fifth time ...")" "$(gettext "Reviewing for the sixth time ...")" "$(gettext "Reviewing for the seventh time ...")" "$(gettext "Reviewing, final review")" "$(gettext "Reviewing, final review")")
@@ -406,7 +406,7 @@ function topic() {
         fi
 
 		export label_level="${labels_level[${count_date_reviews}]}"
-		[ ${stts} -eq 2 ] && label_level="$(gettext "Mastered topic")"
+		[ ${stts} -eq 2 ] && label_level="$(gettext "Mastered Topic")"
 		label_review="${labels_status[${count_date_reviews}]}"
 		[ ${stts} -eq 2 ] && label_review=""
 		export label_review

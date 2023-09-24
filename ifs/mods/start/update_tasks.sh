@@ -28,12 +28,11 @@ f="$DT/tasks.tmp"; cleanups "$f" "$DT/tasks"
 
 
 if [ -f $DT/tasks_init ]; then
-	echo "$(gettext "Getting started with Idiomind")" > "$f"
+	echo "$(gettext "Learn how to use Idiomind")" > "$f"
 	if [ $(stat -c %Y $DT/tasks_init) -lt $(date -d '3 days ago' +%s) ]; then
 		cleanups $DT/tasks_init
 	fi
 fi
-
 
 #current topic
 if [ -n "${tpc}" ]; then
@@ -84,14 +83,12 @@ while read -r tpc_in_list; do
     echo -e "$l7$tpc_in_list" >> "$f"; fi
 done < <(cdb "${shrdb}" 5 T7 |tac)
 
-
 ## addons
 while read -r addon; do
     if [ -e "$DC_a/$addon${tlng}_tsk" ]; then
         tac "$DC_a/$addon${tlng}_tsk" >> "$f"
     fi
 done < "$DS_a/menu_list"
-
 
 [ -f "$f" ] && mv -f "$f" "$DT/tasks"
 
