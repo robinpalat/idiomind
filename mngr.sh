@@ -814,8 +814,9 @@ PY
     "$DS/mngr.sh" mkmn 1 &
     [[ ${3} = 1 ]] && idiomind topic &
     
-    for n in {1..10}; do sqlite3 ${shrdb} \
-    "delete from T${n} where list=\"${tpc}\";"; done
+    for n in {1..10}; do
+        sqlite3 ${shrdb} "delete from T${n} where list=\"${tpc}\";"
+    done
     idiomind tasks
 }
 
@@ -831,8 +832,8 @@ mark_as_learned_topic() {
 			dialog-information "$(gettext "Information")" & exit
 		fi
     fi
-    [ ! -s "${DC_tlt}/data" ] && exit 1
     
+    [ ! -s "${DC_tlt}/data" ] && exit 1
     stts=$(sed -n 1p "${DC_tlt}/stts")
     ! [[ ${stts} =~ ${numer} ]] && stts=1
 
@@ -844,20 +845,16 @@ mark_as_learned_topic() {
         ! [[ ${count_date_reviews} =~ ${numer} ]] && count_date_reviews=0
         [ ${count_date_reviews} = 8 ] && mast=TRUE || mast=FALSE
 
+
         if [ ${count_date_reviews} -gt 0 ]; then
            
             if [ ${count_date_reviews} -eq 3 ]; then # cambiar de fresh to familiar tpc
                 stts=$((stts+1))
             fi
 
-			if [ ${count_date_reviews} -eq 9 ]; then
+			if [ ${count_date_reviews} -gt 8 ]; then # cambiar de familiar to mastered tpc
 				tpc_db 9 reviews date9 ${date_current}
 				echo 2 > "${DC_tlt}/stts"
-				
-			elif [ ${count_date_reviews} -gt 9 ]; then
-				tpc_db 9 reviews date9 ${date_current}
-				echo 2 > "${DC_tlt}/stts"
-				
 			else
 				count_date_reviews=$((count_date_reviews+1))
 				tpc_db 9 reviews date${count_date_reviews} ${date_current}
@@ -917,8 +914,10 @@ PY
     [[ ${3} = 1 ]] && idiomind topic &
     ( sleep 1; "$DS/ifs/tls.sh" colorize 0 ) &
     
-    for n in {1..10}; do sqlite3 ${shrdb} \
-    "delete from T${n} where list=\"${tpc}\";"; done
+    for n in {1..10}; do 
+        sqlite3 ${shrdb} "delete from T${n} where list=\"${tpc}\";"
+    done
+    
     idiomind tasks
 }
 
@@ -926,6 +925,7 @@ mark_as_learned_topic_ok() {
     tpc="${2}"
     DM_tlt="$DM_tl/${tpc}"
     DC_tlt="$DM_tl/${tpc}/.conf"
+    
     [ ! -s "${DC_tlt}/data" ] && exit 1
     stts=$(sed -n 1p "${DC_tlt}/stts")
     ! [[ ${stts} =~ ${numer} ]] && stts=1
@@ -944,14 +944,9 @@ mark_as_learned_topic_ok() {
                 stts=$((stts+1))
             fi
 
-            if [ ${count_date_reviews} -eq 9 ]; then
+            if [ ${count_date_reviews} -gt 8 ]; then # cambiar de familiar to mastered tpc
                 tpc_db 9 reviews date9 ${date_current}
                 echo 2 > "${DC_tlt}/stts"
-                
-            elif [ ${count_date_reviews} -gt 9 ]; then
-                tpc_db 9 reviews date9 ${date_current}
-                echo 2 > "${DC_tlt}/stts"
-                
             else
 				count_date_reviews=$((count_date_reviews+1))
                 tpc_db 9 reviews date${count_date_reviews} ${date_current}
@@ -1002,8 +997,10 @@ PY
     cp -f "${DC_tlt}/note" "${DC_tlt}/note.bk"
     ( sleep 1; mv -f "${DC_tlt}/note.bk" "${DC_tlt}/note" ) &
     
-    for n in {1..10}; do sqlite3 ${shrdb} \
-    "delete from T${n} where list=\"${tpc}\";"; done
+    for n in {1..10}; do 
+        sqlite3 ${shrdb} "delete from T${n} where list=\"${tpc}\";"
+    done
+    
     idiomind tasks
 }
 
