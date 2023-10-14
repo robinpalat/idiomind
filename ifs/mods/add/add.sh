@@ -1,7 +1,7 @@
 #!/bin/bash -x
 # -*- ENCODING: UTF-8 -*-
 
-if [ -z "${tlng}" -o -z "${slng}" ]; then
+if [ -z "${tlng}" ] || [ -z "${slng}" ]; then
         msg "$(gettext "Please check the language settings in the preferences dialog.")
 $(gettext "If necessary, close the program from the panel icon and start it again.")\n" \
     dialog-warning "$(gettext "Language settings")"
@@ -412,7 +412,7 @@ function translate() {
 
 dwld1() {
     URL=""; source "$1/scripts/$(basename "${dict}")"
-    if [ -n "${URL}" -a ! -f "$audio_file" ]; then
+    if [ -n "${URL}" ] && [ ! -f "$audio_file" ]; then
         wget -T 51 -q -U "$useragent" -O "$audio_dwld.$EX" "${URL}"
         
         if [[ ${EX} != 'mp3' ]]; then
@@ -431,7 +431,7 @@ dwld1() {
 
 dwld2() {
     URL=""; source "$1/scripts/$(basename "${dict}")"
-    if [ -n "${URL}" -a ! -f "${audio_file}" ]; then
+    if [ -n "${URL}" ] && [ ! -f "${audio_file}" ]; then
         wget -T 51 -q -U "$useragent" -O "$DT_r/audio.mp3" "${URL}"
     fi
     if [ -f "$DT_r/audio.mp3" ]; then
@@ -542,7 +542,7 @@ function fetch_audio() {
 
 function img_word() {
     if ls "$DC_d"/*."Script.Search image".* 1> /dev/null 2>&1; then
-        if [ ! -e "${DM_tls}/images/${1,,}-1.jpg" -a ! -f "${DM_tlt}/images/${1,,}.jpg" ]; then
+        if [ ! -e "${DM_tls}/images/${1,,}-1.jpg" ] && [ ! -f "${DM_tlt}/images/${1,,}.jpg" ]; then
             touch "$DT/${1}.img"
             for Script in "$DC_d"/*."Script.Search image".*; do
                 Script="$DS_a/Resources/scripts/$(basename "${Script}")"
@@ -572,7 +572,7 @@ function img_word() {
                     fi
                 done
             fi
-            if [ -f "$DT/${1}.jpg" -o -f "$DT/${2}.jpg" ]; then
+            if [ -f "$DT/${1}.jpg" ] || [ -f "$DT/${2}.jpg" ]; then
                 [[ $(wc -w <<< ${1}) -gt 1 ]] && sf="${DM_tlt}/images/${1,,}.jpg" || sf="${DM_tls}/images/${1,,}-1.jpg"
                 [ -f "$DT/${1}.jpg" ] && img_file="${1}.jpg" || img_file="${2}.jpg"
                 local size="$(/usr/bin/identify -ping -format '%w %h' "$DT/${img_file}")"
@@ -738,7 +738,7 @@ function dlg_checklist_2() {
         done
     }
     pre_exmp="$trgt"
-    if [ $(wc -w <<< "${1}") -le 5 -a $(wc -w <<< "${1}") -gt 1 ]; then
+    if [ $(wc -w <<< "${1}") -le 5 ] && [ $(wc -w <<< "${1}") -gt 1 ]; then
     fl="--field="$(gettext "Show in word viewer")":CHK"; fi
     list "${1}" | yad --list --checklist --tabnum=1 --plug="$fkey" \
     --no-headers --text-align=left --text="$(gettext "Sentence's words")" \

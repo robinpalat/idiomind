@@ -26,7 +26,7 @@ fi
 
 source /usr/share/idiomind/default/c.conf
 
-if [ -z "${tlng}" -o -z "${slng}" -a ! -f "$DT/.langc" ]; then
+if [ -z "${tlng}" ] || [ -z "${slng}" ] && [ ! -f "$DT/.langc" ]; then
     source "$DS/ifs/cmns.sh"
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     msg "$(gettext "Please check the language settings in the preferences dialog.")
@@ -36,7 +36,7 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
     exit 1
 fi
 
-if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
+if [ -e "$DT/ps_lk" ] || [ -e "$DT/el_lk" ]; then
     source "$DS/ifs/cmns.sh"
     msg "$(gettext "Please wait until the current process is finished")...\n" dialog-information
     (sleep 50; cleanups "$DT/ps_lk" "$DT/el_lk") & exit 1
@@ -482,7 +482,7 @@ PY
             fi
             
             ntpc=$(cut -d '|' -f 3 < "${cnf4}")
-            if [ "${tpc}" != "${ntpc}" -a -n "$ntpc" ]; then
+            if [ "${tpc}" != "${ntpc}" ] && [ -n "$ntpc" ]; then
             if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/tpc")" ]]; then
             msg "$(gettext "Sorry, this topic is currently not active.")\n" \
             dialog-information "$(gettext "Information")"
@@ -651,7 +651,7 @@ PY
 bground_session() {
     source "$DS/ifs/cmns.sh"
     sleep 5
-    if [ ! -e "$DT/ps_lk" -a ! -d "$DT" ]; then
+    if [ ! -e "$DT/ps_lk" ] && [ ! -d "$DT" ]; then
          new_session
     fi
     if [[ $(cdb ${cfgdb} 1 opts itray) = TRUE ]] && \

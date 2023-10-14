@@ -144,7 +144,7 @@ function yad_kill() {
 #TODO
 function f_lock() {
     brk=0
-    if [ $1 = 0 -o $1 = 1 ]; then
+    if [ $1 = 0 ] || [ $1 = 1 ]; then
         while [ ${brk} -le 20 ]; do
             if [ ! -f "${2}" ]; then 
                 [ $1 = 1 ] && touch "${2}"

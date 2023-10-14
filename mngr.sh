@@ -111,7 +111,7 @@ delete_item() {
 }
 
 edit_item() {
-    [ -z ${2} -o -z ${3} ] && exit 1
+    [ -z ${2} ] || [ -z ${3} ] && exit 1
     list=${2}; item_pos=${3}; text_missing=${4}
     if [ ${list} = 1 ]; then
         index_1="$(tpc_db 5 learning)"
@@ -174,10 +174,10 @@ edit_item() {
         edit_dlg2="$(dlg_form_2)"
     fi
     ret=$?
-        if [ -z "${edit_dlg1}" -a -z "${edit_dlg2}" ]; then
+        if [ -z "${edit_dlg1}" ] && [ -z "${edit_dlg2}" ]; then
             item_pos=$((item_pos-1))
         fi
-        if [ ${ret} -eq 0 -o ${ret} -eq 2 ]; then
+        if [ ${ret} -eq 0 ] || [ ${ret} -eq 2 ]; then
         
             include "$DS/ifs/mods/add"
             dlaud=$(cdb ${cfgdb} 1 opts dlaud) 
@@ -355,14 +355,16 @@ edit_item() {
 
             if [ $ret -eq 2 ]; then $DS/mngr.sh edit ${list} $((item_pos+1)) &
             elif [ $ret -eq 0 ]; then 
-                [ ${tomodify} = 1 -a $ret -eq 0 ] && sleep 0.2
+                [ ${tomodify} = 1 ] && [ $ret -eq 0 ] && sleep 0.2
                 $DS/vwr.sh ${list} "${trgt}" ${item_pos} & 
             fi
         else
             "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} &
         fi
         exit 0
+        
 } >/dev/null 2>&1
+
 
 edit_list_cmds() {
     if grep -o -E 'ja|zh-cn|ru' <<< "${lgt}"; then c=c; else c=w; fi
@@ -378,7 +380,7 @@ edit_list_cmds() {
             return 1
         fi
     fi
-    if [ $1 -eq 0 -o $1 -eq 2 -o $1 -eq 4 ]; then
+    if [ $1 -eq 0 ] || [ $1 -eq 2 ] || [ $1 -eq 4 ]; then
         if [ $1 -eq 0 ]; then 
             cmd=cat && invrt_msg=FALSE
         elif [ $1 -eq 2 ]; then 
@@ -394,7 +396,7 @@ edit_list_cmds() {
         n=1; f_lock 1 "$DT/el_lk"
         
         learn="$(tpc_db 5 learning)"; leart="$(tpc_db 5 learnt)"
-        tpc_db 6 'learning'; tpc_db 6 'words'; tpc_db 6 'sentences'
+        tpc_db 6 'learning'; tpc_db 6 'learnt'; tpc_db 6 'words'; tpc_db 6 'sentences'
         
         $cmd "$DT/list_output" |sed '/^$/d;/(null)/d' |while read -r trgt; do
             if grep -F -m 1 "trgt{${trgt}}" "${direc}/data"; then
@@ -409,7 +411,10 @@ edit_list_cmds() {
                 elif [ ${type} = 2 ]; then
                     tpc_db 8 sentences list "$trgt"
                 fi
-                if ! grep -Fxo "${trgt}" <<< "${leart}"; then
+                if grep -Fxo "${trgt}" <<< "${leart}"; then
+                    tpc_db 8 learnt list "$trgt"
+                fi
+                if grep -Fxo "${trgt}" <<< "${learn}"; then
                     tpc_db 8 learning list "$trgt"
                 fi
             else
@@ -431,7 +436,7 @@ edit_list_cmds() {
 
         mv -f "$DT/new_data" "${direc}/data"
 
-        if [ -d "$DM_tl/${2}" -a $(wc -l < "${direc}/data") -ge 1 ]; then
+        if [ -d "$DM_tl/${2}" ] && [ $(wc -l < "${direc}/data") -ge 1 ]; then
             while read -r fname; do
                 cdid=$(basename "${fname}" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.')
                 if ! grep "${cdid}" "${direc}/data"; then
@@ -482,7 +487,7 @@ edit_list_cmds() {
                 cdid_mod="$(set_name_file ${type} "${trgt}" "${srce_mod}" \
                 "${exmp}" "${defn}" "${note}" "${wrds_mod}" "${grmr_mod}")"
                 
-                if [ ${type} = 2 -a ${dlaud} = TRUE ]; then cd "$DT_r"
+                if [ ${type} = 2 ] && [ ${dlaud} = TRUE ]; then cd "$DT_r"
                 tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$cdid_mod.mp3"; fi
                 
                 sed -i "${pos}s|srce{$srce}|srce{$srce_mod}|;
@@ -497,6 +502,7 @@ edit_list_cmds() {
     "$DT/items_to_add" "$DT_r" "$DT/act_restfile" "$DT/edit_list_more"
     idiomind tasks
     return 1
+    
 } >/dev/null 2>&1
 
 
@@ -548,7 +554,7 @@ edit_list_more() {
                 tpc_db 6 'marks'
                 touch "${DC_tlt}/data"
                 cleanups "$DT/edit_list_more"
-                [ -d "${DM_tlt}" -a -n "$tpc" ] && rm "$DM_tlt"/*.mp3
+                [ -d "${DM_tlt}" ] && [ -n "$tpc" ] && rm "$DM_tlt"/*.mp3
             fi
 
         elif grep "$(gettext "Show short sentences in word's view")" <<< "${more}"; then
@@ -578,13 +584,14 @@ edit_list_more() {
         cleanups "$DT/items_to_add"  \
         "$DT/act_restfile" "$DT/edit_list_more"
     fi
+    
 } >/dev/null 2>&1
 
 
 edit_list_dlg() {
     direc="$DM_tl/${2}/.conf"
     
-    if [ -e "$DT/items_to_add" -o -e "$DT/el_lk" ]; then
+    if [ -e "$DT/items_to_add" ] || [ -e "$DT/el_lk" ]; then
         if [ -e "$DT/items_to_add" ]; then
             msg_4 "$(gettext "Please wait until the current process is finished.")" \
             "face-worried" "$(gettext "OK")" "$(gettext "Stop")" \
