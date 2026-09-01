@@ -16,7 +16,7 @@ l8="$(gettext "Resume Practice:") "
 
 chngtpt(){
     mode="$(< "$DM_tl/${1}/.conf/stts")"
-    "$DS/ifs/tpc.sh" "${1}" ${mode} ${2}
+    "$DS/ifs/tpc.sh" "${1}" "${mode}"
 }
 
 modmenu() {

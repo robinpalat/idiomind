@@ -266,7 +266,7 @@ play_list() {
 			f=1; n=0; count=0
 			for selec_conf in "${psets[@]:0:5}"; do
 				hide_num=$(sed -n $((n+1))p <<< "${out1}" |cut -d "|" -f4)
-				count_select=$(wc -l |sed '/^$/d' <<< "${!in[${hide_num}]}")
+				count_select=$(sed '/^$/d' <<< "${!in[${hide_num}]}" | wc -l)
 				val=$(sed -n $((n+1))p <<< "${out1}" |cut -d "|" -f2)
 				if [ -n "$hide_num" ]; then
 					if [ -n "$val" ]; then 

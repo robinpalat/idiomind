@@ -39,6 +39,9 @@
 ./ifs/tls.sh
 ./ifs/tpc.sh
 ./ifs/upld.sh
+./images/0.png
+./images/1.png
+./images/2.png
 ./images/a0.png
 ./images/about.png
 ./images/bar.png

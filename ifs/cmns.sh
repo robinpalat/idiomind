@@ -286,7 +286,7 @@ function calculate_review() { #TODO check count rows
             tpc_db 6 reviews
             tpc_db 8 reviews date1 "$(date +%m/%d/%Y)"
             date_review=$(tpc_db 1 reviews date1)
-            count_date_reviews=0
+            count_date_reviews=1
         fi
 
         TM=$((($(date +%s)-$(date -d ${date_review} +%s))/(24*60*60)))

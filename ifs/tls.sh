@@ -762,7 +762,7 @@ function transl_batch() {
     fi
     touch "${DC_tlt}/translations/active"
     active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
-    lns=$(< "${DC_tlt}/data" |wc -l)
+    lns=$(wc -l < "${DC_tlt}/data")
     if [ -z "$active_trans" ]; then active_trans="$slng"; fi
 
 echo -e "yad --form --title=\"$(gettext "$tlng") / $active_trans\" \\
@@ -920,7 +920,7 @@ translate_to() {
             if [ -n "$l" ]; then lgt=${tlangs[$l]}; else lgt=${tlangs[$tlng]}; fi
             tl=${slangs[$autom_trans]}
             include "$DS/ifs/mods/add"
-            c1=$(< "${DC_tlt}/data" |wc -l)
+            c1=$(wc -l < "${DC_tlt}/data")
 
             pretrans() {
                 while read -r item_; do
@@ -964,19 +964,19 @@ translate_to() {
             
             pretrans 
 
-            c2=$(< "$DT/index.trad" | wc -l)
+            c2=$(wc -l < "$DT/index.trad")
             if [[ ${c1} != ${c2} ]]; then
                 > "$DT/words.trad_tmp"; > "$DT/index.trad_tmp"
                 del='||'; pretrans
-                c2=$(< "$DT/index.trad" | wc -l)
+                c2=$(wc -l < "$DT/index.trad")
                 if [[ ${c1} != ${c2} ]]; then
                     > "$DT/words.trad_tmp"; > "$DT/index.trad_tmp"
                     del=":"; pretrans
-                    c2=$(< "$DT/index.trad" | wc -l)
+                    c2=$(wc -l < "$DT/index.trad")
                     if [[ ${c1} != ${c2} ]]; then
                         > "$DT/words.trad_tmp"; > "$DT/index.trad_tmp"
                         del="_"; pretrans
-                        c2=$(< "$DT/index.trad" | wc -l)
+                        c2=$(wc -l < "$DT/index.trad")
                         if [[ ${c1} != ${c2} ]]; then
                         msg "$(gettext "There was a problem with the translation;\nSome items were not translated correctly.")\n" 'dialog-warning'
                         fi
@@ -1118,18 +1118,25 @@ itray() {
     python3 <<PY
 import gi
 gi.require_version('Gtk', '3.0')
-gi.require_version('AppIndicator3', '0.1')
-gi.require_version('AyatanaAppIndicator3', '0.1')
 gi.require_version('Notify', '0.7')
-import time, os, os.path, sys
+import time, os, os.path, sys, subprocess
+
+HAVE_APPINDICATOR = False
+AppIndicator = None
 try:
+    gi.require_version('AyatanaAppIndicator3', '0.1')
     from gi.repository import AyatanaAppIndicator3 as AppIndicator
-except ImportError:
+    HAVE_APPINDICATOR = True
+except (ImportError, ValueError):
     try:
+        gi.require_version('AppIndicator3', '0.1')
         from gi.repository import AppIndicator3 as AppIndicator
-    except ImportError:
-        from gi.repository import AppIndicator
+        HAVE_APPINDICATOR = True
+    except (ImportError, ValueError):
+        pass
+
 from gi.repository import Gtk, Gio, Notify
+
 HOME = os.getenv('HOME')
 add = os.environ['lbl1']
 play = os.environ['lbl2']
@@ -1143,18 +1150,26 @@ my_pid = os.getpid()
 f_pid = open(os.environ['dirt']+'tray.pid', 'w')
 f_pid.write(str(my_pid))
 f_pid.close()
+
 class IdiomindIndicator:
     def __init__(self):
-        self.indicator = AppIndicator.Indicator.new("idiomind", "idiomind", AppIndicator.IndicatorCategory.OTHER)
-        self.indicator.set_status(AppIndicator.IndicatorStatus.ACTIVE)
         self.DIRT = os.environ['dirt']
         self.tpc = os.getenv('HOME') + '/.config/idiomind/tpc'
         self.playlck = self.DIRT + 'playlck'
         self.tasks = self.DIRT + 'tasks'
         Notify.init("Idiomind")
-        self.indicator.set_title("Idiomind")
         self.menu_items = []
         self.stts = 1
+        self.use_appindicator = HAVE_APPINDICATOR
+        if self.use_appindicator:
+            self.indicator = AppIndicator.Indicator.new("idiomind", "idiomind", AppIndicator.IndicatorCategory.OTHER)
+            self.indicator.set_status(AppIndicator.IndicatorStatus.ACTIVE)
+            self.indicator.set_title("Idiomind")
+        else:
+            self.indicator = Gtk.StatusIcon()
+            self.indicator.set_from_icon_name("idiomind")
+            self.indicator.set_tooltip_text("Idiomind")
+            self.indicator.connect("popup-menu", self._on_popup_menu)
         self.change_topic()
         self._on_menu_update()
     def _on_menu_update(self):
@@ -1190,7 +1205,7 @@ class IdiomindIndicator:
         else:
             menu_items.append((play, self.on_play))
         return menu_items
-    def change_topic(self):
+    def _build_menu(self):
         menu_items = self.make_menu_items()
         popup_menu = Gtk.Menu()
         for Label, callback in menu_items:
@@ -1238,12 +1253,19 @@ class IdiomindIndicator:
         item.connect("activate", self.on_Quit_click)
         popup_menu.append(item)
         popup_menu.show_all()
-        self.indicator.set_menu(popup_menu)
         self.menu_items = menu_items
+        return popup_menu
+    def change_topic(self):
+        popup_menu = self._build_menu()
+        if self.use_appindicator:
+            self.indicator.set_menu(popup_menu)
+    def _on_popup_menu(self, widget, button, activate_time):
+        popup_menu = self._build_menu()
+        popup_menu.popup_at_widget(widget, Gtk.Gravity.NORTH_WEST, Gtk.Gravity.NORTH_WEST, None)
     def on_Task(self, widget):
         t = widget.get_child()
         t = t.get_label()
-        os.system("/usr/share/idiomind/ifs/tasks.sh \"%s\"" % (str(t)))
+        subprocess.Popen(["/usr/share/idiomind/ifs/tasks.sh", str(t)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     def on_Home(self, widget):
         os.system("idiomind topic &")
     def on_Add_click(self, widget):

@@ -353,9 +353,8 @@ function upld() {
                 a="$slng"
             fi
             if [ $(cd "$DC_tlt/translations"; ls *.tra |wc -l) -gt 1 ]; then
-                slng_="$(for t in "$(cd "$DC_tlt/translations"
-                ls *.tra |sed 's/\.tra//g' |grep -Pv "$a")"; do
-                [ -n "$t" ] && echo "$t"; done |sed ':a;N;$!ba;s/\n/, /g')"
+                slng_="$(for t in $(cd "$DC_tlt/translations"; ls *.tra | sed 's/\.tra//g' | grep -Pv "$a"); do
+                [ -n "$t" ] && echo "$t"; done | sed ':a;N;$!ba;s/\n/, /g')"
                 slng="${a}, ${slng_}"
             else
                 slng="${a}"

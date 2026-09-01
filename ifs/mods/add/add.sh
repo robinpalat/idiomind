@@ -66,7 +66,7 @@ function index() {
             fi
         }
         tas=('learning' 'learnt' 'words' 'sentences' 'marks')
-        for ta in ${tas[@]}; do
+        for ta in "${tas[@]}"; do
             tpc_db 7 "$ta" "${trgt_mod}" "${trgt}"
         done
 

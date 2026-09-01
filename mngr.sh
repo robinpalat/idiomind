@@ -55,7 +55,7 @@ delete_item_ok() {
         fi
         
         tas=('learning' 'learnt' 'words' 'sentences' 'marks')
-        for ta in ${tas[@]}; do
+        for ta in "${tas[@]}"; do
             tpc_db 4 $ta list "${trgt}"
         done
         cleanups "${DC_tlt}/lst"
@@ -93,7 +93,7 @@ delete_item() {
             fi
 
             tas=('learning' 'learnt' 'words' 'sentences' 'marks')
-            for ta in ${tas[@]}; do
+            for ta in "${tas[@]}"; do
                 tpc_db 4 $ta list "${trgt}"
             done
             

@@ -143,9 +143,9 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
         while read -r _rm; do
             if [ -n "${_rm}" ]; then
                 [[ "$(sed -n 1p "$DC_s/tpc")" = "${_rm}" ]] && > "$DC_s/tpc"
-                if [ -d "$DM_tl/${_rm}"/ ]; then
+                if [ -d "$DM_tl/${_rm}" ]; then
                     ( echo "# $(gettext "Removing") ${_rm}"; sleep 1
-                    rm -fr "$DM_tl/${_rm}"/
+                    rm -fr "$DM_tl/${_rm}"
                     "$DS/mngr.sh" mkmn 0 ) | \
                     progress 'progress'
                 fi
@@ -199,7 +199,7 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
     elif [ -n "${tpc}" ]; then
         mode="$(< "$DM_tl/${tpc}/.conf/stts")"
         numer='^[0-9]+$'
-        ! [[ ${mode} =~ $num ]] && echo 13 > \
+        ! [[ ${mode} =~ $numer ]] && echo 13 > \
         "$DM_tl/${tpc}/.conf/stts" && mode=13
         if ((mode>=0 && mode<=20)); then
             if [ $ret -eq 2 ]; then

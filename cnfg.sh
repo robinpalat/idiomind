@@ -111,7 +111,7 @@ config_dlg() {
         rm "${cfgdb}"; "$DS/ifs/mkdb.sh" config
     fi
 
-    for get in ${csets[@]}; do
+    for get in "${csets[@]}"; do
         val="$(cdb "${cfgdb}" 1 opts $get)"
         declare "$get"="$val"
     done

@@ -78,6 +78,9 @@ function score() {
         [ -f ./$active_practice.l ] && echo $(($(< ./$active_practice.l)+count_easy)) > ./$active_practice.l \
         || echo ${count_easy} > ./$active_practice.l; _log $active_practice
         s=$(< ./$active_practice.l)
+        if [ -z "$count_seccion_active_practice" ] || [ "$count_seccion_active_practice" -eq 0 ]; then
+            count_seccion_active_practice=1
+        fi
         v=$((100*s/count_seccion_active_practice))
         n=1; c=1
         while [ ${n} -le 21 ]; do
@@ -716,7 +719,7 @@ function practice_e() {
         fi
         text="<small><small>$(gettext "Listen and then try to write this sentence")</small></small>\n\n<span color='#818181' font_desc='Verdana Bold 13'>$hint</span>\n"
         
-        entry=$(>/dev/null |yad --form --title=" " \
+        entry=$(yad --form --title=" " \
         --text="${text}" \
         --name=Idiomind --class=Idiomind \
         --separator="" --focus-field=1 \

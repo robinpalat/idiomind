@@ -350,7 +350,7 @@ function topic() {
         [ -z "${tpc}" ] && return 1
         source "$DS/ifs/mods/main/items_list.sh"
         n=1; tas=('learning' 'learnt' 'words' 'sentences')
-        for ta in ${tas[@]}; do
+        for ta in "${tas[@]}"; do
             export ls${n}="$(tpc_db 5 "$ta")"; cnt="ls${n}"
             let n++
         done
