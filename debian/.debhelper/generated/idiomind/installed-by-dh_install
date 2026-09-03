@@ -86,4 +86,5 @@
 ./bcle.sh
 ./stop.sh
 ./vwr.sh
+./htmlview/idiomind-htmlview
 ./idiomind

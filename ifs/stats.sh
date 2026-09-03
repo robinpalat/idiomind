@@ -353,32 +353,13 @@ function stats() {
         source "$DS/ifs/cmns.sh"
         sleep 1 && msg "$(gettext "Insufficient data")\n" dialog-information "Idiomind" &
     fi
-    titlew="$(gettext "Statistics")"
-	uri_stats="$DS/default/pg1.html?lang=$intrf"
-	export uri_stats titlew
-	
-python3 <<PY
-import gi
-gi.require_version('Gtk', '3.0')
-gi.require_version('WebKit2', '4.0')
-from gi.repository import WebKit2, Gtk
-import os
-uri = os.environ['uri_stats']
-titlew = os.environ['titlew']
-class MainWin(Gtk.Window):
-    def __init__(self):
-        Gtk.Window.__init__(self, title = titlew, 
-        skip_pager_hint=True, skip_taskbar_hint=True)
-        self.set_icon_from_file("/usr/share/idiomind/images/logo.png")
-        self.set_size_request(650, 450)
-        self.view = WebKit2.WebView()
-        self.view.load_uri("file://" + uri)
-        box = Gtk.Box()
-        self.add(box)
-        box.pack_start(self.view, True, True, 0)
-        self.show_all()
-if __name__ == '__main__':
-    mainwin = MainWin()
-    Gtk.main()
-PY
+    
+titlew="$(gettext "Statistics")"
+uri_stats="$DS/default/pg1.html"
+export uri_stats titlew
+
+/usr/lib/idiomind/idiomind-htmlview \
+    "$DS/default/pg1.html" \
+    "lang=$intrf"
+
 } >/dev/null 2>&1

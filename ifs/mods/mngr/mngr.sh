@@ -70,7 +70,7 @@ function edit_list_list() {
     --column="" \
     --button="$(gettext "Restart")":"$DS/mngr.sh restartTopic" \
     --button="$(gettext "Backups")":"$DS/mngr.sh edit_list_more" \
-    --button="$(gettext "Translate")":2 \
+    --button="$(gettext "Google Translate")":2 \
     --button="$(gettext "Save")!gtk-save":0 \
     --button="$(gettext "Close")":1
 }

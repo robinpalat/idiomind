@@ -145,7 +145,7 @@ for tpc in topics:
                         len_learnt = len_learnt+1
             index.close()
             if (stts == '1' or stts == '2' or stts == '5' or stts == '6'):
-                if len(learn) == len_learnt and len(items) > 15:
+                if len(learn) == len_learnt and len(items) > 0:
                     subprocess.Popen(['/usr/share/idiomind/mngr.sh %s %s' % ('mark_as_learned_ok', '"'+tpc+'"')], shell=True)
                     print 'mark_as_learnt -> ' + tpc
     except:

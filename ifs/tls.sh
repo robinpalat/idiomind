@@ -536,30 +536,7 @@ _definition() {
     eval _url="$(< "$DS_a/Resources/scripts/$(basename "$f")")"
 	export _url
 
-python3 <<PY
-import gi, os
-gi.require_version("Gtk", "3.0")
-gi.require_version('WebKit2', '4.0')
-from gi.repository import Gtk, WebKit2 as WebKit
-_url = os.environ['_url']
-class Window():
-	def __init__(self, *args, **kwargs):
-		self._window = Gtk.Window(title = "Idiomind", 
-		skip_pager_hint=True, skip_taskbar_hint=True)
-		self._window.set_icon_from_file("/usr/share/idiomind/images/logo.png")
-		self._window.connect('destroy', Gtk.main_quit)
-		self._window.set_default_size(750, 470)
-		self._view = Gtk.ScrolledWindow()
-		self._webview = WebKit.WebView()
-		self._webview.load_uri(_url)
-		self._view.add(self._webview)
-		self.vbox_container = Gtk.VBox()
-		self.vbox_container.pack_start(self._view, True, True, 0)
-		self._window.add(self.vbox_container)
-		self._window.show_all()
-		Gtk.main()
-main = Window()
-PY
+/usr/lib/idiomind/idiomind-htmlview "$_url"
     
 } >/dev/null 2>&1
 
@@ -569,30 +546,7 @@ _translation() {
 	url="https://translate.google.com/?sl=$lgt&tl=$lgs&text=${2}&op=translate"
 	export url
 
-python3 <<PY
-import gi, os
-gi.require_version("Gtk", "3.0")
-gi.require_version('WebKit2', '4.0')
-from gi.repository import Gtk, WebKit2 as WebKit
-url = os.environ['url']
-class Window():
-	def __init__(self, *args, **kwargs):
-		self._window = Gtk.Window(title = "Idiomind", 
-		skip_pager_hint=True, skip_taskbar_hint=True)
-		self._window.set_icon_from_file("/usr/share/idiomind/images/logo.png")
-		self._window.connect('destroy', Gtk.main_quit)
-		self._window.set_default_size(750, 470)
-		self._view = Gtk.ScrolledWindow()
-		self._webview = WebKit.WebView()
-		self._webview.load_uri(url)
-		self._view.add(self._webview)
-		self.vbox_container = Gtk.VBox()
-		self.vbox_container.pack_start(self._view, True, True, 0)
-		self._window.add(self.vbox_container)
-		self._window.show_all()
-		Gtk.main()
-main = Window()
-PY
+/usr/lib/idiomind/idiomind-htmlview "$url"
 
 } >/dev/null 2>&1
 
@@ -663,10 +617,10 @@ promp_topic_info() {
         active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
     fi
     if [ -n "$active_trans" ] &&  [ "$active_trans" != "$slng" ]; then
-        slng_err_lbl="\n$(gettext "Native languages do not match.\nYou may have to translate this topic to your own language: click \"Manage\" tab on the main window, -> \"Edit\" -> \"Translate\"")."
+        slng_err_lbl="\n$(gettext "Native languages do not match.\nYou may have to translate this topic to your own language: click \"Manage\" tab on the main window, -> \"Edit\" -> \"Google Translate\"")."
         echo -e "$slng_err_lbl" >> "${DC_tlt}/slng.inf"
     elif [ -z "$active_trans" ] && [ "$(tpc_db 1 id slng)" != "$slng" ]; then
-        slng_err_lbl="\n$(gettext "Native languages do not match.\nYou may have to translate this topic to your own language: click \"Manage\" tab on the main window, -> \"Edit\" -> \"Translate\"")."
+        slng_err_lbl="\n$(gettext "Native languages do not match.\nYou may have to translate this topic to your own language: click \"Manage\" tab on the main window, -> \"Edit\" -> \"Google Translate\"")."
         echo -e "$slng_err_lbl" >> "${DC_tlt}/slng.inf"
     fi
     check_err "${DC_tlt}/slng.inf" "${DC_tlt}/note.inf"

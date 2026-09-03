@@ -761,13 +761,11 @@ rename_topic() {
 mark_to_learn_topic() {
 	
     [ ! -s "${DC_tlt}/data" ] && exit 1
-    if [ "${tpc}" != "${2}" ]; then
-        msg "$(gettext "Sorry, this topic is currently not active.")\n " \
-        dialog-information "$(gettext "Information")" & exit
-    fi
-    if [ $((cfg3+cfg4)) -lt 10 ]; then
-        msg "$(gettext "Insufficient number of items to perform this action").\t\n " \
-        dialog-information "$(gettext "Information")" & exit
+    if [[ "${3}" != 0 ]]; then
+        if [ "${tpc}" != "${2}" ]; then
+            msg "$(gettext "Sorry, this topic is currently not active.")\n " \
+            dialog-information "$(gettext "Information")" & exit
+        fi
     fi
     
     export lns=$(cat "${DC_tlt}/data" |wc -l)
@@ -819,7 +817,6 @@ PY
     ( sleep 1; mv -f "${DC_tlt}/note.bk" "${DC_tlt}/note" ) &
     "$DS/ifs/tls.sh" colorize 1
     "$DS/mngr.sh" mkmn 1 &
-    [[ ${3} = 1 ]] && idiomind topic &
     
     for n in {1..10}; do
         sqlite3 ${shrdb} "delete from T${n} where list=\"${tpc}\";"
@@ -832,10 +829,6 @@ mark_as_learned_topic() {
     if [[ "${3}" != 0 ]]; then
         if [ "${tpc}" != "${2}" ]; then
 			msg "$(gettext "Sorry, this topic is currently not active.")\n " \
-			dialog-information "$(gettext "Information")" & exit
-		fi
-        if [ $((cfg3+cfg4)) -lt 10 ]; then
-			msg "$(gettext "Insufficient number of items to perform this action").\t\n " \
 			dialog-information "$(gettext "Information")" & exit
 		fi
     fi
@@ -918,7 +911,6 @@ PY
     cp -f "${DC_tlt}/note" "${DC_tlt}/note.bk"
     "$DS/mngr.sh" mkmn 1 &
     ( sleep 1; mv -f "${DC_tlt}/note.bk" "${DC_tlt}/note" ) &
-    [[ ${3} = 1 ]] && idiomind topic &
     ( sleep 1; "$DS/ifs/tls.sh" colorize 0 ) &
     
     for n in {1..10}; do 

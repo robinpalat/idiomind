@@ -489,11 +489,23 @@ PY
             else "$DS/mngr.sh" rename_topic "${ntpc}"; fi; fi
         }
         
-       
-    if [ -f "${DC_tlt}/tpc-journal" ]; then 
-		exit 1
-	else readd; fi
     
+    # Re-render the topic in this same process whenever a review action
+    # (mark_as_learned / mark_to_learn) persists a new status. This keeps the
+    # in-memory model, the persisted status and the UI synchronized immediately,
+    # without having to close and reopen the application.
+    stts_orig=${stts}
+    while :; do
+        # Re-read the persisted status on every pass so the re-render uses the
+        # state that a review action just wrote, keeping memory and disk aligned.
+        if [ -f "${DC_tlt}/stts" ]; then
+            stts=$(sed -n 1p "${DC_tlt}/stts")
+            ! [[ ${stts} =~ $numer ]] && stts=${stts_orig}
+        fi
+        if [ -f "${DC_tlt}/tpc-journal" ]; then 
+    		exit 1
+    	else readd; fi
+        
     if ((stts==2)); then # If mastered learning topic
     
     notebook_3; ret=$?
@@ -554,11 +566,24 @@ PY
                 
                 if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
 
-        elif [ ${cfg1} -eq 0 ] && [ ${cfg0} -ge 10 ]; then # if not content to learn
+        elif [ ${cfg1} -eq 0 ] && [ ${cfg0} -ge 1 ]; then # if not content to learn
         
         
             if [ ${stts} = 1 ] || [ ${stts} = 2 ] || [ ${stts} = 5 ] || [ ${stts} = 6 ]; then
+                stts_prev=${stts}
                 "$DS/mngr.sh" mark_as_learned "${tpc}" 0
+                # mark_as_learned just persisted a new status (e.g. 1 -> 3).
+                # Re-sync the in-memory status and go around the loop so readd()
+                # recomputes cfg/labels with the fresh status before we draw, so
+                # this very render shows "Waiting to review for the first time"
+                # instead of the stale "Learning...".
+                stts_new=$(sed -n 1p "${DC_tlt}/stts")
+                ! [[ ${stts_new} =~ $numer ]] && stts_new=${stts_prev}
+                if [ "${stts_new}" != "${stts_prev}" ]; then
+                    stts=${stts_new}; stts_orig=${stts_new}
+                    continue
+                fi
+                stts=${stts_new}
 			fi
 			
             calculate_review "${tpc}"
@@ -644,6 +669,18 @@ PY
             "$DS/mngr.sh" mkmn 1
         fi
     fi
+    
+        # If a review action changed the persisted status while this dialog was
+        # open, re-render immediately with the fresh state instead of waiting for
+        # an application restart.
+        new_stts=$(sed -n 1p "${DC_tlt}/stts")
+        if ! [[ ${new_stts} =~ $numer ]]; then new_stts=${stts}; fi
+        if [ "${new_stts}" != "${stts_orig}" ]; then
+            stts_orig=${new_stts}
+            continue
+        fi
+        break
+    done
     
     oclean & return 0
 }

@@ -1,5 +1,12 @@
 idiomind (0.3.2-1) jammy; urgency=medium
 
+  * Replace YAD HTML statistics viewer with WebKitGTK helper
+  * Minor improvements and bug fixes
+
+ -- Robin Palatnik <robinpalat@gmail.com>  Wed, 02 Sep 2026 17:00:00 -0400
+
+idiomind (0.3.1-1) jammy; urgency=medium
+
   * Various fixes
 
  -- Robin Palatnik <robinpalat@gmail.com>  Thu, 01 Jun 2023 18:11:56 -0400
