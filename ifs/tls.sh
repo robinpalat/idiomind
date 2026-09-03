@@ -557,13 +557,15 @@ _help() {
 
 check_updates() {
     source "$DS/ifs/cmns.sh"; internet
+    source "$DS/default/sets.cfg"
     link='https://idiomind.sourceforge.io/doc/checkversion'
-    nver=$(wget --user-agent "$useragent" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g')
+    nver=$(curl -s "$link" | tr -d '[:space:]')
     pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
     d2=$(date +%Y%m%d); cdb ${cfgdb} 3 updt date ${d2}
     if [ ${#nver} -lt 9 ] && [ ${#_version} -lt 9 ] \
     && [ ${#nver} -ge 3 ] && [ ${#_version} -ge 3 ] \
-    && [[ ${nver} != ${_version} ]]; then
+    && [[ ${nver} != ${_version} ]] \
+    && printf '%s\n' "$_version" "$nver" | sort -V -C; then
         msg_2 " <b>$(gettext "A new version of Idiomind available\!")</b>\t\n" \
         dialog-information "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "Information")"
         ret=$?
@@ -579,12 +581,12 @@ a_check_updates() {
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
     link='https://idiomind.sourceforge.io/doc/checkversion'
-    nver=$(wget --user-agent "$useragent" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g')
+    nver=$(curl -s "$link" | tr -d '[:space:]')
     pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
     d1=$(cdb ${cfgdb} 1 updt date)
     d2=$(date +%Y%m%d)
-    ig=$(cdb ${cfgdb} 1 updt ignr) 
-    if [[ $((d1-d2)) -gt 30 ]]; then
+    ig=$(cdb ${cfgdb} 1 updt ignr)
+    if [[ $((d2-d1)) -gt 30 ]]; then
         cdb ${cfgdb} 3 updt ignr FALSE & return
     fi
     if [[ $ig = TRUE ]]; then return; fi
@@ -594,7 +596,8 @@ a_check_updates() {
         cdb ${cfgdb} 3 updt date ${d2}
         if [ ${#nver} -lt 9 ] && [ ${#_version} -lt 9 ] \
         && [ ${#nver} -ge 3 ] && [ ${#_version} -ge 3 ] \
-        && [[ ${nver} != ${_version} ]]; then
+        && [[ ${nver} != ${_version} ]] \
+        && printf '%s\n' "$_version" "$nver" | sort -V -C; then
 			sleep 50
             msg_2 " <b>$(gettext "A new version of Idiomind available\!")\t\n</b> $(gettext "Do you want to download it now?")\n" \
             dialog-information "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "New Version")" "$(gettext "Ignore")"
