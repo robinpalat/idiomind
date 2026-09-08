@@ -160,9 +160,9 @@ config_dlg() {
     --tab="$(gettext "Addons")" \
     --width=${sz[0]} --height=${sz[1]} \
     --borders=9 --tab-borders=0 \
-    --button="$(gettext "     About     ")"!gtk-about:"$DS/ifs/tls.sh 'about'" \
-    --button="$(gettext "Save")"!gtk-save:0 \
-    --button="$(gettext "Close")"!gtk-close:1
+    --button="$(gettext "     About     ")"!help-about:"$DS/ifs/tls.sh 'about'" \
+    --button="$(gettext "Save")"!document-save:0 \
+    --button="$(gettext "Close")"!window-close:1
     ret=$?
     
     if [ $ret -eq 0 ]; then

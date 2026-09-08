@@ -10,7 +10,7 @@ Vcs-Git: https://github.com/robinpalat/idiomind.git
 
 Package: idiomind
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, yad (>=0.39), sox, mplayer, imagemagick, curl, xdg-utils, xclip, python3, python3-gi, gir1.2-gtk-3.0, gir1.2-glib-2.0, gir1.2-notify-0.7, espeak, sqlite3, xsltproc, libsox-fmt-mp3, tesseract-ocr, libnotify-bin
+Depends: ${shlibs:Depends}, ${misc:Depends}, yad (>=0.39), sox, mplayer, imagemagick, curl, xdg-utils, xclip, python3, python3-gi, gir1.2-gtk-3.0, gir1.2-glib-2.0, gir1.2-notify-0.7, espeak, sqlite3, xsltproc, libsox-fmt-mp3, tesseract-ocr, libnotify-bin, weasyprint
 Suggests: festival, gir1.2-ayatanaappindicator3-0.1, gir1.2-appindicator3-0.1
 Description: Language learning tool
  Idiomind is a small program aimed to help you learn another language.

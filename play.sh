@@ -5,13 +5,17 @@ source "$DS/default/sets.cfg"
 
 msg_err1() {
     local info="$(gettext "Please check about voice synthesizer configuration in the settings dialog.")"
-    msg "$info" error Info
+    msg "$info" dialog-error Info
 }
 
 play_word() {
 
 	w="$(sed 's/<[^>]*>//g' <<<"${2}")"
-	item="$(grep -F -m 1 "trgt{${w}}" "$DC_tlt/data" |sed 's/}/}\n/g')"
+	# When previewing a portable .idmnd package before it is installed,
+	# resolve the note's cdid from the package data instead of the
+	# (not yet existing) installed topic data file.
+	data_src="${IDMND_PREVIEW_DATA:-$DC_tlt/data}"
+	item="$(grep -F -m 1 "trgt{${w}}" "$data_src" |sed 's/}/}\n/g')"
     type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
     cdid="$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")"
    

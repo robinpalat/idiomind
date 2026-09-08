@@ -10,7 +10,7 @@ function check_format_1() {
     file="${1}"
     invalid() {
         echo "Error! Value: ${val}"
-        msg "$(gettext "File is corrupted")\n[${1}]\n" error & exit 1
+        msg "$(gettext "File is corrupted")\n[${1}]\n" dialog-error & exit 1
     }
     if [ ! -f "${file}" ]; then invalid
     elif ! python3 -m json.tool < "${file}" >> /dev/null; then
@@ -182,7 +182,7 @@ check_index() {
                 |grep -Pv '\----- newest' \
                 |grep -Pv '\----- oldest' |head -n200 > "${DC_tlt}/data"
             else
-                msg "$(gettext "No such file or directory")\n${topic}\n" error & exit 1
+                msg "$(gettext "No such file or directory")\n${topic}\n" dialog-error & exit 1
             fi
         fi
         sed -i "/trgt{}srce{}/d" "${DC_tlt}/data"
@@ -411,7 +411,7 @@ videourl() {
         || [ ${url:0:28} = 'http://www.youtube.com/watch' ]); then \
         echo "$url" > "${DM_tlt}/files/video$n.url"
     else 
-        msg "$(gettext "You have entered an invalid URL").\n" error \
+        msg "$(gettext "You have entered an invalid URL").\n" dialog-error \
         "$(gettext "You have entered an invalid URL")"
     fi
 }
@@ -512,7 +512,7 @@ echo "</body></html>" >> "${DC_tlt}/att.html"
         --width=${sz[0]} --height=${sz[1]} --borders=10 \
         --button="$(gettext "Folder")":"xdg-open \"${DM_tlt}\"/files" \
         --button="$(gettext "Add")":0 \
-        --button="gtk-close":1
+        --button="window-close":1
         ret=$?
         if [ $ret = 0 ]; then "$DS/ifs/tls.sh" addFiles
         elif [ $ret = 2 ]; then "$DS/ifs/tls.sh" videourl; fi
@@ -670,7 +670,7 @@ set_image() {
         if [ $? -eq 1 ]; then rm -f "$DT/$trgt".img; else return 1 ; fi
     fi
     if [ -e "$ifile" ]; then
-        btn2="--button=!gtk-delete!$(gettext "Remove image"):2"
+        btn2="--button=!edit-delete!$(gettext "Remove image"):2"
         image="--image=$ifile"
     else
         btn2="--button=!add!"$(gettext "Add an image by screen clipping")":0"
@@ -1143,16 +1143,18 @@ class IdiomindIndicator:
             self.stts = 1
         self.change_topic()
     def create_menu_label(self, label):
-        item = Gtk.ImageMenuItem()
-        item.set_label(label)
+        item = Gtk.MenuItem(label=label)
         return item
     def create_menu_icon(self, label, icon_name):
         image = Gtk.Image()
         image.set_from_icon_name(icon_name, 24)
-        item = Gtk.ImageMenuItem()
-        item.set_label(label)
-        item.set_image(image)
-        item.set_always_show_image(True)
+        item = Gtk.MenuItem()
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        box.pack_start(image, False, False, 0)
+        label_widget = Gtk.Label(label=label)
+        box.pack_start(label_widget, False, False, 0)
+        item.add(box)
+        item.show_all()
         return item
     def make_menu_items(self):
         menu_items = []
@@ -1169,7 +1171,7 @@ class IdiomindIndicator:
             if not Label and not callback:
                 item = Gtk.SeparatorMenuItem()
             else:
-                item = Gtk.ImageMenuItem(label=Label)
+                item = Gtk.MenuItem(label=Label)
                 item.connect('activate', callback)
             popup_menu.append(item)
         try:

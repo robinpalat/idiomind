@@ -13,13 +13,62 @@ DC_e="$DC_a/resources/enables"
 msgs="$DC_a/resources/msgs"
 check_dir "$msgs"
 
+function check_audio() {
+    # $1 = resource filename, $2 = path to candidate audio file
+    local fname="$1" af="$2"
+    if [ -s "$af" ]; then
+        if file -b --mime-type "$af" |grep -E 'audio|mpeg|mp3|ogg|wav' >/dev/null 2>&1 \
+        && [[ $(du -b "$af" |cut -f1) -gt 200 ]]; then
+            return 0   # valid audio, leave message removed
+        fi
+    fi
+    # no valid audio produced
+    if [ -f "$FILECONF" ] && [ -n "$(< "$FILECONF")" ]; then
+        echo "<span color='#C15F27'>$(gettext "No key configuration")</span>" > "$msgs/$fname"
+    else
+        echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$fname"
+    fi
+    return 1
+}
+
+function check_image() {
+    # $1 = resource filename, $2 = path to candidate image file
+    local fname="$1" img="$2"
+    if [ -s "$img" ]; then
+        if file -b --mime-type "$img" |grep -E 'image|jpeg|png|gif' >/dev/null 2>&1; then
+            return 0   # valid image
+        fi
+    fi
+    echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$fname"
+    return 1
+}
+
+function check_lang() {
+    # $1 = resource filename
+    # Sets the resource state according to the declared TLANGS against the
+    # language being learned ($lgt). When the resource declares languages and
+    # the learned language is not among them, writes the failure status into
+    # msgs/ (this is what the info dialog shows as "Status") and returns 1.
+    if [ -n "${TLANGS##+([[:space:]])}" ]; then
+        if ! echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
+            echo "<span color='#C15F27'>$(gettext "Not available for the language you are learning.")</span>" > "$msgs/$1"
+            return 1
+        fi
+    fi
+    return 0
+}
+
 function test_() {
     f_lock 1 "$DT/scripts_lk"
     internet
     
+    # the "c" variable is overwritten while sourcing the resource scripts,
+    # so capture the test options in a dedicated variable here (before any source)
+    testopts="$c"
+    
     echo "1"
     
-    if [ "$(cut -d "|" -f1 <<< "$c")" = 'TRUE' ]; then
+    if [ "$(cut -d "|" -f1 <<< "$testopts")" = 'TRUE' ]; then
         # ---------------------------------------------------
         # TRANSLATORS"
         echo "5"
@@ -55,7 +104,7 @@ function test_() {
         done
     fi
 
-    if [ "$(cut -d "|" -f2 <<< "$c")" = 'TRUE' ]; then
+    if [ "$(cut -d "|" -f2 <<< "$testopts")" = 'TRUE' ]; then
         # ---------------------------------------------------
         # AUDIO - Sentences"
         echo "10"
@@ -65,7 +114,9 @@ function test_() {
             for res in "$DC_d"/*."TTS online.Convert text to audio".*; do
                 audio_file="$DT/res_test/${n}_audio"
                 filename="$(basename "${res}")"; cleanups "$msgs/$filename"
-                unset TESTURL EXECUT TESTSTRING EX; source "$DS_a/Resources/scripts/$filename"
+                unset TESTURL EXECUT TESTSTRING EX FILECONF; source "$DS_a/Resources/scripts/$filename"
+                if ! check_lang "$filename"; then continue; fi
+                rm -f "$audio_file"*
                 
                 if [ -n "${EXECUT##+([[:space:]])}" ]; then # if exe
 					if [[ ! $(which $EXECUT) ]]; then
@@ -83,26 +134,9 @@ function test_() {
 					mv -f "$audio_file.$EX" "$audio_file.mp3"
 				fi
 					
-				if [ -f "$audio_file.mp3" ]; then
-					if file -b --mime-type "$audio_file.mp3" |grep 'audio|mpeg|mp3|' >/dev/null 2>&1 \
-					&& [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
-						:
-					else 
-						if [ -f "$FILECONF" ] && [ -n "$(< "$FILECONF")" ]; then
-							echo "<span color='#C15F27'>$(gettext "No key configuration")</span>" > "$msgs/$filename"
-						else
-							echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
-						fi
-					fi
-				else
-					if [ -f "$FILECONF" ] && [ -n "$(< "$FILECONF")" ]; then
-						echo "<span color='#C15F27'>$(gettext "No key configuration")</span>" > "$msgs/$filename"
-					else
-						echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
-					fi
-				fi
+				check_audio "$filename" "$audio_file.mp3"
 
-                cleanups "$audio_file.mp3"
+                cleanups "$audio_file"*
                 let n++
                 echo 10+n
             done
@@ -115,7 +149,12 @@ function test_() {
              for res in "$DC_e"/*."TTS online.Convert text to audio".*; do
                 audio_file="$DT/res_test/${n}_audio"
                 filename="$(basename "${res}")"; cleanups "$msgs/$filename"
-                unset TESTURL EXECUT TESTSTRING EX; source "$DS_a/Resources/scripts/$filename"
+                unset TESTURL EXECUT TESTSTRING EX FILECONF; source "$DS_a/Resources/scripts/$filename"
+                if ! check_lang "$filename"; then
+                    mv -f "$DC_e/$filename" "$DC_d/$filename" 2>/dev/null
+                    continue
+                fi
+                rm -f "$audio_file"*
                 
                 if [ -n "${EXECUT##+([[:space:]])}" ]; then # if exe
 					if [[ ! $(which $EXECUT) ]]; then
@@ -133,26 +172,11 @@ function test_() {
 					mv -f "$audio_file.$EX" "$audio_file.mp3"
 				fi
 					
-				if [ -f "$audio_file.mp3" ]; then
-					if file -b --mime-type "$audio_file.mp3" |grep 'audio|mpeg|mp3|' >/dev/null 2>&1 \
-					&& [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
-						:
-					else 
-						if [ -f "$FILECONF" ] && [ -n "$(< "$FILECONF")" ]; then
-							echo "<span color='#C15F27'>$(gettext "No key configuration")</span>" > "$msgs/$filename"
-						else
-							echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
-						fi
-					fi
-				else
-					if [ -f "$FILECONF" ] && [ -n "$(< "$FILECONF")" ]; then
-						echo "<span color='#C15F27'>$(gettext "No key configuration")</span>" > "$msgs/$filename"
-					else
-						echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
-					fi
+				check_audio "$filename" "$audio_file.mp3"
+				if [ -f "$msgs/$filename" ]; then
+					mv -f "$DC_e/$filename" "$DC_d/$filename" 2>/dev/null
 				fi
-
-                cleanups "$audio_file.mp3"
+                cleanups "$audio_file"*
                 let n++
                 echo 10+n
 			done
@@ -167,7 +191,8 @@ function test_() {
             for res in "$DC_d"/*."TTS offline.Convert text to audio".*; do
                 audio_file="$DT/res_test/${n}_audio"
                 filename="$(basename "${res}")"; cleanups "$msgs/$filename"
-                unset EXECUT; source "$DS_a/Resources/scripts/$filename"
+                unset EXECUT TLANGS; source "$DS_a/Resources/scripts/$filename"
+                if ! check_lang "$filename"; then continue; fi
 
                 if [ -n "${EXECUT##+([[:space:]])}" ] && [[ ! $(which $EXECUT) ]]; then
 					echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
@@ -194,7 +219,11 @@ function test_() {
             for res in "$DC_e"/*."TTS offline.Convert text to audio".*; do
                 audio_file="$DT/res_test/${n}_audio"
                 filename="$(basename "${res}")"; cleanups "$msgs/$filename"
-                unset EXECUT; source "$DS_a/Resources/scripts/$filename"
+                unset EXECUT TLANGS; source "$DS_a/Resources/scripts/$filename"
+                if ! check_lang "$filename"; then
+                    mv -f "$DC_e/$filename" "$DC_d/$filename" 2>/dev/null
+                    continue
+                fi
                 
                 if [ -n "${EXECUT##+([[:space:]])}" ] && [[ ! $(which $EXECUT) ]]; then
 					echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
@@ -217,7 +246,7 @@ function test_() {
         fi
     fi
 
-    if [ "$(cut -d "|" -f3 <<< "$c")" = 'TRUE' ]; then
+    if [ "$(cut -d "|" -f3 <<< "$testopts")" = 'TRUE' ]; then
         # ---------------------------------------------------
         # AUDIO - Words"
         echo "50"
@@ -227,7 +256,9 @@ function test_() {
             for res in $DC_d/*."TTS online.Download audio".*; do
                 filename="$(basename "${res}")"; cleanups "$msgs/$filename"
                 audio_file="$DT/res_test/${n}_audio"
-                unset TESTURL EXECUT; source "$DS_a/Resources/scripts/$filename"
+                unset TESTURL EXECUT FILECONF; source "$DS_a/Resources/scripts/$filename"
+                if ! check_lang "$filename"; then continue; fi
+                rm -f "$audio_file"*
                 
                 if [ -n "${EXECUT##+([[:space:]])}" ] && [[ ! $(which $EXECUT) ]]; then
 					echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
@@ -238,16 +269,8 @@ function test_() {
 							mv -f "$audio_file.$EX" "$audio_file.mp3"
 						fi
 					fi
-					if [ -f "$audio_file.mp3" ]; then
-						if file -b --mime-type "$audio_file.mp3" |grep 'audio|mpeg|mp3|' >/dev/null 2>&1 \
-						&& [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
-							:
-						else
-							filename="$(basename "${res}")"
-							echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
-						fi
-					fi
-					cleanups "$audio_file.mp3"
+					check_audio "$filename" "$audio_file.mp3"
+					cleanups "$audio_file"*
                 fi
                 let n++
             done
@@ -260,7 +283,12 @@ function test_() {
             for res in $DC_e/*."TTS online.Download audio".*; do
                 filename="$(basename "${res}")"; cleanups "$msgs/$filename"
                 audio_file="$DT/res_test/${n}_audio"
-                unset TESTURL EXECUT; source "$DS_a/Resources/scripts/$filename"
+                unset TESTURL EXECUT FILECONF; source "$DS_a/Resources/scripts/$filename"
+                if ! check_lang "$filename"; then
+                    mv -f "$DC_e/$filename" "$DC_d/$filename" 2>/dev/null
+                    continue
+                fi
+                rm -f "$audio_file"*
                 
                 if [ -n "${EXECUT##+([[:space:]])}" ] && [[ ! $(which $EXECUT) ]]; then
 					echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
@@ -272,24 +300,18 @@ function test_() {
 							mv -f "$audio_file.$EX" "$audio_file.mp3"
 						fi
 					fi
-					if [ -f "$audio_file.mp3" ]; then
-						if file -b --mime-type "$audio_file.mp3" |grep 'audio|mpeg|mp3|' >/dev/null 2>&1 \
-						&& [[ $(du -b "$audio_file.mp3" |cut -f1) -gt 200 ]]; then
-							:
-						else
-							echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
-							mv -f "$DC_e/$filename" "$DC_d/$filename"
-						fi
+					check_audio "$filename" "$audio_file.mp3"
+					if [ -f "$msgs/$filename" ]; then
+						mv -f "$DC_e/$filename" "$DC_d/$filename" 2>/dev/null
 					fi
-					
-					cleanups "$audio_file.mp3"
+					cleanups "$audio_file"*
 				fi
                 let n++
             done
         fi
     fi
 
-    if [ "$(cut -d "|" -f4 <<< "$c")" = 'TRUE' ]; then
+    if [ "$(cut -d "|" -f4 <<< "$testopts")" = 'TRUE' ]; then
         # ---------------------------------------------------
         # WEB PAGES"
         echo "70"
@@ -323,7 +345,7 @@ function test_() {
         fi
     fi
 
-    if [ "$(cut -d "|" -f5 <<< "$c")" = 'TRUE' ]; then
+    if [ "$(cut -d "|" -f5 <<< "$testopts")" = 'TRUE' ]; then
         # ---------------------------------------------------
         # IMAGE DOWNLOADER"
         echo "90"
@@ -333,18 +355,15 @@ function test_() {
             
                 filename="$(basename "${Script}")"; cleanups "$msgs/$filename"
                 Script="$DS_a/Resources/scripts/$filename"
-                TLANGS=$(grep -o TLANGS=\"[^\"]* "$Script" |grep -o '[^"]*$')
                 TESTWORD=$(grep -o TESTWORD=\"[^\"]* "$Script" |grep -o '[^"]*$')
                 
                 [ -f "${Script}" ] && "${Script}" "${TESTWORD}" "_TEST_"
-                if [ -f "$DT/${TESTWORD}.jpg" ]; then
-                    if file -b --mime-type "$DT/${TESTWORD}.jpg" |grep 'image'>/dev/null 2>&1; then
-                        :
-                    else 
-                        echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
-                    fi
+                img="$DT/${TESTWORD}.jpg"
+                if [ ! -f "$img" ]; then
+                    img="$DT/${TESTWORD}.png"
                 fi
-                cleanups "$DT/${TESTWORD}.jpg"
+                check_image "$filename" "$img"
+                cleanups "$DT/${TESTWORD}.jpg" "$DT/${TESTWORD}.png"
             done
         fi
 
@@ -354,19 +373,18 @@ function test_() {
             
                 filename="$(basename "${Script}")"; cleanups "$msgs/$filename"
                 Script="$DS_a/Resources/scripts/$filename"
-                TLANGS=$(grep -o TLANGS=\"[^\"]* "$Script" |grep -o '[^"]*$')
                 TESTWORD=$(grep -o TESTWORD=\"[^\"]* "$Script" |grep -o '[^"]*$')
                 
                 [ -f "${Script}" ] && "${Script}" "${TESTWORD}" "_TEST_"
-                if [ -f "$DT/${TESTWORD}.jpg" ]; then
-                    if file -b --mime-type "$DT/${TESTWORD}.jpg" |grep 'image'>/dev/null 2>&1; then
-                        :
-                    else 
-                        echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
-                        mv -f "$DC_e/$filename" "$DC_d/$filename"
-                    fi
+                img="$DT/${TESTWORD}.jpg"
+                if [ ! -f "$img" ]; then
+                    img="$DT/${TESTWORD}.png"
                 fi
-                cleanups "$DT/${TESTWORD}.jpg"
+                check_image "$filename" "$img"
+                if [ -f "$msgs/$filename" ]; then
+                    mv -f "$DC_e/$filename" "$DC_d/$filename" 2>/dev/null
+                fi
+                cleanups "$DT/${TESTWORD}.jpg" "$DT/${TESTWORD}.png"
             done
         fi
     fi

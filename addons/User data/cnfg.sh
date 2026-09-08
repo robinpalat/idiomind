@@ -52,7 +52,7 @@ if [[ $ret -eq 0 ]]; then
             if [ -d "${DM}" ]; then
                 cd "${DM}"
             else
-                msg "$(gettext "An error occurred while copying files.")\n" error && exit 1
+                msg "$(gettext "An error occurred while copying files.")\n" dialog-error && exit 1
             fi
             
             find -L . -name .CACHEDIR |sed -e 's/[/]\.CACHEDIR$//g' > "$DT/excludes"
@@ -128,8 +128,6 @@ if [[ $ret -eq 0 ]]; then
                 else
                     continue
                 fi
-                ls * -d |sed 's/Podcasts//g' |sed '/^$/d' > \
-                "$DT/import/topics/$language/.topics"
                 
                 while read topic; do
                     if [ -d "$DM_t/$language/${topic}" ]; then continue; fi
@@ -145,8 +143,6 @@ if [[ $ret -eq 0 ]]; then
                     cd "$DT/import/topics"
                 done < "$DT/import/topics/$language/.topics"
                 
-                if [ -d "$DT/import/topics/$language/Podcasts" ]; then
-                    cp -r "$DT/import/topics/$language/Podcasts" "$DM_t/$language/Podcasts"; fi
             done < "$DT/import/topics/languages"
 
             "$DS/mngr.sh" mkmn 1; rm -fr "$DT/import"

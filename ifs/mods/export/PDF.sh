@@ -28,7 +28,7 @@ sentence_normal() {
 
 word_image_normal(){
     cat <<!EOF
-<table width="100%" align="center" cellpadding="10" cellspacing="10">
+<table width="100%" align="center" cellpadding="10" cellspacing="6">
 <tr align="center"><td style="width: 33%;vertical-align:top">${img1}<w0 align="left">${trgt1}</w0><br><w2>${srce1}</w2><br><br></td>
 <td style="width: 33%;vertical-align:top">${img2}<w0 align="left">${trgt2}</w0><br><w2>${srce2}</w2><br><br></td>
 <td style="width: 33%;vertical-align:top">${img}<w0 align="left">${trgt}</w0><br><w2>${srce}</w2><br><br></td></tr></table>
@@ -43,8 +43,8 @@ word_example_normal(){
     fi
     [ -n "${defn}" ] && defn="${defn}<br>"
     [ -n "${note}" ] && note="${note}<br>"
-    field="<w1>${trgt}</w1><br><texmp>${srce}</texmp>"
-    field2="<texmp>${exmp}</texmp><defn>${defn}</defn><note>${note}</note>"
+    field="<w1>${trgt}</w1><span class="word-translation">${srce}</span>"
+    field2="<span class="word-example">${exmp}</span><span class="word-definition">${defn}</span><span class="word-note">${note}</span>"
     echo -e "<table class=\"block1\" width=\"100%\" align=\"center\" cellpadding=\"0\" cellspacing=\"15\"><tr>" >> "$fw"
     [ -n "$img" ] && echo -e "<td style=\"vertical-align:top;align:left\">$img</td>" >> "$fw"
     echo -e "<td style=\"width: 20%;vertical-align:top; align:left\">$field</td>
@@ -137,7 +137,12 @@ mkhtml() {
 
 [ -z "${f}" ] && f=0
 export f; mkhtml
-wkhtmltopdf --enable-local-file-access -s A4 -O Portrait "$file" "$DT/export/tmp.pdf"
+
+weasyprint \
+    --presentational-hints \
+    "$file" \
+    "$DT/export/tmp.pdf"
+
 if [ $f = 2 ]; then
     mv -f "$DT/export/tmp.pdf" "${1} - Test.pdf"
 else

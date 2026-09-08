@@ -1,34 +1,35 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
 
-TLANGS="zh-cn, en, ja, pt, es"
-INFO="Convert text to audio (online)"
-LANGUAGES="Chinese, English, Japanese, Portuguese, Spanish"
-STATUS="Ok"
-VOICES=""
-CONF="FALSE"
-FILECONF=""
-TESTSTRING=""
-EXECUT=""
+# Baidu TTS (unofficial free endpoint).
+# Endpoint: https://fanyi.baidu.com/gettts
+# Works for: zh-cn, en, ja (pt/es return HTTP 403 with this free endpoint).
+# No API key required.
 
+EXECUT="curl"
+TESTSTRING="测试"
+EX="mp3"
 
-if [ "$lgt" = "zh-cn" ]; then
-    t="zh"
-    _test="测试"
-elif [ "$lgt" = "en" ]; then 
-    t="en"
-    _test="test"
-elif [ "$lgt" = "ja" ]; then
-    t="jp"
-    _test="テスト"
-elif [ "$lgt" = "pt" ]; then
-    t="pt"
-    _test="teste"
-elif [ "$lgt" = "es" ]; then
-    t="es"
-    _test="prueba"
+if [ "$1" = "_dclk_" ]; then
+    TLANGS="zh-cn, en, ja"
+    INFO="Convert text to audio (online)"
+    LANGUAGES="Chinese, English, Japanese"
+    STATUS="Ok"
+    VOICES=""
+    CONF="FALSE"
+    FILECONF=""
+    TESTWORD=""
+elif [ -n "$2" ]; then
+    case "$lgt" in
+        zh-cn) lan="zh" ;;
+        en)    lan="en" ;;
+        ja)    lan="jp" ;;
+        *)     lan="zh" ;;
+    esac
+    curl -s -m 51 -G \
+        --data-urlencode "lan=$lan" \
+        --data-urlencode "text=$1" \
+        --data-urlencode "spd=5" \
+        --data-urlencode "source=web" \
+        "https://fanyi.baidu.com/gettts" -o "$2"
 fi
-
-export TESTURL="http://tts.baidu.com/text2audio?lan=$t&ie=UTF-8&text=${_test}"
-export URL="http://tts.baidu.com/text2audio?lan=$t&ie=UTF-8&text=${word}"
-export EX='mp3'
-

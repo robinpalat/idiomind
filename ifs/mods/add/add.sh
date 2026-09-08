@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
 if [ -z "${tlng}" ] || [ -z "${slng}" ]; then
@@ -14,7 +14,6 @@ function check_s() {
         tpe="$(yad --form --title="$(gettext "No topic selected")" \
         --name=Idiomind --class=Idiomind \
         --text="$(gettext "Select the topic in which the notes should be added")" \
-        --gtkrc="$DS/default/gtkrc.cfg" \
         --always-print-result --separator="" \
         --skip-taskbar --fixed --center --on-top --align=right \
         --window-icon=idiomind \
@@ -452,10 +451,26 @@ export -f translate dwld1 dwld2
 function tts_sentence() {
 
     word="${1}"; DT_r="$2"; audio_file="${3}"
-    
+    audio_dwld="${audio_file%.mp3}"
+
     if ls "$DC_d"/*."TTS online.Convert text to audio".* 1> /dev/null 2>&1; then
 		for dict in "$DC_d"/*."TTS online.Convert text to audio".*; do
-			dwld1 "$DS_a/Resources"; if [ $? = 5 ]; then break; fi
+			unset EXECUT URL EX
+			source "$DS_a/Resources/scripts/$(basename "${dict}")"
+			if [ -n "${EXECUT##+([[:space:]])}" ]; then
+				"$DS_a/Resources/scripts/$(basename "${dict}")" "${word}" "${audio_file}"
+			else
+				dwld1 "$DS_a/Resources"
+			fi
+
+			if [ -f "$audio_file" ]; then
+				if file -b --mime-type "$audio_file" |grep -E 'audio|mpeg|mp3|ogg|wav' >/dev/null 2>&1 \
+				&& [[ $(du -b "$audio_file" |cut -f1) -gt 120 ]]; then
+					break
+				else
+					cleanups "$audio_file" "$audio_dwld.$EX"
+				fi
+			fi
 		done
 
     elif ls "$DC_d"/*."TTS offline.Convert text to audio".* 1> /dev/null 2>&1; then
@@ -474,16 +489,16 @@ function tts_word() {
 	
     word="${1,,}"; audio_file="${2}/$word.mp3"; audio_dwld="${2}/$word"
 
-	if ! ls "$DC_d"/*."TTS online.Search audio".$lgt 1> /dev/null 2>&1 &&\
+	if ! ls "$DC_d"/*."TTS online.Download audio".$lgt 1> /dev/null 2>&1 &&\
 	! ls "$DC_d"/*."TTS offline.Convert text to audio".* 1> /dev/null 2>&1 &&\
 	! ls "$DC_d"/*."TTS online.Convert text to audio".* 1> /dev/null 2>&1 &&\
-	! ls "$DC_d"/*."TTS online.Search audio".various 1> /dev/null 2>&1;
+	! ls "$DC_d"/*."TTS online.Download audio".various 1> /dev/null 2>&1;
 	  then
 		"$DS_a/Resources/cnfg.sh"
 	else
 	
-		if ls "$DC_d"/*."TTS online.Search audio".$lgt 1> /dev/null 2>&1; then
-			for dict in $DC_d/*."TTS online.Search audio".$lgt; do
+		if ls "$DC_d"/*."TTS online.Download audio".$lgt 1> /dev/null 2>&1; then
+			for dict in $DC_d/*."TTS online.Download audio".$lgt; do
 				dwld1 "$DS_a/Resources"; [ $? = 5 ] && break
 			done
 		fi
@@ -506,8 +521,8 @@ function tts_word() {
 			fi
 		fi
 		if [ ! -f "${audio_file}" ]; then
-			if ls "$DC_d"/*."TTS online.Search audio".various 1> /dev/null 2>&1; then
-				for dict in $DC_d/*."TTS online.Search audio".various; do
+			if ls "$DC_d"/*."TTS online.Download audio".various 1> /dev/null 2>&1; then
+				for dict in $DC_d/*."TTS online.Download audio".various; do
 					dwld1 "$DS_a/Resources"; [ $? = 5 ] && break
 				done
 			fi
@@ -524,14 +539,14 @@ function fetch_audio() {
         word="${Word,,}"; export audio_file="$DM_tls/audio/$word.mp3"
         audio_dwld="$DM_tls/audio/$word"
         if [ ! -f "$audio_file" ]; then
-            if ls "$DC_d"/*."TTS online.Search audio".$lgt 1> /dev/null 2>&1; then
-                for dict in "$DC_d"/*."TTS online.Search audio".$lgt; do
+            if ls "$DC_d"/*."TTS online.Download audio".$lgt 1> /dev/null 2>&1; then
+                for dict in "$DC_d"/*."TTS online.Download audio".$lgt; do
                     dwld1 "$DS_a/Resources"; [ $? = 5 ] && break
                 done
             fi
             if [ ! -f "$audio_file" ]; then
-                if ls "$DC_d"/*."TTS online.Search audio".various 1> /dev/null 2>&1; then
-                    for dict in "$DC_d"/*."TTS online.Search audio".various; do
+                if ls "$DC_d"/*."TTS online.Download audio".various 1> /dev/null 2>&1; then
+                    for dict in "$DC_d"/*."TTS online.Download audio".various; do
                         dwld1 "$DS_a/Resources"; [ $? = 5 ] && break
                     done
                 fi
@@ -541,10 +556,10 @@ function fetch_audio() {
 }
 
 function img_word() {
-    if ls "$DC_d"/*."Script.Search image".* 1> /dev/null 2>&1; then
+    if ls "$DC_d"/*."Script.Download image".* 1> /dev/null 2>&1; then
         if [ ! -e "${DM_tls}/images/${1,,}-1.jpg" ] && [ ! -f "${DM_tlt}/images/${1,,}.jpg" ]; then
             touch "$DT/${1}.img"
-            for Script in "$DC_d"/*."Script.Search image".*; do
+            for Script in "$DC_d"/*."Script.Download image".*; do
                 Script="$DS_a/Resources/scripts/$(basename "${Script}")"
                 [ -f "${Script}" ] && "${Script}" "${1}"
                 if [ -f "$DT/${1}.jpg" ]; then
@@ -559,7 +574,7 @@ function img_word() {
                 fi
             done
             if [ ! -e "$DT/${1}.jpg" ]; then
-                for Script in "$DC_d"/*."Script.Search image".*; do
+                for Script in "$DC_d"/*."Script.Download image".*; do
                     Script="$DS_a/Resources/scripts/$(basename "${Script}")"
                     [ -f "${Script}" ] && "${Script}" "${2}"
                     if [ -f "$DT/${2}.jpg" ]; then
@@ -634,7 +649,6 @@ function dlg_form_1() {
     cmd_words="$DS/add.sh list_words_dclik $DT_r "\"${trgt}\"""
     yad --form --title="$(gettext "Add note")" \
     --name=Idiomind --class=Idiomind \
-    --gtkrc="$DS/default/gtkrc.cfg" \
     --always-print-result --separator="|" \
     --skip-taskbar --fixed --center \
     --buttons-layout=spread --align=right --image="${img}" \
@@ -646,8 +660,8 @@ function dlg_form_1() {
     --button=!'edit-select-all'!"$(gettext "Optical character recognition")":1 \
     --button=!'image-x-generic'!"$(gettext "Screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an audio file")":2 \
-    --button=!'gtk-edit'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
-    --button=!'gtk-save'!"$(gettext "Add")":0
+    --button=!'document-edit'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
+    --button=!'document-save'!"$(gettext "Add")":0
 }
 
 
@@ -655,7 +669,6 @@ function dlg_form_2() {
     cmd_words="$DS/add.sh list_words_dclik $DT_r "\"${trgt}\"""
     yad --form --title="$(gettext "Add note")" \
     --name=Idiomind --class=Idiomind \
-    --gtkrc="$DS/default/gtkrc.cfg" \
     --always-print-result --separator="|" \
     --skip-taskbar --fixed --center \
     --buttons-layout=spread --align=right --image="${img}" \
@@ -668,8 +681,8 @@ function dlg_form_2() {
     --button=!'edit-select-all'!"$(gettext "Optical character recognition")":1 \
     --button=!'image-x-generic'!"$(gettext "Screen clipping")":3 \
     --button=!'audio-x-generic'!"$(gettext "Add an audio file")":2 \
-    --button=!'gtk-edit'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
-    --button=!'gtk-save'!"$(gettext "Add")":0
+    --button=!'document-edit'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
+    --button=!'document-save'!"$(gettext "Add")":0
 }
 
 function dlg_checklist_3() {
@@ -696,7 +709,6 @@ function dlg_checklist_3() {
     $img --text="<small>$inf</small>" --no-headers --text-align=left \
     --image-on-top --column=" " --column=" " |sed '/^$/d' > "$slt" &
     yad --form --tabnum=2 --plug="$fkey" --columns=2 \
-    --gtkrc="$DS/default/gtkrc.cfg" \
     --separator="" \
     --field=" ":lbl null \
     --field="$(gettext "Add to"):CB" "$2!$(gettext "New topic") *$e$tpcs" &
@@ -704,10 +716,9 @@ function dlg_checklist_3() {
     --title="$(wc -l < "${1}") $(gettext "notes found")" \
     --name=Idiomind --class=Idiomind \
     --skip-taskbar --orient=vert --window-icon=$DS/images/logo.png --center \
-    --gtkrc="$DS/default/gtkrc.cfg" \
     --width=${sz[0]} --height=${sz[1]} --borders=5 --splitter=${sz[2]} \
-    --button=!'gtk-edit'!"$(gettext "Edit")":2 \
-    --button=!'gtk-save'!"$(gettext "Add")":0
+    --button=!'document-edit'!"$(gettext "Edit")":2 \
+    --button=!'document-save'!"$(gettext "Add")":0
 }
 
 function dlg_checklist_1() {
@@ -744,7 +755,6 @@ function dlg_checklist_2() {
     --no-headers --text-align=left --text="$(gettext "Sentence's words")" \
     --column=" " --column=" " |sed '/^$/d' > "$slts" &
     yad --form --tabnum=2 --plug="$fkey" \
-    --gtkrc="$DS/default/gtkrc.cfg" \
     --separator="|" \
     --field="$(gettext "Note")":TXT "${note}" \
     --field="$(gettext "Example (applicable for words only)")":TXT "${pre_exmp}" \
@@ -754,9 +764,8 @@ function dlg_checklist_2() {
     --name=Idiomind --class=Idiomind \
     --skip-taskbar --orient=vert \
     --window-icon=$DS/images/logo.png --center --on-top \
-    --gtkrc="$DS/default/gtkrc.cfg" \
     --width=500 --height=260 --borders=10 --splitter=180 \
-    --button="$(gettext "Apply")!gtk-apply":0 \
+    --button="$(gettext "Apply")!emblem-ok":0 \
     --button="  $(gettext "Cancel")  ":1
 }
 
@@ -764,14 +773,13 @@ function dlg_text_info_1() {
     cat "${1}" |awk '{print "\n"$0}' | \
     yad --text-info --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
-    --gtkrc="$DS/default/gtkrc.cfg" \
     --editable \
     --window-icon=$DS/images/logo.png \
     --wrap --margins=20 --fontname='vendana 11' \
     --skip-taskbar --center --on-top \
     --width=700 --height=450 --borders=5 \
     --button="$(gettext "Cancel")":1 \
-    --button="gtk-apply!$(gettext "Apply")":0
+    --button="emblem-ok!$(gettext "Apply")":0
 }
 
 function msg_3() {
@@ -803,12 +811,11 @@ function dlg_text_info_3() {
 function dlg_form_3() {
     yad --form --title=$(gettext "Image") "$image" "$label" \
     --name=Idiomind --class=Idiomind \
-    --gtkrc="$DS/default/gtkrc.cfg" \
     --window-icon=$DS/images/logo.png \
     --buttons-layout=spread --skip-taskbar --image-on-top \
     --align=center --text-align=center --center --on-top \
     --width=420 --height=320 --borders=5 \
-    "${btn2}" --button="$(gettext "Close")!gtk-close!$(gettext "Close") ":1
+    "${btn2}" --button="$(gettext "Close")!window-close!$(gettext "Close") ":1
 }
 
 function dlg_progress_1() {

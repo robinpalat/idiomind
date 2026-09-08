@@ -7,7 +7,11 @@ source "$DS/default/sets.cfg"
 lgt=${tlangs[$tlng]}
 lgs=${slangs[$slng]}
 include "$DS/ifs/mods/add"
-trans="$(cdb "${cfgdb}" 1 opts trans)"
+# Keep an explicit translation mode supplied by importers such as Feeds.sh.
+# Otherwise use the user's normal preference from the configuration database.
+if [ -z "${trans+x}" ]; then
+    trans="$(cdb "${cfgdb}" 1 opts trans)"
+fi
 ttrgt="$(cdb "${cfgdb}" 1 opts ttrgt)"
 dlaud="$(cdb "${cfgdb}" 1 opts dlaud)"
 notif="$(cdb "${cfgdb}" 1 opts swind)"
@@ -101,10 +105,10 @@ function new_item() {
     
     if [ ${#trgt} -le ${sentence_chars} ] && \
     [ $(echo -e "${trgt}" |wc -l) -gt ${sentence_lines} ]; then
-        export trgt; process & return
+        export trgt; process; return
     fi
     if [ ${#trgt} -gt ${sentence_chars} ]; then 
-        export trgt; process & return
+        export trgt; process; return
     fi
     
     if grep -o -E 'ja|zh-cn|ru' <<< "$lgt" >/dev/null 2>&1 ; then
@@ -424,6 +428,11 @@ function list_words_dclik() {
 } >/dev/null 2>&1
 
 function process() {
+    echo "=== process() called ===" >> /tmp/idiomind_debug.log
+    echo "process args: \$1=$1" >> /tmp/idiomind_debug.log
+    echo "DT_r: $DT_r" >> /tmp/idiomind_debug.log
+    echo "trgt length: ${#trgt}" >> /tmp/idiomind_debug.log
+    
     if [ ! -d "$DT_r" ] ; then
         check_dir "$DT_r"; cd ~ && cd "$DT_r"
     fi
@@ -437,6 +446,7 @@ function process() {
     else
         conten="${1}"
     fi
+    echo "conten length: ${#conten}" >> /tmp/idiomind_debug.log
     include "$DS/ifs/mods/add_process"
     
     if [[ "$1" = '__words__' ]]; then 
@@ -458,7 +468,7 @@ function process() {
                 ) | dlg_progress_1
             else
                 info="$(gettext "The package 'tesseract-ocr' is not installed\nPlease install") <b>tesseract-ocr-${tesseract_lngs[$tlng]}</b> $(gettext "and try again.")"
-                msg "${info}" info "$(gettext "Information")"; cleanups "$DT/n_s_pr" "$DT_r" & exit 0
+                msg "${info}" dialog-information "$(gettext "Information")"; cleanups "$DT/n_s_pr" "$DT_r" & exit 0
             fi
         else
             if [[ ${#conten} = 1 ]]; then
@@ -528,18 +538,28 @@ function process() {
         echo "${2%%[,.-]*}" > "$DT_r/xlines"
         sed -i '/^$/d' "$DT_r/xlines"
     fi
+    echo "=== Checking xlines ===" >> /tmp/idiomind_debug.log
+    echo "xlines content:" >> /tmp/idiomind_debug.log
+    cat "$DT_r/xlines" >> /tmp/idiomind_debug.log 2>&1
+    echo "xlines empty check: $(wc -c < "$DT_r/xlines")" >> /tmp/idiomind_debug.log
+    
     if [ -z "$(< "$DT_r/xlines")" ] && [[ $conten != '__words__' ]]; then
+        echo "ERROR: xlines is empty, showing error dialog" >> /tmp/idiomind_debug.log
         msg "$(gettext "Failed to get text.")\n" \
         dialog-information "$(gettext "Information")"
         cleanups "$DT_r" "$DT/n_s_pr" "$slt" & exit 1
     elif [[ $conten != '__words__' ]]; then
+        echo "Calling dlg_checklist_3..." >> /tmp/idiomind_debug.log
         xclip -i /dev/null
         export slt=$(mktemp $DT/slt.XXXXXX.x)
         tpcs="$(cdb "${shrdb}" 5 topics)"
         export tpcs="$(grep -vFx "${tpe}" <<< "$tpcs" |tr "\\n" '!' |sed 's/\!*$//g')"
         [ -n "$tpcs" ] && export e='!'
+        echo "slt: $slt" >> /tmp/idiomind_debug.log
+        echo "tpe: $tpe" >> /tmp/idiomind_debug.log
         tpe="$(dlg_checklist_3 "$DT_r/xlines" "${tpe}" "$title" "$info")"
         ret="$?"
+        echo "dlg_checklist_3 returned: $ret" >> /tmp/idiomind_debug.log
     fi
     
     if [ $ret -eq 2 ]; then
@@ -739,7 +759,27 @@ function process() {
 
 
 new_items() {
+    # Only one interactive add form may be open at a time. Startup and tray
+    # paths invoke this command without arguments, while internal retries pass
+    # DT_r and must remain independent of this guard.
+    if [ -z "${2}" ]; then
+        add_lock="$DT/add_lk"
+        if [ -d "$add_lock" ]; then
+            add_pid=""
+            [ -f "$add_lock/pid" ] && add_pid="$(< "$add_lock/pid")"
+            if [ -n "$add_pid" ] && kill -0 "$add_pid" 2>/dev/null; then
+                exit 0
+            fi
+            rm -rf "$add_lock"
+        fi
+        if ! mkdir "$add_lock" 2>/dev/null; then
+            exit 0
+        fi
+        printf '%s\n' "$$" > "$add_lock/pid"
+        trap 'rm -rf "$add_lock"' EXIT
+    fi
 
+    
     itemdir=$(base64 <<< $((RANDOM%100000)) | head -c 32)
     if [ -f "$DT/ps_lk" ] || [ -f "$DT/el_lk" ]; then
         msg "$(gettext "Please wait until the current process is finished")...\n" \
@@ -769,12 +809,23 @@ new_items() {
     [ -d "${2}" ] && DT_r="${2}"
     [ -n "${5}" ] && srce="${5}" || srce=""
     
+    # Debug logging
+    echo "=== new_items() called ===" >> /tmp/idiomind_debug.log
+    echo "Args: \$1=$1 \$2=$2 \$3=$3 \$4=$4 \$5=$5" >> /tmp/idiomind_debug.log
+    echo "txt length: ${#txt}" >> /tmp/idiomind_debug.log
+    echo "trgt length: ${#trgt}" >> /tmp/idiomind_debug.log
+    echo "sentence_chars: $sentence_chars" >> /tmp/idiomind_debug.log
+    echo "Level: $Level" >> /tmp/idiomind_debug.log
+    echo "trgt content (first 200 chars): ${trgt:0:200}" >> /tmp/idiomind_debug.log
+    
     if [ ${#trgt} -le ${sentence_chars} ] && \
     [ $(echo -e "${trgt}" |wc -l) -gt ${sentence_lines} ]; then 
-        process & return
+        echo "BRANCH: process (short but multi-line)" >> /tmp/idiomind_debug.log
+        process; return
     fi
     if [ ${#trgt} -gt ${sentence_chars} ]; then 
-        process & return
+        echo "BRANCH: process (long text)" >> /tmp/idiomind_debug.log
+        process; return
     fi
 
     level_control=False
@@ -783,8 +834,11 @@ new_items() {
 	fi
 	
 	if [ $level_control = True ]; then
-		process & return
+	    echo "BRANCH: process (level 0 with many words)" >> /tmp/idiomind_debug.log
+		process; return
 	fi
+	
+	echo "BRANCH: form dialog (no process)" >> /tmp/idiomind_debug.log
 
     [ -f "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" || img="$DS/images/nw.png"
     export img

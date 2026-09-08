@@ -841,7 +841,7 @@ function practice_e() {
         if [ $ret = 1 ]; then
             break &
             if [ -f "${dir_practice}/0.s" ]; then
-			    msg_2 "$(gettext "There are selected words from the sentence practice that can be added to the word practices.")\n" info "$(gettext "No add")" "$(gettext "Add these words")"
+			    msg_2 "$(gettext "There are selected words from the sentence practice that can be added to the word practices.")\n" dialog-information "$(gettext "No add")" "$(gettext "Add these words")"
 			     if [ $? = 0 ]; then
 					cleanups "${dir_practice}/0.s"
 				 else 

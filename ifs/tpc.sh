@@ -131,6 +131,6 @@ if [ -d "${DM_tlt}" ]; then
 else
     [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
     "$DS/mngr.sh" mkmn 0
-    msg "$(gettext "No such file or directory")\n${topic}\n" error & exit 1
+    msg "$(gettext "No such file or directory")\n${topic}\n" dialog-error & exit 1
 fi
 

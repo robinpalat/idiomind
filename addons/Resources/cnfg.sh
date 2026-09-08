@@ -52,7 +52,7 @@ function add_dlg() {
                 kdesudo -d --comment="$(gettext "Idiomind requires admin privileges for this task")" "$DS_a/Resources/cnfg.sh" \
                 cpfile "${add}" "$DS_a/Resources/scripts"/ "$DC_a/resources/disables/$(basename "${add}")"
             else
-                msg "$(gettext "No authentication program found").\n" error \
+                msg "$(gettext "No authentication program found").\n" dialog-error \
                 "$(gettext "No authentication program found")"
                 exit 1
             fi
@@ -97,36 +97,60 @@ function dclk() {
 
     if [[ "$CONF" = "TRUE" ]]; then
         fileconf="$DC_a/resources/$3.cfg"
-        SPEED=""
-        VOICES=""
         [ ! -f "$fileconf" ] && touch "$fileconf"
         if [[ -z "$(< "$fileconf")" ]]; then
-            echo -e "voice=\"\"\nspeed=\"\"\nkey=\"\"" > "$fileconf"
+            CONFFIELDS="${CONFFIELDS:-voice speed key}"
+            cfg_buf=""
+            for _f in $CONFFIELDS; do
+                cfg_buf="${cfg_buf}${_f}=\"\"\n"
+            done
+            printf "%b" "$cfg_buf" > "$fileconf"
         fi
-        key=$(grep -o key=\"[^\"]* "$fileconf" |grep -o '[^"]*$')
-        speed=$(grep -o speed=\"[^\"]* "$fileconf" |grep -o '[^"]*$')
-        voice=$(grep -o voice=\"[^\"]* "$fileconf" |grep -o '[^"]*$' |sed 's/(null)//')
-        SPEED="$speed!Slow!Normal!Fast"
 
-        c=$(yad --form --title="${3}" \
+        # Fields relevant to this resource are declared in the script
+        conffields="${CONFFIELDS:-voice speed key}"
+        # Optional combo options. Format: "field|opt1!opt2!opt3" (first opt is default)
+        confopts="${CONFOPTS:-}"
+        # Fields rendered as hidden/password. Space separated names.
+        confhidden="${CONFKEY_HIDDEN:-key}"
+
+        _yad=( yad --form --title="${3}" \
         --text="$(gettext "Resource name"): $name\n<small>\n<b>$(gettext "Languages"):</b>\n$LANGUAGES\n\n<b>$(gettext "is used for"):</b>\n$INFO\n\n<b>$(gettext "Status:")</b>\n $STATUS</small>\n" \
-        --image=$icon \
-        --name=Idiomind --class=Idiomind \
+        --image=$icon --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" --center \
         --on-top --skip-taskbar --expand-column=3 \
         --width=600 --height=200 --borders=12 \
-        --always-print-result --editable --print-all --align=right \
-        --field=Voice:CB "" \
-        --field=Speed:CB "$SPEED" \
-        --field="Key" "$key" \
-        --button="$(gettext "Cancel")":1 \
-        --button="$(gettext "OK")":0)
-        ret=$?
+        --always-print-result --editable --print-all --align=right )
+
+        for _f in $conffields; do
+            _val=$(grep -o "${_f}=\"[^\"]*" "$fileconf" |grep -o '[^"]*$' |sed 's/(null)//')
+            _label="$(case "$_f" in key) echo "Key";; *) echo "${_f^}";; esac)"
+            _widget=""
+            _defval="$_val"
+            _line="$(printf '%s\n' "$confopts" |grep -m1 "^${_f}|")"
+            if [ -n "$_line" ]; then
+                # combo field: value list after "field|"
+                _list="${_line#*|}"
+                _first="${_list%%!*}"
+                [ -z "$_val" ] && _defval="$_first!${_list#*!}" || _defval="$_val!${_list}"
+                _yad+=( --field="${_label}:CB" "${_defval}" )
+                continue
+            fi
+            for _k in $confhidden; do
+                [ "$_f" = "$_k" ] && _widget=":H"
+            done
+            _yad+=( --field="${_label}${_widget}" "${_defval}" )
+        done
+        _yad+=( --button="$(gettext "Cancel")":1 --button="$(gettext "OK")":0 )
+        c="$("${_yad[@]}")"; ret=$?
 
         if [ $ret = 0 ]; then
-            sed -i "s/voice=.*/voice=\"$(cut -d "|" -f1 <<< "$c")\"/g" "$fileconf"
-            sed -i "s/speed=.*/speed=\"$(cut -d "|" -f2 <<< "$c")\"/g" "$fileconf"
-            sed -i "s/key=.*/key=\"$(cut -d "|" -f3 <<< "$c")\"/g" "$fileconf"
+            f=1
+            for _f in $conffields; do
+                _val="$(cut -d "|" -f${f} <<< "$c")"
+                sed -i "s|${_f}=.*|${_f}=\"${_val}\"|g" "$fileconf"
+                let f++
+            done
         fi
     else
         yad --form --title="${3}" \

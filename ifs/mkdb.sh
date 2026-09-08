@@ -109,8 +109,6 @@ function create_cfgdb() {
     (tlng TEXT, slng TEXT);" |sqlite3 "${cfgdb}"
     echo -n "pragma busy_timeout=500; create table if not exists geom \
     (vals TEXT);" |sqlite3 "${cfgdb}"
-    echo -n "pragma busy_timeout=500; create table if not exists user \
-    (autr TEXT, pass TEXT);" |sqlite3 "${cfgdb}"
     echo -n "pragma busy_timeout=500; create table if not exists sess \
     (date TEXT);" |sqlite3 "${cfgdb}"
     echo -n "pragma busy_timeout=500; create table if not exists updt \
@@ -121,7 +119,6 @@ function create_cfgdb() {
     values ('"$2"','"$2"','"$2"','FALSE','FALSE',\
     'FALSE','"$2"','default','','','','','');"
     sqlite3 "${cfgdb}" "insert into lang (tlng,slng) values ('','');"
-    sqlite3 "${cfgdb}" "insert into user (autr,pass) values ('','');"
     sqlite3 "${cfgdb}" "insert into geom (vals) values ('');"
     v=$(date +%d)
     sqlite3 "${cfgdb}" "insert into sess (date) values ('${v}');"

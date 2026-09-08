@@ -125,7 +125,7 @@ elif [ $ret -eq 0 ]; then
     if [ $? -ne 0 ]; then
         yad --title=Idiomind \
         --text="$(gettext "An error occurred while trying to write on file system")\n" \
-        --image=error \
+        --image=dialog-error \
         --name=Idiomind --class=Idiomind \
         --window-icon=idiomind \
         --skip-taskbar --center \

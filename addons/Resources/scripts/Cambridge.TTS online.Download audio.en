@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Cambridge Dictionary pronunciation (online).
+# Resolves the per-word US pronunciation audio by scraping the dictionary
+# page (the media path is irregular and cannot be guessed reliably).
+# No API key required.
+
 TLANGS="en"
 INFO="Search audio for words"
 LANGUAGES="English"
@@ -10,21 +15,18 @@ FILECONF=""
 TESTWORD=""
 EXECUT=""
 
-
-[[ ${#word} -lt 5 ]] && s="${word:0:5}_" || s="${word:0:5}"
-w1="${word:0:3}"
-[[ ${#word} -gt 5 ]] && w2="${word:0:5}"
-[[ ${#word} = 5 ]] && w2="${word}"
-[[ ${#word} = 4 ]] && w2="${word}_"
-if [[ ${#word} = 3 ]]; then
-    w2="${word}__"
-fi
-if [[ ${#word} = 2 ]]; then
-    w1="${word:0:2}_"
-    w2="${word}___"
-fi
-
+# static known-good test audio
 export TESTURL="https://dictionary.cambridge.org/media/english/us_pron/t/tes/test_/test.mp3"
-export URL="https://dictionary.cambridge.org/media/english/us_pron/${word:0:1}/${w1}/${w2}/${word}.mp3"
-export EX='mp3'
 
+if [ -n "$word" ] && [ -z "$URL" ]; then
+    page="$(curl -s -m 20 -A "$useragent" \
+        "https://dictionary.cambridge.org/dictionary/english/${word}")"
+    pron="$(printf '%s' "$page" |grep -oP '(?<!//)(media/english/us_pron/[^"]*\.mp3)' |head -1)"
+    if [ -n "$pron" ]; then
+        export URL="https://dictionary.cambridge.org/${pron}"
+    else
+        export URL=""
+    fi
+fi
+
+export EX='mp3'

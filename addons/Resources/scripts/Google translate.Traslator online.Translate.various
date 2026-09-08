@@ -27,7 +27,7 @@ TESTWORD=""
 EXECUT=""
 
 
-link="http://translate.googleapis.com/translate_a/single?client=gtx&sl=$2&tl=$3&dt=t&q=$1"
+link="https://translate.googleapis.com/translate_a/single?client=dict-chrome-ex&sl=$2&tl=$3&dt=t&q=$1"
 if [[ "$1" != '_dclk_' ]]; then
     gtra="$(wget -U "$useragent" -qO - "$link")"
 fi

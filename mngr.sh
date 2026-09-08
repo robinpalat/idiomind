@@ -524,7 +524,6 @@ edit_list_more() {
     
     more="$(yad --form --title="$(gettext "Backups")" \
     --field=":CB" "${optns}" --separator="" \
-    --gtkrc="$DS/default/gtkrc.cfg" \
     --name=Idiomind --class=Idiomind \
     --expand-column=2 --no-click --no-headers\
     --window-icon=$DS/images/logo.png --on-top --center \
@@ -639,7 +638,7 @@ edit_list_dlg() {
 restart_topic() {
 		
 	 msg_2 "<b>\"$tpc\"</b>\n\n$(gettext "Are you sure you want to restart topic status?")\n" \
-	 gtk-refresh "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
+	 view-refresh "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
   
 	if [ $? = 0 ]; then
 
@@ -848,11 +847,11 @@ mark_as_learned_topic() {
 
         if [ ${count_date_reviews} -gt 0 ]; then
            
-            if [ ${count_date_reviews} -eq 3 ]; then # cambiar de fresh to familiar tpc
+            if [ ${count_date_reviews} -eq 3 ] && [ $((stts%2)) = 1 ]; then # cambiar de fresh to familiar tpc
                 stts=$((stts+1))
             fi
 
-			if [ ${count_date_reviews} -gt 8 ]; then # cambiar de familiar to mastered tpc
+			if [ ${count_date_reviews} -gt 8 ]; then # cambiar de familiar a mastered tpc
 				tpc_db 9 reviews date9 ${date_current}
 				echo 2 > "${DC_tlt}/stts"
 			else
@@ -939,7 +938,7 @@ mark_as_learned_topic_ok() {
         
         if [ ${count_date_reviews} -gt 0 ]; then
         
-            if [ ${count_date_reviews} -eq 3 ]; then # cambiar de fresh to familiar tpc
+            if [ ${count_date_reviews} -eq 3 ] && [ $((stts%2)) = 1 ]; then # cambiar de fresh to familiar tpc
                 stts=$((stts+1))
             fi
 

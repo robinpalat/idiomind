@@ -216,8 +216,20 @@ function check_file() {
 }
 
 function cleanups() {
+    local _cwd _target
+    _cwd=$(pwd -P 2>/dev/null) || {
+        cd "${HOME:-/}" 2>/dev/null || cd /
+        _cwd=$(pwd -P 2>/dev/null)
+    }
     for _fl in "$@"; do
         if [ -d "${_fl}" ]; then
+            _target=$(readlink -f -- "${_fl}" 2>/dev/null)
+            if [ -n "${_cwd}" ] && [ -n "${_target}" ] && {
+                [ "${_cwd}" = "${_target}" ] || [[ "${_cwd}" == "${_target}"/* ]]
+            }; then
+                cd "${HOME:-/}" 2>/dev/null || cd /
+                _cwd=$(pwd -P 2>/dev/null)
+            fi
             rm -fr "${_fl}"
         elif [ -e "${_fl}" ]; then
             rm -f "${_fl}"
@@ -274,26 +286,50 @@ function check_err() {
     done &
 }
 
-function calculate_review() { #TODO check count rows
+function sqlite_date_to_epoch() {
+    # Convert MM/DD/YYYY to epoch seconds without relying on GNU date parsing.
+    # Uses awk to strip leading zeros and compute the approximation.
+    local yyyy; yyyy=$(echo "$1" | cut -d/ -f3)
+    awk -v d="$1" 'BEGIN {
+        split(d, a, "/"); m=int(a[1]); d=int(a[2]); y=int(a[3])
+        epoch = (y-1970)*365 + int((y-1969)/4) - int((y-1901)/100) + int((y-1601)/400)
+        days = 0
+        split("0 31 59 90 120 151 181 212 243 273 304 334", md, " ")
+        if (m > 1) days = md[m-1]
+        if ((m > 2) && (y % 4 == 0) && (y % 100 != 0 || y % 400 == 0)) days++
+        epoch += days + d - 1
+        print epoch * 86400
+    }'
+}
+
+function calculate_review() {
     [ -z ${notice} ] && source "$DS/default/sets.cfg"
     export DC_tlt="$DM_tl/${1}/.conf"
-    count_date_reviews="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
-    if [ ${count_date_reviews} -ge 1 ]; then
-        date_review=""; date_review=$(tpc_db 1 reviews date${count_date_reviews})
-        
-        if ! [[ ${date_review} =~ ^[0-9]{2}/[0-9]{2}/[0-9]{4}$ ]]; then
-            echo "--error: $1"
-            tpc_db 6 reviews
-            tpc_db 8 reviews date1 "$(date +%m/%d/%Y)"
-            date_review=$(tpc_db 1 reviews date1)
-            count_date_reviews=1
-        fi
 
-        TM=$((($(date +%s)-$(date -d ${date_review} +%s))/(24*60*60)))
+    # Count only columns that contain a valid date (mm/dd/yyyy), skipping
+    # empty or corrupted entries instead of destroying the review history.
+    local all_dates; all_dates=$(tpc_db 5 reviews)
+    local count_valid=0
+    local last_valid_date=""
+    local n=1
+    while [ ${n} -le 10 ]; do
+        local val; val=$(sed -n ${n}p <<< "${all_dates}")
+        if [[ "${val}" =~ ^[0-9]{2}/[0-9]{2}/[0-9]{4}$ ]]; then
+            count_valid=$((count_valid+1))
+            last_valid_date="${val}"
+        fi
+        n=$((n+1))
+    done
+
+    count_date_reviews=${count_valid}
+
+    if [ ${count_date_reviews} -ge 1 ] && [ -n "${last_valid_date}" ]; then
+        local epoch_now; epoch_now=$(date +%s)
+        local epoch_review; epoch_review=$(sqlite_date_to_epoch "${last_valid_date}")
+        TM=$(( (epoch_now - epoch_review) / 86400 ))
         days_to_review=${notice[${count_date_reviews}]}
         days_to_review_porcent=$((100*TM/days_to_review))
 
-        export days_to_review 
-        return ${days_to_review_porcent}
+        export days_to_review days_to_review_porcent
     fi
 }

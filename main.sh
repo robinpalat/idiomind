@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-#  Copyright 2015-2023 Robin Palatnik
+#  Copyright 2015-2026 Robin Palatnik
 #  Email patapatass@hotmail.com
 #  
 #  This program is free software; you can redistribute it and/or modify
@@ -145,7 +145,7 @@ function new_session() {
             elif [[ $((stts+stts%2)) = 6 ]]; then
             
                 datedir=$(stat -c %y "$dir" |cut -d ' ' -f1)
-                cdate=$(date -d $datedir +"%Y%m%d")
+                cdate=$(date -d "${datedir} 12:00:00" +"%Y%m%d")
                 if [ $((tdate-cdate)) -gt 20 ]; then
                     cdb ${shrdb} 2 T7 list "${line}"
                 fi
@@ -181,11 +181,43 @@ function new_session() {
 if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     slngcurrent="$slng"; tlngcurrent="$tlng"
-    source "$DS/ifs/tls.sh"; check_format_1 "${1}"
-    if [ $? != 19 ]; then
-        msg "$(gettext "File format corrupted")\n" error "$(gettext "Information")" & exit 1
-    fi
+    source "$DS/ifs/cmns.sh"
+    source "$DS/ifs/tls.sh"
+
+    # A .idmnd portable package may be:
+    #  - legacy JSON file (.idmnd plain 3-line JSON, no multimedia)
+    #  - legacy directory (<topic>.idmnd/ with JSON + images/ + audio/ folders)
+    #  - new portable ZIP (<topic>.idmnd single file containing topic.idmnd
+    #    [+ images/ + audio/])
+    # For the ZIP case we extract it to a temporary directory and reuse the
+    # same import/preview/install flow used for the legacy directory.
+    media_src=""
     file="${1}"
+    tmpdir=""
+    if [ -d "${1}" ]; then
+        media_src="${1}"
+        file="$(find "${1}" -maxdepth 1 -name '*.idmnd' -type f |head -n1)"
+        [ -z "$file" ] && file="${1}/${1##*/}.idmnd"
+    elif file "${1}" | grep -qi "zip archive"; then
+        tmpdir="$DT/idmnd_import_$((RANDOM%1000000))"
+        check_dir "$tmpdir"
+        if ! unzip -q "${1}" -d "$tmpdir"; then
+            cleanups "$tmpdir"
+            msg "$(gettext "File format corrupted")\n" dialog-error "$(gettext "Information")" & exit 1
+        fi
+        file="$(find "$tmpdir" -maxdepth 1 -name 'topic.idmnd' -type f |head -n1)"
+        if [ -z "$file" ] || [ ! -f "$file" ]; then
+            cleanups "$tmpdir"
+            msg "$(gettext "File format corrupted")\n" dialog-error "$(gettext "Information")" & exit 1
+        fi
+        media_src="$tmpdir"
+    fi
+
+    check_format_1 "${file}"
+    if [ $? != 19 ]; then
+        cleanups "$tmpdir"
+        msg "$(gettext "File format corrupted")\n" dialog-error "$(gettext "Information")" & exit 1
+    fi
     c=$((RANDOM%100000)); export KEY=$c
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
     level="${lv[${levl}]}"
@@ -209,10 +241,34 @@ $level \n$(gettext "Language:") $(gettext "$tlng"),  $(gettext "Translation:") $
     }
 
 	export -f _lst _info
+
+    # For a portable ZIP package, make the topic audio playable during
+    # preview (before the topic is installed). play_word already looks
+    # for <cdid>.mp3 under $DT first, so we stage the package audio there
+    # and point it at the package data to resolve each note's cdid.
+    if [ -n "$media_src" ]; then
+        if [ -d "$media_src/audio/topic" ]; then
+            cp -f "$media_src"/audio/topic/*.mp3 "$DT/" 2>/dev/null
+        fi
+        if [ -d "$media_src/audio/shared" ]; then
+            for _mp3 in "$media_src"/audio/shared/*.mp3; do
+                [ -e "$_mp3" ] || continue
+                cp -f "$_mp3" "$DT/$(basename "$_mp3")" 2>/dev/null
+            done
+        fi
+        P_DATA="$media_src/topic_data"
+        sed -n 2p "${file}" |tr -d '\\' > "$P_DATA"
+        sed -i 's/},/}\n/g;s|","|}|g;s|":"|{|g;s|":{"|}|g;s/"}/}/g' "$P_DATA"
+        sed -i 's/^\s*./trgt{/g' "$P_DATA"
+        sed -i '/^$/d' "$P_DATA"
+        export IDMND_PREVIEW_DATA="$P_DATA"
+    fi
+
     tpc_view
     ret=$?
         if [ $ret -eq 0 ]; then
             if [ -e "$DT/in_lk" ]; then
+                cleanups "$tmpdir"
                 msg "$(gettext "Please wait until the current process is finished")...\n" dialog-information
                 sleep 15; cleanups "$DT/in_lk"; exit 1
             fi
@@ -221,7 +277,7 @@ $level \n$(gettext "Language:") $(gettext "$tlng"),  $(gettext "Translation:") $
                 msg_2 "$(gettext "Please note the language of this Topic is:") <b>$tlng</b>
 $(gettext "It is recommended to change your language preferences before installing it")" dialog-warning "$(gettext "Ignore")" "$(gettext "OK")" 
                 if [ $? -eq 1 ]; then
-                    cleanups "$DT/in_lk"; exit 1
+                    cleanups "$tmpdir" "$DT/in_lk"; exit 1
                 fi
             fi
             
@@ -229,6 +285,7 @@ $(gettext "It is recommended to change your language preferences before installi
             listt="$(cd ~ && cd "$DM_tl"; find ./ -maxdepth 1 -type d \
             ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
             if [ $(wc -l <<< "$listt") -ge 120 ]; then
+                cleanups "$tmpdir"
                 msg "$(gettext "Maximum number of topics reached.")\n" \
                 dialog-information "$(gettext "Information")" & exit 1
             fi
@@ -278,25 +335,30 @@ tpcdb = os.environ['tpcdb']
 db = sqlite3.connect(tpcdb)
 db.text_factory = str
 cur = db.cursor()
+# Extract each brace-delimited field by name instead of by a fixed
+# position. This is robust to the newer topic format that also stores
+# translation sub-fields (slch..slru) right after srce, which would
+# shift the old fixed indices.
+def getf(name, item):
+    m = re.search(r'(?:^|\})' + re.escape(name) + r'\{([^}]*)', item)
+    return m.group(1) if m else ''
 data = [line.strip() for line in open(data)]
 for item in data:
-    item = item.replace('}', '}\n')
-    fields = re.split('\n',item)
-    trgt = (fields[0].split('trgt{'))[1].split('}')[0]
-    srce = (fields[1].split('srce{'))[1].split('}')[0]
-    exmp = (fields[12].split('exmp{'))[1].split('}')[0]
-    defn = (fields[13].split('defn{'))[1].split('}')[0]
-    note = (fields[14].split('note{'))[1].split('}')[0]
-    wrds = (fields[15].split('wrds{'))[1].split('}')[0]
-    grmr = (fields[16].split('grmr{'))[1].split('}')[0]
-    tags = (fields[17].split('tags{'))[1].split('}')[0]
-    mark = (fields[18].split('mark{'))[1].split('}')[0]
-    refr = (fields[19].split('refr{'))[1].split('}')[0]
-    imag = (fields[20].split('imag{'))[1].split('}')[0]
-    imgr = (fields[21].split('imgr{'))[1].split('}')[0]
-    link = (fields[22].split('link{'))[1].split('}')[0]
-    cdid = (fields[23].split('cdid{'))[1].split('}')[0]
-    type = (fields[24].split('type{'))[1].split('}')[0]
+    trgt = getf('trgt', item)
+    srce = getf('srce', item)
+    exmp = getf('exmp', item)
+    defn = getf('defn', item)
+    note = getf('note', item)
+    wrds = getf('wrds', item)
+    grmr = getf('grmr', item)
+    tags = getf('tags', item)
+    mark = getf('mark', item)
+    refr = getf('refr', item)
+    imag = getf('imag', item)
+    imgr = getf('imgr', item)
+    link = getf('link', item)
+    cdid = getf('cdid', item)
+    type = getf('type', item)
     if type == '1':
         cur.execute("insert into words (list) values (?)", (trgt,))
     elif type == '2':
@@ -312,6 +374,35 @@ PY
 
             "$DS/ifs/tls.sh" colorize 1
             f_lock 3 "$DT/in_lk"
+
+            # restore multimedia when importing an exported .idmnd folder
+            if [ -n "$media_src" ] && [ -d "$media_src/images" ]; then
+                check_dir "$DM_tlt/images" "$DM_tls/images" "$DM_tls/audio"
+                for img in "$media_src"/images/*.jpg; do
+                    [ -e "$img" ] || continue
+                    base="$(basename "$img")"
+                    case "$base" in
+                        *-2.jpg)
+                            cp -f "$img" "$DM_tlt/images/${base%-2.jpg}.jpg" ;;
+                        *-1.jpg)
+                            cp -f "$img" "$DM_tls/images/${base%-1.jpg}-1.jpg" ;;
+                    esac
+                done
+            fi
+            if [ -n "$media_src" ] && [ -d "$media_src/audio/topic" ]; then
+                check_dir "$DM_tlt"
+                for mp3 in "$media_src"/audio/topic/*.mp3; do
+                    [ -e "$mp3" ] || continue
+                    cp -f "$mp3" "$DM_tlt/$(basename "$mp3")"
+                done
+            fi
+            if [ -n "$media_src" ] && [ -d "$media_src/audio/shared" ]; then
+                check_dir "$DM_tls/audio"
+                for mp3 in "$media_src"/audio/shared/*.mp3; do
+                    [ -e "$mp3" ] || continue
+                    cp -f "$mp3" "$DM_tls/audio/$(basename "$mp3")"
+                done
+            fi
             
             slngtopic="$slng"; slng="$slngcurrent"
             cdb "${cfgdb}" 3 lang tlng "${tlng}"
@@ -335,6 +426,9 @@ PY
             "$DS/mngr.sh" mkmn 1
             "$DS/ifs/tpc.sh" "${name}" 1 &
         fi
+    # stop any audio still playing from the preview when the viewer closes
+    "$DS/stop.sh" 2
+    cleanups "$tmpdir"
     exit 0
 fi
 
@@ -417,21 +511,25 @@ function topic() {
             export infolbl5="<small>$(gettext "Created on") $dtec</small>"
         fi
         if  [[ ${stts} = 2 ]]; then
-        	lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#844DB1'>$label_level</span></i></small>\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"), $cfg3 $(gettext "Words")</small>\n$infolbl5\n\n"
+        	lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#844DB1'>$label_level</span></i></small>\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"), $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
         elif [[ $((stts%2)) = 0 ]]; then
-        	lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#A36A53'>$label_level</span></i></small>\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"), $cfg3 $(gettext "Words")</small>\n$infolbl5\n\n"
+        	lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#A36A53'>$label_level</span></i></small>\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"), $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
         else
-			lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#84DCE7E7'>$label_level</span></i></small>\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"), $cfg3 $(gettext "Words")</small>\n$infolbl5\n\n"
+			lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#84DCE7E7'>$label_level</span></i></small>\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"), $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
         fi
         
-        [ ${count_date_reviews} = 1 ] && label_serie="<u><b>4</b></u> <span color='#888888'>| 7 | 7 | 10 | 15 | 15 | 20 | 30</span>"
-		[ ${count_date_reviews} = 2 ] && label_serie="<span color='#888888'>4 |</span> <u><b>7</b></u> <span color='#888888'>| 7 | 10 | 15 | 15 | 20 | 30</span>"
-		[ ${count_date_reviews} = 3 ] && label_serie="<span color='#888888'>4 | 7 |</span> <u><b>7</b></u> <span color='#888888'>| 10 | 15 | 15 | 20 | 30</span>"
-		[ ${count_date_reviews} = 4 ] && label_serie="<span color='#888888'>4 | 7 | 7 |</span> <u><b>10</b></u> <span color='#888888'>| 15 | 15 | 20 | 30</span>"
-		[ ${count_date_reviews} = 5 ] && label_serie="<span color='#888888'>4 | 7 | 7 | 10 |</span> <u><b>15</b></u> <span color='#888888'>| 15 | 20 | 30</span>"
-		[ ${count_date_reviews} = 6 ] && label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 |</span> <u><b>15</b></u> <span color='#888888'>| 20 | 30</span>"
-		[ ${count_date_reviews} = 7 ] && label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 | 15 |</span> <u><b>20</b></u> <span color='#888888'>| 30</span>"
-		[ ${count_date_reviews} = 8 ] && label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 | 15 | 20 |</span> <u><b>30</b></u>"
+        if [ ${count_date_reviews} -eq 0 ]; then
+			label_serie=""
+		elif [ ${count_date_reviews} = 1 ]; then label_serie="<u><b>4</b></u> <span color='#888888'>| 7 | 7 | 10 | 15 | 15 | 20 | 30</span>"
+		elif [ ${count_date_reviews} = 2 ]; then label_serie="<span color='#888888'>4 |</span> <u><b>7</b></u> <span color='#888888'>| 7 | 10 | 15 | 15 | 20 | 30</span>"
+		elif [ ${count_date_reviews} = 3 ]; then label_serie="<span color='#888888'>4 | 7 |</span> <u><b>7</b></u> <span color='#888888'>| 10 | 15 | 15 | 20 | 30</span>"
+		elif [ ${count_date_reviews} = 4 ]; then label_serie="<span color='#888888'>4 | 7 | 7 |</span> <u><b>10</b></u> <span color='#888888'>| 15 | 15 | 20 | 30</span>"
+		elif [ ${count_date_reviews} = 5 ]; then label_serie="<span color='#888888'>4 | 7 | 7 | 10 |</span> <u><b>15</b></u> <span color='#888888'>| 15 | 20 | 30</span>"
+		elif [ ${count_date_reviews} = 6 ]; then label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 |</span> <u><b>15</b></u> <span color='#888888'>| 20 | 30</span>"
+		elif [ ${count_date_reviews} = 7 ]; then label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 | 15 |</span> <u><b>20</b></u> <span color='#888888'>| 30</span>"
+		elif [ ${count_date_reviews} = 8 ]; then label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 | 15 | 20 |</span> <u><b>30</b></u> <span color='#888888'>| 60</span>"
+		elif [ ${count_date_reviews} -ge 9 ]; then label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 | 15 | 20 | 30 |</span> <u><b>60</b></u>"
+		fi
 
         export lbl1 label_serie
     }

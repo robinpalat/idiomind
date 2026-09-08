@@ -48,11 +48,11 @@ function create_db() {
 function coll_tpc_stats() {
     
     compute() {
-        n=1; f0=0; f1=0; f2=0; f3=0; f4=0
+        n=1; f0=0; f1=0; f2=0; f3=0; f4=0; f5=0
         old_IFS=$IFS; IFS=$'\n'
         for tpc in $(cd "$DM_tl"; find ./ -maxdepth 1 \
         -type d -not -path '*/\.*' |sed 's|\./||g;/^$/d'); do
-            C0=0; C1=0; C2=0; C3=0; C4=0; G1=0; G2=0
+            C0=0; C1=0; C2=0; C3=0; C4=0; C5=0; G1=0; G2=0
             dir1="$DM_tl/${tpc}/.conf"
             unset stts
             stts=$(sed -n 1p "$dir1/stts")
@@ -62,6 +62,7 @@ function coll_tpc_stats() {
                 elif [ ${stts} = 3 -o ${stts} = 4 ]; then C1=1
                 elif [ ${stts} = 0 ]; then C4=1
                 elif [ ${stts} = 1 ]; then C0=1
+                elif [ ${stts} = 2 ]; then C5=1
                 fi
             fi
             f0=$((f0+C0))
@@ -69,7 +70,8 @@ function coll_tpc_stats() {
             f2=$((f2+C2))
             f3=$((f3+C3))
             f4=$((f4+C4))
-            echo "${f0},${f1},${f2},${f3},${f4}"
+            f5=$((f5+C5))
+            echo "${f0},${f1},${f2},${f3},${f4},${f5}"
         done |tail -n 1
         IFS=$old_IFS
     }
@@ -80,6 +82,7 @@ function coll_tpc_stats() {
     f2=$(cut -d ',' -f 3 <<< "$rdata"); ! [[ ${f2} =~ $int ]] && f2=0
     f3=$(cut -d ',' -f 4 <<< "$rdata"); ! [[ ${f3} =~ $int ]] && f3=0
     f4=$(cut -d ',' -f 5 <<< "$rdata"); ! [[ ${f4} =~ $int ]] && f4=0
+    f5=$(cut -d ',' -f 6 <<< "$rdata"); ! [[ ${f5} =~ $int ]] && f5=0
 
     if [ -f "${no_data}" ] && [[ ${f0} -gt 10 ]]; then
         cleanups "${no_data}"
@@ -302,7 +305,7 @@ function chk_expire() {
         fi
         echo 1
     else
-        if [ $(date +%s) -gt $(date -d ${dte} +%s) ]; then
+        if [ $(date +%s) -gt $(date -d "${dte} 12:00:00" +%s) ]; then
             if [ ${atable} = 'expire_month' ]; then
                 newdate=$(date +%m/01/%Y "-d +1 month")
             elif [ ${atable} = 'expire_week' ]; then
@@ -355,11 +358,11 @@ function stats() {
     fi
     
 titlew="$(gettext "Statistics")"
-uri_stats="$DS/default/pg1.html"
+uri_stats="$DS/default/pg_stats.html"
 export uri_stats titlew
 
 /usr/lib/idiomind/idiomind-htmlview \
-    "$DS/default/pg1.html" \
+    "$DS/default/pg_stats.html" \
     "lang=$intrf"
 
 } >/dev/null 2>&1

@@ -167,7 +167,7 @@ function notebook_1() {
     --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
-    --text="${lbl1}${info2}\n<small>$(gettext "Status:") $label_review</small>" \
+    --text="${lbl1}${info2}<small>$(gettext "Status:") $label_review</small>\n" \
     --borders=25 --columns=2 \
     --field=" $btn_review "!'gtk-apply':FBTN "$cmd_mark" \
     --field=" ":LBL " " \
@@ -228,7 +228,7 @@ function notebook_2() {
     if [ $stts = 7 ] || [ $stts = 8 ] || [ $stts = 9 ] || [ $stts = 10 ] || [ ${days_to_review_porcent} -ge 100 ]; then 
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
-    --text="$lbl1\n<small>$(gettext "Status:") $label_review</small>" \
+    --text="$lbl1<small>$(gettext "Status:") $label_review</small>\n" \
     --borders=25 --columns=2 \
     --field=" $btn_review  "!'view-refresh':FBTN "$cmd_mark" \
     --field=" ":LBL " " \
@@ -243,7 +243,7 @@ function notebook_2() {
     else
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
-    --text="$lbl1\n<small>$(gettext "Status:") $label_review</small>" \
+    --text="$lbl1<small>$(gettext "Status:") $label_review</small>\n" \
     --borders=25 --columns=2 \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
@@ -267,7 +267,6 @@ function notebook_2() {
     --tab="  $(gettext "Manage")  " \
     --width=530 --height=560 --borders=5 --tab-borders=0 \
     --button="$(gettext "Close")"!'window-close':2
-  
     
 } >/dev/null 2>&1
 
@@ -285,10 +284,10 @@ function notebook_3() {
     cmd3="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd4="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
 
-    ([ -n "${ls1}" ] && echo "${ls1}") |yad --list --tabnum=1 \
+    ([ -n "${ls2}" ] && echo "${ls2}") |yad --list --tabnum=1 \
     --window-icon=idiomind --plug=$KEY --print-all --separator='|' \
     --image="$DS/images/2.png" --image-on-top \
-    --dclick-action="$DS/vwr.sh 1" \
+    --dclick-action="$DS/vwr.sh 2" \
     --expand-column=0 --no-headers --grid-lines=hor --ellipsize=end \
     --search-column=1 --regex-search \
     --column=Name:TEXT &
@@ -300,7 +299,7 @@ function notebook_3() {
     --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=3 --window-icon=idiomind \
     --plug=$KEY \
-    --text="$lbl1" \
+    --text="$lbl1\n" \
     --borders=25 --columns=2 \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
@@ -317,7 +316,7 @@ function notebook_3() {
     --always-print-result \
     --center --align=right --ellipsize=END \
     --window-icon=$DS/images/logo.png \
-    --tab="  $(gettext "Learnt") ($cfg1) " \
+    --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Manage")  " \
     --width=530 --height=560 --borders=5 --tab-borders=0 \
@@ -365,7 +364,7 @@ function tpc_view() {
     --tab="  $(gettext "Details")  " \
     --width=530 --height=560 --borders=5 --tab-borders=0 \
     --button="$(gettext "Install")":0 \
-    --button="$(gettext "Close")!gtk-close":1
+    --button="$(gettext "Close")!window-close":1
 } >/dev/null 2>&1
 
 
