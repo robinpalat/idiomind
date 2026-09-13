@@ -338,6 +338,7 @@ function dialog_1() {
     --button=" $(gettext "Yes") ":2
 }
 
+
 function tpc_view() {
 
     _lst | yad --list --tabnum=1 --window-icon=idiomind \

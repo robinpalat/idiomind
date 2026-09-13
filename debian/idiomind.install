@@ -17,5 +17,5 @@ play.sh usr/share/idiomind/
 bcle.sh usr/share/idiomind/
 stop.sh usr/share/idiomind/
 vwr.sh usr/share/idiomind/
-htmlview/idiomind-htmlview usr/lib/idiomind
+utils/idiomind-utils usr/lib/idiomind
 idiomind usr/bin/

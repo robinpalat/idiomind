@@ -1,6 +1,196 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+
+json_get_string() {
+    local file="$1"
+    local key="$2"
+
+    local line
+    local json=""
+    local n=0
+    local i=0
+    local len=0
+    local ch=""
+    local next=""
+    local key_json=""
+    local value=""
+    local found=0
+    local escape=""
+    local hex=""
+    local cp=0
+    local high=0
+    local low=0
+
+    [ -f "$file" ] || return 1
+    [ -n "$key" ] || return 1
+
+    # .idmnd JSON files currently store the root object on line 3.
+    while IFS= read -r line; do
+        ((n++))
+        if [ "$n" -eq 3 ]; then
+            json="$line"
+            break
+        fi
+    done < "$file"
+
+    [ -n "$json" ] || return 1
+
+    # Build the JSON representation of the requested key.
+    key_json="\"$key\""
+
+    len=${#json}
+    i=0
+
+    while [ "$i" -lt "$len" ]; do
+
+        ch="${json:i:1}"
+
+        # Look for the requested key.
+        if [ "$ch" = '"' ] && [ "${json:i:${#key_json}}" = "$key_json" ]; then
+
+            # Verify that this is actually an object member:
+            # "key" : "value"
+            local p=$((i + ${#key_json}))
+
+            while [ "$p" -lt "$len" ] &&
+                  [[ "${json:p:1}" =~ [[:space:]] ]]; do
+                ((p++))
+            done
+
+            [ "${json:p:1}" = ":" ] || {
+                ((i++))
+                continue
+            }
+
+            ((p++))
+
+            while [ "$p" -lt "$len" ] &&
+                  [[ "${json:p:1}" =~ [[:space:]] ]]; do
+                ((p++))
+            done
+
+            [ "${json:p:1}" = '"' ] || return 1
+
+            ((p++))
+            value=""
+
+            while [ "$p" -lt "$len" ]; do
+
+                ch="${json:p:1}"
+
+                # End of JSON string.
+                if [ "$ch" = '"' ]; then
+                    printf '%s' "$value"
+                    found=1
+                    break 2
+                fi
+
+                if [ "$ch" != '\' ]; then
+                    value+="$ch"
+                    ((p++))
+                    continue
+                fi
+
+                # JSON escape.
+                ((p++))
+                [ "$p" -lt "$len" ] || return 1
+
+                escape="${json:p:1}"
+
+                case "$escape" in
+                    '"')
+                        value+='"'
+                        ;;
+
+                    '\')
+                        value+='\'
+                        ;;
+
+                    '/')
+                        value+='/'
+                        ;;
+
+                    'b')
+                        value+=$'\b'
+                        ;;
+
+                    'f')
+                        value+=$'\f'
+                        ;;
+
+                    'n')
+                        value+=$'\n'
+                        ;;
+
+                    'r')
+                        value+=$'\r'
+                        ;;
+
+                    't')
+                        value+=$'\t'
+                        ;;
+
+                    'u')
+                        ((p++))
+                        [ $((p + 3)) -lt "$len" ] || return 1
+
+                        hex="${json:p:4}"
+
+                        [[ "$hex" =~ ^[0-9A-Fa-f]{4}$ ]] || return 1
+
+                        cp=$((16#$hex))
+
+                        # UTF-16 high surrogate.
+                        if (( cp >= 0xD800 && cp <= 0xDBFF )); then
+
+                            # Expect another \uXXXX containing the low surrogate.
+                            if [ "${json:p+4:2}" != '\u' ]; then
+                                return 1
+                            fi
+
+                            low="${json:p+6:4}"
+
+                            [[ "$low" =~ ^[0-9A-Fa-f]{4}$ ]] || return 1
+
+                            low=$((16#$low))
+
+                            (( low >= 0xDC00 && low <= 0xDFFF )) || return 1
+
+                            cp=$((0x10000 +
+                                ((cp - 0xD800) << 10) +
+                                (low - 0xDC00)))
+
+                            # Skip the complete low-surrogate sequence.
+                            ((p+=6))
+                        fi
+
+                        # Reject an isolated low surrogate.
+                        if (( cp >= 0xDC00 && cp <= 0xDFFF )); then
+                            return 1
+                        fi
+
+                        printf -v next '%b' "\\U$(printf '%08x' "$cp")"
+                        value+="$next"
+                        ;;
+
+                    *)
+                        return 1
+                        ;;
+                esac
+
+                ((p++))
+            done
+        fi
+
+        ((i++))
+    done
+
+    [ "$found" -eq 1 ]
+}
+
+
+
 function check_format_1() {
     [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
     source "$DS/default/sets.cfg"
@@ -193,48 +383,114 @@ check_index() {
         datafile="${DC_tlt}/data"; datatmp="$DT/data"
         export s tpcdb datafile datatmp
 
-        python3 <<PY
-import os, re, sqlite3, sys
-count = 1
-s = os.environ['s']
-datafile = os.environ['datafile']
-datatmp = os.environ['datatmp']
-datatmp = open(datatmp, "w")
-tpcdb = os.environ['tpcdb']
-db = sqlite3.connect(tpcdb)
-db.text_factory = str
-cur = db.cursor()
-datalist = [line.strip() for line in open(datafile)]
-for mitem in datalist:
-    mitem = str(mitem)
-    if count > 200:
-        break
-    item = mitem.replace('}', '}\n')
-    fields = re.split('\n',item)
-    trgt = (fields[0].split('trgt{'))[1].split('}')[0]
-    try:
-        typee = (fields[13].split('type{'))[1].split('}')[0]
-        mark = (fields[8].split('mark{'))[1].split('}')[0]
-    except:
-        typee = (fields[24].split('type{'))[1].split('}')[0]
-        mark = (fields[18].split('mark{'))[1].split('}')[0]
-    
-    if typee == '1':
-        cur.execute("insert into words (list) values (?)", (trgt,))
-    else:
-        cur.execute("insert into sentences (list) values (?)", (trgt,))
-    if mark == 'TRUE':
-        cur.execute("insert into marks (list) values (?)", (trgt,))
-    if s == '1':
-        cur.execute("insert into learnt (list) values (?)", (trgt,))
-    else:
-        cur.execute("insert into learning (list) values (?)", (trgt,))
-    datatmp.write(mitem+"\n")
-    count += 1
-db.commit()
-db.close()
-datatmp.close()
-PY
+		(
+			set -euo pipefail
+
+			: "${s:?Falta la variable de entorno 's'}"
+			: "${datafile:?Falta la variable de entorno 'datafile'}"
+			: "${datatmp:?Falta la variable de entorno 'datatmp'}"
+			: "${tpcdb:?Falta la variable de entorno 'tpcdb'}"
+
+			[[ -f "$datafile" ]] || {
+				echo "No existe el archivo datafile: $datafile" >&2
+				exit 1
+			}
+
+			[[ -f "$tpcdb" ]] || {
+				echo "No existe la base tpcdb: $tpcdb" >&2
+				exit 1
+			}
+
+			MAX_COUNT=200
+
+			sql_escape() {
+				printf '%s' "${1//\'/\'\'}"
+			}
+
+			extract_field() {
+				local field="$1" name="$2"
+				local after="${field#*${name}\{}"
+
+				[[ "$after" != "$field" ]] || return 1
+
+				printf '%s' "${after%%\}*}"
+			}
+
+			exec 3> "$datatmp"
+
+			{
+				printf 'BEGIN TRANSACTION;\n'
+
+				count=1
+
+				while IFS= read -r raw_line || [[ -n "$raw_line" ]]; do
+					(( count <= MAX_COUNT )) || break
+
+					# Equivalente a line.strip()
+					mitem="$(printf '%s' "$raw_line" |
+						sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+
+					[[ -z "$mitem" ]] && continue
+
+					# Equivalente a:
+					# item = mitem.replace('}', '}\n')
+					mapfile -t fields < <(
+						printf '%s' "$mitem" | sed 's/}/}\n/g'
+					)
+
+					# trgt = (fields[0].split('trgt{'))[1].split('}')[0]
+					if ! trgt="$(extract_field "${fields[0]:-}" "trgt")"; then
+						echo "Error: no se pudo extraer 'trgt' de fields[0] en el item: $mitem" >&2
+						exit 1
+					fi
+
+					# try:
+					#     typee = fields[13]...
+					#     mark = fields[8]...
+					if typee="$(extract_field "${fields[13]:-}" "type")" &&
+					   mark="$(extract_field "${fields[8]:-}" "mark")"; then
+						:
+					else
+						# except:
+						#     typee = fields[24]...
+						#     mark = fields[18]...
+						if ! typee="$(extract_field "${fields[24]:-}" "type")" ||
+						   ! mark="$(extract_field "${fields[18]:-}" "mark")"; then
+							echo "Error: no se pudo extraer 'type'/'mark' en el item: $mitem" >&2
+							exit 1
+						fi
+					fi
+
+					trgt_e="$(sql_escape "$trgt")"
+
+					if [[ "$typee" == "1" ]]; then
+						printf "INSERT INTO words (list) VALUES ('%s');\n" "$trgt_e"
+					else
+						printf "INSERT INTO sentences (list) VALUES ('%s');\n" "$trgt_e"
+					fi
+
+					if [[ "$mark" == "TRUE" ]]; then
+						printf "INSERT INTO marks (list) VALUES ('%s');\n" "$trgt_e"
+					fi
+
+					if [[ "$s" == "1" ]]; then
+						printf "INSERT INTO learnt (list) VALUES ('%s');\n" "$trgt_e"
+					else
+						printf "INSERT INTO learning (list) VALUES ('%s');\n" "$trgt_e"
+					fi
+
+					printf '%s\n' "$mitem" >&3
+
+					(( count++ ))
+				done < "$datafile"
+
+				printf 'COMMIT;\n'
+			} | sqlite3 -bail "$tpcdb"
+
+			exec 3>&-
+
+			echo "Migración completada." >&2
+		)
 
         mv -f "$DT/data" "${DC_tlt}/data"
         sed -i '/^$/d' "${DC_tlt}/data"
@@ -886,8 +1142,10 @@ translate_to() {
                     trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
                     if [ -n "${trgt}" ]; then
                         echo "${trgt}" \
-                        |python3 -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
-                        |sed 's/ /\n/g' |grep -Pv '^.$' |grep -Pv '^..$' \
+						|tr -s '[:space:]' '\n' \
+						|sort -u \
+						|sed '/^$/d' \
+						|grep -Pv '^.$' |grep -Pv '^..$' \
                         |tr -d '*)(,;"“”:' |tr -s '&{}[]' ' ' \
                         |sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
                         |sed 's/\]//;s/\[//;s/<[^>]*>//g' \
@@ -1019,40 +1277,106 @@ colorize() {
     log2="$(< "${DC_tlt}/practice"/log2)"
     log1="$(< "${DC_tlt}/practice"/log1)"
     export chk data learning index marks log1 log2 log3
-python3 <<PY
-import os, re, sys
-chk = os.environ['chk']
-data = os.environ['data']
-learning = os.environ['learning']
-index = os.environ['index']
-marks = os.environ['marks']
-log1 = os.environ['log1']
-log2 = os.environ['log2']
-log3 = os.environ['log3']
-learning = learning.split('\n')
-marks = marks.split('\n')
-data = [line.strip() for line in open(data)]
-f = open(index, "w")
-for item in data:
-    item = item.replace('}', '}\n')
-    fields = re.split('\n',item)
-    item = (fields[0].split('trgt{'))[1].split('}')[0]
-    if item in learning:
-        srce = (fields[1].split('srce{'))[1].split('}')[0]
-        if item in marks:
-            i="<b><big>"+item+"</big></b>"
-        else:
-            i=item
-        if item in log3:
-            f.write("<span color='#AE3259'>"+i+"</span>\nFALSE\n"+srce+"\n")
-        elif item in log2:
-            f.write("<span color='#C15F27'>"+i+"</span>\nFALSE\n"+srce+"\n")
-        elif item in log1:
-            f.write(i+"\n"+chk+"\n"+srce+"\n")
-        else:
-            f.write(i+"\nFALSE\n"+srce+"\n")
-f.close()
-PY
+	(
+		set -euo pipefail
+
+		: "${chk:?Falta la variable de entorno 'chk'}"
+		: "${data:?Falta la variable de entorno 'data'}"
+		: "${learning:?Falta la variable de entorno 'learning'}"
+		: "${index:?Falta la variable de entorno 'index'}"
+		: "${marks:?Falta la variable de entorno 'marks'}"
+		: "${log1:?Falta la variable de entorno 'log1'}"
+		: "${log2:?Falta la variable de entorno 'log2'}"
+		: "${log3:?Falta la variable de entorno 'log3'}"
+
+		[[ -f "$data" ]] || {
+			echo "No existe el archivo data: $data" >&2
+			exit 1
+		}
+
+		extract_field() {
+			local field="$1" name="$2"
+			local after="${field#*${name}\{}"
+
+			[[ "$after" != "$field" ]] || return 1
+
+			printf '%s' "${after%%\}*}"
+		}
+
+		mapfile -t learning_lines <<< "$learning"
+		mapfile -t marks_lines <<< "$marks"
+
+		in_array() {
+			local needle="$1"
+			shift
+
+			local x
+			for x in "$@"; do
+				[[ "$x" == "$needle" ]] && return 0
+			done
+
+			return 1
+		}
+
+		str_contains() {
+			local haystack="$1"
+			local needle="$2"
+
+			[[ "$haystack" == *"$needle"* ]]
+		}
+
+		: > "$index"
+
+		while IFS= read -r raw_line || [[ -n "$raw_line" ]]; do
+
+			mitem="$(printf '%s' "$raw_line" |
+				sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+
+			[[ -z "$mitem" ]] && continue
+
+			mapfile -t fields < <(
+				printf '%s' "$mitem" | sed 's/}/}\n/g'
+			)
+
+			if ! item="$(extract_field "${fields[0]:-}" "trgt")"; then
+				echo "Error: no se pudo extraer 'trgt' de fields[0] en el item: $mitem" >&2
+				exit 1
+			fi
+
+			in_array "$item" "${learning_lines[@]}" || continue
+
+			if ! srce="$(extract_field "${fields[1]:-}" "srce")"; then
+				echo "Error: no se pudo extraer 'srce' de fields[1] en el item: $mitem" >&2
+				exit 1
+			fi
+
+			if in_array "$item" "${marks_lines[@]}"; then
+				i="<b><big>${item}</big></b>"
+			else
+				i="$item"
+			fi
+
+			if str_contains "$log3" "$item"; then
+				printf "<span color='#AE3259'>%s</span>\nFALSE\n%s\n" \
+					"$i" "$srce" >> "$index"
+
+			elif str_contains "$log2" "$item"; then
+				printf "<span color='#C15F27'>%s</span>\nFALSE\n%s\n" \
+					"$i" "$srce" >> "$index"
+
+			elif str_contains "$log1" "$item"; then
+				printf "%s\n%s\n%s\n" \
+					"$i" "$chk" "$srce" >> "$index"
+
+			else
+				printf "%s\nFALSE\n%s\n" \
+					"$i" "$srce" >> "$index"
+			fi
+
+		done < "$data"
+
+		echo "Index generado." >&2
+	)
     f_lock 3 "$DT/co_lk"
 
 } >/dev/null 2>&1
@@ -1072,191 +1396,7 @@ itray() {
     export lbl8="$(gettext "Quit")"
     export dirt="$DT/"
     export lgt=${tlangs[$tlng]}
-    python3 <<PY
-import gi
-gi.require_version('Gtk', '3.0')
-gi.require_version('Notify', '0.7')
-import time, os, os.path, sys, subprocess
-
-HAVE_APPINDICATOR = False
-AppIndicator = None
-try:
-    gi.require_version('AyatanaAppIndicator3', '0.1')
-    from gi.repository import AyatanaAppIndicator3 as AppIndicator
-    HAVE_APPINDICATOR = True
-except (ImportError, ValueError):
-    try:
-        gi.require_version('AppIndicator3', '0.1')
-        from gi.repository import AppIndicator3 as AppIndicator
-        HAVE_APPINDICATOR = True
-    except (ImportError, ValueError):
-        pass
-
-from gi.repository import Gtk, Gio, Notify
-
-HOME = os.getenv('HOME')
-add = os.environ['lbl1']
-play = os.environ['lbl2']
-stop = os.environ['lbl3']
-next = os.environ['lbl4']
-topics = os.environ['lbl5']
-tasks = os.environ['lbl9']
-settings = os.environ['lbl10']
-quit = os.environ['lbl8']
-my_pid = os.getpid()
-f_pid = open(os.environ['dirt']+'tray.pid', 'w')
-f_pid.write(str(my_pid))
-f_pid.close()
-
-class IdiomindIndicator:
-    def __init__(self):
-        self.DIRT = os.environ['dirt']
-        self.tpc = os.getenv('HOME') + '/.config/idiomind/tpc'
-        self.playlck = self.DIRT + 'playlck'
-        self.tasks = self.DIRT + 'tasks'
-        Notify.init("Idiomind")
-        self.menu_items = []
-        self.stts = 1
-        self.use_appindicator = HAVE_APPINDICATOR
-        if self.use_appindicator:
-            self.indicator = AppIndicator.Indicator.new("idiomind", "idiomind", AppIndicator.IndicatorCategory.OTHER)
-            self.indicator.set_status(AppIndicator.IndicatorStatus.ACTIVE)
-            self.indicator.set_title("Idiomind")
-        else:
-            self.indicator = Gtk.StatusIcon()
-            self.indicator.set_from_icon_name("idiomind")
-            self.indicator.set_tooltip_text("Idiomind")
-            self.indicator.connect("popup-menu", self._on_popup_menu)
-        self.change_topic()
-        self._on_menu_update()
-    def _on_menu_update(self):
-        time.sleep(0.5)
-        if os.path.exists(self.playlck):
-            m = open(self.playlck).readlines()
-            for bm in m:
-                label = bm.rstrip('\n')
-                if label == "0":
-                    self.stts = 1
-                else:
-                    self.stts = 0
-        else:
-            self.stts = 1
-        self.change_topic()
-    def create_menu_label(self, label):
-        item = Gtk.MenuItem(label=label)
-        return item
-    def create_menu_icon(self, label, icon_name):
-        image = Gtk.Image()
-        image.set_from_icon_name(icon_name, 24)
-        item = Gtk.MenuItem()
-        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        box.pack_start(image, False, False, 0)
-        label_widget = Gtk.Label(label=label)
-        box.pack_start(label_widget, False, False, 0)
-        item.add(box)
-        item.show_all()
-        return item
-    def make_menu_items(self):
-        menu_items = []
-        menu_items.append((add, self.on_Add_click))
-        if self.stts == 0:
-            menu_items.append((stop, self.on_stop))
-        else:
-            menu_items.append((play, self.on_play))
-        return menu_items
-    def _build_menu(self):
-        menu_items = self.make_menu_items()
-        popup_menu = Gtk.Menu()
-        for Label, callback in menu_items:
-            if not Label and not callback:
-                item = Gtk.SeparatorMenuItem()
-            else:
-                item = Gtk.MenuItem(label=Label)
-                item.connect('activate', callback)
-            popup_menu.append(item)
-        try:
-            m = open(self.tpc).readlines()
-        except:
-            m = []
-        for bm in m:
-            label = bm.rstrip('\n')
-            if not label:
-                label = ""
-            item = self.create_menu_icon(label, "go-home")
-            item.connect("activate", self.on_Home)
-            popup_menu.append(item)
-        if os.path.exists(self.tasks):
-            listMenu=Gtk.Menu()
-            listItems=Gtk.MenuItem(label=tasks)
-            listItems.set_submenu(listMenu)
-            try:
-                m = open(self.tasks).readlines()
-            except:
-                m = []
-            for bm in m:
-                Label = bm.rstrip('\n')
-                if not Label:
-                    Label = ""
-                item = self.create_menu_label(label=Label)
-                item.connect("activate", self.on_Task)
-                listMenu.append(item)
-            popup_menu.append(listItems)
-            item.show()
-            listItems.show()
-        item = self.create_menu_label(topics)
-        item.connect("activate", self.on_Topics_click)
-        popup_menu.append(item)
-        item = Gtk.SeparatorMenuItem()
-        popup_menu.append(item)
-        item = self.create_menu_label(quit)
-        item.connect("activate", self.on_Quit_click)
-        popup_menu.append(item)
-        popup_menu.show_all()
-        self.menu_items = menu_items
-        return popup_menu
-    def change_topic(self):
-        popup_menu = self._build_menu()
-        if self.use_appindicator:
-            self.indicator.set_menu(popup_menu)
-    def _on_popup_menu(self, widget, button, activate_time):
-        popup_menu = self._build_menu()
-        popup_menu.popup_at_widget(widget, Gtk.Gravity.NORTH_WEST, Gtk.Gravity.NORTH_WEST, None)
-    def on_Task(self, widget):
-        t = widget.get_child()
-        t = t.get_label()
-        subprocess.Popen(["/usr/share/idiomind/ifs/tasks.sh", str(t)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    def on_Home(self, widget):
-        os.system("idiomind topic &")
-    def on_Add_click(self, widget):
-        os.system("/usr/share/idiomind/add.sh new_items &")
-    def on_Topics_click(self, widget):
-        os.system("/usr/share/idiomind/chng.sh &")
-    def on_play(self, widget):
-        self.stts = 0
-        os.system("/usr/share/idiomind/bcle.sh &")
-        self._on_menu_update()
-    def on_stop(self, widget):
-        self.stts = 1
-        os.system("/usr/share/idiomind/stop.sh 2 &")
-        self._on_menu_update()
-    def on_Quit_click(self, widget):
-        os.system("/usr/share/idiomind/stop.sh 1 &")
-        Gtk.main_quit()
-    def callback(self, m, f, o, event):
-        if event == Gio.FileMonitorEvent.CHANGES_DONE_HINT:
-            self._on_menu_update()
-if __name__ == "__main__":
-    i = IdiomindIndicator()
-    if not os.path.exists(os.environ['dirt']+'tray.pid'):
-        f_pid = open(os.environ['dirt']+'tray.pid', 'w')
-        f_pid.write(str(my_pid))
-        f_pid.close()
-    gdir = Gio.File.new_for_path(i.DIRT)
-    monitor = gdir.monitor_directory(Gio.FileMonitorFlags.NONE, None)
-    monitor.connect("changed", i.callback)
-    Gtk.main()
-PY
-
+	/usr/lib/idiomind/idiomind-utils tray
 }
 
 

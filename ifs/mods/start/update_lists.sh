@@ -34,126 +34,294 @@ for n in {1..100}; do
     fi
 done
 
-if grep '^$' "${items}"; then sed -i '/^$/d' "${items}"; fi
+if grep '^$' "${items}"; then
+    sed -i '/^$/d' "${items}"
+fi
+
 f_lock 1 "$DT/co_lk"
+
 lstp="${items}"
 
+declare -A lstp_set=()
+
+while IFS= read -r value; do
+    [ -n "$value" ] && lstp_set["$value"]=1
+done < "$lstp"
+
 export dir topics lstp shrdb
+
 cleanups "$DM_tl/.share/index"
 
-python3 <<PY
-import os, re, subprocess, sqlite3, sys
-from os import path
-from datetime import datetime, timedelta
-topics = os.environ['topics']
-dir = os.environ['dir']
-lstp = os.environ['lstp']
-shrdb = os.environ['shrdb']
-lstp = [line.strip() for line in open(lstp)]
-topics = topics.split('\n')
-days_ago = datetime.now() - timedelta(days=10)
-shr_db = sqlite3.connect(shrdb)
-shr_db.text_factory = str
-cur_shr_db = shr_db.cursor()
-cur_shr_db.execute("delete from T5")
-cur_shr_db.execute("delete from T6")
-for tpc in topics:
-    cnfg_dir = dir + tpc + "/.conf/"
-    tpcdb = cnfg_dir + "tpc"
-    tpc_db = sqlite3.connect(tpcdb)
-    tpc_db.text_factory = str
-    cur_tpc_db = tpc_db.cursor()
-    auto_mrk = cur_tpc_db.execute("select acheck from config")
-    auto_mrk = [i[0] for i in auto_mrk]
-    marks = cur_tpc_db.execute("select list from marks")
-    marks = marks.fetchall()
-    marks = [i[0] for i in marks]
-    learn = cur_tpc_db.execute("select list from learning")
-    learn = learn.fetchall()
-    learn = [i[0] for i in learn]
-    reviews = cur_tpc_db.execute("select * from reviews")
-    reviews = reviews.fetchall()
-    reviews = [i[0] for i in reviews]
-    try:
-        cont = str
-        f = open(cnfg_dir+"/stts")
-        stts = [line.rstrip('\n') for line in f]
-        stts = stts[0]
-        log1m = datetime.fromtimestamp(path.getctime(cnfg_dir+"practice/log1"))
-        log1 = [line.strip() for line in open(cnfg_dir+"practice/log1")]
-        log2m = datetime.fromtimestamp(path.getctime(cnfg_dir+"practice/log2"))
-        log2 = [line.strip() for line in open(cnfg_dir+"practice/log2")]
-        log3m = datetime.fromtimestamp(path.getctime(cnfg_dir+"practice/log3"))
-        log3 = [line.strip() for line in open(cnfg_dir+"practice/log3")]
-        items = [line.strip() for line in open(cnfg_dir+"data")]
-        reviews = len(reviews)
-        if auto_mrk[0] == 'TRUE':
-            auto_mrk = True
-        else:
-            auto_mrk = False
-        if (stts == '3' or stts == '4' or stts == '7' \
-        or stts == '8' or stts == '9' or stts == '10' ):
-            cont = True
-        if not os.path.exists(dir + tpc + "/.conf/practice"):
-            cont = False
-        l1m = False
-        l2m = False
-        l3m = False
-        if log1m < days_ago:
-            l1m = True
-        if log2m < days_ago:
-            l2m = True
-        if log3m < days_ago:
-            l3m = True
-        if (stts == '5' or stts == '6'):
-            if (len(log3) > 0 or len(log2) > 0):
-                cur_shr_db.execute("insert into T6 values (?)", (tpc,))
-                shr_db.commit()
-                print "- back to practice: "+tpc
-            elif l3m == True and l2m == True and l1m == True:
-                cur_shr_db.execute("insert into T5 values (?)", (tpc,))
-                shr_db.commit()
-                print "- to practice: "+tpc
-                
-        len_learnt = 0
-        if cont == True:
-            index = open(cnfg_dir+"index", "w")
-            for item in items:
-                item = item.replace('}', '}\n')
-                fields = re.split('\n',item)
-                item = (fields[0].split('trgt{'))[1].split('}')[0]
-                if item in learn:
-                    srce = (fields[1].split('srce{'))[1].split('}')[0]
-                    if item in marks:
-                        i="<b><big>"+item+"</big></b>"
-                    else:
-                        i=item
-                    if item in lstp and auto_mrk == True:
-                        chk = 'TRUE'
-                    else:
-                        chk = 'FALSE'
-                    if item in log3:
-                        index.write("<span color='#AE3259'>"+i+"</span>\nFALSE\n"+srce+"\n")
-                    elif item in log2:
-                        index.write("<span color='#C15F27'>"+i+"</span>\nFALSE\n"+srce+"\n")
-                    elif item in log1:
-                        print chk + ' -> ' + item
-                        index.write(i+"\n"+chk+"\n"+srce+"\n")
-                    else:
-                        index.write(i+"\nFALSE\n"+srce+"\n")
-                    if chk == 'TRUE':
-                        len_learnt = len_learnt+1
-            index.close()
-            if (stts == '1' or stts == '2' or stts == '5' or stts == '6'):
-                if len(learn) == len_learnt and len(items) > 0:
-                    subprocess.Popen(['/usr/share/idiomind/mngr.sh %s %s' % ('mark_as_learned_ok', '"'+tpc+'"')], shell=True)
-                    print 'mark_as_learnt -> ' + tpc
-    except:
-        print 'err -> ' + tpc
-        
-print "\tlists ok\n"
-shr_db.close()      
-PY
+# Rebuild shared practice lists and topic indexes.
+days_ago=$(date -d '10 days ago' +%s)
+
+{
+    printf 'BEGIN TRANSACTION;\n'
+    printf 'DELETE FROM T5;\n'
+    printf 'DELETE FROM T6;\n'
+    printf 'COMMIT;\n'
+} | sqlite3 -bail "$shrdb"
+
+while IFS= read -r tpc; do
+    [ -n "$tpc" ] || continue
+
+    cnfg_dir="$dir$tpc/.conf"
+    tpcdb="$cnfg_dir/tpc"
+
+    # A damaged/incomplete topic must not abort the whole update.
+    if [ ! -f "$tpcdb" ] ||
+       [ ! -f "$cnfg_dir/stts" ] ||
+       [ ! -f "$cnfg_dir/data" ] ||
+       [ ! -f "$cnfg_dir/practice/log1" ] ||
+       [ ! -f "$cnfg_dir/practice/log2" ] ||
+       [ ! -f "$cnfg_dir/practice/log3" ]; then
+        echo "err -> $tpc"
+        continue
+    fi
+
+    #
+    # Read topic state.
+    #
+    stts=$(<"$cnfg_dir/stts")
+
+    auto_mrk=$(sqlite3 "$tpcdb" \
+        'SELECT acheck FROM config LIMIT 1;')
+
+    #
+    # Load SQLite lists into associative arrays.
+    # This avoids executing sqlite3 once per note.
+    #
+    declare -A learn_set=()
+    declare -A marks_set=()
+
+    while IFS= read -r value; do
+        [ -n "$value" ] && learn_set["$value"]=1
+    done < <(sqlite3 "$tpcdb" 'SELECT list FROM learning;')
+
+    while IFS= read -r value; do
+        [ -n "$value" ] && marks_set["$value"]=1
+    done < <(sqlite3 "$tpcdb" 'SELECT list FROM marks;')
+
+    #
+    # Determine whether the topic has practice activity.
+    #
+    log1_file="$cnfg_dir/practice/log1"
+    log2_file="$cnfg_dir/practice/log2"
+    log3_file="$cnfg_dir/practice/log3"
+
+    log1_mtime=$(stat -c %Y "$log1_file")
+    log2_mtime=$(stat -c %Y "$log2_file")
+    log3_mtime=$(stat -c %Y "$log3_file")
+
+    l1m=false
+    l2m=false
+    l3m=false
+
+    [ "$log1_mtime" -lt "$days_ago" ] && l1m=true
+    [ "$log2_mtime" -lt "$days_ago" ] && l2m=true
+    [ "$log3_mtime" -lt "$days_ago" ] && l3m=true
+
+    #
+    # The original Python used stripped, non-empty log entries.
+    #
+    log1=$(sed '/^[[:space:]]*$/d;s/^[[:space:]]*//;s/[[:space:]]*$//' \
+        "$log1_file")
+
+    log2=$(sed '/^[[:space:]]*$/d;s/^[[:space:]]*//;s/[[:space:]]*$//' \
+        "$log2_file")
+
+    log3=$(sed '/^[[:space:]]*$/d;s/^[[:space:]]*//;s/[[:space:]]*$//' \
+        "$log3_file")
+
+    #
+    # Load practice logs into associative arrays too.
+    #
+    declare -A log1_set=()
+    declare -A log2_set=()
+    declare -A log3_set=()
+
+    while IFS= read -r value; do
+        [ -n "$value" ] && log1_set["$value"]=1
+    done <<< "$log1"
+
+    while IFS= read -r value; do
+        [ -n "$value" ] && log2_set["$value"]=1
+    done <<< "$log2"
+
+    while IFS= read -r value; do
+        [ -n "$value" ] && log3_set["$value"]=1
+    done <<< "$log3"
+
+    #
+    # Determine whether the topic should be processed.
+    #
+    cont=false
+
+    case "$stts" in
+        3|4|7|8|9|10)
+            cont=true
+            ;;
+    esac
+
+    [ -d "$cnfg_dir/practice" ] || cont=false
+
+    #
+    # Topics in states 5/6 may need to return to practice.
+    #
+    if [ "$stts" = "5" ] || [ "$stts" = "6" ]; then
+
+        if [ -n "$log3" ] || [ -n "$log2" ]; then
+
+            tpc_sql=${tpc//\'/\'\'}
+
+            sqlite3 -bail "$shrdb" \
+                "INSERT INTO T6 (list) VALUES ('$tpc_sql');"
+
+            echo "- back to practice: $tpc"
+
+        elif [ "$l3m" = true ] &&
+             [ "$l2m" = true ] &&
+             [ "$l1m" = true ]; then
+
+            tpc_sql=${tpc//\'/\'\'}
+
+            sqlite3 -bail "$shrdb" \
+                "INSERT INTO T5 (list) VALUES ('$tpc_sql');"
+
+            echo "- to practice: $tpc"
+        fi
+    fi
+
+    #
+    # Rebuild topic index.
+    #
+    len_learnt=0
+
+    if [ "$cont" = true ]; then
+
+        index_file="$cnfg_dir/index"
+        data_file="$cnfg_dir/data"
+
+        # Build a temporary index first.
+        # This prevents a partial index if something goes wrong.
+        index_tmp=$(mktemp "$cnfg_dir/.index.XXXXXX") || {
+            echo "err -> $tpc"
+            unset learn_set marks_set log1_set log2_set log3_set
+            continue
+        }
+
+        index_ok=true
+
+        while IFS= read -r raw_item || [ -n "$raw_item" ]; do
+
+            [ -n "$raw_item" ] || continue
+
+            #
+            # The data format stores trgt{} and srce{} in the same record.
+            #
+            item=$(sed -n 's/.*trgt{\([^}]*\)}.*/\1/p' <<< "$raw_item")
+            [ -n "$item" ] || continue
+
+            #
+            # Only learning items belong in the index.
+            #
+            [ "${learn_set[$item]+_}" ] || continue
+
+            srce=$(sed -n 's/.*srce{\([^}]*\)}.*/\1/p' <<< "$raw_item")
+
+            #
+            # Marked notes are displayed in bold.
+            #
+            if [ "${marks_set[$item]+_}" ]; then
+                display_item="<b><big>${item}</big></b>"
+            else
+                display_item="$item"
+            fi
+
+            #
+            # Automatic marking.
+            #
+            if [ "$auto_mrk" = "TRUE" ] &&
+               [ "${lstp_set[$item]+_}" ]; then
+                chk="TRUE"
+            else
+                chk="FALSE"
+            fi
+
+            #
+            # Practice status has priority:
+            # log3 -> log2 -> log1 -> normal.
+            #
+            if [ "${log3_set[$item]+_}" ]; then
+
+                printf '<span color='\''#AE3259'\''>%s</span>\nFALSE\n%s\n' \
+                    "$display_item" "$srce" >> "$index_tmp"
+
+            elif [ "${log2_set[$item]+_}" ]; then
+
+                printf '<span color='\''#C15F27'\''>%s</span>\nFALSE\n%s\n' \
+                    "$display_item" "$srce" >> "$index_tmp"
+
+            elif [ "${log1_set[$item]+_}" ]; then
+
+                echo "$chk -> $item"
+
+                printf '%s\n%s\n%s\n' \
+                    "$display_item" "$chk" "$srce" >> "$index_tmp"
+
+            else
+
+                printf '%s\nFALSE\n%s\n' \
+                    "$display_item" "$srce" >> "$index_tmp"
+            fi
+
+            if [ "$chk" = "TRUE" ]; then
+                len_learnt=$((len_learnt + 1))
+            fi
+
+        done < "$data_file"
+
+        #
+        # Only replace the real index after successful generation.
+        #
+        if [ "$index_ok" = true ]; then
+            mv -f -- "$index_tmp" "$index_file"
+        else
+            rm -f -- "$index_tmp"
+        fi
+
+        #
+        # If every learning note is automatically marked,
+        # promote the topic to learned.
+        #
+        case "$stts" in
+            1|2|5|6)
+
+                learn_count=${#learn_set[@]}
+                item_count=$(wc -l < "$data_file")
+
+                if [ "$learn_count" -eq "$len_learnt" ] &&
+                   [ "$item_count" -gt 0 ]; then
+
+                    "$DS/mngr.sh" mark_as_learned_ok "$tpc" &
+
+                    echo "mark_as_learnt -> $tpc"
+                fi
+                ;;
+        esac
+    fi
+
+    unset learn_set
+    unset marks_set
+    unset log1_set
+    unset log2_set
+    unset log3_set
+
+done <<< "$topics"
+
+unset lstp_set
+
+echo -e "\tlists ok"
 
 [ $(date +%d) = 1 -o $(date +%d) = 14 ] && rm "$log"; touch "$log"
 "$DS/mngr.sh" mkmn 1 &

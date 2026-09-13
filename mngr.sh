@@ -790,26 +790,7 @@ mark_to_learn_topic() {
     tpc_db 9 config repass ${count_date_reviews}
     export data="${DC_tlt}/data" tpcdb
     
-python3 <<PY
-import os, re, sqlite3, sys
-data = os.environ['data']
-tpcdb = os.environ['tpcdb']
-db = sqlite3.connect(tpcdb)
-db.text_factory = str
-cur = db.cursor()
-cur.execute("delete from learnt")
-cur.execute("delete from learning")
-db.commit()
-data = [line.strip() for line in open(data)]
-for item in data:
-    item = item.replace('}', '}\n')
-    fields = re.split('\n',item)
-    trgt = (fields[0].split('trgt{'))[1].split('}')[0]
-    if trgt and trgt != ' ':
-        cur.execute("insert into learning (list) values (?)", (trgt,))
-db.commit()
-db.close()
-PY
+	rebuild_learning_lists "$DC_tlt/data" "$tpcdb" "TRUE"
 
     if [ -e "${DC_tlt}/lk" ]; then rm "${DC_tlt}/lk"; fi
     touch "${DM_tlt}"
@@ -882,31 +863,8 @@ mark_as_learned_topic() {
 
     export data="${DC_tlt}/data" tpcdb mast
 	
-python3 <<PY
-import os, re, locale, sqlite3, sys
-en = locale.getpreferredencoding()
-data = os.environ['data']
-tpcdb = os.environ['tpcdb']
-mast = os.environ['mast']
-db = sqlite3.connect(tpcdb)
-db.text_factory = str
-cur = db.cursor()
-cur.execute("delete from learnt")
-cur.execute("delete from learning")
-db.commit()
-data = [line.strip() for line in open(data)]
-for item in data:
-    item = item.replace('}', '}\n')
-    fields = re.split('\n',item)
-    trgt = (fields[0].split('trgt{'))[1].split('}')[0]
-    if trgt and trgt != ' ':
-        if mast == 'TRUE':
-            cur.execute("insert into learning (list) values (?)", (trgt,))
-        else:
-            cur.execute("insert into learnt (list) values (?)", (trgt,))
-db.commit()
-db.close()
-PY
+    rebuild_learning_lists "$DC_tlt/data" "$tpcdb" "$mast"
+   
     cp -f "${DC_tlt}/note" "${DC_tlt}/note.bk"
     "$DS/mngr.sh" mkmn 1 &
     ( sleep 1; mv -f "${DC_tlt}/note.bk" "${DC_tlt}/note" ) &
@@ -968,30 +926,8 @@ mark_as_learned_topic_ok() {
 
     export data="${DC_tlt}/data" tpcdb mast
     
-python3 <<PY
-import os, re, sqlite3, sys
-data = os.environ['data']
-tpcdb = os.environ['tpcdb']
-mast = os.environ['mast']
-db = sqlite3.connect(tpcdb)
-db.text_factory = str
-cur = db.cursor()
-cur.execute("delete from learnt")
-cur.execute("delete from learning")
-db.commit()
-data = [line.strip() for line in open(data)]
-for item in data:
-    item = item.replace('}', '}\n')
-    fields = re.split('\n',item)
-    trgt = (fields[0].split('trgt{'))[1].split('}')[0]
-    if trgt and trgt != ' ':
-        if mast == 'TRUE':
-            cur.execute("insert into learning (list) values (?)", (trgt,))
-        else:
-            cur.execute("insert into learnt (list) values (?)", (trgt,))
-db.commit()
-db.close()
-PY
+    rebuild_learning_lists "$DC_tlt/data" "$tpcdb" "$mast"
+
     cp -f "${DC_tlt}/note" "${DC_tlt}/note.bk"
     ( sleep 1; mv -f "${DC_tlt}/note.bk" "${DC_tlt}/note" ) &
     

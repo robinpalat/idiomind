@@ -11,6 +11,7 @@ msg_err1() {
 play_word() {
 
 	w="$(sed 's/<[^>]*>//g' <<<"${2}")"
+	echo "$w"
 	# When previewing a portable .idmnd package before it is installed,
 	# resolve the note's cdid from the package data instead of the
 	# (not yet existing) installed topic data file.
@@ -18,43 +19,76 @@ play_word() {
 	item="$(grep -F -m 1 "trgt{${w}}" "$data_src" |sed 's/}/}\n/g')"
     type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
     cdid="$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")"
-   
-    if ps -A | pgrep -f 'play'; then killall 'play'; fi
-    if ps -A | pgrep -f 'espeak'; then killall 'espeak'; fi
     
-    if [ -f "$DT/${cdid}.mp3" ]; then 
-		play "$DT/${cdid}.mp3" &
-    elif [ -f "${DM_tlt}/$cdid.mp3" ]; then
-		play "${DM_tlt}/$cdid.mp3" &
-    elif [ -f "$DT/${3}.mp3" ]; then 
-		play "$DT/${3}.mp3" &
-    elif [ -f "${DM_tlt}/$3.mp3" ]; then
-		play "${DM_tlt}/$3.mp3" &
-    elif [ -f "${DM_tls}/audio/${w,,}.mp3" ]; then
-        play "${DM_tls}/audio/${w,,}.mp3" &
-    elif ls "$DC_d"/*."TTS offline.Convert text to audio".* 1> /dev/null 2>&1; then
-        for Script in "$DC_d"/*."TTS offline.Convert text to audio".*; do
-			Script="$DS_a/Resources/scripts/$(basename "${Script}")"
-			[ -f "${Script}" ] && "${Script}" "${w}" "$DT/${3}.mp3"
-			if [ -f "$DT/${3}.mp3" ]; then 
-				break
+    if ps -A | pgrep -f 'play'; then killall 'play'; fi
+	if ps -A | pgrep -f 'espeak'; then killall 'espeak'; fi
+		
+    
+    # Portable .idmnd preview: use audio directly from the extracted package.
+	# Only this preview-specific path is added; normal playback below is unchanged.
+	if [ -n "$IDMND_PREVIEW_MEDIA" ]; then
+		preview_pid_file="$DT/idmnd_preview_play.pid"
+
+		# Detener solamente el audio anterior del preview.
+		if [ -f "$preview_pid_file" ]; then
+			preview_pid="$(cat "$preview_pid_file" 2>/dev/null)"
+			if [ -n "$preview_pid" ] && kill -0 "$preview_pid" 2>/dev/null; then
+				kill "$preview_pid" 2>/dev/null
+			fi
+			rm -f "$preview_pid_file"
+		fi
+
+		for audio_file in \
+			"$IDMND_PREVIEW_MEDIA/audio/topic/${cdid}.mp3" \
+			"$IDMND_PREVIEW_MEDIA/audio/shared/${cdid}.mp3" \
+			"$IDMND_PREVIEW_MEDIA/audio/topic/${3}.mp3" \
+			"$IDMND_PREVIEW_MEDIA/audio/shared/${3}.mp3" \
+			"$IDMND_PREVIEW_MEDIA/audio/shared/${w,,}.mp3"; do
+			if [ -f "$audio_file" ]; then
+				play "$audio_file" &
+				echo $! > "$preview_pid_file"
+				exit
 			fi
 		done
-		if [ -f "$DT/${3}.mp3" ]; then 
-			play "$DT/${3}.mp3" && rm -f "$DT/${3}.mp3"
+	else
+	   
+	
+		if [ -f "$DT/${cdid}.mp3" ]; then 
+			play "$DT/${cdid}.mp3" &
+		elif [ -f "${DM_tlt}/$cdid.mp3" ]; then
+			play "${DM_tlt}/$cdid.mp3" &
+		elif [ -f "$DT/${3}.mp3" ]; then 
+			play "$DT/${3}.mp3" &
+		elif [ -f "${DM_tlt}/$3.mp3" ]; then
+			play "${DM_tlt}/$3.mp3" &
+		elif [ -f "${DM_tls}/audio/${w,,}.mp3" ]; then
+			play "${DM_tls}/audio/${w,,}.mp3" &
+			
+			
+		elif ls "$DC_d"/*."TTS offline.Convert text to audio".* 1> /dev/null 2>&1; then
+			for Script in "$DC_d"/*."TTS offline.Convert text to audio".*; do
+				Script="$DS_a/Resources/scripts/$(basename "${Script}")"
+				[ -f "${Script}" ] && "${Script}" "${w}" "$DT/${3}.mp3"
+				if [ -f "$DT/${3}.mp3" ]; then 
+					break
+				fi
+			done
+			if [ -f "$DT/${3}.mp3" ]; then 
+				play "$DT/${3}.mp3" && rm -f "$DT/${3}.mp3"
+			else
+				# si hubo error al procesar tts offline se opta por espeak
+				sed 's/<[^>]*>//g' <<< "${w}." |espeak -v ${tlangs[$tlng]} \
+				-a ${sAmplitude} -s ${sSpeed} -p ${sPitch} \
+				-g ${sWordgap} -b ${sEncoding} &
+			fi
 		else
-			# si hubo error al procesar tts offline se opta por espeak
-			sed 's/<[^>]*>//g' <<< "${w}." |espeak -v ${tlangs[$tlng]} \
+			echo "${w}." |espeak -v ${tlangs[$tlng]} \
 			-a ${sAmplitude} -s ${sSpeed} -p ${sPitch} \
 			-g ${sWordgap} -b ${sEncoding} &
 		fi
-    else
-        echo "${w}." |espeak -v ${tlangs[$tlng]} \
-        -a ${sAmplitude} -s ${sSpeed} -p ${sPitch} \
-        -g ${sWordgap} -b ${sEncoding} &
+		
+		exit
     fi
-    
-    exit
     
 } >/dev/null 2>&1
 

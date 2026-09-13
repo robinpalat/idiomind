@@ -18,7 +18,8 @@
 	dh $@
 	
 override_dh_auto_build:
-	gcc htmlview/htmlview.c -o htmlview/idiomind-htmlview \
+	gcc utils/idiomind-utils.c utils/html_view.c \
+		-o utils/idiomind-utils \
 		$$(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1)
 
 

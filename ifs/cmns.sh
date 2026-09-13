@@ -122,6 +122,51 @@ function tpc_db() {
     fi
 }
 
+function rebuild_learning_lists() {
+    local data_file="$1"
+    local db_file="$2"
+    local mast="$3"
+
+    [ -f "$data_file" ] || return 1
+    [ -f "$db_file" ] || return 1
+
+    {
+        printf 'BEGIN TRANSACTION;\n'
+        printf 'DELETE FROM learnt;\n'
+        printf 'DELETE FROM learning;\n'
+
+        while IFS= read -r raw_line || [ -n "$raw_line" ]; do
+
+            # Equivalente a Python: line.strip()
+            local line
+            line="$(printf '%s' "$raw_line" |
+                sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+
+            [ -n "$line" ] || continue
+
+            # Extraer trgt{...}
+            local trgt
+            trgt="$(sed -n 's/.*trgt{\([^}]*\)}.*/\1/p' <<< "$line")"
+
+            [ -n "$trgt" ] || continue
+            [ "$trgt" != " " ] || continue
+
+            # Escapar comillas simples para SQLite.
+            trgt="${trgt//\'/\'\'}"
+
+            if [ "$mast" = "TRUE" ]; then
+                printf "INSERT INTO learning (list) VALUES ('%s');\n" "$trgt"
+            else
+                printf "INSERT INTO learnt (list) VALUES ('%s');\n" "$trgt"
+            fi
+
+        done < "$data_file"
+
+        printf 'COMMIT;\n'
+
+    } | sqlite3 -bail "$db_file"
+}
+
 function nmfile() {
     echo -n "${1}" |md5sum |rev |cut -c 4- |rev
 }
@@ -175,26 +220,27 @@ function check_list() {
     export topics="$(cd ~ && cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
     -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')" \
     addons="$(ls -1a "$DS/addons/")" db="$DM_tls/data/config"
-    
-    if [ -e ${db} ]; then
+
+    if [ -e "$db" ]; then
         if ls -tNd "$DM_tl"/*/ 1> /dev/null 2>&1; then
-python3 <<PY
-import os, sqlite3
-shrdb = os.environ['shrdb']
-db = sqlite3.connect(shrdb)
-db.text_factory = str
-cur = db.cursor()
-addons = os.environ['addons']
-addons = addons.split('\n')
-topics = os.environ['topics']
-topics = topics.split('\n')
-cur.execute("delete from topics")
-for tpc in topics:
-    if not tpc in addons:
-        cur.execute("insert into topics (list) values (?)", (tpc,))
-db.commit()
-db.close()
-PY
+
+            {
+                printf 'BEGIN TRANSACTION;\n'
+                printf 'DELETE FROM topics;\n'
+
+                while IFS= read -r tpc; do
+                    [ -n "$tpc" ] || continue
+
+                    if ! grep -Fxq "$tpc" <<< "$addons"; then
+                        tpc="${tpc//\'/\'\'}"
+                        printf "INSERT INTO topics (list) VALUES ('%s');\n" "$tpc"
+                    fi
+                done <<< "$topics"
+
+                printf 'COMMIT;\n'
+
+            } | sqlite3 -bail "$db"
+
         fi
     fi
 }

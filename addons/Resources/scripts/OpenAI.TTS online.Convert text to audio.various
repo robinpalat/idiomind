@@ -1,0 +1,58 @@
+#!/bin/bash
+# -*- ENCODING: UTF-8 -*-
+
+# OpenAI Text-to-Speech (official API).
+# Endpoint: https://api.openai.com/v1/audio/speech
+# Works for any language supported by the OpenAI TTS API.
+# Requires: an OpenAI API key and curl.
+# Set the key (and optional model/voice) by double-clicking this resource
+# in the addons dialog.
+
+TLANGS="en, es, it, pt, de, ja, fr, zh-cn, ru"
+INFO="Convert text to audio (online)
+https://platform.openai.com/docs/guides/text-to-speech"
+LANGUAGES="English, Spanish, Italian, Portuguese, German, Japanese, French, Chinese, Russian"
+STATUS="Ok"
+VOICES=""
+CONF="TRUE"
+FILECONF="$HOME/.config/idiomind/addons/resources/OpenAI.cfg"
+CONFFIELDS="key model voice"
+CONFOPTS="model|tts-1!tts-1-hd
+voice|alloy!echo!fable!onyx!nova!shimmer"
+CONFKEY_HIDDEN="key"
+TESTSTRING="This is a test"
+EXECUT="curl"
+EX="mp3"
+TESTWORD=""
+
+if [ "$1" = "_dclk_" ]; then
+    :
+elif [ -n "$2" ]; then
+    key=$(grep -o 'key="[^"]*' "$FILECONF" 2>/dev/null |grep -o '[^"]*$' |sed 's/(null)//')
+    model=$(grep -o 'model="[^"]*' "$FILECONF" 2>/dev/null |grep -o '[^"]*$' |sed 's/(null)//')
+    voice=$(grep -o 'voice="[^"]*' "$FILECONF" 2>/dev/null |grep -o '[^"]*$' |sed 's/(null)//')
+    [ -z "$model" ] && model="tts-1"
+    [ -z "$voice" ] && voice="alloy"
+
+    if [ -z "$key" ]; then
+        [ -d "$HOME/.config/idiomind/addons/resources/msgs" ] \
+            || mkdir -p "$HOME/.config/idiomind/addons/resources/msgs"
+        echo "No key configuration" > \
+            "$HOME/.config/idiomind/addons/resources/msgs/${0##*/}"
+        exit 1
+    fi
+
+    text="$1"
+    if command -v jq >/dev/null 2>&1; then
+        data="$(jq -cn --arg m "$model" --arg v "$voice" --arg s "$text" \
+            '{model:$m,voice:$v,input:$s}')"
+    else
+        esc="$(printf '%s' "$text" | sed 's/\\/\\\\/g; s/"/\\"/g')"
+        data="{\"model\":\"$model\",\"voice\":\"$voice\",\"input\":\"$esc\"}"
+    fi
+
+    curl -s --fail -m 51 -X POST "https://api.openai.com/v1/audio/speech" \
+        -H "Authorization: Bearer $key" \
+        -H "Content-Type: application/json" \
+        -d "$data" -o "$2"
+fi

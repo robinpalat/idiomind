@@ -1,3 +1,5 @@
+#include "html_view.h"
+
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
 #include <stdlib.h>
@@ -11,6 +13,8 @@ static int window_height = 470;
 
 static void activate(GtkApplication *app, gpointer user_data)
 {
+    (void)user_data;
+
     GtkWidget *window;
     WebKitWebView *webview;
     char *uri = NULL;
@@ -33,9 +37,6 @@ static void activate(GtkApplication *app, gpointer user_data)
 
     webview = WEBKIT_WEB_VIEW(webkit_web_view_new());
 
-    /*
-     * Accept both local files and remote URLs.
-     */
     if (g_str_has_prefix(target, "http://") ||
         g_str_has_prefix(target, "https://")) {
 
@@ -52,29 +53,17 @@ static void activate(GtkApplication *app, gpointer user_data)
         uri = g_filename_to_uri(target, NULL, NULL);
 
         if (uri == NULL) {
-            g_printerr(
-                "Could not convert path to URI: %s\n",
-                target
-            );
+            g_printerr("Could not convert path to URI: %s\n", target);
             gtk_widget_destroy(window);
             return;
         }
     }
 
-    /*
-     * Optional query string.
-     * Example: "lang=es"
-     */
     if (query != NULL && query[0] != '\0') {
-
         full_uri = g_strdup_printf("%s?%s", uri, query);
-
         webkit_web_view_load_uri(webview, full_uri);
-
         g_free(full_uri);
-
     } else {
-
         webkit_web_view_load_uri(webview, uri);
     }
 
@@ -88,48 +77,40 @@ static void activate(GtkApplication *app, gpointer user_data)
     gtk_widget_show_all(window);
 }
 
-int main(int argc, char **argv)
+int html_view_run(int argc, char **argv)
 {
     GtkApplication *app;
     int status;
 
     /*
-     * Supported forms:
+     * argv[0] = html
+     * argv[1] = TARGET
+     * argv[2] = QUERY                  (optional)
      *
-     *   htmlview TARGET
-     *   htmlview TARGET QUERY
-     *   htmlview TARGET TITLE WIDTH HEIGHT
-     *   htmlview TARGET TITLE WIDTH HEIGHT QUERY
+     * Extended:
+     * argv[1] = TARGET
+     * argv[2] = TITLE
+     * argv[3] = WIDTH
+     * argv[4] = HEIGHT
+     * argv[5] = QUERY                  (optional)
      */
-
     if (argc < 2 || argc > 6) {
         g_printerr(
             "Usage:\n"
-            "  %s <target> [query]\n"
-            "  %s <target> <title> <width> <height> [query]\n",
-            argv[0],
-            argv[0]
+            "  idiomind-utils html <target> [query]\n"
+            "  idiomind-utils html <target> <title> <width> <height> [query]\n"
         );
         return EXIT_FAILURE;
     }
 
     target = argv[1];
 
-    /*
-     * Existing interface:
-     * TARGET [QUERY]
-     */
     if (argc == 3) {
         query = argv[2];
     }
 
-    /*
-     * Extended interface:
-     * TARGET TITLE WIDTH HEIGHT [QUERY]
-     */
     if (argc >= 5) {
         window_title = argv[2];
-
         window_width = atoi(argv[3]);
         window_height = atoi(argv[4]);
 
@@ -144,7 +125,7 @@ int main(int argc, char **argv)
     }
 
     app = gtk_application_new(
-        "org.idiomind.htmlview",
+        "org.idiomind.utils",
         G_APPLICATION_NON_UNIQUE
     );
 
@@ -155,6 +136,7 @@ int main(int argc, char **argv)
         NULL
     );
 
+    /* Pass only argv[0] to GTK; utility arguments were already parsed above. */
     status = g_application_run(
         G_APPLICATION(app),
         1,

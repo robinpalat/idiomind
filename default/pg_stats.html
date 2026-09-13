@@ -1,0 +1,271 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <script src="/usr/share/idiomind/default/js/chart.js"></script>
+    <script type="text/javascript" src="/tmp/.idiomind_stats"></script>
+    <style type="text/css">
+        a.cursor {cursor:hand; margin:10; text-decoration:none;}
+        .lbl {
+            text-decoration:none;
+            font-family: "Arial", "DejaVu Sans", Verdana;
+            color:#151515;
+            font-size:14;
+            font-weight:bold;
+        }
+        body {margin:12; padding:10;}
+        .section {
+            visibility: hidden;
+            height: 0;
+            overflow: hidden;
+            position: absolute;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .section.active {
+            visibility: visible;
+            height: auto;
+            overflow: visible;
+            position: relative;
+            opacity: 1;
+        }
+        .arrow-left {float: left; cursor: pointer;}
+        .arrow-right {float: right; cursor: pointer;}
+    </style>
+</head>
+<body>
+
+<div id="page1" class="section active">
+    <div style="text-align:center">
+        <span style="float:left"><span id="lbl1_p1" class="lbl"> </span></span>
+        <span style="float:right">
+            <span class="arrow-left" onclick="showPage(3)"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAWCAQAAABnVgTKAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAADdcAAA3XAUIom3gAAAAHdElNRQfiAQcSLzeC7OtcAAAAeklEQVQoz2NgGGZABJnDhEUBI4Mugx0DMwMzTIAFQwkbgxmDGKoQuiJ+BksGLnR9qIpkGYwQlmBXpMOghsT7z8CIz+EYANnwVwxfGCTg2m4yMDD8x2bSY4YDDN8wTUK37iPDPoZX+KyDgL8MjxlYGISRrcMFRIdF4gIAQC0P06A5tTcAAAAASUVORK5CYII="></img></span>
+            <span class="arrow-right" onclick="showPage(2)"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAWCAQAAABnVgTKAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAADdcAAA3XAUIom3gAAAAHdElNRQfiAQcSLxleOuaTAAAAdklEQVQoz2NgGBbACLswM5zFxsDMsIGBk+E0w390RUxo/FiGKQz8hBQxMJgxLGZQI6SIgUGKYR6DO3Y3MTMwMCRD2SwMzgwcDCfxmYQBWLCK/mBoZtiJX9EzhhKGW/gdfoohFlUJMmBjYGM4w5BP2JXGDMMLAADXJw84ku438wAAAABJRU5ErkJggg=="></img></span>
+        </span>
+        <span> </span>
+    </div>
+    </br></br>
+    <div>
+    <font size="1.8" color="#535353"><span style="margin-right:5;border:1px solid rgba(0,0,0,.1);"><svg height="10" width="10"><circle cx="6" cy="6" r="4" fill="#C5E8E3" /></svg> <span id="lbl2_p1"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4" fill="#48B951" /></svg> <span id="lbl3_p1"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4" fill="#5A8AD8" /></svg> <span id="lbl4_p1"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4" fill="#F77C48" /></svg> <span id="lbl5_p1"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4" fill="#CACACA" /></svg> <span id="lbl6_p1"></span></span></font>
+    </div></br>
+    <div>
+    <canvas id="canvas1" height="250" width="520"></canvas>
+    </div>
+</div>
+
+<div id="page2" class="section">
+    <div style="text-align:center">
+        <span style="float:left"><span id="lbl1_p2" class="lbl"> </span></span>
+        <span style="float:right">
+            <span class="arrow-left" onclick="showPage(1)"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAWCAQAAABnVgTKAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAADdcAAA3XAUIom3gAAAAHdElNRQfiAQcSLygP5OapAAAAYElEQVQoz2NgGGbAiJACJoZ8hjMMbAxsMAEWDCX8DO0MZqhC6IrUGHoYpDCNRgbuDPMwlaCalMcQh8uRRABkRZMYqhl+EDZpJ0MSwzPC1t1iiGU4RZwT0AITFzAeFokLAKelDHiAHnzcAAAAAElFTkSuQmCC"></img></span>
+            <span class="arrow-right" onclick="showPage(3)"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAWCAQAAABnVgTKAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAADdcAAA3XAUIom3gAAAAHdElNRQfiAQcSLxleOuaTAAAAdklEQVQoz2NgGBbACLswM5zFxsDMsIGBk+E0w390RUxo/FiGKQz8hBQxMJgxLGZQI6SIgUGKYR6DO3Y3MTMwMCRD2SwMzgwcDCfxmYQBWLCK/mBoZtiJX9EzhhKGW/gdfoohFlUJMmBjYGM4w5BP2JXGDMMLAADXJw84ku438wAAAABJRU5ErkJggg=="></img></span>
+        </span>
+        <span> </span>
+    </div>
+    </br></br>
+    <div>
+    <font size="1.8" color="#535353"><span id="lbl2_p2"></span> <span style="margin-right:5;border:1px solid rgba(0,0,0,.1);"><svg height="10" width="10"><circle cx="6" cy="6" r="4" fill="#A7E17A" /></svg> <span id="lbl3_p2"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4" fill="#F2A961" /></svg> <span id="lbl4_p2"></span> </span><span id="lbl5_p2"></span> <span style="margin-right:5; border:1px solid rgba(0,0,0,.1);"><svg height="10" width="10"><circle cx="6" cy="6" r="4" fill="#48B951" /></svg> <span id="lbl6_p2"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4" fill="#AF809F" /></svg> <span id="lbl7_p2"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4" fill="#E56481" /></svg> <span id="lbl8_p2"></span> </span></font>
+    </div></br>
+    <div>
+    <canvas id="canvas2" height="250" width="520"></canvas>
+    </div>
+</div>
+
+<div id="page3" class="section">
+    <div style="text-align:center">
+        <span style="float:left"><span id="lbl1_p3" class="lbl"> </span></span>
+        <span style="float:right">
+            <span class="arrow-left" onclick="showPage(2)"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAWCAQAAABnVgTKAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAADdcAAA3XAUIom3gAAAAHdElNRQfiAQcSLygP5OapAAAAYElEQVQoz2NgGGbAiJACJoZ8hjMMbAxsMAEWDCX8DO0MZqhC6IrUGHoYpDCNRgbuDPMwlaCalMcQh8uRRABkRZMYqhl+EDZpJ0MSwzPC1t1iiGU4RZwT0AITFzAeFokLAKelDHiAHnzcAAAAAElFTkSuQmCC"></img></span>
+            <span class="arrow-right" onclick="showPage(1)"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAWCAQAAABnVgTKAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAADdcAAA3XAUIom3gAAAAHdElNRQfiAQcSMAmO1/hpAAAAeklEQVQoz93OoQ7CQBBF0cO2YDGAQaBI+Acchk8nQaDqKnFFgaggIUXQkgZ2wfeqN5ObecMgmMXXWS8Fe7nLtxQ+5rWtyT+JhZ1pqi5gA8ZWare41LQSwVKmStdFyHt59E4PJ+e41FE7uKYuvagc3dN1UCo0vz+cGxZPvDURc1UtnUsAAAAASUVORK5CYII="></img></span>
+        </span>
+        <span> </span>
+    </div>
+    </br></br>
+    <div>
+    <font size="1.8" color="#535353"><span style="margin-right:5;border:1px solid rgba(0,0,0,.1);"><svg height="10" width="10"><circle cx="6" cy="6" r="4" fill="#48B951" /></svg> <span id="lbl2_p3"></span> <svg height="10" width="10"><circle cx="6" cy="6" r="4" fill="#7F7F7F" /></svg> <span id="lbl3_p3"></span> </span></font>
+    </div></br>
+    <div>
+    <canvas id="canvas3" height="250" width="520"></canvas>
+    </div>
+</div>
+
+<script>
+var a = window.location.toString();
+a = a.substring(a.indexOf('lang=')+5);
+var currentPage = 1;
+var chartsRendered = {1: false, 2: false, 3: false};
+
+function renderChart(num) {
+    if (chartsRendered[num]) return;
+    chartsRendered[num] = true;
+
+    if (num == 1) {
+        var fdata1 = JSON.parse(data1);
+        var ctx1 = document.getElementById("canvas1").getContext("2d");
+        window.myLine1 = new Chart(ctx1).Line({
+            labels : ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+            datasets : [
+                { label: "Iddle", fillColor: "rgba(220,220,220,0.0)", strokeColor: "rgba(230,230,230,1)",
+                  pointColor: "rgba(230,230,230,1)", pointStrokeColor: "rgba(230,230,230,0.1)",
+                  pointHighlightFill: "#fff", pointHighlightStroke: "rgba(151,187,205,1)", data: fdata1[0].f4},
+                { label: "Total", fillColor: "rgba(197,232,227,0.0)", strokeColor: "rgba(209,240,235,1)",
+                  pointColor: "rgba(209,240,235,1)", pointStrokeColor: "rgba(209,240,235,1)",
+                  pointHighlightFill: "#fff", pointHighlightStroke: "rgba(220,220,220,1)", data: fdata1[0].f0},
+                { label: "Reviewing", fillColor: "rgba(226,240,251,0.0)", strokeColor: "rgba(90,138,216,1)",
+                  pointColor: "rgba(90,138,216,1)", pointStrokeColor: "rgba(90,138,216,0.1)",
+                  pointHighlightFill: "#fff", pointHighlightStroke: "rgba(151,187,205,1)", data: fdata1[0].f2},
+                { label: "Alert", fillColor: "rgba(236,119,89,0.0)", strokeColor: "rgba(224,119,72,1)",
+                  pointColor: "rgba(224,119,72,1)", pointStrokeColor: "rgba(224,119,72,1)",
+                  pointHighlightFill: "#fff", pointHighlightStroke: "rgba(151,187,205,1)", data: fdata1[0].f3},
+                { label: "Learnt", fillColor: "rgba(72,185,81,0.2)", strokeColor: "rgba(72,185,81,1)",
+                  pointColor: "rgba(72,185,81,1)", pointStrokeColor: "rgba(72,185,81,0.1)",
+                  pointHighlightFill: "#fff", pointHighlightStroke: "rgba(151,187,205,1)", data: fdata1[0].f1}
+            ]
+        }, { responsive: true, scaleShowGridLines: false, pointRadius: 0 });
+    }
+    else if (num == 2) {
+        var fdata2 = JSON.parse(data2);
+        var ctx2 = document.getElementById("canvas2").getContext("2d");
+        window.myLine2 = new Chart(ctx2).Line({
+            labels: fdata2[0].wk,
+            datasets : [
+                { label: "new", fillColor: "rgba(167,225,122,0.3)", strokeColor: "rgba(167,225,122,1)",
+                  pointColor: "rgba(167,225,122,1)", pointStrokeColor: "rgba(167,225,122,2)",
+                  pointHighlightFill: "#fff", pointHighlightStroke: "rgba(220,220,220,1)", data: fdata2[0].f0},
+                { label: "learning", fillColor: "rgba(251,186,120,0.1)", strokeColor: "rgba(251,186,120,1)",
+                  pointColor: "rgba(251,186,120,1)", pointStrokeColor: "rgba(251,186,120,1)",
+                  pointHighlightFill: "#fff", pointHighlightStroke: "rgba(151,187,205,1)", data: fdata2[0].f1},
+                { label: "Forgotten", fillColor: "rgba(175,128,159,0)", strokeColor: "rgba(175,128,159,1)",
+                  pointColor: "rgba(175,128,159,1)", pointStrokeColor: "rgba(175,128,159,0.5)",
+                  pointHighlightFill: "#fff", pointHighlightStroke: "rgba(151,187,205,1)", data: fdata2[0].f2},
+                { label: "Learning", fillColor: "rgba(229,100,129,0.0)", strokeColor: "rgba(229,100,129,1)",
+                  pointColor: "rgba(229,100,129,1)", pointStrokeColor: "rgba(229,100,129,1)",
+                  pointHighlightFill: "#fff", pointHighlightStroke: "rgba(151,187,205,1)", data: fdata2[0].f3},
+                { label: "Easy", fillColor: "rgba(72,185,81,0.0)", strokeColor: "rgba(72,185,81,1)",
+                  pointColor: "rgba(72,185,81,1)", pointStrokeColor: "rgba(72,185,81,1)",
+                  pointHighlightFill: "#fff", pointHighlightStroke: "rgba(151,187,205,1)", data: fdata2[0].f4}
+            ]
+        }, { responsive: true, scaleShowGridLines: false, pointRadius: 0 });
+    }
+    else if (num == 3) {
+        var fdata2 = JSON.parse(data2);
+        var ctx3 = document.getElementById("canvas3").getContext("2d");
+        window.myLine3 = new Chart(ctx3).Line({
+            labels: fdata2[0].wk,
+            datasets : [
+                { label: "passed", fillColor: "rgba(72,185,81,0.1)", strokeColor: "rgba(72,185,81,1)",
+                  pointColor: "rgba(72,185,81,1)", pointStrokeColor: "rgba(72,185,81,1)",
+                  pointHighlightFill: "#fff", pointHighlightStroke: "rgba(151,187,205,1)", data: fdata2[0].f5},
+                { label: "activity", fillColor: "rgba(127,127,127,0)", strokeColor: "rgba(127,127,127,1)",
+                  pointColor: "rgba(127,127,127,1)", pointStrokeColor: "rgba(127,127,127,0.5)",
+                  pointHighlightFill: "#fff", pointHighlightStroke: "rgba(151,187,205,1)", data: fdata2[0].f6}
+            ]
+        }, { responsive: true, scaleShowGridLines: false, pointRadius: 0 });
+    }
+}
+
+function showPage(num) {
+    var pages = document.querySelectorAll('.section');
+    pages.forEach(function(p) {
+        p.classList.remove('active');
+    });
+    document.getElementById('page' + num).classList.add('active');
+    currentPage = num;
+    setTimeout(function(){ renderChart(num); }, 50);
+}
+
+function nextPage() {
+    var next = currentPage >= 3 ? 1 : currentPage + 1;
+    showPage(next);
+}
+
+document.addEventListener('click', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SPAN' && e.target.classList.contains('arrow-left') || e.target.tagName === 'SPAN' && e.target.classList.contains('arrow-right')) return;
+    nextPage();
+});
+
+window.onload = function(){
+    var lang = a;
+    var labels = {};
+
+    if (lang == 'es') {
+        labels = {
+            p1_title: 'Estado de los temas: registro mensual',
+            p1_lbl2: 'Aprendiendo', p1_lbl3: 'Aprendidos', p1_lbl4: 'Repasando',
+            p1_lbl5: 'Con aviso de repaso', p1_lbl6: 'Inactivos',
+            p2_title: 'Actividad de práctica: informe semanal',
+            p2_lbl2: 'Nuevas palabras:', p2_lbl3: 'Aprendidas', p2_lbl4: 'Aprendiendo',
+            p2_lbl5: 'Palabras repasadas:', p2_lbl6: 'Superadas', p2_lbl7: 'Olvidadas', p2_lbl8: 'Difíciles',
+            p3_title: 'Actividad de práctica: informe semanal',
+            p3_lbl2: 'Prácticas superadas', p3_lbl3: 'Actividad'
+        };
+    } else if (lang == 'it') {
+        labels = {
+            p1_title: 'Stato dei temi: registro mensile',
+            p1_lbl2: 'In apprendimento', p1_lbl3: 'Imparato, in attesa di ripasso', p1_lbl4: 'In ripasso',
+            p1_lbl5: 'Con un promemoria per ripassare', p1_lbl6: 'Inattivo',
+            p2_title: 'Attività di pratica: rapporto settimanale',
+            p2_lbl2: 'Nuove parole:', p2_lbl3: 'Imparate', p2_lbl4: 'Apprendimento',
+            p2_lbl5: 'Parole revisionate:', p2_lbl6: 'Superare', p2_lbl7: 'Trascurato', p2_lbl8: 'Difficile',
+            p3_title: 'Attività di pratica: rapporto settimanale',
+            p3_lbl2: 'Pratiche passate', p3_lbl3: 'Attività'
+        };
+    } else if (lang == 'fr') {
+        labels = {
+            p1_title: 'Statut des thèmes : registre mensuel',
+            p1_lbl2: 'En train d\'apprendre', p1_lbl3: 'Appris, en attente de révision', p1_lbl4: 'Revoir',
+            p1_lbl5: 'Avec un rappel pour réviser', p1_lbl6: 'Inactif',
+            p2_title: 'Activité de pratique : rapport hebdomadaire',
+            p2_lbl2: 'Nouveaux mots :', p2_lbl3: 'Appris', p2_lbl4: 'J\'apprends',
+            p2_lbl5: 'Mots examinés :', p2_lbl6: 'Passé', p2_lbl7: 'Oublié', p2_lbl8: 'Difficile',
+            p3_title: 'Activité de pratique : rapport hebdomadaire',
+            p3_lbl2: 'Tests terminés', p3_lbl3: 'Activité'
+        };
+    } else if (lang == 'pt') {
+        labels = {
+            p1_title: 'Estado dos tópicos: registro mensal',
+            p1_lbl2: 'Aprendendo', p1_lbl3: 'Aprendido, aguardando para revisar', p1_lbl4: 'Revisando',
+            p1_lbl5: 'Com um lembrete para revisar', p1_lbl6: 'Inativo',
+            p2_title: 'Atividade de prática: relatório semanal',
+            p2_lbl2: 'Novas palavras:', p2_lbl3: 'Aprendi', p2_lbl4: 'Aprendendo',
+            p2_lbl5: 'Palavras revistas:', p2_lbl6: 'Passadas', p2_lbl7: 'Esquecido', p2_lbl8: 'Difícil',
+            p3_title: 'Atividade de prática: relatório semanal',
+            p3_lbl2: 'Testes concluídos', p3_lbl3: 'Atividade'
+        };
+    } else {
+        labels = {
+            p1_title: 'Topics status: monthly register',
+            p1_lbl2: 'Learning', p1_lbl3: 'Learned, waiting to review', p1_lbl4: 'Reviewing',
+            p1_lbl5: 'With a reminder to review', p1_lbl6: 'Inactive',
+            p2_title: 'Practice activity: weekly report',
+            p2_lbl2: 'New words:', p2_lbl3: 'Learned', p2_lbl4: 'Learning',
+            p2_lbl5: 'Words reviewed:', p2_lbl6: 'Passed', p2_lbl7: 'Forgotten', p2_lbl8: 'Difficult',
+            p3_title: 'Practice activity: weekly report',
+            p3_lbl2: 'Tests completed', p3_lbl3: 'Activity'
+        };
+    }
+
+    document.getElementById("lbl1_p1").innerHTML = labels.p1_title;
+    document.getElementById("lbl2_p1").innerHTML = labels.p1_lbl2;
+    document.getElementById("lbl3_p1").innerHTML = labels.p1_lbl3;
+    document.getElementById("lbl4_p1").innerHTML = labels.p1_lbl4;
+    document.getElementById("lbl5_p1").innerHTML = labels.p1_lbl5;
+    document.getElementById("lbl6_p1").innerHTML = labels.p1_lbl6;
+
+    document.getElementById("lbl1_p2").innerHTML = labels.p2_title;
+    document.getElementById("lbl2_p2").innerHTML = labels.p2_lbl2;
+    document.getElementById("lbl3_p2").innerHTML = labels.p2_lbl3;
+    document.getElementById("lbl4_p2").innerHTML = labels.p2_lbl4;
+    document.getElementById("lbl5_p2").innerHTML = labels.p2_lbl5;
+    document.getElementById("lbl6_p2").innerHTML = labels.p2_lbl6;
+    document.getElementById("lbl7_p2").innerHTML = labels.p2_lbl7;
+    document.getElementById("lbl8_p2").innerHTML = labels.p2_lbl8;
+
+    document.getElementById("lbl1_p3").innerHTML = labels.p3_title;
+    document.getElementById("lbl2_p3").innerHTML = labels.p3_lbl2;
+    document.getElementById("lbl3_p3").innerHTML = labels.p3_lbl3;
+
+    renderChart(1);
+}
+</script>
+</body>
+</html>

@@ -361,7 +361,7 @@ titlew="$(gettext "Statistics")"
 uri_stats="$DS/default/pg_stats.html"
 export uri_stats titlew
 
-/usr/lib/idiomind/idiomind-htmlview \
+/usr/lib/idiomind/idiomind-utils html \
     "$DS/default/pg_stats.html" \
     "lang=$intrf"
 

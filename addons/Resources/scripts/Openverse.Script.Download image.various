@@ -1,0 +1,32 @@
+#!/bin/bash
+
+TLANGS="en, es, it, pt, ru, de, fr, ja, zh-cn"
+INFO="Download images"
+LANGUAGES="English"
+STATUS="Ok"
+VOICES=""
+CONF="FALSE"
+FILECONF=""
+TESTWORD="cat"
+EXECUT=""
+useragent='Idiomind/1.0 (learning app)'
+
+if [[ "$2" = '_TEST_' ]]; then
+    w="$TESTWORD"
+else
+    w="$1"
+fi
+if [[ "$1" != '_dclk_' ]]; then
+	echo "Addon: search openverse image..."
+    enc="$(printf '%s' "$w" |sed 's/ /%20/g')"
+    json="$(curl -s --max-time 25 -A "$useragent" \
+        "https://api.openverse.org/v1/images/?q=$enc&per_page=10")"
+    for urimg in $(printf '%s' "$json" |jq -r '.results[] | select(.url != null) | .url' 2>/dev/null); do
+        [ -n "$urimg" ] || continue
+        wget -T 40 -q -U "$useragent" -O "$DT/$w.jpg" "$urimg"
+        if file -b --mime-type "$DT/$w.jpg" 2>/dev/null |grep -qE 'image'; then
+            break
+        fi
+        rm -f "$DT/$w.jpg"
+    done
+fi

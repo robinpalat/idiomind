@@ -1,6 +1,8 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+
+
 if [ -z "${tlng}" ] || [ -z "${slng}" ]; then
         msg "$(gettext "Please check the language settings in the preferences dialog.")
 $(gettext "If necessary, close the program from the panel icon and start it again.")\n" \
@@ -138,7 +140,8 @@ function sentence_p() {
     fi
     # sed 's/\s+/\n/g'
     echo "${vrbl}" |sed 's/ ./\U&/g' \
-    |python3 -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
+    |tr -s '[:space:]' '\n' \
+    |LC_ALL=C sort -u \
     |tr -d '.' |sed 's/\.//g' \
     |tr -d '*)(,;"“”:' |tr -s '_&|{}[]' ' ' \
     |sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \

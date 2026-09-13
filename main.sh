@@ -1,6 +1,20 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+# main.sh — punto de entrada principal de Idiomind
+#
+# Funciones principales:
+#   - Detectar y delegar la primera ejecución.
+#   - Cargar y validar la configuración.
+#   - Crear/actualizar el estado de sesión.
+#   - Ejecutar tareas auxiliares de inicio.
+#   - Atender los distintos modos de ejecución mediante el despacho final.
+#
+# La inicialización de la sesión y varios servicios auxiliares se ejecutan
+# de forma concurrente. Los scripts de inicio pueden volver a cargar c.conf,
+# por lo que su ejecución forma parte del entorno de arranque concurrente.
+#
+
 #  Copyright 2015-2026 Robin Palatnik
 #  Email patapatass@hotmail.com
 #  
@@ -20,13 +34,20 @@
 #  MA 02110-1301, USA.
 ##
 
+# Primera ejecución: delega la configuración inicial a 1u.sh y finaliza
+# este proceso. Las ejecuciones posteriores continúan con la configuración
+# persistente ya creada.
 if [ ! -d "$HOME/.idiomind" ]; then
     /usr/share/idiomind/ifs/1u.sh & exit 1
 fi
 
+# Carga la configuración persistente y establece las variables de entorno
+# utilizadas por el resto del proceso.
 source /usr/share/idiomind/default/c.conf
 
-if [ -z "${tlng}" ] || [ -z "${slng}" ] && [ ! -f "$DT/.langc" ]; then
+# Valida que los idiomas estén definidos. El archivo temporal .langc permite
+# omitir esta validación durante una configuración transitoria.
+if { [ -z "${tlng}" ] || [ -z "${slng}" ]; } && [ ! -f "$DT/.langc" ]; then
     source "$DS/ifs/cmns.sh"
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     msg "$(gettext "Please check the language settings in the preferences dialog.")
@@ -42,6 +63,8 @@ if [ -e "$DT/ps_lk" ] || [ -e "$DT/el_lk" ]; then
     (sleep 50; cleanups "$DT/ps_lk" "$DT/el_lk") & exit 1
 fi
 
+# Crea o actualiza el estado de una nueva sesión de ejecución.
+# Se utiliza tanto en el inicio normal como en autostart y en el modo -s.
 function new_session() {
     source "$DS/ifs/cmns.sh"
     echo "-- new session"
@@ -49,7 +72,7 @@ function new_session() {
     d=$(date +%d)
     cdb ${cfgdb} 3 sess date ${d}
 
-    # mkdir tmp dir
+    # Inicializa el directorio temporal de la sesión.
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     if [ $? -ne 0 ]; then
     msg "$(gettext "An error occurred while trying to write on '/tmp'")\n" \
@@ -58,12 +81,12 @@ function new_session() {
     
     f_lock 1 "$DT/ps_lk"
     
-    # list topics
+    # Actualiza y comprueba la lista de topics disponibles.
     check_list
     # 
     if ls "$DC_s"/*.p 1> /dev/null 2>&1; then
     cd ~ && cd "$DC_s"/; rename 's/\.p$//' *.p; fi; cd /
-    # check database
+    # Asegura la existencia de la base de datos correspondiente al idioma.
     if [ ! -e ${tlngdb} ]; then
         [ ! -d "$DM_tls/data" ] && mkdir -p "$DM_tls/data" 
         echo -n "create table if not exists Words \
@@ -73,13 +96,13 @@ function new_session() {
         echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${tlngdb}
         sqlite3 ${tlngdb} "alter table Words add column '${slng}' TEXT;"
     fi
-    # log- practice
+    # Mantiene acotado el registro de práctica cuando supera el tamaño previsto.
     if [ -f "$DC_s/log" ]; then
         if [[ "$(du -sb "$DC_s/log" |awk '{ print $1 }')" -gt 100000 ]]; then
         tail -n2000 < "$DC_s/log" > "$DT/log"
         mv -f "$DT/log" "$DC_s/log"; fi
     fi
-    # update - topics
+    # Actualiza las estructuras de la base compartida y los estados de los topics.
     if [ ! -f "${shrdb}" ]; then
         "$DS/ifs/mkdb.sh" share
     else
@@ -173,7 +196,7 @@ function new_session() {
     echo -e "\ttopics ok\n"
     echo 0 > "$DT/playlck"
     
-    # statistics
+    # Calcula las estadísticas en segundo plano después de un breve retraso.
     ( source "$DS/ifs/stats.sh"; sleep 5; export val1=0 val2=0; pre_comp ) &
 }
 
@@ -199,8 +222,13 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
         file="$(find "${1}" -maxdepth 1 -name '*.idmnd' -type f |head -n1)"
         [ -z "$file" ] && file="${1}/${1##*/}.idmnd"
     elif file "${1}" | grep -qi "zip archive"; then
-        tmpdir="$DT/idmnd_import_$((RANDOM%1000000))"
-        check_dir "$tmpdir"
+		# Use the package filename as the temporary topic directory.
+		# Example: "English Basics.idmnd" -> "$DT/English Basics"
+		topic_tmp_name="$(basename "${1}")"
+		topic_tmp_name="${topic_tmp_name%.idmnd}"
+		tmpdir="$DT/$topic_tmp_name"
+
+		check_dir "$tmpdir"
         if ! unzip -q "${1}" -d "$tmpdir"; then
             cleanups "$tmpdir"
             msg "$(gettext "File format corrupted")\n" dialog-error "$(gettext "Information")" & exit 1
@@ -226,48 +254,43 @@ $nsnt $(gettext "Sentences"),  $nimg $(gettext "Images")\n$(gettext "Level:") \
 $level \n$(gettext "Language:") $(gettext "$tlng"),  $(gettext "Translation:") $(gettext "$slng")$otranslations</small>" 
     dclk="$DS/play.sh play_word"
     source "$DS/ifs/mods/main/items_list.sh"
-    _lst() {
-        while read -r line; do
-        cut -d ':' -f1 <<< "${line}" |sed 's/\"*//;s/\"$//'
-        cut -d ':' -f3 <<< "${line}" |sed 's/\"*//;s/\"$//;s/\",\"slch//'
-        done < <(sed -n 2p "${file}"|sed 's/},/\n/g'|tr -d '\\'|sed '/^$/d')
-    }
-    
-    _info() {
-        while read -r line; do
-        cut -d ':' -f1 <<< "${line}" |sed 's/\"*//;s/\"$//'
-        cut -d ':' -f3 <<< "${line}" |sed 's/\"*//;s/\"$//;s/\",\"slch//'
-        done < <(sed -n 3p "${file}"|sed 's/},/\n/g'|tr -d '\\'|sed '/^$/d')
-    }
+	_lst() {
+		while read -r line; do
+			cut -d ':' -f1 <<< "${line}" | sed 's/\"*//;s/\"$//'
+			cut -d ':' -f3 <<< "${line}" | sed 's/\"*//;s/\"$//;s/\",\"slch//'
+		done < <(sed -n 2p "${file}" | sed 's/},/\n/g' | tr -d '\\' | sed '/^$/d')
+	}
+
+	_info() {
+		json_get_string "$file" info
+	}
 
 	export -f _lst _info
 
-    # For a portable ZIP package, make the topic audio playable during
-    # preview (before the topic is installed). play_word already looks
-    # for <cdid>.mp3 under $DT first, so we stage the package audio there
-    # and point it at the package data to resolve each note's cdid.
-    if [ -n "$media_src" ]; then
-        if [ -d "$media_src/audio/topic" ]; then
-            cp -f "$media_src"/audio/topic/*.mp3 "$DT/" 2>/dev/null
-        fi
-        if [ -d "$media_src/audio/shared" ]; then
-            for _mp3 in "$media_src"/audio/shared/*.mp3; do
-                [ -e "$_mp3" ] || continue
-                cp -f "$_mp3" "$DT/$(basename "$_mp3")" 2>/dev/null
-            done
-        fi
-        P_DATA="$media_src/topic_data"
-        sed -n 2p "${file}" |tr -d '\\' > "$P_DATA"
-        sed -i 's/},/}\n/g;s|","|}|g;s|":"|{|g;s|":{"|}|g;s/"}/}/g' "$P_DATA"
-        sed -i 's/^\s*./trgt{/g' "$P_DATA"
-        sed -i '/^$/d' "$P_DATA"
-        export IDMND_PREVIEW_DATA="$P_DATA"
-    fi
+	# For a portable package, use the extracted topic directory directly
+	# as the multimedia root during preview. No audio files are copied
+	# to the session root ($DT).
+	if [ -n "$media_src" ]; then
+			export IDMND_PREVIEW_MEDIA="$media_src"
+
+			P_DATA="$media_src/topic_data"
+			
+			
+			sed -n 2p "${file}" |tr -d '\\' > "$P_DATA"
+			sed -i 's/},/}\n/g;s|","|}|g;s|":"|{|g;s|":{"|}|g;s/"}/}/g' "$P_DATA"
+			sed -i 's/^\s*./trgt{/g' "$P_DATA"
+			sed -i '/^$/d' "$P_DATA"
+			export IDMND_PREVIEW_DATA="$P_DATA"
+		fi
+    
+    echo "===== DEBUG INFO =====" >&2
+json_get_string "$file" info >&2
+echo "===== END DEBUG =====" >&2
 
     tpc_view
     ret=$?
         if [ $ret -eq 0 ]; then
-            if [ -e "$DT/in_lk" ]; then
+            if [ -f "$DT/in_lk" ]; then
                 cleanups "$tmpdir"
                 msg "$(gettext "Please wait until the current process is finished")...\n" dialog-information
                 sleep 15; cleanups "$DT/in_lk"; exit 1
@@ -322,55 +345,171 @@ $(gettext "It is recommended to change your language preferences before installi
             tpc_db 9 id nsze "$nsze"
             tpc_db 9 id levl "$levl"
             check_file "${DC_tlt}/practice/log1" "${DC_tlt}/practice/log2" \
-            "${DC_tlt}/practice/log3" "${DC_tlt}/note" "${DC_tlt}/download"
+            "${DC_tlt}/practice/log3" "${DC_tlt}/note.md" "${DC_tlt}/download"
+            # Materialize the canonical topic note from the root JSON "info" field.
+			if ! json_get_string "${file}" "info" > "${DC_tlt}/note.md"; then
+				cleanups "$tmpdir"
+				msg "$(gettext "File format corrupted")\n" dialog-error "$(gettext "Information")" & exit 1
+			fi
+            
             sed -n 2p "${file}" |tr -d '\\' > "${DC_tlt}/data"
             sed -i 's/},/}\n/g;s|","|}|g;s|":"|{|g;s|":{"|}|g;s/"}/}/g' "${DC_tlt}/data"
             sed -i 's/^\s*./trgt{/g' "${DC_tlt}/data"
             sed -i '/^$/d' "${DC_tlt}/data"
             export data="${DC_tlt}/data"
-python3 <<PY
-import os, re, sqlite3
-data = os.environ['data']
-tpcdb = os.environ['tpcdb']
-db = sqlite3.connect(tpcdb)
-db.text_factory = str
-cur = db.cursor()
-# Extract each brace-delimited field by name instead of by a fixed
-# position. This is robust to the newer topic format that also stores
-# translation sub-fields (slch..slru) right after srce, which would
-# shift the old fixed indices.
-def getf(name, item):
-    m = re.search(r'(?:^|\})' + re.escape(name) + r'\{([^}]*)', item)
-    return m.group(1) if m else ''
-data = [line.strip() for line in open(data)]
-for item in data:
-    trgt = getf('trgt', item)
-    srce = getf('srce', item)
-    exmp = getf('exmp', item)
-    defn = getf('defn', item)
-    note = getf('note', item)
-    wrds = getf('wrds', item)
-    grmr = getf('grmr', item)
-    tags = getf('tags', item)
-    mark = getf('mark', item)
-    refr = getf('refr', item)
-    imag = getf('imag', item)
-    imgr = getf('imgr', item)
-    link = getf('link', item)
-    cdid = getf('cdid', item)
-    type = getf('type', item)
-    if type == '1':
-        cur.execute("insert into words (list) values (?)", (trgt,))
-    elif type == '2':
-        cur.execute("insert into sentences (list) values (?)", (trgt,))
-    if mark == 'TRUE':
-        cur.execute("insert into marks (list) values (?)", (trgt,))
-    cur.execute("insert into learning (list) values (?)", (trgt,))
-    cur.execute('INSERT INTO Data (trgt,srce,exmp,defn,note,wrds,grmr,tags,mark,refr,imag,link,cdid,type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)', (trgt,srce,exmp,defn,note,wrds,grmr,tags,mark,refr,imag,link,cdid,type))
+            
+			# Parse topic data and populate the SQLite database.
+			
+			parse_item() {
+				local rest="$1"
+				local name
+				local value
 
-db.commit()
-db.close()
-PY
+				trgt=
+				srce=
+				exmp=
+				defn=
+				note=
+				wrds=
+				grmr=
+				tags=
+				mark=
+				refr=
+				imag=
+				imgr=
+				link=
+				cdid=
+				type=
+
+				while [[ "$rest" == *"{"* ]]; do
+
+					# Everything before the first '{' is the field name.
+					name="${rest%%\{*}"
+
+					[[ -n "$name" ]] || break
+
+					# Remove field name and opening '{'.
+					rest="${rest#*\{}"
+
+					# capture until the first '}', or until the end of the
+					# string when no closing '}' exists.
+					if [[ "$rest" == *"}"* ]]; then
+						value="${rest%%\}*}"
+						rest="${rest#*\}}"
+					else
+						value="$rest"
+						rest=""
+					fi
+
+					case "$name" in
+						trgt) trgt="$value" ;;
+						srce) srce="$value" ;;
+						exmp) exmp="$value" ;;
+						defn) defn="$value" ;;
+						note) note="$value" ;;
+						wrds) wrds="$value" ;;
+						grmr) grmr="$value" ;;
+						tags) tags="$value" ;;
+						mark) mark="$value" ;;
+						refr) refr="$value" ;;
+						imag) imag="$value" ;;
+						imgr) imgr="$value" ;;
+						link) link="$value" ;;
+						cdid) cdid="$value" ;;
+						type) type="$value" ;;
+					esac
+				done
+			}
+
+
+			{
+				printf 'BEGIN TRANSACTION;\n'
+
+				while IFS= read -r raw_line || [[ -n "$raw_line" ]]; do
+
+	
+					item="$raw_line"
+
+					# Remove leading whitespace.
+					while [[ "$item" == [[:space:]]* ]]; do
+						item="${item:1}"
+					done
+
+					# Remove trailing whitespace.
+					while [[ "$item" == *[[:space:]] ]]; do
+						item="${item::-1}"
+					done
+
+					[[ -z "$item" ]] && continue
+
+					parse_item "$item"
+
+					# values for logical comparisons.
+					is_word=false
+					is_sentence=false
+					is_mark=false
+
+					[[ "$type" == "1" ]] && is_word=true
+					[[ "$type" == "2" ]] && is_sentence=true
+					[[ "$mark" == "TRUE" ]] && is_mark=true
+
+					# Escape SQL literals in-place.
+					#
+					# SQLite represents a single quote inside a string by
+					# doubling it: ' -> ''.
+					#
+					# This is done directly in Bash, without command substitution
+					# and therefore without creating a subshell.
+					trgt="${trgt//\'/\'\'}"
+					srce="${srce//\'/\'\'}"
+					exmp="${exmp//\'/\'\'}"
+					defn="${defn//\'/\'\'}"
+					note="${note//\'/\'\'}"
+					wrds="${wrds//\'/\'\'}"
+					grmr="${grmr//\'/\'\'}"
+					tags="${tags//\'/\'\'}"
+					mark="${mark//\'/\'\'}"
+					refr="${refr//\'/\'\'}"
+					imag="${imag//\'/\'\'}"
+					link="${link//\'/\'\'}"
+					cdid="${cdid//\'/\'\'}"
+					type="${type//\'/\'\'}"
+
+					if "$is_word"; then
+						printf "INSERT INTO words (list) VALUES ('%s');\n" "$trgt"
+					elif "$is_sentence"; then
+						printf "INSERT INTO sentences (list) VALUES ('%s');\n" "$trgt"
+					fi
+
+					if "$is_mark"; then
+						printf "INSERT INTO marks (list) VALUES ('%s');\n" "$trgt"
+					fi
+
+					printf "INSERT INTO learning (list) VALUES ('%s');\n" "$trgt"
+
+					printf "INSERT INTO Data \
+			(trgt,srce,exmp,defn,note,wrds,grmr,tags,mark,refr,imag,link,cdid,type) \
+			VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s');\n" \
+						"$trgt" \
+						"$srce" \
+						"$exmp" \
+						"$defn" \
+						"$note" \
+						"$wrds" \
+						"$grmr" \
+						"$tags" \
+						"$mark" \
+						"$refr" \
+						"$imag" \
+						"$link" \
+						"$cdid" \
+						"$type"
+
+				done < "$data"
+
+				printf 'COMMIT;\n'
+
+			} | sqlite3 "$tpcdb"
 
             "$DS/ifs/tls.sh" colorize 1
             f_lock 3 "$DT/in_lk"
@@ -453,7 +592,7 @@ function topic() {
         export cfg2="$(grep -c '[^[:space:]]' <<< "$ls2")"
         export cfg3="$(grep -c '[^[:space:]]' <<< "$ls3")"
         export cfg4="$(grep -c '[^[:space:]]' <<< "$ls4")"
-        note="${DC_tlt}/note"
+        note="${DC_tlt}/note.md"
         autr=$(tpc_db 1 id autr)
         dtec=$(tpc_db 1 id dtec)
         dtei=$(tpc_db 1 id dtei)
@@ -480,7 +619,7 @@ function topic() {
         labels_level=( "$(gettext "Fresh Topic")" "$(gettext "Fresh Topic")" "$(gettext "Fresh Topic")" "$(gettext "Fresh Topic")" "$(gettext "Familiar Topic")" "$(gettext "Familiar Topic")" "$(gettext "Familiar Topic")" "$(gettext "Familiar Topic")" "$(gettext "Familiar Topic")" "$(gettext "Mastered Topic")" )
 
         if [ ${stts} -eq 1 ]; then
-			labels_status=("$(gettext "Learning...")" "$(gettext "Reviewing for the first time ...")" "$(gettext "Reviewing for the second time ...")" "$(gettext "Reviewing for the third time ...")" "$(gettext "Reviewing for the fourth time ...")" "$(gettext "Reviewing for the fifth time ...")" "$(gettext "Reviewing for the sixth time ...")" "$(gettext "Reviewing for the seventh time ...")" "$(gettext "Reviewing, final review")" "$(gettext "Reviewing, final review")")
+			labels_status=("$(gettext "Learning.")" "$(gettext "Reviewing for the first time.")" "$(gettext "Reviewing for the second time.")" "$(gettext "Reviewing for the third time.")" "$(gettext "Reviewing for the fourth time.")" "$(gettext "Reviewing for the fifth time.")" "$(gettext "Reviewing for the sixth time.")" "$(gettext "Reviewing for the seventh time.")" "$(gettext "Reviewing, final review")" "$(gettext "Reviewing, final review")")
 			[ ${count_date_reviews} -gt 0 ] && btn_review="$(gettext "Finalize Review")" || btn_review="$(gettext "Mark as Learnt")"
 			
 		elif [ ${stts} -eq 3 ] || [ ${stts} -eq 4 ] ; then
@@ -490,7 +629,7 @@ function topic() {
 			
 		elif [ ${stts} = 5 ] || [ ${stts} = 6 ]; then
 		
-			labels_status=("$(gettext "Learning...")" "$(gettext "Reviewing for the first time ...")" "$(gettext "Reviewing for the second time ...")" "$(gettext "Reviewing for the third time ...")" "$(gettext "Reviewing for the fourth time ...")" "$(gettext "Reviewing for the fifth time ...")" "$(gettext "Reviewing for the sixth time ...")" "$(gettext "Reviewing for the seventh time ...")" "$(gettext "Reviewing, final review")" "$(gettext "Reviewing, final review")")
+			labels_status=("$(gettext "Learning.")" "$(gettext "Reviewing for the first time.")" "$(gettext "Reviewing for the second time.")" "$(gettext "Reviewing for the third time.")" "$(gettext "Reviewing for the fourth time.")" "$(gettext "Reviewing for the fifth time.")" "$(gettext "Reviewing for the sixth time.")" "$(gettext "Reviewing for the seventh time.")" "$(gettext "Reviewing, final review")" "$(gettext "Reviewing, final review")")
 			btn_review="$(gettext "Finalize Review")"
 
 		elif [ ${stts} -gt 6 ] && [ ${stts} -lt 11 ]; then
@@ -553,26 +692,61 @@ function topic() {
             if grep TRUE "${cnf1}" >/dev/null 2>&1; then
                 f_lock 1 "$DT/tpc_lk"
                 export cnf1 tpcdb
-python3 <<PY
-import os, re, locale, sqlite3, sys
-tags = re.compile(r'<[^>]+>')
-en = locale.getpreferredencoding()
-cnf1 = os.environ['cnf1']
-cnf1.encode(en)
-tpcdb = os.environ['tpcdb']
-db = sqlite3.connect(tpcdb)
-db.text_factory = str
-cur = db.cursor()
-cnf1 = [line.strip() for line in open(cnf1)]
-for item in cnf1:
-    if "|TRUE|" in item:
-        trgt = item.replace("|TRUE|", "")
-        trgt = tags.sub('', trgt)
-        cur.execute("insert into learnt (list) values (?)", (trgt,))
-        cur.execute("delete from learning where list=?", (trgt,))
-db.commit()
-db.close()
-PY
+                
+                (
+                    set -euo pipefail
+
+                    : "${cnf1:?Falta la variable de entorno 'cnf1'}"
+                    : "${tpcdb:?Falta la variable de entorno 'tpcdb'}"
+
+                    [[ -f "$cnf1" ]] || {
+                        echo "No existe el archivo cnf1: $cnf1" >&2
+                        exit 1
+                    }
+
+                    [[ -f "$tpcdb" ]] || {
+                        echo "No existe la base tpcdb: $tpcdb" >&2
+                        exit 1
+                    }
+
+                    sql_escape() {
+                        printf '%s' "${1//\'/\'\'}"
+                    }
+
+                    {
+                        printf 'BEGIN TRANSACTION;\n'
+
+                        while IFS= read -r raw_line || [[ -n "$raw_line" ]]; do
+
+                            # Equivalente a line.strip()
+                            item="$(printf '%s' "$raw_line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+
+                            # Solo procesar entradas confirmadas.
+                            [[ "$item" == *"|TRUE|"* ]] || continue
+
+                            # Equivalente a item.replace("|TRUE|", "")
+                            trgt="${item//|TRUE|/}"
+
+                            # Equivalente a re.sub(r'<[^>]+>', '', trgt)
+                            trgt="$(printf '%s' "$trgt" | sed -E 's/<[^>]+>//g')"
+
+                            trgt_e="$(sql_escape "$trgt")"
+
+                            printf "INSERT INTO learnt (list) VALUES ('%s');\n" "$trgt_e"
+                            printf "DELETE FROM learning WHERE list='%s';\n" "$trgt_e"
+
+                        done < "$cnf1"
+
+                        printf 'COMMIT;\n'
+
+                    } | sqlite3 -bail "$tpcdb"
+                ) || {
+                    echo "Error al convertir las notas a aprendidas." >&2
+                    return 1
+                }
+
+                echo "Migración completada." >&2
+
                 "$DS/ifs/tls.sh" colorize 1
                 f_lock 3 "$DT/tpc_lk"
                 source "$DS/ifs/stats.sh"
@@ -783,6 +957,9 @@ PY
     oclean & return 0
 }
 
+# Inicio en segundo plano, utilizado por el modo autostart.
+# Retrasa la creación de la sesión para dejar finalizar la inicialización
+# del entorno de escritorio.
 bground_session() {
     source "$DS/ifs/cmns.sh"
     sleep 5
@@ -821,6 +998,8 @@ ipanel() {
     "$DS/stop.sh" 1 & fi; exit ) & set_geom
 }
 
+# Punto de entrada del inicio normal. Determina si debe crearse una nueva
+# sesión y prepara la interfaz/panel.
 _start() {
     source "$DS/ifs/cmns.sh"
     if [ ! -d "$DT" ] && [[ -z "$1" ]]; then 
@@ -854,11 +1033,14 @@ _start() {
     fi
 }
 
+# Despacho principal de operaciones. main.sh actúa como punto de entrada
+# común para configuración, inicio normal, autostart y comandos específicos.
 case "$1" in
     -v|--version)
     source $DS/default/sets.cfg
     echo -n "$_version" ;;
     -s)
+    # Fuerza la creación de una nueva sesión y abre la interfaz principal.
     new_session; idiomind ;;
     topic)
     topic ;;
@@ -867,6 +1049,7 @@ case "$1" in
     index)
     "$DS/mngr.sh" mkmn 0 ;;
     autostart)
+    # Inicio automático: la sesión se crea mediante bground_session().
     bground_session ;;
     --add)
    "$DS/add.sh" new_items "${dir}" 2 "${2}" ;;
@@ -885,5 +1068,6 @@ case "$1" in
     update_resources)
     "$DS_a/Resources/cnfg.sh" updt_scripts ;;
     *)
+    # Inicio normal: _start() determina si es necesario crear una sesión.
     _start ;;
 esac
