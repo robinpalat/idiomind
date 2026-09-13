@@ -135,6 +135,7 @@ elif [ $ret -eq 0 ]; then
     DM_t="$HOME/.idiomind/topics"
     DC_s="$HOME/.config/idiomind"
     DT=/tmp/.idiomind-$USER
+    [ ! -d "$DT" ] && mkdir -p "$DT"
 
     [ ! -d  "$DC_s" ] && mkdir -p "$DC_s/addons"
     touch "$DC_s/tpc"

@@ -823,7 +823,6 @@ mark_as_learned_topic() {
         date_current=$(date +%m/%d/%Y)
         count_date_reviews="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
         ! [[ ${count_date_reviews} =~ ${numer} ]] && count_date_reviews=0
-        [ ${count_date_reviews} = 8 ] && mast=TRUE || mast=FALSE
 
 
         if [ ${count_date_reviews} -gt 0 ]; then
@@ -832,10 +831,12 @@ mark_as_learned_topic() {
                 stts=$((stts+1))
             fi
 
-			if [ ${count_date_reviews} -gt 8 ]; then # cambiar de familiar a mastered tpc
+			if [ ${count_date_reviews} -gt 8 ]; then
 				tpc_db 9 reviews date9 ${date_current}
 				echo 2 > "${DC_tlt}/stts"
+				mast=TRUE
 			else
+				mast=FALSE
 				count_date_reviews=$((count_date_reviews+1))
 				tpc_db 9 reviews date${count_date_reviews} ${date_current}
 				
@@ -892,7 +893,6 @@ mark_as_learned_topic_ok() {
         date_current=$(date +%m/%d/%Y)
         count_date_reviews="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
         ! [[ ${count_date_reviews} =~ ${numer} ]] && count_date_reviews=0
-        [ ${count_date_reviews} = 8 ] && mast=TRUE || mast=FALSE
         
         if [ ${count_date_reviews} -gt 0 ]; then
         
@@ -900,10 +900,12 @@ mark_as_learned_topic_ok() {
                 stts=$((stts+1))
             fi
 
-            if [ ${count_date_reviews} -gt 8 ]; then # cambiar de familiar to mastered tpc
-                tpc_db 9 reviews date9 ${date_current}
-                echo 2 > "${DC_tlt}/stts"
-            else
+            if [ ${count_date_reviews} -gt 8 ]; then
+				tpc_db 9 reviews date9 ${date_current}
+				echo 2 > "${DC_tlt}/stts"
+				mast=TRUE
+			else
+				mast=FALSE
 				count_date_reviews=$((count_date_reviews+1))
                 tpc_db 9 reviews date${count_date_reviews} ${date_current}
                 

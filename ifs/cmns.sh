@@ -332,28 +332,6 @@ function check_err() {
     done &
 }
 
-function date_to_day_number() {
-    awk -F/ 'BEGIN {
-        m = int($1)
-        d = int($2)
-        y = int($3)
-
-        days = (y-1970)*365 \
-             + int((y-1969)/4) \
-             - int((y-1901)/100) \
-             + int((y-1601)/400)
-
-        split("0 31 59 90 120 151 181 212 243 273 304 334", md, " ")
-
-        if (m > 1)
-            days += md[m-1]
-
-        if (m > 2 && (y % 4 == 0) && (y % 100 != 0 || y % 400 == 0))
-            days++
-
-        print days + d - 1
-    }' <<< "$1"
-}
 
 function calculate_review() {
     [ -z "${notice}" ] && source "$DS/default/sets.cfg"
@@ -375,16 +353,10 @@ function calculate_review() {
             count_date_reviews=0
         fi
 
-        local review_day
-        local today_day
-
-        review_day=$(date_to_day_number "${date_review}")
-        today_day=$(date_to_day_number "$(date +%m/%d/%Y)")
-
-        TM=$((today_day - review_day))
+        TM=$(( ( $(date -d "today 12:00:00" +%s) - $(date -d "${date_review} 12:00:00" +%s) ) / 86400 ))
 
         days_to_review=${notice[${count_date_reviews}]}
-        days_to_review_porcent=$((100 * TM / days_to_review))
+        days_to_review_porcent=$((100*TM/days_to_review))
 
         export days_to_review
         export days_to_review_porcent
