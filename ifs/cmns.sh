@@ -332,50 +332,66 @@ function check_err() {
     done &
 }
 
-function sqlite_date_to_epoch() {
-    # Convert MM/DD/YYYY to epoch seconds without relying on GNU date parsing.
-    # Uses awk to strip leading zeros and compute the approximation.
-    local yyyy; yyyy=$(echo "$1" | cut -d/ -f3)
-    awk -v d="$1" 'BEGIN {
-        split(d, a, "/"); m=int(a[1]); d=int(a[2]); y=int(a[3])
-        epoch = (y-1970)*365 + int((y-1969)/4) - int((y-1901)/100) + int((y-1601)/400)
-        days = 0
+function date_to_day_number() {
+    awk -F/ 'BEGIN {
+        m = int($1)
+        d = int($2)
+        y = int($3)
+
+        days = (y-1970)*365 \
+             + int((y-1969)/4) \
+             - int((y-1901)/100) \
+             + int((y-1601)/400)
+
         split("0 31 59 90 120 151 181 212 243 273 304 334", md, " ")
-        if (m > 1) days = md[m-1]
-        if ((m > 2) && (y % 4 == 0) && (y % 100 != 0 || y % 400 == 0)) days++
-        epoch += days + d - 1
-        print epoch * 86400
-    }'
+
+        if (m > 1)
+            days += md[m-1]
+
+        if (m > 2 && (y % 4 == 0) && (y % 100 != 0 || y % 400 == 0))
+            days++
+
+        print days + d - 1
+    }' <<< "$1"
 }
 
 function calculate_review() {
-    [ -z ${notice} ] && source "$DS/default/sets.cfg"
+    [ -z "${notice}" ] && source "$DS/default/sets.cfg"
     export DC_tlt="$DM_tl/${1}/.conf"
 
-    # Count only columns that contain a valid date (mm/dd/yyyy), skipping
-    # empty or corrupted entries instead of destroying the review history.
-    local all_dates; all_dates=$(tpc_db 5 reviews)
-    local count_valid=0
-    local last_valid_date=""
-    local n=1
-    while [ ${n} -le 10 ]; do
-        local val; val=$(sed -n ${n}p <<< "${all_dates}")
-        if [[ "${val}" =~ ^[0-9]{2}/[0-9]{2}/[0-9]{4}$ ]]; then
-            count_valid=$((count_valid+1))
-            last_valid_date="${val}"
+    count_date_reviews="$(tpc_db 5 reviews | grep -c '[^[:space:]]')"
+
+    if [ "${count_date_reviews}" -ge 1 ]; then
+
+        date_review="$(tpc_db 1 reviews "date${count_date_reviews}")"
+
+        if ! [[ "${date_review}" =~ ^[0-9]{2}/[0-9]{2}/[0-9]{4}$ ]]; then
+            echo "--error: $1"
+
+            tpc_db 6 reviews
+            tpc_db 8 reviews date1 "$(date +%m/%d/%Y)"
+
+            date_review="$(tpc_db 1 reviews date1)"
+            count_date_reviews=0
         fi
-        n=$((n+1))
-    done
 
-    count_date_reviews=${count_valid}
+        local review_day
+        local today_day
 
-    if [ ${count_date_reviews} -ge 1 ] && [ -n "${last_valid_date}" ]; then
-        local epoch_now; epoch_now=$(date +%s)
-        local epoch_review; epoch_review=$(sqlite_date_to_epoch "${last_valid_date}")
-        TM=$(( (epoch_now - epoch_review) / 86400 ))
+        review_day=$(date_to_day_number "${date_review}")
+        today_day=$(date_to_day_number "$(date +%m/%d/%Y)")
+
+        TM=$((today_day - review_day))
+
         days_to_review=${notice[${count_date_reviews}]}
-        days_to_review_porcent=$((100*TM/days_to_review))
+        days_to_review_porcent=$((100 * TM / days_to_review))
 
-        export days_to_review days_to_review_porcent
+        export days_to_review
+        export days_to_review_porcent
+        export count_date_reviews
+
+        return "${days_to_review_porcent}"
     fi
+
+    return 0
 }

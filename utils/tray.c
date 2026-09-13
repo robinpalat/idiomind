@@ -237,17 +237,21 @@ static void add_topics(GtkWidget *menu)
         if (lines[i][0] == '\0')
             continue;
 
-        GtkWidget *item = gtk_menu_item_new_with_label(lines[i]);
+        /*
+         * $HOME/.config/idiomind/tpc contains the active topic.
+         * Use GtkImageMenuItem, as the original tray did.  In particular,
+         * this avoids embedding a GtkBox inside the menu item, which is not
+         * reliably exported by AppIndicator through its D-Bus menu backend.
+         */
+        GtkWidget *item = gtk_image_menu_item_new_with_label(lines[i]);
         GtkWidget *image = gtk_image_new_from_icon_name(
             "go-home", GTK_ICON_SIZE_MENU);
 
-        GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6);
-        gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
-        gtk_box_pack_start(GTK_BOX(box),
-                           gtk_label_new(lines[i]),
-                           FALSE, FALSE, 0);
+        gtk_image_menu_item_set_image(
+            GTK_IMAGE_MENU_ITEM(item), image);
+        gtk_image_menu_item_set_always_show_image(
+            GTK_IMAGE_MENU_ITEM(item), TRUE);
 
-        gtk_container_add(GTK_CONTAINER(item), box);
         g_object_set_data_full(G_OBJECT(item), "topic",
                                g_strdup(lines[i]), g_free);
 
