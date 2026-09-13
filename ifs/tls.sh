@@ -974,27 +974,34 @@ function transl_batch() {
         > "$DT/transl_batch_lk"
     fi
     touch "${DC_tlt}/translations/active"
-    active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
-    lns=$(wc -l < "${DC_tlt}/data")
-    if [ -z "$active_trans" ]; then active_trans="$slng"; fi
+active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
+lns=$(wc -l < "${DC_tlt}/data")
+if [ -z "$active_trans" ]; then active_trans="$slng"; fi
 
 echo -e "yad --form --title=\"$(gettext "$tlng") / $active_trans\" \\
 --class=Idiomind --name=Idiomind --window-icon=$DS/images/logo.png \\
 --always-print-result --print-all \\
 --width=${sz[0]} --height=${sz[1]} --borders=5 \\
---on-top --scroll --center --separator='|\n' \\
---button=$(gettext \"Save\")!gtk-apply:0 \\
---button=$(gettext \"Cancel\"):1 \\" > "$DT/dlg"
+--text=\"$(gettext "Ready to translate")  <b>${cfg3}</b>  $(gettext "sentences with")  <b>${cfg4}</b>  $(gettext "words")\n\" \\
+--on-top --buttons-layout=spread --scroll --center --separator='|\n' \\
+--button=$(gettext \"Cancel\"):1 \\
+--button=$(gettext \"Save\")!gtk-apply:0 \\" > "$DT/dlg"
 
-    (echo "#"; n=1
-    while read -r _item; do
-        unset trgt srce; get_item "${_item}"
-        trgt="$(tr -s '"' '*' <<< "${trgt}")"
-        srce="$(tr -s '"' '*' <<< "${srce}")"
-        echo -e "--field=\"  $trgt\":lbl \"\" --field=\"\" \"$srce\" --field=\" \":lbl \"\" \\" >> "$DT/dlg"
-        let n++
-        echo $((100*n/lns-1))
-    done < "${DC_tlt}/data") |progress "progress"
+	(echo "#"; n=1
+	while read -r _item; do
+    unset trgt srce; get_item "${_item}"
+
+    trgt="$(tr -s '"' '*' <<< "${trgt}")"
+    srce="$(tr -s '"' '*' <<< "${srce}")"
+    trgt_disp="$(sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g' <<< "${trgt}")"
+
+    echo -e "--field=\"<b>${trgt_disp}</b>\":lbl \"\" --field=\"\" \"$srce\" --field=\" \":lbl \"\" \\" >> "$DT/dlg"
+
+    let n++
+    echo $((100*n/lns-1))
+	done < "${DC_tlt}/data") |progress "progress"
+	echo -e "--field=\"\":LBL \"\n\n\n\" \\" >> "$DT/dlg"
+	echo -e "--field=\"\":LBL \"\n\n\n\" \\" >> "$DT/dlg"
     sed -i 's/\*/\\\"/g' "$DT/dlg"
     
     dlg="$(< "$DT/dlg")"; eval "${dlg}" > "$DT/transl_batch_out"; ret="$?"

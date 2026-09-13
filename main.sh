@@ -282,10 +282,6 @@ $level \n$(gettext "Language:") $(gettext "$tlng"),  $(gettext "Translation:") $
 			sed -i '/^$/d' "$P_DATA"
 			export IDMND_PREVIEW_DATA="$P_DATA"
 		fi
-    
-    echo "===== DEBUG INFO =====" >&2
-json_get_string "$file" info >&2
-echo "===== END DEBUG =====" >&2
 
     tpc_view
     ret=$?
