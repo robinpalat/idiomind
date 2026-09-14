@@ -22,9 +22,15 @@ export ttrgt trans lgt lgs
 info3="$(gettext "This note was not added")"
 
 new_topic() {
+	
+
     [ -z "$2" ] && mode=1 || mode=$2
     [ -z "$3" ] && activ=1 || activ=$3
     [ -n "$4" ] && name="${4}"
+    
+
+#    include "$DS/ifs/mods/add_process"
+        
     listt="$(cd ~ && cd "$DM_tl"; find ./ -maxdepth 1 -type d \
     ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
 
@@ -34,7 +40,6 @@ new_topic() {
     elif [[ -z "${listt}" ]]; then
         name_1u="$(gettext "My collection from") $(date '+%B')"
     fi
-    source "$DS/ifs/mods/add/add.sh"
 
     if [[ -z "$name" ]]; then
         to=0; while [ ${to} -lt 4 ]; do
@@ -46,7 +51,10 @@ new_topic() {
             else 
                 add="$(dlg_form_0 "$name")"
             fi
+            name="$(cut -d "|" -f1 <<< "${add}")"
+            include "$DS/ifs/mods/add_process"
             name="$(clean_3 "$(cut -d "|" -f1 <<< "${add}")")"
+
             if [[ ${#name} -gt 55 ]]; then
                 msg "$(gettext "Sorry, the name is too long.")\n" \
                 dialog-information "$(gettext "Information")"

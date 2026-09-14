@@ -1,3 +1,0 @@
-shlibs:Depends=libc6 (>= 2.34), libglib2.0-0t64 (>= 2.28.0), libgtk-3-0t64 (>= 3.3.16), libwebkit2gtk-4.1-0 (>= 2.5.3)
-misc:Depends=
-misc:Pre-Depends=
