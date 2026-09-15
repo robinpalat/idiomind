@@ -58,7 +58,43 @@ export_topic() {
         level="${lv[${levl}]}"
         _levels="$level"$(sed "s/\!$level//g" <<< "$_levels")
     fi
-    _formats="$(gettext "Idiomind Topic (.idmnd)")!CSV!TSV!PDF"
+    
+	export_dir="$DS/ifs/mods/export"
+	_formats=""
+	declare -A export_modules
+
+	while IFS= read -r -d '' file; do
+		module="${file##*/}"
+		module="${module%.sh}"
+
+		case "$module" in
+			"Idiomind Topic (idmnd)")
+				format="$(gettext "Idiomind Topic (.idmnd)")"
+				;;
+			"Comma-separated values (csv)")
+				format="CSV"
+				;;
+			"Tab-separated values (tsv)")
+				format="TSV"
+				;;
+			*)
+				format="$module"
+				;;
+		esac
+
+		export_modules["$format"]="$module"
+
+		if [[ -z "$_formats" ]]; then
+			_formats="$format"
+		else
+			_formats="${_formats}!${format}"
+		fi
+
+	done < <(
+		find "$export_dir" -maxdepth 1 -type f -name '*.sh' -print0 |
+		sort -z
+	)
+
     note=$(< "${DC_tlt}/note" 2>/dev/null)
     autr=$(tpc_db 1 id autr)
     include_media="FALSE"
@@ -89,15 +125,10 @@ export_topic() {
 
         sv_data
 
-        case "$format" in
-            *"(.idmnd)"*) module="Idiomind Topic (idmnd)" ;;
-            *CSV*) module="Comma-separated values (csv)" ;;
-            *TSV*) module="Tab-separated values (tsv)" ;;
-            *PDF*) module="PDF" ;;
-            *) msg "$(gettext "Unknown export format")\n" dialog-error & exit 1 ;;
-        esac
+		format=$(echo "${dlg}" | cut -d "|" -f5)
+		module="${export_modules[$format]}"
 
-        _export "${module}" "${include_media}"
+		_export "${module}" "${include_media}"
     fi
 } >/dev/null 2>&1
 

@@ -34,18 +34,35 @@ fi
 
 if grep -o -E 'ja|zh-cn|ru' <<< "${3}" >/dev/null 2>&1 ; then
     if [[ "$4" = singleline ]]; then
-        echo -e "${gtra}" |sed -e 's/\",\".*//g' |sed -e 's/.*\[\[\[\"//g'
+        echo -e "${gtra}" |
+            sed -e 's/\",\".*//g' |
+            sed -e 's/.*\[\[\[\"//g' |
+            sed 's/\\n$//'
     else
-        while read t; do
-            echo -n "$(grep -oP '(?<=trgt=\").*(?=\",\")' <<< "${t}")"
-        done < <(echo "${gtra}" |sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g')
+        while IFS= read -r t; do
+            grep -oP '(?<=trgt=\").*(?=\",\")' <<< "$t" |
+                sed 's/\\n$//'
+        done < <(
+            echo "${gtra}" |
+            sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g'
+        )
     fi
+
 elif grep -o -E 'de|en|es|fr|it|pt|vi' <<< "${3}" >/dev/null 2>&1 ; then
     if [[ "$4" = singleline ]]; then
-        echo -e "${gtra}" |sed -e 's/\",\".*//g' |sed -e 's/.*\[\[\[\"//g' | awk -F'null' '{print $1}'
+        echo -e "${gtra}" |
+            sed -e 's/\",\".*//g' |
+            sed -e 's/.*\[\[\[\"//g' |
+            awk -F'null' '{print $1}' |
+            sed 's/\\n$//'
     else
-        while read t; do
-            echo -n "$(grep -oP '(?<=trgt=\").*(?=\",\")' <<< "${t}")"  | awk -F'null' '{print $1}'
-        done < <(echo "${gtra}" |sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g')
+        while IFS= read -r t; do
+            grep -oP '(?<=trgt=\").*(?=\",\")' <<< "$t" |
+                sed 's/\\n$//' |
+                awk -F'null' '{print $1}'
+        done < <(
+            echo "${gtra}" |
+            sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g'
+        )
     fi
 fi

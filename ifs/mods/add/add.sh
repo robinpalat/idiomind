@@ -117,6 +117,60 @@ function index() {
 	flock -u 9
 }
 
+load_grammar_sets() {
+
+    declare -gA PRONOUNS=()
+    declare -gA NOUNS_ADJ=()
+    declare -gA NOUNS_VERBS=()
+    declare -gA CONJUNCTIONS=()
+    declare -gA PREPOSITIONS=()
+    declare -gA ADVERBS=()
+    declare -gA ADJECTIVES=()
+    declare -gA VERBS=()
+
+    while IFS=$'\t' read -r category word; do
+        [[ -z "$word" ]] && continue
+
+        case "$category" in
+            pronouns)
+                PRONOUNS["$word"]=1 ;;
+            nouns_adjetives)
+                NOUNS_ADJ["$word"]=1 ;;
+            nouns_verbs)
+                NOUNS_VERBS["$word"]=1 ;;
+            conjunctions)
+                CONJUNCTIONS["$word"]=1 ;;
+            prepositions)
+                PREPOSITIONS["$word"]=1 ;;
+            adverbs)
+                ADVERBS["$word"]=1 ;;
+            adjetives)
+                ADJECTIVES["$word"]=1 ;;
+            verbs)
+                VERBS["$word"]=1 ;;
+        esac
+
+    done < <(
+        sqlite3 -separator $'\t' "$db" '
+            SELECT "pronouns", items FROM pronouns
+            UNION ALL
+            SELECT "nouns_adjetives", items FROM nouns_adjetives
+            UNION ALL
+            SELECT "nouns_verbs", items FROM nouns_verbs
+            UNION ALL
+            SELECT "conjunctions", items FROM conjunctions
+            UNION ALL
+            SELECT "prepositions", items FROM prepositions
+            UNION ALL
+            SELECT "adverbs", items FROM adverbs
+            UNION ALL
+            SELECT "adjetives", items FROM adjetives
+            UNION ALL
+            SELECT "verbs", items FROM verbs;
+        '
+    )
+}
+
 function sentence_p() {
     if [ ${1} = 1 ]; then 
         trgt_p="${trgt}"
@@ -157,28 +211,42 @@ function sentence_p() {
     cat "${aw}.1" | sed 's/\./\n/g' |tr -d '!?¿,;.' | sed 's/^ *//g' \
     |sed -e 's/ \+/ /g' |sed -e 's/.*\]\[\"//g' |sed -e 's/ *$//; /^$/d' > "${aw}"
 
-    while read -r wrd; do
-        w="$(tr -d '\.,;“”"' <<< "${wrd,,}" |sed "s|'|''|g")"
-        if [[ `sqlite3 $db "select items from pronouns where items is '${w}';"` ]]; then
-            echo "<span color='#3E539A'>${wrd}</span>" >> "$DT_r/g.$r"
-        elif [[ `sqlite3 $db "select items from nouns_adjetives where items is '${w}';"` ]]; then
-            echo "<span color='#496E60'>${wrd}</span>" >> "$DT_r/g.$r"
-        elif [[ `sqlite3 $db "select items from nouns_verbs where items is '${w}';"` ]]; then
-            echo "<span color='#62426A'>${wrd}</span>" >> "$DT_r/g.$r"
-        elif [[ `sqlite3 $db "select items from conjunctions where items is '${w}';"` ]]; then
-            echo "<span color='#90B33B'>${wrd}</span>" >> "$DT_r/g.$r"
-        elif [[ `sqlite3 $db "select items from prepositions where items is '${w}';"` ]]; then
-            echo "<span color='#D67B2D'>${wrd}</span>" >> "$DT_r/g.$r"
-        elif [[ `sqlite3 $db "select items from adverbs where items is '${w}';"` ]]; then
-            echo "<span color='#9C68BD'>${wrd}</span>" >> "$DT_r/g.$r"
-        elif [[ `sqlite3 $db "select items from adjetives where items is '${w}';"` ]]; then
-            echo "<span color='#3E8A3B'>${wrd}</span>" >> "$DT_r/g.$r"
-        elif [[ `sqlite3 $db "select items from verbs where items is '${w}';"` ]]; then
-            echo "<span color='#CF387F'>${wrd}</span>" >> "$DT_r/g.$r"
-        else
-            echo "${wrd}" >> "$DT_r/g.$r"
-        fi
-    done < <(sed 's/ /\n/g' <<< "${trgt_p}")
+	load_grammar_sets
+	
+	while IFS= read -r wrd; do
+
+		w="${wrd,,}"
+		w="$(printf '%s' "$w" | tr -d '\.,;“”"')"
+
+		if [[ -n "${PRONOUNS[$w]+x}" ]]; then
+			printf "<span color='#3E539A'>%s</span>\n" "$wrd" >> "$DT_r/g.$r"
+
+		elif [[ -n "${NOUNS_ADJ[$w]+x}" ]]; then
+			printf "<span color='#496E60'>%s</span>\n" "$wrd" >> "$DT_r/g.$r"
+
+		elif [[ -n "${NOUNS_VERBS[$w]+x}" ]]; then
+			printf "<span color='#62426A'>%s</span>\n" "$wrd" >> "$DT_r/g.$r"
+
+		elif [[ -n "${CONJUNCTIONS[$w]+x}" ]]; then
+			printf "<span color='#90B33B'>%s</span>\n" "$wrd" >> "$DT_r/g.$r"
+
+		elif [[ -n "${PREPOSITIONS[$w]+x}" ]]; then
+			printf "<span color='#D67B2D'>%s</span>\n" "$wrd" >> "$DT_r/g.$r"
+
+		elif [[ -n "${ADVERBS[$w]+x}" ]]; then
+			printf "<span color='#9C68BD'>%s</span>\n" "$wrd" >> "$DT_r/g.$r"
+
+		elif [[ -n "${ADJECTIVES[$w]+x}" ]]; then
+			printf "<span color='#3E8A3B'>%s</span>\n" "$wrd" >> "$DT_r/g.$r"
+
+		elif [[ -n "${VERBS[$w]+x}" ]]; then
+			printf "<span color='#CF387F'>%s</span>\n" "$wrd" >> "$DT_r/g.$r"
+
+		else
+			printf "%s\n" "$wrd" >> "$DT_r/g.$r"
+		fi
+
+	done < <(sed 's/ /\n/g' <<< "${trgt_p}")
     
     touch "$DT_r/A.$r" "$DT_r/B.$r" "$DT_r/g.$r"; bcle=1
     trgt_q="$(sed "s|'|''|g" <<< "${trgt}")"
@@ -280,13 +348,13 @@ function clean_1() {
 
 function clean_2() {
     if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1 ; then
-		echo "${1%%[.-]*}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
+		echo "${1}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
 		|sed "s/’/'/g" |sed 's/quot\;/"/g' \
 		|tr -d '*' |tr -s '&|{}[]<>+' ' ' \
 		|sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
 		|sed 's/^ *//;s/ *$//g;s/<[^>]*>//g;s/^\s*./\U&\E/g'
     else
-		echo "${1%%[.-]*}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
+		echo "${1}" |sed 's/\\n/ /;s/	/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
 		|sed "s/’/'/g" |sed 's/quot\;/"/g' \
 		|tr -s '*&|{}[]<>+' ' ' \
 		|sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
@@ -296,7 +364,7 @@ function clean_2() {
 }
 
 function clean_3() {
-    echo "${1%%[,.-]*}" |cut -d "|" -f1 |sed 's/!//;s/&//;s/\://g' \
+    echo "${1}" |cut -d "|" -f1 |sed 's/!//;s/&//;s/\://g' \
     |sed "s/^[ \t]*//;s/[ \t]*$//;s/‘/'/g" |sed -e 's|/|\\/|g' \
     |sed 's/^\s*./\U&\E/g' \
     |sed 's/\：//g;s/<[^>]*>//g' \
