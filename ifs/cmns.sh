@@ -122,6 +122,48 @@ function tpc_db() {
     fi
 }
 
+function data_insert() {
+    local _trgt="${1}" _srce="${2}" _exmp="${3}" _defn="${4}" _note="${5}"
+    local _wrds="${6}" _grmr="${7}" _tags="${8}" _mark="${9}" _refr="${10}"
+    local _imag="${11}" _link="${12}" _cdid="${13}" _type="${14}"
+    _trgt="${_trgt//\'/\'\'}"  _srce="${_srce//\'/\'\'}"
+    _exmp="${_exmp//\'/\'\'}"  _defn="${_defn//\'/\'\'}"
+    _note="${_note//\'/\'\'}"  _wrds="${_wrds//\'/\'\'}"
+    _grmr="${_grmr//\'/\'\'}"  _tags="${_tags//\'/\'\'}"
+    _mark="${_mark//\'/\'\'}"  _refr="${_refr//\'/\'\'}"
+    _imag="${_imag//\'/\'\'}"  _link="${_link//\'/\'\'}"
+    _cdid="${_cdid//\'/\'\'}"  _type="${_type//\'/\'\'}"
+    sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500;
+    INSERT INTO Data (trgt,srce,exmp,defn,note,wrds,grmr,tags,mark,refr,imag,link,cdid,type)
+    VALUES ('${_trgt}','${_srce}','${_exmp}','${_defn}','${_note}','${_wrds}','${_grmr}','${_tags}','${_mark}','${_refr}','${_imag}','${_link}','${_cdid}','${_type}');"
+}
+
+function data_update() {
+    local _trgt="${1}" _srce="${2}" _exmp="${3}" _defn="${4}" _note="${5}"
+    local _wrds="${6}" _grmr="${7}" _tags="${8}" _mark="${9}" _refr="${10}"
+    local _imag="${11}" _link="${12}" _cdid="${13}" _type="${14}"
+    _trgt="${_trgt//\'/\'\'}"  _srce="${_srce//\'/\'\'}"
+    _exmp="${_exmp//\'/\'\'}"  _defn="${_defn//\'/\'\'}"
+    _note="${_note//\'/\'\'}"  _wrds="${_wrds//\'/\'\'}"
+    _grmr="${_grmr//\'/\'\'}"  _tags="${_tags//\'/\'\'}"
+    _mark="${_mark//\'/\'\'}"  _refr="${_refr//\'/\'\'}"
+    _imag="${_imag//\'/\'\'}"  _link="${_link//\'/\'\'}"
+    _cdid="${_cdid//\'/\'\'}"  _type="${_type//\'/\'\'}"
+    sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500;
+    UPDATE Data SET srce='${_srce}',exmp='${_exmp}',defn='${_defn}',
+    note='${_note}',wrds='${_wrds}',grmr='${_grmr}',tags='${_tags}',
+    mark='${_mark}',refr='${_refr}',imag='${_imag}',link='${_link}',
+    cdid='${_cdid}',type='${_type}'
+    WHERE trgt='${_trgt}';"
+}
+
+function data_delete() {
+    local _trgt="${1}"
+    _trgt="${_trgt//\'/\'\'}"
+    sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500;
+    DELETE FROM Data WHERE trgt='${_trgt}';"
+}
+
 function rebuild_learning_lists() {
     local data_file="$1"
     local db_file="$2"

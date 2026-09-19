@@ -27,17 +27,11 @@ new_topic() {
     [ -z "$2" ] && mode=1 || mode=$2
     [ -z "$3" ] && activ=1 || activ=$3
     [ -n "$4" ] && name="${4}"
-    
-
-#    include "$DS/ifs/mods/add_process"
         
     listt="$(cd ~ && cd "$DM_tl"; find ./ -maxdepth 1 -type d \
     ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
 
-    if [[ $(wc -l <<< "${listt}") -ge 120 ]]; then
-        msg "$(gettext "Maximum number of topics reached.")" \
-        dialog-information "$(gettext "Information")" & exit 1
-    elif [[ -z "${listt}" ]]; then
+    if [[ -z "${listt}" ]]; then
         name_1u="$(gettext "My collection from") $(date '+%B')"
     fi
 
@@ -88,8 +82,11 @@ new_topic() {
 function new_item() {
     if [[ $2 = '__cmd__' ]]; then
         trgt="${4}"
+        tpe="${3}"
+        item_type="${5}"
     elif [ -n "${2}" ]; then 
         tpe="${2}"
+        item_type=""
     fi
     check_s "${tpe}"
     
@@ -122,13 +119,21 @@ function new_item() {
     if grep -o -E 'ja|zh-cn|ru' <<< "$lgt" >/dev/null 2>&1 ; then
         srce="$(translate "${trgt}" auto $lgs)"
         [ -z "${srce}" ] && internet
-        if [ $(wc -w <<< "${srce}") = 1 ]; then
+        if [ "${item_type}" = "1" ]; then
+            new_word
+        elif [ "${item_type}" = "2" ]; then
+            new_sentence
+        elif [ $(wc -w <<< "${srce}") = 1 ]; then
             new_word
         elif [ $(wc -w <<< "${srce}") -ge 1 -a ${#srce} -le ${sentence_chars} ]; then
             new_sentence
         fi
     elif ! grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then
-        if [ $(wc -w <<< "${trgt}") = 1 ]; then
+        if [ "${item_type}" = "1" ]; then
+            new_word
+        elif [ "${item_type}" = "2" ]; then
+            new_sentence
+        elif [ $(wc -w <<< "${trgt}") = 1 ]; then
             new_word
         elif [ $(wc -w <<< "${trgt}") -ge 1 -a ${#trgt} -le ${sentence_chars} ]; then
             new_sentence

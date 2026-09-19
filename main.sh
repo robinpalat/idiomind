@@ -303,11 +303,6 @@ $(gettext "It is recommended to change your language preferences before installi
             f_lock 1 "$DT/in_lk"
             listt="$(cd ~ && cd "$DM_tl"; find ./ -maxdepth 1 -type d \
             ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
-            if [ $(wc -l <<< "$listt") -ge 120 ]; then
-                cleanups "$tmpdir"
-                msg "$(gettext "Maximum number of topics reached.")\n" \
-                dialog-information "$(gettext "Information")" & exit 1
-            fi
             cn=0
             if [[ $(grep -Fxo "${name}" <<< "${listt}" |wc -l) -ge 1 ]]; then
                 cn=1
@@ -322,7 +317,7 @@ $(gettext "It is recommended to change your language preferences before installi
             "$DM_t/$tlng/.share/audio" "$DM_t/$tlng/.share/data" \
             "$DM_t/$tlng/${name}/.conf/practice"
             DM_tlt="$DM_t/$tlng/${name}"
-            DC_tlt="$DM_t/$tlng/${name}/.conf"
+            export DC_tlt="$DM_t/$tlng/${name}/.conf"
             export tpcdb="$DC_tlt/tpc"
             "$DS/ifs/mkdb.sh" tpc "${tpc}"
             tpc_db 9 id name "${name}"
@@ -341,7 +336,7 @@ $(gettext "It is recommended to change your language preferences before installi
             tpc_db 9 id nsze "$nsze"
             tpc_db 9 id levl "$levl"
             check_file "${DC_tlt}/practice/log1" "${DC_tlt}/practice/log2" \
-            "${DC_tlt}/practice/log3" "${DC_tlt}/note.md" "${DC_tlt}/download"
+            "${DC_tlt}/practice/log3" "${DC_tlt}/note.md"
             # Materialize the canonical topic note from the root JSON "info" field.
 			if ! json_get_string "${file}" "info" > "${DC_tlt}/note.md"; then
 				cleanups "$tmpdir"
@@ -1050,7 +1045,9 @@ case "$1" in
     --add)
    "$DS/add.sh" new_items "${dir}" 2 "${2}" ;;
     add)
-    "$DS/add.sh" new_item '__cmd__' "${@}" ;;
+    "$DS/add.sh" new_item '__cmd__' "$(sed -n 1p "$DC_s/tpc")" "${2}" "${3}" ;;
+    new_topic)
+    "$DS/add.sh" new_topic "" "" "$2" ;;
     tasks)
     "$DS/ifs/mods/start/update_tasks.sh" ;;
     panel)
@@ -1064,6 +1061,32 @@ case "$1" in
     update_resources)
     "$DS_a/Resources/cnfg.sh" updt_scripts ;;
     *)
-    # Inicio normal: _start() determina si es necesario crear una sesión.
-    _start ;;
+    # Check if command is provided by an addon
+    _addon_cmd_found=0
+    if [ -n "$1" ]; then
+        for addon_dir in "$DS"/addons/*/; do
+            [ -d "$addon_dir" ] || continue
+            commands_file="${addon_dir}commands.sh"
+            if [ -f "$commands_file" ]; then
+                while IFS='|' read -r cmd_name cmd_desc cmd_script; do
+                    # Skip comments and empty lines
+                    [[ "$cmd_name" =~ ^[[:space:]]*# ]] && continue
+                    [ -z "$cmd_name" ] && continue
+                    if [ "$1" = "$cmd_name" ]; then
+                        _addon_script="${addon_dir}${cmd_script}"
+                        if [ -f "$_addon_script" ]; then
+                            shift
+                            bash "$_addon_script" "$@"
+                            _addon_cmd_found=1
+                            break 2
+                        fi
+                    fi
+                done < "$commands_file"
+            fi
+        done
+    fi
+    # If no addon command found, run default startup
+    if [ $_addon_cmd_found -eq 0 ]; then
+        _start
+    fi ;;
 esac

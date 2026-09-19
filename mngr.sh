@@ -58,6 +58,7 @@ delete_item_ok() {
         for ta in "${tas[@]}"; do
             tpc_db 4 $ta list "${trgt}"
         done
+        data_delete "${trgt}"
         cleanups "${DC_tlt}/lst"
     fi
     if [[ $(wc -l < "${DC_tlt}/data") -lt 200 ]] && [ -f "${DC_tlt}/lk" ]; then
@@ -96,6 +97,7 @@ delete_item() {
             for ta in "${tas[@]}"; do
                 tpc_db 4 $ta list "${trgt}"
             done
+            data_delete "${trgt}"
             
             if [[ $(wc -l < "${DC_tlt}/data") -lt 200 ]] \
             && [ -e "${DC_tlt}/lk" ]; then
@@ -279,6 +281,7 @@ edit_item() {
                     exmp="${exmp_mod}"; defn="${defn_mod}"; note="${note_mod}"
                     wrds="${wrds_mod}"; grmr="${grmr_mod}";
                     mark="${mark_mod}"; link="${link_mod}"; cdid="${cdid_mod}"
+                    imag="${imag_mod:-${imag}}"; refr="${refr:-}"; tags="${tags:-}"
                     index ${type_mod}; unset type trgt srce exmp defn note wrds grmr mark cdid
                 elif [ "${tpc}" = "${tpc_mod}" ]; then
                     cfg0="${DC_tlt}/data"
@@ -296,6 +299,9 @@ edit_item() {
                     ${edit_pos}s|grmr{$grmr}|grmr{$grmr_mod}|;
                     ${edit_pos}s|mark{$mark}|mark{$mark_mod}|;
                     ${edit_pos}s|cdid{$cdid}|cdid{$cdid_mod}|g" "${cfg0}"
+                    data_update "${trgt_mod}" "${srce_mod}" "${exmp_mod}" "${defn_mod}" \
+                    "${note_mod}" "${wrds_mod}" "${grmr_mod}" "${tags}" "${mark_mod}" \
+                    "${refr}" "${imag}" "${link}" "${cdid_mod}" "${type_mod}"
                     
                     if [ "${audf}" != "${audf_mod}" ]; then
                         if [ ${type_mod} = 1 ]; then

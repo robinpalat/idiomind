@@ -4,7 +4,7 @@
 "name=\"${tpc}\"\nslng=\"${slng^}\"\ntlng=\"${tlng^}\"\nautr=\"${autr}\"\ncntt=\"${cntt}\"\nctgy=\"${ctgy}\"\nilnk=\"${ilnk}\"\norig=\"${orig}\"\ndtec=\"${dtec}\"\ndteu=\"${dteu}\"\ndtei=\"${dtei}\"\nnwrd=\"${nwrd}\"\nnsnt=\"${nsnt}\"\nnimg=\"${nimg}\"\nnaud=\"${naud}\"\nnsze=\"${nsze}\"\nlevl=\"${levl}\"\nstts=\"${stts}\""
 
 
-#1 item json
-#2 item data
-#3 info json
-#4 info data
+# Line 1 = item json
+# Line 2 = item data
+# Line 3 = info json
+# Line 4 = info data

@@ -91,11 +91,10 @@ function index() {
                     unset wrds grmr link defn
                     tpc_db 2 learning list "${trgt}"
                     tpc_db 2 words list "${trgt}"
-                    # write to tpc db data column (store note data)
-                    #sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,exmp,defn,note,tags,mark,refr,imag,link,cdid,type) values (\"${trgt}\",\"${srce}\",\"${exmp}\",\"${defn}\",\"${note}\",'${tags}','${mark}','${refr}','${imag}',\"${link}\",'${cdid}','${type}');"
-                    # write to text file index
+                    data_insert "${trgt}" "${srce}" "${exmp}" "${defn}" "${note}" \
+                    "${wrds}" "${grmr}" "${tags}" "${mark}" "${refr}" \
+                    "${imag}" "${link}" "${cdid}" "${type}"
                     echo -e "${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
-                    # write to text file data (store note data)
                     eval newline="$(sed -n 2p $DS/default/vars)"
                     echo "${newline}" >> "${DC_tlt}/data"
                 
@@ -103,11 +102,10 @@ function index() {
                     unset defn
                     tpc_db 2 learning list "${trgt}"
                     tpc_db 2 sentences list "${trgt}"
-                    # write to tpc db data column (store note data)
-                    #sqlite3 "$DC_tlt/tpc" "insert into Data (trgt,srce,note,wrds,grmr,tags,mark,refr,imag,link,cdid,type) values (\"${trgt}\",\"${srce}\",\"${note}\",\"${wrds}\",\"${grmr}\",'${tags}','${mark}','${refr}','${imag}',\"${link}\",'${cdid}','${type}');"
-                    # write to text file index
+                    data_insert "${trgt}" "${srce}" "${exmp}" "${defn}" "${note}" \
+                    "${wrds}" "${grmr}" "${tags}" "${mark}" "${refr}" \
+                    "${imag}" "${link}" "${cdid}" "${type}"
                     echo -e "${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
-                    # write to text file data (store note data)
                     eval newline="$(sed -n 2p $DS/default/vars)"
                    echo "${newline}" >> "${DC_tlt}/data"
                 fi
@@ -320,10 +318,12 @@ function word_p() {
         fi
 
         if [ -n "${exmp}" ]; then
-            sqlite3 ${tlngdb} "update Words set Example='${exmp}' where Word='${trgt}';"
+            exmp_q="$(sed "s|'|''|g" <<< "${exmp}")"
+            sqlite3 ${tlngdb} "update Words set Example='${exmp_q}' where Word='${trgt}';"
         fi
         if [ -n "${defn}" ]; then
-            sqlite3 ${tlngdb} "update Words set Definition='${defn}' where Word='${trgt}';"
+            defn_q="$(sed "s|'|''|g" <<< "${defn}")"
+            sqlite3 ${tlngdb} "update Words set Definition='${defn_q}' where Word='${trgt}';"
         fi
     fi
 }

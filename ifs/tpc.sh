@@ -16,7 +16,7 @@ tpcdb="${DC_tlt}/tpc"
 chek_topic() {
     if [ ! -d "${DM_tlt}" -o ! -d "${DC_tlt}" ]; then
         check_dir "${DM_tlt}/images" "${DC_tlt}"
-        echo " " > "${DC_tlt}/note"
+        echo " " > "${DC_tlt}/note.md"
         echo ${stts} > "${DC_tlt}/stts"
         touch "${DC_tlt}/data"
     fi

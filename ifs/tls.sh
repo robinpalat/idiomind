@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 
-json_get_string() {
+function json_get_string() {
     local file="$1"
     local key="$2"
 
@@ -267,6 +267,7 @@ check_index() {
     source "$DS/ifs/cmns.sh"
     DC_tlt="$DM_tl/${2}/.conf"
     DM_tlt="$DM_tl/${2}"
+    tpcdb="${DC_tlt}/tpc"
     tpc="${2}"; mkmn=0; fix=0
     c=0; s=0
     db_config=0
@@ -278,7 +279,7 @@ check_index() {
         check_dir "${DM_tlt}" "${DC_tlt}" \
         "${DM_tlt}/images" "${DC_tlt}/practice"
         check_file "${DC_tlt}/practice/log1" "${DC_tlt}/practice/log2" \
-        "${DC_tlt}/practice/log3" "${DC_tlt}/note"
+        "${DC_tlt}/practice/log3" "${DC_tlt}/note.md"
         
         if ls "${DM_tlt}"/*.mp3 1> /dev/null 2>&1; then
             for mp3 in "${DM_tlt}"/*.mp3 ; do 
@@ -286,13 +287,18 @@ check_index() {
             done
         fi
         if [ ! -e "${DC_tlt}/stts" ]; then
+			echo "---- INDEX ERR1"
             echo 1 > "${DC_tlt}/stts"; export fix=1
         fi
-        if [ ! -e "${DC_tlt}/data" ]; then
+        if [ ! -f "${DC_tlt}/data" ]; then
             export fix=1
+            echo "---- INDEX ERR2"
         fi
         stts=$(sed -n 1p "${DC_tlt}/stts")
-        ! [[ ${stts} =~ $numer ]] && stts=13
+        if ! [[ ${stts} =~ $numer ]]; then
+			stts=13
+			echo "---- INDEX ERR3"
+        fi
 
         if [ ${stts} = 13 ]; then
             if [ -e "${DC_tlt}/stts.bk" ]; then
@@ -301,13 +307,19 @@ check_index() {
             else
                 stts=1
             fi
-            ! [[ ${stts} =~ $numer ]] && stts=1
-            echo ${stts} > "${DC_tlt}/stts"
-            export mkmn=1; export fix=1
+            if ! [[ ${stts} =~ $numer ]] ; then
+				stts=1
+				
+				echo "---- INDEX ERR11"
+				echo ${stts} > "${DC_tlt}/stts"
+				export mkmn=1; export fix=1
+            fi
         fi
         # DB check
         if [ -z "$(file "${tpcdb}" |grep -o 'SQLite')" ]; then
 			"$DS/ifs/mkdb.sh" tpc "${tpc}"; fix=1
+		
+			echo "---- INDEX ERR4"
 		else
             cnt="$(sqlite3 "${tpcdb}" "SELECT Count(*) FROM reviews")"
             if [ ${cnt} != '1' ]; then
@@ -321,6 +333,7 @@ check_index() {
             if [[ ${cnt} != '1' ]]; then
                 db_config=1; echo -e "\n-- error: db_table_config"
             fi
+            
         fi
         if [ ${stts} -gt 1 ]; then
             dater=$(tpc_db 1 reviews date1)
@@ -329,10 +342,12 @@ check_index() {
                 tpc_db 9 reviews date1 "${d}"
             fi
         fi
-        if [ -f "${DC_tlt}/0.cfg" ] || [ -f "${DC_tlt}/id.cfg" ]; then
-            newform=1
+
+        if grep -o 'trgt{}srce{}' "${DC_tlt}/data"; then 
+			fix=1
+		
+			echo "---- INDEX ERR5"
         fi
-        if grep -o 'trgt{}srce{}' "${DC_tlt}/data"; then fix=1; fi
 
         learn="$(tpc_db 5 learning)"
         leart="$(tpc_db 5 learnt)"
@@ -350,10 +365,21 @@ check_index() {
         cnt3="$(grep -c '[^[:space:]]' <<< "$words")"
         cnt4="$(grep -c '[^[:space:]]' <<< "$sentences")"
         
-        if [ $((cnt3+cnt4)) != ${cnt0} ]; then export fix=1; fi
-        if [ $((cnt1+cnt2)) != ${cnt0} ]; then export fix=1; fi
-        if [ $? != 0 ]; then export fix=1; fi
-        if [ ${index0} != ${cnt1} ]; then fix=1; fi
+        if [ $((cnt3+cnt4)) != ${cnt0} ]; then 
+			export fix=1
+			
+			echo "---- INDEX ERR6"
+        fi
+        if [ $((cnt1+cnt2)) != ${cnt0} ]; then 
+			export fix=1
+			echo "---- INDEX ERR7"
+        fi
+        
+        if [ ${index0} != ${cnt1} ]; then # TODO
+			fix=1
+			echo "---- INDEX ERR9"
+        fi
+        
         if grep -E '3|4|7|8|9|10' <<< "$stts"; then
              [ ${cnt0} = 0 ] && echo 1 > "${DC_tlt}/stts"
              mkmn=1
@@ -365,17 +391,70 @@ check_index() {
         if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} \
         >/dev/null 2>&1; then c=c; else c=w; fi
         if echo "$stts" |grep -E '3|4|7|8|9|10' >/dev/null 2>&1; then s=1; fi
-        if [ ! -f "${DC_tlt}/data" ]; then
-            if [ -f "$DM/backup/${tpc}.bk" ]; then
-                sed -n '/----- newest/,/----- oldest/p' \
-                "$DM/backup/${tpc}.bk" \
-                |grep -Pv '\----- newest' \
-                |grep -Pv '\----- oldest' |head -n200 > "${DC_tlt}/data"
-            else
-                msg "$(gettext "No such file or directory")\n${topic}\n" dialog-error & exit 1
+        
+        data_count=$(grep -c '[^[:space:]]' < "${DC_tlt}/data" 2>/dev/null) || data_count=0
+        
+        cnt_db_data=0
+        if [ -f "${tpcdb}" ]; then
+            cnt_db_data=$(sqlite3 "${tpcdb}" "SELECT Count(*) FROM Data;" 2>/dev/null) || cnt_db_data=0
+        fi
+        echo "RESTORE: data file count = ${data_count}"
+        echo "RESTORE: DB Data count = ${cnt_db_data}"
+        
+        data_rebuilt=0
+        
+        if [ "${cnt_db_data}" -gt "${data_count}" ] && [ "${cnt_db_data}" -gt 0 ]; then
+            echo "RESTORE: using DB as recovery source"
+            mkdir -p "$DT"
+            sqlite3 "${tpcdb}" "SELECT * FROM Data;" 2>/dev/null > "$DT/data_raw"
+            if [ -s "$DT/data_raw" ]; then
+                > "${DC_tlt}/data"
+                while IFS='|' read -r trgt srce exmp defn note wrds grmr tags mark refr imag link cdid type; do
+                    [ -n "$trgt" ] && echo "trgt{${trgt}}srce{${srce}}exmp{${exmp}}defn{${defn}}note{${note}}wrds{${wrds}}grmr{${grmr}}tags{${tags}}mark{${mark}}refr{${refr}}imag{${imag}}link{${link}}cdid{${cdid}}type{${type}}"
+                done < "$DT/data_raw" >> "${DC_tlt}/data"
+                rm -f "$DT/data_raw"
+                rebuilt_count=$(grep -c '[^[:space:]]' < "${DC_tlt}/data" 2>/dev/null) || rebuilt_count=0
+                if [ "${rebuilt_count}" -gt "${data_count}" ]; then
+                    data_rebuilt=1
+                    echo "RESTORE: rebuilt data from DB"
+                fi
             fi
         fi
+        
+        if [ "${data_rebuilt}" -eq 0 ]; then
+            if [ "${cnt_db_data}" -eq 0 ]; then
+                echo "RESTORE: DB Data unavailable"
+            fi
+            if [ -f "$DM/backup/${tpc}.bk" ]; then
+                echo "RESTORE: attempting backup"
+                backup_data=$(sed -n '/----- newest/,/----- oldest/p' \
+                "$DM/backup/${tpc}.bk" \
+                |grep -Pv '\----- newest' \
+                |grep -Pv '\----- oldest' |head -n200)
+                backup_count=$(echo "$backup_data" | grep -c '[^[:space:]]') || backup_count=0
+                if [ "${backup_count}" -gt "${data_count}" ]; then
+                    echo "$backup_data" > "${DC_tlt}/data"
+                    data_rebuilt=1
+                    echo "RESTORE: using backup as recovery source"
+                fi
+            fi
+        fi
+        
+        if [ "${data_rebuilt}" -eq 1 ]; then
+            rebuilt_final=$(grep -c '[^[:space:]]' < "${DC_tlt}/data" 2>/dev/null) || rebuilt_final=0
+            echo "RESTORE: rebuilt data count = ${rebuilt_final}"
+        fi
+        
+        if [ "${data_rebuilt}" -eq 0 ] && [ "${cnt_db_data}" -eq 0 ]; then
+            echo "RESTORE: no complete recovery source available"
+            export mkmn=0
+            return 1
+        fi
+        
         sed -i "/trgt{}srce{}/d" "${DC_tlt}/data"
+        
+        echo "RESTORE: rebuilding derived tables"
+        
         tpc_db 6 'sentences'; tpc_db 6 'words'
         tpc_db 6 'learning'; tpc_db 6 'learnt'
         tpc_db 6 'marks'
@@ -500,6 +579,7 @@ check_index() {
     _check
 
     if [ ${fix} = 1 ]; then
+
         > "$DT/ps_lk"
         if [[ ${r} = 0 ]]; then
             (sleep 1; notify-send -i idiomind "$(gettext "Index error")" \
@@ -955,7 +1035,7 @@ set_image() {
 
 function transl_batch() {
     source /usr/share/idiomind/default/c.conf
-    sz=(580 450)
+    sz=(660 470)
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
     if [ -e "$DT/transl_batch_lk" ]; then
@@ -1291,10 +1371,10 @@ colorize() {
 		: "${data:?Falta la variable de entorno 'data'}"
 		: "${learning:?Falta la variable de entorno 'learning'}"
 		: "${index:?Falta la variable de entorno 'index'}"
-		: "${marks:?Falta la variable de entorno 'marks'}"
-		: "${log1:?Falta la variable de entorno 'log1'}"
-		: "${log2:?Falta la variable de entorno 'log2'}"
-		: "${log3:?Falta la variable de entorno 'log3'}"
+		[[ -v marks ]] || marks=""
+		[[ -v log1 ]] || log1=""
+		[[ -v log2 ]] || log2=""
+		[[ -v log3 ]] || log3=""
 
 		[[ -f "$data" ]] || {
 			echo "No existe el archivo data: $data" >&2
@@ -1350,7 +1430,9 @@ colorize() {
 				exit 1
 			fi
 
-			in_array "$item" "${learning_lines[@]}" || continue
+			if ! in_array "$item" "${learning_lines[@]}"; then
+				continue
+			fi
 
 			if ! srce="$(extract_field "${fields[1]:-}" "srce")"; then
 				echo "Error: no se pudo extraer 'srce' de fields[1] en el item: $mitem" >&2

@@ -107,7 +107,6 @@ export_topic() {
     if [ $ret = 4 ]; then
         exit 1
     elif [ $ret = 2 ]; then
-        dlg="$(grep -oP '(?<=|).*(?=\|)' <<< "$dlg")"
         autr_mod=$(echo "${dlg}" |cut -d "|" -f1)
         ctgy=$(echo "${dlg}" |cut -d "|" -f2)
         levl=$(echo "${dlg}" |cut -d "|" -f3)
