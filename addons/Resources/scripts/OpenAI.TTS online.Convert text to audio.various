@@ -1,12 +1,37 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-# OpenAI Text-to-Speech (official API).
-# Endpoint: https://api.openai.com/v1/audio/speech
-# Works for any language supported by the OpenAI TTS API.
-# Requires: an OpenAI API key and curl.
-# Set the key (and optional model/voice) by double-clicking this resource
-# in the addons dialog.
+# ============================================================
+# Resource Provider: OpenAI Text-to-Speech
+# Resource Type: TTS online — Convert text to audio
+# ============================================================
+#
+# Converts text to speech using the OpenAI TTS API.
+# Supports multiple languages and voices.
+#
+# API documentation: https://platform.openai.com/docs/guides/text-to-speech
+#
+# Configuration (via Resource GUI double-click):
+#   key    — OpenAI API key (required)
+#   model  — tts-1 (default) or tts-1-hd
+#   voice  — alloy, echo, fable, onyx, nova, shimmer
+#
+# Execution pattern: Direct execution (Pattern A)
+#   $1 = text to synthesize
+#   $2 = output file path (mp3)
+#   Exit 0 on success, non-zero on failure.
+
+# ------------------------------------------------------------
+# Source common utilities
+# ------------------------------------------------------------
+
+_RES_DIR="$(dirname "$(readlink -f "$0")")"
+[ -f "$_RES_DIR/common.sh" ] && source "$_RES_DIR/common.sh"
+_msgs_dir="$HOME/.config/idiomind/addons/resources/msgs"
+
+# ------------------------------------------------------------
+# Provider metadata
+# ------------------------------------------------------------
 
 TLANGS="en, es, it, pt, de, ja, fr, zh-cn, ru"
 INFO="Convert text to audio (online)
@@ -25,23 +50,38 @@ EXECUT="curl"
 EX="mp3"
 TESTWORD=""
 
+# ------------------------------------------------------------
+# Provider-specific constants
+# ------------------------------------------------------------
+
+_OPENAI_ENDPOINT="https://api.openai.com/v1/audio/speech"
+_OPENAI_DEFAULT_MODEL="tts-1"
+_OPENAI_DEFAULT_VOICE="alloy"
+
+# ------------------------------------------------------------
+# Main
+# ------------------------------------------------------------
+
 if [ "$1" = "_dclk_" ]; then
     :
-elif [ -n "$2" ]; then
-    key=$(grep -o 'key="[^"]*' "$FILECONF" 2>/dev/null |grep -o '[^"]*$' |sed 's/(null)//')
-    model=$(grep -o 'model="[^"]*' "$FILECONF" 2>/dev/null |grep -o '[^"]*$' |sed 's/(null)//')
-    voice=$(grep -o 'voice="[^"]*' "$FILECONF" 2>/dev/null |grep -o '[^"]*$' |sed 's/(null)//')
-    [ -z "$model" ] && model="tts-1"
-    [ -z "$voice" ] && voice="alloy"
 
-    if [ -z "$key" ]; then
-        [ -d "$HOME/.config/idiomind/addons/resources/msgs" ] \
-            || mkdir -p "$HOME/.config/idiomind/addons/resources/msgs"
-        echo "No key configuration" > \
-            "$HOME/.config/idiomind/addons/resources/msgs/${0##*/}"
+elif [ -n "$2" ]; then
+
+    # Read configuration (safe parsing, not source)
+    api_key=$(resource_read_config "$FILECONF" "key")
+    model=$(resource_read_config "$FILECONF" "model")
+    voice=$(resource_read_config "$FILECONF" "voice")
+    [ -z "$model" ] && model="$_OPENAI_DEFAULT_MODEL"
+    [ -z "$voice" ] && voice="$_OPENAI_DEFAULT_VOICE"
+
+    if [ -z "$api_key" ]; then
+        resource_write_error \
+            "No key configuration" \
+            "$_msgs_dir" "${0##*/}"
         exit 1
     fi
 
+    # Build JSON payload — prefer jq for safe construction
     text="$1"
     if command -v jq >/dev/null 2>&1; then
         data="$(jq -cn --arg m "$model" --arg v "$voice" --arg s "$text" \
@@ -51,8 +91,47 @@ elif [ -n "$2" ]; then
         data="{\"model\":\"$model\",\"voice\":\"$voice\",\"input\":\"$esc\"}"
     fi
 
-    curl -s --fail -m 51 -X POST "https://api.openai.com/v1/audio/speech" \
-        -H "Authorization: Bearer $key" \
+    # Execute API request
+    _response=$(curl -s -m 51 -w "\n%{http_code}" -X POST "$_OPENAI_ENDPOINT" \
+        -H "Authorization: Bearer $api_key" \
         -H "Content-Type: application/json" \
-        -d "$data" -o "$2"
+        -d "$data" -o "$2" 2>&1)
+    _http_code=$(tail -1 <<< "$_response")
+
+    case "$_http_code" in
+        200)
+            ;;
+        401)
+            resource_write_error \
+                "<span color='#C15F27'>API key invalid or expired</span>" \
+                "$_msgs_dir" "${0##*/}"
+            exit 1
+            ;;
+        429)
+            # Distinguish quota exhaustion from rate limiting
+            _body=$(head -1 <<< "$_response")
+            if echo "$_body" | grep -q "insufficient_quota\|credit_balance_exhausted"; then
+                resource_write_error \
+                    "<span color='#C15F27'>API quota exhausted</span>" \
+                    "$_msgs_dir" "${0##*/}"
+            else
+                resource_write_error \
+                    "<span color='#C15F27'>Request limit exceeded</span>" \
+                    "$_msgs_dir" "${0##*/}"
+            fi
+            exit 1
+            ;;
+        503)
+            resource_write_error \
+                "<span color='#C15F27'>Service temporarily unavailable</span>" \
+                "$_msgs_dir" "${0##*/}"
+            exit 1
+            ;;
+        *)
+            resource_write_error \
+                "<span color='#C15F27'>Connection error (HTTP $_http_code)</span>" \
+                "$_msgs_dir" "${0##*/}"
+            exit 1
+            ;;
+    esac
 fi

@@ -1,35 +1,107 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-# Baidu TTS (unofficial free endpoint).
-# Endpoint: https://fanyi.baidu.com/gettts
-# Works for: zh-cn, en, ja (pt/es return HTTP 403 with this free endpoint).
+# ============================================================
+# Resource Provider: Baidu Text-to-Speech
+# Resource Type: TTS online — Convert text to audio
+# ============================================================
+#
+# Uses the unofficial free Baidu translation TTS endpoint.
 # No API key required.
+# Supports: zh-cn, en, ja (other languages return HTTP 403).
+#
+# Endpoint: https://fanyi.baidu.com/gettts
+#
+# Execution pattern: Direct execution (Pattern A)
+#   $1 = text to synthesize
+#   $2 = output file path (mp3)
 
-EXECUT="curl"
+# ------------------------------------------------------------
+# Source common utilities
+# ------------------------------------------------------------
+
+_RES_DIR="$(dirname "$(readlink -f "$0")")"
+[ -f "$_RES_DIR/common.sh" ] && source "$_RES_DIR/common.sh"
+_msgs_dir="$HOME/.config/idiomind/addons/resources/msgs"
+
+# ------------------------------------------------------------
+# Provider metadata
+# ------------------------------------------------------------
+
+TLANGS="zh-cn, en, ja"
+INFO="Convert text to audio (online)"
+LANGUAGES="Chinese, English, Japanese"
+STATUS="Ok"
+VOICES=""
+CONF="FALSE"
+FILECONF=""
 TESTSTRING="测试"
+TESTWORD=""
+EXECUT="curl"
 EX="mp3"
 
-if [ "$1" = "_dclk_" ]; then
-    TLANGS="zh-cn, en, ja"
-    INFO="Convert text to audio (online)"
-    LANGUAGES="Chinese, English, Japanese"
-    STATUS="Ok"
-    VOICES=""
-    CONF="FALSE"
-    FILECONF=""
-    TESTWORD=""
-elif [ -n "$2" ]; then
-    case "$lgt" in
-        zh-cn) lan="zh" ;;
-        en)    lan="en" ;;
-        ja)    lan="jp" ;;
-        *)     lan="zh" ;;
+# ------------------------------------------------------------
+# Provider-specific constants
+# ------------------------------------------------------------
+
+_BAIDU_ENDPOINT="https://fanyi.baidu.com/gettts"
+
+# Baidu uses different language codes than Idiomind.
+_get_baidu_lang()
+{
+    case "$1" in
+        zh-cn) echo "zh" ;;
+        en)    echo "en" ;;
+        ja)    echo "jp" ;;
+        *)     echo "zh" ;;
     esac
-    curl -s -m 51 -G \
+}
+
+# ------------------------------------------------------------
+# Main
+# ------------------------------------------------------------
+
+if [ "$1" = "_dclk_" ]; then
+    :
+
+elif [ -n "$2" ]; then
+
+    lan=$(_get_baidu_lang "$lgt")
+
+    _response=$(curl -s -m 51 -w "\n%{http_code}" -G \
         --data-urlencode "lan=$lan" \
         --data-urlencode "text=$1" \
         --data-urlencode "spd=5" \
         --data-urlencode "source=web" \
-        "https://fanyi.baidu.com/gettts" -o "$2"
+        "$_BAIDU_ENDPOINT" -o "$2" 2>&1)
+    _http_code=$(tail -1 <<< "$_response")
+
+    case "$_http_code" in
+        200)
+            ;;
+        403)
+            resource_write_error \
+                "<span color='#C15F27'>Unsupported language or invalid parameters</span>" \
+                "$_msgs_dir" "${0##*/}"
+            exit 1
+            ;;
+        503)
+            resource_write_error \
+                "<span color='#C15F27'>Service temporarily unavailable</span>" \
+                "$_msgs_dir" "${0##*/}"
+            exit 1
+            ;;
+        000)
+            resource_write_error \
+                "<span color='#C15F27'>Timeout - text too long or connection failed</span>" \
+                "$_msgs_dir" "${0##*/}"
+            exit 1
+            ;;
+        *)
+            resource_write_error \
+                "<span color='#C15F27'>Connection error (HTTP $_http_code)</span>" \
+                "$_msgs_dir" "${0##*/}"
+            exit 1
+            ;;
+    esac
 fi

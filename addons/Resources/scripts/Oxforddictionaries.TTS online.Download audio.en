@@ -1,4 +1,16 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
+
+# ============================================================
+# Resource Provider: Oxford Dictionaries Audio
+# Resource Type: TTS online — Download audio for words
+# ============================================================
+#
+# Downloads pre-recorded British pronunciation audio from
+# Oxford Dictionaries' S3 bucket. No API key required.
+# English only.
+#
+# Execution pattern: Source + URL export (Pattern B)
 
 TLANGS="en"
 INFO="Search audio for words"
@@ -10,8 +22,6 @@ FILECONF=""
 TESTWORD=""
 EXECUT=""
 
-
 export TESTURL="http://s3.amazonaws.com/audio.oxforddictionaries.com/en/mp3/test_gb_1.mp3"
 export URL="http://s3.amazonaws.com/audio.oxforddictionaries.com/en/mp3/${word}_gb_1.mp3"
 export EX='mp3'
-

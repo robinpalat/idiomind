@@ -192,7 +192,10 @@ function new_sentence() {
             if [[ ${dlaud} = TRUE ]]; then
                 tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$cdid.mp3"
                 if [ ! -f "${DM_tlt}/$cdid.mp3" ]; then
-                    notify-send -i idiomind "$(gettext "The audio for the note couldn't be retrieved")" "$(gettext "Please check the speech synthesizer configuration in the resource setting.")"
+                    notify-send -i idiomind \
+					"$(gettext "Audio unavailable")" \
+					"$(gettext "The audio for this sentence could not be downloaded from the selected audio provider.")" \
+					-t 10000
                 fi
             fi
         else
@@ -441,11 +444,6 @@ function list_words_dclik() {
 } >/dev/null 2>&1
 
 function process() {
-    echo "=== process() called ===" >> /tmp/idiomind_debug.log
-    echo "process args: \$1=$1" >> /tmp/idiomind_debug.log
-    echo "DT_r: $DT_r" >> /tmp/idiomind_debug.log
-    echo "trgt length: ${#trgt}" >> /tmp/idiomind_debug.log
-    
     if [ ! -d "$DT_r" ] ; then
         check_dir "$DT_r"; cd ~ && cd "$DT_r"
     fi
@@ -459,7 +457,6 @@ function process() {
     else
         conten="${1}"
     fi
-    echo "conten length: ${#conten}" >> /tmp/idiomind_debug.log
     include "$DS/ifs/mods/add_process"
     
     if [[ "$1" = '__words__' ]]; then 
@@ -551,28 +548,19 @@ function process() {
         echo "${2%%[,.-]*}" > "$DT_r/xlines"
         sed -i '/^$/d' "$DT_r/xlines"
     fi
-    echo "=== Checking xlines ===" >> /tmp/idiomind_debug.log
-    echo "xlines content:" >> /tmp/idiomind_debug.log
-    cat "$DT_r/xlines" >> /tmp/idiomind_debug.log 2>&1
-    echo "xlines empty check: $(wc -c < "$DT_r/xlines")" >> /tmp/idiomind_debug.log
     
     if [ -z "$(< "$DT_r/xlines")" ] && [[ $conten != '__words__' ]]; then
-        echo "ERROR: xlines is empty, showing error dialog" >> /tmp/idiomind_debug.log
         msg "$(gettext "Failed to get text.")\n" \
         dialog-information "$(gettext "Information")"
         cleanups "$DT_r" "$DT/n_s_pr" "$slt" & exit 1
     elif [[ $conten != '__words__' ]]; then
-        echo "Calling dlg_checklist_3..." >> /tmp/idiomind_debug.log
         xclip -i /dev/null
         export slt=$(mktemp $DT/slt.XXXXXX.x)
         tpcs="$(cdb "${shrdb}" 5 topics)"
         export tpcs="$(grep -vFx "${tpe}" <<< "$tpcs" |tr "\\n" '!' |sed 's/\!*$//g')"
         [ -n "$tpcs" ] && export e='!'
-        echo "slt: $slt" >> /tmp/idiomind_debug.log
-        echo "tpe: $tpe" >> /tmp/idiomind_debug.log
         tpe="$(dlg_checklist_3 "$DT_r/xlines" "${tpe}" "$title" "$info")"
         ret="$?"
-        echo "dlg_checklist_3 returned: $ret" >> /tmp/idiomind_debug.log
     fi
     
     if [ $ret -eq 2 ]; then
@@ -684,7 +672,10 @@ function process() {
                             if [[ ${dlaud} = TRUE ]]; then
                                 tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$cdid.mp3"
                                 if [ ! -f "${DM_tlt}/$cdid.mp3" ]; then
-									notify-send -i idiomind "$(gettext "The audio for the note couldn't be retrieved")" "$(gettext "Please check the speech synthesizer configuration in the resource setting.")"
+									notify-send -i idiomind \
+									"$(gettext "Audio unavailable")" \
+									"$(gettext "The audio for this sentence could not be downloaded from the selected audio provider.")" \
+									-t 10000
 								fi
                             fi
                             ( [[ ${dlaud} = TRUE ]] && fetch_audio "$aw" "$bw" )
@@ -822,22 +813,11 @@ new_items() {
     [ -d "${2}" ] && DT_r="${2}"
     [ -n "${5}" ] && srce="${5}" || srce=""
     
-    # Debug logging
-    echo "=== new_items() called ===" >> /tmp/idiomind_debug.log
-    echo "Args: \$1=$1 \$2=$2 \$3=$3 \$4=$4 \$5=$5" >> /tmp/idiomind_debug.log
-    echo "txt length: ${#txt}" >> /tmp/idiomind_debug.log
-    echo "trgt length: ${#trgt}" >> /tmp/idiomind_debug.log
-    echo "sentence_chars: $sentence_chars" >> /tmp/idiomind_debug.log
-    echo "Level: $Level" >> /tmp/idiomind_debug.log
-    echo "trgt content (first 200 chars): ${trgt:0:200}" >> /tmp/idiomind_debug.log
-    
     if [ ${#trgt} -le ${sentence_chars} ] && \
     [ $(echo -e "${trgt}" |wc -l) -gt ${sentence_lines} ]; then 
-        echo "BRANCH: process (short but multi-line)" >> /tmp/idiomind_debug.log
         process; return
     fi
     if [ ${#trgt} -gt ${sentence_chars} ]; then 
-        echo "BRANCH: process (long text)" >> /tmp/idiomind_debug.log
         process; return
     fi
 
@@ -847,11 +827,8 @@ new_items() {
 	fi
 	
 	if [ $level_control = True ]; then
-	    echo "BRANCH: process (level 0 with many words)" >> /tmp/idiomind_debug.log
 		process; return
 	fi
-	
-	echo "BRANCH: form dialog (no process)" >> /tmp/idiomind_debug.log
 
     [ -f "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" || img="$DS/images/nw.png"
     export img
@@ -928,7 +905,7 @@ new_items() {
 }
 
 case "$1" in
-    new_topic)
+    new-topic)
     new_topic "$@" ;;
     new_item)
     new_item "$@" ;;

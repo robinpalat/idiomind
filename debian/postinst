@@ -23,7 +23,7 @@ set -e
 #DEBHELPER#
 
 if [ -e /usr/share/idiomind/ifs/tls.sh ]; then
-    /usr/share/idiomind/ifs/tls.sh update_addons
+    /usr/share/idiomind/ifs/tls.sh update-addons
 fi
 
 exit 0

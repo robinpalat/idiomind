@@ -1,5 +1,28 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
 
+# ============================================================
+# Resource Provider: Google Translate
+# Resource Type: Translator online — Translate text
+# ============================================================
+#
+# Translates text using Google Translate's unofficial API.
+# No API key required. Multi-language support.
+#
+# This script uses the Chrome dictionary extension endpoint
+# which is not an official Google API.
+#
+# API reference: https://developers.google.com/translate/
+#
+# NOTE: Google Translate is a proprietary service provided by
+# Google Inc. This script is NOT a Google product.
+#
+# Execution pattern: Direct execution, stdout captured (Pattern A)
+#   $1 = text to translate
+#   $2 = source language code
+#   $3 = target language code
+#   $4 = "singleline" (optional) — collapse output to one line
+#   Stdout = translated text
 
 TLANGS="zh-cn, en, ja, pt, es, ru, it, de, fr"
 
@@ -7,7 +30,7 @@ INFO="Online translator
 
 This software is provided for the purpose of reasonable personal use of
 the Google Translate service.
-Please refer to the official Google Translate API 
+Please refer to the official Google Translate API
 https://developers.google.com/translate/.
 
 By using this software, the user are aware that:
@@ -18,7 +41,7 @@ Google Inc.
 2. This script is NOT a Google product. Neither this software nor
 its author is affiliated with Google Inc."
 
-LANGUAGES="Chinese, English, Frech, German, Italian, Japanese, Portuguese, Russian, Spanish, Vietnamese"
+LANGUAGES="Chinese, English, French, German, Italian, Japanese, Portuguese, Russian, Spanish, Vietnamese"
 STATUS="Ok"
 VOICES=""
 CONF="FALSE"
@@ -26,43 +49,50 @@ FILECONF=""
 TESTWORD=""
 EXECUT=""
 
+# ------------------------------------------------------------
+# Main
+# ------------------------------------------------------------
 
-link="https://translate.googleapis.com/translate_a/single?client=dict-chrome-ex&sl=$2&tl=$3&dt=t&q=$1"
 if [[ "$1" != '_dclk_' ]]; then
+
+    # Build the translation request URL
+    link="https://translate.googleapis.com/translate_a/single?client=dict-chrome-ex&sl=$2&tl=$3&dt=t&q=$1"
     gtra="$(wget -U "$useragent" -qO - "$link")"
-fi
 
-if grep -o -E 'ja|zh-cn|ru' <<< "${3}" >/dev/null 2>&1 ; then
-    if [[ "$4" = singleline ]]; then
-        echo -e "${gtra}" |
-            sed -e 's/\",\".*//g' |
-            sed -e 's/.*\[\[\[\"//g' |
-            sed 's/\\n$//'
-    else
-        while IFS= read -r t; do
-            grep -oP '(?<=trgt=\").*(?=\",\")' <<< "$t" |
+    # Parse the response. Google returns different JSON structures
+    # for CJK languages (ja, zh-cn, ru) vs European languages.
+    if grep -o -E 'ja|zh-cn|ru' <<< "${3}" >/dev/null 2>&1; then
+        if [[ "$4" = singleline ]]; then
+            echo -e "${gtra}" |
+                sed -e 's/\",\".*//g' |
+                sed -e 's/.*\[\[\[\"//g' |
                 sed 's/\\n$//'
-        done < <(
-            echo "${gtra}" |
-            sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g'
-        )
-    fi
+        else
+            while IFS= read -r t; do
+                grep -oP '(?<=trgt=\").*(?=\",\")' <<< "$t" |
+                    sed 's/\\n$//'
+            done < <(
+                echo "${gtra}" |
+                sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g'
+            )
+        fi
 
-elif grep -o -E 'de|en|es|fr|it|pt|vi' <<< "${3}" >/dev/null 2>&1 ; then
-    if [[ "$4" = singleline ]]; then
-        echo -e "${gtra}" |
-            sed -e 's/\",\".*//g' |
-            sed -e 's/.*\[\[\[\"//g' |
-            awk -F'null' '{print $1}' |
-            sed 's/\\n$//'
-    else
-        while IFS= read -r t; do
-            grep -oP '(?<=trgt=\").*(?=\",\")' <<< "$t" |
-                sed 's/\\n$//' |
-                awk -F'null' '{print $1}'
-        done < <(
-            echo "${gtra}" |
-            sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g'
-        )
+    elif grep -o -E 'de|en|es|fr|it|pt|vi' <<< "${3}" >/dev/null 2>&1; then
+        if [[ "$4" = singleline ]]; then
+            echo -e "${gtra}" |
+                sed -e 's/\",\".*//g' |
+                sed -e 's/.*\[\[\[\"//g' |
+                awk -F'null' '{print $1}' |
+                sed 's/\\n$//'
+        else
+            while IFS= read -r t; do
+                grep -oP '(?<=trgt=\").*(?=\",\")' <<< "$t" |
+                    sed 's/\\n$//' |
+                    awk -F'null' '{print $1}'
+            done < <(
+                echo "${gtra}" |
+                sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g'
+            )
+        fi
     fi
 fi

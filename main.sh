@@ -650,15 +650,24 @@ function topic() {
         
         if [ ${count_date_reviews} -eq 0 ]; then
 			label_serie=""
-		elif [ ${count_date_reviews} = 1 ]; then label_serie="<u><b>4</b></u> <span color='#888888'>| 7 | 7 | 10 | 15 | 15 | 20 | 30</span>"
-		elif [ ${count_date_reviews} = 2 ]; then label_serie="<span color='#888888'>4 |</span> <u><b>7</b></u> <span color='#888888'>| 7 | 10 | 15 | 15 | 20 | 30</span>"
-		elif [ ${count_date_reviews} = 3 ]; then label_serie="<span color='#888888'>4 | 7 |</span> <u><b>7</b></u> <span color='#888888'>| 10 | 15 | 15 | 20 | 30</span>"
-		elif [ ${count_date_reviews} = 4 ]; then label_serie="<span color='#888888'>4 | 7 | 7 |</span> <u><b>10</b></u> <span color='#888888'>| 15 | 15 | 20 | 30</span>"
-		elif [ ${count_date_reviews} = 5 ]; then label_serie="<span color='#888888'>4 | 7 | 7 | 10 |</span> <u><b>15</b></u> <span color='#888888'>| 15 | 20 | 30</span>"
-		elif [ ${count_date_reviews} = 6 ]; then label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 |</span> <u><b>15</b></u> <span color='#888888'>| 20 | 30</span>"
-		elif [ ${count_date_reviews} = 7 ]; then label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 | 15 |</span> <u><b>20</b></u> <span color='#888888'>| 30</span>"
-		elif [ ${count_date_reviews} = 8 ]; then label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 | 15 | 20 |</span> <u><b>30</b></u> <span color='#888888'>| 60</span>"
-		elif [ ${count_date_reviews} -ge 9 ]; then label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 | 15 | 20 | 30 |</span> <u><b>60</b></u>"
+		elif [ ${count_date_reviews} = 1 ]; then 
+		label_serie="<u><b>4</b></u> <span color='#888888'>| 7 | 7 | 10 | 15 | 15 | 20 | 30</span>"
+		elif [ ${count_date_reviews} = 2 ]; then 
+		label_serie="<span color='#888888'>4 |</span> <u><b>7</b></u> <span color='#888888'>| 7 | 10 | 15 | 15 | 20 | 30</span>"
+		elif [ ${count_date_reviews} = 3 ]; then 
+		label_serie="<span color='#888888'>4 | 7 |</span> <u><b>7</b></u> <span color='#888888'>| 10 | 15 | 15 | 20 | 30</span>"
+		elif [ ${count_date_reviews} = 4 ]; then 
+		label_serie="<span color='#888888'>4 | 7 | 7 |</span> <u><b>10</b></u> <span color='#888888'>| 15 | 15 | 20 | 30</span>"
+		elif [ ${count_date_reviews} = 5 ]; then 
+		label_serie="<span color='#888888'>4 | 7 | 7 | 10 |</span> <u><b>15</b></u> <span color='#888888'>| 15 | 20 | 30</span>"
+		elif [ ${count_date_reviews} = 6 ]; then 
+		label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 |</span> <u><b>15</b></u> <span color='#888888'>| 20 | 30</span>"
+		elif [ ${count_date_reviews} = 7 ]; then 
+		label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 | 15 |</span> <u><b>20</b></u> <span color='#888888'>| 30</span>"
+		elif [ ${count_date_reviews} = 8 ]; then 
+		label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 | 15 | 20 |</span> <u><b>30</b></u> <span color='#888888'>| 60</span>"
+		elif [ ${count_date_reviews} -ge 9 ]; then 
+		label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 | 15 | 20 | 30 |</span> <u><b>60</b></u>"
 		fi
 
         export lbl1 label_serie
@@ -835,11 +844,7 @@ function topic() {
             if [ ${stts} = 1 ] || [ ${stts} = 2 ] || [ ${stts} = 5 ] || [ ${stts} = 6 ]; then
                 stts_prev=${stts}
                 "$DS/mngr.sh" mark_as_learned "${tpc}" 0
-                # mark_as_learned just persisted a new status (e.g. 1 -> 3).
-                # Re-sync the in-memory status and go around the loop so readd()
-                # recomputes cfg/labels with the fresh status before we draw, so
-                # this very render shows "Waiting to review for the first time"
-                # instead of the stale "Learning...".
+
                 stts_new=$(sed -n 1p "${DC_tlt}/stts")
                 ! [[ ${stts_new} =~ $numer ]] && stts_new=${stts_prev}
                 if [ "${stts_new}" != "${stts_prev}" ]; then
@@ -1035,18 +1040,18 @@ case "$1" in
     new_session; idiomind ;;
     topic)
     topic ;;
-    first_run)
+    first-run)
     "$DS/ifs/tls.sh" "$@" ;;
     index)
     "$DS/mngr.sh" mkmn 0 ;;
     autostart)
     # Inicio automático: la sesión se crea mediante bground_session().
     bground_session ;;
-    --add)
-   "$DS/add.sh" new_items "${dir}" 2 "${2}" ;;
+    add-items)
+    "$DS/add.sh" new_items "${dir}" 2 "${2}" ;;
     add)
     "$DS/add.sh" new_item '__cmd__' "$(sed -n 1p "$DC_s/tpc")" "${2}" "${3}" ;;
-    new_topic)
+    new-topic)
     "$DS/add.sh" new_topic "" "" "$2" ;;
     tasks)
     "$DS/ifs/mods/start/update_tasks.sh" ;;
@@ -1054,36 +1059,53 @@ case "$1" in
     ipanel ;;
     stop)
     "$DS/stop.sh" 2 ;;
-    update_addons)
-    "$DS/ifs/tls.sh" update_addons ;;
-    restart_topic)
+    update-addons)
+    "$DS/ifs/tls.sh" update-addons ;;
+    restart-topic)
     "$DS/mngr.sh" restartTopic ;;
-    update_resources)
+    update-resources)
     "$DS_a/Resources/cnfg.sh" updt_scripts ;;
     *)
     # Check if command is provided by an addon
+    # Commands are registered in: $DS/ifs/mods/commands/<AddonName>
+    # Format: command_name|description|script_path
+    # Script paths are resolved relative to: $DS/addons/<AddonName>/
     _addon_cmd_found=0
-    if [ -n "$1" ]; then
-        for addon_dir in "$DS"/addons/*/; do
-            [ -d "$addon_dir" ] || continue
-            commands_file="${addon_dir}commands.sh"
-            if [ -f "$commands_file" ]; then
-                while IFS='|' read -r cmd_name cmd_desc cmd_script; do
-                    # Skip comments and empty lines
-                    [[ "$cmd_name" =~ ^[[:space:]]*# ]] && continue
-                    [ -z "$cmd_name" ] && continue
-                    if [ "$1" = "$cmd_name" ]; then
-                        _addon_script="${addon_dir}${cmd_script}"
-                        if [ -f "$_addon_script" ]; then
-                            shift
-                            bash "$_addon_script" "$@"
-                            _addon_cmd_found=1
-                            break 2
-                        fi
+    _commands_dir="$DS/ifs/mods/commands"
+    if [ -n "$1" ] && [ -d "$_commands_dir" ]; then
+        _cmd_name_first="$1"
+        _cmd_provider=""
+        for _manifest in "$_commands_dir"/*; do
+            [ -f "$_manifest" ] || continue
+            _addon_name="${_manifest##*/}"
+            while IFS='|' read -r _cmd_name _cmd_desc _cmd_script; do
+                [[ "$_cmd_name" =~ ^[[:space:]]*# ]] && continue
+                [ -z "$_cmd_name" ] && continue
+                if [ "$_cmd_name_first" = "$_cmd_name" ]; then
+                    if [ -n "$_cmd_provider" ]; then
+                        echo "Command conflict: '$_cmd_name_first'" >&2
+                        echo "  Provided by: $_cmd_provider" >&2
+                        echo "  Provided by: $_addon_name" >&2
+                        _addon_cmd_found=1
+                        _cmd_provider="CONFLICT"
+                        break 2
                     fi
-                done < "$commands_file"
-            fi
+                    _cmd_provider="$_addon_name"
+                    _resolved_script="$DS/addons/${_addon_name}/${_cmd_script}"
+                fi
+            done < "$_manifest"
         done
+        if [ "$_cmd_provider" = "CONFLICT" ]; then
+            :
+        elif [ -n "$_cmd_provider" ] && [ -f "$_resolved_script" ]; then
+            shift
+            bash "$_resolved_script" "$@"
+            _addon_cmd_found=1
+        elif [ -n "$_cmd_provider" ] && [ ! -f "$_resolved_script" ]; then
+            echo "Addon command '$_cmd_name_first' registered but script not found:" >&2
+            echo "  Expected: $_resolved_script" >&2
+            _addon_cmd_found=1
+        fi
     fi
     # If no addon command found, run default startup
     if [ $_addon_cmd_found -eq 0 ]; then

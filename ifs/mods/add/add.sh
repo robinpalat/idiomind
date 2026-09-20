@@ -490,7 +490,7 @@ dwld1() {
         fi
     fi
     if [ -f "$audio_file" ]; then
-        if file -b --mime-type "$audio_file" |grep 'audio|mpeg|mp3|' >/dev/null 2>&1 \
+        if file -b --mime-type "$audio_file" |grep -E 'audio|mpeg|mp3' >/dev/null 2>&1 \
         && [[ $(du -b "$audio_file" |cut -f1) -gt 120 ]]; then
             return 5
         else
@@ -505,7 +505,7 @@ dwld2() {
         wget -T 51 -q -U "$useragent" -O "$DT_r/audio.mp3" "${URL}"
     fi
     if [ -f "$DT_r/audio.mp3" ]; then
-        if file -b --mime-type "$DT_r/audio.mp3" |grep 'audio|mpeg|mp3|'>/dev/null 2>&1; then
+        if file -b --mime-type "$DT_r/audio.mp3" |grep -E 'audio|mpeg|mp3'>/dev/null 2>&1; then
 			if [[ $(du -b "$DT_r/audio.mp3" |cut -f1) -gt 120 ]]; then
 				mv -f "$DT_r/audio.mp3" "${audio_file}"; return 5
 			else 

@@ -1,6 +1,27 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+# ============================================================
+# Resource Addon — Configuration Manager
+# ============================================================
+#
+# Provides the GUI for enabling/disabling resource providers,
+# configuring API keys, and managing the resource lifecycle.
+#
+# Entry points (dispatched via case statement at bottom):
+#   add_dlg     — Add a custom resource script
+#   dclk        — Double-click detail view (config form)
+#   cpfile      — Copy resource script with admin privileges
+#   dlg         — Main resource list dialog
+#   updt_scripts — Sync resources with config directories
+#
+# External interface:
+#   cnfg.sh              → opens main dialog
+#   cnfg.sh 6            → opens dialog with initial text
+#   cnfg.sh 2            → opens dialog for task 2
+#   cnfg.sh _dclk_ ...   → double-click handler (YAD dclick-action)
+#   cnfg.sh updt_scripts → sync resources on startup/update
+
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 source "$DS/default/sets.cfg"
@@ -13,6 +34,7 @@ msgs="$DC/addons/resources/msgs"
 DC_a="$HOME/.config/idiomind/addons"
 check_dir "$msgs"
 
+# Resource task types displayed in the GUI
 task=( 'Search audio' 'Convert text to audio' 'Translate' \
 'Search definition' 'Search image' '_' '_' )
 
@@ -86,13 +108,13 @@ function dclk() {
     name="<b>$3</b>"
     icon="$DS/addons/Resources/c.png"
 	
-	STATUS="$(gettext "It seems to work correctly")"
-    if [ -f "$msgs/$fname" ]; then
+	STATUS="<span color='#2BB62D'>$(gettext "It seems to work correctly")</span>"
+    if ! echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
+        STATUS="<span color='#3498DB'>$(gettext "Not available for the language you are learning.")</span>"
+        icon="$DS/addons/Resources/b.png"
+    elif [ -f "$msgs/$fname" ]; then
         STATUS="$(< "$msgs/$fname")"
         icon="$DS/addons/Resources/a.png"
-    elif ! echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
-        STATUS="$(gettext "Not available for the language you are learning.")"
-        icon="$DS/addons/Resources/b.png"
     fi
 
     if [[ "$CONF" = "TRUE" ]]; then
@@ -115,7 +137,7 @@ function dclk() {
         confhidden="${CONFKEY_HIDDEN:-key}"
 
         _yad=( yad --form --title="${3}" \
-        --text="$(gettext "Resource name"): $name\n<small>\n<b>$(gettext "Languages"):</b>\n$LANGUAGES\n\n<b>$(gettext "is used for"):</b>\n$INFO\n\n<b>$(gettext "Status:")</b>\n $STATUS</small>\n" \
+        --text="$(gettext "Resource name"): $name\n\n<b>$(gettext "Languages"):</b>\n$LANGUAGES\n\n<b>$(gettext "is used for"):</b>\n$INFO\n\n<b>$(gettext "Status:")</b>\n $STATUS\n" \
         --image=$icon --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" --center \
         --on-top --skip-taskbar --expand-column=3 \
@@ -154,12 +176,12 @@ function dclk() {
         fi
     else
         yad --form --title="${3}" \
-        --text="$(gettext "Resource name"): $name\n<small>\n<b>$(gettext "Languages"):</b>\n$LANGUAGES\n\n<b>$(gettext "Is used for"):</b>\n$INFO\n\n<b>$(gettext "Status:")</b>\n $STATUS</small>\n" \
+        --text="$(gettext "Resource name"): <big>$name</big>\n\n<b>$(gettext "Languages"):</b>\n$LANGUAGES\n\n<b>$(gettext "Is used for"):</b>\n$INFO\n\n<b>$(gettext "Status:")</b>\n $STATUS\n" \
         --image=$icon \
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" --center \
         --on-top --skip-taskbar --expand-column=3 \
-        --width=600 --height=200 --fixed --borders=12 \
+        --width=600 --height=200 --borders=12 \
         --align=right \
         --button="$(gettext "Close")":1 
     fi
@@ -319,18 +341,7 @@ function update_config_dir() {
         cleanups "$DC_s/recommended_scripts_first_run"  \
         "$DC_s/Resources_first_run"
     
-        #lsResources="$(ls "$disables/")"
-    
-        #"$DS_a/Resources/test.sh" 1 silence
-        #if [ -f "$DC_a/res/test" ] ; then
-            #test_ok="$(< "$DC_a/res/test")"
-        #fi
-        
-            #if grep "${res}" <<< "${test_ok}"  >/dev/null 2>&1; then
-                #echo "-- enable res: ${res}"
-                #mv -f "$disables/${res}" "$enables/${res}"
-            #fi
-            
+
         if ls "$disables"/*.various 1> /dev/null 2>&1; then
             mv -f "$disables"/*.various "$enables"/
         fi

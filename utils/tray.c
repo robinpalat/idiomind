@@ -440,19 +440,27 @@ static void rebuild_menu(void)
     GtkWidget *new_menu = build_menu();
 
     if (ctx->use_indicator) {
+        /*
+         * app_indicator_set_menu() takes a reference to the new menu
+         * and releases (unrefs) the previous one.  If the old menu's
+         * refcount drops to zero, GTK destroys it automatically,
+         * making ctx->menu a dangling pointer.  Do NOT attempt to
+         * destroy the old menu here — AppIndicator already released it.
+         */
         ctx->indicator.set_menu(ctx->indicator.indicator,
                                 GTK_MENU(new_menu));
-
-        if (ctx->menu)
-            gtk_widget_destroy(ctx->menu);
-
         ctx->menu = new_menu;
     } else {
-        gtk_menu_popup_at_pointer(GTK_MENU(new_menu), NULL);
-
-        if (ctx->menu)
+        /*
+         * StatusIcon path: we own the menu exclusively.
+         * Destroy the old one before replacing.
+         */
+        if (ctx->menu) {
             gtk_widget_destroy(ctx->menu);
+            ctx->menu = NULL;
+        }
 
+        gtk_menu_popup_at_pointer(GTK_MENU(new_menu), NULL);
         ctx->menu = new_menu;
     }
 }
@@ -473,6 +481,12 @@ static void on_status_popup(GtkStatusIcon *status_icon,
 
     update_status();
 
+    /* Destroy previous menu — StatusIcon path owns it exclusively. */
+    if (ctx->menu) {
+        gtk_widget_destroy(ctx->menu);
+        ctx->menu = NULL;
+    }
+
     GtkWidget *menu = build_menu();
     ctx->menu = menu;
 
@@ -485,6 +499,12 @@ static void on_status_activate(GtkStatusIcon *status_icon, gpointer data)
     (void)data;
 
     update_status();
+
+    /* Destroy previous menu — StatusIcon path owns it exclusively. */
+    if (ctx->menu) {
+        gtk_widget_destroy(ctx->menu);
+        ctx->menu = NULL;
+    }
 
     GtkWidget *menu = build_menu();
     ctx->menu = menu;
@@ -534,12 +554,12 @@ static void on_directory_changed(GFileMonitor *monitor,
 
         if (ctx->use_indicator && ctx->indicator.indicator) {
             GtkWidget *menu = build_menu();
+            /*
+             * Same ownership rule as rebuild_menu(): AppIndicator
+             * releases the old menu when set_menu is called.
+             */
             ctx->indicator.set_menu(ctx->indicator.indicator,
                                     GTK_MENU(menu));
-
-            if (ctx->menu)
-                gtk_widget_destroy(ctx->menu);
-
             ctx->menu = menu;
         }
     }
@@ -553,6 +573,18 @@ static void cleanup(void)
 {
     if (!ctx)
         return;
+
+    /*
+     * Menu ownership:
+     *   - Indicator path: AppIndicator owns the menu reference.
+     *     Do not destroy it here — AppIndicator releases it on
+     *     disposal or when the module is closed.
+     *   - StatusIcon path: we own the menu exclusively.
+     */
+    if (!ctx->use_indicator && ctx->menu) {
+        gtk_widget_destroy(ctx->menu);
+        ctx->menu = NULL;
+    }
 
     if (ctx->monitor)
         g_object_unref(ctx->monitor);

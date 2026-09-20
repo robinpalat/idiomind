@@ -1,18 +1,44 @@
 #!/bin/bash
-# sudo apt install gtts-cli
+# -*- ENCODING: UTF-8 -*-
 
-EXECUT="gtts-cli"
+# ============================================================
+# Resource Provider: gTTS (Google Text-to-Speech CLI)
+# Resource Type: TTS offline — Convert text to audio
+# ============================================================
+#
+# Uses the gtts-cli command-line tool (pip install gTTS).
+# Requires the gtts-cli binary to be installed.
+#
+# Installation: sudo apt install python3-gtts
+#   or: pip install gTTS
+#
+# Execution pattern: Direct execution (Pattern A)
+#   $1 = text to synthesize
+#   $2 = output file path (mp3)
+
+# ------------------------------------------------------------
+# Provider metadata
+# ------------------------------------------------------------
+
+TLANGS="en"
+INFO="Convert text to audio (offline)"
+LANGUAGES="English"
+STATUS="Ok"
+VOICES=""
+CONF="FALSE"
+FILECONF=""
 TESTSTRING="this is an example"
+TESTWORD=""
+EXECUT="gtts-cli"
 EX="mp3"
 
+# ------------------------------------------------------------
+# Main
+# ------------------------------------------------------------
+
 if [ "$1" = "_dclk_" ]; then
-	TLANGS="en" # Example: zh-cn, en, ja, pt, es
-	INFO="Convert text to audio (offline)"
-	LANGUAGES="English" # Example: Chinese, English
-	STATUS="Ok"
-	VOICES=""
-	CONF="FALSE" 
-	FILECONF="" # "$HOME/.config/idiomind/addons/Resources/XXXX.cfg"
-else
-	gtts-cli -o "$2" "$1"
+    :
+
+elif [ -n "$2" ]; then
+    gtts-cli -o "$2" "$1"
 fi

@@ -1,4 +1,35 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
+
+# ============================================================
+# Resource Provider: Ispeech Text-to-Speech
+# Resource Type: TTS online — Convert text to audio
+# ============================================================
+#
+# Converts text to speech using the Ispeech REST API.
+# Requires a 32-character API key from ispeech.org.
+#
+# This provider also serves the Download audio variant:
+#   Ispeech.TTS online.Download audio.various
+# Both share the same configuration file and API key.
+# If the key is invalid, both variants are auto-disabled.
+#
+# API documentation: https://ispeech.org/api
+#
+# Execution pattern: Source + internal config + URL export (Pattern C)
+#   When sourced, exports URL and EX for the caller to wget.
+
+# ------------------------------------------------------------
+# Source common utilities
+# ------------------------------------------------------------
+
+_RES_DIR="$(dirname "$(readlink -f "$0")")"
+[ -f "$_RES_DIR/common.sh" ] && source "$_RES_DIR/common.sh"
+_msgs_dir="$HOME/.config/idiomind/addons/resources/msgs"
+
+# ------------------------------------------------------------
+# Provider metadata
+# ------------------------------------------------------------
 
 TLANGS="zh-cn, en, ja, pt, es, ru, it, de, fr"
 INFO="Convert text to audio (online)"
@@ -11,69 +42,144 @@ TESTSTRING="test"
 EXECUT=""
 EX='mp3'
 
+# ------------------------------------------------------------
+# Provider-specific constants
+# ------------------------------------------------------------
 
-function check_key(){ # remove from active if missing key
-    DC_a="$HOME/.config/idiomind/addons"
-    d1="Ispeech.TTS online.Search audio.various"
-    d2="Ispeech.TTS online.Convert text to audio.various"
-    local fname="$(basename "$0")"
-    msgs="$HOME/.config/idiomind/addons/resources/msgs"
-    if [ -z "${key}" ] || [[ ${#key} != 32 ]]; then
-        echo "$(gettext "No key configuration")" > "$msgs/$d1"
-        echo "$(gettext "No key configuration")" > "$msgs/$d2"
-        if [ -f "$DC_a/resources/enables/${d1}" ] && [ ! -d "$DT/resources_test" ]; then
-            mv -f "$DC_a/resources/enables/${d1}" "$DC_a/resources/disables/${d1}"
-        fi
-        if [ -f "$DC_a/resources/enables/${d2}" ] && [ ! -d "$DT/resources_test" ]; then
-            mv -f "$DC_a/resources/enables/${d2}" "$DC_a/resources/disables/${d2}"
-        fi
-        return 1
-    else
-        return 0
-    fi
+_ISPEECH_ENDPOINT="https://api.ispeech.org/api/rest"
+_ISPEECH_KEY_LENGTH=32
+
+# Ispeech uses provider-specific voice names per language.
+# This mapping is provider-internal, not shared with other providers.
+
+_get_ispeech_voice()
+{
+    case "$1" in
+        en)    echo "ukenglishmale" ;;
+        es)    echo "eurspanishmale" ;;
+        pt)    echo "brportuguesefemale" ;;
+        ru)    echo "rurussianfemale" ;;
+        it)    echo "euritalianmale" ;;
+        de)    echo "eurgermanfemale" ;;
+        fr)    echo "eurfrenchmale" ;;
+        zh-cn) echo "chchinesefemale" ;;
+        ja)    echo "jpjapanesefemale" ;;
+        *)     echo "ukenglishmale" ;;
+    esac
 }
 
-key=$(grep -o key=\"[^\"]* "$FILECONF" |grep -o '[^"]*$')
-check_key
+# Ispeech uses provider-specific test words per language.
+_get_ispeech_test_word()
+{
+    case "$1" in
+        en)    echo "test" ;;
+        es)    echo "prueba" ;;
+        pt)    echo "teste" ;;
+        ru)    echo "тест" ;;
+        it)    echo "prova" ;;
+        de)    echo "Prüfung" ;;
+        fr)    echo "tester" ;;
+        zh-cn) echo "测试" ;;
+        ja)    echo "テスト" ;;
+        *)     echo "test" ;;
+    esac
+}
 
-if [ $? = 0 ]; then
-    speed=$(grep -o speed=\"[^\"]* "$FILECONF" |grep -o '[^"]*$')
-    voice=$(grep -o voice=\"[^\"]* "$FILECONF" |grep -o '[^"]*$' |sed 's/(null)//')
-    if [ "$speed" = Slow ]; then s=-2
-    elif [ "$speed" = Normal ]; then s=0
-    elif [ "$speed" = Fast ]; then s=2
+# Check API key validity and auto-disable related variants if invalid.
+# Both the Convert and Search/Download variants share the same key.
+# If the key is missing or wrong length, both are disabled.
+#
+# This logic is specific to Ispeech: the API requires exactly 32 characters.
+
+_check_ispeech_key()
+{
+    local _key="$1"
+    if [ -z "$_key" ] || [ "${#_key}" -ne "$_ISPEECH_KEY_LENGTH" ]; then
+        local _convert="Ispeech.TTS online.Convert text to audio.various"
+        local _search="Ispeech.TTS online.Search audio.various"
+        resource_write_error \
+            "<span color='#C15F27'>No key configuration</span>" \
+            "$_msgs_dir" "$_convert"
+        resource_write_error \
+            "<span color='#C15F27'>No key configuration</span>" \
+            "$_msgs_dir" "$_search"
+        # Auto-disable both variants (skip during test runs)
+        if [ ! -d "$DT/resources_test" ]; then
+            local _dc_a="$HOME/.config/idiomind/addons"
+            [ -f "$_dc_a/resources/enables/$_convert" ] && \
+                mv -f "$_dc_a/resources/enables/$_convert" "$_dc_a/resources/disables/$_convert"
+            [ -f "$_dc_a/resources/enables/$_search" ] && \
+                mv -f "$_dc_a/resources/enables/$_search" "$_dc_a/resources/disables/$_search"
+        fi
+        return 1
     fi
-    if [ "$lgt" = "en" ]; then 
-        v=ukenglishmale
-        _test="test"
-    elif [ "$lgt" = "es" ]; then 
-        v=eurspanishmale
-        _test="prueba"
-    elif [ "$lgt" = "pt" ]; then 
-        v=brportuguesefemale
-        _test="teste"
-    elif [ "$lgt" = "ru" ]; then 
-        v=rurussianfemale
-        _test="тест"
-    elif [ "$lgt" = "it" ]; then
-        v=euritalianmale
-        _test="prova"
-    elif [ "$lgt" = "de" ]; then 
-        v=eurgermanfemale
-        _test="Prüfung"
-    elif [ "$lgt" = "fr" ]; then 
-        v=eurfrenchmale
-        _test="tester"
-    elif [ "$lgt" = "zh-cn" ]; then 
-        v=chchinesefemale
-        _test="测试"
-    elif [ "$lgt" = "ja" ]; then 
-        v=jpjapanesefemale
-        _test="テスト"
+    return 0
+}
+
+# Parse Isponse error responses.
+# Ispeech returns "result=error" with an error code in the response body.
+_check_ispeech_error()
+{
+    local _body="$1" _fname="$2"
+    if echo "$_body" | grep -q "result=error"; then
+        local _code
+        _code=$(echo "$_body" | grep -o "error=[0-9]*" | grep -o "[0-9]*")
+        local _msg
+        case "$_code" in
+            1)   _msg="Invalid credentials or API key" ;;
+            3)   _msg="Insufficient credits (quota exhausted)" ;;
+            997) _msg="No API access" ;;
+            *)   _msg="API error (code $_code)" ;;
+        esac
+        resource_write_error \
+            "<span color='#C15F27'>$_msg</span>" \
+            "$_msgs_dir" "$_fname"
+        return 0
     fi
-    
-    export TESTURL="https://api.ispeech.org/api/rest?apikey=$k&action=convert&voice=$v&speed=$s&pitch=0&text=${_test}"
-    export URL="https://api.ispeech.org/api/rest?apikey=$k&action=convert&voice=$v&speed=$s&pitch=0&text=${word}"
+    return 1
+}
+
+# ------------------------------------------------------------
+# Main
+# ------------------------------------------------------------
+# When sourced by cnfg.sh (no arguments), only metadata is read.
+# When sourced by add.sh/test.sh, the full flow runs.
+
+if [ "$1" = "_dclk_" ]; then
+    :
+
+elif [ -n "$2" ]; then
+
+    # Read config
+    api_key=$(resource_read_config "$FILECONF" "key")
+    speed=$(resource_read_config "$FILECONF" "speed")
+    voice=$(resource_read_config "$FILECONF" "voice")
+
+    # Validate key (disables both Convert and Search variants on failure)
+    _check_ispeech_key "$api_key" || exit 0
+
+    # Map speed setting to numeric value
+    case "$speed" in
+        Slow)   s=-2 ;;
+        Normal) s=0 ;;
+        Fast)   s=2 ;;
+        *)      s=0 ;;
+    esac
+
+    # Get voice and test word for current language
+    v=$(_get_ispeech_voice "$lgt")
+    _test=$(_get_ispeech_test_word "$lgt")
+
+    # Export URLs for the caller (Pattern C: source + URL export)
+    export TESTURL="${_ISPEECH_ENDPOINT}?apikey=${api_key}&action=convert&voice=${v}&speed=${s}&pitch=0&text=${_test}"
+    export URL="${_ISPEECH_ENDPOINT}?apikey=${api_key}&action=convert&voice=${v}&speed=${s}&pitch=0&text=${word}"
     export EX='mp3'
-fi
 
+    # Test the API when called with a test parameter
+    if [ -n "${2}" ] && [ "$2" != "" ]; then
+        _response=$(wget -T 15 -q -O - "${TESTURL}" 2>/dev/null)
+        if [ -n "$_response" ]; then
+            _check_ispeech_error "$_response" "$(basename "$0")"
+        fi
+    fi
+fi

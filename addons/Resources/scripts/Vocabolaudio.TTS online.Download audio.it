@@ -1,4 +1,15 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
+
+# ============================================================
+# Resource Provider: Vocabolaudio Italian Audio
+# Resource Type: TTS online — Download audio for words
+# ============================================================
+#
+# Downloads pre-recorded Italian pronunciation audio.
+# No API key required. Italian only.
+#
+# Execution pattern: Source + URL export (Pattern B)
 
 TLANGS="it"
 INFO="Search audio for words"
@@ -9,7 +20,6 @@ CONF="FALSE"
 FILECONF=""
 TESTWORD=""
 EXECUT=""
-
 
 export TESTURL="http://www.vocabolaudio.com/audio-it/prova.mp3"
 export URL="http://www.vocabolaudio.com/audio-it/${word}.mp3"

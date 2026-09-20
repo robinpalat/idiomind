@@ -1,9 +1,19 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
 
-# Cambridge Dictionary pronunciation (online).
-# Resolves the per-word US pronunciation audio by scraping the dictionary
-# page (the media path is irregular and cannot be guessed reliably).
-# No API key required.
+# ============================================================
+# Resource Provider: Cambridge Dictionary Audio
+# Resource Type: TTS online — Download audio for words
+# ============================================================
+#
+# Resolves per-word US pronunciation audio by scraping the
+# Cambridge Dictionary page. The media path is irregular and
+# cannot be guessed reliably, so page scraping is required.
+# No API key required. English only.
+#
+# Execution pattern: Source + URL export (Pattern B)
+#   This provider scrapes the dictionary page at source time
+#   to resolve the actual audio URL for the given word.
 
 TLANGS="en"
 INFO="Search audio for words"
@@ -15,13 +25,14 @@ FILECONF=""
 TESTWORD=""
 EXECUT=""
 
-# static known-good test audio
 export TESTURL="https://dictionary.cambridge.org/media/english/us_pron/t/tes/test_/test.mp3"
 
+# Scrape the Cambridge Dictionary page to find the US pronunciation URL.
+# The audio path varies per word and cannot be constructed from a pattern.
 if [ -n "$word" ] && [ -z "$URL" ]; then
     page="$(curl -s -m 20 -A "$useragent" \
         "https://dictionary.cambridge.org/dictionary/english/${word}")"
-    pron="$(printf '%s' "$page" |grep -oP '(?<!//)(media/english/us_pron/[^"]*\.mp3)' |head -1)"
+    pron="$(printf '%s' "$page" | grep -oP '(?<!//)(media/english/us_pron/[^"]*\.mp3)' | head -1)"
     if [ -n "$pron" ]; then
         export URL="https://dictionary.cambridge.org/${pron}"
     else

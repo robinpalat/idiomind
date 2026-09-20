@@ -1,4 +1,35 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
+
+# ============================================================
+# Resource Provider: VoiceRSS Text-to-Speech
+# Resource Type: TTS online — Convert text to audio
+# ============================================================
+#
+# Converts text to speech using the VoiceRSS API.
+# Requires a 32-character API key from voicerss.org.
+#
+# This provider also serves the Download audio variant:
+#   Voicerss.TTS online.Download audio.various
+# Both share the same configuration file and API key.
+# If the key is invalid, both variants are auto-disabled.
+#
+# API documentation: http://www.voicerss.org/api/documentation.aspx
+#
+# Execution pattern: Source + internal config + URL export (Pattern C)
+#   When sourced, exports URL and EX for the caller to wget.
+
+# ------------------------------------------------------------
+# Source common utilities
+# ------------------------------------------------------------
+
+_RES_DIR="$(dirname "$(readlink -f "$0")")"
+[ -f "$_RES_DIR/common.sh" ] && source "$_RES_DIR/common.sh"
+_msgs_dir="$HOME/.config/idiomind/addons/resources/msgs"
+
+# ------------------------------------------------------------
+# Provider metadata
+# ------------------------------------------------------------
 
 TLANGS="zh-cn, en, pt, es, ru, it, de, fr"
 INFO="Text-to-speech (TTS) API Documentation
@@ -12,71 +43,134 @@ TESTSTRING="test"
 EXECUT=""
 EX='mp3'
 
+# ------------------------------------------------------------
+# Provider-specific constants
+# ------------------------------------------------------------
 
-function check_key(){ # remove from active if missing key
-    DC_a="$HOME/.config/idiomind/addons"
-    d1="Voicerss.TTS online.Search audio.various"
-    d2="Voicerss.TTS online.Convert text to audio.various"
-    local fname="$(basename "$0")"
-    msgs="$HOME/.config/idiomind/addons/resources/msgs"
-    if [ -z "${key}" ] || [[ ${#key} != 32 ]]; then
-        echo "$(gettext "No key configuration")" > "$msgs/$d1"
-        echo "$(gettext "No key configuration")" > "$msgs/$d2"
-        if [ -f "$DC_a/resources/enables/${d1}" ] && [ ! -d "$DT/resources_test" ]; then
-            mv -f "$DC_a/resources/enables/${d1}" "$DC_a/resources/disables/${d1}"
-        fi
-        if [ -f "$DC_a/resources/enables/${d2}" ] && [ ! -d "$DT/resources_test" ]; then
-            mv -f "$DC_a/resources/enables/${d2}" "$DC_a/resources/disables/${d2}"
-        fi
-        return 1
-    else
-        return 0
-    fi
+_VOICERSS_ENDPOINT="http://api.voicerss.org/"
+_VOICERSS_KEY_LENGTH=32
+
+# VoiceRSS uses locale-style voice codes (e.g., "en-us", "es-es").
+# This mapping is provider-internal.
+
+_get_voicerss_voice()
+{
+    case "$1" in
+        en)    echo "en-us" ;;
+        es)    echo "es-es" ;;
+        pt)    echo "pt-br" ;;
+        ru)    echo "ru-ru" ;;
+        it)    echo "it-it" ;;
+        de)    echo "de-de" ;;
+        fr)    echo "fr-fr" ;;
+        zh-cn) echo "zh-cn" ;;
+        *)     echo "en-us" ;;
+    esac
 }
 
-key=$(grep -o key=\"[^\"]* "$FILECONF" |grep -o '[^"]*$')
-check_key
+_get_voicerss_test_word()
+{
+    case "$1" in
+        en)    echo "test" ;;
+        es)    echo "prueba" ;;
+        pt)    echo "teste" ;;
+        ru)    echo "тест" ;;
+        it)    echo "prova" ;;
+        de)    echo "Prüfung" ;;
+        fr)    echo "tester" ;;
+        zh-cn) echo "测试" ;;
+        *)     echo "test" ;;
+    esac
+}
 
-if [ $? = 0 ]; then
-    speed=$(grep -o speed=\"[^\"]* "$FILECONF" |grep -o '[^"]*$')
-    voice=$(grep -o voice=\"[^\"]* "$FILECONF" |grep -o '[^"]*$' |sed 's/(null)//')
-    if [ "$speed" = "Slow" ]; then s="-2"
-    elif [ "$speed" = "Normal" ]; then s="0"
-    elif [ "$speed" = "Fast" ]; then s="2"
-    else s="0"
-    fi
-    if [ -z "$voice" ]; then
-        if [ "$lgt" = "en" ]; then 
-            v='en-us'
-            _test="test"
-        elif [ "$lgt" = "es" ]; then 
-            v='es-es'
-            _test="prueba"
-        elif [ "$lgt" = "pt" ]; then 
-            v='pt-br'
-            _test="teste"
-        elif [ "$lgt" = "ru" ]; then 
-            v='ru-ru'
-            _test="тест"
-        elif [ "$lgt" = "it" ]; then 
-            v='it-it'
-            _test="prova"
-        elif [ "$lgt" = "de" ]; then 
-            v='de-de'
-            _test="Prüfung"
-        elif [ "$lgt" = "fr" ]; then 
-            v='fr-fr'
-            _test="tester"
-        elif [ "$lgt" = "zh-cn" ]; then 
-            v='zh-cn'
-            _test="测试"
+# Same key validation as Ispeech — both require exactly 32 characters.
+# Disables both Convert and Search/Download variants on failure.
+_check_voicerss_key()
+{
+    local _key="$1"
+    if [ -z "$_key" ] || [ "${#_key}" -ne "$_VOICERSS_KEY_LENGTH" ]; then
+        local _convert="Voicerss.TTS online.Convert text to audio.various"
+        local _search="Voicerss.TTS online.Search audio.various"
+        resource_write_error \
+            "$(gettext "No key configuration")" \
+            "$_msgs_dir" "$_convert"
+        resource_write_error \
+            "$(gettext "No key configuration")" \
+            "$_msgs_dir" "$_search"
+        if [ ! -d "$DT/resources_test" ]; then
+            local _dc_a="$HOME/.config/idiomind/addons"
+            [ -f "$_dc_a/resources/enables/$_convert" ] && \
+                mv -f "$_dc_a/resources/enables/$_convert" "$_dc_a/resources/disables/$_convert"
+            [ -f "$_dc_a/resources/enables/$_search" ] && \
+                mv -f "$_dc_a/resources/enables/$_search" "$_dc_a/resources/disables/$_search"
         fi
-    else
-        v="$voice"
+        return 1
     fi
-    
-    export TESTURL="http://api.voicerss.org/?key=$key&hl=$v&r=$s&c=mp3&f=16khz_16bit_mono&src=${_test}"
-    export URL="http://api.voicerss.org/?key=$key&hl=$v&r=$s&c=mp3&f=16khz_16bit_mono&src=${word}"
-    export EX='mp3'
-fi
+    return 0
+}
 
+# Parse VoiceRSS error responses.
+# VoiceRSS returns "ERROR:" followed by a description.
+_check_voicerss_error()
+{
+    local _body="$1" _fname="$2"
+    if echo "$_body" | grep -q "^ERROR:"; then
+        local _msg
+        if echo "$_body" | grep -q "key is not specified\|key is not available"; then
+            _msg="API key invalid or not configured"
+        elif echo "$_body" | grep -q "subscription is expired\|requests count limitation"; then
+            _msg="API quota exhausted or subscription expired"
+        elif echo "$_body" | grep -q "account is inactive"; then
+            _msg="Account inactive"
+        else
+            _msg="Error: $(echo "$_body" | head -1)"
+        fi
+        resource_write_error \
+            "<span color='#C15F27'>$_msg</span>" \
+            "$_msgs_dir" "$_fname"
+        return 0
+    fi
+    return 1
+}
+
+# ------------------------------------------------------------
+# Main
+# ------------------------------------------------------------
+
+if [ "$1" = "_dclk_" ]; then
+    :
+
+elif [ -n "$2" ]; then
+
+    api_key=$(resource_read_config "$FILECONF" "key")
+    speed=$(resource_read_config "$FILECONF" "speed")
+    voice=$(resource_read_config "$FILECONF" "voice")
+
+    _check_voicerss_key "$api_key" || exit 0
+
+    case "$speed" in
+        Slow)   s="-2" ;;
+        Normal) s="0" ;;
+        Fast)   s="2" ;;
+        *)      s="0" ;;
+    esac
+
+    # If no voice configured, use language default
+    if [ -n "$voice" ]; then
+        v="$voice"
+    else
+        v=$(_get_voicerss_voice "$lgt")
+    fi
+    _test=$(_get_voicerss_test_word "$lgt")
+
+    export TESTURL="${_VOICERSS_ENDPOINT}?key=${api_key}&hl=${v}&r=${s}&c=mp3&f=16khz_16bit_mono&src=${_test}"
+    export URL="${_VOICERSS_ENDPOINT}?key=${api_key}&hl=${v}&r=${s}&c=mp3&f=16khz_16bit_mono&src=${word}"
+    export EX='mp3'
+
+    if [ -n "${2}" ] && [ "$2" != "" ]; then
+        _response=$(wget -T 15 -q -O - "${TESTURL}" 2>/dev/null)
+        if [ -n "$_response" ]; then
+            _check_voicerss_error "$_response" "$(basename "$0")"
+        fi
+    fi
+fi

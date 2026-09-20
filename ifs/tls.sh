@@ -1339,6 +1339,7 @@ update_addons() {
         else echo -e "/usr/share/idiomind/images/thumb.png\n${_set}" >> \
             /usr/share/idiomind/addons/menu_list; fi
     done < <(cd "/usr/share/idiomind/addons/"; set -- */; printf "%s\n" "${@%/}")
+    echo "addons updated"
 }
 
 stats_dlg() {
@@ -1566,7 +1567,7 @@ case "$1" in
     promp_topic_info "$@" ;;
     set_image)
     set_image "$@" ;;
-    first_run)
+    first-run)
     first_run "$@" ;;
     fback)
     fback ;;
@@ -1574,7 +1575,7 @@ case "$1" in
     _definition "$@" ;;
     find_trad)
     _translation "$@" ;;
-    update_addons)
+    update-addons)
     update_addons ;;
     _stats)
     stats_dlg ;;

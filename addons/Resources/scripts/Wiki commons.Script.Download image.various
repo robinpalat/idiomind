@@ -1,4 +1,19 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
+
+# ============================================================
+# Resource Provider: Wikimedia Commons Image Search
+# Resource Type: Script — Download image for words
+# ============================================================
+#
+# Searches for and downloads images from Wikimedia Commons.
+# Scrapes the wiki page to find image URLs. No API key required.
+# English only.
+#
+# Execution pattern: Direct execution (Pattern A)
+#   $1 = word to search for
+#   $2 = "_TEST_" flag for testing (uses TESTWORD instead)
+#   Creates: $DT/$word.jpg (or $DT/$TESTWORD.jpg during test)
 
 TLANGS="en"
 INFO="Download images"
@@ -10,7 +25,6 @@ FILECONF=""
 TESTWORD="cat"
 EXECUT=""
 
-
 if [[ "$2" = '_TEST_' ]]; then
     url="https://commons.wikimedia.org/wiki/$TESTWORD"
     w="$TESTWORD"
@@ -18,10 +32,16 @@ else
     url="https://commons.wikimedia.org/wiki/$1"
     w="$1"
 fi
+
 if [[ "$1" != '_dclk_' ]]; then
-	echo "Addon: search wiki image..."
-    urimg="$(wget -q "$url" -O - |grep -o -P '//upload\.wikimedia\.org/wikipedia/[^"&]*\.jpg' |sed -e 's/\(thumb\/\)//g' |sed -e 's/^/https:/g' |head -n1)"
-    [ -z "$urimg" ] && urimg="$(wget -q "$url" -O - |grep -o -P '//upload\.wikimedia\.org/wikipedia/[^"&]*\.png' |sed -e 's/\(thumb\/\)//g' |sed -e 's/^/https:/g' |head -n1)"
+    # Try JPG first, then PNG as fallback
+    urimg="$(wget -q "$url" -O - \
+        | grep -o -P '//upload\.wikimedia\.org/wikipedia/[^"&]*\.jpg' \
+        | sed -e 's/\(thumb\/\)//g' -e 's/^/https:/g' \
+        | head -n1)"
+    [ -z "$urimg" ] && urimg="$(wget -q "$url" -O - \
+        | grep -o -P '//upload\.wikimedia\.org/wikipedia/[^"&]*\.png' \
+        | sed -e 's/\(thumb\/\)//g' -e 's/^/https:/g' \
+        | head -n1)"
     [ -n "$urimg" ] && wget -T 51 -q -U Mozilla -O "$DT/$w.jpg" "$urimg"
 fi
-

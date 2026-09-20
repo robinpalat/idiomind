@@ -1,42 +1,160 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
+
+# ============================================================
+# Resource Provider: Yandex Text-to-Speech (Cloud API)
+# Resource Type: TTS online — Convert text to audio
+# ============================================================
+#
+# Converts text to speech using the Yandex Cloud SpeechKit API.
+# Requires an API key from Yandex Cloud.
+#
+# API documentation: https://cloud.yandex.ru/docs/speechkit/
+#
+# Configuration (via Resource GUI double-click):
+#   key   — Yandex Cloud API key (required)
+#   voice — jane, oksana, alyss, omazh, zahar, ermil
+#
+# Execution pattern: Source + EXECUT export (Pattern D)
+#   When sourced, validates the API key by making a test request,
+#   then exports EXECUT as a command string for the caller.
+#
+# This script also shares its language mapping with the Download variant.
+
+# ------------------------------------------------------------
+# Source common utilities
+# ------------------------------------------------------------
+
+_RES_DIR="$(dirname "$(readlink -f "$0")")"
+[ -f "$_RES_DIR/common.sh" ] && source "$_RES_DIR/common.sh"
+_msgs_dir="${DC_a}/msgs"
+
+# ------------------------------------------------------------
+# Provider metadata
+# ------------------------------------------------------------
 
 TLANGS="en, pt, es, ru, it, de, fr"
-INFO="Convert text to audio (online) https://developer.tech.yandex.ru"
+INFO="Convert text to audio (online) https://cloud.yandex.ru/docs/speechkit"
 LANGUAGES="English, Russian"
 STATUS="Ok"
-CONF="FALSE"
-FILECONF=""
+CONF="TRUE"
+FILECONF="${DC_a}/resources/Yandex.cfg"
 TESTSTRING=""
 EXECUT=""
+CONFFIELDS="key voice"
+CONFOPTS="voice|jane!oksana!alyss!omazh!zahar!ermil"
+CONFKEY_HIDDEN="key"
 
+# ------------------------------------------------------------
+# Provider-specific constants
+# ------------------------------------------------------------
 
-#voices=( "jane" "oksana" "alyss" "omazh" "zahar" "ermil" )
-#voice=${voices[0]}
+_YANDEX_ENDPOINT="https://tts.api.cloud.yandex.net/speech/v1/tts:synthesize"
+_YANDEX_DEFAULT_VOICE="jane"
 
-if [ "$lgt" = "en" ]; then 
-    t="en_GB"
+# Language mapping for Yandex Cloud API (format: "xx-XX").
+# This mapping is shared conceptually with the Download variant.
+# Each provider keeps its own copy to maintain independent scripts.
+
+_get_yandex_cloud_lang()
+{
+    case "$1" in
+        en) echo "en-US" ;;
+        es) echo "es-ES" ;;
+        pt) echo "pt-BR" ;;
+        ru) echo "ru-RU" ;;
+        it) echo "it-IT" ;;
+        de) echo "de-DE" ;;
+        fr) echo "fr-FR" ;;
+        *)  echo "en-US" ;;
+    esac
+}
+
+# ------------------------------------------------------------
+# Main
+# ------------------------------------------------------------
+
+if [ "$1" = "_dclk_" ]; then
+    :
+
+elif [ -n "$2" ]; then
+
+    # Read configuration safely (not via source)
+    api_key=$(resource_read_config "$FILECONF" "key")
+    voice=$(resource_read_config "$FILECONF" "voice")
+    [ -z "$voice" ] && voice="$_YANDEX_DEFAULT_VOICE"
+
+    if [ -z "$api_key" ]; then
+        resource_write_error \
+            "<span color='#C15F27'>API key not configured</span>" \
+            "$_msgs_dir" "Yandex.msg"
+        exit 1
+    fi
+
+    lang=$(_get_yandex_cloud_lang "$lgt")
     _test="test"
-elif [ "$lgt" = "es" ]; then 
-    t="es_ES"
-    _test="prueba"
-elif [ "$lgt" = "pt" ]; then 
-    t="pt_PT"
-    _test="teste"
-elif [ "$lgt" = "ru" ]; then 
-    t="ru_RU"
-    _test="тест"
-elif [ "$lgt" = "it" ]; then 
-    t="it_IT"
-    _test="prova"
-elif [ "$lgt" = "de" ]; then 
-    t="de_DE"
-    _test="Prüfung"
-elif [ "$lgt" = "fr" ]; then 
-    t="fr_FR"
-    _test="tester"
+
+    # Validate API key with a test request before exporting EXECUT.
+    # This ensures the key works before the caller tries to use it.
+    mkdir -p "$DT"
+    _http_code=$(curl -s -o "${DT}/test.mp3" -w "%{http_code}" \
+        -X POST "$_YANDEX_ENDPOINT" \
+        -H "Authorization: Api-Key ${api_key}" \
+        -d "text=${_test}" \
+        -d "lang=${lang}" \
+        -d "voice=${voice}" \
+        -d "format=mp3" \
+        -d "speed=1.0" 2>&1)
+
+    case "$_http_code" in
+        200)
+            export TESTURL="ok"
+            export URL=""
+            export EX='mp3'
+            export EXECUT="curl -s -o \"\$2\" \
+                -X POST \"${_YANDEX_ENDPOINT}\" \
+                -H \"Authorization: Api-Key ${api_key}\" \
+                -d \"text=\${word}\" \
+                -d \"lang=${lang}\" \
+                -d \"voice=${voice}\" \
+                -d \"format=mp3\" \
+                -d \"speed=1.0\""
+            rm -f "${DT}/test.mp3"
+            ;;
+        401)
+            resource_write_error \
+                "<span color='#C15F27'>API key invalid or expired</span>" \
+                "$_msgs_dir" "Yandex.msg"
+            rm -f "${DT}/test.mp3"
+            exit 1
+            ;;
+        429)
+            _body=$(cat "${DT}/test.mp3" 2>/dev/null)
+            if echo "$_body" | grep -q "RESOURCE_EXHAUSTED\|Rate limit"; then
+                resource_write_error \
+                    "<span color='#C15F27'>Request limit exceeded</span>" \
+                    "$_msgs_dir" "Yandex.msg"
+            else
+                resource_write_error \
+                    "<span color='#C15F27'>API quota exhausted</span>" \
+                    "$_msgs_dir" "Yandex.msg"
+            fi
+            rm -f "${DT}/test.mp3"
+            exit 1
+            ;;
+        503)
+            resource_write_error \
+                "<span color='#C15F27'>Service temporarily unavailable</span>" \
+                "$_msgs_dir" "Yandex.msg"
+            rm -f "${DT}/test.mp3"
+            exit 1
+            ;;
+        *)
+            resource_write_error \
+                "<span color='#C15F27'>Connection error (HTTP $_http_code)</span>" \
+                "$_msgs_dir" "Yandex.msg"
+            rm -f "${DT}/test.mp3"
+            exit 1
+            ;;
+    esac
 fi
-
-export TESTURL="http://tts.voicetech.yandex.net/tts?format=mp3&quality=hi&platform=web&application=translate&speaker=$voice&lang=$t&text=${_test}"
-export URL="http://tts.voicetech.yandex.net/tts?format=mp3&quality=hi&platform=web&application=translate&speaker=$voice&lang=$t&text=${word}"
-export EX='mp3'
-

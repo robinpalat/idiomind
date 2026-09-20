@@ -29,6 +29,7 @@ function scripts() {
         fi
         return 0
     }
+    
     if [ ! -d "$DC_d" -o ! -d "$DC_a/resources/disables" ]; then
         mkdir -p "$DC_d"; mkdir -p "$DC_a/resources/disables"
         echo "$tlng" > "$DC_a/resources/.res"
@@ -36,6 +37,7 @@ function scripts() {
             > "$DC_a/resources/disables/$(basename "$re")"
         done
     fi
+    
     if  [ ! -e "$DC_a/resources/.res" ]; then
         echo "$tlng" > "$DC_a/resources/.res"
     fi

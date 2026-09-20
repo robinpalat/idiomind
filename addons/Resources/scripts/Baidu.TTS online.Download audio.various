@@ -1,9 +1,25 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-# Baidu TTS (unofficial free endpoint) for word pronunciation.
+# ============================================================
+# Resource Provider: Baidu Word Audio
+# Resource Type: TTS online — Download audio for words
+# ============================================================
+#
+# Downloads word pronunciation via the unofficial free Baidu
+# translation TTS endpoint. No API key required.
+# Supports: zh-cn, en, ja.
+#
 # Endpoint: https://fanyi.baidu.com/gettts
-# Works for: zh-cn, en, ja (pt/es return HTTP 403 with this free endpoint).
+#
+# This provider also validates the API with a test request
+# when called with a test parameter ($2).
+#
+# Execution pattern: Source + URL export (Pattern B)
+
+_RES_DIR="$(dirname "$(readlink -f "$0")")"
+[ -f "$_RES_DIR/common.sh" ] && source "$_RES_DIR/common.sh"
+_msgs_dir="$HOME/.config/idiomind/addons/resources/msgs"
 
 TLANGS="zh-cn, en, ja"
 INFO="Search audio for words"
@@ -15,21 +31,57 @@ FILECONF=""
 TESTWORD=""
 EXECUT=""
 
-urlencode() {
-    curl -s -m 2 -G --data-urlencode "v=$1" -o /dev/null -w "%{url_effective}" \
-        "http://0.0.0.0/" 2>/dev/null |sed 's|http://0.0.0.0/?v=||;s/+/%20/g'
+_BAIDU_ENDPOINT="https://fanyi.baidu.com/gettts"
+
+_get_baidu_lang()
+{
+    case "$1" in
+        zh-cn) echo "zh" ;;
+        en)    echo "en" ;;
+        ja)    echo "jp" ;;
+        *)     echo "zh" ;;
+    esac
 }
 
-case "$lgt" in
-    zh-cn) lan="zh" ;;
-    en)    lan="en" ;;
-    ja)    lan="jp" ;;
-    *)     lan="zh" ;;
-esac
+# URL-encode using curl's --data-urlencode.
+_baidu_urlencode()
+{
+    curl -s -m 2 -G --data-urlencode "v=$1" -o /dev/null -w "%{url_effective}" \
+        "http://0.0.0.0/" 2>/dev/null | sed 's|http://0.0.0.0/?v=||;s/+/%20/g'
+}
 
-t_enc="$(urlencode "${_test:-测试}")"
-w_enc="$(urlencode "${word}")"
+lan=$(_get_baidu_lang "$lgt")
+t_enc="$(_baidu_urlencode "${_test:-测试}")"
+w_enc="$(_baidu_urlencode "${word}")"
 
-export TESTURL="https://fanyi.baidu.com/gettts?lan=$lan&text=${t_enc}&spd=5&source=web"
-export URL="https://fanyi.baidu.com/gettts?lan=$lan&text=${w_enc}&spd=5&source=web"
+export TESTURL="${_BAIDU_ENDPOINT}?lan=$lan&text=${t_enc}&spd=5&source=web"
+export URL="${_BAIDU_ENDPOINT}?lan=$lan&text=${w_enc}&spd=5&source=web"
 export EX='mp3'
+
+# Validate the endpoint when called with test parameter ($2)
+if [ -n "${2}" ] && [ "$2" != "" ]; then
+    _http_code=$(curl -s -o /dev/null -w "%{http_code}" "$TESTURL" 2>&1)
+    case "$_http_code" in
+        200) ;;
+        403)
+            resource_write_error \
+                "<span color='#C15F27'>Unsupported language or invalid parameters</span>" \
+                "$_msgs_dir" "${0##*/}"
+            exit 1 ;;
+        503)
+            resource_write_error \
+                "<span color='#C15F27'>Service temporarily unavailable</span>" \
+                "$_msgs_dir" "${0##*/}"
+            exit 1 ;;
+        000)
+            resource_write_error \
+                "<span color='#C15F27'>Timeout - text too long or connection failed</span>" \
+                "$_msgs_dir" "${0##*/}"
+            exit 1 ;;
+        *)
+            resource_write_error \
+                "<span color='#C15F27'>Connection error (HTTP $_http_code)</span>" \
+                "$_msgs_dir" "${0##*/}"
+            exit 1 ;;
+    esac
+fi

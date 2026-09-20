@@ -1,6 +1,27 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+# ============================================================
+# Resource Addon — Provider Testing Framework
+# ============================================================
+#
+# Tests all resource providers across all categories:
+#   - Translators
+#   - TTS online (sentences)
+#   - TTS offline
+#   - TTS online (words)
+#   - Link definitions
+#   - Image downloaders
+#
+# For each provider, tests whether it produces valid output.
+# Providers with permanent errors (key/quota) are auto-disabled.
+# Providers with temporary errors stay enabled.
+#
+# Entry points:
+#   test.sh              → interactive (shows YAD checkboxes)
+#   test.sh 1            → silent mode (all categories)
+#   test.sh silence      → silent mode with echo output
+
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 source "$DS/default/sets.cfg"
@@ -19,15 +40,39 @@ function check_audio() {
     if [ -s "$af" ]; then
         if file -b --mime-type "$af" |grep -E 'audio|mpeg|mp3|ogg|wav' >/dev/null 2>&1 \
         && [[ $(du -b "$af" |cut -f1) -gt 200 ]]; then
+            # Valid audio - clear any previous error
+            cleanups "$msgs/$fname"
             return 0   # valid audio, leave message removed
         fi
     fi
-    # no valid audio produced
-    if [ -f "$FILECONF" ] && [ -n "$(< "$FILECONF")" ]; then
-        echo "<span color='#C15F27'>$(gettext "No key configuration")</span>" > "$msgs/$fname"
-    else
-        echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$fname"
+    # No valid audio produced - only write generic message if no specific one exists
+    if [ ! -f "$msgs/$fname" ] || [ ! -s "$msgs/$fname" ]; then
+        if [ -f "$FILECONF" ] && [ -n "$(< "$FILECONF")" ]; then
+            echo "<span color='#C15F27'>No key configuration</span>" > "$msgs/$fname"
+        else
+            echo "<span color='#C15F27'>It's not working</span>" > "$msgs/$fname"
+        fi
     fi
+    return 1
+}
+
+function is_permanent_error() {
+    # $1 = filename to check in msgs/
+    # Returns 0 if error is permanent (should disable), 1 if temporary (keep enabled)
+    local fname="$1"
+    if [ ! -f "$msgs/$fname" ]; then
+        return 1  # no error message, not permanent
+    fi
+    local msg=$(< "$msgs/$fname")
+    # Strip HTML tags for pattern matching
+    local plain_msg=$(echo "$msg" | sed 's/<[^>]*>//g')
+    
+    # Permanent errors: API key issues, quota, credits, account
+    if echo "$plain_msg" | grep -qiE "key inválida|key no configurada|no key configuration|credenciales|cuota de API|créditos|agotada|suscripción vencida|cuenta inactiva|sin acceso"; then
+        return 0
+    fi
+    # Temporary errors: service down, rate limit, connection
+    # These should NOT auto-disable
     return 1
 }
 
@@ -119,22 +164,22 @@ function test_() {
                 rm -f "$audio_file"*
                 
                 if [ -n "${EXECUT##+([[:space:]])}" ]; then # if exe
-					if [[ ! $(which $EXECUT) ]]; then
-						echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
-					else
-						"$DS_a/Resources/scripts/$filename" "$TESTSTRING" "$audio_file.$EX"
-					fi
-				else
-					if [ -n "${TESTURL##+([[:space:]])}" ]; then # if url based
-						wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
-					fi
-				fi
-					
-				if [[ ${EX} != 'mp3' ]]; then
-					mv -f "$audio_file.$EX" "$audio_file.mp3"
-				fi
-					
-				check_audio "$filename" "$audio_file.mp3"
+                    if [[ ! $(which $EXECUT) ]]; then
+                        echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
+                    else
+                        "$DS_a/Resources/scripts/$filename" "$TESTSTRING" "$audio_file.$EX"
+                    fi
+                else
+                    if [ -n "${TESTURL##+([[:space:]])}" ]; then # if url based
+                        wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
+                    fi
+                fi
+                    
+                if [[ ${EX} != 'mp3' ]]; then
+                    mv -f "$audio_file.$EX" "$audio_file.mp3"
+                fi
+                    
+                check_audio "$filename" "$audio_file.mp3"
 
                 cleanups "$audio_file"*
                 let n++
@@ -157,29 +202,32 @@ function test_() {
                 rm -f "$audio_file"*
                 
                 if [ -n "${EXECUT##+([[:space:]])}" ]; then # if exe
-					if [[ ! $(which $EXECUT) ]]; then
-						echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
-					else
-						"$DS_a/Resources/scripts/$filename" "$TESTSTRING" "$audio_file.$EX"
-					fi
-				else
-					if [ -n "${TESTURL##+([[:space:]])}" ]; then # if url based
-						wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
-					fi
-				fi
-					
-				if [[ ${EX} != 'mp3' ]]; then
-					mv -f "$audio_file.$EX" "$audio_file.mp3"
-				fi
-					
-				check_audio "$filename" "$audio_file.mp3"
-				if [ -f "$msgs/$filename" ]; then
-					mv -f "$DC_e/$filename" "$DC_d/$filename" 2>/dev/null
-				fi
+                    if [[ ! $(which $EXECUT) ]]; then
+                        echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
+                    else
+                        "$DS_a/Resources/scripts/$filename" "$TESTSTRING" "$audio_file.$EX"
+                    fi
+                else
+                    if [ -n "${TESTURL##+([[:space:]])}" ]; then # if url based
+                        wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
+                    fi
+                fi
+                    
+                if [[ ${EX} != 'mp3' ]]; then
+                    mv -f "$audio_file.$EX" "$audio_file.mp3"
+                fi
+                    
+                check_audio "$filename" "$audio_file.mp3"
+                # Auto-disable only if error is permanent (key/quota issues)
+                if [ -f "$msgs/$filename" ]; then
+                    if is_permanent_error "$filename"; then
+                        mv -f "$DC_e/$filename" "$DC_d/$filename" 2>/dev/null
+                    fi
+                fi
                 cleanups "$audio_file"*
                 let n++
                 echo 10+n
-			done
+            done
         fi
     
         # ---------------------------------------------------
@@ -195,18 +243,18 @@ function test_() {
                 if ! check_lang "$filename"; then continue; fi
 
                 if [ -n "${EXECUT##+([[:space:]])}" ] && [[ ! $(which $EXECUT) ]]; then
-					echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
-				else
+                    echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
+                else
                     "$DS_a/Resources/scripts/$filename" "this is a test" "$audio_file"
                     if [ -f "$audio_file.mp3" ]; then
                         mv -f "$audio_file.mp3" "$audio_file.mp3"
                     elif [ -f "$audio_file.wav" ]; then
-						sox -r 8000 -c 1 "$audio_file.wav" "$audio_file.mp3"
-						mv -f "$audio_file.mp3" "$audio_file.mp3"
-					else
+                        sox -r 8000 -c 1 "$audio_file.wav" "$audio_file.mp3"
+                        mv -f "$audio_file.mp3" "$audio_file.mp3"
+                    else
                         echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
                     fi
-					cleanups "$audio_file.mp3"
+                    cleanups "$audio_file.mp3"
                 fi
                 let n++
             done
@@ -226,20 +274,20 @@ function test_() {
                 fi
                 
                 if [ -n "${EXECUT##+([[:space:]])}" ] && [[ ! $(which $EXECUT) ]]; then
-					echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
-					mv -f "$DC_e/$filename" "$DC_d/$filename"
-				else
+                    echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
+                    mv -f "$DC_e/$filename" "$DC_d/$filename"
+                else
                     "$DS_a/Resources/scripts/$filename" "this is a test" "$audio_file"
                     if [ -f "$audio_file.mp3" ]; then
                         mv -f "$audio_file.mp3" "$audio_file.mp3"
                     elif [ -f "$audio_file.wav" ]; then
-						sox "$audio_file.wav" "$audio_file.mp3"
-						mv -f "$audio_file.mp3" "$audio_file.mp3"
-					else
+                        sox "$audio_file.wav" "$audio_file.mp3"
+                        mv -f "$audio_file.mp3" "$audio_file.mp3"
+                    else
                         echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
                         mv -f "$DC_e/$filename" "$DC_d/$filename"
                     fi
-					cleanups "$audio_file.mp3"
+                    cleanups "$audio_file.mp3"
                 fi
                 let n++
             done
@@ -261,16 +309,16 @@ function test_() {
                 rm -f "$audio_file"*
                 
                 if [ -n "${EXECUT##+([[:space:]])}" ] && [[ ! $(which $EXECUT) ]]; then
-					echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
-				else
-					if [ -n "${TESTURL##+([[:space:]])}" ]; then
-						wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
-						if [[ ${EX} != 'mp3' ]]; then
-							mv -f "$audio_file.$EX" "$audio_file.mp3"
-						fi
-					fi
-					check_audio "$filename" "$audio_file.mp3"
-					cleanups "$audio_file"*
+                    echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
+                else
+                    if [ -n "${TESTURL##+([[:space:]])}" ]; then
+                        wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
+                        if [[ ${EX} != 'mp3' ]]; then
+                            mv -f "$audio_file.$EX" "$audio_file.mp3"
+                        fi
+                    fi
+                    check_audio "$filename" "$audio_file.mp3"
+                    cleanups "$audio_file"*
                 fi
                 let n++
             done
@@ -291,21 +339,24 @@ function test_() {
                 rm -f "$audio_file"*
                 
                 if [ -n "${EXECUT##+([[:space:]])}" ] && [[ ! $(which $EXECUT) ]]; then
-					echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
-					mv -f "$DC_e/$filename" "$DC_d/$filename"
-				else
-					if [ -n "${TESTURL##+([[:space:]])}" ]; then
-						wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
-						if [[ ${EX} != 'mp3' ]]; then
-							mv -f "$audio_file.$EX" "$audio_file.mp3"
-						fi
-					fi
-					check_audio "$filename" "$audio_file.mp3"
-					if [ -f "$msgs/$filename" ]; then
-						mv -f "$DC_e/$filename" "$DC_d/$filename" 2>/dev/null
-					fi
-					cleanups "$audio_file"*
-				fi
+                    echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
+                    mv -f "$DC_e/$filename" "$DC_d/$filename"
+                else
+                    if [ -n "${TESTURL##+([[:space:]])}" ]; then
+                        wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}"
+                        if [[ ${EX} != 'mp3' ]]; then
+                            mv -f "$audio_file.$EX" "$audio_file.mp3"
+                        fi
+                    fi
+                    check_audio "$filename" "$audio_file.mp3"
+                    # Auto-disable only if error is permanent (key/quota issues)
+                    if [ -f "$msgs/$filename" ]; then
+                        if is_permanent_error "$filename"; then
+                            mv -f "$DC_e/$filename" "$DC_d/$filename" 2>/dev/null
+                        fi
+                    fi
+                    cleanups "$audio_file"*
+                fi
                 let n++
             done
         fi

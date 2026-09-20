@@ -1,4 +1,16 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
+
+# ============================================================
+# Resource Provider: Macmillan Dictionary Audio
+# Resource Type: TTS online — Download audio for words
+# ============================================================
+#
+# Downloads British English pronunciation from Macmillan Dictionary.
+# The URL path depends on word length (path segments vary).
+# No API key required. English only.
+#
+# Execution pattern: Source + URL export (Pattern B)
 
 TLANGS="en"
 INFO="Search audio for words"
@@ -9,7 +21,8 @@ CONF="FALSE"
 FILECONF=""
 EXECUT=""
 
-
+# Macmillan's URL structure varies by word length.
+# Different word lengths produce different path segments.
 w1="${word:0:3}"
 [[ ${#word} -gt 5 ]] && w2="${word:0:5}"
 [[ ${#word} = 5 ]] && w2="${word}"
@@ -25,4 +38,3 @@ fi
 export TESTURL="https://www.macmillandictionary.com/media/british/uk_pron/t/tes/test_/test_British_English_pronunciation.mp3"
 export URL="https://www.macmillandictionary.com/media/british/uk_pron/${word:0:1}/${w1}/${w2}/${word}_British_English_pronunciation.mp3"
 export EX='mp3'
-

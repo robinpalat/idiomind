@@ -1,4 +1,17 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
+
+# ============================================================
+# Resource Provider: Merriam-Webster Audio
+# Resource Type: TTS online — Download audio for words
+# ============================================================
+#
+# Downloads US pronunciation audio from Merriam-Webster.
+# The URL includes zero-padding based on word length.
+# No API key required. English only.
+# Only works for words shorter than 6 characters.
+#
+# Execution pattern: Source + URL export (Pattern B)
 
 TLANGS="en"
 INFO="Search audio for words"
@@ -10,7 +23,8 @@ FILECONF=""
 TESTWORD=""
 EXECUT=""
 
-
+# Merriam-Webster pads short words with zeros in the URL path.
+# Words 6+ characters use a different URL structure not supported here.
 if [ ${#word} -lt 6 ]; then
     c="0000000"
     _test="test"

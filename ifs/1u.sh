@@ -159,7 +159,7 @@ elif [ $ret -eq 0 ]; then
     
     if echo "$target" |grep -oE 'Chinese|Japanese|Russian'; then _info; fi
     
-    /usr/share/idiomind/ifs/tls.sh first_run "$iniset"
+    /usr/share/idiomind/ifs/tls.sh first-run "$iniset"
     
     export u=1
     idiomind -s

@@ -1,8 +1,11 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
 
-dlg="$1"
+# Download audio variant for Ispeech.
+# Sources the Convert variant to share configuration and API key.
+# The Convert script exports URL/EX which the caller uses for wget.
+
 dir="/usr/share/idiomind/addons/Resources/scripts"
 source "$dir/Ispeech.TTS online.Convert text to audio.various"
 TLANGS="zh-cn, en, ja, pt, es, ru, it, de, fr"
 EXECUT=""
-

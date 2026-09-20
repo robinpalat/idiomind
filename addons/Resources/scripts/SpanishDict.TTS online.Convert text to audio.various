@@ -1,6 +1,22 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+# ============================================================
+# Resource Provider: SpanishDict Text-to-Speech
+# Resource Type: TTS online — Convert text to audio
+# ============================================================
+#
+# Downloads pre-generated audio from SpanishDict's audio endpoint.
+# No API key required.
+# Supports: en, es.
+#
+# Execution pattern: Source + URL export (Pattern B)
+#   When sourced, exports TESTURL and URL for the caller to wget.
+
+# ------------------------------------------------------------
+# Provider metadata
+# ------------------------------------------------------------
+
 TLANGS="en, es"
 INFO="Convert text to audio (online)"
 LANGUAGES="English, Spanish"
@@ -11,16 +27,47 @@ FILECONF=""
 TESTSTRING=""
 EXECUT=""
 
+# ------------------------------------------------------------
+# Provider-specific constants
+# ------------------------------------------------------------
 
-if [ "$lgt" = "en" ]; then 
-    t="en"
-    _test="test"
-elif [ "$lgt" = "es" ]; then 
-    t="es"
-    _test="prueba"
-fi
+_SD_ENDPOINT="https://audio1.spanishdict.com/audio"
 
-export TESTURL="http://audio1.spanishdict.com/audio?lang=$t&text=${_test}"
-export URL="http://audio1.spanishdict.com/audio?lang=$t&text=${word}"
+# SpanishDict uses simple language codes.
+_get_spanishdict_lang()
+{
+    case "$1" in
+        en) echo "en" ;;
+        es) echo "es" ;;
+        *)  echo "en" ;;
+    esac
+}
+
+_get_spanishdict_test_word()
+{
+    case "$1" in
+        en) echo "test" ;;
+        es) echo "prueba" ;;
+        *)  echo "test" ;;
+    esac
+}
+
+# URL-encode a string. Tries python3, then curl, then raw passthrough.
+_sd_urlencode()
+{
+    local _str="$1"
+    python3 -c "import urllib.parse; print(urllib.parse.quote('$_str', safe=''))" 2>/dev/null \
+    || printf '%s' "$_str" | curl -Gso /dev/stdout -w '%{url_effective}' --data-urlencode @- "" 2>/dev/null \
+    || printf '%s' "$_str"
+}
+
+# ------------------------------------------------------------
+# Main
+# ------------------------------------------------------------
+
+t=$(_get_spanishdict_lang "$lgt")
+_test=$(_get_spanishdict_test_word "$lgt")
+
+export TESTURL="${_SD_ENDPOINT}?lang=$t&text=$(_sd_urlencode "$_test")"
+export URL="${_SD_ENDPOINT}?lang=$t&text=$(_sd_urlencode "${word}")"
 export EX='mp3'
-

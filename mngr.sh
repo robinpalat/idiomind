@@ -961,7 +961,7 @@ case "$1" in
     edit_list_cmds "$@" ;;
     edit_list_more)
     edit_list_more ;;
-    restartTopic)
+    restart-topic)
     restart_topic "$@" ;;
     edit_feeds)
     edit_feeds "$@" ;;
