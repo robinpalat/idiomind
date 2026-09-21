@@ -1052,7 +1052,7 @@ case "$1" in
     add)
     "$DS/add.sh" new_item '__cmd__' "$(sed -n 1p "$DC_s/tpc")" "${2}" "${3}" ;;
     new-topic)
-    "$DS/add.sh" new_topic "" "" "$2" ;;
+    "$DS/add.sh" new-topic "" "" "$2" ;;
     tasks)
     "$DS/ifs/mods/start/update_tasks.sh" ;;
     panel)

@@ -17,7 +17,7 @@ if [[ ${1} = 0 ]]; then
     fi
     
     _stop=0
-
+	
     _play() {
         if [[ ${stnrd} = 1 ]]; then
             a=$(tpc_db 1 config audio)
@@ -129,13 +129,13 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
         dialog-warning "$(gettext "Language settings")"
         exit 1
     fi
-
+	
     if [ -e "$DT/mn_lk" ]; then
         source "$DS/ifs/cmns.sh"
         msg "$(gettext "Please wait until the current process is finished")...\n" dialog-information
         (sleep 50; cleanups "$DT/mn_lk") & exit 1
     fi
-        
+	
     remove_d() {
         source "$DS/ifs/cmns.sh"
         ins="$(cd ~ && cd "/usr/share/idiomind/addons/"; set -- */; printf "%s\n" "${@%/}")"
@@ -160,7 +160,7 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
     fi
     
     [ ! -e "$DM_tl/.share/index" ] && > "$DM_tl/.share/index"
-
+	
     if [[ -n "$1" ]]; then
     var1="--text=$1\n"
     var2="--image=dialog-information"; else
@@ -173,9 +173,9 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
     
     chk_list_topics1=$(wc -l < "$DM_tl/.share/index" |sed '/^$/d')
     if [[ $((chk_list_topics1%2)) != 0 ]]; then "$DS/mngr.sh" mkmn 0; fi
-    
+	
     if [ -e "$DC_s/topics_first_run" -a -z "${1}" ]; then exit 1; fi
-
+	
     tpc=$(cat "$DM_tl/.share/index" | \
     yad --list --title="$(gettext "My topics")" "${var1}" \
     --name=Idiomind --class=Idiomind \
@@ -193,7 +193,7 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
     --button="$(gettext "Apply")":2 \
     --button="$(gettext "Close")"!window-close:1)
     ret=$?
-
+	
     if [ $ret -eq 3 ]; then
             "$DS/add.sh" new_topic
     elif [ -n "${tpc}" ]; then

@@ -385,7 +385,7 @@ function panelini() {
     ${geometry} --borders=2  --column=Name:TEXT --fixed --width=20 --height=20 \
     --button=""!'list-add'!"$(gettext "Add Note, which can be a word or a sentence")":"$DS/add.sh 'new_items'" \
     --button=""!'go-home'!"$(gettext "My Active Topic")":"idiomind 'topic'" \
-    --button=""!'gtk-index'!"$(gettext "My topics")":"$DS/chng.sh"  
+    --button=""!'gtk-index'!"$(gettext "My topics")":"$DS/chng.sh"
 }
 
 

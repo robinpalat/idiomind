@@ -1567,7 +1567,7 @@ case "$1" in
     promp_topic_info "$@" ;;
     set_image)
     set_image "$@" ;;
-    first-run)
+    first-run|first_run)
     first_run "$@" ;;
     fback)
     fback ;;
