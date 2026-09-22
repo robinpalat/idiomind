@@ -951,18 +951,9 @@ a_check_updates() {
 promp_topic_info() {
     [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/cmns.sh"
-    source "$DS/default/sets.cfg"
-    if [ -f "${DC_tlt}/translations/active" ]; then
-        active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
-    fi
-    if [ -n "$active_trans" ] &&  [ "$active_trans" != "$slng" ]; then
-        slng_err_lbl="\n$(gettext "Native languages do not match.\nYou may have to translate this topic to your own language: click \"Manage\" tab on the main window, -> \"Edit\" -> \"Google Translate\"")."
-        echo -e "$slng_err_lbl" >> "${DC_tlt}/slng.inf"
-    elif [ -z "$active_trans" ] && [ "$(tpc_db 1 id slng)" != "$slng" ]; then
-        slng_err_lbl="\n$(gettext "Native languages do not match.\nYou may have to translate this topic to your own language: click \"Manage\" tab on the main window, -> \"Edit\" -> \"Google Translate\"")."
-        echo -e "$slng_err_lbl" >> "${DC_tlt}/slng.inf"
-    fi
-    check_err "${DC_tlt}/slng.inf" "${DC_tlt}/note.inf"
+    # Language mismatch is shown non-intrusively in the topic notebook.
+    cleanups "${DC_tlt}/slng.inf"
+    check_err "${DC_tlt}/note.inf"
     
 } >/dev/null 2>&1
 
@@ -1121,15 +1112,15 @@ translate_to() {
     |sed 's/\.tra//g' |tr "\\n" '!' |sed 's/\!*$//g')"
     list_transl=$(for i in "${!slangs[@]}"; do echo -n "!$i"; done)
     list_transl_saved_WC="$(cd "$DC_tlt/translations"; ls *.tra |wc -l)"
-    if [ -f "${DC_tlt}/translations/active" ]; then 
+    if [ -f "${DC_tlt}/translations/active" ]; then
         active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
     fi
     if [ -z "$active_trans" ]; then active_trans="$(tpc_db 1 id slng)"; fi
     if [ -z "$active_trans" ]; then active_trans="Undefined"; fi
 
-    if grep "$active_trans" <<< "${list_transl_saved}"; then 
+    if grep -F "$active_trans" <<< "${list_transl_saved}"; then
     chk=TRUE; else chk=FALSE; fi
-    
+
     if [ ${list_transl_saved_WC} -lt 1 ]; then
         ldgl="$(yad --form --title="$(gettext "Native Language Settings")" \
         --class=Idiomind --name=Idiomind \
@@ -1191,7 +1182,7 @@ translate_to() {
             fi
         elif [ -n "$autom_trans" -a "$autom_trans" != "(null)" ]; then
             yad_kill "yad --form --title="
-            if grep "$autom_trans" <<< "$(cd "$DC_tlt/translations"; ls *.bk)"; then
+            if grep -F "$autom_trans" <<< "$(cd "$DC_tlt/translations"; ls *.bk 2>/dev/null)"; then
                 msg_2 "$(gettext "There is a copy of this translation. Do you want to restore the copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
                 if [ $? = 0 ]; then
                     mv -f "$DC_tlt/translations/$autom_trans.bk" "${DC_tlt}/data"
@@ -1203,7 +1194,7 @@ translate_to() {
                     cleanups "$DC_tlt/translations/$autom_trans.bk"
                 fi
             fi
-            if grep "$autom_trans" <<< "$(cd "$DC_tlt/translations"; ls *.tra)"; then
+            if grep -F "$autom_trans" <<< "$(cd "$DC_tlt/translations"; ls *.tra 2>/dev/null)"; then
                 msg_2 "$(gettext "There is a verified translation for this language. Do you want to use this copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
                 if [ $? = 0 ]; then
                     cp -f "$DC_tlt/translations/$autom_trans.tra" "${DC_tlt}/data"
@@ -1213,6 +1204,7 @@ translate_to() {
                     exit 1
                 fi
                 fi
+
             > "$DT/words.trad_tmp"; > "$DT/index.trad_tmp"; > "$DT/translation"
             del='~~'
             internet
@@ -1220,7 +1212,7 @@ translate_to() {
             if [ -n "$l" ]; then lgt=${tlangs[$l]}; else lgt=${tlangs[$tlng]}; fi
             tl=${slangs[$autom_trans]}
             include "$DS/ifs/mods/add"
-            c1=$(wc -l < "${DC_tlt}/data")
+            c1=0
 
             pretrans() {
                 while read -r item_; do
@@ -1229,92 +1221,115 @@ translate_to() {
                     trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
                     if [ -n "${trgt}" ]; then
                         echo "${trgt}" \
-						|tr -s '[:space:]' '\n' \
-						|sort -u \
-						|sed '/^$/d' \
-						|grep -Pv '^.$' |grep -Pv '^..$' \
-                        |tr -d '*)(,;"“”:' |tr -s '&{}[]' ' ' \
-                        |sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
-                        |sed 's/\]//;s/\[//;s/<[^>]*>//g' \
-                        |sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' \
+                        |tr -s '[:space:]' '\n' \
+                        |sort -u \
+                        |sed '/^$/d' \
+                        |grep -Pv '^.$' |grep -Pv '^..$' \
+                        |tr -d '*)(,;""":' |tr -s '&{}[]' ' ' \
+                        |sed -e 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
+                             -e 's/\]//;s/\[//;s/<[^>]*>//g' \
+                             -e 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' \
                         |tr -d '.' |sed 's/^ *//; s/ *$//; /^$/d' >> "$DT/words.trad_tmp"
                         echo "|" >> "$DT/words.trad_tmp"
                         echo "${trgt} ${del}" >> "$DT/index.trad_tmp"
                     fi
                 done < "${DC_tlt}/data"
-           
+
                 sed -i ':a;N;$!ba;s/\n/\. /g' "$DT/words.trad_tmp"
                 sed -i 's/|/|\n/g' "$DT/words.trad_tmp"
                 sed -i 's/^..//' "$DT/words.trad_tmp"
                 index_to_trad="$(< "$DT/index.trad_tmp")"
                 words_to_trad="$(< "$DT/words.trad_tmp")"
-                translate "${index_to_trad}" "$lgt" "$tl" > "$DT/index.trad"
-                sleep 1 && translate "${words_to_trad}" "$lgt" "$tl" > "$DT/words.trad"
+                if ! translate "${index_to_trad}" "$lgt" "$tl" > "$DT/index.trad" \
+                    || [ ! -s "$DT/index.trad" ]; then
+                    return 1
+                fi
+                sleep 1
+                if ! translate "${words_to_trad}" "$lgt" "$tl" > "$DT/words.trad" \
+                    || [ ! -s "$DT/words.trad" ]; then
+                    return 1
+                fi
                 sed -i ':a;N;$!ba;s/\n/ /g' "$DT/index.trad"
                 sed -i "s/${del}n/\n/g" "$DT/index.trad"
                 sed -i "s/${del}/\n/g" "$DT/index.trad"
                 sed -i 's/^ *//; s/ *$//g' "$DT/index.trad"
+                # The final delimiter can produce one empty translated line.
+                sed -i '${/^[[:space:]]*$/d;}' "$DT/index.trad"
                 sed -i ':a;N;$!ba;s/\n/ /g' "$DT/words.trad"
                 sed -i 's/|n/\n/g' "$DT/words.trad"
                 sed -i 's/|/\n/g' "$DT/words.trad"
                 sed -i 's/^ *//; s/ *$//;s/\。/\. /g' "$DT/words.trad"
                 paste -d '&' "$DT/words.trad_tmp" "$DT/words.trad" > "$DT/mix_words.trad_tmp"
-             }
-             
+            }
+
             ( notify-send -i info "$(gettext "Translating")" \
             "$(gettext "Please wait ...")" -t 8000 ) &
-            
-            pretrans 
 
-            c2=$(wc -l < "$DT/index.trad")
-            if [[ ${c1} != ${c2} ]]; then
-                > "$DT/words.trad_tmp"; > "$DT/index.trad_tmp"
-                del='||'; pretrans
-                c2=$(wc -l < "$DT/index.trad")
-                if [[ ${c1} != ${c2} ]]; then
-                    > "$DT/words.trad_tmp"; > "$DT/index.trad_tmp"
-                    del=":"; pretrans
-                    c2=$(wc -l < "$DT/index.trad")
-                    if [[ ${c1} != ${c2} ]]; then
-                        > "$DT/words.trad_tmp"; > "$DT/index.trad_tmp"
-                        del="_"; pretrans
-                        c2=$(wc -l < "$DT/index.trad")
-                        if [[ ${c1} != ${c2} ]]; then
-                        msg "$(gettext "There was a problem with the translation;\nSome items were not translated correctly.")\n" 'dialog-warning'
-                        fi
-                    fi
-                fi
+            if ! pretrans; then
+                msg "$(gettext "The translation service returned no text.")\n" 'dialog-warning'
+                cleanups "$DT/words.trad_tmp" "$DT/index.trad_tmp" \
+                "$DT/mix_words.trad_tmp" "$DT/index.trad" "$DT/words.trad" \
+                "$DT/translate_to" "$DT/translation"
+                [ -e "${DC_tlt}/slng_err.bk" ] && mv "${DC_tlt}/slng_err.bk" "${DC_tlt}/slng_err"
+                exit 1
             fi
-            if [ -z "$(< "$DT/index.trad")" -o -z "$(< "$DT/words.trad")" ]; then
+
+            c1=$(grep -c '[^[:space:]]' "$DT/index.trad_tmp")
+            c2=$(wc -l < "$DT/index.trad")
+            # A single fallback avoids repeating the whole batch unnecessarily.
+            for del in '||'; do
+                [[ ${c1} == ${c2} ]] && break
+                > "$DT/words.trad_tmp"; > "$DT/index.trad_tmp"
+                if ! pretrans; then
+                    msg "$(gettext "The translation service returned no text.")\n" 'dialog-warning'
+                    cleanups "$DT/words.trad_tmp" "$DT/index.trad_tmp" \
+                    "$DT/mix_words.trad_tmp" "$DT/index.trad" "$DT/words.trad" \
+                    "$DT/translate_to" "$DT/translation"
+                    [ -e "${DC_tlt}/slng_err.bk" ] && mv "${DC_tlt}/slng_err.bk" "${DC_tlt}/slng_err"
+                    exit 1
+                fi
+                c2=$(wc -l < "$DT/index.trad")
+            done
+            if [[ ${c1} != ${c2} ]]; then
+                msg "$(gettext "There was a problem with the translation;\nSome items were not translated correctly.")\n" 'dialog-warning'
+            fi
+            if [ ! -s "$DT/index.trad" -o ! -s "$DT/words.trad" ]; then
                 msg "$(gettext "A problem has occurred, try again later.")\n" 'dialog-warning'
                 cleanups "$DT/words.trad_tmp" "$DT/index.trad_tmp" \
                 "$DT/mix_words.trad_tmp" "$DT/translate_to" "$DT/translation"
                 [ -e "${DC_tlt}/slng_err.bk" ] && mv "${DC_tlt}/slng_err.bk" "${DC_tlt}/slng_err"
                 exit 1
             fi
-            n=1
+
+            mapfile -t trad_index < "$DT/index.trad"
+            mapfile -t trad_mix < "$DT/mix_words.trad_tmp"
+
+            n=0
             while read -r item_; do
                 [ ! -f "$DT/translation" ] && break
                 get_item "${item_}"
-                srce="$(sed -n ${n}p "$DT/index.trad")"; srce="${srce^}"
-                tt="$(sed -n ${n}p "$DT/mix_words.trad_tmp" |cut -d '&' -f1 \
+                srce="${trad_index[$n]}"; srce="${srce^}"
+                tt="$(cut -d '&' -f1 <<< "${trad_mix[$n]}" \
                 |sed 's/\. /\n/g' |sed 's/^ *//; s/ *$//g' |tr -d '|.')"
-                st="$(sed -n ${n}p "$DT/mix_words.trad_tmp" |cut -d '&' -f2 \
+                st="$(cut -d '&' -f2 <<< "${trad_mix[$n]}" \
                 |sed 's/\. /\n/g' |sed 's/^ *//; s/ *$//g' |tr -d '|.')"
-                (bcle=1; > "$DT/w.tmp"
-                while [[ ${bcle} -le $(wc -l <<< "${tt}") ]]; do
-                    t="$(sed -n ${bcle}p <<< "${tt}" |sed 's/^\s*./\U&\E/g')"
-                    s="$(sed -n ${bcle}p <<< "${st}" |sed 's/^\s*./\U&\E/g')"
-                    echo "${t}_${s}" >> "$DT/w.tmp"
-                    let bcle++
-                done)
-                wrds="$(tr '\n' '_' < "$DT/w.tmp" |sed '/^$/d')"
-                eval line="$(sed -n 2p $DS/default/vars)"
-                echo -e "${line}" >> "$DT/translation"
+                wrds=""
+                while IFS= read -r t_line; do
+                    IFS= read -r s_line <&3 || s_line=""
+                    t_line="${t_line^}"
+                    s_line="${s_line^}"
+                    [[ -z "${t_line}" ]] && continue
+                    [[ -n "${wrds}" ]] && wrds+="_"
+                    wrds+="${t_line}_${s_line}"
+                done <<< "${tt}" 3<<< "${st}"
+                printf 'trgt{%s}srce{%s}exmp{%s}defn{%s}note{%s}wrds{%s}grmr{%s}tags{%s}mark{%s}refr{%s}imag{%s}link{%s}cdid{%s}type{%s}\n' \
+                    "$trgt" "$srce" "$exmp" "$defn" "$note" "$wrds" "$grmr" \
+                    "$tags" "$mark" "$refr" "$imag" "$link" "$cdid" "$type" \
+                    >> "$DT/translation"
             let n++
             done < "${DC_tlt}/data"
             unset item type trgt srce exmp defn note grmr mark link tag cdid
-            if [ -n "$DT" ]; then rm -f "$DT"/*.tmp "$DT"/*.trad "$DT"/*.trad_tmp; fi
+            rm -f "$DT"/*.tmp "$DT"/*.trad "$DT"/*.trad_tmp 2>/dev/null
 
             if [ -e "$DT/translation" ]; then
                 mv -f "${DC_tlt}/data" "${DC_tlt}/translations/$active_trans.bk"

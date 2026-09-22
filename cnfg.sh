@@ -107,6 +107,62 @@ config_dlg() {
 		fi
         }
 
+    start_mode_live() {
+        local tray_pid tray_launcher
+
+        tray_ready() {
+            [ -s "$DT/tray.pid" ] || return 1
+            tray_pid="$(< "$DT/tray.pid")"
+            [[ "$tray_pid" =~ ^[0-9]+$ ]] || return 1
+            kill -0 "$tray_pid" 2>/dev/null
+        }
+
+        stop_tray() {
+            if [ -s "$DT/tray.pid" ]; then
+                tray_pid="$(< "$DT/tray.pid")"
+                [[ "$tray_pid" =~ ^[0-9]+$ ]] && kill -9 "$tray_pid" 2>/dev/null
+            fi
+            pkill -9 -f "$DS/ifs/tls.sh itray" 2>/dev/null || :
+            cleanups "$DT/tray.pid"
+        }
+
+        start_tray() {
+            if tray_ready; then return 0; fi
+            if pgrep -f "$DS/ifs/tls.sh itray" >/dev/null 2>&1; then
+                for _ in {1..40}; do
+                    tray_ready && return 0
+                    sleep 0.1
+                done
+                return 1
+            fi
+            cleanups "$DT/tray.pid"
+            "$DS/ifs/tls.sh" itray &
+            tray_launcher=$!
+            for _ in {1..40}; do
+                tray_ready && return 0
+                kill -0 "$tray_launcher" 2>/dev/null || break
+                sleep 0.1
+            done
+            return 1
+        }
+
+        if [ "$1" = panel ]; then
+            if ! pgrep -f "yad --title=Idiomind --list" >/dev/null 2>&1; then
+                idiomind panel
+            fi
+            stop_tray &
+        elif [ "$1" = icon ]; then
+            if start_tray; then
+                pkill -9 -f "yad --title=Idiomind --list" 2>/dev/null || :
+            else
+                msg "$(gettext "Sorry, your System not support icon tray")" dialog-warning
+                if ! pgrep -f "yad --title=Idiomind --list" >/dev/null 2>&1; then
+                    idiomind panel
+                fi
+            fi
+        fi
+    }
+
     if [ $(cdb "${cfgdb}" 5 opts |wc -l) != 13 ]; then
         rm "${cfgdb}"; "$DS/ifs/mkdb.sh" config
     fi
@@ -262,9 +318,9 @@ config_dlg() {
         fi
 
         if [ $show_icon = TRUE ]; then
-			start_mode icon $restart
+            start_mode_live icon $restart
         else
-			start_mode panel $restart
+            start_mode_live panel $restart
         fi
         
     fi
@@ -275,4 +331,3 @@ config_dlg() {
 }  
 
 config_dlg >/dev/null 2>&1
-

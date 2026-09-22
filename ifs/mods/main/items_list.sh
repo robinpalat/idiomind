@@ -125,7 +125,20 @@ function sentence_view() {
 
 export -f word_view sentence_view vwr
 
+topic_language_notice() {
+    local topic_slng active_trans effective_slng
+    topic_slng="$(tpc_db 1 id slng)"
+    active_trans="$(sed -n 1p "${DC_tlt}/translations/active" 2>/dev/null)"
+    effective_slng="${active_trans:-$topic_slng}"
+    if [ -n "$effective_slng" ] && [ "$effective_slng" != "$slng" ]; then
+        printf '%s\n%s\n' \
+            "\n⚠ <b>$(gettext "Native languages do not match.")</b>" \
+            "$(gettext 'You may have to translate this topic to your own language: click "Manage" tab on the main window, -> "Edit" -> "Google Translate".')\n\n"
+    fi
+}
+
 function notebook_1() {
+    native_lang_info="$(topic_language_notice)"
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"${tpc}\"" 1"
     cmd_play="$DS/play.sh play_list"
     btn1="$(gettext "Edit")"
@@ -167,7 +180,7 @@ function notebook_1() {
     --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
-    --text="${lbl1}${info2}<small>$(gettext "Status:") $label_review</small>\n" \
+    --text="${lbl1}${info2}${native_lang_info}<small>$(gettext "Status:") $label_review</small>\n" \
     --borders=25 --columns=2 \
     --field=" $btn_review "!'gtk-apply':FBTN "$cmd_mark" \
     --field=" ":LBL " " \
@@ -196,6 +209,7 @@ function notebook_1() {
 
 # TODO
 function notebook_2() {
+	native_lang_info="$(topic_language_notice)"
 	cmd_play="$DS/play.sh play_list"
     cmd_mark="'$DS/mngr.sh' 'mark_to_learn' "\"${tpc}\"" 1"
     btn1="$(gettext "Edit")"
@@ -228,7 +242,7 @@ function notebook_2() {
     if [ $stts = 7 ] || [ $stts = 8 ] || [ $stts = 9 ] || [ $stts = 10 ] || [ ${days_to_review_porcent} -ge 100 ]; then 
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
-    --text="$lbl1<small>$(gettext "Status:") $label_review</small>\n" \
+    --text="$lbl1${native_lang_info}<small>$(gettext "Status:") $label_review</small>\n" \
     --borders=25 --columns=2 \
     --field=" $btn_review  "!'view-refresh':FBTN "$cmd_mark" \
     --field=" ":LBL " " \
@@ -243,7 +257,7 @@ function notebook_2() {
     else
     yad --form --tabnum=4 --window-icon=idiomind \
     --plug=$KEY \
-    --text="$lbl1<small>$(gettext "Status:") $label_review</small>\n" \
+    --text="$lbl1${native_lang_info}<small>$(gettext "Status:") $label_review</small>\n" \
     --borders=25 --columns=2 \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
@@ -272,6 +286,7 @@ function notebook_2() {
 
 
 function notebook_3() {
+	native_lang_info="$(topic_language_notice)"
 	
 	cmd_play="$DS/play.sh play_list"
     cmd_mark="'$DS/mngr.sh' 'mark_to_learn' "\"${tpc}\"" 1"
@@ -299,7 +314,7 @@ function notebook_3() {
     --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=3 --window-icon=idiomind \
     --plug=$KEY \
-    --text="$lbl1\n" \
+    --text="$lbl1${native_lang_info}\n" \
     --borders=25 --columns=2 \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
@@ -387,5 +402,3 @@ function panelini() {
     --button=""!'go-home'!"$(gettext "My Active Topic")":"idiomind 'topic'" \
     --button=""!'gtk-index'!"$(gettext "My topics")":"$DS/chng.sh"
 }
-
-

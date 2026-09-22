@@ -464,7 +464,7 @@ function set_image_2() {
 }
 
 function translate() {
-
+# yad --text="${1}"
     stop=0; t="$(sed "s|'|''|g" <<< "${1}")"
     if [[ $(wc -w <<< ${1}) = 1 ]] && [[ "${ttrgt}" != TRUE ]] && \
     [[ -n "$(sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${t}';")" ]]; then
@@ -718,6 +718,8 @@ function dlg_form_0() {
 
 function dlg_form_1() {
     cmd_words="$DS/add.sh list_words_dclik $DT_r "\"${trgt}\"""
+    # cmd_words is unused: the words button returns 4 and new_items
+    # runs list_words_dclik with the current field values.
     yad --form --title="$(gettext "Add note")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="|" \
@@ -727,17 +729,18 @@ function dlg_form_1() {
     --width=470 --borders=1 \
     --field="" "$trgt" \
     --field=":CB" "$tpe!$(gettext "New topic") *$e$tpcs" \
-    --button=!'edit-paste'!"$(gettext "Clipboard watcher")":5 \
-    --button=!'edit-select-all'!"$(gettext "Optical character recognition")":1 \
-    --button=!'image-x-generic'!"$(gettext "Screen clipping")":3 \
-    --button=!'audio-x-generic'!"$(gettext "Add an audio file")":2 \
-    --button=!'document-edit'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
-    --button=!'document-save'!"$(gettext "Add")":0
+    --button="!$DS/images/add_clipboard.png!$(gettext "Clipboard watcher")":5 \
+    --button="!$DS/images/add_image.png!$(gettext "Screen clipping")":3 \
+    --button="!$DS/images/add_audio.png!$(gettext "Add an audio file")":2 \
+    --button="!$DS/images/add_more.png!$(gettext "Add notes, example and words of a sentence")":4 \
+    --button="!document-save!$(gettext "Add")":0
 }
 
 
 function dlg_form_2() {
     cmd_words="$DS/add.sh list_words_dclik $DT_r "\"${trgt}\"""
+    # cmd_words is unused: the words button returns 4 and new_items
+    # runs list_words_dclik with the current field values.
     yad --form --title="$(gettext "Add note")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="|" \
@@ -748,17 +751,16 @@ function dlg_form_2() {
     --field="" "$trgt" \
     --field="" "$srce" \
     --field=":CB" "$tpe!$(gettext "New topic") *$e$tpcs" \
-    --button=!'edit-paste'!"$(gettext "Clipboard watcher")":5 \
-    --button=!'edit-select-all'!"$(gettext "Optical character recognition")":1 \
-    --button=!'image-x-generic'!"$(gettext "Screen clipping")":3 \
-    --button=!'audio-x-generic'!"$(gettext "Add an audio file")":2 \
-    --button=!'document-edit'!"$(gettext "Add notes, example and words of a sentence")":"$cmd_words" \
-    --button=!'document-save'!"$(gettext "Add")":0
+    --button="!$DS/images/add_clipboard.png!$(gettext "Clipboard watcher")":5 \
+    --button="!$DS/images/add_image.png!$(gettext "Screen clipping")":3 \
+    --button="!$DS/images/add_audio.png!$(gettext "Add an audio file")":2 \
+    --button="!$DS/images/add_more.png!$(gettext "Add notes, example and words of a sentence")":4 \
+    --button="!document-save!$(gettext "Add")":0
 }
 
 function dlg_checklist_3() {
     sz=(700 400 300 350)
-    fkey=$((RANDOM*$$))
+    fkey=$((RANDOM%80000+10000))
     function _list_2() {
         while read -r aitem; do
             if [ -n "$aitem" ]; then
@@ -789,7 +791,7 @@ function dlg_checklist_3() {
     --skip-taskbar --orient=vert --window-icon=$DS/images/logo.png --center \
     --width=${sz[0]} --height=${sz[1]} --borders=5 --splitter=${sz[2]} \
     --button=!'document-edit'!"$(gettext "Edit")":2 \
-    --button=!'document-save'!"$(gettext "Add")":0
+    --button="$(gettext "Save")!document-save!$(gettext "Save")":0
 }
 
 function dlg_checklist_1() {
@@ -805,13 +807,13 @@ function dlg_checklist_1() {
     --window-icon=$DS/images/logo.png \
     --mouse --on-top --no-headers \
     --text-align=right --buttons-layout=end \
-    --width=380 --height=260 --borders=10  \
+    --width=380 --height=260 --borders=5  \
     --column=" " --column="Select" \
     --button="  $(gettext "Close")  ":0
 }
 
 function dlg_checklist_2() {
-    fkey=$((RANDOM*$$))
+    fkey=$((RANDOM%80000+10000))
     list() {
         echo "${1}" | while read -r word; do
         if [ -n "$word" ]; then
@@ -835,9 +837,10 @@ function dlg_checklist_2() {
     --name=Idiomind --class=Idiomind \
     --skip-taskbar --orient=vert \
     --window-icon=$DS/images/logo.png --center --on-top \
-    --width=500 --height=260 --borders=10 --splitter=180 \
-    --button="$(gettext "Apply")!emblem-ok":0 \
-    --button="  $(gettext "Cancel")  ":1
+    --width=500 --height=260 --borders=5 --splitter=180 \
+    --button="  $(gettext "Cancel")  ":1 \
+    --button="$(gettext "Save")!document-save!$(gettext "Save")":0
+
 }
 
 function dlg_text_info_1() {
@@ -850,7 +853,7 @@ function dlg_text_info_1() {
     --skip-taskbar --center --on-top \
     --width=700 --height=450 --borders=5 \
     --button="$(gettext "Cancel")":1 \
-    --button="emblem-ok!$(gettext "Apply")":0
+    --button="$(gettext "Save")!document-save!$(gettext "Save")":0 
 }
 
 function msg_3() {

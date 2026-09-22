@@ -58,7 +58,7 @@ function dlg_form_2() {
 }
 
 function edit_list_list() {
-    sz=(580 450); [[ ${swind} = TRUE ]] && sz=(480 440)
+
     yad --editable --list --title="$(gettext "Edit list")" \
     --text="<small>$(gettext "Try double click, right-click and drag and drop.")</small>" \
     --name=Idiomind --class=Idiomind \
@@ -66,7 +66,7 @@ function edit_list_list() {
     --always-print-result --print-all \
     --window-icon=$DS/images/logo.png \
     --no-headers --center \
-    --width=${sz[0]} --height=${sz[1]} --borders=5 \
+    --width=530 --height=560 --borders=5 \
     --column="" \
     --button="$(gettext "Restart")":"$DS/mngr.sh restartTopic" \
     --button="$(gettext "Backups")":"$DS/mngr.sh edit_list_more" \

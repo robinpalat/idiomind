@@ -389,7 +389,10 @@ function list_words_dclik() {
     source "$DS/ifs/mods/add/add.sh"
     words="$(sed 's/<[^>]*>//g' <<< "${3}")"
     type=1
-    [[ -d "$2"  ]] && DT_r="$2"
+    if [[ "$2" != TRUE && "$2" != FALSE ]]; then
+        [ -n "$2" ] && DT_r="$2"
+    fi
+    [ -n "$DT_r" ] || exit 1
     [ ! -d "$DT_r" ] && check_dir "$DT_r"
     export DT_r
 
@@ -463,32 +466,13 @@ function process() {
         ret=0; conten="${1}"
     elif [[ $conten != '__edit__' ]]; then
     
-        if [[ $1 = image ]]; then
-            if which tesseract >/dev/null; then
-                pars="$DT_r/txt"
-                /usr/bin/import "$DT_r/img_.png"
-                # gnome-screenshot -a --file="$DT_r/img_.png"
-                /usr/bin/convert "$DT_r/img_.png" -shave 1x1 "$pars.png"
-                ( echo "#"
-                mogrify -modulate 100,0 -resize 400% "$pars.png"
-                tesseract "$pars.png" "$pars" -l ${tesseract_lngs[$tlng]} >/dev/null
-                cleanups "$pars"
-                clean_6 < "$pars.txt" > "$DT_r/xxlines"
-                rm -f "$pars".png "$DT_r"/img_.png
-                ) | dlg_progress_1
-            else
-                info="$(gettext "The package 'tesseract-ocr' is not installed\nPlease install") <b>tesseract-ocr-${tesseract_lngs[$tlng]}</b> $(gettext "and try again.")"
-                msg "${info}" dialog-information "$(gettext "Information")"; cleanups "$DT/n_s_pr" "$DT_r" & exit 0
-            fi
-        else
-            if [[ ${#conten} = 1 ]]; then
+        if [[ ${#conten} = 1 ]]; then
                 cleanups "$DT_r" "$DT/n_s_pr"; return 1; 
-            fi
-            if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then
+        fi
+        if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then
                 echo "${conten}" |clean_7 > "$DT_r/xxlines"; epa=0
-            else
+        else
                 echo "${conten}" |clean_8 > "$DT_r/xxlines"; epa=1
-            fi
         fi
         [ -f "$DT_r/xlines" ] && rm -f "$DT_r/xlines"
         if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then
@@ -840,22 +824,22 @@ new_items() {
         lzgplr="$(dlg_form_1)"; ret=$?
         trgt=$(cut -d "|" -f1 <<< "${lzgplr}")
         tpe=$(cut -d "|" -f2 <<< "${lzgplr}")
-    else 
+    else
         lzgplr="$(dlg_form_2)"; ret=$?
         trgt=$(cut -d "|" -f1 <<< "${lzgplr}")
         srce=$(cut -d "|" -f2 <<< "${lzgplr}")
         tpe=$(cut -d "|" -f3 <<< "${lzgplr}")
+    fi
+    if [ "$ret" -eq 4 ]; then
+        "$DS/add.sh" list_words_dclik "$DT_r" "$trgt"
+        xclip -i /dev/null; cleanups "$DT_r"
+        exit 0
     fi
     if [ $ret -eq 3 ]; then
         [ -d "$2" ] && DT_r="$2" || check_dir "$DT_r"
         ! grep '*' <<< "${tpe}" >/dev/null 2>&1 && echo "${tpe}" > "$DT/tpe"
         cd ~ && cd "$DT_r" && set_image_1
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
-        
-    elif [ $ret -eq 1 ]; then
-        [ -d "$2" ] && DT_r="$2" || check_dir "$DT_r"
-        ! grep '*' <<< "${tpe}" >/dev/null 2>&1 && echo "${tpe}" > "$DT/tpe"
-        unset trgt; process image && exit
         
     elif [ $ret -eq 2 ]; then
         [ -d "$2" ] && DT_r="$2" || check_dir "$DT_r"

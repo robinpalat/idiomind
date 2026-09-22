@@ -19,6 +19,10 @@ dir_practice="${DC_tlt}/practice"
 dir_practices="$DS/practice"
 check_dir "$DC_s/logs"
 Level="$(cdb "${cfgdb}" 1 opts level)"
+case "$Level" in
+    0|1) ;;
+    *) Level=1 ;;
+esac
 declare -A prcts=( ['a']='Flashcards' ['b']='Multiple-choice' \
 ['c']='Recognize Pronunciation' ['d']='Images' ['e']='Listen and Writing Sentences')
 t2="<span color='#C15F27' font_desc='Verdana 8'>"
@@ -931,7 +935,7 @@ function get_notes() {
         cleanups "$DT/images"
         
     elif [ $active_practice = e ]; then
-        if [[ $(wc -l <<< "${list_words}") -gt 0 ]]; then
+        if [[ $(grep -c '[^[:space:]]' <<< "${list_words}") -gt 0 ]]; then
             grep -Fxv "${list_words}" <<< "${list_learn}" > "$DT/slist"
             sed '/^$/d' < "$DT/slist" > "${dir_practice}/$active_practice.0.tmp"
             rm -f "$DT/slist"
@@ -1168,7 +1172,7 @@ function strt() {
     
     i=1
     for practice in a b c d e; do
-		if [ ! -f "./$practice.0" ]; then
+        if [ ! -s "./$practice.0" ]; then
 			active_practice=${practice}; get_notes start
             unset active_practice
 		fi
