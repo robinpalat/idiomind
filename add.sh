@@ -27,7 +27,12 @@ new_topic() {
     [ -z "$2" ] && mode=1 || mode=$2
     [ -z "$3" ] && activ=1 || activ=$3
     [ -n "$4" ] && name="${4}"
-        
+
+    # Normalizar el nombre: primera letra en mayúscula
+    if [ -n "$name" ]; then
+        name="$(sed 's/^\s*./\U&\E/' <<< "$name")"
+    fi
+
     listt="$(cd ~ && cd "$DM_tl"; find ./ -maxdepth 1 -type d \
     ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
 

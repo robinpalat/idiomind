@@ -195,7 +195,7 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
     ret=$?
 	
     if [ $ret -eq 3 ]; then
-            "$DS/add.sh" new_topic
+            "$DS/add.sh" new-topic
     elif [ -n "${tpc}" ]; then
         mode="$(< "$DM_tl/${tpc}/.conf/stts")"
         numer='^[0-9]+$'
