@@ -114,7 +114,7 @@ if [[ ${1} = 0 ]]; then
         fi
     fi
     if [ $stts -gt 10 ]; then
-		include "$DS/ifs/mods/chng"
+		include "$DS/ifs/extensions/change"
 		#echo ${_stop} > $DT/playlck
     fi
 

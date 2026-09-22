@@ -181,10 +181,10 @@ function new_session() {
     if ps -A |pgrep -f "yad --title=Idiomind --list"; then
     kill -9 $(pgrep -f "yad --title="Idiomind" --list") >/dev/null 2>&1 & fi
     
-	$DS/ifs/mods/start/update_tasks.sh
+	$DS/ifs/extensions/start/update_tasks.sh
 
     # run startups scripts
-    for strt in "$DS/ifs/mods/start"/*; do
+    for strt in "$DS/ifs/extensions/start"/*; do
 		if grep tasks <<<"$strt">/dev/null 2>&1; then :
 		else
 			( sleep 2 && "${strt}" )
@@ -253,7 +253,7 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
 $nsnt $(gettext "Sentences"),  $nimg $(gettext "Images")\n$(gettext "Level:") \
 $level \n$(gettext "Language:") $(gettext "$tlng"),  $(gettext "Translation:") $(gettext "$slng")$otranslations</small>" 
     dclk="$DS/play.sh play_word"
-    source "$DS/ifs/mods/main/items_list.sh"
+    source "$DS/ifs/extensions/main/items_list.sh"
 	_lst() {
 		while read -r line; do
 			cut -d ':' -f1 <<< "${line}" | sed 's/\"*//;s/\"$//'
@@ -572,7 +572,7 @@ function topic() {
 
     readd(){
         [ -z "${tpc}" ] && return 1
-        source "$DS/ifs/mods/main/items_list.sh"
+        source "$DS/ifs/extensions/main/items_list.sh"
         n=1; tas=('learning' 'learnt' 'words' 'sentences')
         for ta in "${tas[@]}"; do
             export ls${n}="$(tpc_db 5 "$ta")"; cnt="ls${n}"
@@ -929,8 +929,8 @@ function topic() {
         
     else
         tpa="$(sed -n 1p "$DC_s/tpc")"
-        if [ -f "$DS/ifs/mods/main/${tpa}.sh" ] ; then
-            source "$DS/ifs/mods/main/${tpa}.sh"; ${tpa} &
+        if [ -f "$DS/ifs/extensions/main/${tpa}.sh" ] ; then
+            source "$DS/ifs/extensions/main/${tpa}.sh"; ${tpa} &
         else
             echo 13 > "${DC_tlt}/stts"
             > "$DC_s/tpc"
@@ -969,7 +969,7 @@ bground_session() {
 }
 
 ipanel() {
-    source "$DS/ifs/mods/main/items_list.sh"
+    source "$DS/ifs/extensions/main/items_list.sh"
     source "$DS/ifs/cmns.sh"
     set_geom(){
         sleep 1
@@ -1054,7 +1054,7 @@ case "$1" in
     new-topic)
     "$DS/add.sh" new-topic "" "" "$2" ;;
     tasks)
-    "$DS/ifs/mods/start/update_tasks.sh" ;;
+    "$DS/ifs/extensions/start/update_tasks.sh" ;;
     panel)
     ipanel ;;
     stop)
@@ -1067,11 +1067,11 @@ case "$1" in
     "$DS_a/Resources/cnfg.sh" updt_scripts ;;
     *)
     # Check if command is provided by an addon
-    # Commands are registered in: $DS/ifs/mods/commands/<AddonName>
+    # Commands are registered in: $DS/ifs/extensions/commands/<AddonName>
     # Format: command_name|description|script_path
     # Script paths are resolved relative to: $DS/addons/<AddonName>/
     _addon_cmd_found=0
-    _commands_dir="$DS/ifs/mods/commands"
+    _commands_dir="$DS/ifs/extensions/commands"
     if [ -n "$1" ] && [ -d "$_commands_dir" ]; then
         _cmd_name_first="$1"
         _cmd_provider=""

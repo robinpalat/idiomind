@@ -206,7 +206,7 @@ play_list() {
     
     setting_1() {
 	    if [ ${stts} -gt 10 ]; then # addons 1 (addon_name) exclusive play panel
-			for ad in "$DS/ifs/mods/play"/*; do # addons 2
+			for ad in "$DS/ifs/extensions/play"/*; do # addons 2
 				source "${ad}"
 				for item in "${!items[@]}"; do 
 					echo "$DS/images/a0.png"
@@ -229,7 +229,7 @@ play_list() {
 				fi
 				let n++
 			done
-			for ad in "$DS/ifs/mods/play"/*; do # including a type of addons (list_name)
+			for ad in "$DS/ifs/extensions/play"/*; do # including a type of addons (list_name)
 				source "${ad}"
 				if [ -z "$addon_name" ]; then
 					for item in "${!items[@]}"; do
@@ -328,7 +328,7 @@ play_list() {
 			[ -n "${val}" ] && tpc_db 9 config "rword" "${val}"
 
         elif [ $stts -gt 10 ]; then  # for addons
-			for ad in "$DS/ifs/mods/play"/*; do
+			for ad in "$DS/ifs/extensions/play"/*; do
 				source "${ad}"
 				n=1; addons_count=0
 				for item in "${!items[@]}"; do

@@ -729,7 +729,7 @@ add_file() {
 } >/dev/null
 
 videourl() {
-    source "$DS/ifs/mods/cmns.sh"
+    source "$DS/ifs/extensions/cmns.sh"
     n=$(ls *.url "${DM_tlt}/files/" |wc -l)
     url=$(yad --form --title=" " \
     --name=Idiomind --class=Idiomind \
@@ -769,7 +769,7 @@ addFiles() {
 
 attatchments() {
     sz=(580 450)
-    source "$DS/ifs/mods/cmns.sh"
+    source "$DS/ifs/extensions/cmns.sh"
     mkindex() {
 rename 's/_/ /g' "${DM_tlt}/files"/*
 echo "<html><meta http-equiv=\"Content-Type\" \
@@ -984,7 +984,7 @@ first_run() {
 set_image() {
     source "$DS/ifs/cmns.sh"
     cd "$DT"; r=0
-    source "$DS/ifs/mods/add/add.sh"
+    source "$DS/ifs/extensions/add/add.sh"
     if [ -e "${DM_tlt}/images/${trgt,,}.jpg" ]; then
         ifile="${DM_tlt}/images/${trgt,,}.jpg"; im=0
     else
@@ -1211,7 +1211,7 @@ translate_to() {
             l=$(tpc_db 1 lang tlng)
             if [ -n "$l" ]; then lgt=${tlangs[$l]}; else lgt=${tlangs[$tlng]}; fi
             tl=${slangs[$autom_trans]}
-            include "$DS/ifs/mods/add"
+            include "$DS/ifs/extensions/add"
             c1=0
 
             pretrans() {

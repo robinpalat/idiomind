@@ -46,7 +46,7 @@ active_topic() {
         "${topic}" "$(gettext "Is now your topic")" -t 4000 ) & exit
     elif [[ -z "$activ" ]]; then
         echo "${topic}" > "$DC_s/tpc"
-        "$DS/ifs/mods/start/update_tasks.sh"
+        "$DS/ifs/extensions/start/update_tasks.sh"
         idiomind topic & exit
     fi
 }
@@ -123,7 +123,7 @@ if [ -d "${DM_tlt}" ]; then
         
     else
         if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
-            source "$DS/ifs/mods/main/${topic}.sh"
+            source "$DS/ifs/extensions/main/${topic}.sh"
             echo "${topic}" > "$DC_s/tpc"
             active_topic
         fi

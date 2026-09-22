@@ -6,7 +6,7 @@ source "$DS/ifs/cmns.sh"
 source "$DS/default/sets.cfg"
 lgt=${tlangs[$tlng]}
 lgs=${slangs[$slng]}
-include "$DS/ifs/mods/add"
+include "$DS/ifs/extensions/add"
 # Keep an explicit translation mode supplied by importers such as Feeds.sh.
 # Otherwise use the user's normal preference from the configuration database.
 if [ -z "${trans+x}" ]; then
@@ -46,7 +46,7 @@ new_topic() {
                 add="$(dlg_form_0 "$name")"
             fi
             name="$(cut -d "|" -f1 <<< "${add}")"
-            include "$DS/ifs/mods/add_process"
+            include "$DS/ifs/extensions/add_processors"
             name="$(clean_3 "$(cut -d "|" -f1 <<< "${add}")")"
 
             if [[ ${#name} -gt 55 ]]; then
@@ -281,7 +281,7 @@ function new_word() {
 }
 
 function list_words_edit() {
-    include "$DS/ifs/mods/add"
+    include "$DS/ifs/extensions/add"
     tpe="${tpc}"
     exmp="${3}"
     type=1
@@ -386,7 +386,7 @@ function list_words_sentence() {
 }
 
 function list_words_dclik() {
-    source "$DS/ifs/mods/add/add.sh"
+    source "$DS/ifs/extensions/add/add.sh"
     words="$(sed 's/<[^>]*>//g' <<< "${3}")"
     type=1
     if [[ "$2" != TRUE && "$2" != FALSE ]]; then
@@ -460,7 +460,7 @@ function process() {
     else
         conten="${1}"
     fi
-    include "$DS/ifs/mods/add_process"
+    include "$DS/ifs/extensions/add_processors"
     
     if [[ "$1" = '__words__' ]]; then 
         ret=0; conten="${1}"

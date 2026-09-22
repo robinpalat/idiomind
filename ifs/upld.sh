@@ -59,7 +59,7 @@ export_topic() {
         _levels="$level"$(sed "s/\!$level//g" <<< "$_levels")
     fi
     
-	export_dir="$DS/ifs/mods/export"
+	export_dir="$DS/ifs/extensions/export"
 	_formats=""
 	declare -A export_modules
 
@@ -150,7 +150,7 @@ _export() {
     module="$1"; media="$2"
     dlg="$(fdlg "$module")"; ret=$?
     if [ $ret -eq 0 ]; then
-        "$DS/ifs/mods/export/${module}.sh" \
+        "$DS/ifs/extensions/export/${module}.sh" \
         "$(tail -n 1 <<< "$dlg")" "${tpc}" "$media" & return 0
     fi
 } >/dev/null 2>&1

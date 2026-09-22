@@ -1196,7 +1196,7 @@ function strt() {
     done
 
     
-    include "$DS/ifs/mods/practice"
+    include "$DS/ifs/extensions/practice"
     count_active_practice="$(wc -l < $active_practice.0)"
    
     if [[ "${1}" = 1 ]] || [[ "${1}" = 2 ]]; then

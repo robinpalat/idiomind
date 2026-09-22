@@ -28,7 +28,7 @@ if [ $stts = 1 ] || [ $stts = 2 ] || [ $stts = 5 ] || [ $stts = 6 ]; then
 fi
 
 if [ ${stts}  -gt 10 ]; then
-	for addon in "$DS/ifs/mods/play"/*; do
+	for addon in "$DS/ifs/extensions/play"/*; do
 		source "${addon}"
 		for item in "${!items[@]}"; do
 			val="$(grep -o ${items[$item]}=\"[^\"]* "${file_cfg}" |grep -o '[^"]*$')"

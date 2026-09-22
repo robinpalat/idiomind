@@ -7,7 +7,7 @@ source "$DS/default/sets.cfg"
 lgt=${tlangs[$tlng]}
 lgs=${slangs[$slng]}
 export lgt lgs
-include "$DS/ifs/mods/mngr"
+include "$DS/ifs/extensions/manager"
 
 mkmn() {
     f_lock 1 "$DT/mn_lk"
@@ -181,7 +181,7 @@ edit_item() {
         fi
         if [ ${ret} -eq 0 ] || [ ${ret} -eq 2 ]; then
         
-            include "$DS/ifs/mods/add"
+            include "$DS/ifs/extensions/add"
             dlaud=$(cdb ${cfgdb} 1 opts dlaud) 
 
             if [ ${type} = 1 ]; then
@@ -397,7 +397,7 @@ edit_list_cmds() {
             mv -f "$DT/list_input" "$DT/list_output"
         fi
         
-        include "$DS/ifs/mods/add"
+        include "$DS/ifs/extensions/add"
         dlaud=$(cdb ${cfgdb} 1 opts dlaud) 
         n=1; f_lock 1 "$DT/el_lk"
         
@@ -580,8 +580,8 @@ edit_list_more() {
                 "$DS/ifs/tls.sh" restore "${tpc}" ${line}
                 cleanups "$DT/edit_list_more"
             fi
-        elif [ -f "$DS/ifs/mods/topic/${more}.sh" ]; then 
-            "$DS/ifs/mods/topic/${more}.sh" "${more}" # ADDON: $DS/ifs/mods/topic/ADDON.sh ADDON
+        elif [ -f "$DS/ifs/extensions/topic/${more}.sh" ]; then 
+            "$DS/ifs/extensions/topic/${more}.sh" "${more}" # ADDON: $DS/ifs/extensions/topic/ADDON.sh ADDON
         else
             cleanups "$DT/edit_list_more"
         fi
@@ -713,7 +713,7 @@ delete_topic() {
 
 
 rename_topic() {
-    source "$DS/ifs/mods/add/add.sh"
+    source "$DS/ifs/extensions/add/add.sh"
     listt="$(cd ~ && cd "$DM_tl"; find ./ -maxdepth 1 -type d \
     ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
     name="$(clean_3 "${2}")"
