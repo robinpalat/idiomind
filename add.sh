@@ -599,6 +599,31 @@ function process() {
             cleanups "$DT/n_s_pr" "$slt" & exit 1
         fi
         
+        # Batch confirmed: a non-empty selection is about to be processed.
+        # Serialize against other batch runs (mkdir is atomic). Flows that
+        # exit before this point (edit reflows, empty selection, single
+        # notes via new_item) never take the lock.
+        add_lock="$DT/add_lk"
+        if [ -d "$add_lock" ]; then
+            add_pid=""
+            [ -f "$add_lock/pid" ] && add_pid="$(< "$add_lock/pid")"
+            if [ -n "$add_pid" ] && [ "$add_pid" != "$$" ] && kill -0 "$add_pid" 2>/dev/null; then
+                msg "$(gettext "Please wait until the current process is finished")...\n" \
+                dialog-information
+                cleanups "$DT/n_s_pr" "$slt"
+                exit 1
+            fi
+            rm -rf "$add_lock"
+        fi
+        if ! mkdir "$add_lock" 2>/dev/null; then
+            msg "$(gettext "Please wait until the current process is finished")...\n" \
+            dialog-information
+            cleanups "$DT/n_s_pr" "$slt"
+            exit 1
+        fi
+        printf '%s\n' "$$" > "$add_lock/pid"
+        trap 'rm -rf "$add_lock"' EXIT
+        
         if grep -o -E 'ja|zh-cn|ru' <<< ${lgt} >/dev/null 2>&1; then c=c; else c=w; fi
         lns="$(cat "$DT_r/select_lines" "$DT_r/wrds" |sed '/^$/d' |wc -l)"
         n=1
@@ -740,37 +765,23 @@ function process() {
         if [[ ${adds} -ge 1 ]]; then
             if [ $notif = TRUE ]; then 
 				notify-send -i idiomind "${tpe}" \
-            "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
+					"$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 10000 &
             fi
         fi
         
         [ -n "$log" ] && echo -e "${info3}:\n$log\n\n" >> "${DC_tlt}/note.inf"
     fi
     [ ! -f "$DT_r/__opts__" ] && cleanups "$DT_r"
+    rm -rf "$DT/add_lk"
     cleanups "$DT/n_s_pr" "$slt" & return 0
 }
 
 
 new_items() {
-    # Only one interactive add form may be open at a time. Startup and tray
-    # paths invoke this command without arguments, while internal retries pass
-    # DT_r and must remain independent of this guard.
-    if [ -z "${2}" ]; then
-        add_lock="$DT/add_lk"
-        if [ -d "$add_lock" ]; then
-            add_pid=""
-            [ -f "$add_lock/pid" ] && add_pid="$(< "$add_lock/pid")"
-            if [ -n "$add_pid" ] && kill -0 "$add_pid" 2>/dev/null; then
-                exit 0
-            fi
-            rm -rf "$add_lock"
-        fi
-        if ! mkdir "$add_lock" 2>/dev/null; then
-            exit 0
-        fi
-        printf '%s\n' "$$" > "$add_lock/pid"
-        trap 'rm -rf "$add_lock"' EXIT
-    fi
+    # NOTE: opening the Add dialog never takes add_lk, so an individual
+    # Add stays possible while another batch is processing. Mutual
+    # exclusion between batch runs is enforced later, once batch
+    # processing is confirmed (non-empty selection in process()).
 
     
     itemdir=$(base64 <<< $((RANDOM%100000)) | head -c 32)
@@ -894,7 +905,7 @@ new_items() {
 }
 
 case "$1" in
-    new-topic)
+    new_topic|new-topic)
     new_topic "$@" ;;
     new_item)
     new_item "$@" ;;

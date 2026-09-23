@@ -45,12 +45,40 @@ function check_audio() {
             return 0   # valid audio, leave message removed
         fi
     fi
-    # No valid audio produced - only write generic message if no specific one exists
+    # No valid audio produced - only write a message if no specific one exists.
+    # Never blame the API key without evidence from the failed reply itself:
+    # a failed download with a configured key is a network/service problem.
     if [ ! -f "$msgs/$fname" ] || [ ! -s "$msgs/$fname" ]; then
-        if [ -f "$FILECONF" ] && [ -n "$(< "$FILECONF")" ]; then
-            echo "<span color='#C15F27'>No key configuration</span>" > "$msgs/$fname"
+        if [ -s "$af" ] && file -b "$af" 2>/dev/null |grep -qiE 'text|empty' \
+        && grep -qiE 'ERROR:|result=error' "$af" 2>/dev/null; then
+            if grep -qiE 'key is not|key not available|invalid.*key|key.*invalid|no key|missing key|wrong key|credential|error=1([^0-9]|$)|error=997([^0-9]|$)' "$af" 2>/dev/null; then
+                # The service itself reports a credential problem.
+                echo "<span color='#C15F27'>No key configuration</span>" > "$msgs/$fname"
+            elif grep -qiE 'quota|credit|expir|limit|inactive|denied|error=3([^0-9]|$)' "$af" 2>/dev/null; then
+                # The service itself reports quota/account problems.
+                echo "<span color='#C15F27'>API quota exhausted (cuota de API agotada o cuenta inactiva)</span>" > "$msgs/$fname"
+            else
+                echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$fname"
+            fi
+        elif [ -s "$af" ] && file -b "$af" 2>/dev/null |grep -qiE 'text|empty|json' \
+        && grep -qiE '"error"|insufficient_quota|invalid_api_key|rate_limit' "$af" 2>/dev/null; then
+            # JSON API error with explicit diagnosis (e.g. OpenAI TTS).
+            if grep -qiE 'insufficient_quota|credit_balance|quota_exceeded|billing|out_of_credit' "$af" 2>/dev/null; then
+                echo "<span color='#C15F27'>API quota exhausted (cuota de API agotada o cuenta inactiva)</span>" > "$msgs/$fname"
+            elif grep -qiE 'incorrect_api_key|invalid_api_key|invalid_authentication|unauthorized|authentication_failed|\<key\>|credential' "$af" 2>/dev/null; then
+                echo "<span color='#C15F27'>No key configuration</span>" > "$msgs/$fname"
+            elif grep -qiE 'rate_limit|too_many_requests' "$af" 2>/dev/null; then
+                echo "<span color='#C15F27'>Request limit exceeded</span>" > "$msgs/$fname"
+            else
+                _emsg=$(grep -oE '"message"[ ]*:[ ]*"[^"]{1,160}' "$af" 2>/dev/null | head -1 | sed 's/^"message"[ ]*:[ ]*"//;s/[<>&]//g')
+                if [ -n "$_emsg" ]; then
+                    echo "<span color='#C15F27'>Error: ${_emsg}</span>" > "$msgs/$fname"
+                else
+                    echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$fname"
+                fi
+            fi
         else
-            echo "<span color='#C15F27'>It's not working</span>" > "$msgs/$fname"
+            echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$fname"
         fi
     fi
     return 1
@@ -109,13 +137,13 @@ function test_() {
     
     # the "c" variable is overwritten while sourcing the resource scripts,
     # so capture the test options in a dedicated variable here (before any source)
-    testopts="$c"
     
     echo "1"
     
-    if [ "$(cut -d "|" -f1 <<< "$testopts")" = 'TRUE' ]; then
+
         # ---------------------------------------------------
         # TRANSLATORS"
+        echo "# $(gettext "Checking translators…") ($(gettext "1 of 5 categories"))"
         echo "5"
         
         for trans in "$DC_d"/*."Traslator online.Translate".*; do
@@ -147,11 +175,12 @@ function test_() {
                 fi
             fi
         done
-    fi
+    
 
-    if [ "$(cut -d "|" -f2 <<< "$testopts")" = 'TRUE' ]; then
+
         # ---------------------------------------------------
         # AUDIO - Sentences"
+        echo "# $(gettext "Checking text-to-speech converters…") ($(gettext "2 of 5 categories"))"
         echo "10"
 
         if ls "$DC_d"/*."TTS online.Convert text to audio".* 1> /dev/null 2>&1; then
@@ -292,11 +321,12 @@ function test_() {
                 let n++
             done
         fi
-    fi
+    
 
-    if [ "$(cut -d "|" -f3 <<< "$testopts")" = 'TRUE' ]; then
+
         # ---------------------------------------------------
         # AUDIO - Words"
+        echo "# $(gettext "Checking audio downloaders…") ($(gettext "3 of 5 categories"))"
         echo "50"
 
         if ls "$DC_d"/*."TTS online.Download audio".* 1> /dev/null 2>&1; then
@@ -360,11 +390,12 @@ function test_() {
                 let n++
             done
         fi
-    fi
+    
 
-    if [ "$(cut -d "|" -f4 <<< "$testopts")" = 'TRUE' ]; then
+
         # ---------------------------------------------------
         # WEB PAGES"
+        echo "# $(gettext "Checking definition finders…") ($(gettext "4 of 5 categories"))"
         echo "70"
         
         word="test"
@@ -394,11 +425,12 @@ function test_() {
                 fi
             done  
         fi
-    fi
+    
 
-    if [ "$(cut -d "|" -f5 <<< "$testopts")" = 'TRUE' ]; then
+
         # ---------------------------------------------------
         # IMAGE DOWNLOADER"
+        echo "# $(gettext "Checking image downloaders…") ($(gettext "5 of 5 categories"))"
         echo "90"
         
         if ls "$DC_d"/*."Script.Download image".* 1> /dev/null 2>&1; then
@@ -438,7 +470,7 @@ function test_() {
                 cleanups "$DT/${TESTWORD}.jpg" "$DT/${TESTWORD}.png"
             done
         fi
-    fi
+    
     
     # ---------------------------------------------------
 
@@ -451,9 +483,10 @@ function test_() {
 }
 
 function dlg_progress_2() {
-    yad --progress --title="$(gettext "Run tests, please wait...")" \
+    yad --progress --title="$(gettext "Testing online provider availability")" \
     --name=Idiomind --class=Idiomind \
     --window-icon=$DS/images/logo.png --align=right \
+    --text="$(gettext "Checking the available providers for the selected language.")\n\n<span color='#2BB62D'>●</span> $(gettext "Available")   <span color='#3498DB'>●</span> $(gettext "Not available for this language")   <span color='#C15F27'>●</span> $(gettext "Unavailable")\n" \
     --progress-text=" " \
     --percentage="0" --auto-close \
     --no-buttons --on-top --fixed \
@@ -465,26 +498,9 @@ if [[ "$2" = 'silence' ]]; then
     echo -e "\n-- testing online resources..."
     test_
     echo -e "\ttesting online resources ok"
-else
-    cnf1=$(mktemp "$DT/cnf1.XXXXXX")
-    yad --form --title="$(gettext "Resource availability")" \
-    --text="<b>\n$(gettext "Check the used resources for:")</b>\n" \
-    --window-icon=$DS/images/logo.png \
-    --name=Idiomind --class=Idiomind \
-    --center --columns=1 --output-by-row \
-    --on-top --skip-taskbar \
-    --width=400 --height=300 --borders=10 \
-    --always-print-result --print-all --align=right \
-    --field=" $(gettext "Translate")":CHK "" \
-    --field=" $(gettext "Convert text to audio")":CHK "" \
-    --field=" $(gettext "Download audio (only for words)")":CHK "" \
-    --field=" $(gettext "Search definition")":CHK "" \
-    --field=" $(gettext "Download image (only for words)")":CHK "" \
-    --button="$(gettext "Cancel")":1 \
-    --button="$(gettext "Run")":0 > "$cnf1"
     
-    ret=$?; [ $ret != 0 ] && exit
-    export c="$(< "$cnf1")"; cleanups "$cnf1"
+else
+
     
     ( echo "1"; echo "#  "; test_ ) | dlg_progress_2
 fi

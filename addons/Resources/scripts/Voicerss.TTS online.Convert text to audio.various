@@ -23,7 +23,11 @@
 # Source common utilities
 # ------------------------------------------------------------
 
-_RES_DIR="$(dirname "$(readlink -f "$0")")"
+# NOTE: BASH_SOURCE[0] is the provider's own path both when executed
+# directly and when sourced (test.sh, dwld1); $0 alone would give the
+# caller's path when sourced, leaving common.sh unfound. common.sh lives
+# in Resources/ (parent of scripts/), hence the double dirname.
+_RES_DIR="$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]:-$0}")")")"
 [ -f "$_RES_DIR/common.sh" ] && source "$_RES_DIR/common.sh"
 _msgs_dir="$HOME/.config/idiomind/addons/resources/msgs"
 
@@ -140,13 +144,16 @@ _check_voicerss_error()
 if [ "$1" = "_dclk_" ]; then
     :
 
-elif [ -n "$2" ]; then
+else
+    # NOTE: test.sh and dwld1 source this provider WITHOUT arguments to
+    # read metadata and export URL/TESTURL, so config + URL export must
+    # run here. Only the live TESTURL validation below needs $2.
 
     api_key=$(resource_read_config "$FILECONF" "key")
     speed=$(resource_read_config "$FILECONF" "speed")
     voice=$(resource_read_config "$FILECONF" "voice")
 
-    _check_voicerss_key "$api_key" || exit 0
+    _check_voicerss_key "$api_key" || return 0 2>/dev/null || exit 0
 
     case "$speed" in
         Slow)   s="-2" ;;

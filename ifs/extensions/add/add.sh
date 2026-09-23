@@ -718,8 +718,6 @@ function dlg_form_0() {
 
 function dlg_form_1() {
     cmd_words="$DS/add.sh list_words_dclik $DT_r "\"${trgt}\"""
-    # cmd_words is unused: the words button returns 4 and new_items
-    # runs list_words_dclik with the current field values.
     yad --form --title="$(gettext "Add note")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="|" \

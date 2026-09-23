@@ -25,7 +25,11 @@
 # Source common utilities
 # ------------------------------------------------------------
 
-_RES_DIR="$(dirname "$(readlink -f "$0")")"
+# NOTE: BASH_SOURCE[0] is the provider's own path both when executed
+# directly and when sourced (test.sh, dwld1); $0 alone would give the
+# caller's path when sourced, leaving common.sh unfound. common.sh lives
+# in Resources/ (parent of scripts/), hence the double dirname.
+_RES_DIR="$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]:-$0}")")")"
 [ -f "$_RES_DIR/common.sh" ] && source "$_RES_DIR/common.sh"
 _msgs_dir="$HOME/.config/idiomind/addons/resources/msgs"
 
@@ -108,8 +112,11 @@ elif [ -n "$2" ]; then
             exit 1
             ;;
         429)
-            # Distinguish quota exhaustion from rate limiting
-            _body=$(head -1 <<< "$_response")
+            # Distinguish quota exhaustion from rate limiting.
+            # NOTE: curl writes the JSON body to $2 (-o) while $_response
+            # holds only the -w output (the bare code), so classify from
+            # the downloaded file.
+            _body=$(head -c 2000 "$2" 2>/dev/null)
             if echo "$_body" | grep -q "insufficient_quota\|credit_balance_exhausted"; then
                 resource_write_error \
                     "<span color='#C15F27'>API quota exhausted</span>" \

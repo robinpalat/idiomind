@@ -264,7 +264,7 @@ function dlg() {
     --center \
     --width=680 --height=430 --borders=10 \
     --column="$(gettext "Enable")":CHK \
-    --column="$(gettext "Resource")":TEXT \
+    --column="$(gettext "Provider")":TEXT \
     --column="$(gettext "Type")":TEXT \
     --column="$(gettext "Is used for")":TEXT \
     --column="$(gettext "Language")":TEXT \

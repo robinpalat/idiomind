@@ -137,6 +137,20 @@ topic_language_notice() {
     fi
 }
 
+# Injects the learning-table position (NR) as an extra line after each
+# displayed Name, turning 3-line groups (name, chk, tip) into 4-line
+# groups (name, pos, chk, tip). pos is resolved by exact unique match
+# against the table snapshot in $ls1, so it stays correct even if the
+# displayed order differs from the table order; unknown names fall back
+# to the display counter. Feeds the hidden @fore@ column whose value
+# yad appends to --dclick-action, so vwr() receives it as numeric $3.
+add_pos_col() {
+    awk 'NR==FNR { if (!($0 in pos)) pos[$0]=FNR; next }
+        { f=(FNR-1)%3; if (f==0) { nm=$0; c++ } else if (f==1) { ck=$0 }
+          else { print nm; print ((nm != "" && nm in pos) ? pos[nm] : c); print ck; print } }' \
+        <(printf '%s\n' "${ls1}") -
+}
+
 function notebook_1() {
     native_lang_info="$(topic_language_notice)"
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"${tpc}\"" 1"
@@ -156,21 +170,21 @@ function notebook_1() {
     cat "${DC_tlt}/index"; else [ -n "${ls1}" ] && echo -e "${ls1}" | \
     awk '{print ""$0"\nFALSE\n"""}'; fi; }
 
-    list | yad --list --tabnum=1 --window-icon=idiomind \
+    list | add_pos_col | yad --list --tabnum=1 --window-icon=idiomind \
     --plug=$KEY --print-all --separator='|' \
     --image="$DS/images/$((stts%2)).png" --image-on-top \
     --dclick-action="$DS/vwr.sh 1" \
     --print-column=1 --expand-column=1 --grid-lines=hor  --no-headers \
     --ellipsize=end --wrap-width=460 --ellipsize-cols=2 \
-    --search-column=1 --regex-search --hide-column=3 --tooltip-column=3 \
+    --search-column=1 --regex-search --hide-column=4 --tooltip-column=4 \
     --column=Name:TEXT \
-    --column=Learned:CHK --column=@back@:TIP > "$cnf1" &
-    ([ -n "${ls2}" ] && echo "${ls2}") |yad --list --tabnum=2 \
+    --column=@fore@ --column=Learned:CHK --column=@back@:TIP > "$cnf1" &
+    ([ -n "${ls2}" ] && echo "${ls2}" | awk '{print $0"\n"NR}') |yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2"  \
     --expand-column=0 --no-headers \
     --ellipsize=end --wrap-width=460 --ellipsize-cols=1 \
-    --column=Name:TEXT &
+    --column=Name:TEXT --column=@fore@ &
     yad --text-info --tabnum=3 --window-icon=idiomind \
     --text="<small>$(gettext "Enter your text here, use it as a notice or scratch board")</small>" \
     --plug=$KEY \
@@ -185,7 +199,7 @@ function notebook_1() {
     --field=" $btn_review "!'gtk-apply':FBTN "$cmd_mark" \
     --field=" ":LBL " " \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
-    --field="$(gettext "Auto-check learned notes")\t\t\t\t\t":CHK "$acheck" \
+    --field="$(gettext "Automatically mark notes as learnt")\t\t\t\t\t":CHK "$acheck" \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
@@ -227,12 +241,12 @@ function notebook_2() {
 	--text="$pres\n" \
 	--plug=$KEY \
 	--align=center --borders=80 --bar="<small>$info6 </small>":NORM $days_to_review_porcent &
-    ([ -n "${ls2}" ] && echo "${ls2}") |yad --list --tabnum=2 \
+    ([ -n "${ls2}" ] && echo "${ls2}" | awk '{print $0"\n"NR}') |yad --list --tabnum=2 \
     --window-icon=idiomind --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2" --grid-lines=hor \
     --expand-column=0 --no-headers --ellipsize=end \
     --search-column=1 --regex-search \
-    --column=Name:TEXT &
+    --column=Name:TEXT --column=@fore@ &
     yad --text-info --tabnum=3 --window-icon=idiomind \
     --plug=$KEY \
     --text="<small>$(gettext "Enter your text here, use it as a notice or scratch board")</small>" \
@@ -299,13 +313,13 @@ function notebook_3() {
     cmd3="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd4="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
 
-    ([ -n "${ls2}" ] && echo "${ls2}") |yad --list --tabnum=1 \
+    ([ -n "${ls2}" ] && echo "${ls2}" | awk '{print $0"\n"NR}') |yad --list --tabnum=1 \
     --window-icon=idiomind --plug=$KEY --print-all --separator='|' \
     --image="$DS/images/2.png" --image-on-top \
     --dclick-action="$DS/vwr.sh 2" \
     --expand-column=0 --no-headers --grid-lines=hor --ellipsize=end \
     --search-column=1 --regex-search \
-    --column=Name:TEXT &
+    --column=Name:TEXT --column=@fore@ &
     yad --text-info --tabnum=2 --window-icon=idiomind \
     --text="<small>$(gettext "Enter your text here, use it as a notice or scratch board")</small>" \
     --plug=$KEY \

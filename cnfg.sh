@@ -56,20 +56,20 @@ set_lang() {
     else
         > "$DT/tpe"; > "$DC_s/tpc"
     fi
-    if [ ! -f "${shrdb}" ]; then "$DS/ifs/mkdb.sh" share; fi
-    if ! file "${shrdb}" | grep 'SQLite'; then "$DS/ifs/mkdb.sh" share; fi
-    
-    check_list
-    
-    if [ ! -d "$DM_tl/.share/data" ]; then
-        mkdir -p "$DM_tls/data"
-        tlngdb="$DM_tls/data/${tlng}.db"
+    mkdir -p "$DM_tls/data"
+    tlngdb="$DM_tls/data/${tlng}.db"
+    if [ ! -f "${tlngdb}" ]; then
         echo -n "create table if not exists Words \
         (Word TEXT, '${slng^}' TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${tlngdb}
         echo -n "create table if not exists Config \
         (Study TEXT, Expire INTEGER);" |sqlite3 ${tlngdb}
         echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${tlngdb}
     fi
+    if [ ! -f "${shrdb}" ]; then "$DS/ifs/mkdb.sh" share; fi
+    if ! file "${shrdb}" | grep 'SQLite'; then "$DS/ifs/mkdb.sh" share; fi
+
+    check_list
+
     idiomind tasks; "$DS/mngr.sh" mkmn 1 &
 }
 

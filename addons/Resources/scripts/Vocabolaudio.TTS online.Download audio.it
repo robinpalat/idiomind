@@ -21,6 +21,7 @@ FILECONF=""
 TESTWORD=""
 EXECUT=""
 
-export TESTURL="http://www.vocabolaudio.com/audio-it/prova.mp3"
-export URL="http://www.vocabolaudio.com/audio-it/${word}.mp3"
+
+export TESTURL="https://www.vocabolaudio.com/audio/it/prova.mp3"
+export URL="https://www.vocabolaudio.com/audio/it/${word}.mp3"
 export EX='mp3'

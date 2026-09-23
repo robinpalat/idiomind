@@ -70,7 +70,8 @@ if [[ "$1" != '_dclk_' ]]; then
         else
             while IFS= read -r t; do
                 grep -oP '(?<=trgt=\").*(?=\",\")' <<< "$t" |
-                    sed 's/\\n$//'
+                    sed 's/\\n$//' |
+                    sed 's/\\n/\n/g'
             done < <(
                 echo "${gtra}" |
                 sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g'
@@ -88,7 +89,8 @@ if [[ "$1" != '_dclk_' ]]; then
             while IFS= read -r t; do
                 grep -oP '(?<=trgt=\").*(?=\",\")' <<< "$t" |
                     sed 's/\\n$//' |
-                    awk -F'null' '{print $1}'
+                    awk -F'null' '{print $1}' |
+                    sed 's/\\n/\n/g'
             done < <(
                 echo "${gtra}" |
                 sed 's/\[\[\[/trgt=/;s/\],\[/\ntrgt=/g'
