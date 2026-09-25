@@ -44,7 +44,7 @@ export_topic() {
 
     ctgy=$(tpc_db 1 id ctgy)
     levl=$(tpc_db 1 id levl)
-    text_export="<span font_desc='Arial 12'><b>$(gettext "Export this topic")</b></span>\n<small>$(gettext "The topic will be saved locally so you can share it with other Idiomind users.")</small>"
+    text_export="<span font_desc='Arial 12'><b>$(gettext "Export this topic")</b></span>\n"
 
     em='!'; unset list
     for val in "${Categories[@]}"; do
@@ -69,7 +69,7 @@ export_topic() {
 
 		case "$module" in
 			"Idiomind Topic (idmnd)")
-				format="$(gettext "Idiomind Topic (.idmnd)")"
+				format="$(gettext "Idiomind Topic (idmnd)")"
 				;;
 			"Comma-separated values (csv)")
 				format="CSV"

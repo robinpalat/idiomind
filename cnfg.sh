@@ -70,11 +70,17 @@ set_lang() {
 
     check_list
 
+    # On target switch the incoming language must not inherit a stale
+    # "Update Topics from Feeds" reference: drop it now so that
+    # idiomind tasks has no obsolete file, then let the Feeds addon
+    # itself refresh (recreates only if this language has feed topics).
+    rm -f "$DC_a/Feeds${tlng}_tsk"
+    "$DS/ifs/extensions/start/update_feeds.sh" >/dev/null 2>&1 &
     idiomind tasks; "$DS/mngr.sh" mkmn 1 &
 }
 
 config_dlg() {
-    sz=(430 485)
+    sz=(470 550)
     kill_icon=0
     source "$DS/default/sets.cfg"
     
@@ -211,11 +217,11 @@ config_dlg() {
     yad --notebook --key=$KEY --title="$(gettext "Settings")" \
     --name=Idiomind --class=Idiomind \
     --window-icon=$DS/images/logo.png \
-    --tab-borders=5 --sticky --center \
+    --sticky --center \
     --tab="$(gettext "Preferences")" \
     --tab="$(gettext "Addons")" \
     --width=${sz[0]} --height=${sz[1]} \
-    --borders=9 --tab-borders=0 \
+    --borders=5 --tab-borders=15 \
     --button="$(gettext "     About     ")"!help-about:"$DS/ifs/tls.sh 'about'" \
     --button="$(gettext "Save")"!document-save:0 \
     --button="$(gettext "Close")"!window-close:1

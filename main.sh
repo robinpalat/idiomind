@@ -537,7 +537,19 @@ $(gettext "It is recommended to change your language preferences before installi
             slngtopic="$slng"; slng="$slngcurrent"
             cdb "${cfgdb}" 3 lang tlng "${tlng}"
             cdb "${cfgdb}" 3 lang slng "${slng}"
-            if [[ "$slngtopic" != "$slng" ]]; then
+            # LanguagePack optimization layer (aditiva y reversible).
+            # lfetch = Language Fetcher: localizar/descargar/validar/cachear/
+            # instalar el pack remoto antes del fallback existente.
+            # Cualquier fallo continua con el flujo actual.
+            # Desactivar con IDMND_LP_DISABLE=1.
+            _lp_ok=1
+            if [[ "$slngtopic" != "$slng" ]] && [ "${IDMND_LP_DISABLE:-0}" != "1" ] \
+                && [ -f "$DS/ifs/lfetch.sh" ]; then
+                bash "$DS/ifs/lfetch.sh" try "${name}" "${tlng}" "${slng}" "${slngtopic}" >/dev/null 2>&1
+                _lp_ok=$?
+                [ "$_lp_ok" -eq 2 ] && _lp_ok=0
+            fi
+            if [[ "$slngtopic" != "$slng" ]] && [ "$_lp_ok" -ne 0 ]; then
                 mkdir "${DC_tlt}/translations/"
                 echo "$slngtopic" > "${DC_tlt}/translations/active"
                 touch "${DC_tlt}/slng_err"

@@ -166,12 +166,13 @@ play_list() {
     btn1="!media-playback-start!$(gettext "Play"):0"
     title="$(gettext "Play")"
     
-    [ ${stts} -ge 1 ] && [ -n "${tpc}" ] && title="$(gettext "Play") - ${tpc}"
+    #if [ ${stts} -ge 1 ] && [ -n "${tpc}" ]; then  title="$(gettext "Play") - ${tpc}"; fi
     if [ "$(< $DT/playlck)" != 0 ]; then
-        tpp="--text=<b><small>  \"$(sed -n 1p "$DT/playlck")\"</small></b>"
+        tpp="--text=<b>$(gettext "Playing: ")<small>  \"$(sed -n 1p "$DT/playlck")\"</small></b>"
         title="$(gettext "Play")"
         btn1="!media-playback-stop!$(gettext "Stop"):2"
-        title="$(gettext "Playing...")"
+    else 
+		tpp=""
     fi
     
     ntosd=""; audio=""
