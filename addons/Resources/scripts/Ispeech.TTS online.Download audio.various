@@ -7,5 +7,8 @@
 
 dir="/usr/share/idiomind/addons/Resources/scripts"
 source "$dir/Ispeech.TTS online.Convert text to audio.various"
+# Este variant descarga audio: corrige el propósito heredado del Convert.
+USEDTO="Download audio (online)"
+INFO="Word audio via the Ispeech REST API (shares the Convert key)"
 TLANGS="zh-cn, en, ja, pt, es, ru, it, de, fr"
 EXECUT=""

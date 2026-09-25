@@ -16,6 +16,7 @@
 #   to resolve the actual audio URL for the given word.
 
 TLANGS="en"
+USEDTO="Download audio (online)"
 INFO="Search audio for words"
 LANGUAGES="English"
 STATUS="Ok"

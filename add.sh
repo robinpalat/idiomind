@@ -807,7 +807,7 @@ new_items() {
 
     #
     # |tr -cd '\11\12\15\40-\176' 
-    [ -z "${4}" ] && txt="$(xclip -selection primary -o)" || txt="${4}"
+    [ -z "${4}" ] && txt="$(xclip -selection primary -o 2>/dev/null || true)" || txt="${4}"
     export trgt="$(clean_4 "${txt}")"
     
     [ -d "${2}" ] && DT_r="${2}"

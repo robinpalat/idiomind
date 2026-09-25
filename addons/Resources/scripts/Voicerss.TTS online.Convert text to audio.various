@@ -36,13 +36,16 @@ _msgs_dir="$HOME/.config/idiomind/addons/resources/msgs"
 # ------------------------------------------------------------
 
 TLANGS="zh-cn, en, pt, es, ru, it, de, fr"
-INFO="Text-to-speech (TTS) API Documentation
-http://www.voicerss.org/api/documentation.aspx"
+INFOAPI="http://www.voicerss.org/api/documentation.aspx"
+USEDTO="Convert text to audio (online)"
+INFO="Text-to-speech (TTS) API"
 LANGUAGES="English, Spanish, Portuguese, Russian, Italian, German, French, Chinese"
 STATUS="Ok"
 VOICES=""
 CONF="TRUE"
 FILECONF="$HOME/.config/idiomind/addons/resources/Voicerss.cfg"
+CONFFIELDS="key voice speed"
+CONFKEY_HIDDEN="key"
 TESTSTRING="test"
 EXECUT=""
 EX='mp3'
@@ -86,6 +89,38 @@ _get_voicerss_test_word()
         *)     echo "test" ;;
     esac
 }
+
+# Voces disponibles por idioma según parámetro "v" de
+# https://www.voicerss.org/api/ (la primera es la Default de la API).
+_voicerss_voices_for()
+{
+    case "$1" in
+        en)    echo "Linda Amy Mary John Mike" ;;
+        es)    echo "Camila Sofia Luna Diego" ;;
+        pt)    echo "Marcia Ligia Yara Dinis" ;;
+        ru)    echo "Olga Marina Peter" ;;
+        it)    echo "Bria Mia Pietro" ;;
+        de)    echo "Hanna Lina Jonas" ;;
+        fr)    echo "Bette Iva Zola Axel" ;;
+        zh-cn) echo "Luli Shu Chow Wang" ;;
+        *)     echo "Linda Amy Mary John Mike" ;;
+    esac
+}
+
+# Opciones del combo "voice" para el diálogo (Default = voz de la API).
+_voicerss_voice_opts()
+{
+    local _l="${lgt:-en}" _list
+    _list="$(_voicerss_voices_for "$_l")"
+    [ -z "$_list" ] && _list="$(_voicerss_voices_for en)"
+    tr ' ' '!' <<< "Default ${_list}"
+}
+
+# Combo de configuración: voz según idioma actual + velocidad.
+# NOTA: se evalúa al hacer source, cuando $lgt ya está exportado
+# (cnfg.sh dclk y test.sh lo fijan antes).
+CONFOPTS="voice|$(_voicerss_voice_opts)
+speed|Slow!Normal!Fast"
 
 # Same key validation as Ispeech — both require exactly 32 characters.
 # Disables both Convert and Search/Download variants on failure.
@@ -155,29 +190,56 @@ else
 
     _check_voicerss_key "$api_key" || return 0 2>/dev/null || exit 0
 
+    # Velocidad: la API admite -10 (lenta) .. 10 (rápida), 0 = normal.
+    # El combo ofrece Slow/Normal/Fast; se acepta número directo por
+    # compatibilidad con valores manuales antiguos.
     case "$speed" in
         Slow)   s="-2" ;;
-        Normal) s="0" ;;
+        Normal|"") s="0" ;;
         Fast)   s="2" ;;
-        *)      s="0" ;;
+        *)
+            if [[ "$speed" =~ ^-?(10|[0-9])$ ]]; then
+                s="$speed"
+            else
+                s="0"
+            fi ;;
     esac
 
-    # If no voice configured, use language default
-    if [ -n "$voice" ]; then
-        v="$voice"
-    else
-        v=$(_get_voicerss_voice "$lgt")
+    # Idioma siempre del mapping (antes $voice se reusaba como hl).
+    hl=$(_get_voicerss_voice "$lgt")
+
+    # Voz: Default/vacío/código de lengua -> voz por defecto de la API
+    # (se omite el parámetro v). Solo se envía si es válida para el hl
+    # actual; así un cambio de idioma no rompe con voz obsoleta.
+    vparam=""
+    if [ -n "$voice" ] && [ "$voice" != "Default" ]; then
+        case "$voice" in
+            *-*|*" "*|"") ;;
+            *)
+                _allowed=" $(_voicerss_voices_for "$lgt") "
+                if grep -Fq " ${voice} " <<< "$_allowed" 2>/dev/null; then
+                    vparam="&v=${voice}"
+                fi ;;
+        esac
     fi
     _test=$(_get_voicerss_test_word "$lgt")
 
-    export TESTURL="${_VOICERSS_ENDPOINT}?key=${api_key}&hl=${v}&r=${s}&c=mp3&f=16khz_16bit_mono&src=${_test}"
-    export URL="${_VOICERSS_ENDPOINT}?key=${api_key}&hl=${v}&r=${s}&c=mp3&f=16khz_16bit_mono&src=${word}"
+    export TESTURL="${_VOICERSS_ENDPOINT}?key=${api_key}&hl=${hl}${vparam}&r=${s}&c=mp3&f=16khz_16bit_mono&src=${_test}"
+    export URL="${_VOICERSS_ENDPOINT}?key=${api_key}&hl=${hl}${vparam}&r=${s}&c=mp3&f=16khz_16bit_mono&src=${word}"
     export EX='mp3'
 
     if [ -n "${2}" ] && [ "$2" != "" ]; then
-        _response=$(wget -T 15 -q -O - "${TESTURL}" 2>/dev/null)
-        if [ -n "$_response" ]; then
-            _check_voicerss_error "$_response" "$(basename "$0")"
+        # Evita "ignored null byte in input": la respuesta OK es un MP3
+        # binario y no debe capturarse en una variable bash. Descarga a
+        # temporal y solo inspecciona texto cuando parece error.
+        _tmp_resp="$(mktemp 2>/dev/null || echo "/tmp/.voicerss_resp_$$")"
+        if wget -T 15 -q -O "$_tmp_resp" "${TESTURL}" 2>/dev/null; then
+            if file -b "$_tmp_resp" 2>/dev/null | grep -qiE 'text|empty' \
+                || head -c 6 "$_tmp_resp" 2>/dev/null | grep -q "ERROR:"; then
+                _body="$(cat "$_tmp_resp" 2>/dev/null)"
+                [ -n "$_body" ] && _check_voicerss_error "$_body" "$(basename "$0")"
+            fi
         fi
+        rm -f "$_tmp_resp"
     fi
 fi

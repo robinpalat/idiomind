@@ -25,6 +25,7 @@
 #   Stdout = translated text
 
 TLANGS="zh-cn, en, ja, pt, es, ru, it, de, fr"
+USEDTO="Translate text (online)"
 
 INFO="Online translator
 
@@ -42,6 +43,7 @@ Google Inc.
 its author is affiliated with Google Inc."
 
 LANGUAGES="Chinese, English, French, German, Italian, Japanese, Portuguese, Russian, Spanish, Vietnamese"
+INFOAPI="https://developers.google.com/translate/"
 STATUS="Ok"
 VOICES=""
 CONF="FALSE"

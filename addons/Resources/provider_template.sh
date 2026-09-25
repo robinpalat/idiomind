@@ -22,7 +22,7 @@
 #   5. Test with: test.sh (run from the Resources GUI).
 #
 # WHAT TO MODIFY:
-#   - Provider metadata (TLANGS, INFO, LANGUAGES, etc.)
+#   - Provider metadata (TLANGS, LANGUAGES, USEDTO, INFO, etc.)
 #   - Provider-specific config (PROVIDER_ENDPOINT, PROVIDER_AUTH)
 #   - validate_input() — your input validation
 #   - build_request() — your API request construction
@@ -30,7 +30,7 @@
 #   - parse_response() — your response handling
 #
 # WHAT NOT TO MODIFY:
-#   - The metadata variable NAMES (TLANGS, INFO, etc.)
+#   - The metadata variable NAMES (TLANGS, LANGUAGES, USEDTO, INFO, etc.)
 #   - The script argument contract ($1, $2)
 #   - The exit status contract (0=success, non-zero=failure)
 #   - The error message format (HTML spans in $msgs/)
@@ -54,7 +54,10 @@ _msgs_dir="$HOME/.config/idiomind/addons/resources/msgs"
 #
 # TLANGS     — Comma-separated language codes this provider supports.
 #              Use "various" if the provider handles any language.
-# INFO       — Short description shown in the resource list.
+# USEDTO     — Short purpose shown as "Is used for" in the config dialog.
+#              Example: "Convert text to audio (online)"
+# INFO       — Short bounded documentation shown as "Info" (no URLs here).
+# INFOAPI    — API reference URL shown as link (empty if none).
 # LANGUAGES  — Human-readable language names for display.
 # STATUS     — Initial status. Keep as "Ok".
 # VOICES     — Available voices (for display). Empty if not applicable.
@@ -70,8 +73,9 @@ _msgs_dir="$HOME/.config/idiomind/addons/resources/msgs"
 # EX         — Output file extension (mp3, wav, ogg, etc.)
 
 TLANGS="en, es"
-INFO="Convert text to audio (online)
-https://example.com/docs/api"
+USEDTO="Convert text to audio (online)"
+INFO="Short bounded documentation (no URLs here)"
+INFOAPI="https://example.com/docs/api"
 LANGUAGES="English, Spanish"
 STATUS="Ok"
 VOICES=""

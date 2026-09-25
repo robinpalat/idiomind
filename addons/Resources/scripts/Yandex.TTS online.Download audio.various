@@ -28,7 +28,9 @@ _msgs_dir="${DC_a}/msgs"
 # ------------------------------------------------------------
 
 TLANGS="en, pt, es, ru, it, de, fr"
-INFO="Download audio for words https://cloud.yandex.ru/docs/speechkit"
+INFOAPI="https://cloud.yandex.ru/docs/speechkit"
+USEDTO="Download audio (online)"
+INFO="Download audio for words"
 LANGUAGES="English, Russian"
 STATUS="Ok"
 CONF="TRUE"

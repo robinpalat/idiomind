@@ -22,6 +22,7 @@ _RES_DIR="$(dirname "$(readlink -f "$0")")"
 _msgs_dir="$HOME/.config/idiomind/addons/resources/msgs"
 
 TLANGS="zh-cn, en, ja"
+USEDTO="Download audio (online)"
 INFO="Search audio for words"
 LANGUAGES="Chinese, English, Japanese"
 STATUS="Ok"

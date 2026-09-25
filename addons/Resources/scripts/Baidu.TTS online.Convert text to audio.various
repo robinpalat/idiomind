@@ -29,7 +29,8 @@ _msgs_dir="$HOME/.config/idiomind/addons/resources/msgs"
 # ------------------------------------------------------------
 
 TLANGS="zh-cn, en, ja"
-INFO="Convert text to audio (online)"
+USEDTO="Convert text to audio (online)"
+INFO="Free TTS via the Baidu Translate endpoint (no key required)"
 LANGUAGES="Chinese, English, Japanese"
 STATUS="Ok"
 VOICES=""

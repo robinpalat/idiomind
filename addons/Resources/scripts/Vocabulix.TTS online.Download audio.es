@@ -12,6 +12,7 @@
 # Execution pattern: Source + URL export (Pattern B)
 
 TLANGS="es"
+USEDTO="Download audio (online)"
 INFO="Search audio for words"
 LANGUAGES="Spanish"
 STATUS="Ok"

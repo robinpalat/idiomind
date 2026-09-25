@@ -18,7 +18,8 @@
 # ------------------------------------------------------------
 
 TLANGS="en, es"
-INFO="Convert text to audio (online)"
+USEDTO="Convert text to audio (online)"
+INFO="Pre-generated audio via SpanishDict (no key required)"
 LANGUAGES="English, Spanish"
 STATUS="Ok"
 VOICES=""

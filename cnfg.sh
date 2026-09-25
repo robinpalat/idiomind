@@ -210,7 +210,7 @@ config_dlg() {
     --field="$(gettext "My learning level")":CB "$levels_list" \
     --field="$(gettext "My language is")":CB "$(gettext "${slng}")$list2" > "$cnf1" &
     cat "$DS_a/menu_list" |yad --plug=$KEY --tabnum=2 --list \
-    --text=" <small>$(gettext "Double-click to configure")</small> " --print-all \
+    --text=" <small>$(gettext "Double-click an addon to configure it.")</small> " --print-all \
     --dclick-action="$DS/ifs/dclik.sh" \
     --expand-column=2 --no-headers \
     --column=icon:IMG --column=Action &

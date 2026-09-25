@@ -16,7 +16,8 @@
 #   Creates: $DT/$word.jpg (or $DT/$TESTWORD.jpg during test)
 
 TLANGS="en, es, it, pt, ru, de, fr, ja, zh-cn"
-INFO="Download images"
+USEDTO="Download image"
+INFO="Openly-licensed images via the Openverse API (no key required)"
 LANGUAGES="English"
 STATUS="Ok"
 VOICES=""

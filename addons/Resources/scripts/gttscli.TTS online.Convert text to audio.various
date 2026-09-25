@@ -21,7 +21,8 @@
 # ------------------------------------------------------------
 
 TLANGS="en"
-INFO="Convert text to audio (offline)"
+USEDTO="Convert text to audio (offline)"
+INFO="Offline TTS via the gtts-cli tool (requires gtts-cli installed)"
 LANGUAGES="English"
 STATUS="Ok"
 VOICES=""

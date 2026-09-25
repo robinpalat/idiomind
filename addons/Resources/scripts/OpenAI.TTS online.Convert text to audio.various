@@ -38,8 +38,9 @@ _msgs_dir="$HOME/.config/idiomind/addons/resources/msgs"
 # ------------------------------------------------------------
 
 TLANGS="en, es, it, pt, de, ja, fr, zh-cn, ru"
-INFO="Convert text to audio (online)
-https://platform.openai.com/docs/guides/text-to-speech"
+INFOAPI="https://platform.openai.com/docs/guides/text-to-speech"
+USEDTO="Convert text to audio (online)"
+INFO="Text-to-speech via the OpenAI API (key, model and voice)"
 LANGUAGES="English, Spanish, Italian, Portuguese, German, Japanese, French, Chinese, Russian"
 STATUS="Ok"
 VOICES=""

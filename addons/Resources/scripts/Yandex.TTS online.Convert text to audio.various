@@ -34,7 +34,9 @@ _msgs_dir="${DC_a}/msgs"
 # ------------------------------------------------------------
 
 TLANGS="en, pt, es, ru, it, de, fr"
-INFO="Convert text to audio (online) https://cloud.yandex.ru/docs/speechkit"
+USEDTO="Convert text to audio (online)"
+INFO="Text-to-speech via Yandex Cloud SpeechKit (API key required)"
+INFOAPI="https://cloud.yandex.ru/docs/speechkit"
 LANGUAGES="English, Russian"
 STATUS="Ok"
 CONF="TRUE"

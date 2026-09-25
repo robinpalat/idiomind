@@ -20,7 +20,8 @@
 # ------------------------------------------------------------
 
 TLANGS="en"
-INFO="Convert text to audio (offline)"
+USEDTO="Convert text to audio (offline)"
+INFO="Offline TTS via Festival (requires festival and sox packages)"
 LANGUAGES="English"
 STATUS="Ok"
 VOICES=""

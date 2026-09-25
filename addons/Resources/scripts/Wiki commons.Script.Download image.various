@@ -16,7 +16,8 @@
 #   Creates: $DT/$word.jpg (or $DT/$TESTWORD.jpg during test)
 
 TLANGS="en"
-INFO="Download images"
+USEDTO="Download image"
+INFO="Images via Wikimedia Commons (no key required)"
 LANGUAGES="English"
 STATUS="Ok"
 VOICES=""

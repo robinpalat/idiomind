@@ -139,8 +139,10 @@ must not change. Their VALUES are provider-specific.
 | Variable | Purpose | Example |
 |---|---|---|
 | `TLANGS` | Supported language codes | `"en, es, it"` |
-| `INFO` | Description for the resource list | `"Convert text to audio (online)"` |
 | `LANGUAGES` | Human-readable language names | `"English, Spanish, Italian"` |
+| `USEDTO` | Short purpose, shown as "Is used for" | `"Convert text to audio (online)"` |
+| `INFO` | Short bounded documentation, shown as "Info" (no URLs) | `"Text-to-speech (TTS) API"` |
+| `INFOAPI` | API reference URL, shown as link (empty if none) | `"https://example.com/docs/api"` |
 | `STATUS` | Initial status | `"Ok"` |
 | `VOICES` | Available voices (display only) | `""` |
 | `CONF` | Has configuration dialog? | `"TRUE"` or `"FALSE"` |
@@ -275,8 +277,9 @@ Edit the new file and set:
 
 ```bash
 TLANGS="en, es, it, pt, de, ja, fr, zh-cn, ru"
-INFO="Convert text to audio (online)
-https://learn.microsoft.com/azure/ai-services/speech-service/"
+USEDTO="Convert text to audio (online)"
+INFO="Neural text-to-speech"
+INFOAPI="https://learn.microsoft.com/azure/ai-services/speech-service/"
 LANGUAGES="English, Spanish, Italian, Portuguese, German, Japanese, French, Chinese, Russian"
 STATUS="Ok"
 VOICES=""

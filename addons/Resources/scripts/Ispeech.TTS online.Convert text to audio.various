@@ -23,7 +23,7 @@
 # Source common utilities
 # ------------------------------------------------------------
 
-_RES_DIR="$(dirname "$(readlink -f "$0")")"
+_RES_DIR="$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]:-$0}")")")"
 [ -f "$_RES_DIR/common.sh" ] && source "$_RES_DIR/common.sh"
 _msgs_dir="$HOME/.config/idiomind/addons/resources/msgs"
 
@@ -31,13 +31,17 @@ _msgs_dir="$HOME/.config/idiomind/addons/resources/msgs"
 # Provider metadata
 # ------------------------------------------------------------
 
+INFOAPI="https://api.ispeech.org/api"
 TLANGS="zh-cn, en, ja, pt, es, ru, it, de, fr"
-INFO="Convert text to audio (online)"
+USEDTO="Convert text to audio (online)"
+INFO="Text-to-speech via the Ispeech REST API (API key required)"
 LANGUAGES="English, Spanish, Portuguese, Russian, Italian, German, French, Chinese"
 STATUS="Ok"
 VOICES=""
 CONF="TRUE"
 FILECONF="$HOME/.config/idiomind/addons/resources/Ispeech.cfg"
+CONFFIELDS="key voice speed"
+CONFKEY_HIDDEN="key"
 TESTSTRING="test"
 EXECUT=""
 EX='mp3'
@@ -84,6 +88,40 @@ _get_ispeech_test_word()
         *)     echo "test" ;;
     esac
 }
+
+# Voces disponibles por idioma según https://ispeech.org/api
+# (alias del parámetro "voice"; la primera es la Default que el
+# script usaba hasta ahora para ese idioma).
+_ispeech_voices_for()
+{
+    case "$1" in
+        en)    echo "ukenglishmale usenglishfemale usenglishmale ukenglishfemale auenglishfemale caenglishfemale" ;;
+        es)    echo "eurspanishmale eurspanishfemale usspanishfemale usspanishmale" ;;
+        pt)    echo "brportuguesefemale eurportuguesefemale eurportuguesemale" ;;
+        ru)    echo "rurussianfemale rurussianmale" ;;
+        it)    echo "euritalianmale euritalianfemale" ;;
+        de)    echo "eurgermanfemale eurgermanmale" ;;
+        fr)    echo "eurfrenchmale eurfrenchfemale" ;;
+        zh-cn) echo "chchinesefemale hkchinesefemale twchinesefemale" ;;
+        ja)    echo "jpjapanesefemale" ;;
+        *)     echo "ukenglishmale usenglishfemale usenglishmale ukenglishfemale" ;;
+    esac
+}
+
+# Opciones del combo "voice" para el diálogo (Default = voz de la tabla).
+_ispeech_voice_opts()
+{
+    local _l="${lgt:-en}" _list
+    _list="$(_ispeech_voices_for "$_l")"
+    [ -z "$_list" ] && _list="$(_ispeech_voices_for en)"
+    tr ' ' '!' <<< "Default ${_list}"
+}
+
+# Combo de configuración: voz según idioma actual + velocidad.
+# NOTA: se evalúa al hacer source, cuando $lgt ya está exportado
+# (cnfg.sh dclk y test.sh lo fijan antes).
+CONFOPTS="voice|$(_ispeech_voice_opts)
+speed|Slow!Normal!Fast"
 
 # Check API key validity and auto-disable related variants if invalid.
 # Both the Convert and Search/Download variants share the same key.
@@ -148,7 +186,10 @@ _check_ispeech_error()
 if [ "$1" = "_dclk_" ]; then
     :
 
-elif [ -n "$2" ]; then
+else
+    # NOTE: test.sh and dwld1 source this provider WITHOUT arguments to
+    # read metadata and export URL/TESTURL, so config + URL export must
+    # run here. Only the live TESTURL validation below needs $2.
 
     # Read config
     api_key=$(resource_read_config "$FILECONF" "key")
@@ -156,30 +197,52 @@ elif [ -n "$2" ]; then
     voice=$(resource_read_config "$FILECONF" "voice")
 
     # Validate key (disables both Convert and Search variants on failure)
-    _check_ispeech_key "$api_key" || exit 0
+    _check_ispeech_key "$api_key" || return 0 2>/dev/null || exit 0
 
-    # Map speed setting to numeric value
+    # Velocidad: la API admite -10 (lenta) .. 10 (rápida), 0 = normal.
+    # El combo ofrece Slow/Normal/Fast; se acepta número directo por
+    # compatibilidad con valores manuales antiguos.
     case "$speed" in
         Slow)   s=-2 ;;
-        Normal) s=0 ;;
+        Normal|"") s=0 ;;
         Fast)   s=2 ;;
-        *)      s=0 ;;
+        *)
+            if [[ "$speed" =~ ^-?(10|[0-9])$ ]]; then
+                s="$speed"
+            else
+                s=0
+            fi ;;
     esac
 
-    # Get voice and test word for current language
+    # Voz: Default/vacío -> voz por defecto del idioma. Solo se envía si
+    # es válida para el lgt actual; así un cambio de idioma no rompe con
+    # voz obsoleta (antes $voice se ignoraba siempre).
     v=$(_get_ispeech_voice "$lgt")
+    if [ -n "$voice" ] && [ "$voice" != "Default" ]; then
+        _allowed=" $(_ispeech_voices_for "$lgt") "
+        if grep -Fq " ${voice} " <<< "$_allowed" 2>/dev/null; then
+            v="$voice"
+        fi
+    fi
     _test=$(_get_ispeech_test_word "$lgt")
 
-    # Export URLs for the caller (Pattern C: source + URL export)
-    export TESTURL="${_ISPEECH_ENDPOINT}?apikey=${api_key}&action=convert&voice=${v}&speed=${s}&pitch=0&text=${_test}"
-    export URL="${_ISPEECH_ENDPOINT}?apikey=${api_key}&action=convert&voice=${v}&speed=${s}&pitch=0&text=${word}"
+    # Pitch 100 = default documentado (0 es el tono más grave).
+    export TESTURL="${_ISPEECH_ENDPOINT}?apikey=${api_key}&action=convert&voice=${v}&speed=${s}&pitch=100&text=${_test}"
+    export URL="${_ISPEECH_ENDPOINT}?apikey=${api_key}&action=convert&voice=${v}&speed=${s}&pitch=100&text=${word}"
     export EX='mp3'
 
     # Test the API when called with a test parameter
     if [ -n "${2}" ] && [ "$2" != "" ]; then
-        _response=$(wget -T 15 -q -O - "${TESTURL}" 2>/dev/null)
-        if [ -n "$_response" ]; then
-            _check_ispeech_error "$_response" "$(basename "$0")"
+        # Evita "ignored null byte in input": igual que Voicerss, la
+        # respuesta OK es audio binario. Usar archivo temporal.
+        _tmp_resp="$(mktemp 2>/dev/null || echo "/tmp/.ispeech_resp_$$")"
+        if wget -T 15 -q -O "$_tmp_resp" "${TESTURL}" 2>/dev/null; then
+            if file -b "$_tmp_resp" 2>/dev/null | grep -qiE 'text|empty' \
+                || grep -q "result=error" "$_tmp_resp" 2>/dev/null; then
+                _body="$(cat "$_tmp_resp" 2>/dev/null)"
+                [ -n "$_body" ] && _check_ispeech_error "$_body" "$(basename "$0")"
+            fi
         fi
+        rm -f "$_tmp_resp"
     fi
 fi

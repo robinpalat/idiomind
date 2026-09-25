@@ -94,6 +94,7 @@ function dclk() {
         "$DS_a/Resources/scripts/${fname}" |grep -o '[^"]*$')
         LANGUAGES=$(grep -o LANGUAGES=\"[^\"]* \
         "$DS_a/Resources/scripts/${fname}" |grep -o '[^"]*$')
+        USEDTO="$5"
         INFO="$(gettext "Link to web page")"
         if [ ! -f "$msgs/$fname" ]; then
             STATUS="$(gettext "It seems to work correctly")"
@@ -103,6 +104,8 @@ function dclk() {
         CONF="FALSE"
     else
         source "$DS_a/Resources/scripts/$3.$4.$5.$6"
+        # Fallback para scripts personalizados sin USEDTO
+        [ -z "${USEDTO:-}" ] && USEDTO="$5"
     fi
 
     name="<b>$3</b>"
@@ -115,6 +118,17 @@ function dclk() {
     elif [ -f "$msgs/$fname" ]; then
         STATUS="$(< "$msgs/$fname")"
         icon="$DS/addons/Resources/a.png"
+    fi
+
+    # Filas informativas coherentes: propósito (USEDTO), doc acotada
+    # (INFO, solo si hay) y URL de API (INFOAPI, solo si hay).
+    _info_row=""
+    if [ -n "${INFO:-}" ]; then
+        _info_row="\n\n<b>$(gettext "Info"):</b>\n$INFO"
+    fi
+    _api_row=""
+    if [ -n "${INFOAPI:-}" ]; then
+        _api_row="\n<a href='$INFOAPI'>$INFOAPI</a>"
     fi
 
     if [[ "$CONF" = "TRUE" ]]; then
@@ -137,10 +151,11 @@ function dclk() {
         confhidden="${CONFKEY_HIDDEN:-key}"
 
         _yad=( yad --form --title="${3}" \
-        --text="$(gettext "Resource name"): $name\n\n<b>$(gettext "Languages"):</b>\n$LANGUAGES\n\n<b>$(gettext "is used for"):</b>\n$INFO\n\n<b>$(gettext "Status:")</b>\n $STATUS\n" \
+        --text="<big>$name</big>\n\n<b>$(gettext "Languages"):</b>\n$LANGUAGES\n\n<b>$(gettext "is used for"):</b>\n$USEDTO${_info_row}${_api_row}\n\n<b>$(gettext "Status:")</b>\n $STATUS\n" \
         --image=$icon --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" --center \
         --on-top --skip-taskbar --expand-column=3 \
+        --show-uri --fixed \
         --width=600 --height=200 --borders=12 \
         --always-print-result --editable --print-all --align=right )
 
@@ -167,20 +182,35 @@ function dclk() {
         c="$("${_yad[@]}")"; ret=$?
 
         if [ $ret = 0 ]; then
-            f=1
-            for _f in $conffields; do
-                _val="$(cut -d "|" -f${f} <<< "$c")"
-                sed -i "s|${_f}=.*|${_f}=\"${_val}\"|g" "$fileconf"
-                let f++
-            done
+            # Guardado posicional: el orden de salida de yad es el orden
+            # de los --field, que es el de $conffields. Si no coinciden
+            # (p.ej. un arg extra colado en _yad), NO guardar: antes eso
+            # desplazaba los valores (la key caía en model).
+            read -ra _fields <<< "$conffields"
+            IFS='|' read -ra _vals <<< "$c"
+            if [ "${#_vals[@]}" -ne "${#_fields[@]}" ]; then
+                msg "$(gettext "Configuration could not be saved (field mismatch).")\n" \
+                    dialog-error "$(gettext "Error")"
+            else
+                for (( _i=0; _i<${#_fields[@]}; _i++ )); do
+                    _f="${_fields[$_i]}"
+                    _val="${_vals[$_i]}"
+                    # Escapa reemplazo de sed (&, \, delimitador |)
+                    _esc="${_val//\\/\\\\}"
+                    _esc="${_esc//&/\\&}"
+                    _esc="${_esc//|/\\|}"
+                    sed -i "s|^${_f}=.*|${_f}=\"${_esc}\"|" "$fileconf"
+                done
+            fi
         fi
     else
         yad --form --title="${3}" \
-        --text="$(gettext "Resource name"): <big>$name</big>\n\n<b>$(gettext "Languages"):</b>\n$LANGUAGES\n\n<b>$(gettext "Is used for"):</b>\n$INFO\n\n<b>$(gettext "Status:")</b>\n $STATUS\n" \
+        --text="<big>$name</big>\n\n<b>$(gettext "Languages"):</b>\n$LANGUAGES\n\n<b>$(gettext "Is used for"):</b>\n$USEDTO${_info_row}${_api_row}\n\n<b>$(gettext "Status:")</b>\n $STATUS\n" \
         --image=$icon \
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" --center \
         --on-top --skip-taskbar --expand-column=3 \
+        --show-uri --fixed \
         --width=600 --height=200 --borders=12 \
         --align=right \
         --button="$(gettext "Close")":1 
@@ -246,11 +276,11 @@ function dlg() {
         plus="$(gettext "To start is okay select all, later, according to your preferences you can disable some.")\n"
         rm "$DC_s/Resources_first_run"
     fi
-    inf="<b>$(gettext "Please, select at least one resource for each task")</b>\n$plus"
+    inf="<b>$(gettext "Please, select at least one resource for each task")</b>\n$plus<small>$(gettext "Double-click a resource to configure it.")</small>"
     if [[ -n "${1}" ]]; then 
         text="--text=$inf"; n=${1}
     else 
-        text="--center"; n=6
+        text="--text=$inf"; n=6
     fi
     
     sel="$(resources_list ${n} |yad --list \
@@ -269,7 +299,6 @@ function dlg() {
     --column="$(gettext "Is used for")":TEXT \
     --column="$(gettext "Language")":TEXT \
     --column="$(gettext "Status")":IMG \
-    --button="$(gettext "Add")":2 \
     --button="$(gettext "Test")":3 \
     --button="$(gettext "Save")!gtk-apply":0 \
     --button="$(gettext "Close")":1)"
@@ -360,6 +389,50 @@ function update_config_dir() {
             cleanups "$disables/${res}"; echo "-- removed: $(basename "${res}")"
         fi
     done < <(ls "$disables")
+
+    # Deshabilita en cada arranque los recursos incompatibles con el
+    # idioma en aprendizaje. Dos niveles:
+    #  1) por extensión: solo *.various y *.$lgt permanecen habilitados.
+    #  2) por contenido: lee LANGUAGES del script y comprueba que el
+    #     tlng del usuario esté allí; si no está, se deshabilita.
+    #     NOTA: LANGUAGES usa nombres en inglés de tlangs
+    #     ("English, Spanish, ..."), por eso se compara con $tlng
+    #     ("English") y no con $slng nativo ("Español"), que nunca
+    #     aparecería en esa lista. Si falta LANGUAGES se usa TLANGS vs $lgt.
+    if [ -n "$lgt" ] && [ -d "$enables" ] && [ -d "$disables" ]; then
+        ( cd "$enables"/ 2>/dev/null && \
+          find . -maxdepth 1 -type f \
+            -not -name "*.${lgt}" -and -not -name "*.various" \
+            -exec mv -f --target-directory="$disables/" {} + 2>/dev/null )
+    fi
+    if [ -n "$tlng" ] && [ -d "$enables" ] && [ -d "$disables" ]; then
+        while IFS= read -r res; do
+            [ -n "$res" ] || continue
+            _script="$DS_a/Resources/scripts/$res"
+            [ -f "$_script" ] || continue
+            # Solo líneas no comentadas
+            _langs="$(grep -m1 '^LANGUAGES=' "$_script" 2>/dev/null | cut -d'"' -f2)"
+            if [ -n "$_langs" ]; then
+                if ! grep -Fwq -- "$tlng" <<< "$_langs" 2>/dev/null; then
+                    mv -f "$enables/$res" "$disables/$res" 2>/dev/null \
+                        && echo -e "\tresource disabled (LANGUAGES): $res"
+                fi
+            else
+                _tcodes="$(grep -m1 '^TLANGS=' "$_script" 2>/dev/null | cut -d'"' -f2)"
+                if [ -n "$_tcodes" ] && [ -n "$lgt" ]; then
+                    # Comparación exacta por código entre comas
+                    # (evita que "en" matchee dentro de otro token;
+                    # funciona con "zh-cn" que -w partiría por el guion).
+                    _clean="$(tr -d '[:space:]' <<< "$_tcodes")"
+                    case ",${_clean}," in
+                        *",${lgt},"*) ;;
+                        *) mv -f "$enables/$res" "$disables/$res" 2>/dev/null \
+                            && echo -e "\tresource disabled (TLANGS): $res" ;;
+                    esac
+                fi
+            fi
+        done < <(ls "$enables" 2>/dev/null)
+    fi
     
     echo -e "\tResources ok\n"
 }

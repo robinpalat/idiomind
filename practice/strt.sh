@@ -1048,7 +1048,11 @@ function decide_group() {
 function practices() {
 
     log="$DC_s/logs/$date_week.log"
-    export count_check_tasks1="$(grep "1p.$tpc.p1" "$log" | wc -l)"
+    if [ -f "$log" ]; then
+        export count_check_tasks1="$(grep "1p.$tpc.p1" "$log" 2>/dev/null | wc -l)"
+    else
+        export count_check_tasks1=0
+    fi
     list_data="$DC_tlt/data"
     list_sents="$(tpc_db 5 sentences)"
     list_words="$(tpc_db 5 words)"
@@ -1156,10 +1160,11 @@ function strt() {
 	label_prd=$(gettext "Images")
 	label_pre=$(gettext "Listen and Writing Sentences")
 
-    [[ ${count_hard} -lt 0 ]] && count_hard=0
-    if [[ ${step} -gt 1 ]] && [[ ${count_learn} -ge 1 ]] && \
-    [[ ${count_hard} = 0 ]] && [[ ${group} != 1 ]]; then
-        echo -e "wait=\"$(date +%d)\"" > ./$active_practice.lock
+    : "${count_hard:=0}" "${step:=1}" "${count_learn:=0}" "${group:=0}"
+    [[ ${count_hard} -lt 0 ]] 2>/dev/null && count_hard=0
+    if [[ ${step} -gt 1 ]] 2>/dev/null && [[ ${count_learn} -ge 1 ]] 2>/dev/null && \
+    [[ ${count_hard} = 0 ]] && [[ ${group} != 1 ]] && [ -n "${active_practice:-}" ]; then
+        echo -e "wait=\"$(date +%d)\"" > "./${active_practice}.lock"
     fi
     
     list_data="$DC_tlt/data"
@@ -1197,18 +1202,22 @@ function strt() {
 
     
     include "$DS/ifs/extensions/practice"
-    count_active_practice="$(wc -l < $active_practice.0)"
+    if [ -n "${active_practice:-}" ] && [ -f "./${active_practice}.0" ]; then
+        count_active_practice="$(wc -l < "./${active_practice}.0")"
+    else
+        count_active_practice=0
+    fi
    
     if [[ "${1}" = 1 ]] || [[ "${1}" = 2 ]]; then
-    	if [ $active_practice = "a" ] ; then
+    	if [ "${active_practice:-}" = "a" ] ; then
 			label_pra="<b>*  $(gettext "Flashcards")</b>"
-		elif [ $active_practice = "b" ] ; then
+		elif [ "${active_practice:-}" = "b" ] ; then
 			label_prb="<b>*  $(gettext "Multiple-choice")</b>"
-		elif [ $active_practice = "c" ] ; then
+		elif [ "${active_practice:-}" = "c" ] ; then
 			label_prc="<b>*  $(gettext "Recognize Pronunciation")</b>"
-		elif [ $active_practice = "d" ] ; then
+		elif [ "${active_practice:-}" = "d" ] ; then
 			label_prd="<b>*  $(gettext "Images")</b>"
-		elif [ $active_practice = "e" ] ; then
+		elif [ "${active_practice:-}" = "e" ] ; then
 			label_pre="<b>*  $(gettext "Listen and Writing Sentences")</b>"
 		fi
 	fi
@@ -1223,7 +1232,11 @@ function strt() {
 
     elif [[ "${1}" = 2 ]]; then
     
-        count_learnt=$(< ./$active_practice.l); 
+        if [ -n "${active_practice:-}" ] && [ -f "./${active_practice}.l" ]; then
+            count_learnt="$(< "./${active_practice}.l")"
+        else
+            count_learnt=0
+        fi
         if [ -f ./$active_practice.1 ] || [ -f ./$active_practice.2 ] || [ -f ./$active_practice.3 ]; then
 			info=" <b><small>$(gettext "Easy")</small> <b>$count_learnt</b>    <small>$(gettext "Learning")</small> <b>$count_learn</b>    <small>$(gettext "Difficult")</small> <b>$count_hard</b></b>  "
 		fi
@@ -1279,11 +1292,21 @@ function strt() {
             cdb ${shrdb} 4 T8 list "${tpc}"
         fi &
         # idiomind tasks
-        count_check_tasks2="$(grep "1p.$tpc.p1" "$log" | wc -l)"
-        if [ $count_check_tasks2 -gt $count_check_tasks1 ]; then
-			grep -vxE "$(gettext "To Practice:") $tpc|$(gettext "Back to Practice:") $tpc|$(gettext "Resume Practice:") $tpc" $DT/tasks >> $DT/tasks.tmp
-			sed '/^$/d' $DT/tasks.tmp > $DT/tasks
-			rm -f $DT/tasks.tmp
+        : "${count_check_tasks1:=0}"
+        if [ -n "${log:-}" ] && [ -f "$log" ]; then
+            count_check_tasks2="$(grep "1p.$tpc.p1" "$log" 2>/dev/null | wc -l)"
+        else
+            count_check_tasks2=0
+        fi
+        count_check_tasks2="${count_check_tasks2//[[:space:]]/}"
+        count_check_tasks1="${count_check_tasks1//[[:space:]]/}"
+        : "${count_check_tasks2:=0}" "${count_check_tasks1:=0}"
+        if [ "$count_check_tasks2" -gt "$count_check_tasks1" ] 2>/dev/null; then
+			if [ -f "$DT/tasks" ]; then
+				grep -vxE "$(gettext "To Practice:") $tpc|$(gettext "Back to Practice:") $tpc|$(gettext "Resume Practice:") $tpc" "$DT/tasks" 2>/dev/null >> "$DT/tasks.tmp"
+				sed '/^$/d' "$DT/tasks.tmp" > "$DT/tasks"
+				rm -f "$DT/tasks.tmp"
+			fi
 		fi
 
         "$DS/ifs/tls.sh" colorize 1 & exit 0
