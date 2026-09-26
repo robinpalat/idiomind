@@ -6,6 +6,18 @@ function json_get_string() {
     local file="$1"
     local key="$2"
 
+    [ -f "$file" ] || return 1
+    [ -n "$key" ] || return 1
+
+    # Rama v2 (idiomind-topic/2, objeto único): lectura directa por clave.
+    # El camino legacy de abajo queda byte-idéntico.
+    if [ "$(sed -n '1p' "$file" 2>/dev/null)" != '{"items":{' ]; then
+        if jq -e '.format == "idiomind-topic/2"' "$file" >/dev/null 2>&1; then
+            jq -r --arg k "$key" '.[$k] // empty' "$file" 2>/dev/null
+            return 0
+        fi
+    fi
+
     local line
     local json=""
     local n=0
@@ -258,6 +270,105 @@ function check_format_1() {
         let n++
     done < <(sed -n 3p "$file"|sed 's/\",\"/\"\n\"/g'|tr -d '"}')
     return ${n}
+}
+
+# Formato v2 (idiomind-topic/2): valida el standalone multilingüe y exporta
+# las mismas variables que check_format_1 (name/slng/tlng/.../ilnk/note)
+# más IDMND_V2=1. Aquí slng es la LISTA declarada ("de,es,fr,it,pt"), NO un
+# idioma activo: el activo lo decide la configuración del usuario al instalar.
+function check_format_2() {
+    [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
+    source "$DS/default/sets.cfg"
+    source "$DS/ifs/cmns.sh"
+    file="${1}"
+    IDMND_V2=""
+    invalid2() {
+        msg "$(gettext "File is corrupted")\n[v2 $1]\n" dialog-error & exit 1
+    }
+    [ -f "${file}" ] || invalid2 "file"
+    jq empty "${file}" 2>/dev/null || invalid2 "json"
+    [ "$(jq -r '.format // empty' "${file}")" = "idiomind-topic/2" ] || invalid2 "format"
+    local n
+    n="$(jq '.items | length' "${file}" 2>/dev/null)" || invalid2 "items"
+    [[ "$n" =~ ^[0-9]+$ ]] && [ "$n" -ge 1 ] || invalid2 "count"
+    # Cabecera mínima + consistencia slng == claves src de CADA item (§9).
+    jq -e '(.ilnk // "" | length > 0) and (.name // "" | length > 0)
+        and (.tlng // "" | length > 0) and (.slng // "" | length > 0)' \
+        "${file}" >/dev/null 2>&1 || invalid2 "header"
+    if ! jq -e '(.slng | split(",") | sort) as $d
+        | ([.items[] | ((.src // {} | keys | sort) == $d)] | all)' \
+        "${file}" >/dev/null 2>&1; then
+        invalid2 "slng-src"
+    fi
+    if ! jq -e '[.items | to_entries[] |
+        select((.key | length) == 0 or (.value.trgt // "") == ""
+            or ([.value.src[] | select(.text == null or .text == "")]
+                | length > 0))] | length == 0' \
+        "${file}" >/dev/null 2>&1; then
+        invalid2 "items"
+    fi
+    # topic_hash recalculado con el mismo framing que lp_topic_hash.
+    local th th2
+    th="$(jq -r '.topic_hash // empty' "${file}")"
+    th2="$(jq -r '.items | keys_unsorted[]' "${file}" 2>/dev/null \
+        | awk 'NR>1{printf "\n"} {printf "%s",$0}' | sha256sum | cut -d' ' -f1)"
+    [ -n "$th" ] && [ "$th" = "$th2" ] || invalid2 "topic-hash"
+    # Exporta vars compatibles con el flujo de instalación legacy.
+    name="$(jq -r '.name' "${file}")"
+    slng="$(jq -r '.slng' "${file}")"
+    local tcode d
+    tcode="$(jq -r '.tlng' "${file}")"
+    tlng=""
+    for d in "${!tlangs[@]}"; do
+        if [ "${tlangs[$d]}" = "$tcode" ]; then tlng="$d"; break; fi
+    done
+    [ -n "$tlng" ] || invalid2 "tlng"
+    autr="$(jq -r '.autr // empty' "${file}")"
+    cntt="$(jq -r '.cntt // empty' "${file}")"
+    ctgy="$(jq -r '.ctgy // empty' "${file}")"
+    ilnk="$(jq -r '.ilnk' "${file}")"
+    orig="$(jq -r '.orig // empty' "${file}")"
+    dtec="$(jq -r '.dtec // empty' "${file}")"
+    dteu="$(jq -r '.dteu // empty' "${file}")"
+    dtei="$(jq -r '.dtei // empty' "${file}")"
+    nwrd="$(jq -r '.nwrd // empty' "${file}")"
+    nsnt="$(jq -r '.nsnt // empty' "${file}")"
+    nimg="$(jq -r '.nimg // empty' "${file}")"
+    naud="$(jq -r '.naud // empty' "${file}")"
+    nsze="$(jq -r '.nsze // empty' "${file}")"
+    levl="$(jq -r '.levl // empty' "${file}")"
+    info="$(jq -r '.info // empty' "${file}")"
+    stts="$(jq -r '.stts // empty' "${file}")"
+    export note="$info"
+    otranslations=""
+    export name slng tlng autr cntt ctgy ilnk orig dtec dteu dtei
+    export nwrd nsnt nimg naud nsze levl info stts otranslations
+    IDMND_V2=1
+    return 0
+}
+
+# Nombre display ("Italiano") a partir de código ("it"), vía slangs.
+# Sourcea sets.cfg aquí mismo: los assoc declarados dentro de otra
+# función serían locales a ella e invisibles desde aquí.
+function v2_display_name() {
+    local c="$1" d
+    source "$DS/default/sets.cfg"
+    for d in "${!slangs[@]}"; do
+        if [ "${slangs[$d]}" = "$c" ]; then printf '%s' "$d"; return 0; fi
+    done
+    return 1
+}
+
+# Materializa un topic.idmnd v2 a líneas data legacy (trgt{}/srce{}/...)
+# con el source elegido ($2 = código). srce{} queda 2º como exige colorize.
+# Solo lee el JSON; no toca red ni el .idmnd.
+function v2_materialize() {
+    local json="$1" code="$2" out="$3"
+    jq -r --arg c "$code" '
+        .items | to_entries[] | .key as $t | .value as $v
+        | ($v.src[$c] // {text: "", wrds: ""}) as $s
+        | "trgt{\($t)}srce{\($s.text)}exmp{\($v.exmp // "")}defn{\($v.defn // "")}note{\($v.note // "")}wrds{\($s.wrds // "")}grmr{\($v.grmr // "")}tags{\($v.tags // "")}mark{\($v.mark // "")}refr{\($v.refr // "")}imag{\($v.imag // "")}imgr{\($v.imgr // "")}link{\($v.link // "")}cdid{\($v.cdid // "")}type{\($v.type // "")}"' \
+        "$json" >"$out" 2>/dev/null
 }
 
 check_index() {
@@ -706,161 +817,6 @@ fback() {
 } >/dev/null 2>&1
 
 
-add_file() {
-    cd "$HOME"
-    FL=$(yad --file --title="$(gettext "Add File")" \
-    --text=" $(gettext "Browse to and select the file that you want to add.")" \
-    --name=Idiomind --class=Idiomind \
-    --file-filter="$(gettext "Supported files") \
-    | *.mp3 *.ogg *.mp4 *.m4v *.jpg *.jpeg *.png *.txt *.gif" \
-    --add-preview --multiple \
-    --window-icon="$DS/images/icon.png" --on-top --center \
-    --width=680 --height=500 --borders=5 \
-    --button="$(gettext "Cancel")":1 \
-    --button="$(gettext "OK")":0)
-    ret=$?
-    if [ $ret -eq 0 ]; then
-        while read -r file; do
-        [ -f "${file}" ] && cp -f "${file}" \
-        "${DM_tlt}/files/$(basename "$file" |iconv -c -f utf8 -t ascii)"
-        done <<<"$(tr '|' '\n' <<<"$FL")"
-    fi
-    
-} >/dev/null
-
-videourl() {
-    source "$DS/ifs/extensions/cmns.sh"
-    n=$(ls *.url "${DM_tlt}/files/" |wc -l)
-    url=$(yad --form --title=" " \
-    --name=Idiomind --class=Idiomind \
-    --separator="" \
-    --window-icon=$DS/images/logo.png \
-    --skip-taskbar --center --on-top \
-    --width=420 --height=100 --borders=5 \
-    --field="$(gettext "URL")" \
-    --button="$(gettext "Cancel")":1 \
-    --button=gtk-ok:0)
-    ret=$?
-    [ $ret = 1 -o -z "$url" ] && exit
-    if [ ${#url} -gt 40 ] && \
-        ([ ${url:0:29} = 'https://www.youtube.com/watch' ] \
-        || [ ${url:0:28} = 'http://www.youtube.com/watch' ]); then \
-        echo "$url" > "${DM_tlt}/files/video$n.url"
-    else 
-        msg "$(gettext "You have entered an invalid URL").\n" dialog-error \
-        "$(gettext "You have entered an invalid URL")"
-    fi
-}
-
-addFiles() {
-    yad --form --title="$(gettext "Resources")" \
-    --name=Idiomind --class=Idiomind \
-    ---window-icon=$DS/images/logo.png --center \
-    --width=320 --height=100 --borders=5 \
-    --field="$(gettext "Add files")":FBTN "$DS/ifs/tls.sh 'add_file'" \
-    --field="$(gettext "YouTube URL")":FBTN "$DS/ifs/tls.sh 'videourl'" \
-    --button="$(gettext "Save")!gtk-apply":0 \
-    --button="$(gettext "Cancel")":1
-    ret=$?
-    if [[ "$ch1" != "$(ls -A "${DM_tlt}/files")" ]] && [ $ret = 0 ]; then
-        mkindex
-    fi
-}
-
-attatchments() {
-    sz=(580 450)
-    source "$DS/ifs/extensions/cmns.sh"
-    mkindex() {
-rename 's/_/ /g' "${DM_tlt}/files"/*
-echo "<html><meta http-equiv=\"Content-Type\" \
-content=\"text/html; charset=UTF-8\" />
-<link rel=\"stylesheet\" \
-href=\"/usr/share/idiomind/default/attch.css\">\
-<body>" > "${DC_tlt}/att.html"
-while read -r file; do
-if grep ".mp3" <<<"${file: -4}"; then
-echo "${file::-4}<br><br><audio controls>
-<source src=\"../files/$file\" type=\"audio/mpeg\">
-</audio><br><br>" >> "${DC_tlt}/att.html"
-elif grep ".ogg" <<<"${file: -4}"; then
-echo "${file::-4}<audio controls>
-<source src=\"../files/$file\" type=\"audio/mpeg\">
-</audio><br><br>" >> "${DC_tlt}/att.html"; fi
-done <<<"$(ls "${DM_tlt}/files")"
-while read -r file; do
-if grep ".txt" <<<"${file: -4}"; then
-txto=$(sed ':a;N;$!ba;s/\n/<br>/g' \
-< "${DM_tlt}/files/$file" \
-| sed 's/\"/\&quot;/;s/\&/&amp;/g')
-echo "<div class=\"summary\">
-<h2>${file::-4}</h2><br>$txto \
-<br><br><br></div>" >> "${DC_tlt}/att.html"; fi
-done <<<"$(ls "${DM_tlt}/files")"
-while read -r file; do
-if grep ".mp4" <<<"${file: -4}"; then
-echo "${file::-4}<br><br>
-<video width=450 height=280 controls>
-<source src=\"../files/$file\" type=\"video/mp4\">
-</video><br><br><br>" >> "${DC_tlt}/att.html"
-elif grep ".m4v" <<<"${file: -4}"; then
-echo "${file::-4}<br><br>
-<video width=450 height=280 controls>
-<source src=\"../files/$file\" type=\"video/mp4\">
-</video><br><br><br>" >> "${DC_tlt}/att.html"
-elif grep ".jpg" <<<"${file: -4}"; then
-echo "${file::-4}<br><br>
-<img src=\"../files/$file\" alt=\"$name\" \
-style=\"width:100%;height:100%\"><br><br><br>" \
->> "${DC_tlt}/att.html"
-elif grep ".jpeg" <<<"${file: -5}"; then
-echo "${file::-5}<br><br>
-<img src=\"../files/$file\" alt=\"$name\" \
-style=\"width:100%;height:100%\"><br><br><br>" \
->> "${DC_tlt}/att.html"
-elif grep ".png" <<<"${file: -4}"; then
-echo "${file::-4}<br><br>
-<img src=\"../files/$file\" alt=\"$name\" \
-style=\"width:100%;height:100%\"><br><br><br>" \
->> "${DC_tlt}/att.html"
-elif grep ".url" <<<"${file: -4}"; then
-url=$(tr -d '=' < "${DM_tlt}/files/$file" \
-| sed 's|watch?v|embed\/|;s|https|http|g')
-echo "<iframe width=\"100%\" height=\"85%\" src=\"$url\" \
-frameborder=\"0\" allowfullscreen></iframe>
-<br><br>" >> "${DC_tlt}/att.html"
-elif grep ".gif" <<<"${file: -4}"; then
-echo "${file::-4}<br><br>
-<img src=\"../files/$file\" alt=\"$name\" \
-style=\"width:100%;height:100%\"><br><br><br>" \
->> "${DC_tlt}/att.html"; fi
-done <<<"$(ls "${DM_tlt}/files")"
-echo "</body></html>" >> "${DC_tlt}/att.html"
-
-} >/dev/null 2>&1
-    [ ! -d "${DM_tlt}/files" ] && mkdir "${DM_tlt}/files"
-    ch1="$(ls -A "${DM_tlt}/files")"
-    if [[ "$(ls -A "${DM_tlt}/files")" ]]; then
-        [ ! -e "${DC_tlt}/att.html" ] && mkindex
-         yad --html --title="$(gettext "Resources")" \
-        --name=Idiomind --class=Idiomind \
-        --encoding=UTF-8 --uri="${DC_tlt}/att.html" --browser \
-        --window-icon=$DS/images/logo.png --center \
-        --width=${sz[0]} --height=${sz[1]} --borders=10 \
-        --button="$(gettext "Folder")":"xdg-open \"${DM_tlt}\"/files" \
-        --button="$(gettext "Add")":0 \
-        --button="window-close":1
-        ret=$?
-        if [ $ret = 0 ]; then "$DS/ifs/tls.sh" addFiles
-        elif [ $ret = 2 ]; then "$DS/ifs/tls.sh" videourl; fi
-        
-        if [[ "$ch1" != "$(ls -A "${DM_tlt}/files")" ]]; then
-        mkindex; fi
-    else
-        addFiles
-    fi
-} >/dev/null 2>&1
-
-
 _definition() {
     source "$DS/ifs/cmns.sh"
     export query="$(sed 's/<[^>]*>//g' <<<"${2}")"
@@ -1053,10 +1009,10 @@ echo -e "yad --form --title=\"$(gettext "$tlng") / $active_trans\" \\
 --class=Idiomind --name=Idiomind --window-icon=$DS/images/logo.png \\
 --always-print-result --print-all \\
 --width=${sz[0]} --height=${sz[1]} --borders=5 \\
---text=\"$(gettext "Ready to translate")  <b>${cfg3}</b>  $(gettext "sentences with")  <b>${cfg4}</b>  $(gettext "words")\n\" \\
---on-top --buttons-layout=spread --scroll --center --separator='|\n' \\
---button=$(gettext \"Cancel\"):1 \\
---button=$(gettext \"Save\")!gtk-apply:0 \\" > "$DT/dlg"
+--text=\"<b>$(gettext "Manual Translation")</b>\n<b>${cfg3}</b>  $(gettext "sentences with")  <b>${cfg4}</b>  $(gettext "words")\n\" \\
+--on-top --scroll --center --separator='|\n' \\
+--button=$(gettext \"Save\")!gtk-apply:0 \\
+--button=$(gettext \"Cancel\"):1 \\" > "$DT/dlg"
 
 	(echo "#"; n=1
 	while read -r _item; do
@@ -1103,116 +1059,102 @@ echo -e "yad --form --title=\"$(gettext "$tlng") / $active_trans\" \\
 } >/dev/null 2>&1
 
 translate_to() {
+    # Contrato nuevo (sin diálogos de idioma, sin backups, sin listas):
+    #   origen = tlng del topic (id.tlng)  →  destino = slngcurrent.
+    # Silencioso salvo progress bar. Al terminar: active=slngcurrent y
+    # slng_err eliminado. Si falla, el estado anterior queda intacto
+    # (el swap solo ocurre con la traducción completa y validada).
     source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/cmns.sh"
     > "$DT/translate_to"
     source "$DS/default/sets.cfg"
-    [ ! -d "$DC_tlt/translations" ] && mkdir "$DC_tlt/translations"
-    list_transl_saved="$(cd "$DC_tlt/translations"; ls *.tra \
-    |sed 's/\.tra//g' |tr "\\n" '!' |sed 's/\!*$//g')"
-    list_transl=$(for i in "${!slangs[@]}"; do echo -n "!$i"; done)
-    list_transl_saved_WC="$(cd "$DC_tlt/translations"; ls *.tra |wc -l)"
-    if [ -f "${DC_tlt}/translations/active" ]; then
-        active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
-    fi
-    if [ -z "$active_trans" ]; then active_trans="$(tpc_db 1 id slng)"; fi
-    if [ -z "$active_trans" ]; then active_trans="Undefined"; fi
+    include "$DS/ifs/extensions/add"
 
-    if grep -F "$active_trans" <<< "${list_transl_saved}"; then
-    chk=TRUE; else chk=FALSE; fi
+    tto_fail() { # $1 = código
+        prog_kill 2>/dev/null || true
+        cleanups "$DT/words.trad_tmp" "$DT/index.trad_tmp" \
+            "$DT/mix_words.trad_tmp" "$DT/index.trad" "$DT/words.trad" \
+            "$DT/translate_to" "$DT/translation" "$DT/data.sql" \
+            "$DT/prog.fifo"
+        exit "$1"
+    }
 
-    if [ ${list_transl_saved_WC} -lt 1 ]; then
-        ldgl="$(yad --form --title="$(gettext "Native Language Settings")" \
-        --class=Idiomind --name=Idiomind \
-        --text="<big><b>$active_trans</b></big>"\\n \
-        --always-print-result --window-icon=$DS/images/logo.png \
-        --buttons-layout=end --center --on-top --align=left \
-        --width=400 --height=470 --borders=15 \
-        --field="":LBL " " \
-        --field="\n<b>$(gettext "Translation quality") </b> ":LBL " " \
-        --field="$(gettext "The quality of this translation was verified") ( $active_trans )":CHK "$chk" \
-        --field="<small>$(gettext "This topic has no verified translations.")</small>":LBL " " \
-        --field=" ":LBL " " \
-        --field="\\n<b>$(gettext "Automatic Translation")</b> ":LBL " " \
-        --field="$(gettext "Select native language:")":CB "${list_transl}" \
-        --field="<small>$(gettext "Note: translations from google translate service sometimes is inaccurate.")</small>":LBL " " \
-        --field=" ":LBL " " \
-        --field="<b>$(gettext "Manually Translation")</b>":fbtn "$DS/ifs/tls.sh transl_batch" \
-        --field=" ":LBL " " \
-        --button="$(gettext "Apply")"!gtk-apply:0 \
-        --button="$(gettext "Cancel")":1)"; ret="$?"
-    else
-        ldgl="$(yad --form --title="$(gettext "Native Language Settings")" \
-        --class=Idiomind --name=Idiomind \
-        --text="<big><b>$active_trans</b></big>"\\n \
-        --always-print-result --window-icon=$DS/images/logo.png \
-        --buttons-layout=end --center --on-top --align=left \
-        --width=400 --height=470 --borders=15 \
-        --field="":LBL " " \
-        --field="\n<b>$(gettext "Translation quality") </b> ":LBL " " \
-        --field="$active_trans — $(gettext "The quality of this translation was verified")":CHK "$chk" \
-        --field="$(gettext "Change native language:")":CB "!${list_transl_saved}" \
-        --field=" ":LBL " " \
-        --field="<b>$(gettext "Automatic Translation")</b> ":LBL " " \
-        --field="$(gettext "Select native language:")":CB "${list_transl}" \
-        --field="<small>$(gettext "Note: translations from google translate service sometimes is inaccurate.")</small>":LBL " " \
-        --field=" ":LBL " " \
-        --field="<b>$(gettext "Manually Translation")</b>":fbtn "$DS/ifs/tls.sh transl_batch" \
-        --field=" ":LBL " " \
-        --button="$(gettext "Apply")"!gtk-apply:0 \
-        --button="$(gettext "Cancel")":1)"; ret="$?"
-    fi
-    review_trans="$(cut -f4 -d'|' <<< "$ldgl")"
-    review_chek="$(cut -f3 -d'|' <<< "$ldgl")"
-    autom_trans="$(cut -f7 -d'|' <<< "$ldgl")"
-
-    if [ "$ret" = 0 ]; then
-        [ -e "${DC_tlt}/slng_err" ] && mv "${DC_tlt}/slng_err" "${DC_tlt}/slng_err.bk"
-        if [ "$review_chek" = TRUE ]; then
-            cp -f "${DC_tlt}/data" "${DC_tlt}/translations/$active_trans.tra"
-            echo "$active_trans" > "${DC_tlt}/translations/active"
-        elif [ "$review_chek" = FALSE ]; then
-            cleanups "${DC_tlt}/translations/$active_trans.tra"
+    # Progress bar con avance real X/N. UNA SOLA barra durante todo el proceso.
+    # Protocolo yad: línea con número = porcentaje, línea "# ..." = texto.
+    # Se alimenta por fifo para no bloquear el trabajo; el diálogo se cierra
+    # por EOF (éxito) o kill (fallo/interrupción). Nunca quedan procesos ni
+    # fds abiertos.
+    _yadpid=""; _progon=""
+    prog() { # $1 = %; $2 = texto opcional
+        [ -n "${_progon:-}" ] || return 0
+        { printf '%s\n' "$1"; [ -n "${2:-}" ] && printf '# %s\n' "$2"; } >&9 2>/dev/null || true
+    }
+    prog_end() { # cierre limpio al terminar (éxito): 100% + EOF + reap
+        [ -n "${_progon:-}" ] || return 0
+        printf '100\n' >&9 2>/dev/null || true
+        exec 9>&- 2>/dev/null || true
+        _progon=""
+        if [ -n "${_yadpid:-}" ]; then
+            wait "$_yadpid" 2>/dev/null || true
+            _yadpid=""
         fi
-        if [ "$review_trans" != "$active_trans" -a -n "$review_trans" -a "$review_trans" != "(null)" ]; then
-            if [ -e "${DC_tlt}/translations/$review_trans.tra" ]; then
-                yad_kill "yad --form --title="
-                cp -f "${DC_tlt}/translations/$review_trans.tra" "${DC_tlt}/data"
-                echo "$review_trans" > "${DC_tlt}/translations/active"
-            fi
-        elif [ -n "$autom_trans" -a "$autom_trans" != "(null)" ]; then
-            yad_kill "yad --form --title="
-            if grep -F "$autom_trans" <<< "$(cd "$DC_tlt/translations"; ls *.bk 2>/dev/null)"; then
-                msg_2 "$(gettext "There is a copy of this translation. Do you want to restore the copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
-                if [ $? = 0 ]; then
-                    mv -f "$DC_tlt/translations/$autom_trans.bk" "${DC_tlt}/data"
-                    cleanups "$DT/translation" "$DT/transl_batch_lk" \
-                    "$DT/translate_to" "${DC_tlt}/slng_err.bk"
-                    echo "$autom_trans" > "${DC_tlt}/translations/active"
-                    exit 1
-                else
-                    cleanups "$DC_tlt/translations/$autom_trans.bk"
-                fi
-            fi
-            if grep -F "$autom_trans" <<< "$(cd "$DC_tlt/translations"; ls *.tra 2>/dev/null)"; then
-                msg_2 "$(gettext "There is a verified translation for this language. Do you want to use this copy instead of translating again?")" dialog-question "$(gettext "Restore")" "$(gettext "Translate Again")" " "
-                if [ $? = 0 ]; then
-                    cp -f "$DC_tlt/translations/$autom_trans.tra" "${DC_tlt}/data"
-                    echo "$autom_trans" > "${DC_tlt}/translations/active"
-                    cleanups "$DT/translation" "$DT/transl_batch_lk" \
-                    "$DT/translate_to" "${DC_tlt}/slng_err.bk"
-                    exit 1
-                fi
-                fi
+        rm -f "$DT/prog.fifo"
+    }
+    prog_kill() { # cierre en fallo/interrupción: sin 100%, kill + reap
+        [ -n "${_progon:-}" ] || return 0
+        exec 9>&- 2>/dev/null || true
+        _progon=""
+        if [ -n "${_yadpid:-}" ]; then
+            kill "$_yadpid" 2>/dev/null || true
+            wait "$_yadpid" 2>/dev/null || true
+            _yadpid=""
+        fi
+        rm -f "$DT/prog.fifo"
+    }
+
+    # 1. Idiomas automáticos desde el estado actual del runtime.
+    topic_tlng="$(tpc_db 1 id tlng)"
+    [ -n "$topic_tlng" ] || tto_fail 1
+    lgt="${tlangs[$topic_tlng]:-}"
+    [ -n "$lgt" ] || tto_fail 1
+    tl="${slangs[$slng]:-}"
+    [ -n "$tl" ] || tto_fail 1
+
+    # Nada que hacer si ya está en el idioma del usuario y sin slng_err
+    # (el flujo compatible normal no se ve afectado).
+    active_cur="$(sed -n 1p "${DC_tlt}/translations/active" 2>/dev/null)"
+    [ -z "$active_cur" ] && active_cur="$(tpc_db 1 id slng)"
+    if [ "$active_cur" = "$slng" ] && [ ! -f "${DC_tlt}/slng_err" ]; then
+        cleanups "$DT/translate_to"
+        exit 0
+    fi
 
             > "$DT/words.trad_tmp"; > "$DT/index.trad_tmp"; > "$DT/translation"
             del='~~'
             internet
-            l=$(tpc_db 1 lang tlng)
-            if [ -n "$l" ]; then lgt=${tlangs[$l]}; else lgt=${tlangs[$tlng]}; fi
-            tl=${slangs[$autom_trans]}
-            include "$DS/ifs/extensions/add"
             c1=0
+
+            # Diálogo de progreso (solo si hay DISPLAY): lector en background,
+            # escritor (fd 9) en este proceso. SIGPIPE ignorado para que un
+            # lector caído nunca tumbe la traducción (los writes fallan en
+            # silencio y el resultado sigue siendo correcto).
+            rm -f "$DT/prog.fifo"
+            if command -v yad >/dev/null 2>&1 && [ -n "${DISPLAY:-}" ] \
+                && mkfifo "$DT/prog.fifo" 2>/dev/null; then
+                yad --progress --auto-close --no-buttons --on-top \
+                    --title="Idiomind" --text="$(gettext "Translating")" \
+                    --window-icon=$DS/images/logo.png \
+                    --width=350 --borders=18 <"$DT/prog.fifo" 2>/dev/null &
+                _yadpid=$!
+                if exec 9>"$DT/prog.fifo" 2>/dev/null; then
+                    _progon=1
+                    trap '' PIPE
+                    trap 'tto_fail 130' INT TERM
+                    prog 2 "$(gettext "Translating")"
+                else
+                    prog_kill
+                fi
+            fi
 
             pretrans() {
                 while read -r item_; do
@@ -1244,11 +1186,13 @@ translate_to() {
                     || [ ! -s "$DT/index.trad" ]; then
                     return 1
                 fi
+                prog 35
                 sleep 1
                 if ! translate "${words_to_trad}" "$lgt" "$tl" > "$DT/words.trad" \
                     || [ ! -s "$DT/words.trad" ]; then
                     return 1
                 fi
+                prog 60
                 sed -i ':a;N;$!ba;s/\n/ /g' "$DT/index.trad"
                 sed -i "s/${del}n/\n/g" "$DT/index.trad"
                 sed -i "s/${del}/\n/g" "$DT/index.trad"
@@ -1265,13 +1209,14 @@ translate_to() {
             ( notify-send -i info "$(gettext "Translating")" \
             "$(gettext "Please wait ...")" -t 8000 ) &
 
+            # NOTA: se eliminó la segunda barra pulsante que se lanzaba aquí.
+            # Dejaba un proceso yad huérfano (nunca se hacía wait/kill sobre
+            # él) y sobrescribía _yadpid, rompiendo el cierre de la barra de
+            # avance real. La barra lanzada arriba es suficiente y se cierra
+            # sola con prog_end (éxito) o prog_kill (fallo/interrupción).
+
             if ! pretrans; then
-                msg "$(gettext "The translation service returned no text.")\n" 'dialog-warning'
-                cleanups "$DT/words.trad_tmp" "$DT/index.trad_tmp" \
-                "$DT/mix_words.trad_tmp" "$DT/index.trad" "$DT/words.trad" \
-                "$DT/translate_to" "$DT/translation"
-                [ -e "${DC_tlt}/slng_err.bk" ] && mv "${DC_tlt}/slng_err.bk" "${DC_tlt}/slng_err"
-                exit 1
+                tto_fail 1
             fi
 
             c1=$(grep -c '[^[:space:]]' "$DT/index.trad_tmp")
@@ -1281,29 +1226,23 @@ translate_to() {
                 [[ ${c1} == ${c2} ]] && break
                 > "$DT/words.trad_tmp"; > "$DT/index.trad_tmp"
                 if ! pretrans; then
-                    msg "$(gettext "The translation service returned no text.")\n" 'dialog-warning'
-                    cleanups "$DT/words.trad_tmp" "$DT/index.trad_tmp" \
-                    "$DT/mix_words.trad_tmp" "$DT/index.trad" "$DT/words.trad" \
-                    "$DT/translate_to" "$DT/translation"
-                    [ -e "${DC_tlt}/slng_err.bk" ] && mv "${DC_tlt}/slng_err.bk" "${DC_tlt}/slng_err"
-                    exit 1
+                    tto_fail 1
                 fi
                 c2=$(wc -l < "$DT/index.trad")
             done
             if [[ ${c1} != ${c2} ]]; then
-                msg "$(gettext "There was a problem with the translation;\nSome items were not translated correctly.")\n" 'dialog-warning'
+                tto_fail 2
             fi
             if [ ! -s "$DT/index.trad" -o ! -s "$DT/words.trad" ]; then
-                msg "$(gettext "A problem has occurred, try again later.")\n" 'dialog-warning'
-                cleanups "$DT/words.trad_tmp" "$DT/index.trad_tmp" \
-                "$DT/mix_words.trad_tmp" "$DT/translate_to" "$DT/translation"
-                [ -e "${DC_tlt}/slng_err.bk" ] && mv "${DC_tlt}/slng_err.bk" "${DC_tlt}/slng_err"
-                exit 1
+                tto_fail 1
             fi
 
             mapfile -t trad_index < "$DT/index.trad"
             mapfile -t trad_mix < "$DT/mix_words.trad_tmp"
 
+            # Actualización DB en el mismo bucle (una sola pasada).
+            _sql() { printf '%s' "$1" | sed "s/'/''/g"; }
+            printf 'BEGIN;\n' > "$DT/data.sql"
             n=0
             while read -r item_; do
                 [ ! -f "$DT/translation" ] && break
@@ -1326,23 +1265,38 @@ translate_to() {
                     "$trgt" "$srce" "$exmp" "$defn" "$note" "$wrds" "$grmr" \
                     "$tags" "$mark" "$refr" "$imag" "$link" "$cdid" "$type" \
                     >> "$DT/translation"
+                printf "UPDATE Data SET srce='%s',wrds='%s' WHERE trgt='%s';\n" \
+                    "$(_sql "$srce")" "$(_sql "$wrds")" "$(_sql "$trgt")" \
+                    >> "$DT/data.sql"
             let n++
+            # Avance real X/N durante el rebuild (60% -> 95%).
+            if [ "$c1" -gt 0 ]; then
+                prog $((60 + 35*n/c1)) "$n / $c1"
+            fi
             done < "${DC_tlt}/data"
+            printf 'COMMIT;\n' >> "$DT/data.sql"
             unset item type trgt srce exmp defn note grmr mark link tag cdid
             rm -f "$DT"/*.tmp "$DT"/*.trad "$DT"/*.trad_tmp 2>/dev/null
 
-            if [ -e "$DT/translation" ]; then
-                mv -f "${DC_tlt}/data" "${DC_tlt}/translations/$active_trans.bk"
-                mv -f "$DT/translation" "${DC_tlt}/data"
-                echo "$autom_trans" > "${DC_tlt}/translations/active"
+            # Commit sin backups: solo si la traducción está completa.
+            # data esperado = líneas no vacías del data instalado.
+            n_data="$(grep -c '[^[:space:]]' "${DC_tlt}/data")"
+            n_new="$(grep -c '[^[:space:]]' "$DT/translation" 2>/dev/null)"
+            if [ ! -s "$DT/translation" ] || [ "$n_data" != "$n_new" ]; then
+                tto_fail 2
             fi
-        fi
-        active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
-        if [[ "$active_trans" != "$slng" ]]; then
-            touch "${DC_tlt}/slng_err"
-        fi
-    fi
-    cleanups "$DT/translate_to" "${DC_tlt}/slng_err.bk"
+            mv -f "$DT/translation" "${DC_tlt}/data"
+            sqlite3 "${DC_tlt}/tpc" < "$DT/data.sql" >/dev/null 2>&1 \
+                || tto_fail 2
+            rm -f "$DT/data.sql"
+            mkdir -p "${DC_tlt}/translations"
+            printf '%s\n' "$slng" > "${DC_tlt}/translations/active"
+            rm -f "${DC_tlt}/slng_err"
+            # Refresca índice/tooltip con el nuevo source.
+            prog 97
+            "$DS/ifs/tls.sh" colorize 1 >/dev/null 2>&1 || true
+            prog_end
+    cleanups "$DT/translate_to"
 } >/dev/null 2>&1
 
 update_addons() {
@@ -1455,6 +1409,16 @@ colorize() {
 				exit 1
 			fi
 
+			# v2 + idioma solicitado no disponible (slng_err): no mostrar
+			# una fuente incorrecta en el tooltip; la lista sigue con trgt.
+			# Legacy intacto (sin marcador idmnd_v2 no cambia nada).
+			# Se usa el dir de $index (exportado al subshell) en vez de
+			# $DC_tlt, que no siempre está exportado aquí.
+			_idx_dir="$(dirname "$index")"
+			if [ -f "$_idx_dir/slng_err" ] && [ -f "$_idx_dir/idmnd_v2" ]; then
+				srce=""
+			fi
+
 			if in_array "$item" "${marks_lines[@]}"; then
 				i="<b><big>${item}</big></b>"
 			else
@@ -1562,14 +1526,6 @@ case "$1" in
     _restore_backup "$@" ;;
     check_index)
     check_index "$@" ;;
-    addFiles)
-    addFiles "$@" ;;
-    videourl)
-    videourl "$@" ;;
-    add_file)
-    add_file "$@" ;;
-    attatchs)
-    attatchments "$@" ;;
     add_audio)
     add_audio "$@" ;;
     help)

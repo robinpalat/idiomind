@@ -3,6 +3,26 @@
 
 
 function vwr() {
+    # v2 + idioma solicitado no disponible: no abrir tarjeta con source
+    # incorrecto. Diálogo con traducción automática (mecanismo existente
+    # sobre el topic instalado); al quedar compatible se abre la tarjeta.
+    # Legacy intacto (sin marcador idmnd_v2 no cambia nada).
+    if [ -f "${DC_tlt}/slng_err" ] && [ -f "${DC_tlt}/idmnd_v2" ]; then
+        yad --title="Idiomind" --class=Idiomind --name=Idiomind \
+        --text="$(gettext "This topic has no source in your language.")\n" \
+        --window-icon=$DS/images/logo.png --center --on-top --fixed \
+        --width=420 --borders=12 \
+        --button="$(gettext "Automatic translation")":0 \
+        --button="$(gettext "Close")":1
+        if [ $? -eq 0 ]; then
+            "$DS/ifs/tls.sh" translate
+            if [ -f "${DC_tlt}/slng_err" ]; then
+                return 1
+            fi
+        else
+            return 1
+        fi
+    fi
     if [ ${1} = 1 ]; then 
         index="$(tpc_db 5 learning)"
         item_name="$(sed 's/<[^>]*>//g' <<< "${2}")"
@@ -170,8 +190,17 @@ function notebook_1() {
     cat "${DC_tlt}/index"; else [ -n "${ls1}" ] && echo -e "${ls1}" | \
     awk '{print ""$0"\nFALSE\n"""}'; fi; }
 
-    list | add_pos_col | yad --list --tabnum=1 --window-icon=idiomind \
-    --plug=$KEY --print-all --separator='|' \
+    # Live list: an external add.sh can append rows while open via --listen.
+    # Fifo path formula is duplicated in ifs/extensions/add/add.sh index().
+    listfifo="$DT/list_$(printf '%s' "$tpc" | md5sum | cut -c1-12).fifo"
+    rm -f "$listfifo"; mkfifo "$listfifo" 2>/dev/null
+    listfeed() {
+        list | add_pos_col
+        while [ -p "$listfifo" ]; do timeout 5 cat "$listfifo" 2>/dev/null; done
+    }
+
+    listfeed | yad --list --tabnum=1 --window-icon=idiomind \
+    --plug=$KEY --print-all --separator='|' --listen --tail \
     --image="$DS/images/$((stts%2)).png" --image-on-top \
     --dclick-action="$DS/vwr.sh 1" \
     --print-column=1 --expand-column=1 --grid-lines=hor  --no-headers \

@@ -241,10 +241,34 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
         media_src="$tmpdir"
     fi
 
-    check_format_1 "${file}"
-    if [ $? != 19 ]; then
-        cleanups "$tmpdir"
-        msg "$(gettext "File format corrupted")\n" dialog-error "$(gettext "Information")" & exit 1
+    # Puerta de formato: v2 (objeto único) vs legacy (3 líneas L1/L2/L3).
+    # El camino legacy queda byte-idéntico.
+    IDMND_V2=""; V2_PICK=""; V2_PICK_DISPLAY=""; V2_UCODE=""
+    if jq -e '.format == "idiomind-topic/2"' "${file}" >/dev/null 2>&1; then
+        check_format_2 "${file}" || {
+            cleanups "$tmpdir"
+            msg "$(gettext "File format corrupted")\n" dialog-error "$(gettext "Information")" & exit 1
+        }
+        # v2: idioma elegido = configurado si existe en src; si no, es (o 1º).
+        # Los packs externos no participan en v2.
+        # (sets.cfg aquí: slangs es function-local donde se sourcea.)
+        source "$DS/default/sets.cfg"
+        V2_UCODE="${slangs[$slngcurrent]:-}"
+        if [ -n "$V2_UCODE" ] && jq -e --arg c "$V2_UCODE" \
+            '.items | to_entries[0].value.src | has($c)' "${file}" >/dev/null 2>&1; then
+            V2_PICK="$V2_UCODE"
+        else
+            V2_PICK="$(jq -r '.items | to_entries[0].value.src | keys | if index("es") then "es" else sort[0] end' "${file}")"
+            V2_UCODE=""
+        fi
+        V2_PICK_DISPLAY="$(v2_display_name "$V2_PICK" 2>/dev/null)" || V2_PICK_DISPLAY="$V2_PICK"
+        if [ -z "$V2_PICK_DISPLAY" ]; then V2_PICK_DISPLAY="$V2_PICK"; fi
+    else
+        check_format_1 "${file}"
+        if [ $? != 19 ]; then
+            cleanups "$tmpdir"
+            msg "$(gettext "File format corrupted")\n" dialog-error "$(gettext "Information")" & exit 1
+        fi
     fi
     c=$((RANDOM%100000)); export KEY=$c
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
@@ -255,6 +279,18 @@ $level \n$(gettext "Language:") $(gettext "$tlng"),  $(gettext "Translation:") $
     dclk="$DS/play.sh play_word"
     source "$DS/ifs/extensions/main/items_list.sh"
 	_lst() {
+		# v2: la vista previa sale de las líneas ya materializadas
+		# (forma legacy trgt{}/srce{}); el parser legacy sigue igual.
+		if [ -n "${IDMND_V2:-}" ] && [ -n "${IDMND_PREVIEW_DATA:-}" ] \
+		&& [ -f "$IDMND_PREVIEW_DATA" ]; then
+			while IFS= read -r line || [[ -n "$line" ]]; do
+				[ -z "${line//[[:space:]]/}" ] && continue
+				_t="$(grep -oP '(?<=trgt\{)[^}]*' <<< "$line" | head -n1)"
+				_s="$(grep -oP '(?<=srce\{)[^}]*' <<< "$line" | head -n1)"
+				printf '%s\n%s\n' "$_t" "$_s"
+			done < "$IDMND_PREVIEW_DATA"
+			return 0
+		fi
 		while read -r line; do
 			cut -d ':' -f1 <<< "${line}" | sed 's/\"*//;s/\"$//'
 			cut -d ':' -f3 <<< "${line}" | sed 's/\"*//;s/\"$//;s/\",\"slch//'
@@ -274,13 +310,17 @@ $level \n$(gettext "Language:") $(gettext "$tlng"),  $(gettext "Translation:") $
 			export IDMND_PREVIEW_MEDIA="$media_src"
 
 			P_DATA="$media_src/topic_data"
-			
-			
+
+		if [ -n "${IDMND_V2:-}" ]; then
+			v2_materialize "${file}" "$V2_PICK" "$P_DATA" \
+			|| { cleanups "$tmpdir"; msg "$(gettext "File format corrupted")\n" dialog-error "$(gettext "Information")" & exit 1; }
+		else
 			sed -n 2p "${file}" |tr -d '\\' > "$P_DATA"
 			sed -i 's/},/}\n/g;s|","|}|g;s|":"|{|g;s|":{"|}|g;s/"}/}/g' "$P_DATA"
 			sed -i 's/^\s*./trgt{/g' "$P_DATA"
 			sed -i '/^$/d' "$P_DATA"
-			export IDMND_PREVIEW_DATA="$P_DATA"
+		fi
+		export IDMND_PREVIEW_DATA="$P_DATA"
 		fi
 
     tpc_view
@@ -343,10 +383,15 @@ $(gettext "It is recommended to change your language preferences before installi
 				msg "$(gettext "File format corrupted")\n" dialog-error "$(gettext "Information")" & exit 1
 			fi
             
-            sed -n 2p "${file}" |tr -d '\\' > "${DC_tlt}/data"
-            sed -i 's/},/}\n/g;s|","|}|g;s|":"|{|g;s|":{"|}|g;s/"}/}/g' "${DC_tlt}/data"
-            sed -i 's/^\s*./trgt{/g' "${DC_tlt}/data"
-            sed -i '/^$/d' "${DC_tlt}/data"
+            if [ -n "${IDMND_V2:-}" ]; then
+                v2_materialize "${file}" "$V2_PICK" "${DC_tlt}/data" \
+                || { cleanups "$tmpdir"; msg "$(gettext "File format corrupted")\n" dialog-error "$(gettext "Information")" & exit 1; }
+            else
+                sed -n 2p "${file}" |tr -d '\\' > "${DC_tlt}/data"
+                sed -i 's/},/}\n/g;s|","|}|g;s|":"|{|g;s|":{"|}|g;s/"}/}/g' "${DC_tlt}/data"
+                sed -i 's/^\s*./trgt{/g' "${DC_tlt}/data"
+                sed -i '/^$/d' "${DC_tlt}/data"
+            fi
             export data="${DC_tlt}/data"
             
 			# Parse topic data and populate the SQLite database.
@@ -537,6 +582,20 @@ $(gettext "It is recommended to change your language preferences before installi
             slngtopic="$slng"; slng="$slngcurrent"
             cdb "${cfgdb}" 3 lang tlng "${tlng}"
             cdb "${cfgdb}" 3 lang slng "${slng}"
+            if [ -n "${IDMND_V2:-}" ]; then
+                # v2: el source ya viene materializado del .idmnd.
+                # Sin lfetch, sin Google, sin inventar idiomas.
+                # slng_err = instalado pero el idioma del usuario no disponible.
+                printf '%s\n' "$ilnk" > "${DC_tlt}/idmnd_v2"
+                tpc_db 9 id slng "$V2_PICK_DISPLAY"
+                if [ -n "$V2_UCODE" ] && [ "$V2_PICK" = "$V2_UCODE" ]; then
+                    : # compatible: sin active ni slng_err (como legacy match)
+                else
+                    mkdir -p "${DC_tlt}/translations/"
+                    echo "$V2_PICK_DISPLAY" > "${DC_tlt}/translations/active"
+                    touch "${DC_tlt}/slng_err"
+                fi
+            else
             # LanguagePack optimization layer (aditiva y reversible).
             # lfetch = Language Fetcher: localizar/descargar/validar/cachear/
             # instalar el pack remoto antes del fallback existente.
@@ -553,6 +612,7 @@ $(gettext "It is recommended to change your language preferences before installi
                 mkdir "${DC_tlt}/translations/"
                 echo "$slngtopic" > "${DC_tlt}/translations/active"
                 touch "${DC_tlt}/slng_err"
+            fi
             fi
             if [[ "$tlng" != "$tlngcurrent" ]]; then
                 if [[ -f "$DT/tray.pid" ]]; then
@@ -685,7 +745,7 @@ function topic() {
         export lbl1 label_serie
     }
     
-    oclean() { cleanups "$cnf1" "$cnf3" "$cnf4" "$DT/tpc_lk"; }
+    oclean() { cleanups "$cnf1" "$cnf3" "$cnf4" "$DT/tpc_lk"; rm -f "$DT"/list_*.fifo 2>/dev/null; }
     
     apply() {
             note_mod="$(< "${cnf3}")"

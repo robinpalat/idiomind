@@ -24,7 +24,7 @@
 #   $4 = "singleline" (optional) — collapse output to one line
 #   Stdout = translated text
 
-TLANGS="zh-cn, en, ja, pt, es, ru, it, de, fr"
+TLANGS="af, ar, az, be, bg, ca, da, de, el, en, es, fa, fi, fil, fr, hu, hy, it, iw, ja, ka, kk, ko, lt, mg, mk, ml, mn, mt, nl, no, pl, ps, pt, ro, ru, sk, sl, so, sr, sv, sw, tr, uk, ur, uz, vi, zh-cn, zh-CN, zh-HK, zh-TW"
 USEDTO="Translate text (online)"
 
 INFO="Online translator
@@ -42,7 +42,7 @@ Google Inc.
 2. This script is NOT a Google product. Neither this software nor
 its author is affiliated with Google Inc."
 
-LANGUAGES="Chinese, English, French, German, Italian, Japanese, Portuguese, Russian, Spanish, Vietnamese"
+LANGUAGES="Afrikaans, Arabic, Azerbaijani, Belarusian, Bulgarian, Catalan, Chinese, Danish, Dutch, English, Finnish, French, German, Greek, Italian, Japanese, Norwegian, Polish, Portuguese, Russian, Spanish, Swedish, Turkish, Vietnamese"
 INFOAPI="https://developers.google.com/translate/"
 STATUS="Ok"
 VOICES=""
@@ -62,8 +62,9 @@ if [[ "$1" != '_dclk_' ]]; then
     gtra="$(wget -U "$useragent" -qO - "$link")"
 
     # Parse the response. Google returns different JSON structures
-    # for CJK languages (ja, zh-cn, ru) vs European languages.
-    if grep -o -E 'ja|zh-cn|ru' <<< "${3}" >/dev/null 2>&1; then
+    # for CJK languages (ja, zh-cn, ru) vs all other languages.
+    # Matches son exactos (^...$): sin coincidencias por subcadena.
+    if grep -E '^(ja|zh-cn|ru)$' <<< "${3}" >/dev/null 2>&1; then
         if [[ "$4" = singleline ]]; then
             echo -e "${gtra}" |
                 sed -e 's/\",\".*//g' |
@@ -80,7 +81,7 @@ if [[ "$1" != '_dclk_' ]]; then
             )
         fi
 
-    elif grep -o -E 'de|en|es|fr|it|pt|vi' <<< "${3}" >/dev/null 2>&1; then
+    elif grep -E '^(af|ar|az|be|bg|ca|da|de|el|en|es|fa|fi|fil|fr|hu|hy|it|iw|ka|kk|ko|lt|mg|mk|ml|mn|mt|nl|no|pl|ps|pt|ro|sk|sl|so|sr|sv|sw|tr|uk|ur|uz|vi|zh-CN|zh-HK|zh-TW)$' <<< "${3}" >/dev/null 2>&1; then
         if [[ "$4" = singleline ]]; then
             echo -e "${gtra}" |
                 sed -e 's/\",\".*//g' |

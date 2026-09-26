@@ -53,6 +53,23 @@ function mksure() {
     return $e
 }
 
+# Pushes a row to the open topic dialog's live list (if any).
+# The dialog (notebook_1 in ifs/extensions/main/items_list.sh) feeds its
+# yad --list --listen from $DT/list_<md5(tpc)>.fifo; the fifo exists only
+# while that topic's dialog is open, and only for the open topic, so notes
+# added to other topics are never pushed. The O_RDWR open never blocks even
+# with no reader (crash residue): a 4-line row always fits in the pipe buffer.
+function live_list_push() {
+    local _trgt="$1" _srce="$2" _lf _pos
+    _lf="$DT/list_$(printf '%s' "${tpe}" | md5sum | cut -c1-12).fifo"
+    [ -p "$_lf" ] || return 0
+    _pos=$(tpc_db 5 learning | grep -Fxon -m1 -e "${_trgt}" | cut -d: -f1)
+    [ -n "$_pos" ] || return 0
+    exec 9<>"$_lf" 2>/dev/null || return 0
+    printf '%s\n%s\n%s\n%s\n' "${_trgt}" "${_pos}" "FALSE" "${_srce}" >&9 2>/dev/null || true
+    exec 9>&- 2>/dev/null || true
+}
+
 function index() {
 	
 	lockfile="$DT/i_lk"
@@ -95,6 +112,7 @@ function index() {
                     "${wrds}" "${grmr}" "${tags}" "${mark}" "${refr}" \
                     "${imag}" "${link}" "${cdid}" "${type}"
                     echo -e "${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
+                    live_list_push "${trgt}" "${srce}"
                     eval newline="$(sed -n 2p $DS/default/vars)"
                     echo "${newline}" >> "${DC_tlt}/data"
                 
@@ -106,6 +124,7 @@ function index() {
                     "${wrds}" "${grmr}" "${tags}" "${mark}" "${refr}" \
                     "${imag}" "${link}" "${cdid}" "${type}"
                     echo -e "${trgt}\nFALSE\n${srce}" >> "${DC_tlt}/index"
+                    live_list_push "${trgt}" "${srce}"
                     eval newline="$(sed -n 2p $DS/default/vars)"
                    echo "${newline}" >> "${DC_tlt}/data"
                 fi

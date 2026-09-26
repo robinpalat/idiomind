@@ -176,10 +176,26 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
 	
     if [ -e "$DC_s/topics_first_run" -a -z "${1}" ]; then exit 1; fi
 	
-    tpc=$(cat "$DM_tl/.share/index" | \
+    tpc=""
+    # Live index: new-topic prepends rows while open via --listen.
+    # Fifo path formula is duplicated in add.sh new-topic-live.
+    # Single instance is guarded by mn_lk above, so a fixed name is safe.
+    tpcfifo="$DT/topics_fifo"
+    rm -f "$tpcfifo"; mkfifo "$tpcfifo" 2>/dev/null
+    tpcfeed() {
+        # --add-on-top antepone CADA fila entrante (también la carga
+        # inicial), así que el índice se vuelca invertido por pares para
+        # conservar el orden por mtime (nuevos arriba). Los push en vivo
+        # ya llegan en orden y caen arriba como corresponde.
+        cat "$DM_tl/.share/index" 2>/dev/null | tac | awk 'NR%2==1{h=$0;next}{print $0"\n"h}'
+        while [ -p "$tpcfifo" ]; do timeout 5 cat "$tpcfifo" 2>/dev/null; done
+    }
+
+    tpc=$(tpcfeed | \
     yad --list --title="$(gettext "My topics")" "${var1}" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-column=2 --separator="" \
+    --listen --add-on-top \
     --window-icon=$DS/images/logo.png \
     --text-align=left $var2 --image-on-top \
     --no-headers --ellipsize=END --expand-column=2 \
@@ -189,14 +205,13 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
     --column=File:TEXT \
     --button=""!preferences-system:$DS/cnfg.sh \
     --button="$(gettext "Stats")":"'$DS/ifs/tls.sh' _stats" \
-    --button="$(gettext "New")"!document-new:3 \
+    --button="$(gettext "New")"!document-new:"$DS/add.sh new-topic-live" \
     --button="$(gettext "Apply")":2 \
     --button="$(gettext "Close")"!window-close:1)
     ret=$?
-	
-    if [ $ret -eq 3 ]; then
-            "$DS/add.sh" new-topic
-    elif [ -n "${tpc}" ]; then
+    rm -f "$tpcfifo" 2>/dev/null
+
+    if [ -n "${tpc}" ]; then
         mode="$(< "$DM_tl/${tpc}/.conf/stts")"
         numer='^[0-9]+$'
         ! [[ ${mode} =~ $numer ]] && echo 13 > \

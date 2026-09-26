@@ -907,6 +907,21 @@ new_items() {
 case "$1" in
     new_topic|new-topic)
     new_topic "$@" ;;
+    # Live variant for the topics index (chng.sh): creates quietly
+    # (activ=0, no topic dialog) and prepends the row to the open list
+    # via $DT/topics_fifo (--listen --add-on-top). The button that runs
+    # this is a command-button, so the list never closes.
+    new-topic-live)
+    new_topic "" "" "0"
+    if [ $? -eq 0 ] && [ -n "${name}" ] && [ -p "$DT/topics_fifo" ]; then
+        stts_new=$(sed -n 1p "$DM_tl/${name}/.conf/stts" 2>/dev/null)
+        [[ "$stts_new" =~ ^[0-9]+$ ]] || stts_new=1
+        exec 9<>"$DT/topics_fifo" 2>/dev/null && {
+            printf '%s\n%s\n' "$DS/images/img.${stts_new}.png" "${name}" >&9 2>/dev/null || true
+            exec 9>&- 2>/dev/null || true
+        }
+    fi
+    exit 0 ;;
     new_item)
     new_item "$@" ;;
     new_items)
