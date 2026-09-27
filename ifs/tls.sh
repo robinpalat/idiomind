@@ -202,76 +202,6 @@ function json_get_string() {
 }
 
 
-
-function check_format_1() {
-    [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
-    source "$DS/default/sets.cfg"
-    lgt=${tlangs[$tlng]}
-    lgs=${slangs[$slng]}
-    source "$DS/ifs/cmns.sh"
-    file="${1}"
-    invalid() {
-        echo "Error! Value: ${val}"
-        msg "$(gettext "File is corrupted")\n[${1}]\n" dialog-error & exit 1
-    }
-    if [ ! -f "${file}" ]; then invalid
-    elif ! python3 -m json.tool < "${file}" >> /dev/null; then
-        invalid "Format"
-    elif [ $(wc -l < "${file}") != 3 ]; then 
-        invalid "$(wc -l < "${file}") Lines!"
-    elif [ $(sed -n 1p "$file" |tr -d '"{' |cut -d':' -f1) != 'items' ]; then
-        invalid
-    fi
-    shopt -s extglob; n=0
-    while read -r line; do
-        if [ -z "$line" ]; then continue; fi
-        val="$(cut -d ':' -f2 <<< "${line}")"
-        if [[ ${n} = 0 ]]; then
-            if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
-            [ "$(grep -o -E '\*|\/|\@|$|=|' <<< "${val}")" ]; then invalid $n; fi
-        elif [[ ${n} = 1 ]]; then
-            if grep ',' <<< "$val" >/dev/null 2>&1; then
-                opre="$val"; val="$(cut -f1  -d ',' <<< "$val" |sed 's/ \+//g')"
-                export otranslations=", $(sed "s/${val}, //g" <<< "$opre")"
-            fi
-            if ! grep -Fo "${val}" <<< "${!slangs[@]}" >/dev/null 2>&1; then invalid $n; fi
-        elif [[ ${n} = 2 ]]; then
-            if ! grep -Fo "${val}" <<< "${!tlangs[@]}" >/dev/null 2>&1; then invalid $n; fi
-        elif [[ ${n} = 3 || ${n} = 4 ]]; then
-            if [ ${#val} -gt 30 ] || \
-            [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<< "${val}")" ]; then invalid $n; fi
-        elif [[ ${n} = 5 ]]; then
-            if ! grep -Fo "${val//_/ }" <<< "${Categories[@],}" >/dev/null 2>&1; then invalid $n; fi
-        elif [[ ${n} = 6 ]]; then
-            if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 36 ]; then invalid $n; fi
-        elif [[ ${n} = 7 ]]; then
-            if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
-            [ "$(grep -o -E '\*|\/|\@|$|=|' <<< "${val}")" ]; then invalid $n; fi
-        elif [[ ${n} = 8 || ${n} = 9 || ${n} = 10 ]]; then
-            if [ -n "${val}" ]; then
-            if ! [[ ${val} =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] \
-            || [ ${#val} -gt 12 ]; then invalid $n; fi; fi
-        elif [[ ${n} = 11 || ${n} = 12 || ${n} = 13 ]]; then
-            if ! [[ $val =~ $numer ]] || [ ${val} -gt 200 ]; then invalid $n; fi
-        elif [[ ${n} = 14 ]]; then
-             if ! [[ $val =~ $numer ]] || [ ${val} -gt 1000 ]; then invalid $n; fi
-        elif [[ ${n} = 15 ]]; then
-            if [ ${#val} -gt 6 ]; then invalid $n; fi
-        elif [[ ${n} = 16 ]]; then
-            if ! [[ $val =~ $numer ]] || [ ${#val} -gt 2 ]; then invalid $n; fi
-         elif [[ ${n} = 17 ]]; then
-            if [ ${#val} -gt 10240 ]; then invalid $n; fi
-            export note="$val"
-        elif [[ ${n} = 18 ]]; then
-            if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 40 ] || \
-            [ "$(grep -o -E '\*|\/|\@|$|=|-' <<< "${val}")" ]; then invalid $n; fi
-        fi
-        export ${tsets[$n]}="${val}"
-        let n++
-    done < <(sed -n 3p "$file"|sed 's/\",\"/\"\n\"/g'|tr -d '"}')
-    return ${n}
-}
-
 # Formato v2 (idiomind-topic/2): valida el standalone multilingüe y exporta
 # las mismas variables que check_format_1 (name/slng/tlng/.../ilnk/note)
 # más IDMND_V2=1. Aquí slng es la LISTA declarada ("de,es,fr,it,pt"), NO un
@@ -1409,13 +1339,12 @@ colorize() {
 				exit 1
 			fi
 
-			# v2 + idioma solicitado no disponible (slng_err): no mostrar
+			# Idioma solicitado no disponible (slng_err): no mostrar
 			# una fuente incorrecta en el tooltip; la lista sigue con trgt.
-			# Legacy intacto (sin marcador idmnd_v2 no cambia nada).
 			# Se usa el dir de $index (exportado al subshell) en vez de
 			# $DC_tlt, que no siempre está exportado aquí.
 			_idx_dir="$(dirname "$index")"
-			if [ -f "$_idx_dir/slng_err" ] && [ -f "$_idx_dir/idmnd_v2" ]; then
+			if [ -f "$_idx_dir/slng_err" ]; then
 				srce=""
 			fi
 

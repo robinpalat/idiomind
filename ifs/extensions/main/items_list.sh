@@ -3,11 +3,11 @@
 
 
 function vwr() {
-    # v2 + idioma solicitado no disponible: no abrir tarjeta con source
-    # incorrecto. Diálogo con traducción automática (mecanismo existente
-    # sobre el topic instalado); al quedar compatible se abre la tarjeta.
-    # Legacy intacto (sin marcador idmnd_v2 no cambia nada).
-    if [ -f "${DC_tlt}/slng_err" ] && [ -f "${DC_tlt}/idmnd_v2" ]; then
+    # Idioma solicitado no disponible (slng_err con el codigo ISO activo):
+    # no abrir tarjeta con source incorrecto. Diálogo con traducción
+    # automática (mecanismo existente sobre el topic instalado); al quedar
+    # compatible se abre la tarjeta.
+    if [ -f "${DC_tlt}/slng_err" ]; then
         yad --title="Idiomind" --class=Idiomind --name=Idiomind \
         --text="$(gettext "This topic has no source in your language.")\n" \
         --window-icon=$DS/images/logo.png --center --on-top --fixed \
@@ -152,8 +152,7 @@ topic_language_notice() {
     effective_slng="${active_trans:-$topic_slng}"
     if [ -n "$effective_slng" ] && [ "$effective_slng" != "$slng" ]; then
         printf '%s\n%s\n' \
-            "\n⚠ <b>$(gettext "Native languages do not match.")</b>" \
-            "$(gettext 'You may have to translate this topic to your own language: click "Manage" tab on the main window, -> "Edit" -> "Google Translate".')\n\n"
+            "<big><span color='#A83D00'>⚠</span></big> $(gettext "Native languages do not match.")\n\n"
     fi
 }
 

@@ -7,7 +7,13 @@
 
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
+source "$DS/default/sets.cfg"
+source "$DS/ifs/tls.sh"
 [ -z "$3" ] && media=0 || media="$3"
+
+# check_format_2() usa declaraciones 'local': invocarlo siempre dentro
+# de una funcion para no romper su contrato.
+validate_v2() { check_format_2 "$1"; }
 
 tpc="${2}"
 dest="${1}"
@@ -115,7 +121,32 @@ if [ -z "$ilnk" ]; then
     export ilnk="${pre,,}${rand:0:20}"
 fi
 
-### convert items to json format
+# v2: un solo idioma fuente = el instalado (display -> codigo ISO via slangs).
+slng_code=""; tlng_code=""
+[ -n "$slng" ] && slng_code="${slangs[$slng]:-}"
+[ -n "$tlng" ] && tlng_code="${tlangs[$tlng]:-}"
+if [ -z "$slng_code" ] || [ -z "$tlng_code" ]; then
+    echo "Error: unknown language [$slng / $tlng]" >&2
+    cleanups "$pkd" "$DT_e"; exit 1
+fi
+
+# Los valores extraidos del data vienen con \" y \/ pre-escapados:
+# jraw() los restaura a crudo; jesc_data() restaura y escapa completo
+# para JSON; jesc_raw() escapa valores que ya vienen crudos (DB, args).
+jraw() {
+    printf '%s' "$1" | sed -e 's|\\/|/|g' -e 's|\\"|"|g'
+}
+jesc_raw() {
+    printf '%s' "$1" | sed -e 's|\\|\\\\|g' -e 's|"|\\"|g' -e 's|\t|\\t|g' -e 's|\r|\\r|g'
+}
+jesc_data() {
+    jesc_raw "$(jraw "$1")"
+}
+declare -A _seen_trgt=()
+hkeys=()
+skipped=0
+
+### convert items to json format (v2, single source language)
 echo -e "{\"items\":{" > "${idmnd}"
 while read -r _item; do
     get_item "${_item}"; unset ipath
@@ -131,10 +162,25 @@ while read -r _item; do
         export imag=0
         imgr=""
     fi
-    eval item="$(sed -n 1p "$DS/default/vars")"
-    [ -n "${trgt}" ] && echo -en "${item}" >> "${idmnd}"
+    # v2 exige trgt no vacio y src.text no vacio; sin duplicados (la clave
+    # JSON colapsaria y el topic_hash dejaria de coincidir).
+    if [ -z "$trgt" ] || [ -z "$srce" ]; then skipped=$((skipped+1)); unset imgr; continue; fi
+    if [ -n "${_seen_trgt["$trgt"]+x}" ]; then skipped=$((skipped+1)); unset imgr; continue; fi
+    _seen_trgt["$trgt"]=1
+    jt="$(jesc_data "$trgt")"; js="$(jesc_data "$srce")"; jw="$(jesc_data "$wrds")"
+    je="$(jesc_data "$exmp")"; jd="$(jesc_data "$defn")"; jn="$(jesc_data "$note")"
+    jg="$(jesc_data "$grmr")"; jtags="$(jesc_data "$tags")"; jm="$(jesc_data "$mark")"
+    jr="$(jesc_data "$refr")"; ji="$(jesc_data "$imag")"; jir="$(jesc_data "$imgr")"
+    jl="$(jesc_data "$link")"; jc="$(jesc_data "$cdid")"; jy="$(jesc_data "$type")"
+    echo -en "\"${jt}\":{\"trgt\":\"${jt}\",\"src\":{\"${slng_code}\":{\"text\":\"${js}\",\"wrds\":\"${jw}\"}},\"exmp\":\"${je}\",\"defn\":\"${jd}\",\"note\":\"${jn}\",\"grmr\":\"${jg}\",\"tags\":\"${jtags}\",\"mark\":\"${jm}\",\"refr\":\"${jr}\",\"imag\":\"${ji}\",\"imgr\":\"${jir}\",\"link\":\"${jl}\",\"cdid\":\"${jc}\",\"type\":\"${jy}\"}," >> "${idmnd}"
+    hkeys+=("$(jraw "$trgt")")
     unset imgr
 done < <(sed 's|"|\\"|g' < "${DC_tlt}/data")
+if [ ${#hkeys[@]} -eq 0 ]; then
+    echo "Error: no exportable items" >&2
+    cleanups "$pkd" "$DT_e"; exit 1
+fi
+[ "$skipped" -gt 0 ] && echo "warning: $skipped item(s) skipped (empty source or duplicated)" >&2
 
 ### package multimedia inside the portable package
 if [ "$media" = 1 ]; then
@@ -208,12 +254,25 @@ if [ -d "$pkd/images" ] || [ -d "$pkd/audio" ]; then
 fi
 [ -n "$_nsz" ] && nsze="$_nsz"
 
-### set head info
+### topic_hash sobre las claves en orden de insercion (mismo framing que valida check_format_2)
+_thkeys_for_hash="$(printf '%s\n' "${hkeys[@]}")"; _thkeys_for_hash="${_thkeys_for_hash%$'\n'}"
+thash="$(printf '%s' "$_thkeys_for_hash" | sha256sum | cut -d' ' -f1)"
+
+### set head info (v2, single source language)
 sed -i 's/,$//' "${idmnd}"
 echo "}," >> "${idmnd}"
 cd "$DT_e"
-eval head="$(sed -n 3p "$DS/default/vars")"
-echo -e "${head}}" >> "${idmnd}"
+jname="$(jesc_raw "$tpc")"; jautr="$(jesc_raw "$autr")"; jcntt="$(jesc_raw "$cntt")"
+jctgy="$(jesc_raw "$ctgy")"; jilnk="$(jesc_raw "$ilnk")"; jorig="$(jesc_raw "$tpc")"
+jdtec="$(jesc_raw "$dtec")"; jdteu="$(jesc_raw "$dteu")"; jdtei="$(jesc_raw "$dtei")"
+jnwrd="$(jesc_raw "$nwrd")"; jnsnt="$(jesc_raw "$nsnt")"; jnimg="$(jesc_raw "$nimg")"
+jnaud="$(jesc_raw "$naud")"; jnsze="$(jesc_raw "$nsze")"; jlevl="$(jesc_raw "$levl")"
+jinfo="$(jesc_data "$info")"; jstts="$(jesc_raw "$stts")"
+head="\"format\":\"idiomind-topic/2\",\"topic_hash\":\"${thash}\",\"name\":\"${jname}\",\"slng\":\"${slng_code}\",\"tlng\":\"${tlng_code}\",\"autr\":\"${jautr}\",\"cntt\":\"${jcntt}\",\"ctgy\":\"${jctgy}\",\"ilnk\":\"${jilnk}\",\"orig\":\"${jorig}\",\"dtec\":\"${jdtec}\",\"dteu\":\"${jdteu}\",\"dtei\":\"${jdtei}\",\"nwrd\":\"${jnwrd}\",\"nsnt\":\"${jnsnt}\",\"nimg\":\"${jnimg}\",\"naud\":\"${jnaud}\",\"nsze\":\"${jnsze}\",\"levl\":\"${jlevl}\",\"info\":\"${jinfo}\",\"stts\":\"${jstts}\"}"
+echo -e "${head}" >> "${idmnd}"
+
+### validar contra el esquema que consume el importador
+validate_v2 "${idmnd}" >/dev/null 2>&1 || { echo "Error: generated file failed v2 validation" >&2; cleanups "$pkd" "$DT_e"; exit 1; }
 
 ### create the portable single-file package (a ZIP with .idmnd extension)
 rm -f "$dest".idmnd

@@ -28,7 +28,13 @@ declare -A prcts=( ['a']='Flashcards' ['b']='Multiple-choice' \
 t2="<span color='#C15F27' font_desc='Verdana 8'>"
 t3="<span color='#AE3259' font_desc='Verdana 8'>"
 
-if [ -f "${DC_tlt}/translations/active" ]; then
+if [ -f "${DC_tlt}/slng_err" ]; then
+    _iso="$(sed -n 1p "${DC_tlt}/slng_err")"
+    for _d in "${!slangs[@]}"; do
+        if [ "${slangs[$_d]}" = "$_iso" ]; then slng="$_d"; break; fi
+    done
+    unset _d _iso
+elif [ -f "${DC_tlt}/translations/active" ]; then
     act=$(sed -n 1p "${DC_tlt}/translations/active")
     [ -n "$act" ] && slng="$act"
 fi
