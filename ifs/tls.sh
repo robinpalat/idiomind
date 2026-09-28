@@ -940,7 +940,7 @@ echo -e "yad --form --title=\"$(gettext "$tlng") / $active_trans\" \\
 --always-print-result --print-all \\
 --width=${sz[0]} --height=${sz[1]} --borders=5 \\
 --text=\"<b>$(gettext "Manual Translation")</b>\n<b>${cfg3}</b>  $(gettext "sentences with")  <b>${cfg4}</b>  $(gettext "words")\n\" \\
---on-top --scroll --center --separator='|\n' \\
+--on-top --scroll --center --borders=10 --separator='|\n' \\
 --button=$(gettext \"Save\")!gtk-apply:0 \\
 --button=$(gettext \"Cancel\"):1 \\" > "$DT/dlg"
 

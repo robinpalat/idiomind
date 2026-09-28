@@ -68,7 +68,7 @@ function edit_list_list() {
     --no-headers --center \
     --width=530 --height=560 --borders=5 \
     --column="" \
-    --button="$(gettext "Restart")":"$DS/mngr.sh restartTopic" \
+    --button="$(gettext "Restart")":"$DS/mngr.sh restart-topic" \
     --button="$(gettext "Backups")":"$DS/mngr.sh edit_list_more" \
     --button="$(gettext "Translate")":2 \
     --button="$(gettext "Save")!document-save":0 \

@@ -3,6 +3,7 @@
 
 source "$DS/default/sets.cfg"
 
+
 msg_err1() {
     local info="$(gettext "Please check about voice synthesizer configuration in the settings dialog.")"
     msg "$info" dialog-error Info
@@ -149,7 +150,12 @@ play_file() {
 play_list() {
 	
     tpc="$(sed -n 1p "$HOME/.config/idiomind/tpc")"
+    # Topic explicito ($3, p. ej. Play desde Tasks): tiene prioridad
+    # sobre el activo sin modificarlo. $2 se preserva intacto (flag bcle).
+    [ -n "${3:-}" ] && tpc="$3"
     DC_tlt="${DM_tl}/${tpc}/.conf"
+    DM_tlt="${DM_tl}/${tpc}"
+    export tpc DC_tlt DM_tlt
     tpcdb="$DC_tlt/tpc"
     if [ -f "$DT/ps_lk" ] || [ -f "$DT/el_lk" ]; then
         msg "$(gettext "Please wait until the current process is finished.")...\n" \
@@ -360,7 +366,7 @@ play_list() {
             fi
             [ -f "$DT/play2lck" ] && rm -f "$DT/play2lck"
             "$DS/stop.sh" 2
-            "$DS/bcle.sh" "$2" &
+            "$DS/bcle.sh" "$2" "$tpc" &
             
         # cmd stop
         elif [ $ret -eq 2 ]; then

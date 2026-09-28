@@ -34,8 +34,16 @@ if [ "${act}" = "$(gettext "Learn how to use Idiomind")" ]; then
 elif [ "${act}: " = "$l0" ]; then
 	source "$DS/ifs/cmns.sh"
 	export -f tpc_db
-	export stts=$(sed -n 1p "${DC_tlt}/stts")
-    $DS/play.sh  play_list &
+	# Play usa el topic de LA TAREA ($tpt), no el activo: se pasa
+	# explicito a play_list ($3) junto con su stts. Sin topic
+	# utilizable se conserva el comportamiento anterior (activo).
+	if [ -n "$tpt" ] && [ -d "$DM_tl/${tpt}/.conf" ]; then
+		export stts=$(sed -n 1p "$DM_tl/${tpt}/.conf/stts")
+		$DS/play.sh play_list "" "$tpt" &
+	else
+		export stts=$(sed -n 1p "${DC_tlt}/stts")
+		$DS/play.sh play_list &
+	fi
 elif [ "${act}: " = "$l1" ]; then
     modmenu "$arg"; chngtpt "$tpt"
 elif [ "${act}: " = "$l2" ]; then

@@ -674,85 +674,72 @@ _start() {
 }
 
 # Despacho principal de operaciones. main.sh actúa como punto de entrada
-# común para configuración, inicio normal, autostart y comandos específicos.
-case "$1" in
-    -v|--version)
-    source $DS/default/sets.cfg
-    echo -n "$_version" ;;
-    -s)
-    # Fuerza la creación de una nueva sesión y abre la interfaz principal.
-    new_session; idiomind ;;
-    topic)
-    topic ;;
-    first-run)
-    "$DS/ifs/tls.sh" "$@" ;;
-    index)
-    "$DS/mngr.sh" mkmn 0 ;;
-    autostart)
-    # Inicio automático: la sesión se crea mediante bground_session().
-    bground_session ;;
-    add-items)
-    "$DS/add.sh" new_items "${dir}" 2 "${2}" ;;
-    add)
-    "$DS/add.sh" new_item '__cmd__' "$(sed -n 1p "$DC_s/tpc")" "${2}" "${3}" ;;
-    new-topic)
-    "$DS/add.sh" new-topic "" "" "$2" ;;
-    tasks)
-    "$DS/ifs/extensions/start/update_tasks.sh" ;;
-    panel)
-    ipanel ;;
-    stop)
-    "$DS/stop.sh" 2 ;;
-    update-addons)
-    "$DS/ifs/tls.sh" update-addons ;;
-    restart-topic)
-    "$DS/mngr.sh" restartTopic ;;
-    update-resources)
-    "$DS_a/Resources/cnfg.sh" updt_scripts ;;
-    *)
-    # Check if command is provided by an addon
-    # Commands are registered in: $DS/ifs/extensions/commands/<AddonName>
-    # Format: command_name|description|script_path
-    # Script paths are resolved relative to: $DS/addons/<AddonName>/
-    _addon_cmd_found=0
-    _commands_dir="$DS/ifs/extensions/commands"
-    if [ -n "$1" ] && [ -d "$_commands_dir" ]; then
-        _cmd_name_first="$1"
-        _cmd_provider=""
-        for _manifest in "$_commands_dir"/*; do
-            [ -f "$_manifest" ] || continue
-            _addon_name="${_manifest##*/}"
-            while IFS='|' read -r _cmd_name _cmd_desc _cmd_script; do
-                [[ "$_cmd_name" =~ ^[[:space:]]*# ]] && continue
-                [ -z "$_cmd_name" ] && continue
-                if [ "$_cmd_name_first" = "$_cmd_name" ]; then
-                    if [ -n "$_cmd_provider" ]; then
-                        echo "Command conflict: '$_cmd_name_first'" >&2
-                        echo "  Provided by: $_cmd_provider" >&2
-                        echo "  Provided by: $_addon_name" >&2
-                        _addon_cmd_found=1
-                        _cmd_provider="CONFLICT"
-                        break 2
-                    fi
-                    _cmd_provider="$_addon_name"
-                    _resolved_script="$DS/addons/${_addon_name}/${_cmd_script}"
-                fi
-            done < "$_manifest"
-        done
-        if [ "$_cmd_provider" = "CONFLICT" ]; then
-            :
-        elif [ -n "$_cmd_provider" ] && [ -f "$_resolved_script" ]; then
-            shift
-            bash "$_resolved_script" "$@"
-            _addon_cmd_found=1
-        elif [ -n "$_cmd_provider" ] && [ ! -f "$_resolved_script" ]; then
-            echo "Addon command '$_cmd_name_first' registered but script not found:" >&2
-            echo "  Expected: $_resolved_script" >&2
-            _addon_cmd_found=1
+# (inicialización ya realizada arriba) y como dispatcher de comandos:
+# sabe cómo ejecutar comandos, pero el catálogo vive en
+# $DS/ifs/extensions/commands/ (manifest `core` + addons).
+source "$DS/ifs/extensions/commands/core.d/core.sh"
+
+# Resuelve un nombre de comando en el registry (core + addons).
+# Salida por variables: _cmd_provider ("" si no existe, "CONFLICT" si
+# hay varios proveedores) y _cmd_target (objetivo del manifest).
+# Los objetivos "@nombre" son funciones internas (sin argumentos,
+# igual que el case anterior); el resto son rutas de script.
+_resolve_command() {
+    _cmd_provider=""; _cmd_target=""
+    [ -n "$1" ] || return 0
+    [ -d "$DS/ifs/extensions/commands" ] || return 0
+    for _manifest in "$DS"/ifs/extensions/commands/*; do
+        [ -f "$_manifest" ] || continue
+        _cmd_provider_name="${_manifest##*/}"
+        while IFS='|' read -r _cmd_name _cmd_desc _cmd_script; do
+            [[ "$_cmd_name" =~ ^[[:space:]]*# ]] && continue
+            [ -z "$_cmd_name" ] && continue
+            [ "$1" = "$_cmd_name" ] || continue
+            if [ -n "$_cmd_provider" ]; then
+                echo "Command conflict: '$1'" >&2
+                echo "  Provided by: $_cmd_provider" >&2
+                echo "  Provided by: $_cmd_provider_name" >&2
+                _cmd_provider="CONFLICT"; _cmd_target=""
+                return 0
+            fi
+            _cmd_provider="$_cmd_provider_name"; _cmd_target="$_cmd_script"
+        done < "$_manifest"
+    done
+}
+
+if [ -n "$1" ]; then
+    _resolve_command "$1"
+    if [ "$_cmd_provider" = "CONFLICT" ]; then
+        : ;# conflicto ya reportado: sin ejecución ni fallback, igual que antes
+    elif [ "${_cmd_target#@}" != "$_cmd_target" ]; then
+        # Función interna, sin argumentos (igual que el case anterior).
+        "${_cmd_target#@}"
+    elif [ -n "$_cmd_provider" ]; then
+        if [ "$_cmd_provider" = "core" ]; then
+            _resolved_script="$DS/ifs/extensions/commands/core.d/$_cmd_target"
+            _cmd_kind="Core"
+        else
+            _resolved_script="$DS/addons/${_cmd_provider}/${_cmd_target}"
+            _cmd_kind="Addon"
         fi
-    fi
-    # If no addon command found, run default startup
-    if [ $_addon_cmd_found -eq 0 ]; then
+        if [ -f "$_resolved_script" ]; then
+            shift
+            if [ "$_cmd_provider" = "core" ]; then
+                # Los comandos core propagan el exit, igual que el case nativo.
+                bash "$_resolved_script" "$@"
+            else
+                bash "$_resolved_script" "$@"
+                # El case anterior descartaba el exit del script addon
+                # (terminaba en `if...fi` sin else -> 0); se preserva.
+                :
+            fi
+        else
+            echo "$_cmd_kind command '$1' registered but script not found:" >&2
+            echo "  Expected: $_resolved_script" >&2
+        fi
+    else
         _start
-    fi ;;
-esac
+    fi
+else
+    _start
+fi
