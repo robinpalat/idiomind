@@ -263,7 +263,7 @@ function notebook_2() {
     cmd3="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd4="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
     
-    [[ ${days_to_review_porcent} -ge 100 ]] && info6="$(gettext "Ready")" || info6="$(gettext "Wait")"
+    # [[ ${days_to_review_porcent} -ge 100 ]] && info6="$(gettext "Ready for review")" || info6="$(gettext "Waiting period:")"
 
 	yad --multi-progress --tabnum=1 \
 	--text="$pres\n" \

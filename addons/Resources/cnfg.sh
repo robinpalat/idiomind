@@ -292,7 +292,7 @@ function dlg() {
     --expand-column=0 --hide-column=3 \
     --search-column=4 --regex-search \
     --center \
-    --width=680 --height=430 --borders=10 \
+    --width=680 --height=500 --borders=10 \
     --column="$(gettext "Enable")":CHK \
     --column="$(gettext "Provider")":TEXT \
     --column="$(gettext "Type")":TEXT \

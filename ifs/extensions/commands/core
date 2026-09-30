@@ -1,0 +1,24 @@
+# Command manifest for: core (native Idiomind commands)
+# Format: command_name|description|script_path
+#
+# Targets starting with '@' are shell functions available in main.sh
+# (called with no arguments, exactly like the old hardcoded case).
+# Any other target is a script path resolved relative to:
+#   $DS/ifs/extensions/commands/core.d/<script_path>
+
+-v|Show version|@_core_version
+--version|Show version|@_core_version
+-s|Start a new session|@_core_s
+topic|Open current topic|@topic
+panel|Open main panel|@ipanel
+autostart|Start in background|@bground_session
+first-run|Run first-time setup|first-run.sh
+index|Rebuild topic index|index.sh
+add-items|Add items in batch|add-items.sh
+add|Add note to active topic|add.sh
+new-topic|Create a new topic|new-topic.sh
+tasks|Update tasks|tasks.sh
+stop|Stop playback|stop.sh
+update-addons|Update addons|update-addons.sh
+restart-topic|Restart current topic|restart-topic.sh
+update-resources|Update resources|update-resources.sh

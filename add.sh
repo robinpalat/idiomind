@@ -74,13 +74,19 @@ new_topic() {
     else
         name="${name}"
     fi
-    if [ -z "${name}" ]; then 
+    if [ -z "${name}" ]; then
         return 1
     else
         check_dir "$DM_tl/${name}"
         check_list
         "$DS/ifs/tpc.sh" "${name}" "${mode}" "${activ}"
         "$DS/mngr.sh" mkmn 0
+        # Primer topic local creado con éxito: cierra first_run.
+        # (tls.sh solo lo borra si tpc queda seleccionado o al importar;
+        # la vía live/dialog/CLI quedaba atascada con tpc vacío.)
+        if [ -d "$DM_tl/${name}" ]; then
+            rm -f "$DC_s/topics_first_run"
+        fi
     fi
 }
 

@@ -70,7 +70,9 @@ function set_lang() {
     fi
     if [ ! -d "$DM_t/$tlng/.share/data" ]; then
         mkdir -p "$DM_t/$tlng/.share/data"
-        tlngdb="$DM_t/$tlng/.share/data/$tlng.db"
+    fi
+    tlngdb="$DM_t/$tlng/.share/data/$tlng.db"
+    if [ ! -f "${tlngdb}" ]; then
         echo -n "create table if not exists Words \
         (Word TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${tlngdb}
         echo -n "create table if not exists Config \
@@ -94,11 +96,11 @@ dlg=$(yad --form --title="Idiomind" \
 --window-icon=/usr/share/idiomind/images/logo.png \
 --image-on-top --buttons-layout=end --align=right \
 --fixed --geometry="+$sx+$sy" --center --on-top \
---width=500 --height=260 --borders=15 \
---field="\t\t\t$(gettext "Select the language you are learning")  :CB" "$list1" \
+--width=520 --height=260 --borders=15 \
+--field="\t\t\t$(gettext "Select the language you want to learn")  :CB" "$list1" \
 --field="\t\t\t$(gettext "Select your language")  :CB" "$list2" \
 --field=" :LBL" " "  \
---field="$(gettext "Set recommended Initialization configurations")  :chk" "TRUE" \
+--field="$(gettext "Use recommended initial settings")  :chk" "TRUE" \
 --field=" :LBL" " "  \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "OK")!gtk-apply":0)

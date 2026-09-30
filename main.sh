@@ -37,7 +37,9 @@
 # Primera ejecución: delega la configuración inicial a 1u.sh y finaliza
 # este proceso. Las ejecuciones posteriores continúan con la configuración
 # persistente ya creada.
-if [ ! -d "$HOME/.idiomind" ]; then
+# Se considera no inicializado tanto si falta el directorio de datos como
+# si falta la base de configuración (inicialización parcial).
+if [ ! -d "$HOME/.idiomind" ] || [ ! -f "$HOME/.config/idiomind/config" ]; then
     /usr/share/idiomind/ifs/1u.sh & exit 1
 fi
 
@@ -251,27 +253,27 @@ function topic() {
         export cnf3=$(mktemp "$DT/cnf3.XXXXXX")
         export cnf4=$(mktemp "$DT/cnf4.XXXXXX")
 
-        labels_level=( "$(gettext "Fresh Topic")" "$(gettext "Fresh Topic")" "$(gettext "Fresh Topic")" "$(gettext "Fresh Topic")" "$(gettext "Familiar Topic")" "$(gettext "Familiar Topic")" "$(gettext "Familiar Topic")" "$(gettext "Familiar Topic")" "$(gettext "Familiar Topic")" "$(gettext "Mastered Topic")" )
+	labels_level=( "$(gettext "Fresh Topic")" "$(gettext "Fresh Topic")" "$(gettext "Fresh Topic")" "$(gettext "Fresh Topic")" "$(gettext "Familiar Topic")" "$(gettext "Familiar Topic")" "$(gettext "Familiar Topic")" "$(gettext "Familiar Topic")" "$(gettext "Familiar Topic")" "$(gettext "Mastered Topic")" )
 
-        if [ ${stts} -eq 1 ]; then
-			labels_status=("$(gettext "Learning.")" "$(gettext "Reviewing for the first time.")" "$(gettext "Reviewing for the second time.")" "$(gettext "Reviewing for the third time.")" "$(gettext "Reviewing for the fourth time.")" "$(gettext "Reviewing for the fifth time.")" "$(gettext "Reviewing for the sixth time.")" "$(gettext "Reviewing for the seventh time.")" "$(gettext "Reviewing, final review")" "$(gettext "Reviewing, final review")")
-			[ ${count_date_reviews} -gt 0 ] && btn_review="$(gettext "Finalize Review")" || btn_review="$(gettext "Mark as Learnt")"
-			
-		elif [ ${stts} -eq 3 ] || [ ${stts} -eq 4 ] ; then
-			
-			labels_status=( " " "$(gettext "Waiting to review for the first time")" "$(gettext "Waiting to review for the second time")" "$(gettext "Waiting to review for the third time")" "$(gettext "Waiting to review for the fourth time")" "$(gettext "Waiting to review for the fifth time")" "$(gettext "Waiting to review for the sixth time")" "$(gettext "Waiting to review for the seventh time")" "$(gettext "Waiting to review for the eighth time")" "$(gettext "Waiting to review for the ninth time")" "$(gettext "Second reminder to review")")
-			[ ${count_date_reviews} -gt 0 ] && btn_review="$(gettext "Back to Review")" || btn_review="$(gettext "Review")"
-			
-		elif [ ${stts} = 5 ] || [ ${stts} = 6 ]; then
-		
-			labels_status=("$(gettext "Learning.")" "$(gettext "Reviewing for the first time.")" "$(gettext "Reviewing for the second time.")" "$(gettext "Reviewing for the third time.")" "$(gettext "Reviewing for the fourth time.")" "$(gettext "Reviewing for the fifth time.")" "$(gettext "Reviewing for the sixth time.")" "$(gettext "Reviewing for the seventh time.")" "$(gettext "Reviewing, final review")" "$(gettext "Reviewing, final review")")
-			btn_review="$(gettext "Finalize Review")"
+	if [ ${stts} -eq 1 ]; then
+		labels_status=("$(gettext "Learning")" "$(gettext "Reviewing for the first time")" "$(gettext "Reviewing for the second time")" "$(gettext "Reviewing for the third time")" "$(gettext "Reviewing for the fourth time")" "$(gettext "Reviewing for the fifth time")" "$(gettext "Reviewing for the sixth time")" "$(gettext "Reviewing for the seventh time")" "$(gettext "Final review")" "$(gettext "Final review")")
+		[ ${count_date_reviews} -gt 0 ] && btn_review="$(gettext "Finalize Review")" || btn_review="$(gettext "Mark as Learnt")"
 
-		elif [ ${stts} -gt 6 ] && [ ${stts} -lt 11 ]; then
-			
-			labels_status=( " " "$(gettext "Ready for the first review")" "$(gettext "Ready for the second review")" "$(gettext "Ready for the third review")" "$(gettext "Ready for the fourth review")" "$(gettext "Ready for the fifth review")" "$(gettext "Ready for the sixth review")" "$(gettext "Ready for the seventh review")" "$(gettext "Ready for the Eighth review")" "$(gettext "Ready for the final review")" "$(gettext "Second reminder to review")")
-			btn_review="$(gettext "Back to Review")"
-        fi
+	elif [ ${stts} -eq 3 ] || [ ${stts} -eq 4 ]; then
+
+		labels_status=( " " "$(gettext "Waiting for the first review")" "$(gettext "Waiting for the second review")" "$(gettext "Waiting for the third review")" "$(gettext "Waiting for the fourth review")" "$(gettext "Waiting for the fifth review")" "$(gettext "Waiting for the sixth review")" "$(gettext "Waiting for the seventh review")" "$(gettext "Waiting for the eighth review")" "$(gettext "Waiting for the ninth review")" "$(gettext "Second reminder to review")")
+		[ ${count_date_reviews} -gt 0 ] && btn_review="$(gettext "Back to Review")" || btn_review="$(gettext "Review")"
+
+	elif [ ${stts} = 5 ] || [ ${stts} = 6 ]; then
+
+		labels_status=("$(gettext "Learning")" "$(gettext "Reviewing for the first time")" "$(gettext "Reviewing for the second time")" "$(gettext "Reviewing for the third time")" "$(gettext "Reviewing for the fourth time")" "$(gettext "Reviewing for the fifth time")" "$(gettext "Reviewing for the sixth time")" "$(gettext "Reviewing for the seventh time")" "$(gettext "Final review")" "$(gettext "Final review")")
+		btn_review="$(gettext "Finalize Review")"
+
+	elif [ ${stts} -gt 6 ] && [ ${stts} -lt 11 ]; then
+
+		labels_status=( " " "$(gettext "Ready for the first review")" "$(gettext "Ready for the second review")" "$(gettext "Ready for the third review")" "$(gettext "Ready for the fourth review")" "$(gettext "Ready for the fifth review")" "$(gettext "Ready for the sixth review")" "$(gettext "Ready for the seventh review")" "$(gettext "Ready for the eighth review")" "$(gettext "Ready for the final review")" "$(gettext "Second reminder to review")")
+		btn_review="$(gettext "Back to Review")"
+	fi
 
 		export label_level="${labels_level[${count_date_reviews}]}"
 		[ ${stts} -eq 2 ] && label_level="$(gettext "Mastered Topic")"
@@ -292,26 +294,45 @@ function topic() {
 			lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#84DCE7E7'>$label_level</span></i></small>\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"), $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
         fi
         
-        if [ ${count_date_reviews} -eq 0 ]; then
+		if [ ${count_date_reviews} -eq 0 ]; then
 			label_serie=""
-		elif [ ${count_date_reviews} = 1 ]; then 
-		label_serie="<u><b>4</b></u> <span color='#888888'>| 7 | 7 | 10 | 15 | 15 | 20 | 30</span>"
-		elif [ ${count_date_reviews} = 2 ]; then 
-		label_serie="<span color='#888888'>4 |</span> <u><b>7</b></u> <span color='#888888'>| 7 | 10 | 15 | 15 | 20 | 30</span>"
-		elif [ ${count_date_reviews} = 3 ]; then 
-		label_serie="<span color='#888888'>4 | 7 |</span> <u><b>7</b></u> <span color='#888888'>| 10 | 15 | 15 | 20 | 30</span>"
-		elif [ ${count_date_reviews} = 4 ]; then 
-		label_serie="<span color='#888888'>4 | 7 | 7 |</span> <u><b>10</b></u> <span color='#888888'>| 15 | 15 | 20 | 30</span>"
-		elif [ ${count_date_reviews} = 5 ]; then 
-		label_serie="<span color='#888888'>4 | 7 | 7 | 10 |</span> <u><b>15</b></u> <span color='#888888'>| 15 | 20 | 30</span>"
-		elif [ ${count_date_reviews} = 6 ]; then 
-		label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 |</span> <u><b>15</b></u> <span color='#888888'>| 20 | 30</span>"
-		elif [ ${count_date_reviews} = 7 ]; then 
-		label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 | 15 |</span> <u><b>20</b></u> <span color='#888888'>| 30</span>"
-		elif [ ${count_date_reviews} = 8 ]; then 
-		label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 | 15 | 20 |</span> <u><b>30</b></u> <span color='#888888'>| 60</span>"
-		elif [ ${count_date_reviews} -ge 9 ]; then 
-		label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 | 15 | 20 | 30 |</span> <u><b>60</b></u>"
+			days_until=""
+
+		elif [ ${count_date_reviews} = 1 ]; then
+			label_serie="\n<u><b>4</b></u> <span color='#888888'>| 7 | 7 | 10 | 15 | 15 | 20 | 30</span>"
+			days_until="$(gettext "Days remaining until first review:") "
+
+		elif [ ${count_date_reviews} = 2 ]; then
+			label_serie="<span color='#888888'>4 |</span> <u><b>7</b></u> <span color='#888888'>| 7 | 10 | 15 | 15 | 20 | 30</span>"
+			days_until="$(gettext "Days remaining until second review:") "
+
+		elif [ ${count_date_reviews} = 3 ]; then
+			label_serie="<span color='#888888'>4 | 7 |</span> <u><b>7</b></u> <span color='#888888'>| 10 | 15 | 15 | 20 | 30</span>"
+			days_until="$(gettext "Days remaining until third review:") "
+
+		elif [ ${count_date_reviews} = 4 ]; then
+			label_serie="<span color='#888888'>4 | 7 | 7 |</span> <u><b>10</b></u> <span color='#888888'>| 15 | 15 | 20 | 30</span>"
+			days_until="$(gettext "Days remaining until fourth review:") "
+
+		elif [ ${count_date_reviews} = 5 ]; then
+			label_serie="<span color='#888888'>4 | 7 | 7 | 10 |</span> <u><b>15</b></u> <span color='#888888'>| 15 | 20 | 30</span>"
+			days_until="$(gettext "Days remaining until fifth review:") "
+
+		elif [ ${count_date_reviews} = 6 ]; then
+			label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 |</span> <u><b>15</b></u> <span color='#888888'>| 20 | 30</span>"
+			days_until="$(gettext "Days remaining until sixth review:") "
+
+		elif [ ${count_date_reviews} = 7 ]; then
+			label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 | 15 |</span> <u><b>20</b></u> <span color='#888888'>| 30</span>"
+			days_until="$(gettext "Days remaining until seventh review:") "
+
+		elif [ ${count_date_reviews} = 8 ]; then
+			label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 | 15 | 20 |</span> <u><b>30</b></u> <span color='#888888'>| 60</span>"
+			days_until="$(gettext "Days remaining until eighth review:") "
+
+		elif [ ${count_date_reviews} -ge 9 ]; then
+			label_serie="<span color='#888888'>4 | 7 | 7 | 10 | 15 | 15 | 20 | 30 |</span> <u><b>60</b></u>"
+			days_until="$(gettext "Days remaining until final review:") "
 		fi
 
         export lbl1 label_serie
@@ -465,8 +486,9 @@ function topic() {
                 fi
                 
                 [[ ${days_to_review_porcent} -ge 100 ]] && info5="$(gettext "(completado)")"
-
-                pres="<big><b>$(gettext "Topic learnt")</b></big>  <sup>$(gettext "* however you have new notes").</sup>\n   <small>$label_review</small>\n\n<sub>$(gettext "Waiting Days:")  $days_to_review</sub>\n<sub>$(gettext "Spacing Intervals for Review:") $label_serie</sub>"
+				
+				info6="$days_until  $days_remaining "
+                pres="<big><b>$(gettext "Topic learnt")</b></big>  <sup>$(gettext "* however you have new notes").</sup>\n   <small>$label_review</small>\n\n<sub>$(gettext "Spaced repetition schedule")</sub>\n<sub>$(gettext "Current interval (days):")</sub> <sub>$label_serie</sub>"
                 echo "N2 / ${cfg0} / ${cfg1} / ${cfg2}"
                 
                 notebook_2
@@ -517,7 +539,8 @@ function topic() {
             fi
             
             [ ${days_to_review_porcent} -ge 100 ] && info5="$(gettext "(completado)")"
-			pres="<big><b>$(gettext "Topic learnt")</b></big>\n   <small>$label_review</small>\n\n<sub>$(gettext "Waiting Days:")  $days_to_review</sub>\n<sub>$(gettext "Spacing Intervals for Review:") $label_serie</sub>"
+            info6="$days_until  $days_remaining "
+			pres="<big><b>$(gettext "Topic learnt")</b></big>\n   <small>$label_review</small>\n\n<sub>$(gettext "Spaced repetition schedule")</sub>\n<sub>$(gettext "Current interval (days):")</sub> <sub>$label_serie</sub>"
             
             echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
             
@@ -564,8 +587,8 @@ function topic() {
         elif [[ ${cfg1} -eq 0 ]]; then
         
             calculate_review "${tpc}"
-            
-            pres="<big><b>$(gettext "Topic learnt")</b></big>\n   <small>$label_review</small>\n\n<sub>$(gettext "Waiting Days:")  $days_to_review</sub>\n<sub>$(gettext "Spacing Intervals for Review:") $label_serie</sub>"
+            info6="$days_until  $days_remaining "
+            pres="<big><b>$(gettext "Topic learnt")</b></big>\n   <small>$label_review</small>\n\n<sub>$(gettext "Spaced repetition schedule")</sub>\n<sub>$(gettext "Current interval (days):")</sub> <sub>$label_serie</sub>"
             echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
             
             notebook_2; ret=$?

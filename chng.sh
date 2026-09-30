@@ -176,41 +176,10 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
 	
     if [ -e "$DC_s/topics_first_run" -a -z "${1}" ]; then exit 1; fi
 	
-    tpc=""
-    # Live index: new-topic prepends rows while open via --listen.
-    # Fifo path formula is duplicated in add.sh new-topic-live.
-    # Single instance is guarded by mn_lk above, so a fixed name is safe.
-    # NOTE: livefeed is intentionally persistent, so it must NOT run inside
-    # `tpc=$(livefeed | yad)`: bash waits for the feeder even after yad exits
-    # and `ret`/`tpc` would never be reached. The feeder runs in background
-    # writing to a dedicated input fifo; yad runs in foreground reading it
-    # and writing the selection to a temp file. The activation block below
-    # is unchanged.
-    tpcfifo="$DT/topics_fifo"
-    yadin="$DT/topics_yad_in"
-    rm -f "$tpcfifo" "$yadin"; mkfifo "$tpcfifo" "$yadin" 2>/dev/null
-    tmpout="$(mktemp "$DT/topics_out.XXXXXX" 2>/dev/null)"
-    [ -n "$tmpout" ] || { tmpout="$DT/topics_out.$$"; : > "$tmpout"; }
-    # Initial rows go as command-line args so the viewport starts at the
-    # top: rows streamed via --listen are prepended one by one and leave
-    # the list scrolled down. --add-on-top prepends EVERY incoming row
-    # (args and stdin alike), so the initial args are passed oldest-first
-    # (pairwise reversed index) to keep newest on top; live pushes already
-    # arrive newest-first and land on top as-is.
-    # NOTE: --tail scrolls to each newly added row; combined with
-    # --add-on-top that row is position 0 (top), so live topics are
-    # revealed immediately instead of leaving a stale viewport.
-    mapfile -t initrows < <(cat "$DM_tl/.share/index" 2>/dev/null | tac | awk 'NR%2==1{h=$0;next}{print $0"\n"h}')
-    livefeed() {
-        while [ -p "$tpcfifo" ]; do timeout 5 cat "$tpcfifo" 2>/dev/null; done
-    }
-
-    livefeed > "$yadin" &
-    feeder=$!
+    tpc=$(cat "$DM_tl/.share/index" | \
     yad --list --title="$(gettext "My topics")" "${var1}" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-column=2 --separator="" \
-    --listen --add-on-top --tail \
     --window-icon=$DS/images/logo.png \
     --text-align=left $var2 --image-on-top \
     --no-headers --ellipsize=END --expand-column=2 \
@@ -220,18 +189,14 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
     --column=File:TEXT \
     --button=""!preferences-system:$DS/cnfg.sh \
     --button="$(gettext "Stats")":"'$DS/ifs/tls.sh' _stats" \
-    --button="$(gettext "New")"!document-new:"$DS/add.sh new-topic-live" \
+    --button="$(gettext "New")"!document-new:3 \
     --button="$(gettext "Apply")":2 \
-    --button="$(gettext "Close")"!window-close:1 "${initrows[@]}" < "$yadin" > "$tmpout"
+    --button="$(gettext "Close")"!window-close:1)
     ret=$?
-    tpc="$(<"$tmpout")"
-
-    kill "$feeder" 2>/dev/null
-    pkill -P "$feeder" 2>/dev/null
-    wait "$feeder" 2>/dev/null
-    rm -f "$tpcfifo" "$yadin" "$tmpout" 2>/dev/null
-
-    if [ -n "${tpc}" ]; then
+	
+    if [ $ret -eq 3 ]; then
+            "$DS/add.sh" new-topic
+    elif [ -n "${tpc}" ]; then
         mode="$(< "$DM_tl/${tpc}/.conf/stts")"
         numer='^[0-9]+$'
         ! [[ ${mode} =~ $numer ]] && echo 13 > \

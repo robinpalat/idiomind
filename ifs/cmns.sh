@@ -398,9 +398,14 @@ function calculate_review() {
         TM=$(( ( $(date -d "today 12:00:00" +%s) - $(date -d "${date_review} 12:00:00" +%s) ) / 86400 ))
 
         days_to_review=${notice[${count_date_reviews}]}
+
+        days_remaining=$((days_to_review - TM))
+        [ "${days_remaining}" -lt 0 ] && days_remaining=0
+
         days_to_review_porcent=$((100*TM/days_to_review))
 
         export days_to_review
+        export days_remaining
         export days_to_review_porcent
         export count_date_reviews
 
