@@ -1,56 +1,115 @@
 # Idiomind
 
-**Idiomind** is a language-learning application originally developed for Linux using **Bash and the Unix/Linux environment**.
+**Idiomind** is a language-learning application originally developed for Linux using **Bash, YAD and the Unix/Linux environment**.
 
-It began in **2013** as a small Bash script that translated words from the command line and displayed the results through the Linux desktop notification system.
+The project began in **2013** as a small Bash script with a simple purpose: translate a word from the command line and display the result directly on the Linux desktop.
 
-Over time, that experiment evolved into a complete language-learning environment for creating, organizing and reviewing personalized vocabulary and expressions.
+That small experiment gradually grew into a complete language-learning environment for creating, organizing and reviewing personalized vocabulary and expressions.
 
 This repository contains the **original Bash version of Idiomind**.
 
+---
+
 ## Origins
 
-The first version of Idiomind was deliberately small:
+The first version of Idiomind was very small.
+
+A word was entered from the command line, translated, and displayed using the Linux desktop notification system:
 
 ```text
 word
   ↓
 translation
   ↓
+notify-send
+  ↓
 desktop notification
 ```
 
-From there, the project grew organically, adding vocabulary management, language data, review mechanisms, audio, HTML-based content and desktop integration.
+There was no application framework behind it at the beginning. It was simply a shell script making use of the tools already available in Linux.
 
-**Rather than being built initially as a conventional desktop application, Idiomind developed around the tools and conventions of the Unix/Linux environment.**
+As the project evolved, more functionality was added: vocabulary management, language data, review mechanisms, audio, HTML content and graphical interfaces.
 
-Its architecture reflects that history.
+The project grew organically from those first experiments rather than from a predefined application architecture.
+
+**Rather than being built initially as a conventional desktop application, Idiomind grew around Bash, YAD and the tools and conventions of the Unix/Linux environment.**
+
+---
+
+## Bash and YAD
+
+Two technologies are particularly central to the original version of Idiomind.
+
+**Bash** provides the main application logic, orchestration and data processing.
+
+**YAD (Yet Another Dialog)** provides much of the graphical interface, allowing Bash scripts to create dialogs, forms, lists, menus and other interactive elements.
+
+Together, they form the core of the original desktop application:
+
+```text
+                 Idiomind
+                    │
+             ┌──────┴──────┐
+             │             │
+           Bash           YAD
+             │             │
+     application logic   GUI
+             │             │
+             └──────┬──────┘
+                    │
+          Unix/Linux environment
+```
+
+The rest of the application is built by combining these with the tools and services available in the Linux environment.
+
+---
 
 ## Architecture
 
-The original version combines:
+The original Idiomind combines:
 
-* Bash
-* Unix/Linux utilities
-* GTK+ desktop tools
-* HTML
-* SQLite
-* local language data
-* a small native component, `Idiomind_utils`
+* **Bash** — application logic and orchestration
+* **YAD** — graphical interface
+* **Unix/Linux utilities** — system integration and text/file processing
+* **SQLite** — structured local data
+* **HTML** — content presentation
+* **audio tools** — speech and audio processing
+* **Python** — selected supporting functionality
+* **`Idiomind_utils`** — native desktop and HTML integration
 
-`Idiomind_utils` provides functionality that is not practical to implement directly in Bash, including HTML display and desktop integration.
+This architecture allowed Idiomind to remain relatively small while taking advantage of existing Linux tools instead of reimplementing their functionality inside the application.
 
-The result is a hybrid application in which **Bash remains the main application layer**, while native functionality is provided where necessary.
+### Idiomind_utils
+
+The original application also includes a small native component called **`Idiomind_utils`**.
+
+It is installed at:
+
+```text
+/usr/lib/Idiomind_utils
+```
+
+It provides functionality that is difficult or impractical to handle directly from Bash, including displaying HTML-based elements and integrating Idiomind with the Linux desktop, such as its system tray/panel icon.
+
+This creates a hybrid architecture: most of the application remains implemented in Bash and YAD, while `Idiomind_utils` provides selected native functionality where needed.
+
+---
 
 ## Local Data
 
-Idiomind stores the user's language-learning material locally using files and SQLite.
+Idiomind keeps the user's language-learning material locally.
 
-The original design does not depend on a permanent remote backend, keeping the learning data accessible to the user and straightforward to inspect or back up.
+The original version uses files and SQLite rather than relying on a permanent remote service.
+
+This makes the learning data accessible to the user and relatively straightforward to inspect, back up or move.
+
+---
 
 ## System Requirements
 
-The original version was designed for a GTK+-based Linux desktop environment and depends on several system utilities, including:
+The original version was designed for a **GTK+-based Linux desktop environment**.
+
+Its main dependencies include:
 
 * Bash
 * YAD
@@ -65,9 +124,13 @@ The original version was designed for a GTK+-based Linux desktop environment and
 * wkhtmltopdf
 * `Idiomind_utils`
 
+Several of these tools are used directly by the application, while others provide specific functionality such as audio playback, speech synthesis, image processing or document generation.
+
+---
+
 ## Installation
 
-The original Debian/Ubuntu distribution was provided through a PPA:
+The original Debian/Ubuntu distribution was provided through a **PPA**.
 
 ```bash
 sudo add-apt-repository ppa:robinpalat/idiomind
@@ -75,29 +138,40 @@ sudo apt-get update
 sudo apt-get install idiomind
 ```
 
-The PPA represents the original distribution method and may not be available for all current Debian or Ubuntu releases.
+The PPA represents the original distribution method for this version of Idiomind. Its availability may depend on the Debian or Ubuntu release being used.
+
+---
 
 ## Project History
 
-This repository preserves the original Bash implementation of Idiomind.
+Idiomind began in 2013 as a small experiment with language learning, Bash and the Linux desktop.
 
-The project later moved toward a **Qt/C++ desktop implementation**, providing a different foundation for continued development.
+Over time, that experiment became a larger application while retaining its original Unix-oriented approach. The resulting architecture is a reflection of that history: Bash and YAD at its core, surrounded by the tools and capabilities of the Linux environment.
 
-This repository remains as a record of the original architecture and the ideas from which the project evolved.
+The project later moved toward a **Qt/C++ implementation**, providing a different foundation for continued development.
+
+This repository preserves the original implementation and the ideas from which the project evolved.
+
+---
 
 ## Status
 
 **Legacy / Historical**
 
-This is the original Bash version of Idiomind and is no longer the primary development direction.
+This repository contains the original Bash version of Idiomind and is no longer the primary development direction of the project.
+
+It is preserved as part of the project's history and as a reference for its original architecture and implementation.
+
+---
 
 ## Author
 
 **Robin**
 
-Idiomind started in 2013 as a small experiment with language learning, Bash and the Linux desktop, and gradually developed into a larger project.
+Idiomind started in 2013 as a small experiment and gradually evolved into a larger language-learning project.
+
+---
 
 ## License
 
 See the `LICENSE` file for the licensing terms of this repository.
-
