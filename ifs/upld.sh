@@ -8,26 +8,14 @@ lgt=${tlangs[$tlng]}
 lgs=${slangs[$slng]}
 sz=(450 450)
 
+# GUI de exportación (Paso 5C): gui_export_dialog/gui_export_file_dialog.
+if [ -n "${DS:-}" ] && [ -r "$DS/gui/export.sh" ]; then
+    # shellcheck source=/dev/null
+    source "$DS/gui/export.sh"
+fi
+
 export_topic() {
     export_tpc="${1}"
-
-    dlg_export() {
-        yad --form --title="$(gettext "Export topic")" \
-        --text="$text_export" \
-        --name=Idiomind --class=Idiomind \
-        --always-print-result \
-        --window-icon=$DS/images/logo.png --buttons-layout=end \
-        --align=right --center \
-        --width=${sz[0]} --height=${sz[1]} --borders=18 \
-        --field="$(gettext "Author")" "$autr" \
-        --field="$(gettext "Category"):CBE" "$_Categories" \
-        --field="$(gettext "Skill Level"):CB" "$_levels" \
-        --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
-        --field="$(gettext "Format"):CB" "$_formats" \
-        --field="$(gettext "Include images and audio"):CHK" "$include_media" \
-        --button="$(gettext "Export")":2 \
-        --button="$(gettext "Close")":4
-    }
 
     sv_data() {
         tpc_db 9 id autr "${autr_mod}"
@@ -101,7 +89,7 @@ export_topic() {
     [ -n "$(tpc_db 1 id naud)" ] && include_media="TRUE"
 
     shopt -s extglob
-    dlg="$(dlg_export)"
+    dlg="$(gui_export_dialog)"
     ret=$?
 
     if [ $ret = 4 ]; then
@@ -131,24 +119,9 @@ export_topic() {
     fi
 } >/dev/null 2>&1
 
-fdlg() {
-    module="$1"
-    key=$((RANDOM%100000)); cd "$HOME"
-    yad --file --save --filename="$HOME/$tpc" --tabnum=1 --plug="$key" &
-    yad --form --tabnum=2 --plug="$key" \
-    --separator="" --align=right \
-    --field="\t\t\t\t$(gettext "Export to"):CB" "$module" &
-    yad --paned --key="$key" --title="$(gettext "Export")" \
-    --name=Idiomind --class=Idiomind \
-    --window-icon=$DS/images/logo.png --center --on-top \
-    --width=650 --height=480 --borders=8 --splitter=370 \
-    --button="$(gettext "Cancel")":1 \
-    --button="$(gettext "Save")":0
-}
-
 _export() {
     module="$1"; media="$2"
-    dlg="$(fdlg "$module")"; ret=$?
+    dlg="$(gui_export_file_dialog "$module")"; ret=$?
     if [ $ret -eq 0 ]; then
         "$DS/ifs/extensions/export/${module}.sh" \
         "$(tail -n 1 <<< "$dlg")" "${tpc}" "$media" & return 0

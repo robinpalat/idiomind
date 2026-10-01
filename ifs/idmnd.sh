@@ -159,7 +159,7 @@ function idmnd_prepare_preview() {
 $nsnt $(gettext "Sentences"),  $nimg $(gettext "Images")\n$(gettext "Level:") \
 $level \n$(gettext "Language:") $(gettext "$tlng"),  $(gettext "Translation:") $(gettext "$slng")$otranslations</small>" 
     dclk="$DS/play.sh play_word"
-    source "$DS/ifs/extensions/main/items_list.sh"
+    source "$DS/gui/topic.sh"
 	_lst() {
 		# v2: la vista previa sale de las líneas ya materializadas
 		# (forma legacy trgt{}/srce{}); el parser legacy sigue igual.

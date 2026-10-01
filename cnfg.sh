@@ -3,6 +3,11 @@
 
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
+# GUI de Preferences (Paso 5D-A): gui_prefs_dialog; el apply queda aquí.
+if [ -n "${DS:-}" ] && [ -r "$DS/gui/settings.sh" ]; then
+    # shellcheck source=/dev/null
+    source "$DS/gui/settings.sh"
+fi
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
 info2="$(gettext "Switch Language")?"
 check_dir "$DS/addons"; cd "$DS/addons"
@@ -23,14 +28,7 @@ Icon=idiomind
 StartupWMClass=Idiomind"
 
 confirm() {
-    yad --form --title="Idiomind" \
-    --name=Idiomind --class=Idiomind \
-    --image="$DS/images/trans.png" --text="$1\n" \
-    --window-icon=idiomind \
-    --skip-taskbar --center --on-top \
-    --width=380 --height=100 --borders=5 \
-    --button="   $(gettext "Cancel")   ":1 \
-    --button="$(gettext "Yes")":0
+    gui_confirm "$@"
 }
 
 set_lang() {
@@ -194,38 +192,8 @@ config_dlg() {
     [ -z "$Level" ] && Level=" "
     levels_list="$Level"$(sed "s/\!$Level//g" <<< "!${levels[0]}!${levels[1]}")""
 
-    c=$((RANDOM%100000)); KEY=$c
-    yad --plug=$KEY --form --tabnum=1 \
-    --align=right --scroll \
-    --separator='|' --always-print-result --print-all \
-    --field="$(gettext "Use color to highlight grammar in sentences")":CHK "$gramr" \
-    --field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
-    --field="$(gettext "Download audio pronunciation")":CHK "$dlaud" \
-    --field="$(gettext "Detect language of source text (inaccurate)")":CHK "$ttrgt" \
-    --field="$(gettext "Use a system tray icon instead of the start panel")":CHK "$itray" \
-    --field="$(gettext "Show notifications when notes are added")":CHK "$swind" \
-    --field="$(gettext "Run at startup")":CHK "$stsks" \
-    --field="$(gettext "Interface language")":CB "$interface_lang_list" \
-    --field="$(gettext "I'm learning")":CB "$(gettext "${tlng}")$list1" \
-    --field="$(gettext "My learning level")":CB "$levels_list" \
-    --field="$(gettext "My language is")":CB "$(gettext "${slng}")$list2" > "$cnf1" &
-    cat "$DS_a/menu_list" |yad --plug=$KEY --tabnum=2 --list \
-    --text=" <small>$(gettext "Double-click an addon to configure it.")</small> " --print-all \
-    --dclick-action="$DS/ifs/dclik.sh" \
-    --expand-column=2 --no-headers \
-    --column=icon:IMG --column=Action &
-    yad --notebook --key=$KEY --title="$(gettext "Settings")" \
-    --name=Idiomind --class=Idiomind \
-    --window-icon=$DS/images/logo.png \
-    --sticky --center \
-    --tab="$(gettext "Preferences")" \
-    --tab="$(gettext "Addons")" \
-    --width=${sz[0]} --height=${sz[1]} \
-    --borders=5 --tab-borders=15 \
-    --button="$(gettext "     About     ")"!help-about:"$DS/ifs/tls.sh 'about'" \
-    --button="$(gettext "Save")"!document-save:0 \
-    --button="$(gettext "Close")"!window-close:1
-    ret=$?
+    # Diálogo en gui/settings.sh (termina en YAD -> cnf1 + ret).
+    gui_prefs_dialog
     
     if [ $ret -eq 0 ]; then
         n=1

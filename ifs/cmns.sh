@@ -1,6 +1,14 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+# Capa GUI (Paso 1): primitivas YAD en gui/common.sh.
+# Los wrappers msg/msg_2/msg_4/progress/yad_kill/check_err delegan allí
+# y preservan nombre, argumentos, stdout/stderr y códigos de retorno.
+if [ -n "${DS:-}" ] && [ -r "$DS/gui/common.sh" ]; then
+    # shellcheck source=/dev/null
+    source "$DS/gui/common.sh"
+fi
+
 function internet() {
     if curl -v www.google.com 2>&1 |grep -m1 "HTTP/1.1" >/dev/null 2>&1; then :
     else zenity --info \
@@ -9,48 +17,19 @@ function internet() {
 }
 
 function msg() {
-    [ -n "${3}" ] && title="${3}" || title=Idiomind
-    [ -n "${4}" ] && btn="${4}" || btn="$(gettext "OK")"
-    yad --title="${title}" --text="${1}" --image="${2}" \
-    --name=Idiomind --class=Idiomind \
-    --window-icon=$DS/images/logo.png \
-    --image-on-top --sticky --center --fixed --on-top \
-    --width=450 --height=100 --borders=5 \
-    --button="${btn}":0
+    gui_msg "$@"
 }
 
 function msg_2() {
-    [ -n "${5}" ] && title="${5}" || title=Idiomind
-    [ -n "${6}" ] && btn3="--button=${6}:2" || btn3=""
-    yad --title="${title}" --text="${1}" --image="${2}" \
-    --name=Idiomind --class=Idiomind \
-    --always-print-result \
-    --window-icon=$DS/images/logo.png \
-    --image-on-top --sticky --center --fixed --on-top \
-    --width=450 --height=100 --borders=5 \
-    "${btn3}" --button="${4}":1 --button="${3}":0
+    gui_msg_2 "$@"
 }
 
 function msg_4() {
-    [ -n "${5}" ] && title="${5}" || title=Idiomind
-    ( echo "# "; while true; do
-    sleep 1; echo "# "; [ ! -e "${6}" ] && break
-    done )  | yad --progress --title="${title}" --text="${1}" \
-    --name=Idiomind --class=Idiomind \
-    --pulsate --auto-close --always-print-result \
-    --window-icon=$DS/images/logo.png \
-    --buttons-layout=edge --image-on-top \
-    --fixed --on-top --sticky --center \
-    --width=380 --height=110 --borders=3 \
-    --button="${4}":1 --button="${3}":0
-    #--image="$2"
+    gui_msg_4 "$@"
 }
 
 function progress() {
-    yad --progress \
-    --name=Idiomind --class=Idiomind \
-    --undecorated --${1} --auto-close \
-    --skip-taskbar --center --on-top --no-buttons
+    gui_progress "$@"
 }
 
 export numer='^[0-9]+$'
@@ -225,7 +204,7 @@ function include() {
 }
 
 function yad_kill() {
-    for X in "${@}"; do kill -9 $(pgrep -f "$X") & done
+    gui_yad_kill "$@"
 }
 
 #TODO
@@ -350,33 +329,12 @@ function unset_item() {
 }
 
 function check_err() {
-    for filerr in "$@"; do
-        if [ -f "$filerr" ]; then
-            if [ ${filerr: -4} == ".err" ]; then
-                mtitle="$(gettext "Errors found")"
-                mimage="dialog-warning"
-            elif [ ${filerr: -4} == ".inf" ]; then
-                mtitle="$(gettext "Information")"
-                mimage="info"
-            fi
-            sleep 2; echo "$(< "$filerr")" |yad --text-info \
-            --title="Idiomind - $mtitle" \
-            --name=Idiomind --class=Idiomind \
-            --window-icon=$DS/images/logo.png \
-            --wrap --margins=5 \
-            --show-uri --uri-color="#6591AA" \
-            --fontname='monospace 9' \
-            --fixed --scroll --center --on-top \
-            --width=500 --height=200 --borders=5 \
-            --button="$(gettext "Close")":1
-            cleanups "$filerr"
-        fi
-    done &
+    gui_check_err "$@"
 }
 
 
 function calculate_review() {
-    [ -z "${notice}" ] && source "$DS/default/sets.cfg"
+    source "$DS/default/sets.cfg"
     export DC_tlt="$DM_tl/${1}/.conf"
 
     count_date_reviews="$(tpc_db 5 reviews | grep -c '[^[:space:]]')"

@@ -4,10 +4,14 @@
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 source "$DS/default/sets.cfg"
+# GUI del editor (ECT 4A/4C): antes vía include manager (hoy reserva vacía).
+if [ -n "${DS:-}" ] && [ -r "$DS/gui/edit.sh" ]; then
+    # shellcheck source=/dev/null
+    source "$DS/gui/edit.sh"
+fi
 lgt=${tlangs[$tlng]}
 lgs=${slangs[$slng]}
 export lgt lgs
-include "$DS/ifs/extensions/manager"
 
 mkmn() {
     f_lock 1 "$DT/mn_lk"
@@ -171,9 +175,9 @@ edit_item() {
         audf="${DM_tls}/audio/${trgt,,}.mp3"
     fi
     if [ ${type} = 1 ]; then
-        edit_dlg1="$(dlg_form_1)"
+        edit_dlg1="$(gui_edit_word)"
     elif [ ${type} = 2 ]; then
-        edit_dlg2="$(dlg_form_2)"
+        edit_dlg2="$(gui_edit_sentence)"
     fi
     ret=$?
         if [ -z "${edit_dlg1}" ] && [ -z "${edit_dlg2}" ]; then
@@ -513,83 +517,7 @@ edit_list_cmds() {
 
 
 edit_list_more() {
-    touch "$DT/edit_list_more"
-    file="$HOME/.idiomind/backup/${tpc}.bk"
-
-    dt1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
-    dt2=$(grep '\----- oldest' "${file}" |cut -d' ' -f3)
-    if [ -n "$dt2" ]; then
-        cols2="!$(gettext "Restore backup:") $dt1!$(gettext "Restore backup:") $dt2"
-    elif [ -n "$dt1" ]; then
-        cols2="!$(gettext "Restore backup:") $dt1"
-    else
-        cols2=""
-    fi
-
-    optns="$(sed '/^$/d' <<< "$cols2")"
-    
-    more="$(yad --form --title="$(gettext "Backups")" \
-    --field=":CB" "${optns}" --separator="" \
-    --name=Idiomind --class=Idiomind \
-    --expand-column=2 --no-click --no-headers\
-    --window-icon=$DS/images/logo.png --on-top --center \
-    --width=390 --borders=5 \
-    --column="":TXT \
-    --button="$(gettext "Apply")"!gtk-apply:0 \
-    --button="$(gettext "Cancel")":1)"
-    ret="$?"
-    if [ $ret = 0 ]; then
-        _war(){ msg_2 "${more}\n" \
-        dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"; }
-
-        if grep "$(gettext "Reverse items order")" <<< "${more}"; then
-            _war; if [ $? = 0 ]; then
-                yad_kill "yad --editable --list"
-                "$DS/stop.sh" 5
-                edit_list_cmds 2 "${tpc}"
-                cleanups "$DT/edit_list_more"
-            fi
-        elif grep "$(gettext "Remove all items")" <<< "${more}"; then
-            _war; if [ $? = 0 ]; then
-                yad_kill "yad --editable --list"
-                cleanups "$DT/list_output" "$DT/list_input"
-                cleanups "${DC_tlt}/data" "${DC_tlt}/index"
-                tpc_db 6 'sentences'; tpc_db 6 'words'
-                tpc_db 6 'learning'; tpc_db 6 'learnt'
-                tpc_db 6 'marks'
-                touch "${DC_tlt}/data"
-                cleanups "$DT/edit_list_more"
-                [ -d "${DM_tlt}" ] && [ -n "$tpc" ] && rm "$DM_tlt"/*.mp3
-            fi
-
-        elif grep "$(gettext "Show short sentences in word's view")" <<< "${more}"; then
-            _war; if [ $? = 0 ]; then
-                yad_kill "yad --editable --list"
-                edit_list_cmds 4 "${tpc}"
-                cleanups "$DT/edit_list_more"
-            fi
-        elif grep "$(gettext "Restore backup:")" <<< "${more}"; then
-             _war; if [ $? = 0 ]; then
-                cleanups "$DT/list_output" "$DT/list_input"
-                yad_kill "yad --editable --list"
-                if grep ${dt1} <<< "${more}"; then
-                    export line=1
-                elif grep ${dt2} <<< "${more}"; then
-                    export line=2
-                fi
-                "$DS/ifs/tls.sh" restore "${tpc}" ${line}
-                cleanups "$DT/edit_list_more"
-            fi
-        elif [ -f "$DS/ifs/extensions/topic/${more}.sh" ]; then 
-            "$DS/ifs/extensions/topic/${more}.sh" "${more}" # ADDON: $DS/ifs/extensions/topic/ADDON.sh ADDON
-        else
-            cleanups "$DT/edit_list_more"
-        fi
-    else
-        cleanups "$DT/items_to_add"  \
-        "$DT/act_restfile" "$DT/edit_list_more"
-    fi
-    
+    gui_edit_backups "$@"
 } >/dev/null 2>&1
 
 
@@ -625,9 +553,9 @@ edit_list_dlg() {
         trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
         [ -n "${trgt}" ] && echo "${trgt}" >> "$DT/list_input"
         let n++; echo $((100*n/lns-1))
-    done ) | progr_3 "progress"
+    done ) | gui_edit_progress "progress"
 
-    edit_list_list < "$DT/list_input" > "$DT/list_output"
+    gui_edit_list < "$DT/list_input" > "$DT/list_output"
     ret=$?
     if [ $ret = 0 ]; then
         edit_list_cmds 0 "${tpc}"

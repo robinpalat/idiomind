@@ -7,6 +7,7 @@ source "$DS/default/sets.cfg"
 lgt=${tlangs[$tlng]}
 lgs=${slangs[$slng]}
 include "$DS/ifs/extensions/add"
+source "$DS/gui/add.sh"
 # Keep an explicit translation mode supplied by importers such as Feeds.sh.
 # Otherwise use the user's normal preference from the configuration database.
 if [ -z "${trans+x}" ]; then
@@ -43,12 +44,12 @@ new_topic() {
     if [[ -z "$name" ]]; then
         to=0; while [ ${to} -lt 4 ]; do
             if [[ -n "$name_1u" ]]; then 
-                add="$(dlg_form_0 "$name_1u")"
+                add="$(gui_add_new_topic "$name_1u")"
                 export name="${name_1u}"
             elif [[ -z "$name" ]]; then 
-                add="$(dlg_form_0)"
+                add="$(gui_add_new_topic)"
             else 
-                add="$(dlg_form_0 "$name")"
+                add="$(gui_add_new_topic "$name")"
             fi
             name="$(cut -d "|" -f1 <<< "${add}")"
             include "$DS/ifs/extensions/add_processors"
@@ -99,7 +100,7 @@ function new_item() {
         tpe="${2}"
         item_type=""
     fi
-    check_s "${tpe}"
+    gui_add_select_topic "${tpe}"
     
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
@@ -275,7 +276,7 @@ function new_word() {
             fi
         else
             if [ -f "${DM_tls}/audio/${audio}.mp3" ]; then
-                msg_3 "$(gettext "A file named "${audio}.mp3" already exists, do you want to replace it?")\n" \
+                gui_add_confirm_play "$(gettext "A file named "${audio}.mp3" already exists, do you want to replace it?")\n" \
                 dialog-question "${trgt}"
                 if [ $? -eq 0 ]; then
                     cp -f "$DT_r/audtm.mp3" "${DM_tls}/audio/${audio}.mp3"
@@ -292,15 +293,15 @@ function new_word() {
 }
 
 function list_words_edit() {
-    include "$DS/ifs/extensions/add"
+include "$DS/ifs/extensions/add"
     tpe="${tpc}"
     exmp="${3}"
     type=1
     [ -z "${exmp}" ] && exmp="${trgt}"
-    check_s "${tpe}"
+    gui_add_select_topic "${tpe}"
     DT_r=$(mktemp -d "$DT/XXXXXX"); cd ~ && cd "$DT_r"
     words="$(list_words_2 "${2}")"
-    slt="$(dlg_checklist_1 "${words}")"
+    slt="$(gui_add_checklist_words "${words}")"
     if [ $? -eq 0 ]; then
         while read -r chkst; do
             if [ -n "$chkst" ]; then
@@ -349,7 +350,7 @@ function list_words_sentence() {
     DT_r=$(mktemp -d "$DT/XXXXXX")
     wrds="$(list_words_2 "${wrds}")"
     if [ -n "${wrds}" ]; then
-        slt="$(dlg_checklist_1 "${wrds}")"
+        slt="$(gui_add_checklist_words "${wrds}")"
     else
         return 1
     fi
@@ -415,7 +416,7 @@ function list_words_dclik() {
         sentence_p 1
         echo "$wrds"
         list_words_3 "${words}" "${wrds}"
-        ) | dlg_progress_1
+        ) | gui_add_progress
     else
         list_words_3 "${words}"
     fi
@@ -424,7 +425,7 @@ function list_words_dclik() {
 
     if [[ -d "$2"  ]]; then
             slts=$(mktemp "$DT/cnf1.XXXXXX")
-            opts="$(dlg_checklist_2 "${wrds}")"
+            opts="$(gui_add_checklist_opts "${wrds}")"
             if [ $? -eq 0 ]; then
                 echo "$opts" > "$DT_r/__opts__"
                 while read -r chkst; do
@@ -440,7 +441,7 @@ function list_words_dclik() {
     else
         if [[ -n "$wrds" ]]; then
         
-            slt="$(dlg_checklist_1 "${wrds}")"
+            slt="$(gui_add_checklist_words "${wrds}")"
             if [ $? -eq 0 ]; then
                 while read -r chkst; do
 					
@@ -554,14 +555,14 @@ function process() {
         tpcs="$(cdb "${shrdb}" 5 topics)"
         export tpcs="$(grep -vFx "${tpe}" <<< "$tpcs" |tr "\\n" '!' |sed 's/\!*$//g')"
         [ -n "$tpcs" ] && export e='!'
-        tpe="$(dlg_checklist_3 "$DT_r/xlines" "${tpe}" "$title" "$info")"
+        tpe="$(gui_add_checklist_batch "$DT_r/xlines" "${tpe}" "$title" "$info")"
         ret="$?"
     fi
     
     if [ $ret -eq 2 ]; then
     
         cleanups "$slt"
-        txt="$(dlg_text_info_1 "$DT_r/xlines")"
+        txt="$(gui_add_edit_text "$DT_r/xlines")"
         ret=$?
         if [ $ret -eq 0 ]; then
             unset trgt; process '__edit__' "${txt}"
@@ -571,7 +572,7 @@ function process() {
         
     elif [ $ret -eq 0 ]; then
     
-        check_s "${tpe}"
+        gui_add_select_topic "${tpe}"
         unset link
         touch "$DT_r/select_lines"
         if [ "${tpe}" = "$(gettext "New topic") *" ]; then
@@ -843,11 +844,11 @@ new_items() {
     [ -n "$tpcs" ] && e='!'
 
     if [[ ${trans} = TRUE ]]; then
-        lzgplr="$(dlg_form_1)"; ret=$?
+        lzgplr="$(gui_add_note_simple)"; ret=$?
         trgt=$(cut -d "|" -f1 <<< "${lzgplr}")
         tpe=$(cut -d "|" -f2 <<< "${lzgplr}")
     else
-        lzgplr="$(dlg_form_2)"; ret=$?
+        lzgplr="$(gui_add_note_with_srce)"; ret=$?
         trgt=$(cut -d "|" -f1 <<< "${lzgplr}")
         srce=$(cut -d "|" -f2 <<< "${lzgplr}")
         tpe=$(cut -d "|" -f3 <<< "${lzgplr}")
@@ -873,7 +874,7 @@ new_items() {
     
         if [ $ret -eq 5 ]; then "$DS/ifs/tls.sh" clipw & return; fi
         if [ -z "${tpe}" ]; then
-            check_s "${tpe}"; [ -z "${tpe}" ] && exit 1
+            gui_add_select_topic "${tpe}"; [ -z "${tpe}" ] && exit 1
         fi
         
         if [ "${tpe}" = "$(gettext "New topic") *" ]; then

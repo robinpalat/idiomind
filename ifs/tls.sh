@@ -1399,28 +1399,14 @@ itray() {
 
 
 about() {
-
-    lnk1='https://idiomind.sourceforge.io/help.html'
-    lnk2="https://idiomind.sourceforge.io/contact.html"
-    lnk3="https://idiomind.sourceforge.io/donate.html"
-    lnk4="https://idiomind.sourceforge.io/license.html"
-
-	yad --form --text-align=center --align=center --scroll \
-	--image=$DS/images/about.png --center \
-	--title="$(gettext "About")" --image-on-top \
-	--width=350 --height=360 --borders=10 --image-on-top \
-	--window-icon=$DS/images/logo.png \
-	--name=Idiomind --class=Idiomind \
-	--field="<b><big><big>Idiomind</big></big></b>":LBL "" \
-	--field="$_version":LBL "" \
-	--field="$_descrip":LBL "" \
-	--field=" ":LBL "" \
-	--field="<small><a href='$_website'>$(gettext "Website")</a></small>":LBL "" \
-	--field="<small>$(gettext "Program updates")</small>":BTN "$DS/ifs/tls.sh 'check_updates'" \
-	--field=" ":LBL "" \
-	--field="<small>$_copyright</small>":LBL "" \
-	--no-buttons 
-
+    # Wrapper compat (Paso 1): implementación canónica en gui/common.sh.
+    if ! declare -F gui_about >/dev/null 2>&1; then
+        if [ -n "${DS:-}" ] && [ -r "$DS/gui/common.sh" ]; then
+            # shellcheck source=/dev/null
+            source "$DS/gui/common.sh"
+        fi
+    fi
+    gui_about "$@"
 } >/dev/null 2>&1
 
 
