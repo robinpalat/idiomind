@@ -1,26 +1,13 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 #
-# gui/export.sh — GUI de exportación (extracción conservadora de
-# ifs/upld.sh, Paso 5C).
-#
-# Correspondencia:
-#   dlg_export -> gui_export_dialog       (--form 6 campos, Export:2/Close:4)
-#   fdlg       -> gui_export_file_dialog  (--file+--form plug, --paned)
-#
-# Contrato (preparado por upld.sh:export_topic/_export):
-#   text_export, autr, _Categories, _levels, note, _formats, include_media,
-#   sz, tpc, HOME, DS. stdout 6 líneas / path en última línea; ret 2/4, 0/1.
-# Sin shims (cero importadores externos; dispatch por case en upld.sh).
 
-# Guarda contra doble source (patrón resto de módulos gui/).
 if [ -n "${__GUI_EXPORT_SH:-}" ]; then
     return 0 2>/dev/null || exit 0
 fi
 __GUI_EXPORT_SH=1
 
-# Primitivas comunes. Carga documental con guarda (este módulo usa yad
-# directo; se mantiene por consistencia, igual que gui/play.sh).
+
 if [ -z "${__GUI_COMMON_SH:-}" ] && [ -n "${DS:-}" ] && [ -r "$DS/gui/common.sh" ]; then
     # shellcheck source=/dev/null
     source "$DS/gui/common.sh"

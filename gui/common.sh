@@ -1,41 +1,12 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 #
-# gui/common.sh — primitivas GUI YAD de la aplicación principal.
-#
-# Alcance:
-#   Solo capa de presentación. Sin lógica de negocio:
-#   sin SQLite, sin topics, sin traducción, sin reproducción,
-#   sin filesystem específico de operaciones, sin addons,
-#   sin practice, sin Podcasts.
-#
-# Uso:
-#   source "$DS/gui/common.sh"
-#
-#   Las funciones aquí definidas no hacen source de otros módulos
-#   y no tienen efectos laterales al cargarse. Usan únicamente
-#   variables del entorno del llamador: DS, y para gui_about
-#   además _version/_descrip/_website/_copyright (de default/sets.cfg).
-#   gui_check_err requiere además la función cleanups() del llamador
-#   (definida en ifs/cmns.sh); si no existe, el diálogo se muestra
-#   igual y solo falla la limpieza final, igual que antes.
-#
-# Compatibilidad:
-#   Los nombres originales (msg, msg_2, ...) se conservan como
-#   wrappers finos en sus archivos de origen y delegan aquí.
-#   No se normalizan códigos de salida de yad.
-#
 
-# Protección contra doble carga (parseo Bash innecesario).
 if [ -n "${__GUI_COMMON_SH:-}" ]; then
     return 0 2>/dev/null || exit 0
 fi
 __GUI_COMMON_SH=1
 
-# Boilerplate realmente común a todas las primitivas.
-# Solo --name/--class/--center (verificado en las 7 funciones).
-# --on-top y --window-icon se mantienen inline por función porque
-# varían (p.ej. about no usa --on-top; confirm usa --window-icon=idiomind).
 GUI_BASE_OPTS=(--name=Idiomind --class=Idiomind --center)
 
 function gui_msg() {

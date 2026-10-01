@@ -16,27 +16,6 @@ sy=$(xrandr -q |grep -w Screen |sed 's/.*current //;s/,.*//' |awk '{print $3}')
 sx=$(echo $((($sx-500)/2)))
 sy=$(echo $((($sy-500)/2)))
 
-if [[ ! $(which yad) ]]; then
-zenity --info --title="$(gettext "Installing YAD")" \
---text="$(gettext "Sorry, to run idiomind we need to use a GUI output with yad.\nPlease install 'yad', you can use:")
-\nsudo add-apt-repository ppa:robinpalat/idiomind
-sudo apt-get update
-sudo apt-get install yad\n
-$(gettext "You can also download the source code and compile it yourself.\nPlease go to:") https://sourceforge.net/projects/yad-dialog"
-    exit 1
-else
-    yv="$(yad --version |cut -f1 -d' ')"
-    yadversion() { test "$(echo "$@" |tr " " "\n" |sort -V |head -n 1)" != "$1"; }
-    if yadversion "$yad_version" "$yv"; then
-zenity --info --title="$(gettext "Installing YAD")" \
---text="$(gettext "Sorry, idiomind is using a more recent version of yad.\nPlease update 'yad', you can use:")
-\nsudo add-apt-repository ppa:robinpalat/idiomind
-sudo apt-get update
-sudo apt-get install yad\n
-$(gettext "You can also download the source code and compile it yourself.\nPlease go to:") https://sourceforge.net/projects/yad-dialog"
-        exit 1
-    fi
-fi
 
 _info() {
     yad --form --title="$(gettext "Notice")" \

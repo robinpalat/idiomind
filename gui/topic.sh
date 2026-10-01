@@ -1,22 +1,8 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 #
-# gui/topic.sh — GUI principal de Topics (extracción conservadora de
-# ifs/extensions/main/items_list.sh, Paso 2).
-#
-# GUI específica de la aplicación principal. NO es una API genérica de
-# notebooks y NO debe ser reutilizada por Podcasts/addons/practice.
-#
-# Contrato (preparado por main.sh:topic()/ipanel() e ifs/idmnd.sh):
-#   KEY, cnf1, cnf3, cnf4, ls1, ls2, tpc, stts, DC_tlt, note,
-#   lbl1, info2, label_review, cfg1, cfg2, acheck,
-#   cmd_mark, cmd_play, cmd1..cmd4, DT, DS, cfgdb.
-# No se convierten en parámetros en esta etapa.
-#
-# Primitivas comunes (msg, etc.) viven en gui/common.sh.
-# Este módulo solo construye YAD con plug/notebook/listen/tail/FIFOs.
 
-# Primitivas comunes ya migradas (Paso 1). Carga perezosa y con guarda.
+
 if [ -z "${__GUI_COMMON_SH:-}" ] && [ -n "${DS:-}" ] && [ -r "$DS/gui/common.sh" ]; then
     # shellcheck source=/dev/null
     source "$DS/gui/common.sh"
@@ -24,10 +10,7 @@ fi
 
 
 function vwr() {
-    # Idioma solicitado no disponible (slng_err con el codigo ISO activo):
-    # no abrir tarjeta con source incorrecto. Diálogo con traducción
-    # automática (mecanismo existente sobre el topic instalado); al quedar
-    # compatible se abre la tarjeta.
+
     if [ -f "${DC_tlt}/slng_err" ]; then
         yad --title="Idiomind" --class=Idiomind --name=Idiomind \
         --text="$(gettext "This topic has no source in your language.")\n" \
@@ -116,6 +99,7 @@ function vwr() {
 } >/dev/null 2>&1
 
 function word_view() {
+	
     font_size=27; [ ${#trgt} -gt 20 ] && font_size=20
     [ -n "${tags}" ] && field_tag="--field=<small>$tags</small>:lbl"
     [ -n "${defn}" ] && field_defn="--field=$defn:lbl"
@@ -138,6 +122,7 @@ function word_view() {
 } >/dev/null 2>&1
 
 function sentence_view() {
+	
     if [ `sqlite3 "$cfgdb" "select gramr from opts;"` = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
     [ -n "${note}" ] && field_note="💬  <span font_desc='Arial 9'>$note</span>\n"
@@ -192,6 +177,7 @@ add_pos_col() {
 }
 
 function notebook_1() {
+	
     native_lang_info="$(topic_language_notice)"
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"${tpc}\"" 1"
     cmd_play="$DS/play.sh play_list"
@@ -272,6 +258,7 @@ function notebook_1() {
 
 # TODO
 function notebook_2() {
+	
 	native_lang_info="$(topic_language_notice)"
 	cmd_play="$DS/play.sh play_list"
     cmd_mark="'$DS/mngr.sh' 'mark_to_learn' "\"${tpc}\"" 1"
@@ -347,6 +334,7 @@ function notebook_2() {
 
 
 function notebook_3() {
+	
 	native_lang_info="$(topic_language_notice)"
 	
 	cmd_play="$DS/play.sh play_list"
@@ -403,6 +391,7 @@ function notebook_3() {
 
 
 function dialog_1() {
+	
     yad --title="$(gettext "Review")  \"${tpc}\"" \
     --class=idiomind --name=Idiomind \
     --text="$(gettext "<b>Would you like to review it?</b>\n The waiting period already has been completed.")" \

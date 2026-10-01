@@ -1,23 +1,12 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 #
-# gui/play.sh — GUI de reproducción (extracción conservadora de play.sh).
-#
 # Correspondencia:
 #   play_list -> gui_play_lists_options  (notebook Lists/Options)
 #   setting_1 -> gui_play_settings_rows  (filas list, incl. extensions/play/*)
 #   msg_err1  -> gui_play_synth_hint     (aviso sintetizador, sin callers hoy)
 #
-# Contrato (preparado por el proceso play.sh):
-#   tpc, stts, DC_tlt, DM_tlt, tpcdb, DT, DS, cfgdb, rword/rplay/audio/ntosd/loop,
-#   psets, KEY/tab1/tab2 (mktemp dentro), out1/out2, tpp, playlck.
-# play_list era dispatch CLI ($DS/play.sh play_list); la acción CLI se
-# conserva en play.sh y el case invoca gui_play_lists_options.
-#
-# Dependencias cmns.sh (msg, tpc_db): las aporta el proceso play.sh
-# (source explícito allí); aquí solo se documentan, igual que gui/add.sh.
 
-# Guarda contra doble source (patrón gui/common.sh, resto de módulos).
 if [ -n "${__GUI_PLAY_SH:-}" ]; then
     return 0 2>/dev/null || exit 0
 fi

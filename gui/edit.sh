@@ -1,38 +1,13 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 #
-# gui/edit.sh — GUI del editor/gestor de notas (extracción conservadora,
-# Paso 4A).
-#
-# Origen:
-#   ifs/extensions/manager/mngr.sh: dlg_form_1/2, edit_list_list, progr_3
-#   mngr.sh:edit_list_more (formulario Backups + _war + dispatch, íntegro)
-#
-# Correspondencia:
-#   dlg_form_1     -> gui_edit_word       (editor de palabra, 11 campos)
-#   dlg_form_2     -> gui_edit_sentence   (editor de oración, viewer CHK/LBL)
-#   edit_list_list -> gui_edit_list       (lista editable in/out)
-#   progr_3        -> gui_edit_progress   (filtro --progress --$1)
-#   edit_list_more -> gui_edit_backups    (form Backups + dispatch íntegro)
-#
-# NOTA colisión resuelta por renombre (sin reordenar includes):
-#   gui_edit_word/gui_edit_sentence ya NO colisionan con
-#   gui_add_note_simple/gui_add_note_with_srce (gui/add.sh, alta).
-#
-# Contrato: el llamador (mngr.sh) prepara las globales
-# (trgt/srce/tpc_list/exmp/defn/note/audf/mark/edit_pos/type/cdid,
-#  cmd_delete/cmd_image/cmd_def/cmd_trad/cmd_play, direc, tpc, DT, DS...)
-# igual que antes. Códigos YAD sin normalizar; edit_list_list conserva
-# su stdin->stdout; progr_3 conserva su uso como filtro por pipe.
 
-# Guarda contra doble source (patrón gui/common.sh, gui/topic.sh, gui/add.sh).
 if [ -n "${__GUI_EDIT_SH:-}" ]; then
     return 0 2>/dev/null || exit 0
 fi
 __GUI_EDIT_SH=1
 
-# Primitivas comunes (msg/msg_2/yad_kill viven en gui/common.sh;
-# no se duplican aquí). Carga documental con guarda.
+
 if [ -z "${__GUI_COMMON_SH:-}" ] && [ -n "${DS:-}" ] && [ -r "$DS/gui/common.sh" ]; then
     # shellcheck source=/dev/null
     source "$DS/gui/common.sh"

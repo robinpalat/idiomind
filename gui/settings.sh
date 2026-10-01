@@ -1,21 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 #
-# gui/settings.sh — GUI de Preferences (extracción conservadora de
-# cnfg.sh:config_dlg, Paso 5D-A).
-#
-# Única función: gui_prefs_dialog (notebook Preferences/Addons).
-# NO incluye: 1u.sh (bootstrap), chng.sh (selector), set_lang,
-# start_mode/start_mode_live (procesos), ni persistencia alguna.
-#
-# Contrato (preparado por cnfg.sh:config_dlg):
-#   KEY no — lo crea aquí (RANDOM); lee gramr/trans/dlaud/ttrgt/itray/
-#   swind/stsks/interface_lang_list/tlng/list1/level/levels_list/slng/list2,
-#   acheck no, cnf1, sz, DS, DS_a. Escribe cnf1 (plug --form) y setea ret
-#   (código del notebook). Termina en YAD -> cnf1 + ret; el apply
-#   (cut/cdb/autostart/idiomas) permanece en cnfg.sh.
 
-# Guarda contra doble source (patrón resto de módulos gui/).
 if [ -n "${__GUI_SETTINGS_SH:-}" ]; then
     return 0 2>/dev/null || exit 0
 fi
