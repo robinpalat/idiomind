@@ -24,6 +24,10 @@
 
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
+if [ -r "$DS/addons/Resources/common.sh" ]; then
+    # shellcheck source=/dev/null
+    source "$DS/addons/Resources/common.sh"
+fi
 source "$DS/default/sets.cfg"
 export lgt=${tlangs[$tlng]}
 export lgs=${slangs[$slng]}
@@ -90,10 +94,15 @@ function dclk() {
     fname="$3.$4.$5.$6"
     
     if [ "$4" = "Link" ]; then
-        TLANGS=$(grep -o TLANGS=\"[^\"]* \
-        "$DS_a/Resources/scripts/${fname}" |grep -o '[^"]*$')
-        LANGUAGES=$(grep -o LANGUAGES=\"[^\"]* \
-        "$DS_a/Resources/scripts/${fname}" |grep -o '[^"]*$')
+        if declare -F resource_get_field >/dev/null 2>&1; then
+            TLANGS="$(resource_get_field "$DS_a/Resources/scripts/${fname}" "TLANGS")"
+            LANGUAGES="$(resource_get_field "$DS_a/Resources/scripts/${fname}" "LANGUAGES")"
+        else
+            TLANGS=$(grep -o TLANGS=\"[^\"]* \
+            "$DS_a/Resources/scripts/${fname}" |grep -o '[^"]*$')
+            LANGUAGES=$(grep -o LANGUAGES=\"[^\"]* \
+            "$DS_a/Resources/scripts/${fname}" |grep -o '[^"]*$')
+        fi
         USEDTO="$5"
         INFO="$(gettext "Link to web page")"
         if [ ! -f "$msgs/$fname" ]; then
@@ -224,6 +233,26 @@ function cpfile() {
 }
 
 function dlg() {
+    # Single-instance: N llamadas concurrentes (p.ej. 3 fallbacks de
+    # translate/tts en el arranque) deben resultar en 1 diálogo, no N.
+    # flock es kernel-state, sin ficheros stale como $DT/scripts.
+    if [ -n "${DT:-}" ]; then
+        [ -d "$DT" ] || mkdir -p "$DT" 2>/dev/null
+        exec 200>"$DT/.resources_dlg.lock" 2>/dev/null
+        if ! flock -n 200 2>/dev/null; then
+            exit 1
+        fi
+    fi
+    # En tareas de fondo (autostart, feeds, session init) está prohibido
+    # abrir GUI modal: fallar en silencio y dejar que el llamador
+    # registre/omita. Ver IDIOMIND_NONINTERACTIVE en main.sh.
+    if declare -F resource_gui_allowed >/dev/null 2>&1; then
+        if ! resource_gui_allowed; then
+            exit 1
+        fi
+    elif [ "${IDIOMIND_NONINTERACTIVE:-}" = 1 ]; then
+        exit 1
+    fi
     if [ -f "$DT/scripts" ]; then
         (sleep 20 && cleanups "$DT/scripts") & exit 1
     fi
@@ -232,11 +261,15 @@ function dlg() {
         cd "$enables"/
         find . -not -name "*.$lgt" -and -not -name "*.various" -type f \
         -exec mv --target-directory="$disables/" {} +
-        
+
         while read -r res; do
             if [ -n "${res}" ]; then
-                TLANGS=$(grep -o TLANGS=\"[^\"]* \
-                "$DS_a/Resources/scripts/${res}" |grep -o '[^"]*$')
+                if declare -F resource_get_field >/dev/null 2>&1; then
+                    TLANGS="$(resource_get_field "$DS_a/Resources/scripts/${res}" "TLANGS")"
+                else
+                    TLANGS=$(grep -o TLANGS=\"[^\"]* \
+                    "$DS_a/Resources/scripts/${res}" |grep -o '[^"]*$')
+                fi
                 echo 'TRUE'
                 sed 's/\./\n/g' <<< "${res}"
                 if ! echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
@@ -248,16 +281,20 @@ function dlg() {
                 fi
             fi
         done < <(ls "$enables"/)
-        
+
         while read -r res; do
             if [ -n "${res}" ]; then
-                TLANGS=$(grep -o TLANGS=\"[^\"]* \
-                "$DS_a/Resources/scripts/${res}" |grep -o '[^"]*$')
+                if declare -F resource_get_field >/dev/null 2>&1; then
+                    TLANGS="$(resource_get_field "$DS_a/Resources/scripts/${res}" "TLANGS")"
+                else
+                    TLANGS=$(grep -o TLANGS=\"[^\"]* \
+                    "$DS_a/Resources/scripts/${res}" |grep -o '[^"]*$')
+                fi
                 echo 'FALSE'
                 if grep -E ".$lgt|.various" <<< "${res}">/dev/null 2>&1; then
                     sed 's/\./\n/g' <<< "${res}" | \
                     sed "3s|${sus}|<span color='#2BB62D'>${sus}<\/span>|"
-                else 
+                else
                     sed 's/\./\n/g' <<< "${res}"
                 fi
                 if ! echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
@@ -410,25 +447,33 @@ function update_config_dir() {
             [ -n "$res" ] || continue
             _script="$DS_a/Resources/scripts/$res"
             [ -f "$_script" ] || continue
-            # Solo líneas no comentadas
-            _langs="$(grep -m1 '^LANGUAGES=' "$_script" 2>/dev/null | cut -d'"' -f2)"
-            if [ -n "$_langs" ]; then
-                if ! grep -Fwq -- "$tlng" <<< "$_langs" 2>/dev/null; then
+            # Lógica centralizada en common.sh: soporta LANGUAGES
+            # multilínea (p.ej. Google Translate) y TLANGS exacto.
+            # Sin metadatos se asume compatible (comportamiento histórico).
+            if declare -F resource_supports_language >/dev/null 2>&1; then
+                if ! resource_supports_language "$_script" "$tlng" "$lgt"; then
                     mv -f "$enables/$res" "$disables/$res" 2>/dev/null \
-                        && echo -e "\tresource disabled (LANGUAGES): $res"
+                        && echo -e "\tresource disabled (language): $res"
                 fi
             else
-                _tcodes="$(grep -m1 '^TLANGS=' "$_script" 2>/dev/null | cut -d'"' -f2)"
-                if [ -n "$_tcodes" ] && [ -n "$lgt" ]; then
-                    # Comparación exacta por código entre comas
-                    # (evita que "en" matchee dentro de otro token;
-                    # funciona con "zh-cn" que -w partiría por el guion).
-                    _clean="$(tr -d '[:space:]' <<< "$_tcodes")"
-                    case ",${_clean}," in
-                        *",${lgt},"*) ;;
-                        *) mv -f "$enables/$res" "$disables/$res" 2>/dev/null \
-                            && echo -e "\tresource disabled (TLANGS): $res" ;;
-                    esac
+                # Fallback legacy (solo primera línea): se mantiene por
+                # compatibilidad si common.sh no pudo cargarse.
+                _langs="$(grep -m1 '^LANGUAGES=' "$_script" 2>/dev/null | cut -d'"' -f2)"
+                if [ -n "$_langs" ]; then
+                    if ! grep -Fwq -- "$tlng" <<< "$_langs" 2>/dev/null; then
+                        mv -f "$enables/$res" "$disables/$res" 2>/dev/null \
+                            && echo -e "\tresource disabled (LANGUAGES): $res"
+                    fi
+                else
+                    _tcodes="$(grep -m1 '^TLANGS=' "$_script" 2>/dev/null | cut -d'"' -f2)"
+                    if [ -n "$_tcodes" ] && [ -n "$lgt" ]; then
+                        _clean="$(tr -d '[:space:]' <<< "$_tcodes")"
+                        case ",${_clean}," in
+                            *",${lgt},"*) ;;
+                            *) mv -f "$enables/$res" "$disables/$res" 2>/dev/null \
+                                && echo -e "\tresource disabled (TLANGS): $res" ;;
+                        esac
+                    fi
                 fi
             fi
         done < <(ls "$enables" 2>/dev/null)
@@ -437,6 +482,10 @@ function update_config_dir() {
     echo -e "\tResources ok\n"
 }
 
+# Nota: los argumentos numéricos 1/2/3/6 seleccionan la pestaña inicial
+# del diálogo (ver dlg: n=${1}); no son modos no-GUI. Todo lo no listado
+# abre el diálogo principal con single-instance + respeto a
+# IDIOMIND_NONINTERACTIVE (ver dlg()).
 case "$1" in
     add_dlg)
     add_dlg "$@" ;;
@@ -448,6 +497,8 @@ case "$1" in
     dlg_text_info_3 ;;
     updt_scripts)
     update_config_dir "$@" ;;
+    1|2|3|6)
+    dlg "$@" ;;
     *)
     dlg "$@" ;;
 esac

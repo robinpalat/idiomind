@@ -185,11 +185,11 @@ function new_session() {
     
 	$DS/ifs/extensions/start/update_tasks.sh
 
-    # run startups scripts
+
     for strt in "$DS/ifs/extensions/start"/*; do
 		if grep tasks <<<"$strt">/dev/null 2>&1; then :
 		else
-			( sleep 2 && "${strt}" )
+			( export IDIOMIND_NONINTERACTIVE=1; sleep 2 && "${strt}" )
 		fi
 	done &
     

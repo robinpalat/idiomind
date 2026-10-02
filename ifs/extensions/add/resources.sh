@@ -6,26 +6,50 @@
 function scripts() {
     dlg=0
     cmsg() {
-        if [ ! -e "$DT/scripts" ]; then
-            touch "$DT/scripts"
-            sleep 3
-            if [ ! -e "$DC_s/topics_first_run" ]; then
-                source "$DS/ifs/cmns.sh"
-                msg_2 "$(gettext "You may need to configure a list of Internet resources. \nDo you want to do this now?")" \
-                dialog-information "$(gettext "Yes")" "$(gettext "Cancel")" "Idiomind"
-                if [ $? = 0 ]; then 
-                    if ps -A |pgrep -f "yad --form --title"; then 
-                        kill -9 $(pgrep -f "yad --form --title") &
-                    fi
-                    rm -f "$DT/scripts"; "$DS_a/Resources/cnfg.sh" 6 &
-                    
-                    if ps -A |pgrep -f "/usr/share/idiomind/add.sh"; then 
-                        killall add.sh & 
-                    fi
+
+        if [ "${IDIOMIND_NONINTERACTIVE:-}" = 1 ]; then
+            echo "$tlng" > "$DC_a/resources/.res" 2>/dev/null
+            return 0
+        fi
+    
+        [ -d "$DT" ] || mkdir -p "$DT" 2>/dev/null
+        if ! mkdir "$DT/scripts.lk" 2>/dev/null; then
+            return 0
+        fi
+        touch "$DT/scripts" 2>/dev/null
+        _scripts_unlock() { rm -f "$DT/scripts"; rmdir "$DT/scripts.lk" 2>/dev/null; }
+        trap '_scripts_unlock' RETURN
+        sleep 3
+        if [ ! -e "$DC_s/topics_first_run" ]; then
+            source "$DS/ifs/cmns.sh"
+            if [ -r "$DS/addons/Resources/common.sh" ]; then
+                # shellcheck source=/dev/null
+                source "$DS/addons/Resources/common.sh"
+                if ! resource_gui_allowed 2>/dev/null; then
+                    echo "$tlng" > "$DC_a/resources/.res" 2>/dev/null
+                    _scripts_unlock; trap - RETURN
+                    return 0
                 fi
-                echo "$tlng" > "$DC_a/resources/.res"
+                if resource_dlg_is_open 2>/dev/null; then
+                    _scripts_unlock; trap - RETURN
+                    return 0
+                fi
             fi
-            [ -f "$DT/scripts" ] && rm -f "$DT/scripts"
+            msg_2 "$(gettext "You may need to configure a list of Internet resources. \nDo you want to do this now?")" \
+            dialog-information "$(gettext "Yes")" "$(gettext "Cancel")" "Idiomind"
+            if [ $? = 0 ]; then
+                if ps -A |pgrep -f "yad --form --title"; then
+                    kill -9 $(pgrep -f "yad --form --title") &
+                fi
+                rm -f "$DT/scripts"; rmdir "$DT/scripts.lk" 2>/dev/null
+                trap - RETURN
+                "$DS_a/Resources/cnfg.sh" 6 &
+
+                if ps -A |pgrep -f "/usr/share/idiomind/add.sh"; then
+                    killall add.sh &
+                fi
+            fi
+            echo "$tlng" > "$DC_a/resources/.res"
         fi
         return 0
     }

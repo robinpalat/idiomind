@@ -14,6 +14,27 @@ if [ -n "${DS:-}" ] && [ -r "$DS/gui/add.sh" ]; then
     # shellcheck source=/dev/null
     source "$DS/gui/add.sh"
 fi
+if [ -n "${DS:-}" ] && [ -r "$DS/addons/Resources/common.sh" ]; then
+    # shellcheck source=/dev/null
+    source "$DS/addons/Resources/common.sh"
+fi
+
+function _request_resources_dlg() {
+    local _task="${1:-}"
+    if declare -F resource_gui_allowed >/dev/null 2>&1; then
+        resource_gui_allowed || return 1
+        resource_dlg_is_open 2>/dev/null && return 1
+    else
+        [ "${IDIOMIND_NONINTERACTIVE:-}" = 1 ] && return 1
+        pgrep -f "Resources/cnfg.sh" >/dev/null 2>&1 && return 1
+    fi
+    if [ -n "$_task" ]; then
+        "$DS_a/Resources/cnfg.sh" "$_task"
+    else
+        "$DS_a/Resources/cnfg.sh"
+    fi
+    return 0
+}
 
 function check_s() {
     gui_add_select_topic "$@"
@@ -468,7 +489,10 @@ function translate() {
         sqlite3 ${tlngdb} "select "${slng^}" from Words where Word is '${t}' limit 1;"
     else
         if ! ls "$DC_d"/*."Traslator online.Translate".* 1> /dev/null 2>&1; then
-            "$DS_a/Resources/cnfg.sh" 2
+            if ! _request_resources_dlg 2; then
+                echo "translate: no Traslator provider enabled (GUI suprimida en fondo)" >&2
+                return 1
+            fi
         fi
         for trans in "$DC_d"/*."Traslator online.Translate".*; do
             trans="$DS_a/Resources/scripts/$(basename "${trans}")"
@@ -514,7 +538,7 @@ dwld2() {
     fi
 }
 
-export -f translate dwld1 dwld2
+export -f translate dwld1 dwld2 _request_resources_dlg
 
 function tts_sentence() {
 
@@ -549,7 +573,10 @@ function tts_sentence() {
 		done
 
 	else
-		"$DS_a/Resources/cnfg.sh" 1
+		if ! _request_resources_dlg 1; then
+			echo "tts_sentence: no TTS provider enabled (GUI suprimida en fondo)" >&2
+			return 1
+		fi
 	fi
 }
 
@@ -562,7 +589,10 @@ function tts_word() {
 	! ls "$DC_d"/*."TTS online.Convert text to audio".* 1> /dev/null 2>&1 &&\
 	! ls "$DC_d"/*."TTS online.Download audio".various 1> /dev/null 2>&1;
 	  then
-		"$DS_a/Resources/cnfg.sh"
+		if ! _request_resources_dlg ""; then
+			echo "tts_word: no TTS provider enabled (GUI suprimida en fondo)" >&2
+			return 1
+		fi
 	else
 	
 		if ls "$DC_d"/*."TTS online.Download audio".$lgt 1> /dev/null 2>&1; then

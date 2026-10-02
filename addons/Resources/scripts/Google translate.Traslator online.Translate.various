@@ -42,7 +42,10 @@ Google Inc.
 2. This script is NOT a Google product. Neither this software nor
 its author is affiliated with Google Inc."
 
-LANGUAGES="Afrikaans, Arabic, Azerbaijani, Belarusian, Bulgarian, Catalan, Chinese, Danish, Dutch, English, Finnish, French, German, Greek, Italian, Japanese, Norwegian, Polish, Portuguese, Russian, Spanish, Swedish, Turkish, Vietnamese"
+LANGUAGES="Afrikaans, Arabic, Azerbaijani, Belarusian, Bulgarian,
+ Catalan, Chinese, Danish, Dutch, English, Finnish, French, German,
+  Greek, Italian, Japanese, Norwegian, Polish, Portuguese, 
+  Russian, Spanish, Swedish, Turkish, Vietnamese"
 INFOAPI="https://developers.google.com/translate/"
 STATUS="Ok"
 VOICES=""

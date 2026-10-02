@@ -213,7 +213,7 @@ function notebook_1() {
     --ellipsize=end --wrap-width=460 --ellipsize-cols=2 \
     --search-column=1 --regex-search --hide-column=4 --tooltip-column=4 \
     --column=Name:TEXT \
-    --column=@fore@ --column=Learned:CHK --column=@back@:TIP > "$cnf1" &
+    --column=@fore@ --column=Learned:CHK --column=TIP:TEXT > "$cnf1" &
     ([ -n "${ls2}" ] && echo "${ls2}" | awk '{print $0"\n"NR}') |yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2"  \
@@ -413,7 +413,7 @@ function tpc_view() {
     --print-column=1 --expand-column=1 --grid-lines=hor  --no-headers \
     --ellipsize=end --wrap-width=460 --ellipsize-cols=2 \
     --search-column=1 --regex-search --hide-column=2 --tooltip-column=2 \
-    --column=Name:TEXT --column=@back@:TIP &
+    --column=Name:TEXT --column=TIP:TEXT &
     echo "$note" | yad --text-info --tabnum=2 --window-icon=idiomind \
     --text="${itxt}\n" \
     --plug=$KEY --borders=10 \
