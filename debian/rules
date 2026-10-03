@@ -16,12 +16,15 @@
 
 %:
 	dh $@
-	
+
 override_dh_auto_build:
 	gcc -Wall -Wextra \
 		utils/idiomind-utils.c utils/tray.c utils/html_view.c \
 		-o utils/idiomind-utils \
 		$$(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1 gmodule-2.0)
+
+override_dh_strip:
+	dh_strip --no-automatic-dbgsym
 
 
 # dh_make generated override targets

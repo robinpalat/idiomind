@@ -38,9 +38,8 @@ msgs="$DC/addons/resources/msgs"
 DC_a="$HOME/.config/idiomind/addons"
 check_dir "$msgs"
 
-# Resource task types displayed in the GUI
-task=( 'Search audio' 'Convert text to audio' 'Translate' \
-'Search definition' 'Search image' '_' '_' )
+# Resource task types displayed in the GUI (grouping order)
+task=( 'Search audio' 'Convert text to audio' 'Translate' 'Search image' )
 
 function add_dlg() {
     langs=( 'various' 'zh-cn' 'en' 'fr' \
@@ -232,6 +231,17 @@ function cpfile() {
     > "${4}"; sudo chmod 777 "${4}"
 }
 
+function run_live_test() {
+    # Punto de entrada vivo para el boton Test (misma instancia YAD).
+    # $1 = fifo de la lista --listen. Vacia la vista y delega en
+    # test.sh live, que emite fila por fila sin cerrar el dialogo.
+    local _fifo="${1:-$DT/resources_live.fifo}"
+    [ -p "$_fifo" ] || _fifo="$DT/resources_live.fifo"
+    [ -p "$_fifo" ] || exit 1
+    printf '\f\n' > "$_fifo" 2>/dev/null || exit 1
+    "$DS_a/Resources/test.sh" live "$_fifo"
+}
+
 function dlg() {
     # Single-instance: N llamadas concurrentes (p.ej. 3 fallbacks de
     # translate/tts en el arranque) deben resultar en 1 diálogo, no N.
@@ -256,56 +266,69 @@ function dlg() {
     if [ -f "$DT/scripts" ]; then
         (sleep 20 && cleanups "$DT/scripts") & exit 1
     fi
+    resource_row() {
+        local _res="$1" _st="$2" _tl
+        [ -n "$_res" ] || return 1
+        if declare -F resource_get_field >/dev/null 2>&1; then
+            _tl="$(resource_get_field "$DS_a/Resources/scripts/${_res}" "TLANGS")"
+        else
+            _tl=$(grep -o TLANGS=\"[^\"]* \
+            "$DS_a/Resources/scripts/${_res}" |grep -o '[^"]*$')
+        fi
+        echo "$_st"
+        sed 's/\./\n/g' <<< "${_res}"
+        if ! echo "$_tl" |grep -E "$lgt" >/dev/null 2>&1; then
+            echo "$DS/addons/Resources/b.png"
+        elif [ ! -f "$msgs/${_res}" ]; then
+            echo "$DS/addons/Resources/c.png"
+        else
+            echo "$DS/addons/Resources/a.png"
+        fi
+    }
+    resource_task_norm() {
+        case "$1" in
+            'Download audio') echo 'Search audio' ;;
+            'Download image') echo 'Search image' ;;
+            *) echo "$1" ;;
+        esac
+    }
     resources_list() {
-        sus="${task[$1]}"
         cd "$enables"/
         find . -not -name "*.$lgt" -and -not -name "*.various" -type f \
         -exec mv --target-directory="$disables/" {} +
 
-        while read -r res; do
-            if [ -n "${res}" ]; then
-                if declare -F resource_get_field >/dev/null 2>&1; then
-                    TLANGS="$(resource_get_field "$DS_a/Resources/scripts/${res}" "TLANGS")"
-                else
-                    TLANGS=$(grep -o TLANGS=\"[^\"]* \
-                    "$DS_a/Resources/scripts/${res}" |grep -o '[^"]*$')
-                fi
-                echo 'TRUE'
-                sed 's/\./\n/g' <<< "${res}"
-                if ! echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
-                    echo "$DS/addons/Resources/b.png"
-                elif [ ! -f "$msgs/${res}" ]; then
-                    echo "$DS/addons/Resources/c.png"
-                else
-                    echo "$DS/addons/Resources/a.png"
-                fi
-            fi
-        done < <(ls "$enables"/)
+        # Agrupado por tarea: el orden de las filas lo define ${task[@]}.
+        # Cada reconstruccion (--listen) vuelve a generarse en este orden.
+        for sus in "${task[@]}"; do
+            while read -r res; do
+                [ -n "${res}" ] || continue
+                _rtask="$(cut -d'.' -f3 <<< "${res}")"
+                [ "$(resource_task_norm "${_rtask}")" = "${sus}" ] || continue
+                resource_row "${res}" 'TRUE'
+            done < <(ls "$enables"/)
 
-        while read -r res; do
-            if [ -n "${res}" ]; then
-                if declare -F resource_get_field >/dev/null 2>&1; then
-                    TLANGS="$(resource_get_field "$DS_a/Resources/scripts/${res}" "TLANGS")"
-                else
-                    TLANGS=$(grep -o TLANGS=\"[^\"]* \
-                    "$DS_a/Resources/scripts/${res}" |grep -o '[^"]*$')
-                fi
-                echo 'FALSE'
-                if grep -E ".$lgt|.various" <<< "${res}">/dev/null 2>&1; then
-                    sed 's/\./\n/g' <<< "${res}" | \
-                    sed "3s|${sus}|<span color='#2BB62D'>${sus}<\/span>|"
-                else
-                    sed 's/\./\n/g' <<< "${res}"
-                fi
-                if ! echo "$TLANGS" |grep -E "$lgt" >/dev/null 2>&1; then
-                    echo "$DS/addons/Resources/b.png"
-                elif [ ! -f "$msgs/${res}" ]; then
-                    echo "$DS/addons/Resources/c.png"
-                else
-                    echo "$DS/addons/Resources/a.png"
-                fi
+            while read -r res; do
+                [ -n "${res}" ] || continue
+                _rtask="$(cut -d'.' -f3 <<< "${res}")"
+                [ "$(resource_task_norm "${_rtask}")" = "${sus}" ] || continue
+                resource_row "${res}" 'FALSE'
+            done < <(ls "$disables"/)
+        done
+    }
+    resources_live_feeder() {
+        # Sirve la lista inicial y reenvia cada linea del fifo vivo a la
+        # misma instancia YAD. Relevo solo con builtins: el subshell
+        # muere con kill sin dejar procesos bloqueados ni restos en tmp.
+        resources_list
+        exec 8<>"$RES_LIVE_FIFO" 2>/dev/null || return 0
+        while [ -p "$RES_LIVE_FIFO" ]; do
+            if IFS= read -t 5 -r _rl <&8 2>/dev/null; then
+                printf '%s\n' "$_rl" || break
+            else
+                sleep 0.2 2>/dev/null
             fi
-        done < <(ls "$disables"/)
+        done
+        exec 8<&- 2>/dev/null
     }
     
     if [ -f "$DC_s/Resources_first_run" ]; then
@@ -320,14 +343,23 @@ function dlg() {
         text="--text=$inf"; n=6
     fi
     
-    sel="$(resources_list ${n} |yad --list \
+    RES_LIVE_FIFO="$DT/resources_live.fifo"
+    RES_FEED_FIFO="$DT/resources_feed.fifo"
+    RES_SEL_TMP="$(mktemp "$DT/res_sel.XXXXXX" 2>/dev/null)"
+    rm -f "$RES_LIVE_FIFO" "$RES_FEED_FIFO" 2>/dev/null
+    mkfifo "$RES_LIVE_FIFO" "$RES_FEED_FIFO" 2>/dev/null
+    _live_cmd="bash -c '\"$DS_a/Resources/cnfg.sh\" live_test \"$RES_LIVE_FIFO\"'"
+
+    resources_live_feeder > "$RES_FEED_FIFO" &
+    _feed_pid=$!
+    yad --list --listen \
     --title="$(gettext "Resources")" \
     --name=Idiomind --class=Idiomind "${text}" \
     --print-all --always-print-result --separator="|" \
     --dclick-action="$DS_a/Resources/cnfg.sh _dclk_" \
     --window-icon=$DS/images/logo.png \
     --expand-column=0 --hide-column=3 \
-    --search-column=4 --regex-search \
+    --search-column=3 --regex-search \
     --center \
     --width=680 --height=500 --borders=10 \
     --column="$(gettext "Enable")":CHK \
@@ -336,14 +368,22 @@ function dlg() {
     --column="$(gettext "Is used for")":TEXT \
     --column="$(gettext "Language")":TEXT \
     --column="$(gettext "Status")":IMG \
-    --button="$(gettext "Test")":3 \
+    --button="$(gettext "Test")":"$_live_cmd" \
     --button="$(gettext "Save")!gtk-apply":0 \
-    --button="$(gettext "Close")":1)"
+    --button="$(gettext "Close")":1 \
+    < "$RES_FEED_FIFO" > "$RES_SEL_TMP"
     ret=$?
-        
+    kill "$_feed_pid" 2>/dev/null
+    wait "$_feed_pid" 2>/dev/null
+    rm -f "$RES_LIVE_FIFO" "$RES_FEED_FIFO" 2>/dev/null
+    sel="$(cat "$RES_SEL_TMP" 2>/dev/null)"
+    rm -f "$RES_SEL_TMP" 2>/dev/null
+    exec 200>&- 2>/dev/null
+    rm -f "$DT/.resources_dlg.lock" 2>/dev/null
+
         if [ $ret -eq 2 ]; then
                 "$DS_a/Resources/cnfg.sh" add_dlg
-        elif [ $ret -eq 0  -o $ret -eq 3 ]; then
+        elif [ $ret -eq 0 ]; then
             while read -r res; do
                 name="$(cut -d "|" -f2 <<< "$res")"
                 type="$(cut -d "|" -f3 <<< "$res")"
@@ -382,8 +422,6 @@ function dlg() {
                     rm "$disables/$name.$type.$tget.$lgt"
                 fi
             done < <(sed 's/<[^>]*>//g' <<< "${sel}")
-            
-            if [ $ret -eq 3 ]; then "$DS_a/Resources/test.sh"; fi
         fi
     exit 1
     
@@ -493,6 +531,8 @@ case "$1" in
     dclk "$@" ;;
     cpfile)
     cpfile "$@" ;;
+    live_test)
+    run_live_test "$2" ;;
     errors)
     dlg_text_info_3 ;;
     updt_scripts)

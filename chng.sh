@@ -187,7 +187,7 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
     --width=${sz[0]} --height=${sz[1]} --borders=5 \
     --column=img:IMG \
     --column=File:TEXT \
-    --button=""!preferences-system:$DS/cnfg.sh \
+    --button=""!preferences-system:2 \
     --button="$(gettext "Stats")":"'$DS/ifs/tls.sh' _stats" \
     --button="$(gettext "New")"!document-new:3 \
     --button="$(gettext "Apply")":2 \
@@ -196,6 +196,8 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
 	
     if [ $ret -eq 3 ]; then
             "$DS/add.sh" new-topic
+    elif [ $ret -eq 2 ]; then
+			$DS/cnfg.sh
     elif [ -n "${tpc}" ]; then
         mode="$(< "$DM_tl/${tpc}/.conf/stts")"
         numer='^[0-9]+$'

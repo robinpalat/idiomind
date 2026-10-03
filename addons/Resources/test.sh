@@ -24,9 +24,15 @@
 
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
+if [ -r "$DS/addons/Resources/common.sh" ]; then
+    source "$DS/addons/Resources/common.sh"
+fi
 source "$DS/default/sets.cfg"
 lgt=${tlangs[$tlng]}
 lgs=${slangs[$slng]}
+
+# Agrupamiento visible (misma lista que cnfg.sh, sin Search definition)
+task=( 'Search audio' 'Convert text to audio' 'Translate' 'Search image' )
 
 mkdir "$DT/res_test"
 DC_d="$DC_a/resources/disables"
@@ -129,6 +135,239 @@ function check_lang() {
         fi
     fi
     return 0
+}
+
+function live_task_norm() {
+    case "$1" in
+        'Download audio') echo 'Search audio' ;;
+        'Download image') echo 'Search image' ;;
+        *) echo "$1" ;;
+    esac
+}
+
+function live_emit_row() {
+    # $1 = basename, $2 = fifo. Emite la misma fila de 6 lineas que cnfg.sh
+    # (Enable, Provider, Type, Is used for, Language, Status) a la
+    # misma instancia YAD via --listen, sin cerrar el dialogo.
+    local _fname="$1" _fifo="${2:-$RES_LIVE_FIFO}"
+    [ -n "$_fname" ] || return 1
+    [ -p "$_fifo" ] || return 1
+    local _st="FALSE" _tl _icon
+    [ -f "$DC_e/$_fname" ] && _st="TRUE"
+    if declare -F resource_get_field >/dev/null 2>&1; then
+        _tl="$(resource_get_field "$DS_a/Resources/scripts/$_fname" "TLANGS")"
+    else
+        _tl=$(grep -o TLANGS=\"[^\"]* "$DS_a/Resources/scripts/$_fname" 2>/dev/null |grep -o '[^"]*$')
+    fi
+    if ! echo "$_tl" |grep -E "$lgt" >/dev/null 2>&1; then
+        _icon="$DS/addons/Resources/b.png"
+    elif [ ! -f "$msgs/$_fname" ]; then
+        _icon="$DS/addons/Resources/c.png"
+    else
+        _icon="$DS/addons/Resources/a.png"
+    fi
+    {
+        printf '%s\n' "$_st"
+        sed 's/\./\n/g' <<< "$_fname"
+        printf '%s\n' "$_icon"
+    } > "$_fifo" 2>/dev/null || return 1
+}
+
+function live_test_one() {
+    # Prueba un solo proveedor y deja msgs/ + enables/disables como test_().
+    # $1 = basename, $2 = 1 si estaba habilitado, 0 si deshabilitado.
+    local filename="$1" _enabled="${2:-0}"
+    local res trans Script audio_file img re st
+    local TESTWORD EXECUT TESTSTRING EX FILECONF TESTURL _sv1 _sv2
+    case "$filename" in
+        *."Traslator online.Translate".*)
+            cleanups "$msgs/$filename"
+            trans="$DS_a/Resources/scripts/$filename"
+            if [ -f "${trans}" ]; then
+                re="$("${trans}" "This is a test" auto $lgs 2>/dev/null)"
+                if [ -n "${re##+([[:space:]])}" ]; then
+                    :
+                else
+                    echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
+                    if [ "$_enabled" = 1 ]; then
+                        mv -f "$DC_e/$filename" "$DC_d/$filename" 2>/dev/null
+                    fi
+                fi
+            fi
+            ;;
+        *."TTS online.Convert text to audio".*)
+            audio_file="$DT/res_test/live_audio"
+            cleanups "$msgs/$filename"
+            unset TESTURL EXECUT TESTSTRING EX FILECONF; _sv1="$1"; _sv2="$2"; set --; source "$DS_a/Resources/scripts/$filename" 2>/dev/null; set -- "$_sv1" "$_sv2"
+            if ! check_lang "$filename"; then
+                if [ "$_enabled" = 1 ]; then
+                    mv -f "$DC_e/$filename" "$DC_d/$filename" 2>/dev/null
+                fi
+            else
+                rm -f "$audio_file"*
+                if [ -n "${EXECUT##+([[:space:]])}" ]; then
+                    if [[ ! $(which $EXECUT 2>/dev/null) ]]; then
+                        echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
+                    else
+                        "$DS_a/Resources/scripts/$filename" "$TESTSTRING" "$audio_file.$EX" 2>/dev/null
+                    fi
+                else
+                    if [ -n "${TESTURL##+([[:space:]])}" ]; then
+                        wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}" 2>/dev/null
+                    fi
+                fi
+                if [[ ${EX} != 'mp3' ]]; then
+                    mv -f "$audio_file.$EX" "$audio_file.mp3" 2>/dev/null
+                fi
+                check_audio "$filename" "$audio_file.mp3"
+                if [ "$_enabled" = 1 ] && [ -f "$msgs/$filename" ]; then
+                    if is_permanent_error "$filename"; then
+                        mv -f "$DC_e/$filename" "$DC_d/$filename" 2>/dev/null
+                    fi
+                fi
+                cleanups "$audio_file"*
+            fi
+            ;;
+        *."TTS offline.Convert text to audio".*)
+            audio_file="$DT/res_test/live_audio"
+            cleanups "$msgs/$filename"
+            unset EXECUT TLANGS; _sv1="$1"; _sv2="$2"; set --; source "$DS_a/Resources/scripts/$filename" 2>/dev/null; set -- "$_sv1" "$_sv2"
+            if ! check_lang "$filename"; then
+                if [ "$_enabled" = 1 ]; then
+                    mv -f "$DC_e/$filename" "$DC_d/$filename" 2>/dev/null
+                fi
+            else
+                if [ -n "${EXECUT##+([[:space:]])}" ] && [[ ! $(which $EXECUT 2>/dev/null) ]]; then
+                    echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
+                    if [ "$_enabled" = 1 ]; then
+                        mv -f "$DC_e/$filename" "$DC_d/$filename" 2>/dev/null
+                    fi
+                else
+                    "$DS_a/Resources/scripts/$filename" "this is a test" "$audio_file" 2>/dev/null
+                    if [ -f "$audio_file.mp3" ]; then
+                        :
+                    elif [ -f "$audio_file.wav" ]; then
+                        sox "$audio_file.wav" "$audio_file.mp3" 2>/dev/null
+                    else
+                        echo "<span color='#C15F27'>$(gettext "It's not working")</span>" > "$msgs/$filename"
+                        if [ "$_enabled" = 1 ]; then
+                            mv -f "$DC_e/$filename" "$DC_d/$filename" 2>/dev/null
+                        fi
+                    fi
+                    cleanups "$audio_file.mp3"
+                fi
+            fi
+            ;;
+        *."TTS online.Download audio".*)
+            audio_file="$DT/res_test/live_audio"
+            cleanups "$msgs/$filename"
+            unset TESTURL EXECUT FILECONF; _sv1="$1"; _sv2="$2"; set --; source "$DS_a/Resources/scripts/$filename" 2>/dev/null; set -- "$_sv1" "$_sv2"
+            if ! check_lang "$filename"; then
+                if [ "$_enabled" = 1 ]; then
+                    mv -f "$DC_e/$filename" "$DC_d/$filename" 2>/dev/null
+                fi
+            else
+                rm -f "$audio_file"*
+                if [ -n "${EXECUT##+([[:space:]])}" ] && [[ ! $(which $EXECUT 2>/dev/null) ]]; then
+                    echo "<span color='#C15F27'>$(gettext "For this utility, please install the package:")</span> $EXECUT" > "$msgs/$filename"
+                    if [ "$_enabled" = 1 ]; then
+                        mv -f "$DC_e/$filename" "$DC_d/$filename" 2>/dev/null
+                    fi
+                else
+                    if [ -n "${TESTURL##+([[:space:]])}" ]; then
+                        wget -T 15 -q -U "$useragent" -O "$audio_file.$EX" "${TESTURL}" 2>/dev/null
+                        if [[ ${EX} != 'mp3' ]]; then
+                            mv -f "$audio_file.$EX" "$audio_file.mp3" 2>/dev/null
+                        fi
+                    fi
+                    check_audio "$filename" "$audio_file.mp3"
+                    if [ "$_enabled" = 1 ] && [ -f "$msgs/$filename" ]; then
+                        if is_permanent_error "$filename"; then
+                            mv -f "$DC_e/$filename" "$DC_d/$filename" 2>/dev/null
+                        fi
+                    fi
+                    cleanups "$audio_file"*
+                fi
+            fi
+            ;;
+        *."Script.Download image".*)
+            cleanups "$msgs/$filename"
+            Script="$DS_a/Resources/scripts/$filename"
+            TESTWORD=$(grep -o TESTWORD=\"[^\"]* "$Script" 2>/dev/null |grep -o '[^"]*$')
+            [ -f "${Script}" ] && "${Script}" "${TESTWORD}" "_TEST_" 2>/dev/null
+            img="$DT/${TESTWORD}.jpg"
+            if [ ! -f "$img" ]; then
+                img="$DT/${TESTWORD}.png"
+            fi
+            check_image "$filename" "$img"
+            if [ "$_enabled" = 1 ] && [ -f "$msgs/$filename" ]; then
+                mv -f "$DC_e/$filename" "$DC_d/$filename" 2>/dev/null
+            fi
+            cleanups "$DT/${TESTWORD}.jpg" "$DT/${TESTWORD}.png"
+            ;;
+        *)
+            return 0
+            ;;
+    esac
+}
+
+function test_live() {
+    # Bucle vivo agrupado por task: prueba cada proveedor y emite su fila
+    # de inmediato a la misma lista YAD. El progreso sale por stdout
+    # para el progress bar. No cierra ni reabre el dialogo.
+    local _fifo="${1:-$RES_LIVE_FIFO}"
+    [ -p "$_fifo" ] || return 1
+    trap 'f_lock 3 "$DT/scripts_lk" 2>/dev/null' EXIT INT TERM
+    f_lock 1 "$DT/scripts_lk"
+    internet
+    mkdir -p "$DT/res_test"
+    local _en_snap _dis_snap _ordered _total _i _pct _fname _rtask _norm sus res _flag _entry
+    _en_snap="$(ls "$DC_e"/ 2>/dev/null)"
+    _dis_snap="$(ls "$DC_d"/ 2>/dev/null)"
+    # Lista unica precalculada en orden de task: cada proveedor aparece
+    # una sola vez con su estado inicial. Asi lo testeado y lo emitido
+    # coinciden siempre, tambien tras varias pasadas con movimientos.
+    _ordered=""
+    for sus in "${task[@]}"; do
+        while read -r res; do
+            [ -n "${res}" ] || continue
+            _fname="$(basename "$res")"
+            _rtask="$(cut -d'.' -f3 <<< "$_fname")"
+            _norm="$(live_task_norm "$_rtask")"
+            [ "$_norm" = "$sus" ] || continue
+            _ordered+="${sus}|1|${_fname}"$'\n'
+        done <<< "$_en_snap"
+        while read -r res; do
+            [ -n "${res}" ] || continue
+            _fname="$(basename "$res")"
+            _rtask="$(cut -d'.' -f3 <<< "$_fname")"
+            _norm="$(live_task_norm "$_rtask")"
+            [ "$_norm" = "$sus" ] || continue
+            _ordered+="${sus}|0|${_fname}"$'\n'
+        done <<< "$_dis_snap"
+    done
+    _total="$(printf '%s' "$_ordered" | grep -c '[^[:space:]]')"
+    [ "$_total" -gt 0 ] || _total=1
+    echo "1"
+    echo "# $(gettext "Checking providers…")"
+    _i=0
+    while IFS='|' read -r sus _flag _fname; do
+        [ -n "$_fname" ] || continue
+        [ -p "$_fifo" ] || break
+        live_test_one "$_fname" "$_flag"
+        live_emit_row "$_fname" "$_fifo" || break
+        _i=$((_i+1))
+        _pct=$((1 + _i * 99 / _total))
+        echo "$_pct"
+        echo "# $sus: $_fname ($_i/$_total)"
+    done <<< "$_ordered"
+    if [ ! -f "$DC_s/Resources_first_run" ]; then
+        cat "$DT/test_fail" >> "$DC_a/scripts.inf" 2>/dev/null
+    fi
+    cleanups "$DT/res_test" "$DT/test_fail" 2>/dev/null
+    echo "100"
+    f_lock 3 "$DT/scripts_lk"
+    trap - EXIT INT TERM 2>/dev/null
 }
 
 function test_() {
@@ -486,25 +725,34 @@ function dlg_progress_2() {
     yad --progress --title="$(gettext "Testing online provider availability")" \
     --name=Idiomind --class=Idiomind \
     --window-icon=$DS/images/logo.png --align=right \
-    --text="$(gettext "Checking the available providers for the selected language.")\n\n<span color='#2BB62D'>●</span> $(gettext "Available")   <span color='#3498DB'>●</span> $(gettext "Not available for this language")   <span color='#C15F27'>●</span> $(gettext "Unavailable")\n" \
+    --text="$(gettext "Checking the available providers for the selected language.")\n\n<span color='#2BB62D'>●</span> $(gettext "Available")\n<span color='#3498DB'>●</span> $(gettext "Not available for this language")\n<span color='#C15F27'>●</span> $(gettext "Unavailable")\n" \
     --progress-text=" " \
     --percentage="0" --auto-close \
     --no-buttons --on-top --fixed \
-    --width=420 --borders=10
+    --width=460 --borders=10
 }
+
+if [[ "$1" = live ]]; then
+    # Modo vivo: la lista YAD ya esta abierta (--listen). Se emite fila
+    # por fila al fifo y el progreso a este progress bar. No se reabre cnfg.
+    RES_LIVE_FIFO="${2:-$RES_LIVE_FIFO}"
+    export RES_LIVE_FIFO
+    ( echo "1"; echo "#  "; test_live "$RES_LIVE_FIFO" ) | dlg_progress_2
+    exit 0
+fi
 
 if [[ "$2" = 'silence' ]]; then
     export c="TRUE|TRUE|TRUE|TRUE|TRUE|"
     echo -e "\n-- testing online resources..."
     test_
     echo -e "\ttesting online resources ok"
-    
+
 else
 
-    
+
     ( echo "1"; echo "#  "; test_ ) | dlg_progress_2
 fi
 
-if [[ "$1" != 1 ]]; then 
+if [[ "$1" != 1 && "$1" != live ]]; then
     "$DS/addons/Resources/cnfg.sh"
 fi
