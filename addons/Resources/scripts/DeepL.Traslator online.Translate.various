@@ -1,0 +1,428 @@
+#!/bin/bash
+# -*- ENCODING: UTF-8 -*-
+
+_RESOURCE_DIR="$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]:-$0}")")")"
+if [[ -r "$_RESOURCE_DIR/common.sh" ]]; then
+    source "$_RESOURCE_DIR/common.sh"
+else
+    printf 'DeepL provider: Resources common.sh is unavailable\n' >&2
+    exit 1
+fi
+
+_msgs_dir="$HOME/.config/idiomind/addons/resources/msgs"
+
+# ============================================================
+# Resource Provider: DeepL
+# Resource Type: Translator online — Translate text
+# ============================================================
+#
+# Translates text using the official DeepL API.
+# Requires an API key configured through Idiomind Resources.
+#
+# Free tier: 500,000 characters/month.
+# Get a key: https://www.deepl.com/pro-api
+#
+# API reference: https://developers.deepl.com/docs
+#
+# Execution pattern: Direct execution, stdout captured (Pattern A)
+#   $1 = text to translate
+#   $2 = source language code
+#   $3 = target language code
+#   $4 = "singleline" (optional)
+#   Stdout = translated text
+
+# ------------------------------------------------------------
+# Provider metadata
+# ------------------------------------------------------------
+
+TLANGS="bg, cs, da, de, el, en, en-gb, en-us, es, et, fi, fr, hu, id, it, ja, ko, lt, lv, nb, nl, pl, pt, pt-br, pt-pt, ro, ru, sk, sl, sv, tr, uk, zh, zh-hans, zh-hant"
+
+USEDTO="Translate text (online)"
+
+INFO="Online translator
+
+This software is provided for the purpose of reasonable personal use of
+the DeepL translation service.
+Please refer to the official DeepL API
+https://developers.deepl.com/docs.
+
+By using this software, the user are aware that:
+
+1. DeepL is a proprietary service provided and owned by
+DeepL SE.
+
+2. This script is NOT a DeepL product. Neither this software nor
+its author is affiliated with DeepL SE."
+
+LANGUAGES="Bulgarian, Czech, Danish, Dutch, English, Estonian,
+ Finnish, French, German, Greek, Hungarian, Indonesian, Italian,
+ Japanese, Korean, Lithuanian, Latvian, Norwegian, Polish,
+ Portuguese, Romanian, Russian, Slovak, Slovenian, Spanish,
+ Swedish, Turkish, Ukrainian, Chinese"
+
+INFOAPI="https://developers.deepl.com/docs"
+STATUS="Ok"
+VOICES=""
+
+# ------------------------------------------------------------
+# Idiomind Resources configuration
+# ------------------------------------------------------------
+
+CONF="TRUE"
+
+FILECONF="$HOME/.config/idiomind/addons/resources/DeepL.cfg"
+
+CONFFIELDS="key"
+CONFKEY_HIDDEN="key"
+
+TESTWORD="test"
+EXECUT=""
+
+deepl_request()
+{
+    local _raw_response
+
+    if ! _raw_response=$(curl -sS \
+        --connect-timeout 15 \
+        --max-time 60 \
+        -w '\n%{http_code}' \
+        -X POST \
+        "$DEEPL_API_URL" \
+        -H "Authorization: DeepL-Auth-Key $api_key" \
+        -H "Content-Type: application/json" \
+        -d "$1"); then
+        resource_write_error \
+            "<span color='#C15F27'>DeepL connection failed</span>" \
+            "$_msgs_dir" "$(basename "$0")"
+        return 1
+    fi
+
+    HTTP_CODE="${_raw_response##*$'\n'}"
+    RESP="${_raw_response%$'\n'*}"
+
+    if [[ ! "$HTTP_CODE" =~ ^2[0-9][0-9]$ ]]; then
+        case "$HTTP_CODE" in
+            400)
+                ERROR_MESSAGE="Invalid DeepL translation request"
+                ;;
+            401|403)
+                ERROR_MESSAGE="DeepL API key or account is not authorized"
+                ;;
+            429)
+                ERROR_MESSAGE="DeepL request limit exceeded"
+                ;;
+            456)
+                ERROR_MESSAGE="DeepL API quota exhausted"
+                ;;
+            *)
+                ERROR_MESSAGE="DeepL request failed (HTTP $HTTP_CODE)"
+                ;;
+        esac
+
+        resource_write_error \
+            "<span color='#C15F27'>$ERROR_MESSAGE</span>" \
+            "$_msgs_dir" "$(basename "$0")"
+        return 1
+    fi
+}
+
+# ------------------------------------------------------------
+# Main
+# ------------------------------------------------------------
+
+if [[ "$1" != '_dclk_' ]]; then
+
+    TEXT="${1:-}"
+    SRC="${2:-}"
+    TGT="${3:-}"
+    MODE="${4:-}"
+
+    if [[ -z "$TEXT" || -z "$TGT" ]]; then
+        resource_write_error \
+            "$(gettext "Translation failed")" \
+            "$_msgs_dir" "$(basename "$0")"
+        exit 1
+    fi
+
+    # --------------------------------------------------------
+    # Read configuration from Idiomind Resources
+    # --------------------------------------------------------
+
+    api_key=$(resource_read_config "$FILECONF" "key")
+
+    if [[ -z "$api_key" ]]; then
+        resource_write_error \
+            "$(gettext "No key configuration")" \
+            "$_msgs_dir" "$(basename "$0")"
+
+        exit 1
+    fi
+
+    # --------------------------------------------------------
+    # Select API endpoint
+    #
+    # DeepL Free API keys normally end in :fx.
+    # --------------------------------------------------------
+
+    if [[ "$api_key" == *":fx" ]]; then
+        DEEPL_API_URL="https://api-free.deepl.com/v2/translate"
+    else
+        DEEPL_API_URL="https://api.deepl.com/v2/translate"
+    fi
+
+    # --------------------------------------------------------
+    # Normalize target language
+    # --------------------------------------------------------
+
+    TGT_U=$(echo "$TGT" | tr '[:lower:]' '[:upper:]')
+
+    case "$TGT_U" in
+        ZH-CN)
+            TGT_U="ZH"
+            ;;
+        ZH-HANS)
+            TGT_U="ZH"
+            ;;
+        ZH-TW)
+            TGT_U="ZH-HANT"
+            ;;
+        ZH-HK)
+            TGT_U="ZH-HANT"
+            ;;
+        EN-GB)
+            TGT_U="EN-GB"
+            ;;
+        EN-US)
+            TGT_U="EN-US"
+            ;;
+        PT-PT)
+            TGT_U="PT-PT"
+            ;;
+        PT-BR)
+            TGT_U="PT-BR"
+            ;;
+    esac
+
+    # --------------------------------------------------------
+    # Normalize source language
+    # --------------------------------------------------------
+
+    SRC_U=""
+
+    if [[ -n "$SRC" && "${SRC,,}" != "auto" ]]; then
+
+        SRC_U=$(echo "$SRC" | tr '[:lower:]' '[:upper:]')
+
+        case "$SRC_U" in
+            ZH-CN|ZH-HANS)
+                SRC_U="ZH"
+                ;;
+            ZH-TW|ZH-HK)
+                SRC_U="ZH-HANT"
+                ;;
+            EN-GB)
+                SRC_U="EN-GB"
+                ;;
+            EN-US)
+                SRC_U="EN-US"
+                ;;
+            PT-PT)
+                SRC_U="PT-PT"
+                ;;
+            PT-BR)
+                SRC_U="PT-BR"
+                ;;
+        esac
+
+    fi
+
+    # --------------------------------------------------------
+    # Resources' sentence_p separates words with ". " before
+    # translation so it can pair each source word with its result.
+    # --------------------------------------------------------
+
+    WORD_LIST_MODE=0
+    TEXT_PARTS=()
+    if [[ "$TEXT" == *". "* ]]; then
+        IFS='.' read -r -a _text_parts <<< "$TEXT"
+        if ((${#_text_parts[@]} > 1)); then
+            for _part in "${_text_parts[@]}"; do
+                _part="${_part#"${_part%%[![:space:]]*}"}"
+                _part="${_part%"${_part##*[![:space:]]}"}"
+                if [[ -z "$_part" || "$_part" =~ [[:space:]] ]]; then
+                    TEXT_PARTS=()
+                    break
+                fi
+                TEXT_PARTS+=("$_part")
+            done
+            if ((${#TEXT_PARTS[@]} > 1)); then
+                WORD_LIST_MODE=1
+            fi
+        fi
+    fi
+
+    if command -v jq >/dev/null 2>&1; then
+        if [[ "$WORD_LIST_MODE" = 1 ]]; then
+            TEXTS_JSON=$(printf '%s\n' "${TEXT_PARTS[@]}" | jq -R . | jq -s .)
+        else
+            TEXTS_JSON=$(jq -cn --arg text "$TEXT" '[$text]')
+        fi
+        if [[ -n "$SRC_U" ]]; then
+            JSON_BODY=$(jq -cn \
+                --argjson text "$TEXTS_JSON" \
+                --arg target "$TGT_U" \
+                --arg source "$SRC_U" \
+                '{text:$text,target_lang:$target,source_lang:$source}')
+        else
+            JSON_BODY=$(jq -cn \
+                --argjson text "$TEXTS_JSON" \
+                --arg target "$TGT_U" \
+                '{text:$text,target_lang:$target}')
+        fi
+    elif command -v python3 >/dev/null 2>&1; then
+        if [[ "$WORD_LIST_MODE" = 1 ]]; then
+            TEXTS_JSON=$(python3 -c \
+                'import json,sys; print(json.dumps(sys.argv[1:]))' \
+                "${TEXT_PARTS[@]}")
+        else
+            TEXTS_JSON=$(python3 -c \
+                'import json,sys; print(json.dumps([sys.argv[1]]))' \
+                "$TEXT")
+        fi
+        if [[ -n "$SRC_U" ]]; then
+            JSON_BODY=$(python3 -c \
+                'import json,sys; print(json.dumps({"text":json.loads(sys.argv[1]),"target_lang":sys.argv[2],"source_lang":sys.argv[3]}))' \
+                "$TEXTS_JSON" "$TGT_U" "$SRC_U")
+        else
+            JSON_BODY=$(python3 -c \
+                'import json,sys; print(json.dumps({"text":json.loads(sys.argv[1]),"target_lang":sys.argv[2]}))' \
+                "$TEXTS_JSON" "$TGT_U")
+        fi
+    else
+        resource_write_error \
+            "$(gettext "Translation failed")" \
+            "$_msgs_dir" "$(basename "$0")"
+        printf 'DeepL provider requires jq or python3 to encode the request\n' >&2
+        exit 1
+    fi
+
+    if [[ "$WORD_LIST_MODE" = 1 && -z "$SRC_U" ]]; then
+        if command -v jq >/dev/null 2>&1; then
+            DETECT_BODY=$(jq -cn \
+                --arg text "$TEXT" \
+                --arg target "$TGT_U" \
+                '{text:[$text],target_lang:$target}')
+        else
+            DETECT_BODY=$(python3 -c \
+                'import json,sys; print(json.dumps({"text":[sys.argv[1]],"target_lang":sys.argv[2]}))' \
+                "$TEXT" "$TGT_U")
+        fi
+
+        deepl_request "$DETECT_BODY" || exit 1
+
+        if command -v jq >/dev/null 2>&1; then
+            SRC_U=$(printf '%s' "$RESP" |
+                jq -r '.translations[0].detected_source_language // empty' 2>/dev/null)
+        else
+            SRC_U=$(printf '%s' "$RESP" |
+                python3 -c \
+                    'import json,sys; print(json.load(sys.stdin)["translations"][0].get("detected_source_language",""))' \
+                    2>/dev/null)
+        fi
+
+        if [[ -z "$SRC_U" ]]; then
+            resource_write_error \
+                "<span color='#C15F27'>DeepL could not detect the source language</span>" \
+                "$_msgs_dir" "$(basename "$0")"
+            exit 1
+        fi
+
+        if command -v jq >/dev/null 2>&1; then
+            JSON_BODY=$(jq -cn \
+                --argjson text "$TEXTS_JSON" \
+                --arg target "$TGT_U" \
+                --arg source "$SRC_U" \
+                '{text:$text,target_lang:$target,source_lang:$source}')
+        else
+            JSON_BODY=$(python3 -c \
+                'import json,sys; print(json.dumps({"text":json.loads(sys.argv[1]),"target_lang":sys.argv[2],"source_lang":sys.argv[3]}))' \
+                "$TEXTS_JSON" "$TGT_U" "$SRC_U")
+        fi
+    fi
+
+    # --------------------------------------------------------
+    # Call DeepL
+    # --------------------------------------------------------
+
+    deepl_request "$JSON_BODY" || exit 1
+
+    # --------------------------------------------------------
+    # Extract translation
+    # --------------------------------------------------------
+
+    if command -v jq >/dev/null 2>&1; then
+
+        if [[ "$WORD_LIST_MODE" = 1 ]]; then
+            OUT=$(printf '%s' "$RESP" |
+                jq -r '[.translations[].text] | join(". ")' 2>/dev/null)
+        else
+            OUT=$(printf '%s' "$RESP" |
+                jq -r '.translations[0].text // empty' 2>/dev/null)
+        fi
+
+    else
+
+        if command -v python3 >/dev/null 2>&1; then
+            if [[ "$WORD_LIST_MODE" = 1 ]]; then
+                OUT=$(printf '%s' "$RESP" |
+                    python3 -c \
+                        'import json,sys; print(". ".join(item["text"] for item in json.load(sys.stdin)["translations"]))' \
+                        2>/dev/null)
+            else
+                OUT=$(printf '%s' "$RESP" |
+                    python3 -c \
+                        'import json,sys; print(json.load(sys.stdin)["translations"][0]["text"])' \
+                        2>/dev/null)
+            fi
+        else
+            resource_write_error \
+                "<span color='#C15F27'>DeepL response parser unavailable (install jq or Python 3)</span>" \
+                "$_msgs_dir" "$(basename "$0")"
+            exit 1
+        fi
+
+    fi
+
+    # --------------------------------------------------------
+    # Error
+    # --------------------------------------------------------
+
+    if [[ -z "$OUT" ]]; then
+
+        resource_write_error \
+            "$(gettext "Translation failed")" \
+            "$_msgs_dir" "$(basename "$0")"
+
+        exit 1
+
+    fi
+
+    resource_clear_error "$_msgs_dir" "$(basename "$0")"
+
+    # --------------------------------------------------------
+    # Output
+    # --------------------------------------------------------
+
+    if [[ "$MODE" = "singleline" ]]; then
+
+        printf '%s\n' "$OUT" |
+            tr '\n' ' ' |
+            sed 's/ *$//'
+
+    else
+
+        printf '%s\n' "$OUT"
+
+    fi
+
+fi

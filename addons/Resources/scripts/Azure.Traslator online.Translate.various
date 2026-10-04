@@ -1,0 +1,229 @@
+#!/bin/bash
+# -*- ENCODING: UTF-8 -*-
+
+# ============================================================
+# Resource Provider: Microsoft Azure Translator
+# Resource Type: Translator online — Translate text
+# ============================================================
+#
+# Translates text using the Microsoft Azure Translator API.
+# Requires an API key configured through Idiomind Resources.
+#
+# Some Azure Translator resources also require a region.
+#
+# Get a key:
+# https://portal.azure.com
+#
+# API reference:
+# https://learn.microsoft.com/azure/ai-services/translator/
+#
+# Execution pattern: Direct execution, stdout captured (Pattern A)
+#   $1 = text to translate
+#   $2 = source language code
+#   $3 = target language code
+#   $4 = "singleline" (optional)
+#   Stdout = translated text
+
+# ------------------------------------------------------------
+# Provider metadata
+# ------------------------------------------------------------
+
+TLANGS="af, ar, az, be, bg, ca, cs, cy, da, de, el, en, es, et, fa, fi, fil, fr, ga, he, hi, hu, hy, id, is, it, ja, ka, kk, ko, lt, lv, mg, mk, ml, mn, ms, mt, nb, nl, no, pl, ps, pt, ro, ru, sk, sl, so, sr, sv, sw, th, tr, uk, ur, uz, vi, zh-Hans, zh-Hant"
+
+USEDTO="Translate text (online)"
+
+INFO="Online translator
+
+This software is provided for the purpose of reasonable personal use of
+the Microsoft Azure Translator service.
+Please refer to the official Azure Translator API
+https://learn.microsoft.com/azure/ai-services/translator/.
+
+By using this software, the user are aware that:
+
+1. Azure Translator is a proprietary service provided and owned by
+Microsoft Corporation.
+
+2. This script is NOT a Microsoft product. Neither this software nor
+its author is affiliated with Microsoft Corporation."
+
+LANGUAGES="Afrikaans, Arabic, Azerbaijani, Belarusian, Bulgarian,
+ Catalan, Chinese, Czech, Danish, Dutch, English, Estonian,
+ Finnish, French, German, Greek, Hebrew, Hindi, Hungarian,
+ Indonesian, Italian, Japanese, Korean, Latvian, Lithuanian,
+ Norwegian, Persian, Polish, Portuguese, Romanian, Russian,
+ Slovak, Slovenian, Spanish, Swedish, Thai, Turkish, Ukrainian,
+ Urdu, Vietnamese"
+
+INFOAPI="https://learn.microsoft.com/azure/ai-services/translator/"
+STATUS="Ok"
+VOICES=""
+
+# ------------------------------------------------------------
+# Idiomind Resources configuration
+# ------------------------------------------------------------
+
+CONF="TRUE"
+
+FILECONF="$HOME/.config/idiomind/addons/resources/Azure.cfg"
+
+CONFFIELDS="key region"
+
+CONFKEY_HIDDEN="key"
+
+TESTWORD="test"
+EXECUT=""
+
+# ------------------------------------------------------------
+# Main
+# ------------------------------------------------------------
+
+if [[ "$1" != '_dclk_' ]]; then
+
+    TEXT="${1:-}"
+    SRC="${2:-}"
+    TGT="${3:-}"
+    MODE="${4:-}"
+
+    # --------------------------------------------------------
+    # Read configuration
+    # --------------------------------------------------------
+
+    api_key=$(resource_read_config "$FILECONF" "key")
+    region=$(resource_read_config "$FILECONF" "region")
+
+    # --------------------------------------------------------
+    # Validate API key
+    # --------------------------------------------------------
+
+    if [[ -z "$api_key" ]]; then
+
+        resource_write_error \
+            "$(gettext "No key configuration")" \
+            "$_msgs_dir" "$(basename "$0")"
+
+        exit 1
+
+    fi
+
+    # --------------------------------------------------------
+    # Normalize target language
+    # --------------------------------------------------------
+
+    TGT_N=$(echo "$TGT" |
+        sed -E \
+        's/^zh-cn$/zh-Hans/I;
+         s/^zh-tw$/zh-Hant/I;
+         s/^zh-hk$/zh-Hant/I')
+
+    # --------------------------------------------------------
+    # Normalize source language
+    # --------------------------------------------------------
+
+    SRC_N=""
+
+    if [[ -n "$SRC" ]]; then
+
+        SRC_N=$(echo "$SRC" |
+            sed -E \
+            's/^zh-cn$/zh-Hans/I;
+             s/^zh-tw$/zh-Hant/I;
+             s/^zh-hk$/zh-Hant/I')
+
+    fi
+
+    # --------------------------------------------------------
+    # Build API URL
+    # --------------------------------------------------------
+
+    URL="https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=$TGT_N"
+
+    if [[ -n "$SRC_N" ]]; then
+        URL="${URL}&from=$SRC_N"
+    fi
+
+    # --------------------------------------------------------
+    # Escape JSON
+    # --------------------------------------------------------
+
+    ESCAPED_TEXT=$(printf '%s' "$TEXT" |
+        sed 's/\\/\\\\/g; s/"/\\"/g')
+
+    JSON_BODY=$(printf '[{"Text":"%s"}]' "$ESCAPED_TEXT")
+
+    # --------------------------------------------------------
+    # Build headers
+    # --------------------------------------------------------
+
+    HEADERS=(
+        -H "Ocp-Apim-Subscription-Key: $api_key"
+        -H "Content-Type: application/json"
+    )
+
+    if [[ -n "$region" ]]; then
+
+        HEADERS+=(
+            -H "Ocp-Apim-Subscription-Region: $region"
+        )
+
+    fi
+
+    # --------------------------------------------------------
+    # Call Azure Translator
+    # --------------------------------------------------------
+
+    RESP=$(curl -s \
+        -X POST \
+        "$URL" \
+        "${HEADERS[@]}" \
+        -d "$JSON_BODY")
+
+    # --------------------------------------------------------
+    # Extract translation
+    # --------------------------------------------------------
+
+    if command -v jq >/dev/null 2>&1; then
+
+        OUT=$(printf '%s' "$RESP" |
+            jq -r '.[0].translations[0].text // empty' \
+            2>/dev/null)
+
+    else
+
+        OUT=$(printf '%s' "$RESP" |
+            sed -n 's/.*"text":"\([^"]*\)".*/\1/p' |
+            head -n1)
+
+    fi
+
+    # --------------------------------------------------------
+    # Error
+    # --------------------------------------------------------
+
+    if [[ -z "$OUT" ]]; then
+
+        resource_write_error \
+            "$(gettext "Translation failed")" \
+            "$_msgs_dir" "$(basename "$0")"
+
+        exit 1
+
+    fi
+
+    # --------------------------------------------------------
+    # Output
+    # --------------------------------------------------------
+
+    if [[ "$MODE" = "singleline" ]]; then
+
+        printf '%s\n' "$OUT" |
+            tr '\n' ' ' |
+            sed 's/ *$//'
+
+    else
+
+        printf '%s\n' "$OUT"
+
+    fi
+
+fi

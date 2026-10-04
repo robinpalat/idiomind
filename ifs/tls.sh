@@ -748,32 +748,15 @@ fback() {
 
 
 _definition() {
+	
     source "$DS/ifs/cmns.sh"
-    if [ -r "$DS/addons/Resources/common.sh" ]; then
-        # shellcheck source=/dev/null
-        source "$DS/addons/Resources/common.sh"
-    fi
-    export query="$(sed 's/<[^>]*>//g' <<<"${2}")"
-    f="$(ls "$DC_d"/*."Link.Search definition".* 2>/dev/null |head -n1)"
-    if [ -z "$f" ]; then
-        _allow=0
-        if declare -F resource_gui_allowed >/dev/null 2>&1; then
-            resource_gui_allowed && ! resource_dlg_is_open 2>/dev/null && _allow=1
-        else
-            [ "${IDIOMIND_NONINTERACTIVE:-}" != 1 ] && ! pgrep -f "Resources/cnfg.sh" >/dev/null 2>&1 && _allow=1
-        fi
-        if [ "$_allow" = 1 ]; then
-            "$DS_a/Resources/cnfg.sh" 3
-            f="$(ls "$DC_d"/*."Link.Search definition".* 2>/dev/null |head -n1)"
-        else
-            echo "_definition: no Link provider (GUI suprimida en fondo)" >&2
-            return 1
-        fi
-    fi
-    eval _url="$(< "$DS_a/Resources/scripts/$(basename "$f")")"
-	export _url
+    source /usr/share/idiomind/default/c.conf
+	url="https://translate.google.com/?sl=$lgt&tl=$lgs&text=${2}&op=translate"
+	export url
 
-/usr/lib/idiomind/idiomind-htmlview "$_url"
+/usr/lib/idiomind/idiomind-utils html "$url"
+
+
     
 } >/dev/null 2>&1
 
@@ -783,7 +766,8 @@ _translation() {
 	url="https://translate.google.com/?sl=$lgt&tl=$lgs&text=${2}&op=translate"
 	export url
 
-/usr/lib/idiomind/idiomind-htmlview "$url"
+/usr/lib/idiomind/idiomind-utils html "$url"
+
 
 } >/dev/null 2>&1
 

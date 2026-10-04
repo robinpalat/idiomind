@@ -30,7 +30,7 @@ function gui_edit_word() {
     --field=" ":LBL " " \
     --field="$(gettext "Example")\t\t\t\t\t\t\t\t\t\t\t":TXT "${exmp}" \
     --field="$(gettext "Definition")":TXT "${defn}" \
-    --field="$(gettext "Definition")":FBTN "${cmd_def}" \
+    --field=" ":LBL " " \
     --field="$(gettext "Translation")":FBTN "${cmd_trad}" \
     --field="$(gettext "Audio")":FL "${audf}" \
     --field="$(gettext "Mark")":CHK "$mark" \
