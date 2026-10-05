@@ -141,9 +141,7 @@ It is preserved as part of the project's history and as a reference for its orig
 
 ## Author
 
-**Robin**
-
-Idiomind started in 2013 as a small experiment and gradually evolved into a larger language-learning project.
+**Robinpalat**
 
 ---
 
