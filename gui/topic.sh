@@ -206,7 +206,7 @@ function notebook_1() {
     }
 
     listfeed | yad --list --tabnum=1 --window-icon=idiomind \
-    --plug=$KEY --print-all --separator='|' --listen --tail \
+    --plug=$KEY --print-all --separator='|' --listen \
     --image="$DS/images/$((stts%2)).png" --image-on-top \
     --dclick-action="$DS/vwr.sh 1" \
     --print-column=1 --expand-column=1 --grid-lines=hor  --no-headers \

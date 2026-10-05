@@ -934,11 +934,12 @@ active_trans=$(sed -n 1p "${DC_tlt}/translations/active")
 lns=$(wc -l < "${DC_tlt}/data")
 if [ -z "$active_trans" ]; then active_trans="$slng"; fi
 
+nNotes=$((cfg3+cfg4))
 echo -e "yad --form --title=\"$(gettext "$tlng") / $active_trans\" \\
 --class=Idiomind --name=Idiomind --window-icon=$DS/images/logo.png \\
 --always-print-result --print-all \\
 --width=${sz[0]} --height=${sz[1]} --borders=5 \\
---text=\"<b>$(gettext "Manual Translation")</b>\n<b>${cfg3}</b>  $(gettext "sentences with")  <b>${cfg4}</b>  $(gettext "words")\n\" \\
+--text=\"<b>$(gettext "Manual Translation")</b>\n<b>${nNotes}</b>  $(gettext "notes")\n\" \\
 --on-top --scroll --center --borders=10 --separator='|\n' \\
 --button=$(gettext \"Save\")!gtk-apply:0 \\
 --button=$(gettext \"Cancel\"):1 \\" > "$DT/dlg"

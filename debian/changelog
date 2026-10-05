@@ -1,16 +1,13 @@
 idiomind (0.3.2-1) trixie; urgency=medium
 
-  * Added fallback translation through online translation providers when a language pack is unavailable.
   * Added a new version of the .idmnd topic format.
   * Improved multilingual topic handling.
   * Improved provider language detection and compatibility checks.
-  * Improved handling of providers that support different sets of target languages.
   * Reworked the resource-provider configuration system.
   * Improved live topic-list updates when creating topics.
   * Reworked the Idiomind topic export system.
   * Introduced the new .idmnd format.
   * Reorganized extension directories and internal interfaces.
-  * Improved the separation between core application functionality and optional extensions.
   * Reorganized the GUI components into a dedicated gui directory.
   * Removed or simplified obsolete functionality.
   * Fixed several minor interface and usability issues.

@@ -294,6 +294,8 @@ function topic() {
 			lbl1="<span font_desc='Free Sans Bold 12'>${tpc}</span>\n<small><i><span color='#84DCE7E7'>$label_level</span></i></small>\n<small>$(gettext "Notes:") $cfg4 $(gettext "Sentences"), $cfg3 $(gettext "Words")</small>\n$infolbl5\n"
         fi
         
+        days_until="$(gettext "Days until review:") "
+        
 		if [ ${count_date_reviews} -eq 0 ]; then
 			label_serie=""
 			days_until=""
@@ -306,8 +308,6 @@ function topic() {
 <span color='#A36A53'>15 | 15 | 20 | 30</span>\n		
 <small>$(gettext "Mastered")</small>
 <span color='#844DB1'>60</span>"
-			
-			days_until="$(gettext "Days remaining until first review:") "
 
 		elif [ ${count_date_reviews} = 2 ]; then
 						label_serie="
@@ -317,8 +317,6 @@ function topic() {
 <span color='#A36A53'>15 | 15 | 20 | 30</span>\n		
 <small>$(gettext "Mastered")</small>
 <span color='#844DB1'>60</span>"
-			
-			days_until="$(gettext "Days remaining until second review:") "
 
 		elif [ ${count_date_reviews} = 3 ]; then
 			label_serie="
@@ -329,18 +327,14 @@ function topic() {
 <small>$(gettext "Mastered")</small>
 <span color='#844DB1'>60</span>"
 
-			days_until="$(gettext "Days remaining until third review:") "
-
 		elif [ ${count_date_reviews} = 4 ]; then
 			label_serie="
 \n<small>$(gettext "Fresh")</small>
-<span color='#84DCE7E7'>4 | 7 | 7 |</span> <u><b>10</b></u> <span color='#84DCE7E7'>\n
+<span color='#84DCE7E7'>4 | 7 | 7 |</span> <u><b>10</b></u>\n
 <small>$(gettext "Familiar")</small>
 <span color='#A36A53'>15 | 15 | 20 | 30</span>\n		
 <small>$(gettext "Mastered")</small>
 <span color='#844DB1'>60</span>"
-
-			days_until="$(gettext "Days remaining until fourth review:") "
 
 		elif [ ${count_date_reviews} = 5 ]; then
 			label_serie="
@@ -350,8 +344,6 @@ function topic() {
 <u><b>15</b></u> <span color='#A36A53'>| 15 | 20 | 30</span>\n		
 <small>$(gettext "Mastered")</small>
 <span color='#844DB1'>60</span>"
-			
-			days_until="$(gettext "Days remaining until fifth review:") "
 
 		elif [ ${count_date_reviews} = 6 ]; then
 			label_serie="
@@ -361,8 +353,6 @@ function topic() {
 <span color='#A36A53'>15 |</span> <u><b>15</b></u> <span color='#A36A53'>| 20 | 30</span>\n		
 <small>$(gettext "Mastered")</small>
 <span color='#844DB1'>60</span>"
-			
-			days_until="$(gettext "Days remaining until sixth review:") "
 
 		elif [ ${count_date_reviews} = 7 ]; then
 			label_serie="
@@ -372,8 +362,6 @@ function topic() {
 <span color='#A36A53'>15 | 15 |</span> <u><b>20</b></u> <span color='#A36A53'>| 30</span>\n		
 <small>$(gettext "Mastered")</small>
 <span color='#844DB1'>60</span>"
-			
-			days_until="$(gettext "Days remaining until seventh review:") "
 
 		elif [ ${count_date_reviews} = 8 ]; then
 
@@ -384,8 +372,6 @@ function topic() {
 <span color='#A36A53'>15 | 15 | 20 |</span> <u><b>30</b></u>\n		
 <small>$(gettext "Mastered")</small>
 <span color='#844DB1'>60</span>"
-			
-			days_until="$(gettext "Days remaining until eighth review:") "
 
 		elif [ ${count_date_reviews} -ge 9 ]; then
 			
@@ -396,8 +382,7 @@ function topic() {
 <span color='#A36A53'>15 | 15 | 20 | 30 </span>\n		
 <small>$(gettext "Mastered")</small>
 <u><b>60</b></u>"
-			
-			days_until="$(gettext "Days remaining until final review:") "
+		
 		fi
 
         export lbl1 label_serie
