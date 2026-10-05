@@ -38,7 +38,6 @@ function gui_edit_word() {
     --button="$(gettext "Image")":"${cmd_image}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
     --button="!audio-volume-high!$(gettext "Listen")":"${cmd_play}" \
-    --button="!media-seek-forward":2 \
     --button="$(gettext "Close")":0
 }
 
@@ -65,7 +64,6 @@ function gui_edit_sentence() {
     --field="$(gettext "Audio")":FL "${audf}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
     --button="!audio-volume-high!$(gettext "Listen")":"${cmd_play}" \
-    --button="!media-seek-forward":2 \
     --button="$(gettext "Close")":0
 }
 

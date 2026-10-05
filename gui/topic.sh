@@ -112,12 +112,13 @@ function word_view() {
     --text="${sentence}" \
     --window-icon=$DS/images/logo.png \
     --skip-taskbar --text-align=center \
-    --image-on-top --center \
-    --width=630 --height=390 --borders=18 \
+    --image-on-top --center --undecorated \
+    --width=630 --height=390 --borders=25 \
     "${field_tag}" "${field_exmp}" "${field_defn}" "${field_note}" \
     --button="!gtk-edit":4 \
     --button="!audio-volume-high":"$cmd_listen" \
-    --button="!media-seek-forward":2
+    --button="!media-seek-forward":2 \
+    --button="!window-close":0
     
 } >/dev/null 2>&1
 
@@ -137,15 +138,16 @@ function sentence_view() {
     --select-action="$DS/play.sh 'play_word'" \
     --dclick-action="$DS/play.sh 'play_word'" \
     --window-icon=$DS/images/logo.png \
-    --skip-taskbar --image-on-top --center \
+    --skip-taskbar --image-on-top --center --undecorated \
     --scroll --text-align=left --expand-column=0 --no-headers \
-    --width=630 --height=390 --borders=18 \
+    --width=630 --height=390 --borders=25 \
     --column="":TEXT \
     --column="":TEXT \
     --button="!gtk-edit":4 \
     --button="!format-justify-left!$(gettext "Words")":"$cmd_words" \
     --button="!audio-volume-high":"$cmd_listen" \
-    --button="!media-seek-forward":2
+    --button="!media-seek-forward":2 \
+    --button="!window-close":0
     
 } >/dev/null 2>&1
 
