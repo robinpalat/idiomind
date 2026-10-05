@@ -8,31 +8,6 @@ That small experiment gradually grew into a complete language-learning environme
 
 This repository contains the **original Bash version of Idiomind**.
 
----
-
-## Origins
-
-The first version of Idiomind was very small.
-
-A word was entered from the command line, translated, and displayed using the Linux desktop notification system:
-
-```text
-word
-  ↓
-translation
-  ↓
-notify-send
-  ↓
-desktop notification
-```
-
-There was no application framework behind it at the beginning. It was simply a shell script making use of the tools already available in Linux.
-
-As the project evolved, more functionality was added: vocabulary management, language data, review mechanisms, audio, HTML content and graphical interfaces.
-
-The project grew organically from those first experiments rather than from a predefined application architecture.
-
-**Rather than being built initially as a conventional desktop application, Idiomind grew around Bash, YAD and the tools and conventions of the Unix/Linux environment.**
 
 ---
 
