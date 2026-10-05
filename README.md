@@ -96,7 +96,8 @@ Its main dependencies include:
 * eSpeak
 * SQLite 3
 * SoX
-* wkhtmltopdf
+* libnotify-bin
+* weasyprint
 * `Idiomind_utils`
 
 Several of these tools are used directly by the application, while others provide specific functionality such as audio playback, speech synthesis, image processing or document generation.
