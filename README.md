@@ -2,10 +2,6 @@
 
 **Idiomind** is a language-learning application originally developed for Linux using **Bash, YAD and the Unix/Linux environment**.
 
-The project began in **2013** as a small Bash script with a simple purpose: translate a word from the command line and display the result directly on the Linux desktop.
-
-That small experiment gradually grew into a complete language-learning environment for creating, organizing and reviewing personalized vocabulary and expressions.
-
 This repository contains the **original Bash version of Idiomind**.
 
 
