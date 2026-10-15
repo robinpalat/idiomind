@@ -7,6 +7,7 @@ addons/* usr/share/idiomind/addons
 practice/* usr/share/idiomind/practice
 default/* usr/share/idiomind/default
 ifs/* usr/share/idiomind/ifs
+gui/* usr/share/idiomind/gui
 images/* usr/share/idiomind/images
 main.sh usr/share/idiomind/
 add.sh usr/share/idiomind/
@@ -17,5 +18,4 @@ play.sh usr/share/idiomind/
 bcle.sh usr/share/idiomind/
 stop.sh usr/share/idiomind/
 vwr.sh usr/share/idiomind/
-utils/idiomind-utils usr/lib/idiomind
 idiomind usr/bin/

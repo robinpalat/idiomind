@@ -1394,7 +1394,8 @@ itray() {
     export lbl8="$(gettext "Quit")"
     export dirt="$DT/"
     export lgt=${tlangs[$tlng]}
-	/usr/lib/idiomind/idiomind-utils tray
+	cd $DS/gui/
+	./tray.sh
 }
 
 

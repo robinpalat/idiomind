@@ -2,7 +2,7 @@ Source: idiomind
 Section: x11
 Priority: optional
 Maintainer: Robin Palatnik <robinpalat@gmail.com>
-Build-Depends: debhelper-compat (= 13), gcc, pkg-config, libgtk-3-dev, libwebkit2gtk-4.1-dev
+Build-Depends: debhelper-compat (= 13)
 Standards-Version: 4.6.0
 Homepage: http://idiomind.sourceforge.io
 Vcs-Browser: https://github.com/robinpalat/idiomind
@@ -11,7 +11,8 @@ Vcs-Git: https://github.com/robinpalat/idiomind.git
 Package: idiomind
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, yad (>=0.39), sox, mplayer, imagemagick, curl, xdg-utils, xclip, python3, python3-gi, gir1.2-gtk-3.0, gir1.2-glib-2.0, gir1.2-notify-0.7, espeak, sqlite3, xsltproc, libsox-fmt-mp3, libnotify-bin, weasyprint
-Suggests: festival, gir1.2-ayatanaappindicator3-0.1, gir1.2-appindicator3-0.1
+Recommends: xdotool, inotify-tools
+Suggests: festival
 Description: Language learning tool
  Idiomind is a small program aimed to help you learn another language.
  Idiomind is based on shell scripts and YAD (GUI).

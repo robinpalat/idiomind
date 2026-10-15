@@ -40,29 +40,25 @@ The rest of the application is built by combining these with the tools and servi
 The original Idiomind combines:
 
 * **Bash** — application logic and orchestration
-* **YAD** — graphical interface
+* **YAD** — graphical interface and system tray icon
 * **Unix/Linux utilities** — system integration and text/file processing
 * **SQLite** — structured local data
 * **HTML** — content presentation
 * **audio tools** — speech and audio processing
 * **Python** — selected supporting functionality
-* **`Idiomind_utils`** — native desktop and HTML integration
 
 This architecture allowed Idiomind to remain relatively small while taking advantage of existing Linux tools instead of reimplementing their functionality inside the application.
 
-### Idiomind_utils
+### System tray
 
-The original application also includes a small native component called **`Idiomind_utils`**.
+The tray/panel icon is provided by YAD itself (`yad --notification`) and driven by a Bash script. No compiled component is needed: the whole application is now implemented in Bash and YAD, with Python for selected supporting functionality.
 
-It is installed at:
+The icon needs a desktop panel with a system tray area:
 
-```text
-/usr/lib/Idiomind_utils
-```
+* **Xfce:** the *Status Tray* plugin, included in the default panel.
+* **GNOME:** the AppIndicator extension (enabled by default on Ubuntu), with legacy tray icon support turned on.
 
-It provides functionality that is difficult or impractical to handle directly from Bash, including displaying HTML-based elements and integrating Idiomind with the Linux desktop, such as its system tray/panel icon.
-
-This creates a hybrid architecture: most of the application remains implemented in Bash and YAD, while `Idiomind_utils` provides selected native functionality where needed.
+Optional packages improve the tray menu: `xdotool` lets the left click open the menu (X11 only), and `inotify-tools` makes the menu react instantly to changes instead of polling.
 
 ---
 
@@ -94,9 +90,10 @@ Its main dependencies include:
 * SoX
 * libnotify-bin
 * weasyprint
-* `Idiomind_utils`
 
 Several of these tools are used directly by the application, while others provide specific functionality such as audio playback, speech synthesis, image processing or document generation.
+
+Recommended (optional): `xdotool`, `inotify-tools`.
 
 ---
 

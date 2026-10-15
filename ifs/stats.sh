@@ -344,6 +344,71 @@ function pre_comp() {
 
 create_db
 
+# Muestra las estadísticas en un diálogo yad con dos pestañas (sustituye al visor HTML).
+# Lee ${data}, que mk_tpc_stats genera en dos líneas:
+#   data1=[{"f0":[12 valores],...,"f4":[...]}];                  topics por mes y estado
+#   data2=[{"wk":["Oct06",...],"f0":[17 valores],...,"f6":[...]}]; palabras y práctica por semana
+function show_stats_dialog() {
+    [ -s "${data}" ] || return
+    local l1 l2 i key pid1 pid2
+    l1="$(grep -m1 '^data1=' "${data}")"
+    l2="$(grep -m1 '^data2=' "${data}")"
+
+    # arr "<línea>" <clave>  ->  valores del array separados por coma, sin comillas
+    arr() { grep -o "\"$2\":\[[^]]*\]" <<< "$1" |head -n1 |sed 's/^[^[]*\[//; s/\]$//; s/"//g'; }
+
+    local t0 t1 t2 t3 t4 wk w0 w1 w2 w3 w4 w5 w6
+    IFS=',' read -r -a t0 <<< "$(arr "$l1" f0)"
+    IFS=',' read -r -a t1 <<< "$(arr "$l1" f1)"
+    IFS=',' read -r -a t2 <<< "$(arr "$l1" f2)"
+    IFS=',' read -r -a t3 <<< "$(arr "$l1" f3)"
+    IFS=',' read -r -a t4 <<< "$(arr "$l1" f4)"
+    IFS=',' read -r -a wk <<< "$(arr "$l2" wk)"
+    IFS=',' read -r -a w0 <<< "$(arr "$l2" f0)"
+    IFS=',' read -r -a w1 <<< "$(arr "$l2" f1)"
+    IFS=',' read -r -a w2 <<< "$(arr "$l2" f2)"
+    IFS=',' read -r -a w3 <<< "$(arr "$l2" f3)"
+    IFS=',' read -r -a w4 <<< "$(arr "$l2" f4)"
+    IFS=',' read -r -a w5 <<< "$(arr "$l2" f5)"
+    IFS=',' read -r -a w6 <<< "$(arr "$l2" f6)"
+
+    key=$$
+    local st="$(gettext "State")"
+
+    # Pestaña 1: topics por mes (una celda por línea, fila a fila)
+    (for i in {0..11}; do
+        printf '%s\n%s\n%s\n%s\n%s\n%s\n' "$(date -d "2000-$((i+1))-01" +%b)" \
+        "${t0[i]:-0}" "${t1[i]:-0}" "${t2[i]:-0}" "${t3[i]:-0}" "${t4[i]:-0}"
+    done) |yad --plug=$key --tabnum=1 --list \
+        --column="$(gettext "Month")" \
+        --column="$st 1:NUM" --column="$st 3-4:NUM" --column="$st 5-6:NUM" \
+        --column="$st 7-10:NUM" --column="$st 0:NUM" &
+    pid1=$!
+
+    # Pestaña 2: palabras y práctica por semana (se omiten las semanas vacías)
+    (for i in "${!wk[@]}"; do
+        [[ -z "${wk[i]// /}" ]] && continue
+        printf '%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' "${wk[i]}" \
+        "${w0[i]:-0}" "${w1[i]:-0}" "${w2[i]:-0}" "${w3[i]:-0}" \
+        "${w4[i]:-0}" "${w5[i]:-0}" "${w6[i]:-0}"
+    done) |yad --plug=$key --tabnum=2 --list \
+        --column="$(gettext "Week")" \
+        --column="$(gettext "New words learned"):NUM" \
+        --column="$(gettext "Words learning"):NUM" \
+        --column="$(gettext "Forgotten words"):NUM" \
+        --column="$(gettext "Difficult words"):NUM" \
+        --column="$(gettext "Words reviewed"):NUM" \
+        --column="$(gettext "Tests passed"):NUM" \
+        --column="$(gettext "Practices"):NUM" &
+    pid2=$!
+
+    yad --notebook --key=$key --center --width=720 --height=480 \
+        --title="${titlew:-Statistics}" --window-icon=idiomind \
+        --tab="$(gettext "Topics")" --tab="$(gettext "Words")" \
+        --button="gtk-close:0"
+    kill $pid1 $pid2 2>/dev/null
+}
+
 function stats() {
     if [ ! -e "${data}" -o -e "${pross}" ]; then
         f_lock 1 "$DT/p_stats"
@@ -357,12 +422,7 @@ function stats() {
         sleep 1 && msg "$(gettext "Insufficient data")\n" dialog-information "Idiomind" &
     fi
     
-titlew="$(gettext "Statistics")"
-uri_stats="$DS/default/pg_stats.html"
-export uri_stats titlew
-
-/usr/lib/idiomind/idiomind-utils html \
-    "$DS/default/pg_stats.html" \
-    "lang=$intrf"
+    titlew="$(gettext "Statistics")"
+    show_stats_dialog
 
 } >/dev/null 2>&1
