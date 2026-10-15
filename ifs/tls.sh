@@ -749,25 +749,17 @@ fback() {
 
 _definition() {
 	
-    source "$DS/ifs/cmns.sh"
     source /usr/share/idiomind/default/c.conf
 	url="https://translate.google.com/?sl=$lgt&tl=$lgs&text=${2}&op=translate"
-	export url
+	xdg-open "$url"
 
-/usr/lib/idiomind/idiomind-utils html "$url"
-
-
-    
 } >/dev/null 2>&1
 
 _translation() {
-    source "$DS/ifs/cmns.sh"
+
     source /usr/share/idiomind/default/c.conf
 	url="https://translate.google.com/?sl=$lgt&tl=$lgs&text=${2}&op=translate"
-	export url
-
-/usr/lib/idiomind/idiomind-utils html "$url"
-
+	xdg-open "$url"
 
 } >/dev/null 2>&1
 

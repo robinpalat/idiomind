@@ -344,17 +344,78 @@ function pre_comp() {
 
 create_db
 
-# Muestra las estadísticas en un diálogo yad con dos pestañas (sustituye al visor HTML).
-# Lee ${data}, que mk_tpc_stats genera en dos líneas:
-#   data1=[{"f0":[12 valores],...,"f4":[...]}];                  topics por mes y estado
-#   data2=[{"wk":["Oct06",...],"f0":[17 valores],...,"f6":[...]}]; palabras y práctica por semana
+# ---------------------------------------------------------------------------
+# Diálogo yad con tres pestañas: Topics / Words / Activity
+# Los labels multiidioma se toman de la misma estructura que html.txt.
+# ---------------------------------------------------------------------------
 function show_stats_dialog() {
     [ -s "${data}" ] || return
-    local l1 l2 i key pid1 pid2
+    local l1 l2 lang
+
+    lang="$(ps -o args= -p $$ 2>/dev/null |grep -oP '(?<=lang=)[a-z]+' |head -n1)"
+    [ -z "$lang" ] && lang="${LANG%%_*}"
+    lang="${lang,,}"
+
+    local p1_title p1_desc p1_lbl2 p1_lbl3 p1_lbl4 p1_lbl5 p1_lbl6
+    local p2_title p2_desc p2_lbl2 p2_lbl3 p2_lbl4 p2_lbl5 p2_lbl6 p2_lbl7 p2_lbl8
+    local p3_title p3_desc p3_lbl2 p3_lbl3
+
+    case "$lang" in
+        es)
+            p1_title='Estado de los temas'; p1_desc='Registro mensual'
+            p1_lbl2='Aprendiendo'; p1_lbl3='Aprendidos'; p1_lbl4='Repasando'
+            p1_lbl5='Con aviso'; p1_lbl6='Inactivos'
+            p2_title='Actividad de práctica'; p2_desc='Informe semanal · palabras'
+            p2_lbl2='Nuevas'; p2_lbl3='Aprendidas'; p2_lbl4='Aprendiendo'
+            p2_lbl5='Repasadas'; p2_lbl6='Superadas'; p2_lbl7='Olvidadas'; p2_lbl8='Difíciles'
+            p3_title='Actividad de práctica'; p3_desc='Informe semanal · tests'
+            p3_lbl2='Superadas'; p3_lbl3='Actividad'
+            ;;
+        it)
+            p1_title='Stato dei temi'; p1_desc='Registro mensile'
+            p1_lbl2='In apprendimento'; p1_lbl3='Imparato'; p1_lbl4='In ripasso'
+            p1_lbl5='Con promemoria'; p1_lbl6='Inattivo'
+            p2_title='Attività di pratica'; p2_desc='Rapporto settimanale · parole'
+            p2_lbl2='Nuove'; p2_lbl3='Imparate'; p2_lbl4='Apprendimento'
+            p2_lbl5='Revisionate'; p2_lbl6='Superare'; p2_lbl7='Trascurato'; p2_lbl8='Difficile'
+            p3_title='Attività di pratica'; p3_desc='Rapporto settimanale · test'
+            p3_lbl2='Pratiche passate'; p3_lbl3='Attività'
+            ;;
+        fr)
+            p1_title='Statut des thèmes'; p1_desc='Registre mensuel'
+            p1_lbl2="En apprentissage"; p1_lbl3='Appris'; p1_lbl4='Revoir'
+            p1_lbl5='Avec rappel'; p1_lbl6='Inactif'
+            p2_title='Activité de pratique'; p2_desc='Rapport hebdomadaire · mots'
+            p2_lbl2='Nouveaux'; p2_lbl3='Appris'; p2_lbl4="J'apprends"
+            p2_lbl5='Examinés'; p2_lbl6='Passé'; p2_lbl7='Oublié'; p2_lbl8='Difficile'
+            p3_title='Activité de pratique'; p3_desc='Rapport hebdomadaire · tests'
+            p3_lbl2='Tests terminés'; p3_lbl3='Activité'
+            ;;
+        pt)
+            p1_title='Estado dos tópicos'; p1_desc='Registro mensal'
+            p1_lbl2='Aprendendo'; p1_lbl3='Aprendido'; p1_lbl4='Revisando'
+            p1_lbl5='Com lembrete'; p1_lbl6='Inativo'
+            p2_title='Atividade de prática'; p2_desc='Relatório semanal · palavras'
+            p2_lbl2='Novas'; p2_lbl3='Aprendi'; p2_lbl4='Aprendendo'
+            p2_lbl5='Revistas'; p2_lbl6='Passadas'; p2_lbl7='Esquecido'; p2_lbl8='Difícil'
+            p3_title='Atividade de prática'; p3_desc='Relatório semanal · testes'
+            p3_lbl2='Testes concluídos'; p3_lbl3='Atividade'
+            ;;
+        *)
+            p1_title='Topics status'; p1_desc='Monthly register'
+            p1_lbl2='Learning'; p1_lbl3='Learned'; p1_lbl4='Reviewing'
+            p1_lbl5='Reminder'; p1_lbl6='Inactive'
+            p2_title='Practice activity'; p2_desc='Weekly report · words'
+            p2_lbl2='New'; p2_lbl3='Learned'; p2_lbl4='Learning'
+            p2_lbl5='Reviewed'; p2_lbl6='Passed'; p2_lbl7='Forgotten'; p2_lbl8='Difficult'
+            p3_title='Practice activity'; p3_desc='Weekly report · tests'
+            p3_lbl2='Tests passed'; p3_lbl3='Activity'
+            ;;
+    esac
+
     l1="$(grep -m1 '^data1=' "${data}")"
     l2="$(grep -m1 '^data2=' "${data}")"
 
-    # arr "<línea>" <clave>  ->  valores del array separados por coma, sin comillas
     arr() { grep -o "\"$2\":\[[^]]*\]" <<< "$1" |head -n1 |sed 's/^[^[]*\[//; s/\]$//; s/"//g'; }
 
     local t0 t1 t2 t3 t4 wk w0 w1 w2 w3 w4 w5 w6
@@ -372,41 +433,101 @@ function show_stats_dialog() {
     IFS=',' read -r -a w5 <<< "$(arr "$l2" f5)"
     IFS=',' read -r -a w6 <<< "$(arr "$l2" f6)"
 
-    key=$$
-    local st="$(gettext "State")"
+    local R=$'\033[0m' B=$'\033[1m' D=$'\033[2m'
+    local C1=$'\033[38;5;39m' C2=$'\033[38;5;42m' C3=$'\033[38;5;215m'
+    local C4=$'\033[38;5;203m' C5=$'\033[38;5;245m' C6=$'\033[38;5;170m'
+    local C7=$'\033[38;5;109m' CB=$'\033[48;5;236m'
 
-    # Pestaña 1: topics por mes (una celda por línea, fila a fila)
-    (for i in {0..11}; do
-        printf '%s\n%s\n%s\n%s\n%s\n%s\n' "$(date -d "2000-$((i+1))-01" +%b)" \
-        "${t0[i]:-0}" "${t1[i]:-0}" "${t2[i]:-0}" "${t3[i]:-0}" "${t4[i]:-0}"
-    done) |yad --plug=$key --tabnum=1 --list \
-        --column="$(gettext "Month")" \
-        --column="$st 1:NUM" --column="$st 3-4:NUM" --column="$st 5-6:NUM" \
-        --column="$st 7-10:NUM" --column="$st 0:NUM" &
-    pid1=$!
+    bar() {
+        local v=${1:-0} max=${2:-1} w=${3:-22} col=${4:-$C1} n i
+        (( max < 1 )) && max=1
+        n=$(( v * w / max )); (( n > w )) && n=$w
+        printf "%s" "$col"
+        for ((i=0;i<n;i++)); do printf '█'; done
+        printf "%s%s" "$CB" "$C5"
+        for ((i=n;i<w;i++)); do printf '░'; done
+        printf "%s" "$R"
+    }
 
-    # Pestaña 2: palabras y práctica por semana (se omiten las semanas vacías)
-    (for i in "${!wk[@]}"; do
+    row() {
+        local lbl="$1" val="${2:-0}" max="$3" col="$4" w="${5:-22}"
+        printf "  ${D}%-22s${R} ${B}%4s${R}  " "$lbl" "$val"
+        bar "$val" "$max" "$w" "$col"
+        printf "\n"
+    }
+
+    hr() { local i; printf "%s" "$C5"; for ((i=0;i<74;i++)); do printf '─'; done; printf "%s\n" "$R"; }
+    title() { printf "\n${B}${C1}▌ %s${R}  ${D}%s${R}\n" "$1" "$2"; hr; }
+
+    local out=""
+    local max=1 v mnum mname i
+
+    # ---------- 1. TOPICS ----------
+    out+="$(title "$p1_title" "$p1_desc")"
+    for v in "${t0[@]}" "${t1[@]}" "${t2[@]}" "${t3[@]}" "${t4[@]}"; do
+        [[ "$v" =~ ^[0-9]+$ ]] && (( v > max )) && max=$v
+    done
+    for i in {0..11}; do
+        mnum=$(printf '%02d' $((i+1)))
+        mname=$(date -d "2000-${mnum}-01" +%b)
+        out+="$(printf "\n${B}${C2}▸ %s${R}\n" "$mname")"
+        out+="$(row "$p1_lbl2" "${t0[i]:-0}" "$max" "$C7")"
+        out+="$(row "$p1_lbl3" "${t1[i]:-0}" "$max" "$C2")"
+        out+="$(row "$p1_lbl4" "${t2[i]:-0}" "$max" "$C1")"
+        out+="$(row "$p1_lbl5" "${t3[i]:-0}" "$max" "$C3")"
+        out+="$(row "$p1_lbl6" "${t4[i]:-0}" "$max" "$C5")"
+    done
+
+    # ---------- 2. WORDS ----------
+    out+="$(title "$p2_title" "$p2_desc")"
+    max=1
+    for v in "${w0[@]}" "${w1[@]}" "${w2[@]}" "${w3[@]}" "${w4[@]}"; do
+        [[ "$v" =~ ^[0-9]+$ ]] && (( v > max )) && max=$v
+    done
+    for i in "${!wk[@]}"; do
         [[ -z "${wk[i]// /}" ]] && continue
-        printf '%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' "${wk[i]}" \
-        "${w0[i]:-0}" "${w1[i]:-0}" "${w2[i]:-0}" "${w3[i]:-0}" \
-        "${w4[i]:-0}" "${w5[i]:-0}" "${w6[i]:-0}"
-    done) |yad --plug=$key --tabnum=2 --list \
-        --column="$(gettext "Week")" \
-        --column="$(gettext "New words learned"):NUM" \
-        --column="$(gettext "Words learning"):NUM" \
-        --column="$(gettext "Forgotten words"):NUM" \
-        --column="$(gettext "Difficult words"):NUM" \
-        --column="$(gettext "Words reviewed"):NUM" \
-        --column="$(gettext "Tests passed"):NUM" \
-        --column="$(gettext "Practices"):NUM" &
-    pid2=$!
+        out+="$(printf "\n${B}${C2}▸ %s${R}\n" "${wk[i]}")"
+        out+="$(row "$p2_lbl2" "${w0[i]:-0}" "$max" "$C7")"
+        out+="$(row "$p2_lbl3" "${w1[i]:-0}" "$max" "$C2")"
+        out+="$(row "$p2_lbl4" "${w2[i]:-0}" "$max" "$C1")"
+        out+="$(row "$p2_lbl5" "${w3[i]:-0}" "$max" "$C6")"
+        out+="$(row "$p2_lbl6" "${w4[i]:-0}" "$max" "$C3")"
+        out+="$(row "$p2_lbl7" "${w5[i]:-0}" "$max" "$C4")"
+        out+="$(row "$p2_lbl8" "${w6[i]:-0}" "$max" "$C5")"
+    done
 
-    yad --notebook --key=$key --center --width=720 --height=480 \
-        --title="${titlew:-Statistics}" --window-icon=idiomind \
-        --tab="$(gettext "Topics")" --tab="$(gettext "Words")" \
-        --button="gtk-close:0"
-    kill $pid1 $pid2 2>/dev/null
+    # ---------- 3. ACTIVITY ----------
+    out+="$(title "$p3_title" "$p3_desc")"
+    max=1
+    for v in "${w5[@]}" "${w6[@]}"; do
+        [[ "$v" =~ ^[0-9]+$ ]] && (( v > max )) && max=$v
+    done
+    for i in "${!wk[@]}"; do
+        [[ -z "${wk[i]// /}" ]] && continue
+        out+="$(printf "\n${B}${C2}▸ %s${R}\n" "${wk[i]}")"
+        out+="$(row "$p3_lbl2" "${w5[i]:-0}" "$max" "$C2")"
+        out+="$(row "$p3_lbl3" "${w6[i]:-0}" "$max" "$C5")"
+    done
+
+    out+="$(printf "\n${D}— %s —${R}\n" "$(date '+%Y-%m-%d %H:%M')")"
+
+    out+="$(printf "\n${D}— %s —${R}\n" "$(date '+%Y-%m-%d %H:%M')")"
+
+    out+="$(printf "\n${D}— %s —${R}\n" "$(date '+%Y-%m-%d %H:%M')")"
+
+    # Salida a la terminal real (evita el >/dev/null del wrapper de stats)
+    if [ -w /dev/tty ]; then
+        {
+            if command -v less >/dev/null 2>&1; then
+                printf "%s\n" "$out" | less -R -F -X
+            else
+                printf "%s\n" "$out"
+            fi
+        } > /dev/tty 2>&1
+    else
+        printf "%s\n" "$out"
+    fi
+
 }
 
 function stats() {
