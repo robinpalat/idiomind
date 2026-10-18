@@ -1236,7 +1236,7 @@ update_addons() {
 stats_dlg() {
     source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/stats.sh"
-    stats &
+    stats
 }
 
 colorize() {

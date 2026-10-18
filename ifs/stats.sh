@@ -345,205 +345,85 @@ function pre_comp() {
 create_db
 
 # ---------------------------------------------------------------------------
-# Diálogo yad con tres pestañas: Topics / Words / Activity
-# Los labels multiidioma se toman de la misma estructura que html.txt.
+# Lanzamiento de la vista de estadísticas en una terminal interactiva.
+# Se usa cuando Idiomind se ejecuta desde el escritorio (sin TTY): el
+# renderizador necesita stdin/stdout conectados a un terminal. El comando
+# reentra por el punto de entrada _stats; en ese proceso hijo ya hay TTY
+# y stats() renderiza directamente (sin recursión).
+# Devuelve 0 si se lanzó un emulador, 1 si no hay ninguno disponible.
 # ---------------------------------------------------------------------------
-function show_stats_dialog() {
-    [ -s "${data}" ] || return
-    local l1 l2 lang
-
-    lang="$(ps -o args= -p $$ 2>/dev/null |grep -oP '(?<=lang=)[a-z]+' |head -n1)"
-    [ -z "$lang" ] && lang="${LANG%%_*}"
-    lang="${lang,,}"
-
-    local p1_title p1_desc p1_lbl2 p1_lbl3 p1_lbl4 p1_lbl5 p1_lbl6
-    local p2_title p2_desc p2_lbl2 p2_lbl3 p2_lbl4 p2_lbl5 p2_lbl6 p2_lbl7 p2_lbl8
-    local p3_title p3_desc p3_lbl2 p3_lbl3
-
-    case "$lang" in
-        es)
-            p1_title='Estado de los temas'; p1_desc='Registro mensual'
-            p1_lbl2='Aprendiendo'; p1_lbl3='Aprendidos'; p1_lbl4='Repasando'
-            p1_lbl5='Con aviso'; p1_lbl6='Inactivos'
-            p2_title='Actividad de práctica'; p2_desc='Informe semanal · palabras'
-            p2_lbl2='Nuevas'; p2_lbl3='Aprendidas'; p2_lbl4='Aprendiendo'
-            p2_lbl5='Repasadas'; p2_lbl6='Superadas'; p2_lbl7='Olvidadas'; p2_lbl8='Difíciles'
-            p3_title='Actividad de práctica'; p3_desc='Informe semanal · tests'
-            p3_lbl2='Superadas'; p3_lbl3='Actividad'
-            ;;
-        it)
-            p1_title='Stato dei temi'; p1_desc='Registro mensile'
-            p1_lbl2='In apprendimento'; p1_lbl3='Imparato'; p1_lbl4='In ripasso'
-            p1_lbl5='Con promemoria'; p1_lbl6='Inattivo'
-            p2_title='Attività di pratica'; p2_desc='Rapporto settimanale · parole'
-            p2_lbl2='Nuove'; p2_lbl3='Imparate'; p2_lbl4='Apprendimento'
-            p2_lbl5='Revisionate'; p2_lbl6='Superare'; p2_lbl7='Trascurato'; p2_lbl8='Difficile'
-            p3_title='Attività di pratica'; p3_desc='Rapporto settimanale · test'
-            p3_lbl2='Pratiche passate'; p3_lbl3='Attività'
-            ;;
-        fr)
-            p1_title='Statut des thèmes'; p1_desc='Registre mensuel'
-            p1_lbl2="En apprentissage"; p1_lbl3='Appris'; p1_lbl4='Revoir'
-            p1_lbl5='Avec rappel'; p1_lbl6='Inactif'
-            p2_title='Activité de pratique'; p2_desc='Rapport hebdomadaire · mots'
-            p2_lbl2='Nouveaux'; p2_lbl3='Appris'; p2_lbl4="J'apprends"
-            p2_lbl5='Examinés'; p2_lbl6='Passé'; p2_lbl7='Oublié'; p2_lbl8='Difficile'
-            p3_title='Activité de pratique'; p3_desc='Rapport hebdomadaire · tests'
-            p3_lbl2='Tests terminés'; p3_lbl3='Activité'
-            ;;
-        pt)
-            p1_title='Estado dos tópicos'; p1_desc='Registro mensal'
-            p1_lbl2='Aprendendo'; p1_lbl3='Aprendido'; p1_lbl4='Revisando'
-            p1_lbl5='Com lembrete'; p1_lbl6='Inativo'
-            p2_title='Atividade de prática'; p2_desc='Relatório semanal · palavras'
-            p2_lbl2='Novas'; p2_lbl3='Aprendi'; p2_lbl4='Aprendendo'
-            p2_lbl5='Revistas'; p2_lbl6='Passadas'; p2_lbl7='Esquecido'; p2_lbl8='Difícil'
-            p3_title='Atividade de prática'; p3_desc='Relatório semanal · testes'
-            p3_lbl2='Testes concluídos'; p3_lbl3='Atividade'
-            ;;
-        *)
-            p1_title='Topics status'; p1_desc='Monthly register'
-            p1_lbl2='Learning'; p1_lbl3='Learned'; p1_lbl4='Reviewing'
-            p1_lbl5='Reminder'; p1_lbl6='Inactive'
-            p2_title='Practice activity'; p2_desc='Weekly report · words'
-            p2_lbl2='New'; p2_lbl3='Learned'; p2_lbl4='Learning'
-            p2_lbl5='Reviewed'; p2_lbl6='Passed'; p2_lbl7='Forgotten'; p2_lbl8='Difficult'
-            p3_title='Practice activity'; p3_desc='Weekly report · tests'
-            p3_lbl2='Tests passed'; p3_lbl3='Activity'
-            ;;
-    esac
-
-    l1="$(grep -m1 '^data1=' "${data}")"
-    l2="$(grep -m1 '^data2=' "${data}")"
-
-    arr() { grep -o "\"$2\":\[[^]]*\]" <<< "$1" |head -n1 |sed 's/^[^[]*\[//; s/\]$//; s/"//g'; }
-
-    local t0 t1 t2 t3 t4 wk w0 w1 w2 w3 w4 w5 w6
-    IFS=',' read -r -a t0 <<< "$(arr "$l1" f0)"
-    IFS=',' read -r -a t1 <<< "$(arr "$l1" f1)"
-    IFS=',' read -r -a t2 <<< "$(arr "$l1" f2)"
-    IFS=',' read -r -a t3 <<< "$(arr "$l1" f3)"
-    IFS=',' read -r -a t4 <<< "$(arr "$l1" f4)"
-    IFS=',' read -r -a wk <<< "$(arr "$l2" wk)"
-    IFS=',' read -r -a w0 <<< "$(arr "$l2" f0)"
-    IFS=',' read -r -a w1 <<< "$(arr "$l2" f1)"
-    IFS=',' read -r -a w2 <<< "$(arr "$l2" f2)"
-    IFS=',' read -r -a w3 <<< "$(arr "$l2" f3)"
-    IFS=',' read -r -a w4 <<< "$(arr "$l2" f4)"
-    IFS=',' read -r -a w5 <<< "$(arr "$l2" f5)"
-    IFS=',' read -r -a w6 <<< "$(arr "$l2" f6)"
-
-    local R=$'\033[0m' B=$'\033[1m' D=$'\033[2m'
-    local C1=$'\033[38;5;39m' C2=$'\033[38;5;42m' C3=$'\033[38;5;215m'
-    local C4=$'\033[38;5;203m' C5=$'\033[38;5;245m' C6=$'\033[38;5;170m'
-    local C7=$'\033[38;5;109m' CB=$'\033[48;5;236m'
-
-    bar() {
-        local v=${1:-0} max=${2:-1} w=${3:-22} col=${4:-$C1} n i
-        (( max < 1 )) && max=1
-        n=$(( v * w / max )); (( n > w )) && n=$w
-        printf "%s" "$col"
-        for ((i=0;i<n;i++)); do printf '█'; done
-        printf "%s%s" "$CB" "$C5"
-        for ((i=n;i<w;i++)); do printf '░'; done
-        printf "%s" "$R"
-    }
-
-    row() {
-        local lbl="$1" val="${2:-0}" max="$3" col="$4" w="${5:-22}"
-        printf "  ${D}%-22s${R} ${B}%4s${R}  " "$lbl" "$val"
-        bar "$val" "$max" "$w" "$col"
-        printf "\n"
-    }
-
-    hr() { local i; printf "%s" "$C5"; for ((i=0;i<74;i++)); do printf '─'; done; printf "%s\n" "$R"; }
-    title() { printf "\n${B}${C1}▌ %s${R}  ${D}%s${R}\n" "$1" "$2"; hr; }
-
-    local out=""
-    local max=1 v mnum mname i
-
-    # ---------- 1. TOPICS ----------
-    out+="$(title "$p1_title" "$p1_desc")"
-    for v in "${t0[@]}" "${t1[@]}" "${t2[@]}" "${t3[@]}" "${t4[@]}"; do
-        [[ "$v" =~ ^[0-9]+$ ]] && (( v > max )) && max=$v
+function _stats_open_terminal() {
+    local term wtitle
+    wtitle="Idiomind - $(gettext "Statistics")"
+    for term in gnome-terminal xfce4-terminal konsole tilix terminator \
+                lxterminal alacritty kitty foot st xterm; do
+        command -v "$term" >/dev/null 2>&1 || continue
+        case "$term" in
+            gnome-terminal)
+                "$term" --title="$wtitle" -- \
+                    bash "$DS/ifs/tls.sh" _stats >/dev/null 2>&1 ;;
+            xfce4-terminal)
+                "$term" --title="$wtitle" -x \
+                    bash "$DS/ifs/tls.sh" _stats >/dev/null 2>&1 ;;
+            konsole)
+                "$term" --title "$wtitle" -e \
+                    bash "$DS/ifs/tls.sh" _stats >/dev/null 2>&1 ;;
+            tilix)
+                "$term" --title "$wtitle" -e \
+                    bash "$DS/ifs/tls.sh" _stats >/dev/null 2>&1 ;;
+            lxterminal)
+                "$term" --title="$wtitle" -e \
+                    "bash $DS/ifs/tls.sh _stats" >/dev/null 2>&1 ;;
+            terminator)
+                "$term" --title "$wtitle" -e \
+                    "bash $DS/ifs/tls.sh _stats" >/dev/null 2>&1 ;;
+            alacritty)
+                "$term" --title "$wtitle" -e \
+                    bash "$DS/ifs/tls.sh" _stats >/dev/null 2>&1 ;;
+            kitty|foot)
+                "$term" --title "$wtitle" \
+                    bash "$DS/ifs/tls.sh" _stats >/dev/null 2>&1 ;;
+            st)
+                "$term" -t "$wtitle" -e \
+                    bash "$DS/ifs/tls.sh" _stats >/dev/null 2>&1 ;;
+            xterm)
+                "$term" -T "$wtitle" -e \
+                    bash "$DS/ifs/tls.sh" _stats >/dev/null 2>&1 ;;
+            *)
+                "$term" -e bash "$DS/ifs/tls.sh" _stats >/dev/null 2>&1 ;;
+        esac
+        return 0
     done
-    for i in {0..11}; do
-        mnum=$(printf '%02d' $((i+1)))
-        mname=$(date -d "2000-${mnum}-01" +%b)
-        out+="$(printf "\n${B}${C2}▸ %s${R}\n" "$mname")"
-        out+="$(row "$p1_lbl2" "${t0[i]:-0}" "$max" "$C7")"
-        out+="$(row "$p1_lbl3" "${t1[i]:-0}" "$max" "$C2")"
-        out+="$(row "$p1_lbl4" "${t2[i]:-0}" "$max" "$C1")"
-        out+="$(row "$p1_lbl5" "${t3[i]:-0}" "$max" "$C3")"
-        out+="$(row "$p1_lbl6" "${t4[i]:-0}" "$max" "$C5")"
-    done
-
-    # ---------- 2. WORDS ----------
-    out+="$(title "$p2_title" "$p2_desc")"
-    max=1
-    for v in "${w0[@]}" "${w1[@]}" "${w2[@]}" "${w3[@]}" "${w4[@]}"; do
-        [[ "$v" =~ ^[0-9]+$ ]] && (( v > max )) && max=$v
-    done
-    for i in "${!wk[@]}"; do
-        [[ -z "${wk[i]// /}" ]] && continue
-        out+="$(printf "\n${B}${C2}▸ %s${R}\n" "${wk[i]}")"
-        out+="$(row "$p2_lbl2" "${w0[i]:-0}" "$max" "$C7")"
-        out+="$(row "$p2_lbl3" "${w1[i]:-0}" "$max" "$C2")"
-        out+="$(row "$p2_lbl4" "${w2[i]:-0}" "$max" "$C1")"
-        out+="$(row "$p2_lbl5" "${w3[i]:-0}" "$max" "$C6")"
-        out+="$(row "$p2_lbl6" "${w4[i]:-0}" "$max" "$C3")"
-        out+="$(row "$p2_lbl7" "${w5[i]:-0}" "$max" "$C4")"
-        out+="$(row "$p2_lbl8" "${w6[i]:-0}" "$max" "$C5")"
-    done
-
-    # ---------- 3. ACTIVITY ----------
-    out+="$(title "$p3_title" "$p3_desc")"
-    max=1
-    for v in "${w5[@]}" "${w6[@]}"; do
-        [[ "$v" =~ ^[0-9]+$ ]] && (( v > max )) && max=$v
-    done
-    for i in "${!wk[@]}"; do
-        [[ -z "${wk[i]// /}" ]] && continue
-        out+="$(printf "\n${B}${C2}▸ %s${R}\n" "${wk[i]}")"
-        out+="$(row "$p3_lbl2" "${w5[i]:-0}" "$max" "$C2")"
-        out+="$(row "$p3_lbl3" "${w6[i]:-0}" "$max" "$C5")"
-    done
-
-    out+="$(printf "\n${D}— %s —${R}\n" "$(date '+%Y-%m-%d %H:%M')")"
-
-    out+="$(printf "\n${D}— %s —${R}\n" "$(date '+%Y-%m-%d %H:%M')")"
-
-    out+="$(printf "\n${D}— %s —${R}\n" "$(date '+%Y-%m-%d %H:%M')")"
-
-    # Salida a la terminal real (evita el >/dev/null del wrapper de stats)
-    if [ -w /dev/tty ]; then
-        {
-            if command -v less >/dev/null 2>&1; then
-                printf "%s\n" "$out" | less -R -F -X
-            else
-                printf "%s\n" "$out"
-            fi
-        } > /dev/tty 2>&1
-    else
-        printf "%s\n" "$out"
-    fi
-
+    return 1
 }
 
 function stats() {
-    if [ ! -e "${data}" -o -e "${pross}" ]; then
-        f_lock 1 "$DT/p_stats"
-        [ ! -e "${data}" ] && cp -f "${databk}" "${data}"
-        [ ! -e "${pross}" ] && coll_tpc_stats 0
-        mk_tpc_stats
-        f_lock 3 "$DT/p_stats"
+    # Sin terminal interactivo (lanzamiento desde el escritorio): abrir la
+    # vista en un emulador de terminal disponible y retornar.
+    if ! [ -t 0 ] && ! [ -t 1 ]; then
+        _stats_open_terminal || {
+            source "$DS/ifs/cmns.sh"
+            msg "$(gettext "Statistics could not be displayed: no terminal emulator is available.")\n" \
+            dialog-warning "Idiomind"
+        }
+        return
     fi
+    # Recopilación y persistencia: idéntica a antes, en silencio.
+    {
+        if [ ! -e "${data}" -o -e "${pross}" ]; then
+            f_lock 1 "$DT/p_stats"
+            [ ! -e "${data}" ] && cp -f "${databk}" "${data}"
+            [ ! -e "${pross}" ] && coll_tpc_stats 0
+            mk_tpc_stats
+            f_lock 3 "$DT/p_stats"
+        fi
+    } >/dev/null 2>&1
     if [ -f "${no_data}" ]; then
         source "$DS/ifs/cmns.sh"
         sleep 1 && msg "$(gettext "Insufficient data")\n" dialog-information "Idiomind" &
     fi
-    
-    titlew="$(gettext "Statistics")"
-    show_stats_dialog
-
-} >/dev/null 2>&1
+    # Presentación: renderizador de terminal (sustituye las pestañas YAD).
+    export ST_INSUFFICIENT="$(gettext "Insufficient data")"
+    source "$DS/ifs/stat_render.sh"
+    stats_terminal_dlg
+}
