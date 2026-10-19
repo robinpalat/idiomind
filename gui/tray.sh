@@ -111,6 +111,10 @@ add_item() {                    # etiqueta, argumentos de --do, [icono], [argume
     MENU+="${MENU:+|}$(clean "$1")!${cmd}${3:+!$3}"
 }
 
+add_separator() {               # una entrada vacía ('||') es un separador en yad
+    MENU+="${MENU:+|}"
+}
+
 build_menu() {
     get_status
     MENU=""
@@ -137,16 +141,18 @@ build_menu() {
                 add_item "$lbl9: $line" task "" "$(printf '%s' "$line" | base64 -w0)"
             done < "$tasks_file"
         else
-            add_item "$lbl9  ▸" tasks
+            add_item "$lbl9   ▸" tasks
         fi
     fi
 
+    add_separator
     add_item "$lbl5" topics
+    add_separator
     add_item "$lbl8" quit
 }
 
 # ---------------------------------------------------------------------------
-# Espera de cambios en $DT (equivale al GFileMonitor)
+# Espera de cambios en $DT 
 # ---------------------------------------------------------------------------
 wait_change() {
     if [[ -n $DT ]] && command -v inotifywait >/dev/null 2>&1; then
@@ -159,7 +165,7 @@ wait_change() {
 }
 
 # ---------------------------------------------------------------------------
-# Principal (equivale a tray_run)
+# Principal
 # ---------------------------------------------------------------------------
 command -v yad >/dev/null 2>&1 || { echo "Idiomind tray: yad no está instalado" >&2; exit 1; }
 

@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
 # Idiomind Shell — terminal statistics renderer
-# Source this file after stats.sh has initialized $data and generated data1/data2.
-# This module only renders statistics; it does not read/write SQLite or alter logs.
-#
-# i18n: every visible string goes through gettext (domain: idiomind).
-# TEXTDOMAIN/TEXTDOMAINDIR/LANGUAGE come from default/c.conf; this file
-# does not set or override any locale environment variable.
 
 # ANSI palette: subdued blue/green/amber/purple/gray.
 _ST_RESET=$'\033[0m'
@@ -21,11 +15,20 @@ _ST_CYAN=$'\033[38;5;109m'
 _st_plain() { printf '%s' "$1" | sed $'s/\033\\[[0-9;]*m//g'; }
 _st_cols() { local n; n=$(tput cols 2>/dev/null); [[ "$n" =~ ^[0-9]+$ ]] && ((n >= 50)) && printf '%s' "$n" || printf '80'; }
 _st_rule() { printf '%s' "${_ST_GRAY}"; printf '%*s' "$(_st_cols)" '' | sed 's/ /─/g'; printf '%s\n' "${_ST_RESET}"; }
+# Description wrapped to the terminal width: every physical line is one line
+# of the view buffer, so the scroll logic counts real rows.
+_st_desc() {
+    printf '%s\n' "$1" | fold -s -w "$(( $(_st_cols) - 4 ))" | sed 's/^/  /'
+    printf '\n'
+}
+# Alternate screen buffer: no scrollback is kept, so previous views never pile up
+# when the mouse wheel is used. Mode 1007 makes the wheel send ↑/↓ keys, which
+# the viewer below uses to scroll.
+_st_enter() { printf '\033[?1049h\033[?1007h'; }
+_st_leave() { printf '\033[?1007l\033[?1049l'; }
 _st_header() {
     local number="$1" title="$2" period="$3"
-    printf '\n%s%s IDIOMIND %s/ %s %s/ %02d%s\n' "$_ST_DIM" "$_ST_BLUE" "$_ST_GRAY" "$_ST_BLUE" "$(gettext "Statistics")" "$number" "$_ST_RESET"
-    printf '\n%s%s%s\n' "$_ST_BOLD" "$title" "$_ST_RESET"
-    printf '%s%s%s\n' "$_ST_DIM" "$period" "$_ST_RESET"
+    printf '\n%s%s%s %s— %s%s\n' "$_ST_BOLD" "$title" "$_ST_RESET" "$_ST_DIM" "$period" "$_ST_RESET"
     _st_rule
 }
 _st_bar() {
@@ -79,9 +82,6 @@ _st_week_label() {
     fi
 }
 
-# Interfaz de terminal (sustituye las pestañas YAD).
-# Requiere que stats.sh haya inicializado $data con data1/data2.
-# El idioma lo determina gettext con el LANGUAGE que exporta c.conf.
 stats_terminal_dlg() {
     local l1 l2 i cur y m yy idx shown key
 
@@ -94,7 +94,7 @@ stats_terminal_dlg() {
     l2=$(grep -m1 '^data2=' "$data")
     local p1 p1desc p2 p2desc p3 p3desc p3passed p3activity
     local p1_now p1_trend p1_note p_period_m p_period_w p_unit_topics
-    local nav_topics nav_words nav_activity nav_quit
+    local nav_topics nav_words nav_activity nav_quit nav_scroll
     local -a p1labels p2labels t0 t1 t2 t3 t4 wk w0 w1 w2 w3 w4 w5 w6
 
     p1="$(gettext "Topics status")"
@@ -102,16 +102,16 @@ stats_terminal_dlg() {
     p1labels=("$(gettext "Learning")" "$(gettext "Learned")" "$(gettext "Reviewing")" \
               "$(gettext "Review reminder")" "$(gettext "Inactive")")
     p1_now="$(gettext "Current month distribution")"
-    p1_trend="$(gettext "Monthly total trend")"
+    p1_trend="  $(gettext "Monthly total trend")"
     p1_note="$(gettext "the monthly total is the sum of the five recorded states.")"
     p_period_m="$(gettext "Monthly register · last 5 months")"
     p_unit_topics="$(gettext "topics")"
 
     p2="$(gettext "Word activity")"
     p2desc="$(gettext "Values count word records in each category for that week. They describe recorded activity, not a direct measure of mastery.")"
-    p2labels=("$(gettext "New")" "$(gettext "Learned")" "$(gettext "Learning")" \
-              "$(gettext "Reviewed")" "$(gettext "Passed")" "$(gettext "Forgotten")" \
-              "$(gettext "Difficult")")
+
+    p2labels=("$(gettext "New")" "$(gettext "Learning")" "$(gettext "Forgotten")" \
+              "$(gettext "Difficult")" "$(gettext "Reviewed")")
     p_period_w="$(gettext "Weekly report · last 5 weeks")"
 
     p3="$(gettext "Practice activity")"
@@ -123,6 +123,7 @@ stats_terminal_dlg() {
     nav_words="$(gettext "Words")"
     nav_activity="$(gettext "Activity")"
     nav_quit="$(gettext "Quit")"
+    nav_scroll="$(gettext "Scroll")"
 
     IFS=',' read -r -a t0 <<< "$(_st_arr "$l1" f0)"
     IFS=',' read -r -a t1 <<< "$(_st_arr "$l1" f1)"
@@ -138,14 +139,21 @@ stats_terminal_dlg() {
     IFS=',' read -r -a w5 <<< "$(_st_arr "$l2" f5)"
     IFS=',' read -r -a w6 <<< "$(_st_arr "$l2" f6)"
 
-    # Navigation loop. Redraw only on explicit screen change.
+    local tmp off rows view_h total max_off k rest quit=0
+    local -a lines
+    tmp=$(mktemp 2>/dev/null) || tmp="/tmp/.idiomind_stats_view.$$"
+    trap '_st_leave; rm -f "$tmp"; exit 130' INT TERM HUP
+    _st_enter
+
+    # Navigation loop. Each view is rendered into a buffer first, then shown
+    # through a viewport that always starts at the top (header visible).
     key=1
     while :; do
-      clear 2>/dev/null || printf '\n\n'
+      {
       case "$key" in
         1)
           _st_header 1 "$p1" "$p_period_m"
-          printf '  %s\n\n' "$p1desc"
+          _st_desc "${p1desc//. /.$'\n'}"
           cur=$(date +%m); y=$(date +%Y); local -a vals names month_totals; local max=1
           for i in 0 1 2 3 4; do
             m=$((10#$cur - (4-i))); yy=$y
@@ -176,26 +184,30 @@ stats_terminal_dlg() {
           ;;
         2)
           _st_header 2 "$p2" "$p_period_w"
-          printf '  %s\n\n' "$p2desc"
+          _st_desc "$p2desc"
           local -a latest=(); shown=0
           for ((i=${#wk[@]}-1; i>=0 && shown<5; i--)); do [[ -z "${wk[i]// /}" ]] && continue; latest+=("$i"); ((shown++)); done
-          local -a colors=("$_ST_BLUE" "$_ST_GREEN" "$_ST_CYAN" "$_ST_AMBER" "$_ST_GREEN" "$_ST_PURPLE" "$_ST_GRAY")
+          # val0..val4 -> New, Learning, Forgotten, Difficult, Reviewed
+          local -a colors=("$_ST_BLUE" "$_ST_AMBER" "$_ST_PURPLE" "$_ST_GRAY" "$_ST_GREEN")
+          local j v gmax=1
+
+          for i in "${latest[@]}"; do
+            for j in 0 1 2 3 4; do
+              case "$j" in 0) v=${w0[i]:-0};; 1) v=${w1[i]:-0};; 2) v=${w2[i]:-0};; 3) v=${w3[i]:-0};; 4) v=${w4[i]:-0};; esac
+              [[ "$v" =~ ^[0-9]+$ ]] || v=0; ((v>gmax)) && gmax=$v
+            done
+          done
           for i in "${latest[@]}"; do
             printf '\n%s%s%s\n' "$_ST_BOLD" "$(_st_week_label "${wk[i]}")" "$_ST_RESET"
-            local j v max=1
-            for j in 0 1 2 3 4 5 6; do
-              case "$j" in 0) v=${w0[i]:-0};; 1) v=${w1[i]:-0};; 2) v=${w2[i]:-0};; 3) v=${w3[i]:-0};; 4) v=${w4[i]:-0};; 5) v=${w5[i]:-0};; 6) v=${w6[i]:-0};; esac
-              [[ "$v" =~ ^[0-9]+$ ]] || v=0; ((v>max)) && max=$v
-            done
-            for j in 0 1 2 3 4 5 6; do
-              case "$j" in 0) v=${w0[i]:-0};; 1) v=${w1[i]:-0};; 2) v=${w2[i]:-0};; 3) v=${w3[i]:-0};; 4) v=${w4[i]:-0};; 5) v=${w5[i]:-0};; 6) v=${w6[i]:-0};; esac
-              _st_bar "${p2labels[j]}" "$v" "$max" "${colors[j]}"
+            for j in 0 1 2 3 4; do
+              case "$j" in 0) v=${w0[i]:-0};; 1) v=${w1[i]:-0};; 2) v=${w2[i]:-0};; 3) v=${w3[i]:-0};; 4) v=${w4[i]:-0};; esac
+              _st_bar "${p2labels[j]}" "$v" "$gmax" "${colors[j]}"
             done
           done
           ;;
         3)
           _st_header 3 "$p3" "$p_period_w"
-          printf '  %s\n\n' "$p3desc"
+          _st_desc "$p3desc"
           shown=0
           for ((i=${#wk[@]}-1; i>=0 && shown<5; i--)); do
             [[ -z "${wk[i]// /}" ]] && continue
@@ -208,10 +220,54 @@ stats_terminal_dlg() {
           done
           ;;
       esac
-      _st_rule
-      printf '  [1] %s   [2] %s   [3] %s   [q] %s\n' \
-        "$nav_topics" "$nav_words" "$nav_activity" "$nav_quit"
-      read -r -n 1 -s -p '  > ' key || { printf '\n'; break; }
-      case "$key" in 1|2|3) ;; q|Q) printf '\n'; break;; *) key=1;; esac
+      } > "$tmp"
+      mapfile -t lines < "$tmp"
+      off=0
+
+      while :; do
+        rows=$(tput lines 2>/dev/null); [[ "$rows" =~ ^[0-9]+$ ]] || rows=24
+        view_h=$((rows-3)); ((view_h<5)) && view_h=5   # reserve: rule + nav + prompt
+        total=${#lines[@]}
+        max_off=$((total-view_h)); ((max_off<0)) && max_off=0
+        ((off>max_off)) && off=$max_off
+        ((off<0)) && off=0
+
+        printf '\033[H\033[2J'
+        printf '%s\n' "${lines[@]:off:view_h}"
+        _st_rule
+        printf '  [1] %s   [2] %s   [3] %s   [q] %s' \
+          "$nav_topics" "$nav_words" "$nav_activity" "$nav_quit"
+        ((max_off>0)) && printf '   %s[↑↓] %s %d-%d/%d%s' "$_ST_DIM" "$nav_scroll" \
+          $((off+1)) $((off+view_h>total ? total : off+view_h)) "$total" "$_ST_RESET"
+        printf '\n'
+        read -r -s -n 1 -p '  > ' k || { quit=1; break; }
+
+        if [[ "$k" == $'\033' ]]; then
+          read -r -s -n 2 -t 0.05 rest
+          case "$rest" in
+            '[A'|'OA') k=up;;
+            '[B'|'OB') k=down;;
+            '[5') read -r -s -n 1 -t 0.05 _; k=pgup;;
+            '[6') read -r -s -n 1 -t 0.05 _; k=pgdn;;
+            '[H') k=home;;
+            '[F') k=end;;
+            *) k='';;
+          esac
+        fi
+        case "$k" in
+          1|2|3) key=$k; break;;
+          q|Q) quit=1; break;;
+          up|k) off=$((off-1));;
+          down|j) off=$((off+1));;
+          pgup) off=$((off-view_h+1));;
+          pgdn|' ') off=$((off+view_h-1));;
+          home|g) off=0;;
+          end|G) off=$max_off;;
+        esac
+      done
+      ((quit)) && break
     done
+    trap - INT TERM HUP
+    _st_leave
+    rm -f "$tmp"
 }
