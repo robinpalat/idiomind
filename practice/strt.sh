@@ -5,6 +5,7 @@ source /usr/share/idiomind/default/c.conf
 source $DS/default/sets.cfg
 sz=(440 470)
 source "$DS/ifs/cmns.sh"
+source "$DS/practice/term_practice.sh"
 export -f tpc_db
 date_week=$(date +%W |sed 's/^0*//')
 
@@ -78,7 +79,7 @@ function score() {
     [[ ${count_seccion_active_practice} -gt 0 ]]; then
 		cleanups ./$active_practice.0
 		> ./$active_practice.2; > ./$active_practice.3
-        _log $active_practice; play "$dir_practices/all.mp3" &
+        _log $active_practice; play "$dir_practices/all.mp3" >/dev/null 2>&1 &
         echo "1p.$tpc.p1" >> "$log"
         date "+%a %d %B" > ./$active_practice.lock
         [ -f ./$active_practice.df ] && rm ./$active_practice.df
@@ -229,27 +230,55 @@ function practice_a() {
     }
 
     question() {
-        yad --form --title=" " \
-        --skip-taskbar --text-align=center --center --on-top \
-        --undecorated --buttons-layout=spread --align=center \
-        --width=460 --height=280 --borders=16  \
-        --field="\n$question":lbl "" \
-        --field="":lbl "" \
-        --button="!window-close":1 \
-        --button="!media-seek-forward":0
+        if [ -t 1 ]; then
+            ui_card_question "${question}"
+        else
+            yad --form --title=" " \
+            --skip-taskbar --text-align=center --center --on-top \
+            --undecorated --buttons-layout=spread --align=center \
+            --width=460 --height=280 --borders=16  \
+            --field="\n$question":lbl "" \
+            --field="":lbl "" \
+            --button="!window-close":1 \
+            --button="!media-seek-forward":0
+        fi
     }
     
     answer() {
-        yad --form --title=" " \
-        --skip-taskbar --text-align=center --center --on-top \
-        --undecorated --buttons-layout=spread --align=center \
-        --width=460 --height=280 --borders=16  \
-        --field="$answer1":lbl "" \
-        --field="":lbl "" \
-        --field="$answer2":lbl "" \
-        --button="    $(gettext "I did not know it")   !$img_no":3 \
-        --button="    $(gettext "I Knew it")   !$img_yes":2
+        if [ -t 1 ]; then
+            ui_card_answer "${answer1}" "${answer2}"
+        else
+            yad --form --title=" " \
+            --skip-taskbar --text-align=center --center --on-top \
+            --undecorated --buttons-layout=spread --align=center \
+            --width=460 --height=280 --borders=16  \
+            --field="$answer1":lbl "" \
+            --field="":lbl "" \
+            --field="$answer2":lbl "" \
+            --button="    $(gettext "I did not know it")   !$img_no":3 \
+            --button="    $(gettext "I Knew it")   !$img_yes":2
+        fi
     }
+
+    if ! [ -t 1 ]; then
+        local exstate
+        exstate="$(tp_state_file)"
+        rm -f "${exstate}"
+        if tp_open_terminal "$(gettext "Flashcards")" \
+            env HOME="${HOME}" bash "$DS/practice/strt.sh" "$tpc" exercise a; then
+            if tp_wait_state "${exstate}"; then
+                tp_state_read "${exstate}"
+                export count_easy count_hard count_learn step
+                if [ "${tp_phase}" = "done" ]; then
+                    export count_hard count_learn
+                    scoreschk
+                else
+                    score && return
+                fi
+                return
+            fi
+        fi
+    fi
 
     while read -r item; do
         fonts; question
@@ -379,18 +408,26 @@ function practice_b(){
     }
 
     mchoise() {
-        dlg="$(ofonts | yad --list --title=" " \
-        --text="${question}" \
-        --separator=" " --always-print-result \
-        --skip-taskbar --no-scroll --vscroll-policy=never \
-        --text-align=center --center --on-top \
-        --buttons-layout=edge --undecorated \
-        --no-headers --select-action=: \
-        --width=450 --height=320 --borders=16 \
-        --column=Option \
-        --button="!window-close":1 \
-        --button="!media-seek-forward":0)"
+        if [ -t 1 ]; then
+            dlg="$(ui_select_list "${question}" "${tmp}")"
+        else
+            dlg="$(ofonts | yad --list --title=" " \
+            --text="${question}" \
+            --separator=" " --always-print-result \
+            --skip-taskbar --no-scroll --vscroll-policy=never \
+            --text-align=center --center --on-top \
+            --buttons-layout=edge --undecorated \
+            --no-headers --select-action=: \
+            --width=450 --height=320 --borders=16 \
+            --column=Option \
+            --button="!window-close":1 \
+            --button="!media-seek-forward":0)"
+        fi
     }
+
+    if ! [ -t 1 ]; then
+        tp_practice_launch b "$(gettext "Multiple-choice")" && return
+    fi
 
     P=4; s=11
     while read -r item; do
@@ -400,7 +437,7 @@ function practice_b(){
                 echo "${item}" >> b.1
                 count_easy=$((count_easy+1))
             else
-                (play "$snd" & echo "${item}" >> b.2)
+                (play "$snd" >/dev/null 2>&1 & echo "${item}" >> b.2)
                 count_hard=$((count_hard+1))
             fi
         elif [ $ret = 1 ]; then
@@ -421,7 +458,7 @@ function practice_b(){
                     count_hard=$((count_hard-1))
                     count_learn=$((count_learn+1))
                 else
-                    play "$snd" &
+                    play "$snd" >/dev/null 2>&1 &
                     echo "${item}" >> b.3
                 fi
             elif [ $? = 1 ]; then
@@ -442,7 +479,7 @@ function practice_b(){
                     count_hard=$((count_hard-1))
                     count_learn=$((count_learn+1))
                 else
-                    play "$snd" &
+                    play "$snd" >/dev/null 2>&1 &
                     echo "${item}" >> b.3.tmp
                 fi
             elif [ $? = 1 ]; then
@@ -492,19 +529,27 @@ function practice_c() {
     }
 
     question() {
-        cmd_play="$DS/play.sh play_word "\"${trgt}\"" ${cdid}"
-        (sleep 0.5 && "$DS/play.sh" play_word "${trgt}" ${cdid}) &
+        if [ -t 1 ]; then
+            ui_recognize_card "${lst}" "$DS/play.sh" play_word "${trgt}" "${cdid}"
+        else
+            cmd_play="$DS/play.sh play_word "\"${trgt}\"" ${cdid}"
+            (sleep 0.5 && "$DS/play.sh" play_word "${trgt}" ${cdid}) &
 
-        yad --form --title=" " \
-        --text="<small><small>$(gettext "Do you recognize this word?")</small></small>\n\n$lquestion" \
-        --skip-taskbar --text-align=center --center --on-top \
-        --buttons-layout=edge --image-on-top --undecorated \
-        --width=450 --height=270 --borders=16 \
-        --button="!window-close":1 \
-        --button="      $(gettext "No")     !$img_no":3 \
-        --button="      $(gettext "Yes")    !$img_yes":2 \
-        --button="!audio-volume-high":"$cmd_play"
+            yad --form --title=" " \
+            --text="<small><small>$(gettext "Do you recognize this word?")</small></small>\n\n$lquestion" \
+            --skip-taskbar --text-align=center --center --on-top \
+            --buttons-layout=edge --image-on-top --undecorated \
+            --width=450 --height=270 --borders=16 \
+            --button="!window-close":1 \
+            --button="      $(gettext "No")     !$img_no":3 \
+            --button="      $(gettext "Yes")    !$img_yes":2 \
+            --button="!audio-volume-high":"$cmd_play"
+        fi
     }
+
+    if ! [ -t 1 ]; then
+        tp_practice_launch c "$(gettext "Recognize Pronunciation")" && return
+    fi
 
     p=1
     while read -r trgt; do
@@ -710,7 +755,9 @@ function practice_d() {
 
 # practice E
 function practice_e() {
-    
+    TP_AUDIO_PIDFILE="${dir_practice}/.e.apids"
+    rm -f "${TP_AUDIO_PIDFILE}"
+
     dlg_question() {
         if [[ ${lang_question} != 1 ]]; then
             if grep -o -E 'Japanese|Chinese|Russian' <<< ${tlng}; then
@@ -729,35 +776,44 @@ function practice_e() {
         fi
         text="<small><small>$(gettext "Listen and then try to write this sentence")</small></small>\n\n<span color='#818181' font_desc='Verdana Bold 13'>$hint</span>\n"
         
-        entry=$(yad --form --title=" " \
-        --text="${text}" \
-        --name=Idiomind --class=Idiomind \
-        --separator="" --focus-field=1 \
-        --window-icon=$DS/images/logo.png \
-        --image="$DS/images/bar.png" \
-        --buttons-layout=end --skip-taskbar \
-        --undecorated --center --on-top \
-        --align=center --image-on-top \
-        --width=620 --height=250 --borders=15 \
-        --field="" "" \
-        --button="!window-close":1 \
-        --button="!audio-volume-high":"$cmd_play" \
-        --button="!media-seek-forward":0)
+        if [ -t 1 ]; then
+            entry="$(ui_write_sentence "${text}" "$DS/play.sh" play_sentence "${cdid}")"
+        else
+            entry=$(yad --form --title=" " \
+            --text="${text}" \
+            --name=Idiomind --class=Idiomind \
+            --separator="" --focus-field=1 \
+            --window-icon=$DS/images/logo.png \
+            --image="$DS/images/bar.png" \
+            --buttons-layout=end --skip-taskbar \
+            --undecorated --center --on-top \
+            --align=center --image-on-top \
+            --width=620 --height=250 --borders=15 \
+            --field="" "" \
+            --button="!window-close":1 \
+            --button="!audio-volume-high":"$cmd_play" \
+            --button="!media-seek-forward":0)
+        fi
     }
         
     check() {
         sz=$((sz+3))
-        yad --form --title=" " \
-        --text="<small><small>$(gettext "Result:")</small></small>\n\n<span font_desc='Arial 15'>${check_trgt_label^}</span>\\n" \
-        --name=Idiomind --class=Idiomind \
-        --window-icon=idiomind \
-        --skip-taskbar --wrap --image-on-top --center --on-top \
-        --undecorated --buttons-layout=end \
-        --width=620 --height=250 --borders=15 \
-        --field="":lbl "" \
-        --field="<span font_desc='Arial 12'>$green_words</span>\n\n<small>$porcent_match_label $hits</small>":lbl \
-        --button="!audio-volume-high":"$cmd_play" \
-        --button="!media-seek-forward":2
+        if [ -t 1 ]; then
+            ui_check_result "${check_trgt_label^}" "${green_words}" "${porcent_match_label} ${hits}" \
+                "$DS/play.sh" play_sentence "${cdid}"
+        else
+            yad --form --title=" " \
+            --text="<small><small>$(gettext "Result:")</small></small>\n\n<span font_desc='Arial 15'>${check_trgt_label^}</span>\\n" \
+            --name=Idiomind --class=Idiomind \
+            --window-icon=idiomind \
+            --skip-taskbar --wrap --image-on-top --center --on-top \
+            --undecorated --buttons-layout=end \
+            --width=620 --height=250 --borders=15 \
+            --field="":lbl "" \
+            --field="<span font_desc='Arial 12'>$green_words</span>\n\n<small>$porcent_match_label $hits</small>":lbl \
+            --button="!audio-volume-high":"$cmd_play" \
+            --button="!media-seek-forward":2
+        fi
     }
     
     get_text() {
@@ -830,6 +886,10 @@ function practice_e() {
         rm ./check_trgt.tmp
         }
     
+    if ! [ -t 1 ]; then
+        tp_practice_launch e "$(gettext "Listen and Writing Sentences")" && return
+    fi
+
     cleanups ./0.s
     step=2
     while read -r trgt; do
@@ -845,6 +905,7 @@ function practice_e() {
         get_text "${trgt}"
         cmd_play="$DS/play.sh play_sentence ${cdid}"
         ( sleep 0.5 && "$DS/play.sh" play_sentence ${cdid} ) &
+        tp_audio_track "$!"
 
         dlg_question "${push}"
         ret=$?
@@ -859,23 +920,23 @@ function practice_e() {
 					notify-send "Idiomind - $(gettext "Notice")" "$count_tmp $(gettext "new words have been added for practice in new sections")" -i info
 				fi
 		    fi
-            if ps -A |pgrep -f 'play'; then killall play & fi
+            tp_audio_stop
             export count_hard count_learn
             score && return
         else
-            if ps -A |pgrep -f 'play'; then killall play & fi
+            tp_audio_stop
             result "${trgt}"
             check "${trgt}"
             ret=$?
             rm -f ./mtch.tmp ./words.tmp
             if [ $ret = 1 ]; then
                 break &
-                if ps -A |pgrep -f 'play'; then killall play & fi
+                tp_audio_stop
 
                 export count_hard count_learn
                 score && return
             elif [ $ret -eq 2 ]; then
-                if ps -A |pgrep -f 'play'; then killall play & fi
+                tp_audio_stop
             fi
         fi
     done < ./e.tmp
@@ -1319,4 +1380,25 @@ function strt() {
     fi
 }
 
-strt 0 & exit
+if [ "${2}" = "exercise" ] && { [ "${3}" = "a" ] || [ "${3}" = "b" ] || [ "${3}" = "c" ] || [ "${3}" = "e" ]; }; then
+    active_practice="${3}"
+    check_dir "${dir_practice}"
+    cd "${dir_practice}" || exit 1
+    list_data="$DC_tlt/data"
+    list_words="$(tpc_db 5 words)"
+    hits="$(gettext "hits")"
+    if [ -f "${dir_practice}/${3}" ]; then
+        optns="$(< "${dir_practice}/${3}")"
+        group="$(cut -d "|" -f1 <<< "${optns}")"
+        split="$(cut -d "|" -f2 <<< "${optns}")"
+        lang_question="$(cut -d "|" -f3 <<< "${optns}")"
+    fi
+    count_easy=0
+    count_hard=0
+    count_learn=0
+    step=1
+    tp_exercise_run "practice_${3}"
+    exit $?
+else
+    strt 0 & exit
+fi

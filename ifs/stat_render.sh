@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Idiomind Shell — terminal statistics renderer
 
-# ANSI palette: subdued blue/green/amber/purple/gray.
+# ANSI palette: subdued blue/aqua/green/amber/orange/purple/gray.
 _ST_RESET=$'\033[0m'
 _ST_BOLD=$'\033[1m'
 _ST_DIM=$'\033[2m'
@@ -11,6 +11,9 @@ _ST_AMBER=$'\033[38;5;179m'
 _ST_PURPLE=$'\033[38;5;140m'
 _ST_GRAY=$'\033[38;5;245m'
 _ST_CYAN=$'\033[38;5;109m'
+_ST_AQUA=$'\033[38;5;152m'
+_ST_ORANGE=$'\033[38;5;173m'
+_ST_GRAY_DK=$'\033[38;5;242m'
 
 _st_plain() { printf '%s' "$1" | sed $'s/\033\\[[0-9;]*m//g'; }
 _st_cols() { local n; n=$(tput cols 2>/dev/null); [[ "$n" =~ ^[0-9]+$ ]] && ((n >= 50)) && printf '%s' "$n" || printf '80'; }
@@ -63,6 +66,40 @@ _st_max() {
     ((max==0)) && max=1
     printf '%s' "$max"
 }
+# Stacked bar: green represents Learned, celeste represents Reviewing.
+_st_stacked_bar() {
+    local label="$1" learned="$2" reviewing="$3" max="$4" unit="${5:-}"
+    local width=24 total filled learned_fill reviewing_fill empty pct label_width=21 len
+    [[ "$learned" =~ ^[0-9]+$ ]] || learned=0
+    [[ "$reviewing" =~ ^[0-9]+$ ]] || reviewing=0
+    [[ "$max" =~ ^[0-9]+$ ]] || max=0
+    total=$((learned + reviewing))
+    filled=0; learned_fill=0; reviewing_fill=0; pct=0
+    if ((max > 0)); then
+        filled=$((total * width / max))
+        pct=$((total * 100 / max))
+    fi
+    ((filled > width)) && filled=$width
+    if ((total > 0)); then
+        learned_fill=$((filled * learned / total))
+        reviewing_fill=$((filled - learned_fill))
+    fi
+    empty=$((width - filled))
+    printf '  %s' "$label"
+    len=$(printf '%s' "$label" | LC_ALL=C.UTF-8 wc -m)
+    (( len < label_width )) && printf '%*s' $(( label_width - len )) ''
+    printf ' '
+    printf '%s' "$_ST_GREEN"
+    printf '%*s' "$learned_fill" '' | sed 's/ /█/g'
+    printf '%s' "$_ST_BLUE"
+    printf '%*s' "$reviewing_fill" '' | sed 's/ /█/g'
+    printf '%s' "$_ST_GRAY"
+    printf '%*s' "$empty" '' | sed 's/ /░/g'
+    printf '%s' "$_ST_RESET"
+    printf ' %5s' "$total"
+    [[ -n "$unit" ]] && printf ' %s' "$unit"
+    printf '  %3d%%\n' "$pct"
+}
 _st_arr() { sed -n "s/.*\"$2\":\[\([^]]*\)\].*/\1/p" <<< "$1" | head -n1 | tr -d '"'; }
 # Month abbreviation: always extract the English form (stable gettext
 # msgid), then translate it through the idiomind catalog.
@@ -81,6 +118,87 @@ _st_week_label() {
         printf '%s' "$s"
     fi
 }
+# Display a stored Monday label (e.g. Oct05) as a localized Monday–Sunday range.
+_st_week_range() {
+    local s="$1" mon day year start end end_mon start_day end_day start_label end_label
+    [[ "$s" =~ ^([A-Za-z]{3})([0-9]{2})$ ]] || { printf '%s' "$(_st_week_label "$s")"; return; }
+    mon="${BASH_REMATCH[1]}"
+    day="${BASH_REMATCH[2]}"
+    year=$(date +%Y)
+    start=$(LC_TIME=C date -d "$mon $day $year" +%F 2>/dev/null) || {
+        printf '%s' "$(_st_week_label "$s")"
+        return
+    }
+    # Labels from late December may refer to the previous year when viewed in January.
+    if [[ "$start" > "$(date -d '+7 days' +%F)" ]]; then
+        year=$((year - 1))
+        start=$(LC_TIME=C date -d "$mon $day $year" +%F 2>/dev/null) || {
+            printf '%s' "$(_st_week_label "$s")"
+            return
+        }
+    fi
+    end=$(date -d "$start +6 days" +%F)
+    start_day=$(date -d "$start" +%-d)
+    end_day=$(date -d "$end" +%-d)
+    start_label="$(_st_month_label "$(date -d "$start" +%Y)" "$(date -d "$start" +%-m)")"
+    end_label="$(_st_month_label "$(date -d "$end" +%Y)" "$(date -d "$end" +%-m)")"
+    # Always include the month beside both day numbers so every weekly
+    # label has the same structure and occupies a predictable width.
+    printf '%s %s – %s %s' "$start_day" "$start_label" "$end_day" "$end_label"
+}
+
+# Stacked weekly bar for the activity screen: one bar per week, green for
+# tests passed and dark gray for the tests practiced that were not passed;
+# the total length is the number of tests practiced. The two rows use half
+# blocks so the bar keeps the combined height of the two single bars it
+# replaces, and each number line sits on the row of its segment.
+_st_week_stacked_bar() {
+    local week_label="$1" passed="$2" practiced="$3" max="$4"
+    local width=30 filled=0 gfill=0 rest=0 empty=0 label_len
+    [[ "$passed" =~ ^[0-9]+$ ]] || passed=0
+    [[ "$practiced" =~ ^[0-9]+$ ]] || practiced=0
+    ((passed > practiced)) && passed=$practiced
+    [[ "$max" =~ ^[0-9]+$ ]] || max=0
+
+    if ((max > 0 && practiced > 0)); then
+        filled=$((practiced * width / max))
+        ((filled == 0)) && filled=1
+    fi
+    ((filled > width)) && filled=$width
+    if ((practiced > 0)); then
+        gfill=$((filled * passed / practiced))
+        ((passed > 0 && gfill == 0)) && gfill=1
+    fi
+    ((gfill > filled)) && gfill=$filled
+    rest=$((filled - gfill))
+    empty=$((width - filled))
+
+    label_len=$(printf '%s' "$week_label" | LC_ALL=C.UTF-8 wc -m)
+    printf '  %s' "$week_label"
+    (( label_len < 20 )) && printf '%*s' "$((20 - label_len))" ''
+    printf '  '
+
+    # Two rows of full blocks form one continuous, thicker stacked bar.
+    # Green = passed; dark gray = practiced but not passed; hatch = no activity.
+    printf '%s' "$_ST_GREEN"
+    printf '%*s' "$gfill" '' | sed 's/ /█/g'
+    printf '%s' "$_ST_GRAY_DK"
+    printf '%*s' "$rest" '' | sed 's/ /█/g'
+    printf '%s' "$_ST_GRAY"
+    printf '%*s' "$empty" '' | sed 's/ /░/g'
+    printf '%s' "$_ST_RESET"
+    printf '  %s%d%s\n' "$_ST_GREEN" "$passed" "$_ST_RESET"
+
+    printf '%24s' ''
+    printf '%s' "$_ST_GREEN"
+    printf '%*s' "$gfill" '' | sed 's/ /█/g'
+    printf '%s' "$_ST_GRAY_DK"
+    printf '%*s' "$rest" '' | sed 's/ /█/g'
+    printf '%s' "$_ST_GRAY"
+    printf '%*s' "$empty" '' | sed 's/ /░/g'
+    printf '%s' "$_ST_RESET"
+    printf '  %d\n' "$practiced"
+}
 
 stats_terminal_dlg() {
     local l1 l2 i cur y m yy idx shown key
@@ -93,7 +211,7 @@ stats_terminal_dlg() {
     l1=$(grep -m1 '^data1=' "$data")
     l2=$(grep -m1 '^data2=' "$data")
     local p1 p1desc p2 p2desc p3 p3desc p3passed p3activity
-    local p1_now p1_trend p1_note p_period_m p_period_w p_unit_topics
+    local p1_now p1_trend p_period_m p_period_w p_unit_topics
     local nav_topics nav_words nav_activity nav_quit nav_scroll
     local -a p1labels p2labels t0 t1 t2 t3 t4 wk w0 w1 w2 w3 w4 w5 w6
 
@@ -102,8 +220,7 @@ stats_terminal_dlg() {
     p1labels=("$(gettext "Learning")" "$(gettext "Learned")" "$(gettext "Reviewing")" \
               "$(gettext "Review reminder")" "$(gettext "Inactive")")
     p1_now="$(gettext "Current month distribution")"
-    p1_trend="  $(gettext "Monthly total trend")"
-    p1_note="$(gettext "the monthly total is the sum of the five recorded states.")"
+    p1_trend="  $(gettext "Learned") + $(gettext "Reviewing")"
     p_period_m="$(gettext "Monthly register · last 5 months")"
     p_unit_topics="$(gettext "topics")"
 
@@ -115,9 +232,9 @@ stats_terminal_dlg() {
     p_period_w="$(gettext "Weekly report · last 5 weeks")"
 
     p3="$(gettext "Practice activity")"
-    p3desc="$(gettext "Compares passed tests with total recorded activity each week. Activity alone is not a measure of language mastery.")"
+    p3desc="$(gettext "Compares tests passed with tests practiced each week. The number of tests practiced alone does not indicate language mastery.")"
     p3passed="$(gettext "Tests passed")"
-    p3activity="$(gettext "Total activity")"
+    p3activity="$(gettext "Tests practiced")"
 
     nav_topics="$(gettext "Topics")"
     nav_words="$(gettext "Words")"
@@ -154,7 +271,7 @@ stats_terminal_dlg() {
         1)
           _st_header 1 "$p1" "$p_period_m"
           _st_desc "${p1desc//. /.$'\n'}"
-          cur=$(date +%m); y=$(date +%Y); local -a vals names month_totals; local max=1
+          cur=$(date +%m); y=$(date +%Y); local -a vals names month_totals month_learned month_reviewing; local max=1
           for i in 0 1 2 3 4; do
             m=$((10#$cur - (4-i))); yy=$y
             if ((m<=0)); then m=$((m+12)); yy=$((yy-1)); fi
@@ -166,21 +283,26 @@ stats_terminal_dlg() {
           max=$(_st_max "${now[@]}")
           printf '%s%s  %s%s\n\n' "$_ST_BOLD" "$_ST_CYAN" "$p1_now" "$_ST_RESET"
           for i in 0 1 2 3 4; do
-            case "$i" in 0) c=$_ST_BLUE;; 1) c=$_ST_GREEN;; 2) c=$_ST_AMBER;; 3) c=$_ST_PURPLE;; *) c=$_ST_GRAY;; esac
+            case "$i" in 0) c=$_ST_AQUA;; 1) c=$_ST_GREEN;; 2) c=$_ST_BLUE;; 3) c=$_ST_ORANGE;; *) c=$_ST_GRAY;; esac
             _st_bar "${p1labels[i]}" "${now[i]}" "$max" "$c" "$p_unit_topics"
           done
           local totals_max=1 total
           for i in 0 1 2 3 4; do
             IFS=, read -r a b c d e <<< "${vals[i]}"
-            total=$(( ${a:-0}+${b:-0}+${c:-0}+${d:-0}+${e:-0} ))
+            # The trend represents topics that are learned or being reviewed.
+            month_learned[i]=${b:-0}
+            month_reviewing[i]=${c:-0}
+            total=$(( ${b:-0}+${c:-0} ))
             month_totals[i]=$total
             ((total>totals_max)) && totals_max=$total
           done
           printf '\n%s%s%s\n' "$_ST_BOLD" "$p1_trend" "$_ST_RESET"
+          printf '  %s█%s %s   %s█%s %s\n' \
+            "$_ST_GREEN" "$_ST_RESET" "$(gettext "Learned")" \
+            "$_ST_BLUE" "$_ST_RESET" "$(gettext "Reviewing")"
           for i in 0 1 2 3 4; do
-            _st_bar "${names[i]}" "${month_totals[i]}" "$totals_max" "$_ST_BLUE" "$p_unit_topics"
+            _st_stacked_bar "${names[i]}" "${month_learned[i]}" "${month_reviewing[i]}" "$totals_max" "$p_unit_topics"
           done
-          printf '\n%s%s %s%s\n' "$_ST_DIM" "$(gettext "Note:")" "$p1_note" "$_ST_RESET"
           ;;
         2)
           _st_header 2 "$p2" "$p_period_w"
@@ -208,15 +330,25 @@ stats_terminal_dlg() {
         3)
           _st_header 3 "$p3" "$p_period_w"
           _st_desc "$p3desc"
+          printf '  %s█%s %s   %s█%s %s\n\n' \
+            "$_ST_GREEN" "$_ST_RESET" "$p3passed" \
+            "$_ST_GRAY_DK" "$_ST_RESET" "$p3activity"
           shown=0
+          local -a activity_weeks=()
+          local activity_max=1 a b j
           for ((i=${#wk[@]}-1; i>=0 && shown<5; i--)); do
             [[ -z "${wk[i]// /}" ]] && continue
-            printf '\n%s%s%s\n' "$_ST_BOLD" "$(_st_week_label "${wk[i]}")" "$_ST_RESET"
-            local a=${w5[i]:-0} b=${w6[i]:-0} mx
-            mx=$(_st_max "$a" "$b")
-            _st_bar "$p3passed" "$a" "$mx" "$_ST_GREEN"
-            _st_bar "$p3activity" "$b" "$mx" "$_ST_BLUE"
+            activity_weeks+=("$i")
+            b=${w6[i]:-0}
+            [[ "$b" =~ ^[0-9]+$ ]] || b=0
+            ((b > activity_max)) && activity_max=$b
             ((shown++))
+          done
+          for ((j=0; j<${#activity_weeks[@]}; j++)); do
+            i=${activity_weeks[j]}
+            a=${w5[i]:-0}; b=${w6[i]:-0}
+            _st_week_stacked_bar "$(_st_week_range "${wk[i]}")" "$a" "$b" "$activity_max"
+            printf '\n'
           done
           ;;
       esac
