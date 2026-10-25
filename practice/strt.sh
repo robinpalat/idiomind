@@ -26,8 +26,6 @@ case "$Level" in
 esac
 declare -A prcts=( ['a']='Flashcards' ['b']='Multiple-choice' \
 ['c']='Recognize Pronunciation' ['d']='Images' ['e']='Listen and Writing Sentences')
-t2="<span color='#C15F27' font_desc='Verdana 8'>"
-t3="<span color='#AE3259' font_desc='Verdana 8'>"
 
 if [ -f "${DC_tlt}/slng_err" ]; then
     _iso="$(sed -n 1p "${DC_tlt}/slng_err")"
@@ -283,7 +281,6 @@ function practice_a() {
     while read -r item; do
         fonts; question
         if [ $? = 1 ]; then
-            count_learn=${count_hard}; count_hard=0
             export count_hard count_learn
             break & score && return
         else
@@ -294,7 +291,7 @@ function practice_a() {
                 count_easy=$((count_easy+1))
             elif [ ${ans} = 3 ]; then
                 echo "${item}" >> a.2
-                count_hard=$((count_hard+1))
+                count_learn=$((count_learn+1))
             fi
         fi
     done < ./a.tmp
@@ -311,10 +308,9 @@ function practice_a() {
             else
                 answer
                 ans=$?
-                if [ ${ans} = 2 ]; then
-                    count_hard=$((count_hard-1))
-                    count_learn=$((count_learn+1))
-                elif [ ${ans} = 3 ]; then
+                if [ ${ans} = 3 ]; then
+                    count_learn=$((count_learn-1))
+                    count_hard=$((count_hard+1))
                     echo "${item}" >> a.3
                 fi
             fi
@@ -438,10 +434,9 @@ function practice_b(){
                 count_easy=$((count_easy+1))
             else
                 (play "$snd" >/dev/null 2>&1 & echo "${item}" >> b.2)
-                count_hard=$((count_hard+1))
+                count_learn=$((count_learn+1))
             fi
         elif [ $ret = 1 ]; then
-            count_learn=${count_hard}; count_hard=0
             export count_hard count_learn
             break & score && return
         fi
@@ -455,10 +450,11 @@ function practice_b(){
             fonts; mchoise
             if [ $? = 0 ]; then
                 if grep -o "$srce" <<< "${dlg}"; then
-                    count_hard=$((count_hard-1))
-                    count_learn=$((count_learn+1))
+                    :
                 else
                     play "$snd" >/dev/null 2>&1 &
+                    count_learn=$((count_learn-1))
+                    count_hard=$((count_hard+1))
                     echo "${item}" >> b.3
                 fi
             elif [ $? = 1 ]; then
@@ -560,9 +556,8 @@ function practice_c() {
             count_easy=$((count_easy+1))
         elif [ ${ans} = 3 ]; then
             echo "${trgt}" >> c.2
-            count_hard=$((count_hard+1))
+            count_learn=$((count_learn+1))
         elif [ ${ans} = 1 ]; then
-            count_learn=${count_hard}; count_hard=0
             export count_hard count_learn
             break & score && return
         fi
@@ -575,10 +570,9 @@ function practice_c() {
         while read -r trgt; do
             fonts; question
             ans=$?
-            if [ ${ans} = 2 ]; then
-                count_hard=$((count_hard-1))
-                count_learn=$((count_learn+1))
-            elif [ ${ans} = 3 ]; then
+            if [ ${ans} = 3 ]; then
+                count_learn=$((count_learn-1))
+                count_hard=$((count_hard+1))
                 echo "${trgt}" >> c.3
             elif [ ${ans} = 1 ]; then
                 export count_hard count_learn
@@ -688,7 +682,6 @@ function practice_d() {
     while read -r item; do
         fonts; question
         if [ $? = 1 ]; then
-            count_learn=${count_hard}; count_hard=0
             export count_hard count_learn
             break & score && return
         else
@@ -699,7 +692,7 @@ function practice_d() {
                 count_easy=$((count_easy+1))
             elif [ ${ans} = 3 ]; then
                 echo "${item}" >> d.2
-                count_hard=$((count_hard+1))
+                count_learn=$((count_learn+1))
             fi
         fi
     done < ./d.tmp
@@ -716,10 +709,9 @@ function practice_d() {
             else
                 answer
                 ans=$?
-                if [ ${ans} = 2 ]; then
-                    count_hard=$((count_hard-1))
-                    count_learn=$((count_learn+1))
-                elif [ ${ans} = 3 ]; then
+                if [ ${ans} = 3 ]; then
+                    count_learn=$((count_learn-1))
+                    count_hard=$((count_hard+1))
                     echo "${item}" >> d.3
                 fi
             fi
@@ -878,7 +870,7 @@ function practice_e() {
             color="#E5801D"
         else
             [ -n "$entry" ] && echo "${trgt}" >> ./e.3
-            [ -n "$entry" ] && export count_hard=$((count_hard+1))
+            [ -n "$entry" ] && export count_learn=$((count_learn+1))
             color="#D11B5D"
         fi
         porcent_match_label="<b>$porcent_match%</b>"
@@ -1321,10 +1313,10 @@ function strt() {
     --width=${sz[0]} --height=${sz[1]} --borders=10 \
     --ellipsize=end --wrap-width=200 --ellipsize-cols=1 \
     --column="Action" --column="Pick":IMG --column="Label" \
-    "a" "$DS/images/practice/$(< ./.1).png" "$label_count_a $label_pra$congr1 <small>$plusa</small>"  \
-    "b" "$DS/images/practice/$(< ./.2).png" "$label_count_b $label_prb$congr2 <small>$plusb</small>" \
-    "c" "$DS/images/practice/$(< ./.3).png" "$label_count_c $label_prc$congr3 <small>$plusc</small>" \
-    "d" "$DS/images/practice/$(< ./.4).png" "$label_count_d $label_prd$congr4 <small>$plusd</small>" \
+    "a" "$DS/images/practice/$(< ./.1).png" "$label_count_a $label_pra$congr1"  \
+    "b" "$DS/images/practice/$(< ./.2).png" "$label_count_b $label_prb$congr2" \
+    "c" "$DS/images/practice/$(< ./.3).png" "$label_count_c $label_prc$congr3" \
+    "d" "$DS/images/practice/$(< ./.4).png" "$label_count_d $label_prd$congr4" \
     "e" "$DS/images/practice/$(< ./.5).png" "$label_count_e $label_pre$congr5" \
     --button="$(gettext "Restart")":3 \
     --button="$(gettext "Start")":0)"
@@ -1341,7 +1333,7 @@ function strt() {
         fi
         
     elif [ $ret -eq 3 ]; then # restar all practices
-        unset plusa plusb plusc plusd pr
+        unset pr
         if [ -d "${dir_practice}" ]; then
             cd ~ && cd "${dir_practice}"/
             find . -exec rm {} \;

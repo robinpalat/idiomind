@@ -14,6 +14,7 @@ function _tp_plain() {
 
 TP_B=$'\033[1m'
 TP_I=$'\033[3m'
+TP_Q=$'\033[1;97m'
 TP_D=$'\033[2;90m'
 TP_RST=$'\033[0m'
 
@@ -153,7 +154,7 @@ function _tp_footer_add() {
     for seg in "$@"; do
         if [ "${w}" -lt 70 ]; then
             case "${seg}" in
-                *mouse*) continue ;;
+                *mouse*|*ratón*|*raton*|*souris*) continue ;;
             esac
         fi
         TP_FSEGS+=("${seg}")
@@ -164,6 +165,28 @@ function _tp_footer_add() {
 
 function _tp_footer_fit() {
     local w="${1}" seg line i n total half acc k v1 v2 l1 l2
+    local -a oneline
+    oneline=("${TP_FSEGS[@]}")
+    if [ ${#oneline[@]} -gt 0 ]; then
+        line=""
+        for seg in "${oneline[@]}"; do
+            if [ -z "${line}" ]; then line="${seg}"; else line="${line} · ${seg}"; fi
+        done
+        if [ $(( ${#line} + 2 )) -le "${w}" ]; then
+            TP_FOOTER=("$(_tp_bold_keys "${line}")")
+            return 0
+        fi
+        # sin indicaciones de ratón: los clics ya constan en la ayuda de la tarjeta
+        line=""
+        for seg in "${oneline[@]}"; do
+            case "${seg}" in *mouse*) continue ;; esac
+            if [ -z "${line}" ]; then line="${seg}"; else line="${line} · ${seg}"; fi
+        done
+        if [ -n "${line}" ] && [ $(( ${#line} + 2 )) -le "${w}" ]; then
+            TP_FOOTER=("$(_tp_bold_keys "${line}")")
+            return 0
+        fi
+    fi
     n=${#TP_FSEGS[@]}
     if [ ${n} -ge 2 ]; then
         total=0
@@ -231,9 +254,6 @@ function _tp_footer_fit() {
         TP_FSEGS=("${TP_FSEGS[@]:0:${#TP_FSEGS[@]}-1}")
     done
     TP_FOOTER=("${lines[@]}")
-    while [ ${#TP_FOOTER[@]} -lt 2 ]; do
-        TP_FOOTER+=("")
-    done
     if [ ${#TP_FOOTER[@]} -gt 2 ]; then
         TP_FOOTER=("${TP_FOOTER[0]}" "${TP_FOOTER[1]}")
     fi
@@ -241,7 +261,7 @@ function _tp_footer_fit() {
 }
 
 function _tp_vcenter_top() {
-    local rows="${1}" n="${2}" bar="${3}" zone top z
+    local rows="${1}" n="${2}" bar="${3}" ctext="${4:-}" zone top z
     TP_START=1
     zone=$((rows - bar))
     [ ${zone} -lt 1 ] && zone=1
@@ -250,15 +270,28 @@ function _tp_vcenter_top() {
     else
         top=0
     fi
-    TP_START=$((top + 1))
     printf '\033[2J\033[H'
-    for (( z=0; z<top; z++ )); do
-        printf '\n'
-    done
+    tp_cursor_hide
+    if [ -n "${ctext}" ]; then
+        printf '%s\n' "${ctext}"
+        if [ ${top} -gt 0 ]; then
+            for (( z=1; z<top; z++ )); do
+                printf '\n'
+            done
+            TP_START=$((top + 1))
+        else
+            TP_START=2
+        fi
+    else
+        TP_START=$((top + 1))
+        for (( z=0; z<top; z++ )); do
+            printf '\n'
+        done
+    fi
 }
 
 function _tp_progress_draw() {
-    local w total green red g r gray i
+    local w total green g gray i bcol
     w="$(_tp_cols)"
     total=0
     if [ -n "${active_practice:-}" ] && [ -f "./${active_practice}.tmp" ]; then
@@ -268,23 +301,26 @@ function _tp_progress_draw() {
         ''|*[!0-9]*) return 1 ;;
     esac
     [ "${total}" -le 0 ] && return 1
-    green=$(( ${count_easy:-0} + ${count_learn:-0} ))
-    red="${count_hard:-0}"
-    case "${red}" in
+    green="${count_easy:-0}"
+    case "${green}" in
         ''|*[!0-9]*) return 1 ;;
     esac
-    if [ $((green + red)) -gt "${total}" ]; then
+    if [ "${green}" -gt "${total}" ]; then
         return 1
     fi
     g=$(( green * w / total ))
-    r=$(( red * w / total ))
-    gray=$(( w - g - r ))
+    gray=$(( w - g ))
     [ ${gray} -lt 0 ] && gray=0
+    case "${step:-1}" in
+        2) bcol=$'\033[2;33m' ;;
+        3) bcol=$'\033[2;31m' ;;
+        *) bcol=$'\033[2;32m' ;;
+    esac
+    if [ "${active_practice:-}" = "e" ]; then
+        bcol=$'\033[2;32m'
+    fi
     for (( i=0; i<g; i++ )); do
-        printf '\033[2;32m█'
-    done
-    for (( i=0; i<r; i++ )); do
-        printf '\033[2;31m█'
+        printf '%s█' "${bcol}"
     done
     if [ ${gray} -gt 0 ]; then
         printf '\033[2;90m'
@@ -315,6 +351,9 @@ function _tp_status_bar() {
     fi
     for seg in "${TP_FOOTER[@]}"; do
         barl=$((barl - 1))
+        if [ -z "${seg}" ]; then
+            continue
+        fi
         if [ ${barl} -gt 0 ]; then
             printf '  %s%s%s\n' "${TP_D}" "${seg}" "${TP_RST}"
         else
@@ -324,9 +363,26 @@ function _tp_status_bar() {
     return 0
 }
 
+function _tp_counters_text() {
+    local tail="${TP_RST}" acol=$'\033[1;33m'
+    if [ "${step:-1}" = "3" ]; then
+        acol=$'\033[1;31m'
+    fi
+    if [ "${1:-}" = "dim" ]; then
+        tail="${TP_D}"
+    fi
+    printf '%s%s%s   %s%s%s   %s%s%s' \
+        $'\033[1;32m' "$(gettext "Easy"): ${count_easy:-0}" "${TP_RST}" \
+        "${acol}" "$(gettext "Learning"): ${count_learn:-0}" "${TP_RST}" \
+        $'\033[1;31m' "$(gettext "Difficult"): ${count_hard:-0}" "${tail}"
+}
+
 function _tp_card_help() {
     local w="${1}" rows="${2}" wl="${3}" wr="${4}" row lv_l lv_r colr
-    row=$((rows - 3))
+    row=$((rows - 2))
+    if [ -n "${5:-}" ]; then
+        row="${5}"
+    fi
     if [ ${row} -lt 1 ]; then
         return 0
     fi
@@ -345,7 +401,7 @@ function _tp_card_help() {
 
 function _tp_card_help_center() {
     local w="${1}" rows="${2}" txt="${3}" row lv pad
-    row=$((rows - 3))
+    row=$((rows - 2))
     if [ ${row} -lt 1 ]; then
         return 0
     fi
@@ -435,8 +491,9 @@ function ui_card_question() {
     [ ${#tl[@]} -eq 0 ] && tl=("")
     n2=${#tl[@]}
     _tp_footer_reset
-    _tp_footer_add "${_w}" "[Enter] show the answer" "[q] quit" \
-        "mouse: left = show"
+    _tp_footer_add "${_w}" "$(gettext "[Enter] show the answer")" \
+        "$(gettext "[q] quit")" \
+        "$(gettext "mouse: left = show")"
     barl=${#TP_FOOTER[@]}
     zone=$((_rows - barl))
     [ ${zone} -lt 1 ] && zone=1
@@ -448,10 +505,10 @@ function ui_card_question() {
         gap=1
     fi
     n=$((n1 + gap + n2))
-    _tp_vcenter_top "${_rows}" "${n}" "${barl}"
-    _tp_center "${_w}" "$(_tp_step_attr)" "${TP_RST}" "${_txt}"
+    _tp_vcenter_top "${_rows}" "${n}" "${barl}" "$(_tp_counters_text)"
+    _tp_center "${_w}" "${TP_Q}" "${TP_RST}" "${_txt}"
     _tp_card_help_center "${_w}" "${_rows}" \
-        "$(gettext "Mostrar respuesta: Espacio o clic izquierdo")"
+        "$(gettext "Show answer: Space or left click")"
     _tp_status_bar "${_rows}" "${TP_START}" "${n}"
     while :; do
         _tp_read_event || return 1
@@ -481,8 +538,9 @@ function ui_card_answer() {
     n1=${#l1[@]}
     n2=${#l2[@]}
     _tp_footer_reset
-    _tp_footer_add "${_w}" "[s] I knew it" "[n] I did not know it" \
-        "mouse: left = knew, right = did not know"
+    _tp_footer_add "${_w}" "$(gettext "[s] I knew it")" \
+        "$(gettext "[n] I did not know it")" \
+        "$(gettext "mouse: left = knew, right = did not know")"
     barl=${#TP_FOOTER[@]}
     zone=$((_rows - barl))
     [ ${zone} -lt 1 ] && zone=1
@@ -494,15 +552,15 @@ function ui_card_answer() {
         gap=1
     fi
     n=$((n1 + gap + n2))
-    _tp_vcenter_top "${_rows}" "${n}" "${barl}"
-    _tp_center "${_w}" "$(_tp_step_attr)" "${TP_RST}" "${_t1}"
+    _tp_vcenter_top "${_rows}" "${n}" "${barl}" "$(_tp_counters_text)"
+    _tp_center "${_w}" "${TP_Q}" "${TP_RST}" "${_t1}"
     for (( i=0; i<gap; i++ )); do
         printf '\n'
     done
-    _tp_center "${_w}" "${TP_I}" "${TP_RST}" "${_t2}"
+    _tp_center "${_w}" $'\033[3;90m' "${TP_RST}" "${_t2}"
     _tp_card_help "${_w}" "${_rows}" \
-        "$(gettext "Clic izquierdo: conozco la palabra")" \
-        "$(gettext "Clic derecho: no conozco la palabra")"
+        "$(gettext "Left click: I know the word")" \
+        "$(gettext "Right click: I do not know the word")"
     _tp_status_bar "${_rows}" "${TP_START}" "${n}"
     while :; do
         _tp_read_event || return 1
@@ -606,8 +664,9 @@ function ui_select_list() {
         sum=$((sum + row_rl[r]))
     done
     _tp_footer_reset
-    _tp_footer_add "${w}" "[Up/Down] move" "[Enter] choose" \
-        "[1-9] direct choice" "[q] quit"
+    _tp_footer_add "${w}" "$(gettext "[Up/Down] move")" \
+        "$(gettext "[Enter] choose")" "$(gettext "[1-9] direct choice")" \
+        "$(gettext "[q] quit")"
     zone=$((rows - ${#TP_FOOTER[@]}))
     [ ${zone} -lt 1 ] && zone=1
     if [ $((zone - q_lines - sum)) -ge 3 ]; then
@@ -618,8 +677,8 @@ function ui_select_list() {
     n=$((q_lines + gap + sum))
     while :; do
         {
-            _tp_vcenter_top "${rows}" "${n}" "${#TP_FOOTER[@]}"
-            st="$(_tp_step_attr)"
+            _tp_vcenter_top "${rows}" "${n}" "${#TP_FOOTER[@]}" "$(_tp_counters_text)"
+            st="${TP_Q}"
             _tp_center "${w}" "${st}" "${TP_RST}" "$(printf '%s\n' "${ql[@]}")"
             for (( i=0; i<gap; i++ )); do
                 printf '\n'
@@ -730,22 +789,21 @@ function ui_select_list() {
 
 function ui_recognize_card() {
     local txt="$1" w rows attr n hw zone avail pad word_top
+    local lbl k1 i
     local -a wl
     shift
     txt="$(_tp_plain "${txt}")"
     w="$(_tp_cols)"
     rows="$(_tp_rows)"
-    if [ "${lang_question:-0}" = 1 ]; then
-        attr=$'\033[1;90m'
-    else
-        attr="$(_tp_step_attr)"
-    fi
-    hw="$(_tp_vcount "$((w - 2))" "$(gettext "Do you recognize this word?")")"
+    attr="${TP_Q}"
+    lbl="$(gettext "Do you recognize this word?")"
+    hw="$(_tp_vcount "$((w - 2))" "${lbl}")"
     mapfile -t wl < <(_tp_wrap $((w - 4)) "$(_tp_trim "${txt}")")
     [ ${#wl[@]} -eq 0 ] && wl=("")
     _tp_footer_reset
-    _tp_footer_add "${w}" "[y] Yes" "[n] No"
-    _tp_footer_add "${w}" "[r] repeat audio" "[q] quit"
+    _tp_footer_add "${w}" "$(gettext "[y] Yes")" "$(gettext "[n] No")"
+    _tp_footer_add "${w}" "$(gettext "[Space] repeat audio")" \
+        "$(gettext "[q] quit")"
     zone=$((rows - ${#TP_FOOTER[@]}))
     [ ${zone} -lt 1 ] && zone=1
     n=${#wl[@]}
@@ -762,15 +820,19 @@ function ui_recognize_card() {
     while :; do
         {
             printf '\033[2J\033[H'
-            printf '  %s%s%s\n' "${TP_D}" \
-                "$(gettext "Do you recognize this word?")" "${TP_RST}"
-            for (( i=0; i<word_top - hw; i++ )); do
+            tp_cursor_hide
+            printf '%s\n' "$(_tp_counters_text dim)"
+            printf '\n'
+            printf '  %s%s%s\n' "${TP_D}" "${lbl}" "${TP_RST}"
+            k1=$((word_top - hw - 3))
+            [ ${k1} -lt 0 ] && k1=0
+            for (( i=0; i<k1; i++ )); do
                 printf '\n'
             done
             _tp_center "${w}" "${attr}" "${TP_RST}" "${txt}"
             _tp_card_help "${w}" "${rows}" \
-                "$(gettext "Click izquierdo: conozco esta palabra")" \
-                "$(gettext "Click derecho: no conozco esta palabra")"
+                "$(gettext "Left mouse click: Yes")" \
+                "$(gettext "Right mouse click: No")"
             _tp_status_bar "${rows}" "${word_top}" "${n}"
         } > /dev/tty
         _tp_read_event || return 1
@@ -830,7 +892,7 @@ function _tp_check_colors() {
 
 function ui_write_sentence() {
     local txt="$1" buf="" k ch seq w rows header hint hn nh pn g2 pad avail nrest zone spare lv
-    local prompt_row=0 pn_prev=-1 dirty=1 j
+    local prompt_row=0 pn_prev=-1 dirty=1 j rows_used padb
     local -a hl
     shift
     txt="$(_tp_trim "$(_tp_plain "${txt}")")"
@@ -852,8 +914,9 @@ function ui_write_sentence() {
     [ ${#hl[@]} -eq 0 ] && hl=("")
     nh=${#hl[@]}
     _tp_footer_reset
-    _tp_footer_add "${w}" "[Enter] send answer" "[Ctrl+R] repeat audio" \
-        "[Esc] quit"
+    _tp_footer_add "${w}" "$(gettext "[Enter] send answer")" \
+        "$(gettext "[Ctrl+R] repeat audio")" \
+        "$(gettext "[Esc] quit")"
     while :; do
         if [ ${dirty} -eq 1 ]; then
             lv="$(_tp_vlen "${buf}")"
@@ -881,23 +944,36 @@ function ui_write_sentence() {
             if [ ${prompt_row} -eq 0 ] || [ ${pn} -ne ${pn_prev} ]; then
                 {
                     printf '\033[2J\033[H'
+                    printf '%s\n' "$(_tp_counters_text)"
+                    rows_used=1
+                    padb=${pad}
                     if [ -n "${header}" ]; then
+                        printf '\n'
+                        rows_used=$((rows_used + 1))
                         printf '  %s%s%s\n' "${TP_D}" "${header}" "${TP_RST}"
+                        rows_used=$((rows_used + hn))
+                        if [ ${padb} -gt $((1 + hn)) ]; then
+                            padb=$((padb - 1 - hn))
+                        else
+                            padb=0
+                        fi
                     fi
-                    for (( i=0; i<pad; i++ )); do
+                    for (( i=0; i<padb; i++ )); do
                         printf '\n'
                     done
-                    _tp_center "${w}" $'\033[90m' "${TP_RST}" \
+                    rows_used=$((rows_used + padb))
+                    _tp_center "${w}" "${TP_Q}" "${TP_RST}" \
                         "$(printf '%s\n' "${hl[@]}")"
                     for (( i=0; i<g2; i++ )); do
                         printf '\n'
                     done
                     printf '  %s> %s\033[0m\033[K\n' "${TP_D}" "${buf}"
                     _tp_card_help "${w}" "${rows}" \
-                        "$(gettext "Espacio: reproducir audio")" ""
-                    _tp_status_bar "${rows}" "$((hn + pad))" "${nrest}"
+                        "$(gettext "Space: repeat audio")" ""
+                    tp_cursor_show
+                    _tp_status_bar "${rows}" "${rows_used}" "${nrest}"
                 } > /dev/tty
-                prompt_row=$((hn + pad + nh + g2 + 1))
+                prompt_row=$((rows_used + nh + g2 + 1))
                 pn_prev=${pn}
             else
                 {
@@ -977,7 +1053,8 @@ function ui_check_result() {
     nt=${#tl[@]}
     nw="$(_tp_vcount "$((w - 2))" "${gw}")"
     _tp_footer_reset
-    _tp_footer_add "${w}" "[Enter] continue" "[r] repeat audio" "[q] quit"
+    _tp_footer_add "${w}" "$(gettext "[Enter] continue")" \
+        "$(gettext "[r] repeat audio")" "$(gettext "[q] quit")"
     zone=$((rows - ${#TP_FOOTER[@]}))
     [ ${zone} -lt 1 ] && zone=1
     g1=1
@@ -989,21 +1066,21 @@ function ui_check_result() {
     shift 3
     while :; do
         {
-            _tp_vcenter_top "${rows}" "${n}" "${#TP_FOOTER[@]}"
+            _tp_vcenter_top "${rows}" "${n}" "${#TP_FOOTER[@]}" "$(_tp_counters_text)"
             printf '  %s%s%s\n' "${TP_D}" "$(gettext "Result:")" "${TP_RST}"
             for (( i=0; i<g1; i++ )); do
                 printf '\n'
             done
-            _tp_center "${w}" "${TP_D}" "${TP_RST}" "$(gettext "Correcta")"
-            _tp_center "${w}" "${TP_B}" "${TP_RST}" "${t}"
+            _tp_center "${w}" "${TP_D}" "${TP_RST}" "$(gettext "Correct")"
+            _tp_center "${w}" "${TP_RST}" "${TP_RST}" "${t}"
             for (( i=0; i<g2; i++ )); do
                 printf '\n'
             done
-            printf '  %s%s%s\n' "${TP_D}" "$(gettext "Tu respuesta")" "${TP_RST}"
+            printf '  %s%s%s\n' "${TP_D}" "$(gettext "Your answer")" "${TP_RST}"
             printf '  %s\n' "${gw}"
             printf '  %s\n' "${ph}"
             _tp_card_help "${w}" "${rows}" \
-                "$(gettext "Espacio: reproducir audio")" ""
+                "$(gettext "Space: repeat audio")" ""
             _tp_status_bar "${rows}" "${TP_START}" "${n}"
         } > /dev/tty
         _tp_read_event || return 1
@@ -1037,6 +1114,19 @@ function tp_mouse_on() {
 
 function tp_mouse_off() {
     printf '\033[?1006l\033[?1000l'
+}
+
+function tp_cursor_hide() {
+    printf '\033[?25l'
+}
+
+function tp_cursor_show() {
+    printf '\033[?25h\033[2 q\033]12;#9E9E9E\007'
+}
+
+function tp_cursor_restore() {
+    printf '\033[?25h\033[0 q\033]112\007' > /dev/tty 2>/dev/null
+    return 0
 }
 
 function tp_state_file() {
@@ -1161,15 +1251,12 @@ function tp_open_terminal() {
 }
 
 function tp_exercise_on_signal() {
-    if [ "${step:-1}" = "1" ]; then
-        count_learn="${count_hard:-0}"
-        count_hard=0
-    fi
     tp_exercise_ended="quit"
     exit 130
 }
 
 function tp_exercise_on_exit() {
+    tp_cursor_restore
     stty echo echoctl < /dev/tty 2>/dev/null
     tp_mouse_off
     tp_state_write "${tp_exercise_ended:-quit}"
@@ -1186,6 +1273,7 @@ function tp_exercise_run() {
     trap 'tp_exercise_on_signal' HUP INT TERM
     stty -echo -echoctl < /dev/tty 2>/dev/null
     tp_mouse_on
+    tp_cursor_hide
     score() { tp_exercise_ended="quit"; exit 0; }
     scoreschk() { tp_exercise_ended="done"; exit 0; }
     "${_fn}"
