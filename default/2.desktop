@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Topic
+Comment=
+Exec=idiomind topic
+Icon=/usr/share/idiomind/images/topic.png
+Path=
+Terminal=false
+StartupNotify=false
+

@@ -1244,10 +1244,12 @@ colorize() {
     f_lock 1 "$DT/co_lk"
     cleanups "${DC_tlt}/index"
     touch "${DM_tlt}"
-    acheck="$(tpc_db 1 config acheck)"
     marks="$(tpc_db 5 marks)"
     learning="$(tpc_db 5 learning)"
-    if [ "$acheck" = TRUE ] && [[ ${2} = 1 ]]; then 
+    # El marcado automático como aprendido está siempre activo: chk=TRUE
+    # cuando se pide reconstruir con marca de aprendido (colorize 1), sin
+    # consultar la antigua preferencia acheck de la configuración del tema.
+    if [[ ${2} = 1 ]]; then
 		chk=TRUE; else chk=FALSE
 	fi
     data="${DC_tlt}/data"
@@ -1297,11 +1299,11 @@ colorize() {
 			return 1
 		}
 
-		str_contains() {
+		log_member() {
 			local haystack="$1"
 			local needle="$2"
 
-			[[ "$haystack" == *"$needle"* ]]
+			grep -Fxq -- "$needle" <<< "$haystack"
 		}
 
 		: > "$index"
@@ -1346,16 +1348,16 @@ colorize() {
 				i="$item"
 			fi
 
-			if str_contains "$log3" "$item"; then
+			if log_member "$log3" "$item"; then
 				printf "<span color='#AE3259'>%s</span>\nFALSE\n%s\n" \
 					"$i" "$srce" >> "$index"
 
-			elif str_contains "$log2" "$item"; then
+			elif log_member "$log2" "$item"; then
 				printf "<span color='#C15F27'>%s</span>\nFALSE\n%s\n" \
 					"$i" "$srce" >> "$index"
 
-			elif str_contains "$log1" "$item"; then
-				printf "%s\n%s\n%s\n" \
+			elif log_member "$log1" "$item"; then
+				printf "<span color='#4C8C12'>%s</span>\n%s\n%s\n" \
 					"$i" "$chk" "$srce" >> "$index"
 
 			else

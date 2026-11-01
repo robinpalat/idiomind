@@ -26,9 +26,11 @@ _st_desc() {
 }
 # Alternate screen buffer: no scrollback is kept, so previous views never pile up
 # when the mouse wheel is used. Mode 1007 makes the wheel send ↑/↓ keys, which
-# the viewer below uses to scroll.
-_st_enter() { printf '\033[?1049h\033[?1007h'; }
-_st_leave() { printf '\033[?1007l\033[?1049l'; }
+# the viewer below uses to scroll. Normal tracking (1000) + SGR (1006) enable
+# clicks; the cursor is hidden while the viewer owns the screen and restored
+# by _st_leave (normal exit and the INT/TERM/HUP trap).
+_st_enter() { printf '\033[?1049h\033[?1007h\033[?1000h\033[?1006h\033[?25l'; }
+_st_leave() { printf '\033[?1006l\033[?1000l\033[?1007l\033[?1049l\033[?25h'; }
 _st_header() {
     local number="$1" title="$2" period="$3"
     printf '\n%s%s%s %s— %s%s\n' "$_ST_BOLD" "$title" "$_ST_RESET" "$_ST_DIM" "$period" "$_ST_RESET"
@@ -202,6 +204,7 @@ _st_week_stacked_bar() {
 
 stats_terminal_dlg() {
     local l1 l2 i cur y m yy idx shown key
+    local seq ch mb mx my x navline pre2 pre3 preq c2 c3 cq q_end rows_click
 
     if [[ ! -s "${data:-}" ]]; then
         printf '\n%s\n\n' "${ST_INSUFFICIENT:-$(gettext "Insufficient data")}"
@@ -383,12 +386,50 @@ stats_terminal_dlg() {
             '[6') read -r -s -n 1 -t 0.05 _; k=pgdn;;
             '[H') k=home;;
             '[F') k=end;;
+            '[<') # ratón SGR (1006): ESC [ < botón ; x ; y M|m
+              seq=''
+              while IFS= read -r -n 1 -t 0.1 ch; do
+                [[ "$ch" == [Mm] ]] && break
+                seq+="$ch"
+              done
+              if [[ "$ch" == M ]]; then
+                IFS=';' read -r mb mx my <<< "$seq"
+                rows_click=$(tput lines 2>/dev/null); [[ "$rows_click" =~ ^[0-9]+$ ]] || rows_click=24
+                # La línea de navegación vive en la fila rows-1 (regla en rows-2).
+                if [[ "$mb" == 0 && "$my" == "$((rows_click - 1))" ]]; then
+                  k=click:"${mx:-0}"
+                else
+                  k=''
+                fi
+              else
+                k=''
+              fi
+              ;;
             *) k='';;
           esac
         fi
         case "$k" in
           1|2|3) key=$k; break;;
           q|Q) quit=1; break;;
+          click:*)
+            # Mismos destinos que las teclas1/2/3/q: se reutiliza el
+            # mismo case de navegación, sin duplicar la lógica.
+            x="${k#click:}"
+            navline="  [1] ${nav_topics}   [2] ${nav_words}   [3] ${nav_activity}   [q] ${nav_quit}"
+            pre2="${navline%%\[2\]*}"; pre3="${navline%%\[3\]*}"; preq="${navline%%\[q\]*}"
+            c2=$(( ${#pre2} + 1 )); c3=$(( ${#pre3} + 1 )); cq=$(( ${#preq} + 1 ))
+            q_end=$(( cq + 4 + $(printf '%s' "${nav_quit}" | LC_ALL=C.UTF-8 wc -m) ))
+            if (( x >= c2 && x < c3 )); then
+              key=2; break
+            elif (( x >= c3 && x < cq )); then
+              key=3; break
+            elif (( x >= cq && x < q_end )); then
+              quit=1; break
+            elif (( x >= 3 && x < c2 )); then
+              key=1; break
+            fi
+            # Fuera de las opciones (p. ej. la pista de scroll): ignorado.
+            ;;
           up|k) off=$((off-1));;
           down|j) off=$((off+1));;
           pgup) off=$((off-view_h+1));;

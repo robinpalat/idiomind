@@ -143,6 +143,34 @@ function data_delete() {
     DELETE FROM Data WHERE trgt='${_trgt}';"
 }
 
+# Marca/desmarca la nota cuyo trgt se indica: conmuta el campo mark{} del
+# registro en data, la tabla Data y la tabla marks (la misma lista que usan
+# Play y colorize para el negrita). Compartida por el diálogo de edición
+# (mngr.sh edit_item) y el visor terminal. Imprime TRUE|FALSE (nuevo estado).
+function toggle_note_mark() {
+    local _trgt="${1}" _cur _new _pos
+    [ -n "${_trgt}" ] || return 1
+    # _cur es el valor crudo del campo (puede ser vacío: mark{})
+    _cur="$(grep -F -m 1 "trgt{${_trgt}}" "${DC_tlt}/data" |sed 's/}/}\n/g' \
+        |grep -oP '(?<=mark{).*(?=})')"
+    if [ "${_cur}" = TRUE ]; then _new=FALSE; else _new=TRUE; fi
+    _pos="$(grep -Fon -m 1 "trgt{${_trgt}}" "${DC_tlt}/data" \
+        |sed -n 's/^\([0-9]*\)[:].*/\1/p')"
+    if [[ "${_pos}" =~ ^[0-9]+$ ]]; then
+        sed -i "${_pos}s|mark{${_cur}}|mark{${_new}}|" "${DC_tlt}/data"
+    fi
+    if [ "${_new}" = TRUE ]; then
+        grep -Fxq -- "${_trgt}" <(tpc_db 5 marks) || tpc_db 2 marks list "${_trgt}"
+    else
+        # la columna es 'list' (como en el insert); el llamado histórico
+        # omitía la columna y no borraba nada
+        tpc_db 4 marks list "${_trgt}"
+    fi
+    sqlite3 "$DC_tlt/tpc" "pragma busy_timeout=500;
+    UPDATE Data SET mark='${_new}' WHERE trgt='${_trgt//\'/\'\'}';" >/dev/null 2>&1
+    printf '%s' "${_new}"
+}
+
 function rebuild_learning_lists() {
     local data_file="$1"
     local db_file="$2"

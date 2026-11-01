@@ -1,0 +1,9 @@
+[Desktop Entry]
+Exec=/usr/share/idiomind/play.sh play_list
+Icon=/usr/share/idiomind/images/tasks.png
+Version=3
+Encoding=UTF-8
+Type=Application
+Comment=Tasks list
+Terminal=false
+Name[en]=Tasks

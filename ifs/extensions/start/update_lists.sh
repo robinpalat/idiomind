@@ -14,22 +14,31 @@ while read -r tpc; do
 done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime +80 -type d \
 -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
 
-[ ! -f "$DC_s/log" ] && exit 1 || log="$DC_s/log"
+log="$DC_s/log"
+[ -f "$log" ] || touch "$log"
 items=$(mktemp "$DT/w1.XXXX")
-words=$(grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' \
-|sort |uniq -dc |sort -n -r |sed 's/ \+/ /g')
-sentences=$(grep -o -P '(?<=s1.).*(?=\.s1)' "${log}" |tr '|' '\n' \
-|sort |uniq -dc |sort -n -r |sed 's/ \+/ /g')
+# Dependencias del auto-marcado histórico (Etapa 6, Alternativa A): fuente
+# exclusiva = master log $DC_s/log, escrito por practice/strt.sh::_snap
+# (w1/s1 con dedup intra-instantánea y append idempotente). Conteo por
+# apariciones en instantáneas distintas: ≥3 (palabras) / ≥1 (oraciones),
+# umbral sin cambios. Dedup por línea (instantánea) antes de contar y
+# extracción completa de notas multi-palabra (sin truncar en el 2.º campo).
+words=$(grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" \
+|awk -F'|' '{delete u; for (i=1; i<=NF; i++) if ($i != "" && !u[$i]++) print $i}' \
+|sort |uniq -c |sort -n -r |sed 's/ \+/ /g')
+sentences=$(grep -o -P '(?<=s1.).*(?=\.s1)' "${log}" \
+|awk -F'|' '{delete u; for (i=1; i<=NF; i++) if ($i != "" && !u[$i]++) print $i}' \
+|sort |uniq -c |sort -n -r |sed 's/ \+/ /g')
 topics="$(cdb "${shrdb}" 5 topics|head -n30)"
 dir="$DM_tl/"
 
 for n in {1..100}; do
     if [[ $(sed -n ${n}p <<<"${words}" |awk '{print ($1)}') -ge 3 ]]; then
-        fwk=$(sed -n ${n}p <<<"${words}" |awk '{print ($2)}')
+        fwk=$(sed -n ${n}p <<<"${words}" |sed -E 's/^ +[0-9]+ //')
         [ -n "${fwk}" ] && echo "${fwk}" >> "${items}"
     fi
     if [[ $(sed -n ${n}p <<<"${sentences}" |awk '{print ($1)}') -ge 1 ]]; then
-        fwk=$(sed -n ${n}p <<<"${sentences}" |cut -c 4-)
+        fwk=$(sed -n ${n}p <<<"${sentences}" |sed -E 's/^ +[0-9]+ //')
         [ -n "${fwk}" ] && echo "${fwk}" >> "${items}"
     fi
 done
@@ -83,9 +92,6 @@ while IFS= read -r tpc; do
     # Read topic state.
     #
     stts=$(<"$cnfg_dir/stts")
-
-    auto_mrk=$(sqlite3 "$tpcdb" \
-        'SELECT acheck FROM config LIMIT 1;')
 
     #
     # Load SQLite lists into associative arrays.
@@ -195,8 +201,6 @@ while IFS= read -r tpc; do
     #
     # Rebuild topic index.
     #
-    len_learnt=0
-
     if [ "$cont" = true ]; then
 
         index_file="$cnfg_dir/index"
@@ -239,10 +243,10 @@ while IFS= read -r tpc; do
             fi
 
             #
-            # Automatic marking.
+            # Automatic marking: always on (the old acheck preference is
+            # ignored); a note is shown as learnt while it is in lstp.
             #
-            if [ "$auto_mrk" = "TRUE" ] &&
-               [ "${lstp_set[$item]+_}" ]; then
+            if [ "${lstp_set[$item]+_}" ]; then
                 chk="TRUE"
             else
                 chk="FALSE"
@@ -266,17 +270,13 @@ while IFS= read -r tpc; do
 
                 echo "$chk -> $item"
 
-                printf '%s\n%s\n%s\n' \
+                printf '<span color='\''#4C8C12'\''>%s</span>\n%s\n%s\n' \
                     "$display_item" "$chk" "$srce" >> "$index_tmp"
 
             else
 
                 printf '%s\nFALSE\n%s\n' \
                     "$display_item" "$srce" >> "$index_tmp"
-            fi
-
-            if [ "$chk" = "TRUE" ]; then
-                len_learnt=$((len_learnt + 1))
             fi
 
         done < "$data_file"
@@ -289,27 +289,41 @@ while IFS= read -r tpc; do
         else
             rm -f -- "$index_tmp"
         fi
-
-        #
-        # If every learning note is automatically marked,
-        # promote the topic to learned.
-        #
-        case "$stts" in
-            1|2|5|6)
-
-                learn_count=${#learn_set[@]}
-                item_count=$(wc -l < "$data_file")
-
-                if [ "$learn_count" -eq "$len_learnt" ] &&
-                   [ "$item_count" -gt 0 ]; then
-
-                    "$DS/mngr.sh" mark_as_learned_ok "$tpc" &
-
-                    echo "mark_as_learnt -> $tpc"
-                fi
-                ;;
-        esac
     fi
+
+    #
+    # Promoción a aprendido (Etapa 6): fuera del bloque cont — la
+    # promoción aplica a stts 1/2/5/6, que no reconstruyen índice, y
+    # antes estaba anidada en cont (3|4|7-10) junto al case 1|2|5|6:
+    # intersección vacía, mark_as_learned_ok era código muerto.
+    # chk=TRUE ⟺ en lstp ∧ en log1 ∧ ¬log2 ∧ ¬log3 (marcado automático
+    # siempre activo; la antigua preferencia acheck se ignora)
+    # (equivale al chk mostrado en el índice). Vacuidad preservada:
+    # learn_count==len_auto ∧ item_count>0.
+    case "$stts" in
+        1|2|5|6)
+            len_auto=0
+            for item in "${!learn_set[@]}"; do
+                if [ "${lstp_set[$item]+_}" ] &&
+                   [ "${log1_set[$item]+_}" ] &&
+                   [ -z "${log2_set[$item]+_}" ] &&
+                   [ -z "${log3_set[$item]+_}" ]; then
+                    len_auto=$((len_auto + 1))
+                fi
+            done
+
+            learn_count=${#learn_set[@]}
+            item_count=$(wc -l < "$cnfg_dir/data")
+
+            if [ "$learn_count" -eq "$len_auto" ] &&
+               [ "$item_count" -gt 0 ]; then
+
+                "$DS/mngr.sh" mark_as_learned_ok "$tpc" &
+
+                echo "mark_as_learnt -> $tpc"
+            fi
+            ;;
+    esac
 
     unset learn_set
     unset marks_set
@@ -323,7 +337,10 @@ unset lstp_set
 
 echo -e "\tlists ok"
 
-[ $(date +%d) = 1 -o $(date +%d) = 14 ] && rm "$log"; touch "$log"
+# Etapa 6: sin rotación por fecha del master. _snap apendea de forma
+# idempotente y main.sh acota el tamaño (tail -2000 al superar 100000 B);
+# un rm aquí borraría el historial que alimenta el auto-marcado.
+touch "$log"
 "$DS/mngr.sh" mkmn 1 &
 cleanups "$items"
 f_lock 3 "$DT/co_lk"

@@ -224,10 +224,10 @@ edit_item() {
                 mod_index=1; colorize_run=1; tomodify=1
             fi
             if [ "${mark}" != "${mark_mod}" ]; then
-                if [ "${mark_mod}" = "TRUE" ]; then
-                    tomodify=1; tpc_db 2 marks list "${trgt}"; else
-                    tpc_db 4 marks "${trgt}"
-                fi
+                # Toggle compartido (cmns::toggle_note_mark): tabla marks +
+                # campo mark{} + tabla Data. Mismo destino que el bloque
+                # anterior; sin lógica paralela.
+                toggle_note_mark "${trgt}" >/dev/null
                 colorize_run=1; tomodify=1
             fi
             [[ "${transl_mark}" = 1 ]] && srce="$temp"
@@ -768,7 +768,7 @@ mark_as_learned_topic() {
 			if [ ${count_date_reviews} -gt 8 ]; then
 				tpc_db 9 reviews date9 ${date_current}
 				echo 2 > "${DC_tlt}/stts"
-				mast=TRUE
+				mast=FALSE
 			else
 				mast=FALSE
 				count_date_reviews=$((count_date_reviews+1))
@@ -837,7 +837,7 @@ mark_as_learned_topic_ok() {
             if [ ${count_date_reviews} -gt 8 ]; then
 				tpc_db 9 reviews date9 ${date_current}
 				echo 2 > "${DC_tlt}/stts"
-				mast=TRUE
+				mast=FALSE
 			else
 				mast=FALSE
 				count_date_reviews=$((count_date_reviews+1))

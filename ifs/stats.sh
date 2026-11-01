@@ -127,7 +127,9 @@ function coll_items_stats() {
         S6w3="$(grep -o -P "(?<=w3.).*(?=\.w3.<6>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # Difficult Words to Remember
         c_S6w3="$(grep -c '[^[:space:]]' <<< "$S6w3")"
         cc_S6w=$((c_S6w2+c_S6w3)) # Difficult Words to Remember
-        cc_S56w=$((c_S5w1+c_S6w1)) # assimilated words ok
+        S2w1="$(grep -o -P "(?<=w1.).*(?=\.w1.<2>)" "${log}" |tr '|' '\n' |sed '/^$/d' |uniq)" # reviewed words in mature topics (stts=2)
+        c_S2w1="$(grep -c '[^[:space:]]' <<< "$S2w1")"
+        cc_S56w=$((c_S5w1+c_S6w1+c_S2w1)) # reviewed words (incluye aprobaciones en topics maduros <2>; w2/w3.<2> y <0> no se contaron por diseño)
         # new words learned | words learning (new) | forgotten words |
         # Difficult Words to Remember | words reviewed | test pass | pract act
         echo "${c_S1w1},${cc_S1w},${cc_S5w},${cc_S6w},${cc_S56w},${c_tpc_practs_ok},${c_tpc_practs}"

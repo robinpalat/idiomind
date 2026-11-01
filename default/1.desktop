@@ -1,0 +1,9 @@
+[Desktop Entry]
+Exec=/usr/share/idiomind/add.sh new_items
+Icon=/usr/share/idiomind/images/add2.png
+Version=3
+Encoding=UTF-8
+Type=Application
+Comment=Add new sentence
+Terminal=false
+Name[en]=Add

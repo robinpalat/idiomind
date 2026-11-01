@@ -234,7 +234,6 @@ function topic() {
         dtec=$(tpc_db 1 id dtec)
         dtei=$(tpc_db 1 id dtei)
         count_date_reviews="$(tpc_db 5 reviews |grep -c '[^[:space:]]')"
-        acheck=$(tpc_db 1 config acheck)
 
 		[ -z ${count_date_reviews} ] && count_date_reviews=0
 		
@@ -244,7 +243,7 @@ function topic() {
 			"$DS/mngr.sh" mkmn 1
         fi
         
-        export count_date_reviews acheck stts
+        export count_date_reviews stts
         
         if [ $((stts)) -lt 10 ]; then 
 			( sleep 2 && "$DS/ifs/tls.sh" promp_topic_info ) & fi
@@ -397,13 +396,6 @@ function topic() {
                 then echo -e "\n${note_mod}" > "${note}"
                 else echo "${note_mod}" > "${note}"; fi
             fi
-            acheck_mod=$(cut -d '|' -f 4 < "${cnf4}")
-            if [[ $acheck_mod != $acheck ]] && [ -n "$acheck_mod" ]; then
-                tpc_db 3 config acheck "$acheck_mod"
-            fi
-            if [[ $acheck_mod = FALSE ]] && [[ $acheck != FALSE ]]; then
-                "$DS/ifs/tls.sh" colorize 1; rm "${cnf1}"
-            fi
             if grep TRUE "${cnf1}" >/dev/null 2>&1; then
                 f_lock 1 "$DT/tpc_lk"
                 export cnf1 tpcdb
@@ -439,8 +431,11 @@ function topic() {
                             # Solo procesar entradas confirmadas.
                             [[ "$item" == *"|TRUE|"* ]] || continue
 
-                            # Equivalente a item.replace("|TRUE|", "")
-                            trgt="${item//|TRUE|/}"
+                            # Identificador de la nota: todo lo anterior a la
+                            # casilla |TRUE|. Las columnas auxiliares que
+                            # puedan seguir (TIP, separadores finales) no
+                            # forman parte del identificador.
+                            trgt="${item%%|TRUE|*}"
 
                             # Equivalente a re.sub(r'<[^>]+>', '', trgt)
                             trgt="$(printf '%s' "$trgt" | sed -E 's/<[^>]+>//g')"

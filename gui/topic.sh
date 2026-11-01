@@ -8,6 +8,11 @@ if [ -z "${__GUI_COMMON_SH:-}" ] && [ -n "${DS:-}" ] && [ -r "$DS/gui/common.sh"
     source "$DS/gui/common.sh"
 fi
 
+if [ -z "${__GUI_VWR_TERM_SH:-}" ] && [ -n "${DS:-}" ] && [ -r "$DS/gui/vwr_term.sh" ]; then
+    # shellcheck source=/dev/null
+    source "$DS/gui/vwr_term.sh"
+fi
+
 
 function vwr() {
 
@@ -27,70 +32,24 @@ function vwr() {
             return 1
         fi
     fi
-    if [ ${1} = 1 ]; then 
-        index="$(tpc_db 5 learning)"
-        item_name="$(sed 's/<[^>]*>//g' <<< "${2}")"
-    elif [ ${1} = 2 ]; then
-        index="$(tpc_db 5 learnt)"
-        item_name="$(sed 's/<[^>]*>//g' <<< "${2}")"
-    fi
-    re='^[0-9]+$'; index_pos="$3"
-    
-    if ! [[ ${index_pos} =~ $re ]]; then
-        index_pos="grep -Fxon -m 1 \"${item_name}\" <<< \"${index}\" |sed -n 's/^\([0-9]*\)[:].*/\1/p'"
-        if ! [[ ${index_pos} =~ $re ]]; then
-            index_pos="$(awk 'match($0,v){print NR; exit}' v="${item_name}" <<< "${index}")"
-        fi
-        nll=""
-    fi
-    _item="$(sed -n ${index_pos}p <<< "${index}")"
-    if [ -z "${_item}" ]; then
-        _item="$(sed -n 1p <<< "${index}")"; export index_pos=1
-    fi
-    item="$(grep -F -m 1 "trgt{${_item}}" "$DC_tlt/data" |sed 's/}/}\n/g')"
-    type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
-    export trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
-    export srce="$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")"
-    export exmp="$(grep -oP '(?<=exmp{).*(?=})' <<< "${item}" |sed -e 's/^ *//' -e 's/ *$//')"
-    export defn="$(grep -oP '(?<=defn{).*(?=})' <<< "${item}")"
-    export note="$(grep -oP '(?<=note{).*(?=})' <<< "${item}")"
-    export grmr="$(grep -oP '(?<=grmr{).*(?=})' <<< "${item}")"
-    export mark="$(grep -oP '(?<=mark{).*(?=})' <<< "${item}")"
-    export link="$(grep -oP '(?<=link{).*(?=})' <<< "${item}")"
-    export tags="$(grep -oP '(?<=tags{).*(?=})' <<< "${item}")"
-    export wrds="$(grep -oP '(?<=wrds{).*(?=})' <<< "${item}")"
-    export cdid="$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")"
-    export exmp="$(sed "s|${trgt,,}|<span color='#404040' background='#FDFBCF'>${trgt,,}<\/\span>|g" <<< "${exmp}")"
-    text_missing=0
+    vwr_resolve "${1}" "${2}" "${3}"
 
-    if [ ${type} = 1 ]; then
-        export cmd_listen="$DS/play.sh play_word "\"${trgt}\"" ${cdid}"
-        [ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
-        word_view
-    elif [ ${type} = 2 ]; then
-        export cmd_listen="$DS/play.sh play_sentence ${cdid}"
-        [ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
-        sentence_view
-    else
-        trgt="${_item} <small>[Text missing]</small>"
-        grmr="${trgt}"
-        if [[ $(wc -w <<< "${_item}") -lt 2 ]]; then
-            export cmd_listen="$DS/play.sh play_word "\"${trgt}\"" ${cdid}"
-            text_missing=1
-            word_view
-        else 
-            export cmd_listen="$DS/play.sh play_sentence ${cdid}"
-            text_missing=2
-            sentence_view
-        fi
-    fi
-        ret=$?
+    vwr_term_view "${1}"
+    ret=$?
         if ps -A | pgrep -f 'play'; then killall play & fi
-        if [ $ret -eq 4 ]; then
-            "$DS/mngr.sh" edit ${1} ${index_pos} ${text_missing} &
-        elif [ $ret -eq 2 ]; then
+        if [ ${ret} -eq 4 ]; then
+            vwr_do_edit ${1} ${index_pos} ${text_missing} &
+        elif [ ${ret} -eq 2 ]; then
             ff=$((index_pos+1))
-            "$DS/vwr.sh" ${1} "" ${ff} &
+            vwr_spawn ${1} "" ${ff} &
+        elif [ ${ret} -eq 3 ]; then
+            pp=$((index_pos-1))
+            if [ ${pp} -ge 1 ]; then
+                vwr_spawn ${1} "" ${pp} &
+            fi
+        elif [ ${ret} -eq 5 ]; then
+            vwr_words_edit "${wrds}" &
+            exit 1
         else
             if ps -A | pgrep -f 'play'; then killall play & fi
             exit 1
@@ -98,60 +57,7 @@ function vwr() {
     return
 } >/dev/null 2>&1
 
-function word_view() {
-	
-    font_size=27; [ ${#trgt} -gt 20 ] && font_size=20
-    [ -n "${tags}" ] && field_tag="--field=<small>$tags</small>:lbl"
-    [ -n "${defn}" ] && field_defn="--field=$defn:lbl"
-    [ -n "${note}" ] && field_note="--field=💬  <span font_desc='Arial 9'>$note</span>:lbl"
-    [ -n "${exmp}" ] && field_exmp="--field=<span font_desc='Sans Free italic 11'>\"$exmp\"</span>:lbl"
-    [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
-    local sentence="<span font_desc='Sans Free ${font_size}'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>$link\n\n"
-    yad --form --title=" " \
-    --quoted-output \
-    --text="${sentence}" \
-    --window-icon=$DS/images/logo.png \
-    --skip-taskbar --text-align=center \
-    --image-on-top --center --undecorated \
-    --width=630 --height=390 --borders=25 \
-    "${field_tag}" "${field_exmp}" "${field_defn}" "${field_note}" \
-    --button="!gtk-edit":4 \
-    --button="!audio-volume-high":"$cmd_listen" \
-    --button="!media-seek-forward":2 \
-    --button="!window-close":0
-    
-} >/dev/null 2>&1
-
-function sentence_view() {
-	
-    if [ `sqlite3 "$cfgdb" "select gramr from opts;"` = TRUE ]; then
-    trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
-    [ -n "${note}" ] && field_note="💬  <span font_desc='Arial 9'>$note</span>\n"
-    [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
-    local sentence="<span font_desc='Sans Free 16'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i>$link</span>\n<small>$tag</small>\n"
-    cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"""
-    lwrds="$(tr '_' '\n' <<< "${wrds}")"
-
-    echo -e "${lwrds}" |yad --list --title=" " \
-    --text="${sentence}${field_note}" \
-    --print-column=0 \
-    --select-action="$DS/play.sh 'play_word'" \
-    --dclick-action="$DS/play.sh 'play_word'" \
-    --window-icon=$DS/images/logo.png \
-    --skip-taskbar --image-on-top --center --undecorated \
-    --scroll --text-align=left --expand-column=0 --no-headers \
-    --width=630 --height=390 --borders=25 \
-    --column="":TEXT \
-    --column="":TEXT \
-    --button="!gtk-edit":4 \
-    --button="!format-justify-left!$(gettext "Words")":"$cmd_words" \
-    --button="!audio-volume-high":"$cmd_listen" \
-    --button="!media-seek-forward":2 \
-    --button="!window-close":0
-    
-} >/dev/null 2>&1
-
-export -f word_view sentence_view vwr
+export -f vwr vwr_resolve vwr_term_view vwr_term_open vwr_do_edit vwr_spawn vwr_words_edit
 
 topic_language_notice() {
     local topic_slng active_trans effective_slng
@@ -183,6 +89,7 @@ function notebook_1() {
     native_lang_info="$(topic_language_notice)"
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"${tpc}\"" 1"
     cmd_play="$DS/play.sh play_list"
+    cmd_prac="$DS/practice/strt.sh"
     btn1="$(gettext "Edit")"
     btn2="$(gettext "Resources")"
     btn3="$(gettext "Share")"
@@ -215,7 +122,7 @@ function notebook_1() {
     --ellipsize=end --wrap-width=460 --ellipsize-cols=2 \
     --search-column=1 --regex-search --hide-column=4 --tooltip-column=4 \
     --column=Name:TEXT \
-    --column=@fore@ --column=Learned:CHK --column=TIP:TEXT > "$cnf1" &
+    --column=@fore@ --column=Learned:CHK --column=@back@:TIP > "$cnf1" &
     ([ -n "${ls2}" ] && echo "${ls2}" | awk '{print $0"\n"NR}') |yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2"  \
@@ -223,7 +130,7 @@ function notebook_1() {
     --ellipsize=end --wrap-width=460 --ellipsize-cols=1 \
     --column=Name:TEXT --column=@fore@ &
     yad --text-info --tabnum=3 --window-icon=idiomind \
-    --text="<small>$(gettext "Enter your text here, use it as a notice or scratch board")</small>" \
+    --text="<small>$(gettext "A space for notes, reminders, or anything you want to write down")</small>" \
     --plug=$KEY \
     --always-print-result \
     --show-uri --uri-color="#6591AA" \
@@ -236,7 +143,6 @@ function notebook_1() {
     --field=" $btn_review "!'gtk-apply':FBTN "$cmd_mark" \
     --field=" ":LBL " " \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
-    --field="$(gettext "Automatically mark notes as learnt")\t\t\t\t\t":CHK "$acheck" \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
@@ -254,7 +160,7 @@ function notebook_1() {
     --tab="  $(gettext "Manage")  " \
     --width=530 --height=560 --borders=5 --tab-borders=0 \
     --button="$(gettext "Play")":"$cmd_play" \
-    --button="$(gettext "Practice")":3 \
+    --button="$(gettext "Practice")":"$cmd_prac" \
     --button="$(gettext "Close")"!'window-close':2
 } >/dev/null 2>&1
 
@@ -285,7 +191,7 @@ function notebook_2() {
     --column=Name:TEXT --column=@fore@ &
     yad --text-info --tabnum=3 --window-icon=idiomind \
     --plug=$KEY \
-    --text="<small>$(gettext "Enter your text here, use it as a notice or scratch board")</small>" \
+    --text="<small>$(gettext "A space for notes, reminders, or anything you want to write down")</small>" \
     --show-uri --uri-color="#6591AA" \
     --filename="${note}" --editable --wrap \
     --fontname='vendana 11' --margins=14 > "$cnf3" &
@@ -340,6 +246,7 @@ function notebook_3() {
 	native_lang_info="$(topic_language_notice)"
 	
 	cmd_play="$DS/play.sh play_list"
+	cmd_prac="$DS/practice/strt.sh"
     cmd_mark="'$DS/mngr.sh' 'mark_to_learn' "\"${tpc}\"" 1"
     btn1="$(gettext "Edit")"
     btn2="$(gettext "Resources")"
@@ -358,7 +265,7 @@ function notebook_3() {
     --search-column=1 --regex-search \
     --column=Name:TEXT --column=@fore@ &
     yad --text-info --tabnum=2 --window-icon=idiomind \
-    --text="<small>$(gettext "Enter your text here, use it as a notice or scratch board")</small>" \
+    --text="<small>$(gettext "A space for notes, reminders, or anything you want to write down")</small>" \
     --plug=$KEY \
     --show-uri --uri-color="#6591AA" \
     --filename="${note}" --editable --wrap \
@@ -387,7 +294,7 @@ function notebook_3() {
     --tab="  $(gettext "Manage")  " \
     --width=530 --height=560 --borders=5 --tab-borders=0 \
     --button="$(gettext "Play")":"$cmd_play" \
-    --button="$(gettext "Practice")":3 \
+    --button="$(gettext "Practice")":"$cmd_prac" \
     --button="$(gettext "Close")"!'window-close':2
 } >/dev/null 2>&1
 
@@ -436,21 +343,34 @@ function tpc_view() {
 } >/dev/null 2>&1
 
 
+
+
 function panelini() {
-	
-	 #--select-action="/usr/share/idiomind/ifs/tasks.sh"
-	(if [ -s "$DT/tasks"  ]; then cat "$DT/tasks"; \
-	else echo "$(gettext "no tasks")"; fi) \
-	| yad --title="Idiomind" --list \
-    --name=Idiomind --class=Idiomind --dclick-action="" \
-    --separator="" --expander="$(gettext "Tasks")" --scroll --grid-lines=hor \
-    --dclick-action="/usr/share/idiomind/ifs/tasks.sh" \
-    --window-icon=$DS/images/logo.png \
-    --hscroll-policy=auto --vscroll-policy=never \
-    --expand-column=1 --no-click --no-headers \
-    --on-top --text-align=left --align=left --buttons-layout=spread \
-    ${geometry} --borders=2  --column=Name:TEXT --fixed --width=20 --height=20 \
-    --button=""!'list-add'!"$(gettext "Add Note, which can be a word or a sentence")":"$DS/add.sh 'new_items'" \
-    --button=""!'go-home'!"$(gettext "My Active Topic")":"idiomind 'topic'" \
-    --button=""!'gtk-index'!"$(gettext "My topics")":"$DS/chng.sh"
+
+
+
+    # --------------------------------------------------
+    # PANEL 2: ICONS (parte inferior)
+    # --------------------------------------------------
+
+    yad --icons \
+        --single-click \
+        --read-dir="$DS/default/" \
+        --item-width=60 \
+        --generic \
+        --title="Idiomind" \
+        --name=Idiomind \
+        --class=Idiomind \
+        --window-icon="$DS/images/logo.png" \
+        --sticky --fixed \
+        --width=197 \
+        --height=205 \
+        --on-top ${geometry} \
+        --skip-taskbar \
+        --borders=4 --no-buttons
+
 }
+        #--button=""!'list-add'!"$(gettext "Add Note, which can be a word or a sentence")":"$DS/add.sh 'new_items'" \
+        #--button=""!'go-home'!"$(gettext "My Active Topic")":"idiomind 'topic'" \
+        #--button=""!'gtk-index'!"$(gettext "My topics")":"$DS/chng.sh"
+

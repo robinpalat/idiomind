@@ -62,6 +62,8 @@ function scoreschk() {
             if [[ "$(grep -Ecv '#|^$' < "${dir_practice}/$active_practice.group")" = 0 ]]; then
                 export group=0; score
             else
+                _log $active_practice
+                save_score
                 practices $active_practice
             fi
         fi
@@ -109,69 +111,88 @@ function score() {
 function save_score() {
 
     > ./log1
-    if [ $(ls *.1 | wc -l) -ge 3  ]; then # si hay 3 o mas practicas con notas aprendidas
+    if [ $(ls *.1 2>/dev/null | wc -l) -ge 3  ]; then # si hay 3 o mas practicas con notas aprendidas
     	while read -r note; do
-			[ $(grep "$note" *.1 | wc -l) -ge 3 ] && echo "$note" >> ./log1 # se listan solo las notas que han pasado mas 3 practicas
-		done <<< $(sort -u *.1) # se listan las notas de la lista "aprendiendo"
+            nfiles=0
+            for f in *.1; do
+                grep -Fxq -- "$note" "$f" && nfiles=$((nfiles+1))
+            done
+            [ "$nfiles" -ge 3 ] && echo "$note" >> ./log1 # por tipos distintos, coincidencia exacta, sin duplicados por archivo
+		done <<< $(sort -u *.1) # se listan solo las notas unicas de la lista
 	fi
 	
 	if [[ -f ./e.1 ]]; then sort -u ./e.1 >> ./log1; fi
 	if ls ./*.2 >/dev/null 2>&1; then sort -u ./*.2 > ./log2; fi
 	if ls ./*.3 >/dev/null 2>&1; then sort -u ./*.3 > ./log3; fi
 
-    if [[ ${step} = 3 ]]; then # si se ha llegado al nivel 3 (palabras dificiles de aprender)
- 
-        while read -r rem; do # se quitan todas las notas del nivel 2 que estan en el nivel 3
-			if grep -Fxq "${rem}" ./log2; then
-				grep -vxF "${rem}" ./log2 >> ./rm.tmp
-			fi	
-		done < ./log3
-		sed '/^$/d' ./rm.tmp | sort -u > ./log2
-		[ -f ./rm.tmp ] && rm ./rm.tmp
-	fi
+    if [ -f ./log3 ]; then # se quitan todas las notas del nivel 2 que estan en el nivel 3
+        grep -vxF -f ./log3 ./log2 > ./rm.tmp || :
+        sed '/^$/d' ./rm.tmp | sort -u > ./log2
+        [ -f ./rm.tmp ] && rm ./rm.tmp
+    fi
+}
+
+# Etapa 6: espejo de instantáneas w1/s1 al master log ($DC_s/log), fuente
+# del auto-marcado en update_lists. Dedup intra-instantánea; append
+# idempotente por línea exacta (una misma sesión repetida no infla el
+# conteo de apariciones). El log semanal ($log) sigue recibiendo cada
+# escritura sin dedup (lo consume coll_items_stats, Etapa 5).
+function _snap() { # $1=etiqueta w1|s1 $2=instantánea $3=tag_stts
+    local tag="${1}" src="${2}" stts_tag="${3}" line
+    local mlog="$DC_s/log"
+    [ -f "$src" ] || return 0
+    line="${tag}.$(awk '!_u[$0]++' "$src" | tr -s '\n' '|').${tag}.<${stts_tag}>"
+    case "$line" in *..*) return 0 ;; esac # mismo filtro sed '/\.\./d'
+    printf '%s\n' "$line" >> "$log"
+    [ -f "$mlog" ] || touch "$mlog"
+    grep -Fxq -- "$line" "$mlog" 2>/dev/null || printf '%s\n' "$line" >> "$mlog"
 }
 
 # just for stats
-function _log() { 
+function _log() {
+    local tag_stts="${stts}"
+    if [ "${tag_stts}" = "0" ] && [ -f "${DC_tlt}/stts.bk" ]; then
+        tag_stts="$(sed -n 1p "${DC_tlt}/stts.bk")"
+        case "${tag_stts}" in ''|*[!0-9]*) tag_stts=0 ;; esac
+    fi
 
     if [ ${1} != 'e' ]; then
-    
-        if [ -f ./${1}.1 ]; then
-            echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1.<${stts}>" \
-            |sed '/\.\./d' >> "$log"
-        fi
+
+        _snap w1 "./${1}.1" "${tag_stts}"
         if [ -f ./${1}.2 ]; then
             if [ -f ./${1}.3 ]; then
                 lg2="$(grep -Fvxf ./${1}.3 < ./${1}.2)"
                 [ -n "${lg2}" ] && erw="${t2} </span> " || erw=""
                 lg3="$(< ./${1}.3)"
-                echo "w2.$(tr -s '\n' '|' <<< "${lg2}").w2.<${stts}>" |sed '/\.\./d' >> "$log"
-                echo "w3.$(tr -s '\n' '|' <<< "${lg3}").w3.<${stts}>" |sed '/\.\./d' >> "$log"
+                echo "w2.$(tr -s '\n' '|' <<< "${lg2}").w2.<${tag_stts}>" |sed '/\.\./d' >> "$log"
+                echo "w3.$(tr -s '\n' '|' <<< "${lg3}").w3.<${tag_stts}>" |sed '/\.\./d' >> "$log"
                 i2="${t2}$(echo "${lg2}" |head -n8 |sed -e ':a;N;$!ba;s/\n/  /g')</span>"
                 i3="${t3}$(echo "${lg3}" |head -n8 |sed -e ':a;N;$!ba;s/\n/  /g')</span>"
                 echo -n "${i2}${erw}${i3}" > ./${1}.df
             else
                 lg2="$(< ./${1}.2)"
-                echo "w2.$(tr -s '\n' '|' <<< "${lg2}").w2.<${stts}>" |sed '/\.\./d' >> "$log"
+                echo "w2.$(tr -s '\n' '|' <<< "${lg2}").w2.<${tag_stts}>" |sed '/\.\./d' >> "$log"
                 i2="$t2$(echo "${lg2}" |head -n16 |sed -e ':a;N;$!ba;s/\n/  /g') </span>"
                 echo -n "${i2}" > ./${1}.df
             fi
         elif [ -f ./${1}.3 ]; then
             lg3="$(< ./${1}.3)"
-            echo "w3.$(tr -s '\n' '|' <<< "${lg3}").w3.<${stts}>" |sed '/\.\./d' >> "$log"
+            echo "w3.$(tr -s '\n' '|' <<< "${lg3}").w3.<${tag_stts}>" |sed '/\.\./d' >> "$log"
             i3="$t3$(head -n16 <<< "${lg3}") |sed -e ':a;N;$!ba;s/\n/  /g')</span>"
             echo -n "${i3}" > ./${1}.df
         fi
 
     elif [ ${1} = 'e' ]; then
-        if [ -f ./${1}.1 ]; then
-            echo "s1.$(tr -s '\n' '|' < ./${1}.1).s1.<${stts}>" |sed '/\.\./d' >> "$log"
-        fi
+        # s1/s2/s3 (oraciones): s1 se espeja al master vía _snap (Etapa 6,
+        # consumidor: update_lists, umbral ≥1 aparición). s2/s3 siguen solo
+        # en el log semanal para coll_items_stats; ningún parser los lee
+        # (legado documentado Etapa 4 §3.2).
+        _snap s1 "./${1}.1" "${tag_stts}"
         if [ -f ./${1}.2 ]; then
-            echo "s2.$(tr -s '\n' '|' < ./${1}.2).s2.<${stts}>" |sed '/\.\./d' >> "$log"
+            echo "s2.$(tr -s '\n' '|' < ./${1}.2).s2.<${tag_stts}>" |sed '/\.\./d' >> "$log"
         fi
         if [ -f ./${1}.3 ]; then
-            echo "s3.$(tr -s '\n' '|' < ./${1}.3).s3.<${stts}>" |sed '/\.\./d' >> "$log"
+            echo "s3.$(tr -s '\n' '|' < ./${1}.3).s3.<${tag_stts}>" |sed '/\.\./d' >> "$log"
         fi
     fi
 }
@@ -228,34 +249,11 @@ function practice_a() {
     }
 
     question() {
-        if [ -t 1 ]; then
-            ui_card_question "${question}"
-        else
-            yad --form --title=" " \
-            --skip-taskbar --text-align=center --center --on-top \
-            --undecorated --buttons-layout=spread --align=center \
-            --width=460 --height=280 --borders=16  \
-            --field="\n$question":lbl "" \
-            --field="":lbl "" \
-            --button="!window-close":1 \
-            --button="!media-seek-forward":0
-        fi
+        ui_card_question "${question}"
     }
     
     answer() {
-        if [ -t 1 ]; then
-            ui_card_answer "${answer1}" "${answer2}"
-        else
-            yad --form --title=" " \
-            --skip-taskbar --text-align=center --center --on-top \
-            --undecorated --buttons-layout=spread --align=center \
-            --width=460 --height=280 --borders=16  \
-            --field="$answer1":lbl "" \
-            --field="":lbl "" \
-            --field="$answer2":lbl "" \
-            --button="    $(gettext "I did not know it")   !$img_no":3 \
-            --button="    $(gettext "I Knew it")   !$img_yes":2
-        fi
+        ui_card_answer "${answer1}" "${answer2}"
     }
 
     if ! [ -t 1 ]; then
@@ -264,8 +262,7 @@ function practice_a() {
         rm -f "${exstate}"
         if tp_open_terminal "$(gettext "Flashcards")" \
             env HOME="${HOME}" bash "$DS/practice/strt.sh" "$tpc" exercise a; then
-            if tp_wait_state "${exstate}"; then
-                tp_state_read "${exstate}"
+            if tp_wait_state "${exstate}" && tp_state_read "${exstate}"; then
                 export count_easy count_hard count_learn step
                 if [ "${tp_phase}" = "done" ]; then
                     export count_hard count_learn
@@ -276,6 +273,8 @@ function practice_a() {
                 return
             fi
         fi
+        strt 0
+        return
     fi
 
     while read -r item; do
@@ -328,13 +327,7 @@ function practice_a() {
                 break & score && return
             else
                 answer
-                ans=$?
-                if [ ${ans} = 2 ]; then
-                    count_hard=$((count_hard-1))
-                    count_learn=$((count_learn+1))
-                elif [ ${ans} = 3 ]; then
-                    echo "${item}" >> a.3.tmp
-                fi
+                echo "${item}" >> a.3.tmp
             fi
         done < ./a.3
         
@@ -397,32 +390,16 @@ function practice_b(){
         fi
     }
     
-    ofonts() {
-        while read -r name; do
-        echo "<span font_desc='Arial 13'> $name </span>"
-        done <<< "${tmp}"
-    }
-
     mchoise() {
-        if [ -t 1 ]; then
-            dlg="$(ui_select_list "${question}" "${tmp}")"
-        else
-            dlg="$(ofonts | yad --list --title=" " \
-            --text="${question}" \
-            --separator=" " --always-print-result \
-            --skip-taskbar --no-scroll --vscroll-policy=never \
-            --text-align=center --center --on-top \
-            --buttons-layout=edge --undecorated \
-            --no-headers --select-action=: \
-            --width=450 --height=320 --borders=16 \
-            --column=Option \
-            --button="!window-close":1 \
-            --button="!media-seek-forward":0)"
-        fi
+        dlg="$(ui_select_list "${question}" "${tmp}")"
     }
 
     if ! [ -t 1 ]; then
-        tp_practice_launch b "$(gettext "Multiple-choice")" && return
+        if tp_practice_launch b "$(gettext "Multiple-choice")"; then
+            return
+        fi
+        strt 0
+        return
     fi
 
     P=4; s=11
@@ -472,8 +449,7 @@ function practice_b(){
             fonts; mchoise
             if [ $? = 0 ]; then
                 if grep -o "$srce" <<< "${dlg}"; then
-                    count_hard=$((count_hard-1))
-                    count_learn=$((count_learn+1))
+                    echo "${item}" >> b.3.tmp
                 else
                     play "$snd" >/dev/null 2>&1 &
                     echo "${item}" >> b.3.tmp
@@ -525,26 +501,15 @@ function practice_c() {
     }
 
     question() {
-        if [ -t 1 ]; then
-            ui_recognize_card "${lst}" "$DS/play.sh" play_word "${trgt}" "${cdid}"
-        else
-            cmd_play="$DS/play.sh play_word "\"${trgt}\"" ${cdid}"
-            (sleep 0.5 && "$DS/play.sh" play_word "${trgt}" ${cdid}) &
-
-            yad --form --title=" " \
-            --text="<small><small>$(gettext "Do you recognize this word?")</small></small>\n\n$lquestion" \
-            --skip-taskbar --text-align=center --center --on-top \
-            --buttons-layout=edge --image-on-top --undecorated \
-            --width=450 --height=270 --borders=16 \
-            --button="!window-close":1 \
-            --button="      $(gettext "No")     !$img_no":3 \
-            --button="      $(gettext "Yes")    !$img_yes":2 \
-            --button="!audio-volume-high":"$cmd_play"
-        fi
+        ui_recognize_card "${lst}" "$DS/play.sh" play_word "${trgt}" "${cdid}"
     }
 
     if ! [ -t 1 ]; then
-        tp_practice_launch c "$(gettext "Recognize Pronunciation")" && return
+        if tp_practice_launch c "$(gettext "Recognize Pronunciation")"; then
+            return
+        fi
+        strt 0
+        return
     fi
 
     p=1
@@ -588,10 +553,7 @@ function practice_c() {
         while read -r trgt; do
             fonts; question
             ans=$?
-            if [ ${ans} = 2 ]; then
-                count_hard=$((count_hard-1))
-                count_learn=$((count_learn+1))
-            elif [ ${ans} = 3 ]; then
+            if [ ${ans} = 2 ] || [ ${ans} = 3 ]; then
                 echo "${trgt}" >> c.3.tmp
             elif [ ${ans} = 1 ]; then
                 export count_hard count_learn
@@ -730,13 +692,7 @@ function practice_d() {
                 break & score && return
             else
                 answer
-                ans=$?
-                if [ ${ans} = 2 ]; then
-                    count_hard=$((count_hard-1))
-                    count_learn=$((count_learn+1))
-                elif [ ${ans} = 3 ]; then
-                    echo "${item}" >> d.3.tmp
-                fi
+                echo "${item}" >> d.3.tmp
             fi
         done < ./d.3
         
@@ -761,51 +717,20 @@ function practice_e() {
                 |sed "s|[a-z]|\.|g" \
                 |sed 's|\.|\ .|g' \
                 |sed 's/^\s*./\U&\E/g' \
-                |sed "s|\.|<span color='#989898'>\.<\/span>|g")"
+                |sed "s|\.|<span color='#666666'>\.<\/span>|g")"
             fi
         else
             hint="$@"
         fi
         text="<small><small>$(gettext "Listen and then try to write this sentence")</small></small>\n\n<span color='#818181' font_desc='Verdana Bold 13'>$hint</span>\n"
         
-        if [ -t 1 ]; then
-            entry="$(ui_write_sentence "${text}" "$DS/play.sh" play_sentence "${cdid}")"
-        else
-            entry=$(yad --form --title=" " \
-            --text="${text}" \
-            --name=Idiomind --class=Idiomind \
-            --separator="" --focus-field=1 \
-            --window-icon=$DS/images/logo.png \
-            --image="$DS/images/bar.png" \
-            --buttons-layout=end --skip-taskbar \
-            --undecorated --center --on-top \
-            --align=center --image-on-top \
-            --width=620 --height=250 --borders=15 \
-            --field="" "" \
-            --button="!window-close":1 \
-            --button="!audio-volume-high":"$cmd_play" \
-            --button="!media-seek-forward":0)
-        fi
+        entry="$(ui_write_sentence "${text}" "$DS/play.sh" play_sentence "${cdid}")"
     }
         
     check() {
         sz=$((sz+3))
-        if [ -t 1 ]; then
-            ui_check_result "${check_trgt_label^}" "${green_words}" "${porcent_match_label} ${hits}" \
-                "$DS/play.sh" play_sentence "${cdid}"
-        else
-            yad --form --title=" " \
-            --text="<small><small>$(gettext "Result:")</small></small>\n\n<span font_desc='Arial 15'>${check_trgt_label^}</span>\\n" \
-            --name=Idiomind --class=Idiomind \
-            --window-icon=idiomind \
-            --skip-taskbar --wrap --image-on-top --center --on-top \
-            --undecorated --buttons-layout=end \
-            --width=620 --height=250 --borders=15 \
-            --field="":lbl "" \
-            --field="<span font_desc='Arial 12'>$green_words</span>\n\n<small>$porcent_match_label $hits</small>":lbl \
-            --button="!audio-volume-high":"$cmd_play" \
-            --button="!media-seek-forward":2
-        fi
+        ui_check_result "${check_trgt_label^}" "${green_words}" "${porcent_match_label} ${hits}" \
+            "$DS/play.sh" play_sentence "${cdid}"
     }
     
     get_text() {
@@ -870,7 +795,7 @@ function practice_e() {
             color="#E5801D"
         else
             [ -n "$entry" ] && echo "${trgt}" >> ./e.3
-            [ -n "$entry" ] && export count_learn=$((count_learn+1))
+            [ -n "$entry" ] && export count_hard=$((count_hard+1))
             color="#D11B5D"
         fi
         porcent_match_label="<b>$porcent_match%</b>"
@@ -879,7 +804,11 @@ function practice_e() {
         }
     
     if ! [ -t 1 ]; then
-        tp_practice_launch e "$(gettext "Listen and Writing Sentences")" && return
+        if tp_practice_launch e "$(gettext "Listen and Writing Sentences")"; then
+            return
+        fi
+        strt 0
+        return
     fi
 
     cleanups ./0.s
@@ -1200,7 +1129,6 @@ function practices() {
         strt 0
     else
         cleanups "${dir_practice}/$active_practice.2" "${dir_practice}/$active_practice.3"
-        img_cont="$DS/images/cont.png"
         img_no="$DS/images/nou.png"
         img_yes="$DS/images/yes.png"
         echo "0p.$tpc.p0" >> "$log"
@@ -1235,10 +1163,10 @@ function strt() {
      
     
     i=1
+    _pra_set="${active_practice+set}"; _pra_prev="${active_practice-}"
     for practice in a b c d e; do
         if [ ! -s "./$practice.0" ]; then
 			active_practice=${practice}; get_notes start
-            unset active_practice
 		fi
         if [ -f ./$practice.1 ]; then
 			declare label_count_${practice}="<i>( $(($(wc -l < ./$practice.0) - $(wc -l < ./$practice.1))) )</i>"
@@ -1258,6 +1186,8 @@ function strt() {
         if [ ! -f ./.${i} ]; then echo 1 > ./.${i}; fi
         ((i=i+1))
     done
+    if [ -n "${_pra_set}" ]; then active_practice="${_pra_prev}"; else unset active_practice; fi
+    unset _pra_set _pra_prev
 
     
     include "$DS/ifs/extensions/practice"
@@ -1284,7 +1214,11 @@ function strt() {
     if [[ "${1}" = 1 ]]; then
 
         declare congr${icon}="<span font_desc='Arial Bold 12'>  —  $(gettext "Test completed") </span>"
-		info="<span font_desc='Arial Bold  11'>$(gettext "Congratulations!")</span> "
+		learnt_total=0
+		if [ -n "${active_practice:-}" ] && [ -f "./${active_practice}.1" ]; then
+			learnt_total="$(sort -u "./${active_practice}.1" | wc -l)"
+		fi
+		info="<span font_desc='Arial Bold  11'>$(gettext "Congratulations!")</span>\n<b><small>$(gettext "Easy")</small> <b>${count_easy:-0}</b>    <small>$(gettext "Learning")</small> <b>${count_learn:-0}</b>    <small>$(gettext "Difficult")</small> <b>${count_hard:-0}</b>    <small>$(gettext "Learnt")</small> <b>${learnt_total}</b></b>"
         echo 21 > .${icon}; export plus$active_practice=""
         declare label_count_${active_practice}=""
         count_seccion_active_practice=""
@@ -1297,7 +1231,7 @@ function strt() {
             count_learnt=0
         fi
         if [ -f ./$active_practice.1 ] || [ -f ./$active_practice.2 ] || [ -f ./$active_practice.3 ]; then
-			info=" <b><small>$(gettext "Easy")</small> <b>$count_learnt</b>    <small>$(gettext "Learning")</small> <b>$count_learn</b>    <small>$(gettext "Difficult")</small> <b>$count_hard</b></b>  "
+			info=" <b><small>$(gettext "Easy")</small> <b>$count_easy</b>    <small>$(gettext "Learning")</small> <b>$count_learn</b>    <small>$(gettext "Difficult")</small> <b>$count_hard</b>    <small>$(gettext "Learnt")</small> <b>$count_learnt</b></b>  "
 		fi
 		declare label_count_${active_practice}=""
     fi
