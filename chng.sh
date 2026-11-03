@@ -19,9 +19,11 @@ if [[ ${1} = 0 ]]; then
     _stop=0
 	
     _play() {
+        v=""
         if [[ ${stnrd} = 1 ]]; then
             a=$(tpc_db 1 config audio)
             n=$(tpc_db 1 config ntosd)
+            v=$(tpc_db 1 config vismode ""); [ -z "${v}" ] && v=present
             l=$(tpc_db 1 config loop); ! [[ ${l} =~ $numer ]] && l=0
             rw=$(tpc_db 1 config rword); ! [[ ${rw} =~ $numer ]] && rw=0
             [ ! -f "$DT"/playlck ] && echo 0 > "$DT"/playlck
@@ -32,11 +34,13 @@ if [[ ${1} = 0 ]]; then
 				"$DS"/stop.sh 2  & exit 1
             fi
             
-            if [ ${n} = TRUE ]; then
-                notify-send -i "${icon}" "${trgt}" "${srce}" -t $((4000+${pause_osd}000)) &
-            fi
+            case "${v}" in
+                present) printf '%s\n%s\n%s\n---\n' "${trgt}" "${srce}" "${icon}" >&9 2>/dev/null ;;
+                osd)     notify-send -i "${icon}" "${trgt}" "${srce}" -t $((4000+${pause_osd}000)) & ;;
+                none)    ;;
+            esac
             
-            if [ ${a} = TRUE ]; then 
+            if [ ${a} = TRUE ]; then
 				sleep 0.2; sle=0.1; spn=1
                 [ ${type} = 1 -a ${rw} = 1 ] && spn=${word_rep}
                 [ ${type} = 2 -a ${rw} = 2 ] && spn=${sentence_rep} && sle=1
@@ -48,6 +52,7 @@ if [[ ${1} = 0 ]]; then
                     let ritem++
                 done )
             fi
+
         else
             echo -e "${trgt}" > "$DT/playlck"
             notify-send -i "${icon}" "${trgt}" "${srce}" -t $((4000+${pause_osd}000)) &
@@ -56,6 +61,15 @@ if [[ ${1} = 0 ]]; then
         
         if [[ ${n} = TRUE ]] && [[ ${l} -lt ${pause_osd} ]]; then l=${pause_osd}; fi
         [[ ${stnrd} = 1 ]] && sleep ${l}
+
+        if [ "${v}" = present ]; then
+            cmd=""
+            IFS= read -r -t 0.1 cmd <&8 2>/dev/null || true
+            case "${cmd//$'\n'/}" in
+                advance) return ;;
+                stop) "$DS/stop.sh" 2; exit 0 ;;
+            esac
+        fi
     }
     export -f _play
 
@@ -190,8 +204,7 @@ $(gettext "If necessary, close the program from the panel icon and start it agai
     --button=""!preferences-system:2 \
     --button="$(gettext "Stats")":"'$DS/ifs/tls.sh' _stats" \
     --button="$(gettext "New")"!document-new:3 \
-    --button="$(gettext "Apply")":2 \
-    --button="$(gettext "Close")"!window-close:1)
+    --button="$(gettext "Apply")":2)
     ret=$?
 	
     if [ $ret -eq 3 ]; then

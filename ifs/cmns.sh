@@ -61,8 +61,8 @@ function cdb () {
 
 function tpc_db() {
     ta="${2}"
-    co="$(sed "s|'|''|g" <<< "${3}")"
-    va="$(sed "s|'|''|g" <<< "${4}")"
+    co="$(sed "s|'|''|g" <<< "${3:-}")"
+    va="$(sed "s|'|''|g" <<< "${4:-}")"
     
     if [ $1 = 1 ]; then # read
         sqlite3 "$DC_tlt/tpc" "select ${co} from '${ta}';"

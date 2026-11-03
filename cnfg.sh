@@ -220,8 +220,8 @@ config_dlg() {
 					kill -9 $(pgrep -f "$DS/ifs/tls.sh itray")
 					rm -f "$DT/tray.pid"
 				fi
-				if  ps -A |pgrep -f "yad --title=Idiomind --list"; then
-           			kill -9 $(pgrep -f "yad --title="Idiomind" --list")
+				if  ps -A |pgrep -f "yad --title=Idiomind --icons"; then
+           			kill -9 $(pgrep -f "yad --title="Idiomind" --icons")
            		fi
            		)
             else

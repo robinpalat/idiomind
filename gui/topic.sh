@@ -84,6 +84,35 @@ add_pos_col() {
         <(printf '%s\n' "${ls1}") -
 }
 
+# YAD returns 252 when the dialog is closed through the window manager
+# button (or Esc). main.sh interprets 2 as "apply the marked notes", so
+# remap the close event to that code without adding a visible button.
+yad_close_code() {
+    local ret=$?
+    [ "$ret" -eq 252 ] && ret=2
+    return "$ret"
+}
+
+# A plugged list only prints its result when it receives SIGUSR1. The
+# notebook sends that signal when one of its buttons is pressed, but not
+# when the window is closed with the X button, so the checkbox state would
+# be lost and apply would find an empty cnf1. Ask the child for its state
+# periodically and keep the last value of each row, so cnf1 always holds
+# the current selection when the dialog closes.
+yad_list_print() {
+    local tmpfifo
+    tmpfifo="$DT/.yad_list_print_$$"
+    mkfifo "$tmpfifo" 2>/dev/null
+    awk -F'|' '{a[$1]=$0} END{for (k in a) print a[k]}' < "$tmpfifo" &
+    local awkpid=$!
+    yad "$@" > "$tmpfifo" &
+    local ypid=$!
+    ( sleep 0.3; while kill -0 "$ypid" 2>/dev/null; do kill -USR1 "$ypid" 2>/dev/null; sleep 0.05; done ) &
+    wait "$ypid"
+    wait "$awkpid"
+    rm -f "$tmpfifo"
+}
+
 function notebook_1() {
 	
     native_lang_info="$(topic_language_notice)"
@@ -114,7 +143,7 @@ function notebook_1() {
         while [ -p "$listfifo" ]; do timeout 5 cat "$listfifo" 2>/dev/null; done
     }
 
-    listfeed | yad --list --tabnum=1 --window-icon=idiomind \
+    listfeed | yad_list_print --list --tabnum=1 --window-icon=idiomind \
     --plug=$KEY --print-all --separator='|' --listen \
     --image="$DS/images/$((stts%2)).png" --image-on-top \
     --dclick-action="$DS/vwr.sh 1" \
@@ -123,7 +152,8 @@ function notebook_1() {
     --search-column=1 --regex-search --hide-column=4 --tooltip-column=4 \
     --column=Name:TEXT \
     --column=@fore@ --column=Learned:CHK --column=@back@:TIP > "$cnf1" &
-    ([ -n "${ls2}" ] && echo "${ls2}" | awk '{print $0"\n"NR}') |yad --list --tabnum=2 \
+    ([ -n "${ls2}" ] && echo "${ls2}" | awk '{print $0"\n"NR}') | \
+    yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2"  \
     --expand-column=0 --no-headers \
@@ -160,8 +190,8 @@ function notebook_1() {
     --tab="  $(gettext "Manage")  " \
     --width=530 --height=560 --borders=5 --tab-borders=0 \
     --button="$(gettext "Play")":"$cmd_play" \
-    --button="$(gettext "Practice")":"$cmd_prac" \
-    --button="$(gettext "Close")"!'window-close':2
+    --button="$(gettext "Practice")":"$cmd_prac"
+    yad_close_code
 } >/dev/null 2>&1
 
 # TODO
@@ -235,8 +265,9 @@ function notebook_2() {
     --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Manage")  " \
-    --width=530 --height=560 --borders=5 --tab-borders=0 \
-    --button="$(gettext "Close")"!'window-close':2
+    --width=530 --height=560 --borders=5 --tab-borders=0
+
+    yad_close_code
     
 } >/dev/null 2>&1
 
@@ -294,8 +325,8 @@ function notebook_3() {
     --tab="  $(gettext "Manage")  " \
     --width=530 --height=560 --borders=5 --tab-borders=0 \
     --button="$(gettext "Play")":"$cmd_play" \
-    --button="$(gettext "Practice")":"$cmd_prac" \
-    --button="$(gettext "Close")"!'window-close':2
+    --button="$(gettext "Practice")":"$cmd_prac"
+    yad_close_code
 } >/dev/null 2>&1
 
 
@@ -338,39 +369,76 @@ function tpc_view() {
     --tab="  $(gettext "Notes") " \
     --tab="  $(gettext "Details")  " \
     --width=530 --height=560 --borders=5 --tab-borders=0 \
-    --button="$(gettext "Install")":0 \
-    --button="$(gettext "Close")!window-close":1
+    --button="$(gettext "Install")":0
+
 } >/dev/null 2>&1
 
 
 
 
+#function panelini() {
+
+    ## --------------------------------------------------
+    ## Theme detection: pick the icon directory that
+    ## matches the active XFCE GTK theme.
+    ## --------------------------------------------------
+    #local theme_dir theme_name
+    #theme_name="$(xfconf-query -c xsettings -p /Net/ThemeName 2>/dev/null | tr '[:upper:]' '[:lower:]')"
+    #case "$theme_name" in
+        #*dark*|*noir*|*black*|*night*|*dusk*|*midnight*|*obsidian*|*dracula*|*eclipse*|*shadow*|*abyss*|*void*|*twilight*|*charcoal*|*graphite*|*slate*|*ash*|*ink*|*oscur*|*scur*|*nuit*|*dunkel*|*finster*|*nacht*|*preto*|*preta*|*mörk*|*mørk*|*tumma*|*tume*|*tams*|*meln*|*juod*|*koyu*|*sötét*|*sotet*|*tmav*|*crn*|*gelap*|*malam*|*tối*|*inverse*|*inverted*)
+            #theme_dir="$DS/default/dark_theme" ;;
+        #*)
+            #theme_dir="$DS/default/light_theme" ;;
+    #esac
+    #if [ ! -d "$theme_dir" ]; then
+        #if [ "$theme_dir" = "$DS/default/dark_theme" ] && [ -d "$DS/default/light_theme" ]; then
+            #theme_dir="$DS/default/light_theme"
+        #elif [ -d "$DS/default/dark_theme" ]; then
+            #theme_dir="$DS/default/dark_theme"
+        #else
+            #yad --title="Idiomind" --class=Idiomind --name=Idiomind \
+            #--text="$(gettext "No icon theme directory was found.")" \
+            #--window-icon="$DS/images/logo.png" \
+            #--center --on-top --fixed --width=300 \
+            #--button="$(gettext "Close")":0 >/dev/null 2>&1
+            #return 0
+        #fi
+    #fi
+
+    ## --------------------------------------------------
+    ## PANEL 2: ICONS (parte inferior)
+    ## --------------------------------------------------
+
+    #yad --title="Idiomind" --icons \
+        #--single-click \
+        #--read-dir="$theme_dir" \
+        #--item-width=60 \
+        #--generic \
+        #--name=Idiomind \
+        #--class=Idiomind \
+        #--window-icon="$DS/images/logo.png" \
+        #--sticky --fixed \
+        #--width=197 \
+        #--height=250 ${geometry} \
+        #--skip-taskbar \
+        #--borders=4 --no-buttons
+
+#}
+
+
+
 function panelini() {
-
-
-
-    # --------------------------------------------------
-    # PANEL 2: ICONS (parte inferior)
-    # --------------------------------------------------
-
-    yad --icons \
-        --single-click \
-        --read-dir="$DS/default/" \
-        --item-width=60 \
-        --generic \
-        --title="Idiomind" \
-        --name=Idiomind \
-        --class=Idiomind \
-        --window-icon="$DS/images/logo.png" \
-        --sticky --fixed \
-        --width=197 \
-        --height=205 \
-        --on-top ${geometry} \
-        --skip-taskbar \
-        --borders=4 --no-buttons
+    yad --fixed --form --title="Idiomind" \
+    --name=Idiomind --class=Idiomind \
+    --always-print-result \
+    --window-icon="$DS/images/logo.png" --skip-taskbar --on-top \
+    --on-top --no-buttons --text-align=left --align=left \
+    --width=160 --height=150 ${geometry} --borders=10 \
+    --field=" $(gettext "New")"!'/usr/share/idiomind/images/add2_dark.png':btn "$DS/add.sh 'new_items'" \
+    --field=" $(gettext "Home")"!'/usr/share/idiomind/images/topic_dark.png':btn "idiomind 'topic'" \
+    --field=" $(gettext "Play")"!'/usr/share/idiomind/images/play_dark.png':btn /usr/share/idiomind/gui/panel_play.sh \
+    --field=" $(gettext "Practice")"!'/usr/share/idiomind/images/pract_dark.png':btn "$DS/practice/strt.sh" \
+    --field=" $(gettext "Index")"!'/usr/share/idiomind/images/index_dark.png':btn "$DS/chng.sh"
 
 }
-        #--button=""!'list-add'!"$(gettext "Add Note, which can be a word or a sentence")":"$DS/add.sh 'new_items'" \
-        #--button=""!'go-home'!"$(gettext "My Active Topic")":"idiomind 'topic'" \
-        #--button=""!'gtk-index'!"$(gettext "My topics")":"$DS/chng.sh"
 

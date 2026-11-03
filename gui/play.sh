@@ -23,6 +23,32 @@ gui_play_synth_hint() {
     msg "$info" dialog-error Info
 }
 
+# Presentación fullscreen de Play (GTK3). Se abre una sola vez y se
+# actualiza por FIFO; el motor Play sigue gestionando playlists, audio
+# y avance. Los comandos "advance" y "stop" llegan por otro FIFO.
+play_present_open() {
+    command -v python3 >/dev/null 2>&1 || return 1
+    play_present_fifo="$DT/play_present.fifo"
+    play_present_cmd_fifo="$DT/play_present.cmd"
+    rm -f "$play_present_fifo" "$play_present_cmd_fifo"
+    mkfifo "$play_present_fifo" "$play_present_cmd_fifo" 2>/dev/null || return 1
+    python3 "$DS/gui/play_present.py" "$play_present_fifo" "$play_present_cmd_fifo" &
+    play_present_pid=$!
+    exec 9>"$play_present_fifo"
+    exec 8<>"$play_present_cmd_fifo"
+    echo "$play_present_pid" > "$DT/play_present.pid"
+    return 0
+}
+
+play_present_close() {
+    exec 9>&- 2>/dev/null
+    exec 8>&- 2>/dev/null
+    [ -n "${play_present_pid:-}" ] && kill "$play_present_pid" 2>/dev/null
+    rm -f "${play_present_fifo:-}" "${play_present_cmd_fifo:-}" "$DT/play_present.pid"
+    play_present_pid=""
+    return 0
+}
+
 gui_play_settings_rows() {
 	    if [ ${stts} -gt 10 ]; then # addons 1 (addon_name) exclusive play panel
 			for ad in "$DS/ifs/extensions/play"/*; do # addons 2
@@ -132,6 +158,13 @@ gui_play_lists_options() {
     unset iteml[${rword}]
     lst=`for i in "${iteml[@]}"; do echo -n "!$i"; done`
     lst_opts1="$set$lst"
+    vismode=$(tpc_db 1 config vismode "") || vismode=present
+    [ -z "$vismode" ] && vismode=present
+    case "$vismode" in
+        osd) vlist="osd|present|none" ;;
+        none) vlist="none|present|osd" ;;
+        *) vlist="present|osd|none" ;;
+    esac
     tab1=$(mktemp "$DT/XXXXXX")
     tab2=$(mktemp "$DT/XXXXXX")
     c=$((RANDOM%100000)); KEY=$c
@@ -157,7 +190,8 @@ gui_play_lists_options() {
 		--field="$(gettext "Play audio")":CHK "$audio" \
 		--field="$(gettext "Use desktop notifications")":CHK "$ntosd" \
 		--field="$(gettext "Pause between notes (sec)")":SCL "$loop" \
-		--field="$(gettext "Repeat sounding out")":CB "$lst_opts1" > "$tab2" &
+		--field="$(gettext "Repeat sounding out")":CB "$lst_opts1" \
+		--field="$(gettext "Presentation")":CB "$vlist" > "$tab2" &
     else
 		yad --plug=$KEY --form --tabnum=2 \
 		--align=right --center \

@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Exec=/usr/share/idiomind/chng.sh
+Name=Index
+Icon=/usr/share/idiomind/images/index_dark.png
+StartupWMClass=Idiomind
+Terminal=false
+StartupNotify=false
+Name[es]=Índice
+Name[en]=Index
+Name[it]=Indice
+Name[pt]=Índice
+Name[fr]=Index
+Name[de]=Index

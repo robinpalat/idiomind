@@ -25,6 +25,12 @@ for f in "$DS/ifs/cmns.sh" "$DS/default/sets.cfg"; do
     source "$f"
 done
 
+# Presentación fullscreen de Play (GTK3).
+if [ -n "${DS:-}" ] && [ -r "$DS/gui/play.sh" ]; then
+    # shellcheck source=/dev/null
+    source "$DS/gui/play.sh"
+fi
+
 # Topic explicito ($2, p. ej. Play desde Tasks): tiene prioridad sobre
 # el topic activo de c.conf sin modificarlo. $1 (flag) no se toca.
 if [ -n "${2:-}" ]; then
@@ -34,6 +40,13 @@ if [ -n "${2:-}" ]; then
 fi
 
 rplay=$(tpc_db 1 config rplay) || rplay=""
+# Migración vismode + lectura (present/osd/none).
+if ! sqlite3 "$DC_tlt/tpc" "SELECT vismode FROM config;" &>/dev/null; then
+    sqlite3 "$DC_tlt/tpc" "ALTER TABLE config ADD COLUMN vismode TEXT;"
+    sqlite3 "$DC_tlt/tpc" "UPDATE config SET vismode='present';"
+fi
+vismode=$(tpc_db 1 config vismode "") || vismode="present"
+[ -z "$vismode" ] && vismode="present"
 ritem=0
 stnrd=0
 
@@ -109,6 +122,7 @@ fi
 
 if [ "$ok" -eq 1 ]; then
     echo -e "${tpc}" > "$DT/playlck"
+    [ "$vismode" = present ] && play_present_open
     if [ "$rplay" = "TRUE" ]; then
         while :; do
             "$DS/chng.sh" 0
@@ -122,6 +136,7 @@ if [ "$ok" -eq 1 ]; then
     else
         "$DS/chng.sh" 0
         echo 0 > "$DT/playlck"
+        [ "$vismode" = present ] && play_present_close
         exit 0
     fi
 else
@@ -131,3 +146,4 @@ else
         notify-send "$(gettext "Nothing to play")" "$(gettext "Exiting...")" -t 3000 &
     fi
 fi
+[ "$vismode" = present ] && play_present_close

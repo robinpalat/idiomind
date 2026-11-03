@@ -15,7 +15,7 @@ function create_tpcdb() {
     
     echo -n "create table if not exists config \
     (words TEXT, sntcs TEXT, marks TEXT, learn TEXT, diffi TEXT, rplay TEXT, audio TEXT, \
-    ntosd TEXT, loop TEXT, rword TEXT, acheck TEXT, repass TEXT);" |sqlite3 "${tpcdb}"
+    ntosd TEXT, loop TEXT, rword TEXT, acheck TEXT, repass TEXT, vismode TEXT);" |sqlite3 "${tpcdb}"
     
     echo -n "create table if not exists reviews \
     (date1 TEXT,date2 TEXT,date3 TEXT,date4 TEXT,date5 TEXT,\
@@ -69,9 +69,9 @@ function create_tpcdb() {
     '${dtec}','','','','','','','','','');"
     sqlite3 "${tpcdb}" "pragma busy_timeout=2000;\
     insert into config (words,sntcs,marks,learn,\
-    diffi,rplay,audio,ntosd,loop,rword,acheck,repass) \
+    diffi,rplay,audio,ntosd,loop,rword,acheck,repass,vismode) \
     values ('FALSE','FALSE','FALSE','FALSE','FALSE','FALSE',\
-    'FALSE','FALSE','FALSE','FALSE','TRUE','0');"
+    'FALSE','FALSE','FALSE','FALSE','TRUE','0','present');"
     sqlite3 "${tpcdb}" "pragma busy_timeout=2000;\
     insert into reviews (date1) values ('');"
     echo -n "pragma foreign_keys=ON" |sqlite3 "${tpcdb}"

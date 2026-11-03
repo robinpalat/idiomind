@@ -32,14 +32,10 @@ if [[ $1 == --do ]]; then
         topics) "$DS/chng.sh" >/dev/null 2>&1 & ;;
         play)   set_forced 0; "$DS/bcle.sh" >/dev/null 2>&1 & ;;
         stop)   set_forced 1; "$DS/stop.sh" 2 >/dev/null 2>&1 & ;;
-        tasks)  # pseudo-submenú: lista emergente junto al puntero
+        tasks)  # pseudo-submenú: lista emergente (misma función que el panel)
                 [[ -r $tasks_file ]] || exit 0
-                sel=$(grep -v '^$' "$tasks_file" | GDK_BACKEND=x11 yad --list --no-headers \
-                        --undecorated --mouse --close-on-unfocus --no-buttons \
-                        --width=380 --height=320 --title="$lbl9" \
-                        --column="$lbl9" --separator= 2>/dev/null)
-                sel=${sel%|}
-                [[ -n $sel ]] && "$DS/ifs/tasks.sh" "$sel" >/dev/null 2>&1 &
+                declare -F show_tasks_menu >/dev/null 2>&1 || source "$DS/ifs/tls.sh"
+                show_tasks_menu tray
                 ;;
         task)   
                 t=$(printf '%s' "$3" | base64 -d 2>/dev/null)

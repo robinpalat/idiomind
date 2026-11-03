@@ -33,6 +33,10 @@ on_quit() {
 
 on_play() {
     [ -f "$DT/playlck" ] && echo 0 > "$DT/playlck"
+    if [ -f "$DT/play_present.pid" ]; then
+        kill "$(< "$DT/play_present.pid")" 2>/dev/null
+        rm -f "$DT/play_present.pid" "$DT/play_present.fifo" "$DT/play_present.cmd"
+    fi
     killall bcle.sh &
     if ps -A |pgrep -f "espeak"; then killall espeak & fi
     if ps -A |pgrep -f "mplayer"; then killall mplayer & fi

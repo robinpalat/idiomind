@@ -1393,6 +1393,46 @@ itray() {
 }
 
 
+# Muestra el menú de tareas. Es la única implementación del menú y se
+# reutiliza desde el System Tray y desde el panel.
+#   $1 = tray  -> junto al puntero (comportamiento original del System Tray).
+#   $1 = panel -> junto al icono Task del panel, usando la posición del
+#                 puntero en el momento de la pulsación, clampeada a pantalla.
+show_tasks_menu() {
+    local mode="${1:-tray}"
+    local tasks_file="${DT}/tasks"
+    [ -r "$tasks_file" ] || return 0
+
+    local lbl9="${lbl9:-$(gettext "Tasks" 2>/dev/null)}"
+    [ -n "$lbl9" ] || lbl9="Tasks"
+
+    local pos=()
+    if [ "$mode" = "panel" ] && command -v xdotool >/dev/null 2>&1; then
+        local sw sh mx my mw=380 mh=320
+        read -r sw sh <<< "$(xdotool getdisplaygeometry 2>/dev/null | tr 'x' ' ')"
+        eval "$(xdotool getmouselocation --shell 2>/dev/null)"
+        mx="${X:-0}"; my="${Y:-0}"
+        [ "$mx" -lt 0 ] && mx=0
+        [ "$my" -lt 0 ] && my=0
+        if [ -n "$sw" ] && [ $((mx + mw)) -gt "$sw" ]; then mx=$((sw - mw)); fi
+        if [ -n "$sh" ] && [ $((my + mh)) -gt "$sh" ]; then my=$((sh - mh)); fi
+        [ "$mx" -lt 0 ] && mx=0
+        [ "$my" -lt 0 ] && my=0
+        pos=(--posx="$mx" --posy="$my")
+    else
+        pos=(--mouse)
+    fi
+
+    local sel
+    sel=$(grep -v '^$' "$tasks_file" | GDK_BACKEND=x11 yad --list --no-headers \
+            --undecorated "${pos[@]}" --close-on-unfocus --no-buttons \
+            --width=380 --height=320 --title="$lbl9" \
+            --column="$lbl9" --separator= 2>/dev/null)
+    sel=${sel%|}
+    [ -n "$sel" ] && "$DS/ifs/tasks.sh" "$sel" >/dev/null 2>&1 &
+}
+
+
 about() {
     # Wrapper compat (Paso 1): implementación canónica en gui/common.sh.
     if ! declare -F gui_about >/dev/null 2>&1; then
@@ -1468,6 +1508,8 @@ case "$1" in
     translate_to ;;
     itray)
     itray ;;
+    show-tasks-menu)
+    show_tasks_menu "$2" ;;
     about)
     about ;;
     clipw)

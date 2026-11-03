@@ -1,0 +1,15 @@
+[Desktop Entry]
+Exec=/usr/share/idiomind/gui/panel_play.sh
+Icon=/usr/share/idiomind/images/play.png
+Version=3
+Encoding=UTF-8
+Type=Application
+Comment=Add new sentence
+Terminal=false
+Name=Play
+Name[es]=Reproducir
+Name[en]=Play
+Name[it]=Riproduci
+Name[pt]=Reproduzir
+Name[fr]=Lire
+Name[de]=Wiedergabe

@@ -1,0 +1,15 @@
+[Desktop Entry]
+Exec=/usr/share/idiomind/ifs/tls.sh show-tasks-menu panel
+Icon=/usr/share/idiomind/images/tasks.png
+Version=3
+Encoding=UTF-8
+Type=Application
+Comment=Tasks list
+Terminal=false
+Name=Tasks
+Name[es]=Tareas
+Name[en]=Tasks
+Name[it]=Attività
+Name[pt]=Tarefas
+Name[fr]=Tâches
+Name[de]=Aufgaben
