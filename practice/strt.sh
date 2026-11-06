@@ -707,6 +707,7 @@ function practice_e() {
     rm -f "${TP_AUDIO_PIDFILE}"
 
     dlg_question() {
+        local dot_dim=$'\033[38;5;242m' dot_rst=$'\033[0m'
         if [[ ${lang_question} != 1 ]]; then
             if grep -o -E 'Japanese|Chinese|Russian' <<< ${tlng}; then
                 hint=" "
@@ -717,7 +718,7 @@ function practice_e() {
                 |sed "s|[a-z]|\.|g" \
                 |sed 's|\.|\ .|g' \
                 |sed 's/^\s*./\U&\E/g' \
-                |sed "s|\.|<span color='#666666'>\.<\/span>|g")"
+                |sed "s|\.|${dot_dim}.${dot_rst}|g")"
             fi
         else
             hint="$@"
