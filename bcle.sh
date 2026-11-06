@@ -25,10 +25,11 @@ for f in "$DS/ifs/cmns.sh" "$DS/default/sets.cfg"; do
     source "$f"
 done
 
-# Presentación fullscreen de Play (GTK3).
-if [ -n "${DS:-}" ] && [ -r "$DS/gui/play.sh" ]; then
+# Presentación fullscreen de Play (YAD). El motor Play sigue gestionando
+# playlists, audio, avance y pausas; la interfaz sólo pinta.
+if [ -n "${DS:-}" ] && [ -r "$DS/gui/play_present.sh" ]; then
     # shellcheck source=/dev/null
-    source "$DS/gui/play.sh"
+    source "$DS/gui/play_present.sh"
 fi
 
 # Topic explicito ($2, p. ej. Play desde Tasks): tiene prioridad sobre

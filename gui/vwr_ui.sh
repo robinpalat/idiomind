@@ -65,6 +65,87 @@ play_cmd() {
 
 E=$'\033'
 
+# --- Color por estadisticas de practica (la misma regla que Play/colorize) ---
+# log3 = rojo (dificil), log2 = naranja (en aprendizaje), log1 = verde (facil).
+# Se cargan una sola vez por vista; la clasificacion no se vuelve a implementar.
+declare -A VWR_C1=() VWR_C2=() VWR_C3=()
+for _vwr_n in 1 2 3; do
+    _vwr_f="${DC_tlt}/practice/log${_vwr_n}"
+    [ -r "${_vwr_f}" ] || continue
+    while IFS= read -r _vwr_w; do
+        [ -n "${_vwr_w}" ] || continue
+        _vwr_w="${_vwr_w,,}"
+        case "${_vwr_n}" in
+            1) VWR_C1["${_vwr_w}"]=1 ;;
+            2) VWR_C2["${_vwr_w}"]=1 ;;
+            3) VWR_C3["${_vwr_w}"]=1 ;;
+        esac
+    done < "${_vwr_f}"
+done
+unset _vwr_n _vwr_f _vwr_w
+
+# Codigo de color de una palabra (38;2;R;G;B) o vacio si no tiene estadistica.
+vwr_word_color() {
+    local w="$1" core c
+    core="$(printf '%s' "$w" | sed -e 's/^[[:punct:]]*//' -e 's/[[:punct:]]*$//')"
+    for c in "$w" "$core"; do
+        [ -n "$c" ] || continue
+        c="${c,,}"
+        if [ -n "${VWR_C3[$c]:-}" ]; then printf '%s' '38;2;174;50;89'; return; fi
+        if [ -n "${VWR_C2[$c]:-}" ]; then printf '%s' '38;2;193;95;39'; return; fi
+        if [ -n "${VWR_C1[$c]:-}" ]; then printf '%s' '38;2;76;140;18'; return; fi
+    done
+}
+
+# Pinta una palabra con su color; $2 = estilo base ("1;" = negrita).
+vwr_paint_word() {
+    local t="$1" st="${2:-}" c
+    c="$(vwr_word_color "$t")"
+    # Sin color, el prefijo "1;" daria "[1;m" = SGR 1 + SGR 0 (reset), perdiendo
+    # la negrita; se recorta el ';' final. Con color se mantiene "1;38;2;...".
+    if [ -z "$c" ]; then
+        st="${st%;}"
+    fi
+    if [ -n "$c" ]; then
+        printf '%s[%s%sm%s%s[0m' "$E" "$st" "$c" "$t" "$E"
+    elif [ -n "$st" ]; then
+        printf '%s[%sm%s%s[0m' "$E" "$st" "$t" "$E"
+    else
+        printf '%s' "$t"
+    fi
+}
+
+# Pinta cada palabra de un texto (se conserva el estilo base indicado).
+vwr_paint_words() {  # $1 texto $2 estilo base
+    local text="$1" st="${2:-}" tok out=""
+    local -a toks
+    # read -ra separa por espacios SIN expansion de globs (un '*' no debe
+    # convertirse en la lista del directorio de trabajo).
+    read -ra toks <<< "$text"
+    for tok in "${toks[@]}"; do
+        out+="$(vwr_paint_word "$tok" "$st") "
+    done
+    printf '%s' "$out"
+}
+
+# Celda de palabra con color y relleno por ancho visible.
+vwr_paint_pad() {  # $1 ancho $2 palabra $3 estilo base
+    local w="$1" t="$2" st="${3:-}" c
+    c="$(vwr_word_color "$t")"
+    if [ -n "$c" ]; then
+        printf '%s[%s%sm%-*s%s[0m' "$E" "$st" "$c" "$w" "$t" "$E"
+    elif [ -n "$st" ]; then
+        printf '%s[%sm%-*s%s[0m' "$E" "$st" "$w" "$t" "$E"
+    else
+        printf '%-*s' "$w" "$t"
+    fi
+}
+
+# Par palabra-traduccion: solo la palabra lleva color estadistico.
+vwr_pair() {  # $1 ancho palabra $2 palabra $3 ancho traduccion $4 traduccion
+    printf '%s  %-*s' "$(vwr_paint_pad "$1" "$2" "")" "$3" "$4"
+}
+
 # Texto plano para plegar y medir: quita marcas HTML; los enlaces quedan URL.
 plain() {
     local t="$1"
@@ -106,14 +187,8 @@ emitc() {
 # Primera línea: contador a la izquierda y, si la nota está marcada,
 # asterisco en el extremo derecho usando el ancho real de la terminal.
 print_header() {
-    local h="[${POS}/${ntotal}]" pad
-    if [ "${mark}" = TRUE ]; then
-        pad=$(( COLS - ${#h} - 4 )); [ "${pad}" -lt 0 ] && pad=0
-        printf '%s%s%s%*s%s*%s\n' \
-            "${E}[2;90m" "${h}" "${E}[0m" "${pad}" '' "${E}[1m" "${E}[0m"
-    else
-        printf '%s%s%s\n' "${E}[2;90m" "${h}" "${E}[0m"
-    fi
+    local h="[${POS}/${ntotal}]"
+    printf '%s%s%s\n' "${E}[2;90m" "${h}" "${E}[0m"
 }
 
 # Resaltado del ejemplo: coincidencias COMPLETAS (límites de palabra),
@@ -171,11 +246,11 @@ build_grid() {
     i=0
     while [ "${i}" -lt "${#words[@]}" ]; do
         if [ "${mode}" = 2 ]; then
-            seg1="$(printf '%-*s  %-*s' "${o_w}" "${words[$i]}" "${t_w}" "${trans[$i]:-}")"
+            seg1="$(vwr_pair "${o_w}" "${words[$i]}" "${t_w}" "${trans[$i]:-}")"
             [ "${i}" -eq "${SEL}" ] && seg1="${E}[7m${seg1}${E}[0m"
             pl=${#GRID[@]}
             if [ -n "${words[$((i+1))]:-}" ]; then
-                seg2="$(printf '%-*s  %-*s' "${o_w}" "${words[$((i+1))]}" "${t_w}" "${trans[$((i+1))]:-}")"
+                seg2="$(vwr_pair "${o_w}" "${words[$((i+1))]}" "${t_w}" "${trans[$((i+1))]:-}")"
                 [ "$((i+1))" -eq "${SEL}" ] && seg2="${E}[7m${seg2}${E}[0m"
                 GRID+=("${seg1}  │  ${seg2}")
                 PARLINE[$((i+1))]=${pl}
@@ -188,12 +263,12 @@ build_grid() {
             o="${words[$i]}"; t="${trans[$i]:-}"
             pl=${#GRID[@]}
             if [ ${#t} -le "${t_w}" ]; then
-                seg="$(printf '%-*s  %-*s' "${o_w}" "${o}" "${t_w}" "${t}")"
+                seg="$(vwr_pair "${o_w}" "${o}" "${t_w}" "${t}")"
                 [ "${i}" -eq "${SEL}" ] && seg="${E}[7m${seg}${E}[0m"
                 GRID+=("${seg}")
             else
                 mapfile -t tl < <(fold -s -w "${t_w}" <<< "${t}")
-                seg="$(printf '%-*s  %s' "${o_w}" "${o}" "${tl[0]:-}")"
+                seg="$(vwr_paint_pad "${o_w}" "${o}" "")  ${tl[0]:-}"
                 [ "${i}" -eq "${SEL}" ] && seg="${E}[7m${seg}${E}[0m"
                 GRID+=("${seg}")
                 for (( k=1; k<${#tl[@]}; k++ )); do
@@ -245,9 +320,9 @@ build_list() {
         wtext="${words[$i]}"
         ttext="${trans[$i]:-}"
         if [ "${i}" -eq "${SEL}" ]; then
-            wcell="${E}[7m${wtext}${E}[0m"
+            wcell="${E}[7m$(vwr_paint_word "${wtext}" "1;")${E}[0m"
         else
-            wcell="${E}[1m${wtext}${E}[0m"
+            wcell="$(vwr_paint_word "${wtext}" "1;")"
         fi
         natural=$(( ${#wtext} + 3 + ${#ttext} ))
         line="${wcell} ${E}[2;90m·${E}[0m ${E}[2;90m${ttext}${E}[0m"
@@ -282,7 +357,7 @@ push_field() {
 # mismo para la oración y su traducción. Las líneas se marcan con ¦ para que
 # render las imprima sin recentrar.
 push_left_block() {
-    local style="$1" txt="$2" l pad width maxpad
+    local style="$1" txt="$2" color="${3:-0}" l pad width maxpad
     local -a blines=()
     pad=$(( COLS / 10 )); [ "${pad}" -lt 2 ] && pad=2
     maxpad=$(( (COLS - 1) / 4 )); [ "${maxpad}" -lt 1 ] && maxpad=1
@@ -290,7 +365,12 @@ push_left_block() {
     width=$(( COLS - 2 * pad )); [ "${width}" -lt 1 ] && width=1
     mapfile -t blines < <(fold -s -w "${width}" <<< "${txt}")
     for l in "${blines[@]}"; do
-        MA+=("¦$(printf '%*s' "${pad}" '')${style}${l}${E}[0m")
+        if [ "${color}" = 1 ]; then
+            l="$(vwr_paint_words "$l" "$style")"
+            MA+=("¦$(printf '%*s' "${pad}" '')${l}${E}[0m")
+        else
+            MA+=("¦$(printf '%*s' "${pad}" '')${E}[${style}m${l}${E}[0m")
+        fi
     done
 }
 
@@ -300,22 +380,24 @@ push_left_block() {
 # que exista un ejemplo ni de cuántas líneas ocupe.
 # $1 = separación entre original y traducción (1..2 según espacio).
 build_main() {
-    local g="$1" l
+    local g="$1" l mp=""
+    # El indicador de marcado va inmediatamente a la izquierda del TARGET.
+    [ "${mark}" = TRUE ] && mp="* "
     MA=()
     if [ "${KIND}" = sentence ]; then
         # Oración: bloque alineado a la izquierda con margen fijo.
-        push_left_block "${E}[1m" "$(plain "${ORIG}")"
+        push_left_block "1;" "$(printf '%s%s' "${mp}" "$(plain "${ORIG}")")" 1
     else
-        mapfile -t _a < <(fold -s -w "${FW}" <<< "$(plain "${ORIG}")")
+        mapfile -t _a < <(fold -s -w "${FW}" <<< "$(printf '%s%s' "${mp}" "$(plain "${ORIG}")")")
         for l in "${_a[@]}"; do
-            MA+=("${E}[1m${l}${E}[0m")
+            MA+=("$(vwr_paint_words "$l" "1;")${E}[0m")
         done
     fi
     if [ -n "${srce}" ]; then
         add_blank "${g}"
         if [ "${KIND}" = sentence ]; then
             # Traducción: mismo margen izquierdo que la oración.
-            push_left_block "${E}[3;2m" "$(plain "${srce}")"
+            push_left_block "3;2;" "$(plain "${srce}")" 0
         else
             mapfile -t _b < <(fold -s -w "${FW}" <<< "$(plain "${srce}")")
             for l in "${_b[@]}"; do
