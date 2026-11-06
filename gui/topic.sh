@@ -450,18 +450,23 @@ function tpc_view() {
 
 function panelini() {
 	
+	geometry=$(cdb ${cfgdb} 1 geom vals)
+    if [ -z "$geometry" ]; then geometry="0x0"; fi
+	
 	 #--select-action="/usr/share/idiomind/ifs/tasks.sh"
 	(if [ -s "$DT/tasks"  ]; then cat "$DT/tasks"; \
 	else echo "$(gettext "no tasks")"; fi) \
 	| yad --title="Idiomind" --list \
     --name=Idiomind --class=Idiomind --dclick-action="" \
-    --separator="" --expander="$(gettext "Tasks")" --scroll --grid-lines=hor \
+    --separator="" --expander="$(gettext "Tasks")" \
+    --scroll --grid-lines=hor \
     --dclick-action="/usr/share/idiomind/ifs/tasks.sh" \
     --window-icon=$DS/images/logo.png \
     --hscroll-policy=auto --vscroll-policy=never \
     --expand-column=1 --no-click --no-headers \
-    --on-top --text-align=left --align=left --buttons-layout=spread \
-    --borders=2  --column=Name:TEXT --fixed --width=20 --height=20 \
+    --text-align=left --align=left --buttons-layout=spread \
+    --geometry="${geometry}" --borders=4  --column=Name:TEXT \
+    --fixed --width=20 --height=20 \
     --button=""!'list-add'!"$(gettext "Add Note, which can be a word or a sentence")":"$DS/add.sh 'new_items'" \
     --button=""!'go-home'!"$(gettext "My Active Topic")":"idiomind 'topic'" \
     --button=""!'gtk-index'!"$(gettext "My topics")":"$DS/chng.sh"
