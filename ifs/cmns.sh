@@ -346,6 +346,8 @@ function get_item() {
     link="$(grep -oP '(?<=link{).*(?=})' <<< "${item}")" \
     tags="$(grep -oP '(?<=tags{).*(?=})' <<< "${item}")" \
     refr="$(grep -oP '(?<=refr{).*(?=})' <<< "${item}")" \
+    imag="$(grep -oP '(?<=imag{).*(?=})' <<< "${item}")" \
+    imgr="$(grep -oP '(?<=imgr{).*(?=})' <<< "${item}")" \
     cdid="$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")"
 }
 

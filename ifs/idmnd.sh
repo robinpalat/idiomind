@@ -268,6 +268,8 @@ function idmnd_create_topic() {
                 v2_materialize "${file}" "$V2_PICK" "${DC_tlt}/data" \
                 || { cleanups "$tmpdir"; msg "$(gettext "File format corrupted")\n" dialog-error "$(gettext "Information")" & exit 1; }
             fi
+            # Imagenes de palabras: biblioteca compartida con indice asignado.
+            idmnd_install_images
             export data="${DC_tlt}/data"
 }
 
@@ -428,24 +430,82 @@ function idmnd_populate_db() {
 }
 
 
+# Instalacion de imagenes de palabras en la biblioteca compartida.
+#
+# Todas las imagenes de palabras del paquete (tanto images/topic/ como
+# images/shared/) se guardan en $DM_tls/images/<palabra>-<indice>.jpg.
+# El indice se reutiliza cuando ya existe una variante con el mismo contenido
+# (SHA-256) para esa palabra; si no, se asigna el siguiente indice libre.
+# Nunca se sobrescribe una variante existente con contenido distinto.
+#
+# El indice asignado se deja escrito en el campo "imag" del fichero de datos
+# (${DC_tlt}/data), de modo que el registro y el archivo quedan coordinados y
+# la reproduccion resuelve share/images/<palabra>-<imag>.jpg.
+function idmnd_install_images() {
+    local data="${DC_tlt}/data"
+    local out="${data}.imgtmp"
+    local line trgt imgr imag type word src sha idx f d
+    local old new
+    [ -f "$data" ] || return 0
+    [ -n "$media_src" ] && [ -d "$media_src/images" ] || return 0
+    check_dir "$DM_tls/images" || return 1
+    : > "$out" || return 1
+    while IFS= read -r line || [ -n "$line" ]; do
+        [ -z "$line" ] && continue
+        trgt="$(grep -oP '(?<=trgt\{)[^{}]*(?=\})' <<< "$line")"
+        imgr="$(grep -oP '(?<=imgr\{)[^{}]*(?=\})' <<< "$line")"
+        imag="$(grep -oP '(?<=imag\{)[^{}]*(?=\})' <<< "$line")"
+        type="$(grep -oP '(?<=type\{)[^{}]*(?=\})' <<< "$line")"
+        if [ "$type" = "1" ] && [ -n "$imag" ] && [ "$imag" != "0" ]; then
+            word="${imgr:-${trgt,,}}"
+            src=""
+            for d in topic shared; do
+                if [ -f "$media_src/images/$d/${word}.jpg" ]; then
+                    src="$media_src/images/$d/${word}.jpg"
+                    break
+                fi
+            done
+            if [ -z "$src" ] && [ -f "$media_src/images/topic/${trgt,,}.jpg" ]; then
+                src="$media_src/images/topic/${trgt,,}.jpg"
+            fi
+            if [ -n "$src" ] && [ -r "$src" ]; then
+                sha="$(sha256sum "$src" | cut -d' ' -f1)"
+                idx=""
+                for f in "$DM_tls/images/${word}"-*.jpg; do
+                    [ -e "$f" ] || continue
+                    [ "$(sha256sum "$f" | cut -d' ' -f1)" = "$sha" ] || continue
+                    idx="${f##*-}"
+                    idx="${idx%.jpg}"
+                    break
+                done
+                if [ -z "$idx" ]; then
+                    idx=1
+                    while [ -e "$DM_tls/images/${word}-${idx}.jpg" ]; do
+                        idx=$(( idx + 1 ))
+                    done
+                    if ! cp -f "$src" "$DM_tls/images/${word}-${idx}.jpg" 2>/dev/null; then
+                        idx=""
+                    fi
+                fi
+                if [ -n "$idx" ]; then
+                    old="imag{${imag}}"
+                    new="imag{${idx}}"
+                    line="${line//"$old"/"$new"}"
+                fi
+            fi
+        fi
+        printf '%s\n' "$line" >> "$out"
+    done < "$data"
+    mv -f "$out" "$data"
+    return 0
+}
+
 function idmnd_finalize() {
             "$DS/ifs/tls.sh" colorize 1
             f_lock 3 "$DT/in_lk"
 
-            # restore multimedia when importing an exported .idmnd folder
-            if [ -n "$media_src" ] && [ -d "$media_src/images" ]; then
-                check_dir "$DM_tlt/images" "$DM_tls/images" "$DM_tls/audio"
-                for img in "$media_src"/images/*.jpg; do
-                    [ -e "$img" ] || continue
-                    base="$(basename "$img")"
-                    case "$base" in
-                        *-2.jpg)
-                            cp -f "$img" "$DM_tlt/images/${base%-2.jpg}.jpg" ;;
-                        *-1.jpg)
-                            cp -f "$img" "$DM_tls/images/${base%-1.jpg}-1.jpg" ;;
-                    esac
-                done
-            fi
+            # Las imagenes de palabras ya se instalaron (biblioteca compartida)
+            # en idmnd_create_topic -> idmnd_install_images.
             if [ -n "$media_src" ] && [ -d "$media_src/audio/topic" ]; then
                 check_dir "$DM_tlt"
                 for mp3 in "$media_src"/audio/topic/*.mp3; do

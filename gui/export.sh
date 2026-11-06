@@ -26,7 +26,6 @@ function gui_export_dialog() {
     --field="$(gettext "Skill Level"):CB" "$_levels" \
     --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
     --field="$(gettext "Format"):CB" "$_formats" \
-    --field="$(gettext "Include images and audio"):CHK" "$include_media" \
     --button="$(gettext "Export")":2 \
     --button="$(gettext "Close")":4
 }

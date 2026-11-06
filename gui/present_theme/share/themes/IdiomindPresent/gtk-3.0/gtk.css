@@ -1,0 +1,39 @@
+/* Tema exclusivo de la presentacion fullscreen de Play.
+   Iguala el fondo del GtkTreeView vacio al de las filas (#0d0d12) para
+   que el FormFeed de --listen no exponga el fondo del tema por defecto. */
+
+* {
+    background-color: #0d0d12;
+    color: #f4f4f4;
+}
+
+GtkWindow,
+GtkWindow.background,
+GtkTreeView,
+GtkTreeView.view {
+    background-color: #0d0d12;
+}
+
+button,
+.button,
+GtkButton {
+    background-color: #a02020;
+    color: #ffffff;
+    border: 1px solid #d04040;
+    border-radius: 4px;
+}
+
+button:hover,
+.button:hover,
+GtkButton:hover {
+    background-color: #c03030;
+    color: #ffffff;
+}
+
+button:active,
+.button:active,
+GtkButton:active {
+    background-color: #801818;
+    color: #ffffff;
+    border-color: #a03030;
+}

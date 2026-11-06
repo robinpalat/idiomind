@@ -862,10 +862,18 @@ set_image() {
     source "$DS/ifs/cmns.sh"
     cd "$DT"; r=0
     source "$DS/ifs/extensions/add/add.sh"
-    if [ -e "${DM_tlt}/images/${trgt,,}.jpg" ]; then
+    # Oracion (type 2): imagen propia del topic. Palabra (type 1): biblioteca
+    # compartida con la variante indicada por "imag".
+    if [ "$type" = "2" ]; then
         ifile="${DM_tlt}/images/${trgt,,}.jpg"; im=0
     else
-        ifile="${DM_tls}/images/${trgt,,}-1.jpg"; im=1
+        _w="${imgr:-${trgt,,}}"
+        # imag vacio (topics heredados) -> variante 1
+        case "$imag" in
+            0) ifile="" ;;
+            *) ifile="${DM_tls}/images/${_w}-${imag:-1}.jpg" ;;
+        esac
+        im=1
     fi
     if [ -e "$DT/$trgt.img" ]; then
         msg_4 "$(gettext "Attempting download image")..." \

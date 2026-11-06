@@ -105,7 +105,7 @@ yad_list_print() {
     mkfifo "$tmpfifo" 2>/dev/null
     awk -F'|' '{a[$1]=$0} END{for (k in a) print a[k]}' < "$tmpfifo" &
     local awkpid=$!
-    yad "$@" > "$tmpfifo" &
+    yad "$@" > "$tmpfifo" 2>>"$DT/ylp_$$.err" &
     local ypid=$!
     ( sleep 0.3; while kill -0 "$ypid" 2>/dev/null; do kill -USR1 "$ypid" 2>/dev/null; sleep 0.05; done ) &
     wait "$ypid"
@@ -143,7 +143,34 @@ function notebook_1() {
         while [ -p "$listfifo" ]; do timeout 5 cat "$listfifo" 2>/dev/null; done
     }
 
-    listfeed | yad_list_print --list --tabnum=1 --window-icon=idiomind \
+    # El notebook crea el socket XEMBED; debe existir antes de que los plugs
+    # intenten incrustarse, si no su ventana queda sin mapear y no aparece.
+    rm -f "$DT/nb.xid"
+    yad --notebook --title="Idiomind - $tpc" \
+    --name=Idiomind --class=Idiomind --key=$KEY \
+    --always-print-result \
+    --center --align=right \
+    --window-icon=$DS/images/logo.png \
+    --tab="  $(gettext "Learning") ($cfg1) " \
+    --tab="  $(gettext "Learnt") ($cfg2) " \
+    --tab="  $(gettext "Note")  " \
+    --tab="  $(gettext "Manage")  " \
+    --width=530 --height=560 --borders=5 --tab-borders=0 \
+    --button="$(gettext "Play")":"$cmd_play" \
+    --button="$(gettext "Practice")":"$cmd_prac" \
+    --print-xid="$DT/nb.xid" &
+    local nbid=$!
+    for _ in {1..30}; do [ -s "$DT/nb.xid" ] && break; sleep 0.1; done
+    if [ ! -s "$DT/nb.xid" ]; then kill "$nbid" 2>/dev/null; return 1; fi
+    # Vigilante: si el notebook no llega a mapearse (carrera de registro de
+    # plugs de YAD), se mata para no dejar procesos huérfanos.
+    ( sleep 5; X=$(cat "$DT/nb.xid" 2>/dev/null)
+      if [ -n "$X" ] && ! xprop -id "$X" WM_STATE 2>/dev/null | grep -q "WM_STATE(WM_STATE)"; then
+        kill -9 "$nbid" 2>/dev/null; pkill -9 -f "plug=$KEY" 2>/dev/null
+      fi ) &
+    local wdog=$!
+
+    listfeed | yad_list_print --list --tabnum=1 \
     --plug=$KEY --print-all --separator='|' --listen \
     --image="$DS/images/$((stts%2)).png" --image-on-top \
     --dclick-action="$DS/vwr.sh 1" \
@@ -152,6 +179,7 @@ function notebook_1() {
     --search-column=1 --regex-search --hide-column=4 --tooltip-column=4 \
     --column=Name:TEXT \
     --column=@fore@ --column=Learned:CHK --column=@back@:TIP > "$cnf1" &
+    sleep 0.15
     ([ -n "${ls2}" ] && echo "${ls2}" | awk '{print $0"\n"NR}') | \
     yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
@@ -159,14 +187,16 @@ function notebook_1() {
     --expand-column=0 --no-headers \
     --ellipsize=end --wrap-width=460 --ellipsize-cols=1 \
     --column=Name:TEXT --column=@fore@ &
-    yad --text-info --tabnum=3 --window-icon=idiomind \
+    sleep 0.15
+    yad --text-info --tabnum=3 \
     --text="<small>$(gettext "A space for notes, reminders, or anything you want to write down")</small>" \
     --plug=$KEY \
     --always-print-result \
     --show-uri --uri-color="#6591AA" \
     --filename="${note}" --editable --wrap \
     --fontname='vendana 11' --margins=14 > "$cnf3" &
-    yad --form --tabnum=4 --window-icon=idiomind \
+    sleep 0.15
+    yad --form --tabnum=4 \
     --plug=$KEY \
     --text="${lbl1}${info2}${native_lang_info}<small>$(gettext "Status:") $label_review</small>\n" \
     --borders=25 --columns=2 \
@@ -179,18 +209,9 @@ function notebook_1() {
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn3":FBTN "$cmd3" \
     --field="$btn4":FBTN "$cmd4" > "$cnf4" &
-    yad --notebook --title="Idiomind - $tpc" \
-    --name=Idiomind --class=Idiomind --key=$KEY \
-    --always-print-result \
-    --center --align=right \
-    --window-icon=$DS/images/logo.png \
-    --tab="  $(gettext "Learning") ($cfg1) " \
-    --tab="  $(gettext "Learnt") ($cfg2) " \
-    --tab="  $(gettext "Note")  " \
-    --tab="  $(gettext "Manage")  " \
-    --width=530 --height=560 --borders=5 --tab-borders=0 \
-    --button="$(gettext "Play")":"$cmd_play" \
-    --button="$(gettext "Practice")":"$cmd_prac"
+    sleep 0.15
+    wait "$nbid"
+    kill "$wdog" 2>/dev/null
     yad_close_code
 } >/dev/null 2>&1
 
@@ -209,24 +230,50 @@ function notebook_2() {
     cmd3="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd4="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
     
+    # El notebook crea el socket XEMBED; debe existir antes de los plugs.
+    rm -f "$DT/nb.xid"
+    yad --notebook --title="Idiomind - $tpc" \
+    --name=Idiomind --class=Idiomind --key=$KEY \
+    --always-print-result \
+    --center --align=right --ellipsize=END \
+    --window-icon=$DS/images/logo.png \
+    --tab="  $(gettext "Learning") (0) " \
+    --tab="  $(gettext "Learnt") ($cfg2) " \
+    --tab="  $(gettext "Note")  " \
+    --tab="  $(gettext "Manage")  " \
+    --width=530 --height=560 --borders=5 --tab-borders=0 \
+    --print-xid="$DT/nb.xid" &
+    local nbid=$!
+    for _ in {1..30}; do [ -s "$DT/nb.xid" ] && break; sleep 0.1; done
+    if [ ! -s "$DT/nb.xid" ]; then kill "$nbid" 2>/dev/null; return 1; fi
+    # Vigilante: si el notebook no llega a mapearse (carrera de registro de
+    # plugs de YAD), se mata para no dejar procesos huérfanos.
+    ( sleep 5; X=$(cat "$DT/nb.xid" 2>/dev/null)
+      if [ -n "$X" ] && ! xprop -id "$X" WM_STATE 2>/dev/null | grep -q "WM_STATE(WM_STATE)"; then
+        kill -9 "$nbid" 2>/dev/null; pkill -9 -f "plug=$KEY" 2>/dev/null
+      fi ) &
+    local wdog=$!
+
 	yad --multi-progress --tabnum=1 \
 	--text="$pres\n" \
 	--plug=$KEY \
 	--align=center --borders=80 --bar="<small>$info6 </small>":NORM $days_to_review_porcent &
     ([ -n "${ls2}" ] && echo "${ls2}" | awk '{print $0"\n"NR}') |yad --list --tabnum=2 \
-    --window-icon=idiomind --plug=$KEY --print-all --separator='|' \
+    --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2" --grid-lines=hor \
     --expand-column=0 --no-headers --ellipsize=end \
     --search-column=1 --regex-search \
     --column=Name:TEXT --column=@fore@ &
+    sleep 0.15
     yad --text-info --tabnum=3 --window-icon=idiomind \
     --plug=$KEY \
     --text="<small>$(gettext "A space for notes, reminders, or anything you want to write down")</small>" \
     --show-uri --uri-color="#6591AA" \
     --filename="${note}" --editable --wrap \
     --fontname='vendana 11' --margins=14 > "$cnf3" &
+    sleep 0.15
     if [ $stts = 7 ] || [ $stts = 8 ] || [ $stts = 9 ] || [ $stts = 10 ] || [ ${days_to_review_porcent} -ge 100 ]; then 
-    yad --form --tabnum=4 --window-icon=idiomind \
+    yad --form --tabnum=4 \
     --plug=$KEY \
     --text="$lbl1${native_lang_info}<small>$(gettext "Status:") $label_review</small>\n" \
     --borders=25 --columns=2 \
@@ -240,8 +287,9 @@ function notebook_2() {
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn3":FBTN "$cmd3" \
     --field="$btn4":FBTN "$cmd4" > "$cnf4" &
+    sleep 0.15
     else
-    yad --form --tabnum=4 --window-icon=idiomind \
+    yad --form --tabnum=4 \
     --plug=$KEY \
     --text="$lbl1${native_lang_info}<small>$(gettext "Status:") $label_review</small>\n" \
     --borders=25 --columns=2 \
@@ -255,20 +303,12 @@ function notebook_2() {
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn3":FBTN "$cmd3" \
     --field="$btn4":FBTN "$cmd4" > "$cnf4" &
+    sleep 0.15
     fi
-    yad --notebook --title="Idiomind - $tpc" \
-    --name=Idiomind --class=Idiomind --key=$KEY \
-    --always-print-result \
-    --center --align=right --ellipsize=END \
-    --window-icon=$DS/images/logo.png \
-    --tab="  $(gettext "Learning") (0) " \
-    --tab="  $(gettext "Learnt") ($cfg2) " \
-    --tab="  $(gettext "Note")  " \
-    --tab="  $(gettext "Manage")  " \
-    --width=530 --height=560 --borders=5 --tab-borders=0
-
+    wait "$nbid"
+    kill "$wdog" 2>/dev/null
     yad_close_code
-    
+     
 } >/dev/null 2>&1
 
 
@@ -288,6 +328,31 @@ function notebook_3() {
     cmd3="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd4="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
 
+    # El notebook crea el socket XEMBED; debe existir antes de los plugs.
+    rm -f "$DT/nb.xid"
+    yad --notebook --title="Idiomind - $tpc" \
+    --name=Idiomind --class=Idiomind --key=$KEY \
+    --always-print-result \
+    --center --align=right --ellipsize=END \
+    --window-icon=$DS/images/logo.png \
+    --tab="  $(gettext "Learnt") ($cfg2) " \
+    --tab="  $(gettext "Note")  " \
+    --tab="  $(gettext "Manage")  " \
+    --width=530 --height=560 --borders=5 --tab-borders=0 \
+    --button="$(gettext "Play")":"$cmd_play" \
+    --button="$(gettext "Practice")":"$cmd_prac" \
+    --print-xid="$DT/nb.xid" &
+    local nbid=$!
+    for _ in {1..30}; do [ -s "$DT/nb.xid" ] && break; sleep 0.1; done
+    if [ ! -s "$DT/nb.xid" ]; then kill "$nbid" 2>/dev/null; return 1; fi
+    # Vigilante: si el notebook no llega a mapearse (carrera de registro de
+    # plugs de YAD), se mata para no dejar procesos huérfanos.
+    ( sleep 5; X=$(cat "$DT/nb.xid" 2>/dev/null)
+      if [ -n "$X" ] && ! xprop -id "$X" WM_STATE 2>/dev/null | grep -q "WM_STATE(WM_STATE)"; then
+        kill -9 "$nbid" 2>/dev/null; pkill -9 -f "plug=$KEY" 2>/dev/null
+      fi ) &
+    local wdog=$!
+
     ([ -n "${ls2}" ] && echo "${ls2}" | awk '{print $0"\n"NR}') |yad --list --tabnum=1 \
     --window-icon=idiomind --plug=$KEY --print-all --separator='|' \
     --image="$DS/images/2.png" --image-on-top \
@@ -295,13 +360,15 @@ function notebook_3() {
     --expand-column=0 --no-headers --grid-lines=hor --ellipsize=end \
     --search-column=1 --regex-search \
     --column=Name:TEXT --column=@fore@ &
-    yad --text-info --tabnum=2 --window-icon=idiomind \
+    sleep 0.15
+    yad --text-info --tabnum=2 \
     --text="<small>$(gettext "A space for notes, reminders, or anything you want to write down")</small>" \
     --plug=$KEY \
     --show-uri --uri-color="#6591AA" \
     --filename="${note}" --editable --wrap \
     --fontname='vendana 11' --margins=14 > "$cnf3" &
-    yad --form --tabnum=3 --window-icon=idiomind \
+    sleep 0.15
+    yad --form --tabnum=3 \
     --plug=$KEY \
     --text="$lbl1${native_lang_info}\n" \
     --borders=25 --columns=2 \
@@ -315,17 +382,9 @@ function notebook_3() {
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn3":FBTN "$cmd3" \
     --field="$btn4":FBTN "$cmd4" > "$cnf4" &
-    yad --notebook --title="Idiomind - $tpc" \
-    --name=Idiomind --class=Idiomind --key=$KEY \
-    --always-print-result \
-    --center --align=right --ellipsize=END \
-    --window-icon=$DS/images/logo.png \
-    --tab="  $(gettext "Learnt") ($cfg2) " \
-    --tab="  $(gettext "Note")  " \
-    --tab="  $(gettext "Manage")  " \
-    --width=530 --height=560 --borders=5 --tab-borders=0 \
-    --button="$(gettext "Play")":"$cmd_play" \
-    --button="$(gettext "Practice")":"$cmd_prac"
+    sleep 0.15
+    wait "$nbid"
+    kill "$wdog" 2>/dev/null
     yad_close_code
 } >/dev/null 2>&1
 
@@ -346,7 +405,30 @@ function dialog_1() {
 
 function tpc_view() {
 
-    _lst | yad --list --tabnum=1 --window-icon=idiomind \
+    # El notebook crea el socket XEMBED; debe existir antes de los plugs.
+    rm -f "$DT/nb.xid"
+    yad --notebook --title="$name" \
+    --name=Idiomind --class=Idiomind --key=$KEY \
+    --always-print-result \
+    --center --align=right \
+    --window-icon=$DS/images/logo.png \
+    --tab="  $(gettext "Notes") " \
+    --tab="  $(gettext "Details")  " \
+    --width=530 --height=560 --borders=5 --tab-borders=0 \
+    --button="$(gettext "Install")":0 \
+    --print-xid="$DT/nb.xid" &
+    local nbid=$!
+    for _ in {1..30}; do [ -s "$DT/nb.xid" ] && break; sleep 0.1; done
+    if [ ! -s "$DT/nb.xid" ]; then kill "$nbid" 2>/dev/null; return 1; fi
+    # Vigilante: si el notebook no llega a mapearse (carrera de registro de
+    # plugs de YAD), se mata para no dejar procesos huérfanos.
+    ( sleep 5; X=$(cat "$DT/nb.xid" 2>/dev/null)
+      if [ -n "$X" ] && ! xprop -id "$X" WM_STATE 2>/dev/null | grep -q "WM_STATE(WM_STATE)"; then
+        kill -9 "$nbid" 2>/dev/null; pkill -9 -f "plug=$KEY" 2>/dev/null
+      fi ) &
+    local wdog=$!
+
+    _lst | yad --list --tabnum=1 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="/usr/share/idiomind/play.sh play_word" \
     --select-action="/usr/share/idiomind/play.sh play_word" \
@@ -361,84 +443,27 @@ function tpc_view() {
     --show-uri --uri-color="#6591AA" \
     --wrap \
     --fontname='vendana 11' --margins=14  &
-    yad --notebook --title="$name" \
-    --name=Idiomind --class=Idiomind --key=$KEY \
-    --always-print-result \
-    --center --align=right \
-    --window-icon=$DS/images/logo.png \
-    --tab="  $(gettext "Notes") " \
-    --tab="  $(gettext "Details")  " \
-    --width=530 --height=560 --borders=5 --tab-borders=0 \
-    --button="$(gettext "Install")":0
-
+    wait "$nbid"
+    kill "$wdog" 2>/dev/null
 } >/dev/null 2>&1
 
 
-
-
-#function panelini() {
-
-    ## --------------------------------------------------
-    ## Theme detection: pick the icon directory that
-    ## matches the active XFCE GTK theme.
-    ## --------------------------------------------------
-    #local theme_dir theme_name
-    #theme_name="$(xfconf-query -c xsettings -p /Net/ThemeName 2>/dev/null | tr '[:upper:]' '[:lower:]')"
-    #case "$theme_name" in
-        #*dark*|*noir*|*black*|*night*|*dusk*|*midnight*|*obsidian*|*dracula*|*eclipse*|*shadow*|*abyss*|*void*|*twilight*|*charcoal*|*graphite*|*slate*|*ash*|*ink*|*oscur*|*scur*|*nuit*|*dunkel*|*finster*|*nacht*|*preto*|*preta*|*mörk*|*mørk*|*tumma*|*tume*|*tams*|*meln*|*juod*|*koyu*|*sötét*|*sotet*|*tmav*|*crn*|*gelap*|*malam*|*tối*|*inverse*|*inverted*)
-            #theme_dir="$DS/default/dark_theme" ;;
-        #*)
-            #theme_dir="$DS/default/light_theme" ;;
-    #esac
-    #if [ ! -d "$theme_dir" ]; then
-        #if [ "$theme_dir" = "$DS/default/dark_theme" ] && [ -d "$DS/default/light_theme" ]; then
-            #theme_dir="$DS/default/light_theme"
-        #elif [ -d "$DS/default/dark_theme" ]; then
-            #theme_dir="$DS/default/dark_theme"
-        #else
-            #yad --title="Idiomind" --class=Idiomind --name=Idiomind \
-            #--text="$(gettext "No icon theme directory was found.")" \
-            #--window-icon="$DS/images/logo.png" \
-            #--center --on-top --fixed --width=300 \
-            #--button="$(gettext "Close")":0 >/dev/null 2>&1
-            #return 0
-        #fi
-    #fi
-
-    ## --------------------------------------------------
-    ## PANEL 2: ICONS (parte inferior)
-    ## --------------------------------------------------
-
-    #yad --title="Idiomind" --icons \
-        #--single-click \
-        #--read-dir="$theme_dir" \
-        #--item-width=60 \
-        #--generic \
-        #--name=Idiomind \
-        #--class=Idiomind \
-        #--window-icon="$DS/images/logo.png" \
-        #--sticky --fixed \
-        #--width=197 \
-        #--height=250 ${geometry} \
-        #--skip-taskbar \
-        #--borders=4 --no-buttons
-
-#}
-
-
-
 function panelini() {
-    yad --fixed --form --title="Idiomind" \
-    --name=Idiomind --class=Idiomind \
-    --always-print-result \
-    --window-icon="$DS/images/logo.png" --skip-taskbar --on-top \
-    --on-top --no-buttons --text-align=left --align=left \
-    --width=160 --height=150 ${geometry} --borders=10 \
-    --field=" $(gettext "New")"!'/usr/share/idiomind/images/add2_dark.png':btn "$DS/add.sh 'new_items'" \
-    --field=" $(gettext "Home")"!'/usr/share/idiomind/images/topic_dark.png':btn "idiomind 'topic'" \
-    --field=" $(gettext "Play")"!'/usr/share/idiomind/images/play_dark.png':btn /usr/share/idiomind/gui/panel_play.sh \
-    --field=" $(gettext "Practice")"!'/usr/share/idiomind/images/pract_dark.png':btn "$DS/practice/strt.sh" \
-    --field=" $(gettext "Index")"!'/usr/share/idiomind/images/index_dark.png':btn "$DS/chng.sh"
-
+	
+	 #--select-action="/usr/share/idiomind/ifs/tasks.sh"
+	(if [ -s "$DT/tasks"  ]; then cat "$DT/tasks"; \
+	else echo "$(gettext "no tasks")"; fi) \
+	| yad --title="Idiomind" --list \
+    --name=Idiomind --class=Idiomind --dclick-action="" \
+    --separator="" --expander="$(gettext "Tasks")" --scroll --grid-lines=hor \
+    --dclick-action="/usr/share/idiomind/ifs/tasks.sh" \
+    --window-icon=$DS/images/logo.png \
+    --hscroll-policy=auto --vscroll-policy=never \
+    --expand-column=1 --no-click --no-headers \
+    --on-top --text-align=left --align=left --buttons-layout=spread \
+    --borders=2  --column=Name:TEXT --fixed --width=20 --height=20 \
+    --button=""!'list-add'!"$(gettext "Add Note, which can be a word or a sentence")":"$DS/add.sh 'new_items'" \
+    --button=""!'go-home'!"$(gettext "My Active Topic")":"idiomind 'topic'" \
+    --button=""!'gtk-index'!"$(gettext "My topics")":"$DS/chng.sh"
 }
 

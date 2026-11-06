@@ -607,6 +607,8 @@ function ui_card_answer() {
 function ui_select_list() {
     local q col i idx w ww y acc st seg li q_lines rows gap zone sum line used
     local avail n r ry startx run x cw addw rstart found
+    # Separador discreto entre opciones (punto medio U+00B7, atenuado).
+    local sep=$' \033[2m·\033[0m '
     local -a arr ql wl row_sc row_ec row_used row_rl cell_cx cell_cw row_x
     q="$(_tp_trim "$(_tp_plain "${1}")")"
     arr=()
@@ -652,7 +654,7 @@ function ui_select_list() {
             row_rl+=("${#wl[@]}")
         else
             addw=${cw}
-            [ ${rstart} -ge 0 ] && addw=$((cw + 2))
+            [ ${rstart} -ge 0 ] && addw=$((cw + 3))
             if [ ${rstart} -ge 0 ] && [ $((used + addw)) -gt ${avail} ]; then
                 row_sc+=("${rstart}")
                 row_ec+=("$((i - 1))")
@@ -682,7 +684,7 @@ function ui_select_list() {
         for (( i=row_sc[r]; i<=row_ec[r]; i++ )); do
             cell_cx[i]=$((startx + run))
             cell_cw[i]=$(_tp_vlen "${arr[i]}")
-            run=$((run + cell_cw[i] + 2))
+            run=$((run + cell_cw[i] + 3))
         done
     done
     sum=0
@@ -720,7 +722,7 @@ function ui_select_list() {
                         if [ -z "${line}" ]; then
                             line="${seg}"
                         else
-                            line="${line}  ${seg}"
+                            line="${line}${sep}${seg}"
                         fi
                     done
                     printf '%*s%s\n' "$((row_x[r] - 1))" "" "${line}"

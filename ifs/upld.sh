@@ -85,8 +85,6 @@ export_topic() {
 
     note=$(< "${DC_tlt}/note" 2>/dev/null)
     autr=$(tpc_db 1 id autr)
-    include_media="FALSE"
-    [ -n "$(tpc_db 1 id naud)" ] && include_media="TRUE"
 
     shopt -s extglob
     dlg="$(gui_export_dialog)"
@@ -100,7 +98,6 @@ export_topic() {
         levl=$(echo "${dlg}" |cut -d "|" -f3)
         note_mod=$(echo "${dlg}" |cut -d "|" -f4)
         format=$(echo "${dlg}" |cut -d "|" -f5)
-        media_opt=$(echo "${dlg}" |cut -d "|" -f6)
 
         for val in "${Categories[@],}"; do
             [ "${ctgy^}" = "$(gettext "${val^}")" ] && ctgy="${val// /_}"
@@ -108,7 +105,8 @@ export_topic() {
         [ "$levl" = "$(gettext "Beginner")" ] && levl=0
         [ "$levl" = "$(gettext "Intermediate")" ] && levl=1
         [ "$levl" = "$(gettext "Advanced")" ] && levl=2
-        [ "$media_opt" = TRUE ] && include_media=1 || include_media=0
+        # Imagenes y audio se incluyen siempre en el paquete.
+        include_media=1
 
         sv_data
 

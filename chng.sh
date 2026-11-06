@@ -1,6 +1,12 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+# Interfaz de presentación fullscreen (YAD) para el motor Play.
+if [ -r "${DS:-}/gui/play_present.sh" ]; then
+    # shellcheck source=/dev/null
+    source "$DS/gui/play_present.sh"
+fi
+
 if [[ ${1} = 0 ]]; then
 
     if [ $stts = 1 ] || [ $stts = 2 ] || [ $stts = 5 ] || [ $stts = 6 ]; then
@@ -35,7 +41,7 @@ if [[ ${1} = 0 ]]; then
             fi
             
             case "${v}" in
-                present) printf '%s\n%s\n%s\n---\n' "${trgt}" "${srce}" "${icon}" >&9 2>/dev/null ;;
+                present) declare -F play_present_update >/dev/null 2>&1 && play_present_update "${trgt}" "${srce}" "${icon:-}" ;;
                 osd)     notify-send -i "${icon}" "${trgt}" "${srce}" -t $((4000+${pause_osd}000)) & ;;
                 none)    ;;
             esac
@@ -61,15 +67,6 @@ if [[ ${1} = 0 ]]; then
         
         if [[ ${n} = TRUE ]] && [[ ${l} -lt ${pause_osd} ]]; then l=${pause_osd}; fi
         [[ ${stnrd} = 1 ]] && sleep ${l}
-
-        if [ "${v}" = present ]; then
-            cmd=""
-            IFS= read -r -t 0.1 cmd <&8 2>/dev/null || true
-            case "${cmd//$'\n'/}" in
-                advance) return ;;
-                stop) "$DS/stop.sh" 2; exit 0 ;;
-            esac
-        fi
     }
     export -f _play
 
@@ -85,8 +82,27 @@ if [[ ${1} = 0 ]]; then
             export trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${_item}")"
             srce="$(grep -oP '(?<=srce{).*(?=})' <<<"${_item}")"
             id="$(grep -oP '(?<=cdid{).*(?=})' <<<"${_item}")"
-            [ -e "${DM_tlt}/images/${trgt,,}.jpg" ] && icon="${DM_tlt}/images/${trgt,,}.jpg"
-            [ -e "${DM_tls}/images/${trgt,,}-0.jpg" ] && icon="${DM_tls}/images/${trgt,,}-0.jpg"
+            # Imagen de la nota.
+            #  - Oracion (type 2): imagen propia del topic (topic/images/).
+            #  - Palabra (type 1): biblioteca compartida share/images/ con la
+            #    variante indicada por el campo "imag" (<palabra>-<imag>.jpg).
+            if [ "$type" = "2" ]; then
+                [ -e "${DM_tlt}/images/${trgt,,}.jpg" ] && \
+                    icon="${DM_tlt}/images/${trgt,,}.jpg"
+            else
+                _imgr="$(grep -oP '(?<=imgr\{).*(?=\})' <<< "${_item}")"
+                _imag="$(grep -oP '(?<=imag\{).*(?=\})' <<< "${_item}")"
+                case "$_imag" in
+                    0) ;;
+                    *)
+                        # imag vacio (topics heredados) -> variante 1
+                        _w="${_imgr:-${trgt,,}}"
+                        _idx="${_imag:-1}"
+                        [ -e "${DM_tls}/images/${_w}-${_idx}.jpg" ] && \
+                            icon="${DM_tls}/images/${_w}-${_idx}.jpg"
+                        ;;
+                esac
+            fi
             [ -e "${DM_tlt}/$id.mp3" ] && file="${DM_tlt}/$id.mp3" || file="${DM_tls}/audio/${trgt,,}.mp3"
             stnrd=1
         else

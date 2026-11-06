@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=X-GNOME-Metatheme
+Name=IdiomindPresent
+Comment=Fullscreen Play presentation theme (uniform dark background)
+Encoding=UTF-8
+
+[GTK Theme]
+GtkTheme=true

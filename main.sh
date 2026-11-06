@@ -248,6 +248,13 @@ function topic() {
         if [ $((stts)) -lt 10 ]; then 
 			( sleep 2 && "$DS/ifs/tls.sh" promp_topic_info ) & fi
         c=$((RANDOM%100000)); export KEY=$c
+        # YAD usa un segmento SysV shm por clave para el mecanismo XEMBED.
+        # Si queda un segmento huérfano con esta clave, el notebook no puede
+        # crearlo y la ventana no llega a mapearse. Se eliminan los huérfanos.
+        if command -v ipcs >/dev/null 2>&1 && command -v ipcrm >/dev/null 2>&1; then
+            ipcs -m 2>/dev/null | awk 'NR>3 && $4==644 && $5==1616 && $6==0 {print $2}' | \
+            while read -r shid; do ipcrm -m "$shid" 2>/dev/null; done
+        fi
         export cnf1=$(mktemp "$DT/cnf1.XXXXXX")
         export cnf3=$(mktemp "$DT/cnf3.XXXXXX")
         export cnf4=$(mktemp "$DT/cnf4.XXXXXX")
@@ -387,7 +394,7 @@ function topic() {
         export lbl1 label_serie
     }
     
-    oclean() { cleanups "$cnf1" "$cnf3" "$cnf4" "$DT/tpc_lk"; rm -f "$DT"/list_*.fifo 2>/dev/null; }
+    oclean() { cleanups "$cnf1" "$cnf3" "$cnf4" "$DT/tpc_lk"; rm -f "$DT"/list_*.fifo "$DT/nb.xid" 2>/dev/null; }
     
     apply() {
             note_mod="$(< "${cnf3}")"
