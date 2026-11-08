@@ -38,6 +38,8 @@ get_item() {
     link="$(grep -oP '(?<=link{).*(?=})' <<< "${item}")" \
     tags="$(grep -oP '(?<=tags{).*(?=})' <<< "${item}")" \
     refr="$(grep -oP '(?<=refr{).*(?=})' <<< "${item}")" \
+    imag="$(grep -oP '(?<=imag{).*(?=})' <<< "${item}")" \
+    imgr="$(grep -oP '(?<=imgr{).*(?=})' <<< "${item}")" \
     cdid="$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")"
 }
 
@@ -151,13 +153,18 @@ echo -e "{\"items\":{" > "${idmnd}"
 while read -r _item; do
     get_item "${_item}"; unset ipath
     if [ -n "$trgt" ] && [ "$type" = 1 ]; then
+        # Palabra: biblioteca compartida share/images/<palabra>-<imag>.jpg
         ipath=""
-        if [ -f "$DM_tlt/images/${trgt,,}.jpg" ]; then
-            ipath="$DM_tlt/images/${trgt,,}.jpg"; export imag=2
-        elif [ -f "$DM_tls/images/${trgt,,}-1.jpg" ]; then
-            ipath="$DM_tls/images/${trgt,,}-1.jpg"; export imag=1
-        fi
-        export imgr="${trgt,}"
+        _w="${imgr:-${trgt,,}}"
+        case "$imag" in
+            ''|0) export imag=0 ;;
+            *) if [ -f "$DM_tls/images/${_w}-${imag}.jpg" ]; then
+                   ipath="$DM_tls/images/${_w}-${imag}.jpg"
+               else
+                   export imag=0
+               fi ;;
+        esac
+        export imgr="${_w}"
     else
         export imag=0
         imgr=""
@@ -194,28 +201,14 @@ if [ "$media" = 1 ]; then
         get_item "${_item}"
 
         if [ -n "$trgt" ] && [ "$type" = 1 ]; then
-
-            # Topic image
-            # Installed source:
-            #   $DM_tlt/images/<word>.jpg
-            #
-            # IDMND package:
-            #   images/topic/<word>.jpg
-            if [ -f "$DM_tlt/images/${trgt,,}.jpg" ]; then
-                cp -f \
-                    "$DM_tlt/images/${trgt,,}.jpg" \
-                    "$pkd/images/topic/${trgt,,}.jpg"
-
-            # Shared image
-            # Installed shared repository:
-            #   $DM_tls/images/<word>-1.jpg
-            #
-            # IDMND package:
-            #   images/shared/<word>.jpg
-            elif [ -f "$DM_tls/images/${trgt,,}-1.jpg" ]; then
-                cp -f \
-                    "$DM_tls/images/${trgt,,}-1.jpg" \
-                    "$pkd/images/shared/${trgt,,}.jpg"
+            # Palabra: biblioteca compartida
+            #   Instalada: $DM_tls/images/<palabra>-<imag>.jpg
+            #   Paquete:   images/topic/<palabra>.jpg
+            _w="${imgr:-${trgt,,}}"
+            if [ -n "$imag" ] && [ "$imag" != "0" ] && \
+               [ -f "$DM_tls/images/${_w}-${imag}.jpg" ]; then
+                cp -f "$DM_tls/images/${_w}-${imag}.jpg" \
+                    "$pkd/images/topic/${_w}.jpg"
             fi
         fi
     done < "$DC_tlt/data"

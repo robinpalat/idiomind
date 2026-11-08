@@ -385,24 +385,68 @@ function _tp_status_bar() {
     return 0
 }
 
-function _tp_counters_text() {
+# Contadores del encabezado de la ronda actual. No altera la clasificación
+# interna ni la persistencia: solo calcula la presentación.
+_tp_header_counts() {
+    local total=0 processed=0 know=0 dont=0 left=0 f
+    case "${step:-1}" in
+        1)
+            f="${active_practice:-}.tmp"
+            [ -f "$f" ] && total="$(grep -Ecv '#|^$' "$f" 2>/dev/null || :)"
+            know="${count_easy:-0}"
+            dont="${count_learn:-0}"
+            processed=$((know + dont))
+            ;;
+        2)
+            f="${active_practice:-}.2"
+            [ -f "$f" ] && total="$(grep -Ecv '#|^$' "$f" 2>/dev/null || :)"
+            know="${count_easy2:-0}"
+            dont="${count_learn2:-0}"
+            processed=$((know + dont))
+            ;;
+        3)
+            f="${active_practice:-}.3"
+            [ -f "$f" ] && total="$(grep -Ecv '#|^$' "$f" 2>/dev/null || :)"
+            know="${count_easy3:-0}"
+            dont="${count_learn3:-0}"
+            processed=$((know + dont))
+            ;;
+        *)
+            f="${active_practice:-}.tmp"
+            [ -f "$f" ] && total="$(grep -Ecv '#|^$' "$f" 2>/dev/null || :)"
+            know="${count_easy:-0}"
+            dont="$(( ${count_learn:-0} + ${count_hard:-0} ))"
+            processed=$((know + dont))
+            ;;
+    esac
+    [ "$total" -lt 0 ] && total=0
+    [ "$know" -lt 0 ] && know=0
+    [ "$dont" -lt 0 ] && dont=0
+    [ "$processed" -lt 0 ] && processed=0
+    left=$((total - processed))
+    [ "$left" -lt 0 ] && left=0
+    TP_HK="$know"
+    TP_HD="$dont"
+    TP_HL="$left"
+}
+
+_tp_counters_text() {
     local tail="${TP_RST}"
     if [ "${1:-}" = "dim" ]; then
         tail="${TP_D}"
     fi
-    _tp_session_counts
-    if [ "${TP_P}" -gt 0 ]; then
-        printf '%s%s%s   %s%s%s   %s%s%s   %s%s%s' \
-            $'\033[1;32m' "$(gettext "Easy"): ${TP_E}" "${TP_RST}" \
-            $'\033[1;33m' "$(gettext "Learning"): ${TP_L}" "${TP_RST}" \
-            $'\033[1;31m' "$(gettext "Difficult"): ${TP_R}" "${TP_RST}" \
-            "${TP_D}" "$(gettext "Left"): ${TP_P}" "$tail"
-    else
-        printf '%s%s%s   %s%s%s   %s%s%s' \
-            $'\033[1;32m' "$(gettext "Easy"): ${TP_E}" "${TP_RST}" \
-            $'\033[1;33m' "$(gettext "Learning"): ${TP_L}" "${TP_RST}" \
-            $'\033[1;31m' "$(gettext "Difficult"): ${TP_R}" "$tail"
-    fi
+    _tp_header_counts
+    local ck cd
+    case "${step:-1}" in
+        1) ck=$'\033[1;32m'; cd=$'\033[1;33m' ;;
+        2) ck=$'\033[1;33m'; cd=$'\033[1;31m' ;;
+        3) ck=$'\033[1;31m'; cd=$'\033[1;31m' ;;
+        *) ck=$'\033[1;32m'; cd=$'\033[1;33m' ;;
+    esac
+    printf '%s%s%s   %s%s%s   %s%s%s' \
+        "$ck" "$(gettext "I know it"): ${TP_HK}" "${TP_RST}" \
+        "$cd" "$(gettext "I don't know it"): ${TP_HD}" "${TP_RST}" \
+        "${TP_D}" "$(gettext "Left"): ${TP_HL}" "$tail"
 }
 
 function _tp_card_help() {
@@ -590,17 +634,29 @@ function ui_card_answer() {
     _tp_status_bar "${_rows}" "${TP_START}" "${n}"
     while :; do
         _tp_read_event || return 1
+        local _ret=""
         case "${tp_event}" in
-            s) return 2 ;;
-            n|enter) return 3 ;;
+            s) _ret=2 ;;
+            n|enter) _ret=3 ;;
             q|esc|eof) return 1 ;;
             mouse:*)
                 _tp_mouse_button "${tp_event}" || continue
                 case "${TP_BTN}" in
-                    left) return 2 ;;
-                    right) return 3 ;;
-                esac ;;
+                    left) _ret=2 ;;
+                    right) _ret=3 ;;
+                esac
+                [ -z "${_ret}" ] && continue
+                ;;
         esac
+        if [ "${step:-1}" = 2 ]; then
+            [ "${_ret}" = 2 ] && count_easy2=$(( ${count_easy2:-0} + 1 ))
+            [ "${_ret}" = 3 ] && count_learn2=$(( ${count_learn2:-0} + 1 ))
+        fi
+        if [ "${step:-1}" = 3 ]; then
+            [ "${_ret}" = 2 ] && count_easy3=$(( ${count_easy3:-0} + 1 ))
+            [ "${_ret}" = 3 ] && count_learn3=$(( ${count_learn3:-0} + 1 ))
+        fi
+        return "${_ret}"
     done
 }
 
@@ -1061,6 +1117,14 @@ function ui_write_sentence() {
     done
 }
 
+_tp_track_round2_answer() {
+    [ "${step:-1}" = 2 ] || return 0
+    case "$1" in
+        2) count_easy2=$(( ${count_easy2:-0} + 1 )) ;;
+        1) count_learn2=$(( ${count_learn2:-0} + 1 )) ;;
+    esac
+}
+
 function ui_check_result() {
     local t gw ph w rows nt nw g1 g2 zone n
     local -a tl
@@ -1109,17 +1173,18 @@ function ui_check_result() {
                 if [ "${tp_space}" = 1 ]; then
                     "$@" >/dev/null 2>&1 &
                 else
+                    _tp_track_round2_answer 2
                     return 2
                 fi ;;
             r)
                 "$@" >/dev/null 2>&1 &
                 tp_audio_track "$!" ;;
-            q|esc|eof) return 1 ;;
+            q|esc|eof) _tp_track_round2_answer 1; return 1 ;;
             mouse:*)
                 _tp_mouse_button "${tp_event}" || continue
                 case "${TP_BTN}" in
-                    left) return 2 ;;
-                    right) return 1 ;;
+                    left) _tp_track_round2_answer 2; return 2 ;;
+                    right) _tp_track_round2_answer 1; return 1 ;;
                     middle)
                         "$@" >/dev/null 2>&1 &
                         tp_audio_track "$!" ;;

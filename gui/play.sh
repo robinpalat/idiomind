@@ -126,6 +126,7 @@ gui_play_lists_options() {
             let n++
         done
     fi
+    [ "${audio}" = TRUE ] || audio=FALSE
     
     [ -z "$rword" ] && rword=0
     set="$(echo "${iteml[${rword}]}")"
@@ -135,14 +136,13 @@ gui_play_lists_options() {
     vismode=$(tpc_db 1 config vismode "") || vismode=present
     [ -z "$vismode" ] && vismode=present
     case "$vismode" in
-        osd) vlist="osd|present|none" ;;
-        none) vlist="none|present|osd" ;;
-        *) vlist="present|osd|none" ;;
+        osd) vlist="osd!present!none" ;;
+        none) vlist="none!present!osd" ;;
+        *) vlist="present!osd!none" ;;
     esac
     tab1=$(mktemp "$DT/XXXXXX")
     tab2=$(mktemp "$DT/XXXXXX")
     c=$((RANDOM%100000)); KEY=$c
-    [[ ${ntosd} != TRUE ]] && [[ ${audio} != TRUE ]] && audio=TRUE
 
     if [ $(( in0+in1+in2+in3+in4 )) = 0 ] && [ $stts -lt 10 ]; then
 		echo " $(gettext "Nothing to play")" | \

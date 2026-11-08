@@ -179,6 +179,24 @@ function rebuild_learning_lists() {
     [ -f "$data_file" ] || return 1
     [ -f "$db_file" ] || return 1
 
+    if [ -r "${DS:-}/ifs/consolidation.sh" ]; then
+        source "${DS:-}/ifs/consolidation.sh"
+    fi
+    if type practice_schema_ensure >/dev/null 2>&1; then
+        practice_schema_ensure "$db_file" >/dev/null 2>&1 || :
+    fi
+    sqlite3 "$db_file" "pragma busy_timeout=500;
+    create table if not exists learning (list TEXT);
+    create table if not exists learnt (list TEXT);" >/dev/null 2>&1 || :
+
+    declare -A origin_set=()
+    while IFS=$'\t' read -r note origin; do
+        [ -n "$note" ] && origin_set["$note"]="${origin:-manual}"
+    done < <(sqlite3 -separator $'\t' "$db_file" \
+        "select note,origin from Learned_origin;" 2>/dev/null)
+
+    declare -A seen_notes=()
+
     {
         printf 'BEGIN TRANSACTION;\n'
         printf 'DELETE FROM learnt;\n'
@@ -186,27 +204,35 @@ function rebuild_learning_lists() {
 
         while IFS= read -r raw_line || [ -n "$raw_line" ]; do
 
-            # Equivalente a Python: line.strip()
             local line
             line="$(printf '%s' "$raw_line" |
                 sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
 
             [ -n "$line" ] || continue
 
-            # Extraer trgt{...}
             local trgt
             trgt="$(sed -n 's/.*trgt{\([^}]*\)}.*/\1/p' <<< "$line")"
 
             [ -n "$trgt" ] || continue
             [ "$trgt" != " " ] || continue
+            [ "${seen_notes[$trgt]+_}" ] && continue
+            seen_notes["$trgt"]=1
 
-            # Escapar comillas simples para SQLite.
             trgt="${trgt//\'/\'\'}"
+            local origin="${origin_set[$trgt]:-}"
 
-            if [ "$mast" = "TRUE" ]; then
+            if [ "$mast" = "TRUE" ] && [ -z "$origin" ]; then
                 printf "INSERT INTO learning (list) VALUES ('%s');\n" "$trgt"
             else
                 printf "INSERT INTO learnt (list) VALUES ('%s');\n" "$trgt"
+                printf "UPDATE Practice_evidence SET active=0 WHERE note='%s';\n" "$trgt"
+                if [ -n "$origin" ]; then
+                    printf "INSERT OR REPLACE INTO Learned_origin (note,origin,updated) VALUES ('%s','%s','%s');\n" \
+                        "$trgt" "$origin" "$(date +%F)"
+                else
+                    printf "INSERT OR IGNORE INTO Learned_origin (note,origin,updated) VALUES ('%s','manual','%s');\n" \
+                        "$trgt" "$(date +%F)"
+                fi
             fi
 
         done < "$data_file"

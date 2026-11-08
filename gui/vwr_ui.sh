@@ -66,7 +66,7 @@ play_cmd() {
 E=$'\033'
 
 # --- Color por estadisticas de practica (la misma regla que Play/colorize) ---
-# log3 = rojo (dificil), log2 = naranja (en aprendizaje), log1 = verde (facil).
+# log3 = rojo (dificil), log2 = naranja (en aprendizaje), log1 = sin color.
 # Se cargan una sola vez por vista; la clasificacion no se vuelve a implementar.
 declare -A VWR_C1=() VWR_C2=() VWR_C3=()
 for _vwr_n in 1 2 3; do
@@ -93,7 +93,6 @@ vwr_word_color() {
         c="${c,,}"
         if [ -n "${VWR_C3[$c]:-}" ]; then printf '%s' '38;2;174;50;89'; return; fi
         if [ -n "${VWR_C2[$c]:-}" ]; then printf '%s' '38;2;193;95;39'; return; fi
-        if [ -n "${VWR_C1[$c]:-}" ]; then printf '%s' '38;2;76;140;18'; return; fi
     done
 }
 
@@ -397,7 +396,7 @@ build_main() {
         add_blank "${g}"
         if [ "${KIND}" = sentence ]; then
             # Traducción: mismo margen izquierdo que la oración.
-            push_left_block "3;2;" "$(plain "${srce}")" 0
+            push_left_block "3;2" "$(plain "${srce}")" 0
         else
             mapfile -t _b < <(fold -s -w "${FW}" <<< "$(plain "${srce}")")
             for l in "${_b[@]}"; do
@@ -424,6 +423,28 @@ push_detail() {
     done
 }
 
+# Nota o definición: etiqueta con color normal y contenido atenuado, alineada
+# a la izquierda con el mismo margen que el bloque principal. El marcador ¦
+# indica a render() que no centre la línea.
+push_note() {  # $1 etiqueta $2 texto
+    local label="$1" txt="$2" l pad width maxpad first=1 rest
+    pad=$(( COLS / 10 )); [ "${pad}" -lt 2 ] && pad=2
+    maxpad=$(( (COLS - 1) / 4 )); [ "${maxpad}" -lt 1 ] && maxpad=1
+    [ "${pad}" -gt "${maxpad}" ] && pad=${maxpad}
+    width=$(( COLS - 2 * pad )); [ "${width}" -lt 1 ] && width=1
+    mapfile -t _f < <(fold -s -w "${width}" <<< "${label}: ${txt}")
+    for l in "${_f[@]}"; do
+        if [ "${first}" = 1 ]; then
+            rest="${l#"${label}:"}"
+            rest="${rest# }"
+            DET+=("¦$(printf '%*s' "${pad}" '')${label}: ${E}[2m${rest}${E}[0m")
+            first=0
+        else
+            DET+=("¦$(printf '%*s' "${pad}" '')${E}[2m${l}${E}[0m")
+        fi
+    done
+}
+
 build_details() {
     local g="$1" any=0
     DET=()
@@ -436,8 +457,8 @@ build_details() {
         if [ "${any}" = 1 ]; then
             det_blank "${g}"
             [ -n "${exmp}" ] && push_detail "$(gettext "Example"): $(plain "${exmp}")" hl
-            [ -n "${defn}" ] && push_detail "$(gettext "Definition"): $(plain "${defn}")"
-            [ -n "${note}" ] && push_detail "$(gettext "Note"): $(plain "${note}")"
+            [ -n "${defn}" ] && push_note "$(gettext "Definition")" "$(plain "${defn}")"
+            [ -n "${note}" ] && push_note "$(gettext "Note")" "$(plain "${note}")"
             [ -n "${tags}" ] && push_detail "$(gettext "Tags"): $(plain "${tags}")"
         fi
     else
@@ -446,7 +467,7 @@ build_details() {
         if [ "${any}" = 1 ]; then
             det_blank "${g}"
             [ -n "${exmp}" ] && push_detail "$(gettext "Example"): $(plain "${exmp}")"
-            [ -n "${note}" ] && push_detail "$(gettext "Note"): $(plain "${note}")"
+            [ -n "${note}" ] && push_note "$(gettext "Note")" "$(plain "${note}")"
         fi
         # La lista de palabras vive en su propia vista (tecla l);
         # la vista de oración no la incluye.
@@ -598,7 +619,10 @@ render() {
         fi
     done
     for l in "${DET[@]}"; do
-        if [ -n "${l}" ]; then
+        if [[ "${l}" = ¦* ]]; then
+            # Línea de detalle ya posicionada con su margen izquierdo.
+            printf '%s\n' "${l#¦}"
+        elif [ -n "${l}" ]; then
             emitc "${l}"
         else
             printf '\n'

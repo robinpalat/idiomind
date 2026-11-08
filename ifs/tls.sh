@@ -1249,23 +1249,24 @@ stats_dlg() {
 
 colorize() {
     source "$DS/ifs/cmns.sh"
+    [ -r "$DS/ifs/consolidation.sh" ] && source "$DS/ifs/consolidation.sh"
     f_lock 1 "$DT/co_lk"
     cleanups "${DC_tlt}/index"
     touch "${DM_tlt}"
+    [ -n "${DC_tlt:-}" ] && practice_schema_ensure "${DC_tlt}/tpc" 2>/dev/null || :
+    [ -n "${DC_tlt:-}" ] && practice_evidence_ensure "${DC_tlt}/tpc" "${DC_tlt}/practice" 2>/dev/null || :
     marks="$(tpc_db 5 marks)"
     learning="$(tpc_db 5 learning)"
-    # El marcado automático como aprendido está siempre activo: chk=TRUE
-    # cuando se pide reconstruir con marca de aprendido (colorize 1), sin
-    # consultar la antigua preferencia acheck de la configuración del tema.
-    if [[ ${2} = 1 ]]; then
-		chk=TRUE; else chk=FALSE
-	fi
+    chk=FALSE
+    auto_chk=FALSE
+    [ "${2:-0}" = "1" ] && auto_chk=TRUE
     data="${DC_tlt}/data"
     index="${DC_tlt}/index"
     log3="$(< "${DC_tlt}/practice"/log3)"
     log2="$(< "${DC_tlt}/practice"/log2)"
     log1="$(< "${DC_tlt}/practice"/log1)"
     export chk data learning index marks log1 log2 log3
+    export _tpcdb="${DC_tlt}/tpc" _word_thr="$(practice_word_threshold)" _sent_thr="$(practice_sentence_sessions)" auto_chk
 	(
 		set -euo pipefail
 
@@ -1314,6 +1315,19 @@ colorize() {
 			grep -Fxq -- "$needle" <<< "$haystack"
 		}
 
+		declare -A ev_mod=() ev_e=() origin_map=() pending_map=()
+		while IFS=$'\t' read -r _n _c _e; do
+			[ -n "$_n" ] || continue
+			ev_mod["$_n"]="$_c"
+			ev_e["$_n"]="${_e:-0}"
+		done < <(sqlite3 -separator $'\t' "$_tpcdb" "select note,count(distinct modality),coalesce(max(case when modality='e' then easy_sessions end),0) from Practice_evidence where active=1 and easy_sessions>0 and last_result='easy' group by note;" 2>/dev/null || :)
+		while IFS=$'\t' read -r _n _o; do
+			[ -n "$_n" ] && origin_map["$_n"]="${_o:-manual}"
+		done < <(sqlite3 -separator $'\t' "$_tpcdb" "select note,origin from Learned_origin;" 2>/dev/null || :)
+		while IFS=$'\t' read -r _n _o; do
+			[ -n "$_n" ] && pending_map["$_n"]="${_o:-manual}"
+		done < <(sqlite3 -separator $'\t' "$_tpcdb" "select note,origin from Learned_pending;" 2>/dev/null || :)
+
 		: > "$index"
 
 		while IFS= read -r raw_line || [[ -n "$raw_line" ]]; do
@@ -1356,21 +1370,53 @@ colorize() {
 				i="$item"
 			fi
 
+			item_type="$(sed -n 's/.*type{\([^}]*\)}.*/\1/p' <<< "$mitem")"
+			eligible=false
+			if [ "$item_type" = "2" ]; then
+				if [ "${ev_e[$item]:-0}" -ge "$_sent_thr" ]; then eligible=true; fi
+			else
+				if [ "${ev_mod[$item]:-0}" -ge "$_word_thr" ]; then eligible=true; fi
+			fi
+
+			manual_flag=false
+			[ "${pending_map[$item]:-}" = "manual" ] && manual_flag=true
+			[ "${origin_map[$item]:-}" = "manual" ] && manual_flag=true
+
 			if log_member "$log3" "$item"; then
-				printf "<span color='#AE3259'>%s</span>\nFALSE\n%s\n" \
-					"$i" "$srce" >> "$index"
+				item_chk=FALSE
+				[ "$manual_flag" = true ] && item_chk=TRUE
+				printf "<span color='#AE3259'>%s</span>\n%s\n%s\n" \
+					"$i" "$item_chk" "$srce" >> "$index"
 
 			elif log_member "$log2" "$item"; then
-				printf "<span color='#C15F27'>%s</span>\nFALSE\n%s\n" \
-					"$i" "$srce" >> "$index"
+				item_chk=FALSE
+				[ "$manual_flag" = true ] && item_chk=TRUE
+				printf "<span color='#C15F27'>%s</span>\n%s\n%s\n" \
+					"$i" "$item_chk" "$srce" >> "$index"
 
 			elif log_member "$log1" "$item"; then
-				printf "<span color='#4C8C12'>%s</span>\n%s\n%s\n" \
-					"$i" "$chk" "$srce" >> "$index"
+				item_chk=FALSE
+				if [ "$manual_flag" = true ]; then
+					item_chk=TRUE
+				elif [ "$auto_chk" = TRUE ] && [ "$eligible" = true ]; then
+					item_chk=TRUE
+					if [ -z "${origin_map[$item]:-}" ] && [ -z "${pending_map[$item]:-}" ]; then
+						practice_pending_set "$_tpcdb" "$item" auto >/dev/null 2>&1 || :
+					fi
+				fi
+				if [ "$eligible" = true ]; then
+					printf "<span color='#4C8C12'>%s</span>\n%s\n%s\n" \
+						"$i" "$item_chk" "$srce" >> "$index"
+				else
+					printf "%s\n%s\n%s\n" \
+						"$i" "$item_chk" "$srce" >> "$index"
+				fi
 
 			else
-				printf "%s\nFALSE\n%s\n" \
-					"$i" "$srce" >> "$index"
+				item_chk=FALSE
+				[ "$manual_flag" = true ] && item_chk=TRUE
+				printf "%s\n%s\n%s\n" \
+					"$i" "$item_chk" "$srce" >> "$index"
 			fi
 
 		done < "$data"

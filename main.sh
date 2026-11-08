@@ -302,100 +302,108 @@ function topic() {
         
         days_until="$(gettext "Days until review:") "
         
-		if [ ${count_date_reviews} -eq 0 ]; then
-			label_serie=""
-			days_until=""
+if [ ${count_date_reviews} -eq 0 ]; then
+	label_serie=""
+	days_until=""
 
-		elif [ ${count_date_reviews} = 1 ]; then
-			label_serie="
-\n<small>$(gettext "Fresh")</small>
-<u><b>4</b></u> <span color='#84DCE7E7'>| 7 | 7 | 10</span>\n
-<small>$(gettext "Familiar")</small>
-<span color='#A36A53'>15 | 15 | 20 | 30</span>\n		
-<small>$(gettext "Mastered")</small>
-<span color='#844DB1'>60</span>"
+elif [ ${count_date_reviews} = 1 ]; then
+	label_serie="
+\n<small><span color='#84DCE7E7'>Fresh</span></small>:  <u><b>4</b></u> · 7 · 7 · 10  $(gettext "days")\n
+<small><span color='#A36A53'>Familiar</span></small>:  15 · 15 · 20 · 30  $(gettext "days")\n		
+<small><span color='#844DB1'>Mastered</span></small>:  60  $(gettext "days")"
 
-		elif [ ${count_date_reviews} = 2 ]; then
-						label_serie="
-\n<small>$(gettext "Fresh")</small>
-<span color='#84DCE7E7'>4 |</span> <u><b>7</b></u> <span color='#84DCE7E7'>| 7 | 10</span>\n
-<small>$(gettext "Familiar")</small>
-<span color='#A36A53'>15 | 15 | 20 | 30</span>\n		
-<small>$(gettext "Mastered")</small>
-<span color='#844DB1'>60</span>"
+elif [ ${count_date_reviews} = 2 ]; then
+	label_serie="
+\n<small><span color='#84DCE7E7'>Fresh</span></small>:  4 · <u><b>7</b></u> · 7 · 10  $(gettext "days")\n
+<small><span color='#A36A53'>Familiar</span></small>:  15 · 15 · 20 · 30  $(gettext "days")\n		
+<small><span color='#844DB1'>Mastered</span></small>:  60  $(gettext "days")"
 
-		elif [ ${count_date_reviews} = 3 ]; then
-			label_serie="
-\n<small>$(gettext "Fresh")</small>
-<span color='#84DCE7E7'>4  | 7 |</span> <u><b>7</b></u> <span color='#84DCE7E7'>| 10</span>\n
-<small>$(gettext "Familiar")</small>
-<span color='#A36A53'>15 | 15 | 20 | 30</span>\n		
-<small>$(gettext "Mastered")</small>
-<span color='#844DB1'>60</span>"
+elif [ ${count_date_reviews} = 3 ]; then
+	label_serie="
+\n<small><span color='#84DCE7E7'>Fresh</span></small>:  4 · 7 · <u><b>7</b></u> · 10  $(gettext "days")\n
+<small><span color='#A36A53'>Familiar</span></small>:  15 · 15 · 20 · 30  $(gettext "days")\n		
+<small><span color='#844DB1'>Mastered</span></small>:  60  $(gettext "days")"
 
-		elif [ ${count_date_reviews} = 4 ]; then
-			label_serie="
-\n<small>$(gettext "Fresh")</small>
-<span color='#84DCE7E7'>4 | 7 | 7 |</span> <u><b>10</b></u>\n
-<small>$(gettext "Familiar")</small>
-<span color='#A36A53'>15 | 15 | 20 | 30</span>\n		
-<small>$(gettext "Mastered")</small>
-<span color='#844DB1'>60</span>"
+elif [ ${count_date_reviews} = 4 ]; then
+	label_serie="
+\n<small><span color='#84DCE7E7'>Fresh</span></small>:  4 · 7 · 7 · <u><b>10</b></u>  $(gettext "days")\n
+<small><span color='#A36A53'>Familiar</span></small>:  15 · 15 · 20 · 30  $(gettext "days") \n		
+<small><span color='#844DB1'>Mastered</span></small>:  60  $(gettext "days")"
 
-		elif [ ${count_date_reviews} = 5 ]; then
-			label_serie="
-\n<small>$(gettext "Fresh")</small>
-<span color='#84DCE7E7'>4 | 7 | 7 | 10</span>\n
-<small>$(gettext "Familiar")</small>
-<u><b>15</b></u> <span color='#A36A53'>| 15 | 20 | 30</span>\n		
-<small>$(gettext "Mastered")</small>
-<span color='#844DB1'>60</span>"
+elif [ ${count_date_reviews} = 5 ]; then
+	label_serie="
+\n<small><span color='#84DCE7E7'>Fresh</span></small>:  4 · 7 · 7 · 10  $(gettext "days")\n
+<small><span color='#A36A53'>Familiar</span></small>:  <u><b>15</b></u> · 15 · 20 · 30  $(gettext "days")\n		
+<small><span color='#844DB1'>Mastered</span></small>:  60  $(gettext "days") "
 
-		elif [ ${count_date_reviews} = 6 ]; then
-			label_serie="
-\n<small>$(gettext "Fresh")</small>
-<span color='#84DCE7E7'>4 | 7 | 7 | 10</span>\n
-<small>$(gettext "Familiar")</small>
-<span color='#A36A53'>15 |</span> <u><b>15</b></u> <span color='#A36A53'>| 20 | 30</span>\n		
-<small>$(gettext "Mastered")</small>
-<span color='#844DB1'>60</span>"
+elif [ ${count_date_reviews} = 6 ]; then
+	label_serie="
+\n<small><span color='#84DCE7E7'>Fresh</span></small>:  4 · 7 · 7 · 10  $(gettext "days")\n
+<small><span color='#A36A53'>Familiar</span></small>:  15 · <u><b>15</b></u> · 20 · 30  $(gettext "days")\n		
+<small><span color='#844DB1'>Mastered</span></small>:  60  $(gettext "days")"
 
-		elif [ ${count_date_reviews} = 7 ]; then
-			label_serie="
-\n<small>$(gettext "Fresh")</small>
-<span color='#84DCE7E7'>4 | 7 | 7 | 10</span>\n
-<small>$(gettext "Familiar")</small>
-<span color='#A36A53'>15 | 15 |</span> <u><b>20</b></u> <span color='#A36A53'>| 30</span>\n		
-<small>$(gettext "Mastered")</small>
-<span color='#844DB1'>60</span>"
+elif [ ${count_date_reviews} = 7 ]; then
+	label_serie="
+\n<small><span color='#84DCE7E7'>Fresh</span></small>:  4 · 7 · 7 · 10  $(gettext "days")\n
+<small><span color='#A36A53'>Familiar</span></small>:  15 · 15 · <u><b>20</b></u> · 30  $(gettext "days")\n		
+<small><span color='#844DB1'>Mastered</span></small>:  60  $(gettext "days")"
 
-		elif [ ${count_date_reviews} = 8 ]; then
+elif [ ${count_date_reviews} = 8 ]; then
+	label_serie="
+\n<small><span color='#84DCE7E7'>Fresh</span></small>:  4 · 7 · 7 · 10  $(gettext "days")\n
+<small><span color='#A36A53'>Familiar</span></small>:  15 · 15 · 20 · <u><b>30</b></u>  $(gettext "days")\n		
+<small><span color='#844DB1'>Mastered</span></small>:  60  $(gettext "days")"
 
-			label_serie="
-\n<small>$(gettext "Fresh")</small>
-<span color='#84DCE7E7'>4 | 7 | 7 | 10</span>\n
-<small>$(gettext "Familiar")</small>
-<span color='#A36A53'>15 | 15 | 20 |</span> <u><b>30</b></u>\n		
-<small>$(gettext "Mastered")</small>
-<span color='#844DB1'>60</span>"
+elif [ ${count_date_reviews} -ge 9 ]; then
+	label_serie="
+\n<small><span color='#84DCE7E7'>Fresh</span></small>:  4 · 7 · 7 · 10  $(gettext "days")\n
+<small><span color='#A36A53'>Familiar</span></small>:  15 · 15 · 20 · 30  $(gettext "days")\n		
+<small><span color='#844DB1'>Mastered</span></small>:  <u><b>60</b></u>  $(gettext "days")"
 
-		elif [ ${count_date_reviews} -ge 9 ]; then
-			
-			label_serie="
-\n<small>$(gettext "Fresh")</small>
-<span color='#84DCE7E7'>4 | 7 | 7 | 10</span>\n
-<small>$(gettext "Familiar")</small>
-<span color='#A36A53'>15 | 15 | 20 | 30 </span>\n		
-<small>$(gettext "Mastered")</small>
-<u><b>60</b></u>"
-		
-		fi
+fi
 
-        export lbl1 label_serie
-    }
+export lbl1 label_serie
+}
     
     oclean() { cleanups "$cnf1" "$cnf3" "$cnf4" "$DT/tpc_lk"; rm -f "$DT"/list_*.fifo "$DT/nb.xid" 2>/dev/null; }
-    
+
+    persist_manual_intent() {
+        [ -f "${cnf1:-}" ] || return 0
+        [ -n "${tpcdb:-}" ] && [ -f "$tpcdb" ] || return 0
+        [ -r "${DS:-}/ifs/consolidation.sh" ] && source "${DS:-}/ifs/consolidation.sh"
+        type practice_schema_ensure >/dev/null 2>&1 || return 0
+        practice_schema_ensure "$tpcdb" >/dev/null 2>&1 || :
+        local raw_line item trgt rest chk
+        while IFS= read -r raw_line || [ -n "$raw_line" ]; do
+            item="$(printf '%s' "$raw_line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+            [ -n "$item" ] || continue
+            trgt="${item%%|*}"
+            rest="${item#*|}"
+            chk="${rest%%|*}"
+            [ "$chk" = "TRUE" ] || continue
+            trgt="$(printf '%s' "$trgt" | sed -E 's/<[^>]+>//g' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+            [ -n "$trgt" ] || continue
+            practice_pending_set "$tpcdb" "$trgt" manual >/dev/null 2>&1 || :
+        done < "$cnf1"
+    }
+
+    # ¿Debe aplicarse la selección al cerrar el notebook? Sí solo si el
+    # cierre fue el normal (2: X/Esc remapeado, 3: Practice) y no hay
+    # otra sesión activa (ps_lk). Si hay ps_lk, la intención manual se
+    # persiste en Learned_pending y se consume cuando el bloqueo permite.
+    should_apply() {
+        case "$1" in
+            2|3)
+                if [ ! -e "$DT/ps_lk" ]; then
+                    return 0
+                fi
+                persist_manual_intent
+                return 1
+                ;;
+            *) return 1 ;;
+        esac
+    }
+
     apply() {
             note_mod="$(< "${cnf3}")"
             if [ "${note_mod}" != "$(< "${note}")" ]; then
@@ -403,10 +411,14 @@ function topic() {
                 then echo -e "\n${note_mod}" > "${note}"
                 else echo "${note_mod}" > "${note}"; fi
             fi
+            [ -r "${DS:-}/ifs/consolidation.sh" ] && source "${DS:-}/ifs/consolidation.sh"
+            if [ -n "${tpcdb:-}" ] && [ -f "$tpcdb" ]; then
+                practice_schema_ensure "$tpcdb" >/dev/null 2>&1 || :
+            fi
             if grep TRUE "${cnf1}" >/dev/null 2>&1; then
                 f_lock 1 "$DT/tpc_lk"
                 export cnf1 tpcdb
-                
+
                 (
                     set -euo pipefail
 
@@ -432,25 +444,54 @@ function topic() {
 
                         while IFS= read -r raw_line || [[ -n "$raw_line" ]]; do
 
-                            # Equivalente a line.strip()
                             item="$(printf '%s' "$raw_line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+                            [ -n "$item" ] || continue
 
-                            # Solo procesar entradas confirmadas.
-                            [[ "$item" == *"|TRUE|"* ]] || continue
+                            trgt="${item%%|*}"
+                            rest="${item#*|}"
+                            chk="${rest%%|*}"
 
-                            # Identificador de la nota: todo lo anterior a la
-                            # casilla |TRUE|. Las columnas auxiliares que
-                            # puedan seguir (TIP, separadores finales) no
-                            # forman parte del identificador.
-                            trgt="${item%%|TRUE|*}"
-
-                            # Equivalente a re.sub(r'<[^>]+>', '', trgt)
-                            trgt="$(printf '%s' "$trgt" | sed -E 's/<[^>]+>//g')"
+                            trgt="$(printf '%s' "$trgt" | sed -E 's/<[^>]+>//g' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+                            [ -n "$trgt" ] || continue
 
                             trgt_e="$(sql_escape "$trgt")"
 
-                            printf "INSERT INTO learnt (list) VALUES ('%s');\n" "$trgt_e"
-                            printf "DELETE FROM learning WHERE list='%s';\n" "$trgt_e"
+                            if [ "$chk" = "TRUE" ]; then
+                                origin=""
+                                p_origin="$(practice_origin_get "$tpcdb" "$trgt" 2>/dev/null || true)"
+                                p_pending="$(practice_pending_get "$tpcdb" "$trgt" 2>/dev/null || true)"
+                                if [ "$p_origin" = "manual" ] || [ "$p_pending" = "manual" ]; then
+                                    origin="manual"
+                                elif [ "$p_origin" = "auto" ] || [ "$p_pending" = "auto" ]; then
+                                    origin="auto"
+                                else
+                                    item_type=""
+                                    if [ -f "${DC_tlt}/data" ]; then
+                                        item_type="$(grep -F -m 1 "trgt{${trgt}}" "${DC_tlt}/data" | sed -n 's/.*type{\([^}]*\)}.*/\1/p')"
+                                    fi
+                                    if practice_evidence_eligible "$tpcdb" "$trgt" "$item_type" 2>/dev/null; then
+                                        if grep -Fxq -- "$trgt" "${DC_tlt}/practice/log1" 2>/dev/null && \
+                                           ! grep -Fxq -- "$trgt" "${DC_tlt}/practice/log2" 2>/dev/null && \
+                                           ! grep -Fxq -- "$trgt" "${DC_tlt}/practice/log3" 2>/dev/null; then
+                                            origin="auto"
+                                        else
+                                            origin="manual"
+                                        fi
+                                    else
+                                        origin="manual"
+                                    fi
+                                fi
+                                [ -n "$origin" ] || origin="manual"
+
+                                printf "INSERT INTO learnt (list) SELECT '%s' WHERE EXISTS (SELECT 1 FROM learning WHERE list='%s') AND NOT EXISTS (SELECT 1 FROM learnt WHERE list='%s');\n" "$trgt_e" "$trgt_e" "$trgt_e"
+                                printf "DELETE FROM learning WHERE list='%s';\n" "$trgt_e"
+                                printf "DELETE FROM Learned_pending WHERE note='%s';\n" "$trgt_e"
+                                printf "INSERT OR REPLACE INTO Learned_origin (note,origin,updated) SELECT '%s','%s','%s' WHERE EXISTS (SELECT 1 FROM learnt WHERE list='%s');\n" "$trgt_e" "$origin" "$(date +%F)" "$trgt_e"
+                                printf "UPDATE Practice_evidence SET active=0 WHERE note='%s' AND EXISTS (SELECT 1 FROM learnt WHERE list='%s');\n" "$trgt_e" "$trgt_e"
+                            else
+                                printf "DELETE FROM Learned_pending WHERE note='%s';\n" "$trgt_e"
+                                printf "DELETE FROM Learned_origin WHERE note='%s' AND EXISTS (SELECT 1 FROM learning WHERE list='%s');\n" "$trgt_e" "$trgt_e"
+                            fi
 
                         done < "$cnf1"
 
@@ -468,6 +509,10 @@ function topic() {
                 f_lock 3 "$DT/tpc_lk"
                 source "$DS/ifs/stats.sh"
                 coll_tpc_stats 0
+            fi
+
+            if type practice_pending_consume >/dev/null 2>&1; then
+                practice_pending_consume "$tpcdb" manual >/dev/null 2>&1 || :
             fi
             
             ntpc=$(cut -d '|' -f 3 < "${cnf4}")
@@ -499,7 +544,9 @@ function topic() {
     
     notebook_3; ret=$?
     
-        if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
+        if should_apply "$ret"; then
+			apply
+        fi
             
         if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
        
@@ -510,7 +557,9 @@ function topic() {
             
             notebook_1; ret=$?
             
-            if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
+            if should_apply "$ret"; then
+				apply
+			fi
             
             if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
 
@@ -539,8 +588,11 @@ function topic() {
                 
                 [[ ${days_to_review_porcent} -ge 100 ]] && info5="$(gettext "(completado)")"
 				
-				info6="$days_until  $days_remaining / $days_to_review "
-                pres="<big><b>$(gettext "Topic learnt")</b></big>  <sup>$(gettext "* however you have new notes").</sup>\n   <small>$label_review</small>\n\n<b>$(gettext "Spaced repetition schedule")</b>\n<sub>$(gettext "Current interval (days):")</sub>$label_serie"
+				info6=$(printf "$(ngettext \
+    "Next review: %d day left / %d days" \
+    "Next review: %d days left / %d days" \
+    "$days_remaining")" "$days_remaining" "$days_to_review")
+                pres="<big><b>$(gettext "Topic status")</b></big>  <sup>$(gettext "* New notes added").</sup>\n  <small>$label_review</small>\n\n\n<b>$(gettext "Spaced repetition schedule")</b>\n<sub>$(gettext "Intervals between reviews")</sub>$label_serie"
                 echo "N2 / ${cfg0} / ${cfg1} / ${cfg2}"
                 
                 notebook_2
@@ -552,7 +604,9 @@ function topic() {
             fi
                 ret=$?
                 
-                if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 ] || [ $ret -eq 3 ]; then apply; fi
+                if should_apply "$ret"; then
+					apply
+                fi
                 
                 if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
 
@@ -591,8 +645,11 @@ function topic() {
             fi
             
             [ ${days_to_review_porcent} -ge 100 ] && info5="$(gettext "(completado)")"
-            info6="$days_until  $days_remaining / $days_to_review "
-			pres="<big><b>$(gettext "Topic learnt")</b></big>\n<small>$label_review</small>\n\n<b>$(gettext "Spaced repetition schedule")</b>\n<sub>$(gettext "Current interval (days):")</sub>$label_serie"
+            info6=$(printf "$(ngettext \
+    "Next review: %d day left / %d days" \
+    "Next review: %d days left / %d days" \
+    "$days_remaining")" "$days_remaining" "$days_to_review")
+			pres="<big><b>$(gettext "Topic status")</b></big>\n<small>$label_review</small>\n\n\n<b>$(gettext "Spaced repetition schedule")</b>\n<sub>$(gettext "Intervals between reviews")</sub>$label_serie"
             
             echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
             
@@ -600,7 +657,7 @@ function topic() {
             
             if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
             
-            if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 ]; then 
+            if should_apply "$ret"; then
 				apply
             fi
 
@@ -615,7 +672,9 @@ function topic() {
             
             notebook_1; ret=$?
             
-            if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
+            if should_apply "$ret"; then
+				apply
+            fi
             
             if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
 
@@ -632,15 +691,20 @@ function topic() {
             fi
             ret=$?
             
-            if [ ! -e "$DT/ps_lk" ] && [ $ret -eq 2 -o $ret -eq 3 ]; then apply; fi
+            if should_apply "$ret"; then
+				apply
+            fi
             
             if [ $ret -eq 3 ]; then "$DS/practice/strt.sh" & fi
             
         elif [[ ${cfg1} -eq 0 ]]; then
         
             calculate_review "${tpc}"
-            info6="$days_until  $days_remaining / $days_to_review "
-            pres="<big><b>$(gettext "Topic learnt")</b></big>\n<small>$label_review</small>\n\n<b>$(gettext "Spaced repetition schedule")</b>\n<sub>$(gettext "Current interval (days):")</sub>$label_serie"
+            info6=$(printf "$(ngettext \
+    "Next review: %d day left / %d days" \
+    "Next review: %d days left / %d days" \
+    "$days_remaining")" "$days_remaining" "$days_to_review")
+            pres="<big><b>$(gettext "Topic status")</b></big>\n<small>$label_review</small>\n\n\n<b>$(gettext "Spaced repetition schedule")</b>\n<sub>$(gettext "Intervals between reviews")</sub>$label_serie"
             echo "N2/ ${cfg0} / ${cfg1} / ${cfg2}"
             
             notebook_2; ret=$?
@@ -705,10 +769,6 @@ ipanel() {
         done
     } >/dev/null 2>&1
     
-    geometry=$(cdb ${cfgdb} 1 geom vals)
-    if [ -n "$geometry" ]; then
-    geometry="--geometry=$geometry"
-    else geometry="--mouse"; fi
     (panelini; if [ $? != 0 ] && ! pgrep -f "$DS/ifs/tls.sh itray"; then \
     "$DS/stop.sh" 1 & fi; exit ) & set_geom
 }

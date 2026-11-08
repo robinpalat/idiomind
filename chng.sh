@@ -7,6 +7,16 @@ if [ -r "${DS:-}/gui/play_present.sh" ]; then
     source "$DS/gui/play_present.sh"
 fi
 
+# La aparicion diferida de SOURCE de las palabras se cancela al terminar o
+# al detener este proceso para no dejar temporizadores huerfanos.
+_present_source_cleanup() {
+    declare -F play_present_cancel_staged >/dev/null 2>&1 && play_present_cancel_staged
+}
+if declare -F play_present_cancel_staged >/dev/null 2>&1; then
+    trap '_present_source_cleanup' EXIT
+    trap '_present_source_cleanup; exit 143' HUP INT TERM
+fi
+
 if [[ ${1} = 0 ]]; then
 
     if [ $stts = 1 ] || [ $stts = 2 ] || [ $stts = 5 ] || [ $stts = 6 ]; then
@@ -26,22 +36,37 @@ if [[ ${1} = 0 ]]; then
 	
     _play() {
         v=""
+        # Cualquier avance invalida la traduccion diferida del elemento anterior.
+        declare -F play_present_cancel_staged >/dev/null 2>&1 && play_present_cancel_staged
         if [[ ${stnrd} = 1 ]]; then
             a=$(tpc_db 1 config audio)
+            [ "${a}" = TRUE ] || a=FALSE
             n=$(tpc_db 1 config ntosd)
+            [ "${n}" = TRUE ] || n=FALSE
             v=$(tpc_db 1 config vismode ""); [ -z "${v}" ] && v=present
             l=$(tpc_db 1 config loop); ! [[ ${l} =~ $numer ]] && l=0
             rw=$(tpc_db 1 config rword); ! [[ ${rw} =~ $numer ]] && rw=0
             [ ! -f "$DT"/playlck ] && echo 0 > "$DT"/playlck
 
-            if [ ${n} != TRUE ] && [ ${a} != TRUE ] && [ ${stnrd} = 1 ]; then a=TRUE; fi
             
             if ! grep 'TRUE' <<< "$W$S$M$L$D">/dev/null 2>&1; then
 				"$DS"/stop.sh 2  & exit 1
             fi
             
+            # Una traduccion pendiente del elemento anterior no debe aparecer
+            # sobre este (incluye parada y cambio de elemento).
+            declare -F play_present_cancel_staged >/dev/null 2>&1 && play_present_cancel_staged
+
             case "${v}" in
-                present) declare -F play_present_update >/dev/null 2>&1 && play_present_update "${trgt}" "${srce}" "${icon:-}" ;;
+                present)
+                    if declare -F play_present_update_staged >/dev/null 2>&1 && [ "${type:-}" = 1 ]; then
+                        # Palabra: TARGET inmediato y SOURCE a los 1,5 s.
+                        # El bloque de audio siguiente no se altera ni se espera.
+                        play_present_update_staged "${trgt}" "${srce}" "${icon:-}"
+                    else
+                        # Oracion: TARGET y SOURCE simultaneos.
+                        declare -F play_present_update >/dev/null 2>&1 && play_present_update "${trgt}" "${srce}" "${icon:-}"
+                    fi ;;
                 osd)     notify-send -i "${icon}" "${trgt}" "${srce}" -t $((4000+${pause_osd}000)) & ;;
                 none)    ;;
             esac

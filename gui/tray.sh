@@ -32,7 +32,7 @@ if [[ $1 == --do ]]; then
         topics) "$DS/chng.sh" >/dev/null 2>&1 & ;;
         play)   set_forced 0; "$DS/bcle.sh" >/dev/null 2>&1 & ;;
         stop)   set_forced 1; "$DS/stop.sh" 2 >/dev/null 2>&1 & ;;
-        tasks)  # pseudo-submenú: lista emergente (misma función que el panel)
+        tasks)  # pseudo-submenú: lista emergente
                 [[ -r $tasks_file ]] || exit 0
                 declare -F show_tasks_menu >/dev/null 2>&1 || source "$DS/ifs/tls.sh"
                 show_tasks_menu tray
@@ -95,12 +95,12 @@ clean() {                       # '|' y '!' son delimitadores en yad
     printf '%s' "${s//!/ }"
 }
 
-sq() {                          # comillas simples seguras (yad no entiende $'...')
+sq() {                         
     local s=${1//\'/\'\\\'\'}
     printf "'%s'" "$s"
 }
 
-add_item() {                    # etiqueta, argumentos de --do, [icono], [argumento extra]
+add_item() {                   
     local cmd
     cmd="$(sq "$SELF") --do $2"
     [[ -n $4 ]] && cmd+=" $(sq "$4")"

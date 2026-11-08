@@ -1,0 +1,1560 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: idiomind\n"
+"PO-Revision-Date: 2019-03-31 12:15-0300\n"
+"Last-Translator: robin <robinpalat@gmail.com>\n"
+"Language-Team: English <>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.6\n"
+"X-Poedit-KeywordsList: gettext;gtext\n"
+"X-Poedit-Basepath: ../../../../../../../../..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: home/robin/Shortcuts/idiomind\n"
+"X-Poedit-SearchPath-1: media/Files/Cloud/Mega/1DEV/Projects/Idiomind/Docs/"
+"Translates/strings\n"
+
+msgid "\"Cancel\\"
+msgstr "\"Annuler\\"
+
+msgid "\"Save\\"
+msgstr "\"Enregistrer\\"
+
+msgid "* however you have new notes"
+msgstr "* Cependant vous avez de nouvelles notes"
+
+msgid "1 episode downloaded"
+msgstr "1 épisode téléchargé"
+
+msgid "<b>Would you like to review it?</b>\\\n The waiting period already has been completed."
+msgstr "<b>Voulez-vous l'examiner à nouveau?</b>\\\n La période d'attente a déjà été achevée."
+
+msgid "A new version of Idiomind available\\!"
+msgstr "Une nouvelle version d'Idiomind est disponible."
+
+msgid "A problem has occurred while fetching data, try again later."
+msgstr "Une erreur est survenue lors de la récupération des données. Réessayez plus tard."
+
+msgid "A problem has occurred with the file upload, try again later."
+msgstr "Erreur durant l'envoi. Réessayez plus tard."
+
+msgid "A problem has occurred, try again later."
+msgstr "Un problème est survenu, réessayer plus tard."
+
+msgid "A process is already running!"
+msgstr "Un processus est en cours d'exécution!"
+
+msgid "About"
+msgstr "À Propos"
+
+msgid "Active"
+msgstr "Actif"
+
+msgid "Activity"
+msgstr "Activité"
+
+msgid "Add"
+msgstr "Ajouter"
+
+msgid "Add Audio"
+msgstr "Ajouter Audio"
+
+msgid "Add File"
+msgstr "Ajouter Fichier"
+
+msgid "Add URL of podcasts about languages"
+msgstr "Ajouter l'URL des podcasts sur les langues"
+
+msgid "Add an audio file"
+msgstr "Ajouter un fichier audio"
+
+msgid "Add an image by screen clipping"
+msgstr "Ajouter une image par coupure d'écran"
+
+msgid "Add files"
+msgstr "Ajouter des fichiers"
+
+msgid "Add resource"
+msgstr "Ajouter ressources"
+
+msgid "Add these words"
+msgstr "Ajouter ces mots"
+
+msgid "Add to"
+msgstr "Ajouter à"
+
+msgid "Add to favorites"
+msgstr "Ajouter aux Favoris"
+
+msgid "Add words"
+msgstr "Ajouter mots"
+
+msgid "Advanced"
+msgstr "Avancé"
+
+msgid "Again"
+msgstr "Encore"
+
+msgid "Also delete saved episodes"
+msgstr "Supprimer également épisodes sauvegardées"
+
+msgid "An error has occurred. Playback stopped"
+msgstr "Une erreur inattendue est survenue. Lecture arrêté"
+
+msgid "An error occurred while copying files."
+msgstr "Une erreur est survenue lors de la copie des fichiers."
+
+msgid "An error occurred while trying to write on '/tmp'"
+msgstr "Erreur lors de la tentative d'écriture dans le système de fichiers"
+
+msgid "An error occurred while trying to write on file system"
+msgstr "Erreur lors de la tentative d'écriture dans le système de fichiers"
+
+msgid "An error occurred."
+msgstr "Une erreur est survenue."
+
+msgid "Answers in"
+msgstr "Réponses en"
+
+msgid "Apply"
+msgstr "Appliquer"
+
+msgid "Apr"
+msgstr "avr"
+
+msgid "Are you sure you want to change the interface language?"
+msgstr "Êtes-vous sûr de vouloir changer la langue de l'interface?"
+
+msgid "Are you sure you want to delete all episodes?"
+msgstr "Êtes-vous sûr de vouloir supprimer toutes les épisodes?"
+
+msgid "Are you sure you want to delete this episode from favorites?"
+msgstr "Êtes-vous sûr de vouloir supprimer cet épisode de vos favoris?"
+
+msgid "Are you sure you want to delete this item?"
+msgstr "Etes-vous sûr de vouloir supprimer ceci?"
+
+msgid "Are you sure you want to delete this topic?"
+msgstr "Voulez-vous vraiment supprimer ce  thème?"
+
+msgid "Article"
+msgstr "Article"
+
+msgid "At home"
+msgstr "Home"
+
+msgid "Attempting download image"
+msgstr "Regarder l'image"
+
+msgid "Audio"
+msgstr "Audio"
+
+msgid "Audio files"
+msgstr "Fichiers audio"
+
+msgid "Audio files:"
+msgstr "Fichiers audio:"
+
+msgid "Aug"
+msgstr "août"
+
+msgid "Authentication error."
+msgstr "Erreur d'authentification."
+
+msgid "Author"
+msgstr "Auteur"
+
+msgid "Auto-check learned items"
+msgstr "Auto-vérification appris items"
+
+msgid "Automatic Translation"
+msgstr "Traduction automatique"
+
+msgid "Back to Practice:"
+msgstr "Retour à la pratique:"
+
+msgid "Beginner"
+msgstr "Débutant"
+
+msgid "Beginners"
+msgstr "Débutant"
+
+msgid "Browse to and select the audio file that you want to add."
+msgstr "Sélectionnez le fichier audio à ajouter."
+
+msgid "Browse to and select the file that you want to add."
+msgstr "Sélectionnez le fichier à ajouter."
+
+msgid "By:"
+msgstr "Par:"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Category"
+msgstr "Catégorie"
+
+msgid "Change native language:"
+msgstr "Changer la langue natale:"
+
+msgid "Change viewer"
+msgstr "Changement viewer"
+
+msgid "Check"
+msgstr "Vérifier"
+
+msgid "Checking key"
+msgstr "Vérification de la clé"
+
+msgid "Checks for new episodes at startup"
+msgstr "Vérifie nouveaux épisodes au démarrage"
+
+msgid "Chinese"
+msgstr "Chinoise"
+
+msgid "Choose the challenge language:"
+msgstr "Choisir la langue du défi :"
+
+msgid "Clipboard watcher"
+msgstr "Presse-papiers observateur"
+
+msgid "Close"
+msgstr "Fermer"
+
+msgid "Close and reopen the main window to see any changes"
+msgstr "Fermer et rouvrir la fenêtre principale pour voir les changements"
+
+msgid "Collects difficult words from the second review onwards."
+msgstr "Recueille les mots difficiles à partir de la deuxième revue."
+
+msgid "Compares passed tests with total recorded activity each week. Activity alone is not a measure of language mastery."
+msgstr "Compare les tests réussis à l'activité totale enregistrée chaque semaine. L'activité seule n'est pas une mesure de la maîtrise de la langue."
+
+msgid "Completing"
+msgstr "Terminé"
+
+msgid "Configure"
+msgstr "Configurer"
+
+msgid "Configure feed urls to add content automatically."
+msgstr "Configurez les URL de flux pour ajouter du contenu automatiquement."
+
+msgid "Confirm"
+msgstr "Confirmer"
+
+msgid "Congratulations!"
+msgstr "Félicitations !"
+
+msgid "Congratulations! You have completed a test of"
+msgstr "Félicitations! Vous avez terminé un test de"
+
+msgid "Consider waiting a while before resuming to practice some items"
+msgstr "Envisager d'attendre un certain temps avant de reprendre à pratiquer certains items"
+
+msgid "Consider waiting a while before resuming to practice some notes"
+msgstr "Pensez à patienter un peu avant de reprendre l’entraînement de certaines notes"
+
+msgid "Continue"
+msgstr "Continuer"
+
+msgid "Convert text to audio"
+msgstr "Convertir du texte en audio"
+
+msgid "Copying"
+msgstr "Copier"
+
+msgid "Copying..."
+msgstr "Copier..."
+
+msgid "Correct"
+msgstr "Correct"
+
+msgid "Could not add some podcasts:"
+msgstr "Impossible d'ajouter certains podcasts:"
+
+msgid "Could not remove the directory:"
+msgstr "Impossible de supprimer le dossier:"
+
+msgid "Created by"
+msgstr "Créé par"
+
+msgid "Created on"
+msgstr "Créé le"
+
+msgid "Culture"
+msgstr "Culture"
+
+msgid "Current month distribution"
+msgstr "Distribution du mois actuel"
+
+msgid "Data exported successfully."
+msgstr "Données exporté avec succès."
+
+msgid "Data imported successfully."
+msgstr "Données importées avec succès."
+
+msgid "Deactivate Clipboard watcher?"
+msgstr "Désactiver Presse-papiers observateur?"
+
+msgid "Dec"
+msgstr "déc"
+
+msgid "Definition"
+msgstr "Définition"
+
+msgid "Delete"
+msgstr "Supprimer"
+
+msgid "Description/Notes"
+msgstr "Description/Notes"
+
+msgid "Detect language of source text (inaccurate)"
+msgstr "Détecter la langue du texte source (inexact)"
+
+msgid "Dictionaries"
+msgstr "Dictionnaires"
+
+msgid "Difficult"
+msgstr "Difficiles"
+
+msgid "Do you recognize this word?"
+msgstr "Reconnaissez-vous ce mot ?"
+
+msgid "Do you want to download it now?"
+msgstr "Voulez-vous le télécharger maintenant?"
+
+msgid "Does not need configuration"
+msgstr "N'a pas besoin de configuration"
+
+msgid "Does not need configuration."
+msgstr "N'a pas besoin de configuration."
+
+msgid "Double-click to configure"
+msgstr "Double-cliquez pour configurer"
+
+msgid "Download"
+msgstr "Télécharger"
+
+msgid "Download audio pronunciation"
+msgstr "Télécharger la prononciation audio"
+
+msgid "Downloadable content available"
+msgstr "Contenu supplémentaire disponible"
+
+msgid "Downloaded files"
+msgstr "Fichiers téléchargés"
+
+msgid "Downloading"
+msgstr "Téléchargement"
+
+msgid "Downloading..."
+msgstr "Téléchargement..."
+
+msgid "Each bar shows how many topics are in each state. Monthly comparison shows how your learning library changes."
+msgstr "Chaque barre indique le nombre de thèmes dans chaque état. La comparaison mensuelle montre l'évolution de la bibliothèque."
+
+msgid "Easy"
+msgstr "Faciles"
+
+msgid "Edit"
+msgstr "Modifier"
+
+msgid "Edit list"
+msgstr "Modifier liste"
+
+msgid "Enable"
+msgstr "Actif"
+
+msgid "English"
+msgstr "Anglaise"
+
+msgid "Entertainment"
+msgstr "Divertissement"
+
+msgid "Episode removed from favorites"
+msgstr "Episode retiré de favoris"
+
+msgid "Episodes"
+msgstr "Episodes"
+
+msgid "Error"
+msgstr "Erreur"
+
+msgid "Error while syncing"
+msgstr "Erreur lors de la synchronisation"
+
+msgid "Errors found"
+msgstr "Erreurs détectées"
+
+msgid "Example"
+msgstr "Exemple"
+
+msgid "Example (for words)"
+msgstr "Exemple (pour les mots)"
+
+msgid "Exiting..."
+msgstr "Quitter..."
+
+msgid "Export"
+msgstr "Exporter"
+
+msgid "Export to"
+msgstr "Exporter vers"
+
+msgid "Failed to get text."
+msgstr "Impossible d'obtenir texte."
+
+msgid "Favorites"
+msgstr "Favoris"
+
+msgid "Favorites<i><small><small> Podcasts</small></small></i>"
+msgstr "Favoris<i><small><small> Podcasts</small></small></i>"
+
+msgid "Feb"
+msgstr "févr"
+
+msgid "Feeds"
+msgstr "Feeds"
+
+msgid "Feeds for"
+msgstr "RSS pour"
+
+msgid "File format corrupted"
+msgstr "Le fichier est corrompu"
+
+msgid "File is corrupted"
+msgstr "Le fichier est corrompu"
+
+msgid "Finalize Review [overdue]:"
+msgstr "Finaliser Examen [En retard]:"
+
+msgid "Flashcards"
+msgstr "Fiche de Vocabulaire"
+
+msgid "Folder"
+msgstr "Dossier"
+
+msgid "Forgotten"
+msgstr "Oubliés"
+
+msgid "Found"
+msgstr "Trouvé"
+
+msgid "French"
+msgstr "Français"
+
+msgid "Funny"
+msgstr "Drôle"
+
+msgid "German"
+msgstr "Allemande"
+
+msgid "Get account"
+msgstr "Obtenir un compte"
+
+msgid "Get in touch"
+msgstr "Entrer en contact"
+
+msgid "Getting started"
+msgstr "Commencer"
+
+msgid "Go back to practice the above items"
+msgstr "Retour à la pratique de groupe précédent"
+
+msgid "Go back to practice the above notes"
+msgstr "Retournez vous entraîner sur les notes ci-dessus"
+
+msgid "Grammar"
+msgstr "Grammaire"
+
+msgid "Hard words"
+msgstr "Mots difficiles"
+
+msgid "Has not changed since last update"
+msgstr "N'a pas changé depuis la dernière mise à jour"
+
+msgid "Have been added:"
+msgstr "Ont été ajoutés:"
+
+msgid "Help"
+msgstr "Aide"
+
+msgid "History"
+msgstr "Histoire"
+
+msgid "Home"
+msgstr "Home"
+
+msgid "I Knew it"
+msgstr "Je le savais"
+
+msgid "I did not know it"
+msgstr "Ne pas"
+
+msgid "I'm learning"
+msgstr "J'apprends"
+
+msgid "Idiomind requires admin privileges for this task"
+msgstr "Idiomind nécessite des privilèges d'administrateur pour cette tâche"
+
+msgid "Ignore"
+msgstr "Ignorer"
+
+msgid "Image"
+msgstr "Image"
+
+msgid "Images"
+msgstr "Images"
+
+msgid "Images:"
+msgstr "Images:"
+
+msgid "Import"
+msgstr "Importer"
+
+msgid "In the city"
+msgstr "Dans la ville"
+
+msgid "Inactive"
+msgstr "Inactifs"
+
+msgid "Index"
+msgstr "Index"
+
+msgid "Index error"
+msgstr "Erreur dans l'indice"
+
+msgid "Information"
+msgstr "Information"
+
+msgid "Install"
+msgstr "Installer"
+
+msgid "Installed on"
+msgstr "Installé le"
+
+msgid "Insufficient data"
+msgstr "Données insuffisantes"
+
+msgid "Insufficient number of items"
+msgstr "Pas assez d'éléments pour effectuer l'opération"
+
+msgid "Insufficient number of items to perform this action"
+msgstr "Nombre d'éléments insuffisant pour effectuer cette action"
+
+msgid "Interface language"
+msgstr "Langue de l'interface"
+
+msgid "Intermediate"
+msgstr "Intermédiaire"
+
+msgid "Internet"
+msgstr "Internet"
+
+msgid "Interview"
+msgstr "Entretien"
+
+msgid "Is now your topic"
+msgstr "Est maintenant votre thème"
+
+msgid "It Might take some time"
+msgstr "Il pourrait prendre un certain temps"
+
+msgid "It is recommended to change your language preferences before installing it"
+msgstr "Il est recommandé de changer vos préférences de langue avant de l'installer"
+
+msgid "Italian"
+msgstr "Italienne"
+
+msgid "Jan"
+msgstr "janv"
+
+msgid "Japanese"
+msgstr "Japonais"
+
+msgid "Jul"
+msgstr "juil"
+
+msgid "Jun"
+msgstr "juin"
+
+msgid "Just open it"
+msgstr "Il suffit de l'ouvrir"
+
+msgid "Language"
+msgstr "Langue"
+
+msgid "Language learning tool"
+msgstr "Outil d'apprentissage des langues"
+
+msgid "Language settings"
+msgstr "Paramètres de langue"
+
+msgid "Language:"
+msgstr "Langue:"
+
+msgid "Languages"
+msgstr "Langues"
+
+msgid "Latest downloads:"
+msgstr "Derniers Téléchargements:"
+
+msgid "Learned"
+msgstr "Appris"
+
+msgid "Learning"
+msgstr "J'apprends"
+
+msgid "Learning Mode"
+msgstr "Mode d’apprentissage"
+
+msgid "Learning mode"
+msgstr "Mode d'apprentissage"
+
+msgid "Learning mode, practice in sets of 10 notes"
+msgstr "Mode d’apprentissage, entraînement par groupes de 10 notes"
+
+msgid "Learnt"
+msgstr "Appris"
+
+msgid "Left click: I know the word"
+msgstr "Clic gauche : je connais le mot"
+
+msgid "Left mouse click: Yes"
+msgstr "Clic gauche de la souris : Oui"
+
+msgid "Level:"
+msgstr "Niveau:"
+
+msgid "Link to web page"
+msgstr "Lien vers la page Web"
+
+msgid "Listen"
+msgstr "Écouter"
+
+msgid "Listen and Writing Sentences"
+msgstr "Écoutez et Sentences d'Ecriture"
+
+msgid "Listen and then try to write this sentence"
+msgstr "Écoutez puis essayez d’écrire cette phrase"
+
+msgid "Listen: Recent audios"
+msgstr "Écouter: Audios récents"
+
+msgid "Lists"
+msgstr "Listes"
+
+msgid "Manage"
+msgstr "Gérer"
+
+msgid "Manually Translation"
+msgstr "Traduction manuelle"
+
+msgid "Mar"
+msgstr "mars"
+
+msgid "Mark"
+msgstr "Marque"
+
+msgid "Mark as learnt"
+msgstr "Marquer comme appris"
+
+msgid "Maximum number of notes has been exceeded"
+msgstr "Le nombre maximum de notes a été dépassé"
+
+msgid "Maximum number of notes has been exceeded:"
+msgstr "Le nombre maximum de notes a été dépassé"
+
+msgid "Maximum number of topics reached."
+msgstr "Le nombre maximum des thèmes atteint."
+
+msgid "May"
+msgstr "mai"
+
+msgid "Media"
+msgstr "Média"
+
+msgid "Monthly register · last 5 months"
+msgstr "Registre mensuel · 5 derniers mois"
+
+msgid "Monthly total trend"
+msgstr "Évolution du total mensuel"
+
+msgid "More"
+msgstr "Plus"
+
+msgid "More options"
+msgstr "Plus d'options"
+
+msgid "Movies"
+msgstr "Films"
+
+msgid "Multiple-choice"
+msgstr "Multiple-choice"
+
+msgid "Music"
+msgstr "Musique"
+
+msgid "My language is"
+msgstr "Ma langue est"
+
+msgid "My topics"
+msgstr "Mes thèmes"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Native Language Settings"
+msgstr "Paramètres de langue natale"
+
+msgid "Native languages do not match.\\\nYou may have to translate this topic to your own language: click \"Manage\" tab on the main window, click \"Edit\" -> \"Translate\" -> \"Automatic Translation\" ->"
+msgstr "Les langues ne correspondent pas.\\\nVous devrez peut-être de le traduire:\\\ncliquez sur \"Gérer\" dans la fenêtre principale, cliquez sur \"Éditer\" -> \"Traduire\" -> \"Traduction automatique\" ->"
+
+msgid "Nature"
+msgstr "Nature"
+
+msgid "New"
+msgstr "Nouveau"
+
+msgid "New Episodes:"
+msgstr "Nouveaux Épisodes:"
+
+msgid "New Topic"
+msgstr "Nouveau Thème"
+
+msgid "New Version"
+msgstr "Nouvelle Version"
+
+msgid "New content"
+msgstr "Nouveau contenu"
+
+msgid "New episodes<i><small><small> Podcasts</small></small></i>"
+msgstr "Épisodes nouveaux<i><small><small> Podcasts</small></small></i>"
+
+msgid "New note"
+msgstr "Nouvelle note"
+
+msgid "News"
+msgstr "Nouvelles"
+
+msgid "Next"
+msgstr "Suivant"
+
+msgid "No"
+msgstr "Non"
+
+msgid "No add"
+msgstr "Ne pas ajouter"
+
+msgid "No authentication program found"
+msgstr "Aucun programme d'authentification figurant"
+
+msgid "No network connection\\\nPlease connect to a network, then try again."
+msgstr "Aucune connexion réseau\\\nVeuillez connecter à un réseau, puis essayez à nouveau."
+
+msgid "No new content"
+msgstr "Pas de nouveau contenu"
+
+msgid "No repeat"
+msgstr "Rien"
+
+msgid "No such file or directory"
+msgstr "Aucun fichier ou répertoire de ce nom"
+
+msgid "No topic is active"
+msgstr "Aucun thème est actif"
+
+msgid "No topic selected"
+msgstr "Aucun thème est actif"
+
+msgid "No updates available."
+msgstr "Aucune mise à jour n’est disponible."
+
+msgid "Not Yet"
+msgstr "Pas Encore"
+
+msgid "Not available for the language you are learning."
+msgstr "Non disponible pour la langue que vous apprenez."
+
+msgid "Not enough words"
+msgstr "Pas assez d'mots"
+
+msgid "Note"
+msgstr "Note"
+
+msgid "Note:"
+msgstr "Note :"
+
+msgid "Notes will be added to:"
+msgstr "Les notes seront ajoutées à:"
+
+msgid "Nothing to play"
+msgstr "Rien à lire"
+
+msgid "Notice"
+msgstr "Avis"
+
+msgid "Nov"
+msgstr "nov"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Oct"
+msgstr "oct"
+
+msgid "Open"
+msgstr "Ouvert"
+
+msgid "Options"
+msgstr "Options"
+
+msgid "Others"
+msgstr "Autres"
+
+msgid "Passed"
+msgstr "Réussis"
+
+msgid "Password"
+msgstr "Mot de passe"
+
+msgid "Path where episodes should be synced"
+msgstr "Chemin où épisodes devraient être synchronisés"
+
+msgid "Pause between items (sec)"
+msgstr "Pause entre items (s)"
+
+msgid "Places"
+msgstr "Lieux"
+
+msgid "Play"
+msgstr "Lire"
+
+msgid "Play audio"
+msgstr "Lecture audio"
+
+msgid "Play/Stop"
+msgstr "Play/Stop"
+
+msgid "Playing:"
+msgstr "En cours de lecture:"
+
+msgid "Please check about voice synthesizer configuration in the settings dialog."
+msgstr "S'il vous plaît vérifier la configuration de synthèse vocale dans la boîte de dialogue des préférences."
+
+msgid "Please check the language settings in the preferences dialog."
+msgstr "S'il vous plaît vérifier les paramètres de langue dans la boîte de dialogue des préférences."
+
+msgid "Please check the speech synthesizer configuration in the preferences dialog."
+msgstr "S'il vous plaît vérifier la configuration de synthèse vocale dans la boîte de dialogue des préférences."
+
+msgid "Please note the language of this Topic is:"
+msgstr "Veuillez noter que la langue de ce sujet est:"
+
+msgid "Please select a category."
+msgstr "Veuillez sélectionner la catégorie."
+
+msgid "Please wait until the current process is finished"
+msgstr "Attendez jusqu'à ce que le processus est terminé"
+
+msgid "Please wait until the current process is finished."
+msgstr "Attendez jusqu'à ce que le processus est terminé."
+
+msgid "Please, reconfigure this feed:"
+msgstr "Veuillez, reconfigurer ce flux:"
+
+msgid "Please, select at least one resource for each task"
+msgstr "Veuillez, sélectionnez au moins une ressource pour chaque tâche"
+
+msgid "Podcast playlist"
+msgstr "Podcast playlist"
+
+msgid "Podcasts"
+msgstr "Podcasts"
+
+msgid "Portuguese"
+msgstr "Portugaise"
+
+msgid "Practice"
+msgstr "Pratique"
+
+msgid "Practice "
+msgstr "Pratique "
+
+msgid "Practice Completed"
+msgstr "Pratique Terminé"
+
+msgid "Practice activity"
+msgstr "Activité de pratique"
+
+msgid "Practice the next group"
+msgstr "Pratiquez le groupe suivant"
+
+msgid "Preferences"
+msgstr "Préférences"
+
+msgid "Press Enter to return..."
+msgstr "Appuyez sur Entrée pour continuer..."
+
+msgid "Processing"
+msgstr "Traitement"
+
+msgid "Processing... Wait."
+msgstr "Traitement en cours... Attendre."
+
+msgid "Program to convert text to audio"
+msgstr "TTS alternatif"
+
+msgid "Program updates"
+msgstr "Mises à jour du programme"
+
+msgid "Progress"
+msgstr "Progrès"
+
+msgid "Questions in"
+msgstr "Questions en"
+
+msgid "Quit"
+msgstr "Quitter"
+
+msgid "Quotes"
+msgstr "Citations"
+
+msgid "Recognize Pronunciation"
+msgstr "Reconnaître Prononciation"
+
+msgid "Remove"
+msgstr "Supprimer"
+
+msgid "Remove all items"
+msgstr "Supprimer tous les éléments"
+
+msgid "Remove from favorites"
+msgstr "Retirer des favoris"
+
+msgid "Remove image"
+msgstr "Supprimer l'image"
+
+msgid "Removing"
+msgstr "Retrait"
+
+msgid "Rename"
+msgstr "Renommer"
+
+msgid "Repeat"
+msgstr "Répéter"
+
+msgid "Repeat sounding out"
+msgstr "Répétez prononciation des"
+
+msgid "Resource"
+msgstr "Ressource"
+
+msgid "Resources"
+msgstr "Ressources"
+
+msgid "Restart"
+msgstr "Redémarrer"
+
+msgid "Restart topic status"
+msgstr "Réinitialiser l'état du thème"
+
+msgid "Restore"
+msgstr "Restaurer"
+
+msgid "Restore backup:"
+msgstr "Restaurer la sauvegarde:"
+
+msgid "Result:"
+msgstr "Résultat :"
+
+msgid "Resume Practice:"
+msgstr "Reprendre la pratique:"
+
+msgid "Reverse items order"
+msgstr "Inverser l'ordre de la liste"
+
+msgid "Review"
+msgstr "Examen"
+
+msgid "Review reminder"
+msgstr "Rappel de révision"
+
+msgid "Reviewed"
+msgstr "Révisés"
+
+msgid "Reviewing"
+msgstr "En révision"
+
+msgid "Right click: I do not know the word"
+msgstr "Clic droit : je ne connais pas le mot"
+
+msgid "Right mouse click: No"
+msgstr "Clic droit de la souris : Non"
+
+msgid "Run at startup"
+msgstr "Exécuter au démarrage"
+
+msgid "Russian"
+msgstr "Russe"
+
+msgid "Save"
+msgstr "Enregistrer"
+
+msgid "Save as"
+msgstr "Enregistrer sous"
+
+msgid "Saved to Favorites list"
+msgstr "Enregistré dans la liste des favoris"
+
+msgid "Science"
+msgstr "Science"
+
+msgid "Screen clipping"
+msgstr "Screen clipping"
+
+msgid "Search audio"
+msgstr "Trouver des audio"
+
+msgid "Search definition"
+msgstr "Trouver des définition"
+
+msgid "Search image"
+msgstr "Trouver des image"
+
+msgid "Select"
+msgstr "Sélectionner"
+
+msgid "Select File"
+msgstr "Sélectionner"
+
+msgid "Select native language:"
+msgstr "Sélectionnez la langue maternelle"
+
+msgid "Select the Topic to which the notes should be added"
+msgstr "Sélectionnez le thème auquel les notes doivent être ajoutées"
+
+msgid "Select the language you are learning"
+msgstr "Choisissez la langue que vous apprenez"
+
+msgid "Select your language"
+msgstr "Choisissez votre langue"
+
+msgid "Selected words from the sentence test have been added to this practice."
+msgstr "Les mots sélectionnés du test de phrases ont été ajoutés à cet entraînement."
+
+msgid "Sentence too long"
+msgstr "Sentence trop longue"
+
+msgid "Sentences"
+msgstr "Sentences"
+
+msgid "Sep"
+msgstr "sept"
+
+msgid "Set recommended Initialization configurations"
+msgstr "Définir les configurations d'initialisation recommandées"
+
+msgid "Settings"
+msgstr "Paramètres"
+
+msgid "Share"
+msgstr "Partager"
+
+msgid "Show answer: Space or left click"
+msgstr "Afficher la réponse : Espace ou clic gauche"
+
+msgid "Show icon in the notification area"
+msgstr "Afficher l'icône dans la zone de notification"
+
+msgid "Show short sentences in word's view"
+msgstr "Afficher des phrases courtes dans de vue de mot"
+
+msgid "Size:"
+msgstr "Taille:"
+
+msgid "Skill Level"
+msgstr "Niveau"
+
+msgid "Smaller windows"
+msgstr "Fenêtres plus petites"
+
+msgid "Some notes could not be added to your list"
+msgstr "Quelques notes ne peuvent être ajoutés à votre liste"
+
+msgid "Some sentences were set aside because they are too complex for your learning level."
+msgstr "Certaines phrases ont été écartées car trop complexes pour votre niveau."
+
+msgid "Sorry, Authentication failed."
+msgstr "Désolé, authentification a échoué."
+
+msgid "Sorry, idiomind is using a more recent version of yad.\\\nPlease update 'yad', you can use:"
+msgstr "Désolé, idiomind utilise une version plus récente de yad\\\nS'il vous plaît mettre à jour 'yad', vous pouvez utiliser:"
+
+msgid "Sorry, the name is too long."
+msgstr "Désolé, nouveau nom trop long."
+
+msgid "Sorry, the new name is too long."
+msgstr "Désolé, nouveau nom trop long."
+
+msgid "Sorry, this topic is currently not active."
+msgstr "Désolé, ce thème est actuellement inactive."
+
+msgid "Sorry, to run idiomind we need to use a GUI output with yad.\\\nPlease install 'yad', you can use:"
+msgstr "Désolé, pour exécuter idiomind nous avons besoin d'utiliser une sortie de GUI avec yad.\\\nS'il vous plaît installer 'yad', vous pouvez utiliser:"
+
+msgid "Sorry, your System not support icon tray"
+msgstr "Désolé, votre système ne supporte pas la barre d'icônes"
+
+msgid "Space: repeat audio"
+msgstr "Espace : réécouter l’audio"
+
+msgid "Spanish"
+msgstr "Espagnol"
+
+msgid "Specified URL doesn't seem to contain any feeds:"
+msgstr "L'URL spécifié ne peut pas contenir de flux:"
+
+msgid "Sport"
+msgstr "Sport"
+
+msgid "Start"
+msgstr "Démarrer"
+
+msgid "Starting"
+msgstr "Départ"
+
+msgid "Statistics"
+msgstr "Statistiques"
+
+msgid "Statistics could not be displayed: no terminal emulator is available."
+msgstr "Impossible d'afficher les statistiques : aucun émulateur de terminal disponible."
+
+msgid "Stats"
+msgstr "Stats"
+
+msgid "Status"
+msgstr "Statut"
+
+msgid "Status:"
+msgstr "Statut:"
+
+msgid "Stop"
+msgstr "Arrêtez"
+
+msgid "Stop playback"
+msgstr "Arrête la lecture"
+
+msgid "Storyteller"
+msgstr "Conteur"
+
+msgid "Subscriptions"
+msgstr "Souscription"
+
+msgid "Suggested Podcasts"
+msgstr "Podcasts Suggérés"
+
+msgid "Suggested podcasts to learn"
+msgstr "Podcasts suggérés"
+
+msgid "Switch Language"
+msgstr "Changer de Langue"
+
+msgid "Sync after update"
+msgstr "synchroniser après chaque mise à jour"
+
+msgid "Sync only favorites"
+msgstr "Synchroniser seulement favoris"
+
+msgid "Synchronization finished"
+msgstr "Synchronisation terminée"
+
+msgid "Synchronize"
+msgstr "Syncronize"
+
+msgid "Syncing..."
+msgstr "Syncing..."
+
+msgid "Talks"
+msgstr "Pourparlers"
+
+msgid "Task"
+msgstr "Tâche"
+
+msgid "Tasks"
+msgstr "Tâches"
+
+msgid "Tasks:"
+msgstr "Tâches:"
+
+msgid "Tech"
+msgstr "Technologie"
+
+msgid "Test"
+msgstr "Tester"
+
+msgid "Test completed"
+msgstr "Test est terminé"
+
+msgid "Test online resources"
+msgstr "Testez les ressources en ligne"
+
+msgid "Tests passed"
+msgstr "Tests réussis"
+
+msgid "Text is too long"
+msgstr "Sentence trop longue"
+
+msgid "Text missing:"
+msgstr "Texte manquant:"
+
+msgid "The clipboard watcher is enabled for 5 minutes..."
+msgstr "L'observateur du presse-papiers est activé pendant 5 minutes..."
+
+msgid "The current Native language of this topic is"
+msgstr "La langue natale actuelle de cette thème est"
+
+msgid "The directory to synchronization does not exist."
+msgstr "Ne existe pas le dossier de synchronisation."
+
+msgid "The package 'tesseract-ocr' is not installed\\\nPlease install"
+msgstr "Le paquet 'tesseract-ocr' est pas installé\\\nVeuillez installer"
+
+msgid "The quality of this translation was verified"
+msgstr "La qualité de cette traduction a été vérifiée"
+
+msgid "The specified path for the video player does not exist"
+msgstr "Le chemin spécifié pour le lecteur vidéo n'existe pas"
+
+msgid "There are not enough items to practice"
+msgstr "Il n'y a pas assez d'objets à pratiquer"
+
+msgid "There are not enough notes to practice."
+msgstr "Pas assez de notes pour s’entraîner."
+
+msgid "There are not enough sentences for this practice in the \"Learning\" list"
+msgstr "Pas assez de phrases pour cet entraînement dans la liste \"Learning\"."
+
+msgid "There are not enough words for this practice in the \"Learning\" list"
+msgstr "Pas assez de mots pour cet entraînement dans la liste \"Learning\"."
+
+msgid "There are selected words from the sentence practice that can be added to the word practices."
+msgstr "Des mots sélectionnés de l’entraînement de phrases peuvent être ajoutés à l’entraînement de mots."
+
+msgid "There is a copy of this translation. Do you want to restore the copy instead of translating again?"
+msgstr "Il y a une copie de cette traduction. Voulez-vous restaurer la copie au lieu de traduire à nouveau?"
+
+msgid "There is a verified translation for this language. Do you want to use this copy instead of translating again?"
+msgstr "Il y a une traduction révisée de cette langue. Voulez-vous utiliser cette copie au lieu de traduire à nouveau?"
+
+msgid "There was a problem with the translation;\\\nSome items were not translated correctly."
+msgstr "Il y avait un problème avec la traduction;\\\nCertains éléments n'ont pas été traduits correctement."
+
+msgid "This is a test"
+msgstr "C'est un test"
+
+msgid "This note was not added"
+msgstr "Cette note n'a pas été ajoutée"
+
+msgid "This topic has no verified translations."
+msgstr "Ce thème n'a pas de traduction vérifiée."
+
+msgid "Time set to review:"
+msgstr "Temps établi pour réexaminer:"
+
+msgid "To Practice:"
+msgstr "Pour pratiquer:"
+
+msgid "To Review [new] [overdue]:"
+msgstr "Pour Examen [Nouveau] [En retard]:"
+
+msgid "To Review [new]:"
+msgstr "Pour Examen [Nouveau]:"
+
+msgid "To Review [overdue]:"
+msgstr "Pour Examen [En retard]:"
+
+msgid "To Review:"
+msgstr "Pour Examen:"
+
+msgid "To get started, please configure the following:"
+msgstr "Pour commencer, veuillez définir les paramètres suivants:"
+
+msgid "To start adding notes you need to have a Topic.\\\nCreate one using the New button..."
+msgstr "Pour commencer à ajouter des notes, vous devez avoir un thème.\\\nCréer un en utilisant le bouton Nouveau..."
+
+msgid "To start is okay select all, later, according to your preferences you can disable some."
+msgstr "Pour commencer, vous pouvez tout sélectionner. Plus tard, vous pouvez en désactiver certaines selon vos préférences.,"
+
+msgid "Topic"
+msgstr "Thème"
+
+msgid "Topic inactive. Do you want to enable it now?"
+msgstr "Thème considéré comme inactif. Voulez-vous le faire maintenant?"
+
+msgid "Topic learnt"
+msgstr "Thème appris"
+
+msgid "Topic name"
+msgstr "Thème appris"
+
+msgid "Topics"
+msgstr "Thèmes"
+
+msgid "Topics library"
+msgstr "Bibliothèque de thèmes"
+
+msgid "Topics status"
+msgstr "État des thèmes"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Total activity"
+msgstr "Activité totale"
+
+msgid "Total size:"
+msgstr "Taille totale:"
+
+msgid "Translate"
+msgstr "Traduire"
+
+msgid "Translate Again"
+msgstr "Traduire à nouveau"
+
+msgid "Translate this program"
+msgstr "Traduire ce programme"
+
+msgid "Translating"
+msgstr "Traduction en cours"
+
+msgid "Translation"
+msgstr "Traduction"
+
+msgid "Translation:"
+msgstr "Traduction:"
+
+msgid "Translations"
+msgstr "Traductions"
+
+msgid "Translations:"
+msgstr "Traductions:"
+
+msgid "Try double click, right-click and drag and drop."
+msgstr "Essayez un double clic, un clic droit et un glisser-déposer."
+
+msgid "Type"
+msgstr "Type"
+
+msgid "URL"
+msgstr "URL"
+
+msgid "Unable to rename at this time. Please try later "
+msgstr "Impossible de renommer en ce moment. Réessayez ultérieurement"
+
+msgid "Update"
+msgstr "Mise À Jour"
+
+msgid "Update finished"
+msgstr "Mise à jour terminée"
+
+msgid "Updated:"
+msgstr "Mis à jour:"
+
+msgid "Updating..."
+msgstr "Mise à jour..."
+
+msgid "Upload"
+msgstr "Envoyer"
+
+msgid "Uploaded correctly"
+msgstr "Thème envoyée avec succès"
+
+msgid "Uploading"
+msgstr "Téléchargement"
+
+msgid "Use automatic translation, if available"
+msgstr "Utiliser la traduction automatique, si disponible"
+
+msgid "Use color to highlight grammar"
+msgstr "Utiliser des couleurs pour ressortir la grammaire"
+
+msgid "Use desktop notifications"
+msgstr "Utiliser notifications sur le bureau"
+
+msgid "Use this character to invoke:"
+msgstr "Utilisez ce caractère d'invoquer:"
+
+msgid "Use this speech synthesizer"
+msgstr "Utilisez ce synthétiseur vocal"
+
+msgid "Use this video player"
+msgstr "Utilisez ce lecteur vidéo"
+
+msgid "User Data"
+msgstr "Données de l'utilisateur"
+
+msgid "Values count word records in each category for that week. They describe recorded activity, not a direct measure of mastery."
+msgstr "Les valeurs comptent les enregistrements par catégorie et par semaine. Elles décrivent l'activité, pas directement la maîtrise."
+
+msgid "Verified Translations"
+msgstr "Traductions révisées"
+
+msgid "Videos<i><small><small> Podcasts</small></small></i>"
+msgstr "Vidéos<i><small><small> Podcasts</small></small></i>"
+
+msgid "Vietnamese"
+msgstr "Vietnamienne"
+
+msgid "Visit the "
+msgstr "Visiter le "
+
+msgid "Wait"
+msgstr "Attendez"
+
+msgid "Wait until it finishes a previous process"
+msgstr "Veuillez attendre qu'un processus en cours soit terminée"
+
+msgid "Warning"
+msgstr "Avertissement"
+
+msgid "Watch or listen: Favorite episodes"
+msgstr "Regarder ou écouter: Épisodes préférés"
+
+msgid "Watch: Recent videos"
+msgstr "Regarder: Vidéos récentes"
+
+msgid "Weekly report · last 5 weeks"
+msgstr "Rapport hebdomadaire · 5 dernières semaines"
+
+msgid "Welcome"
+msgstr "Bienvenue"
+
+msgid "When the download completes, the files will be added to topic directory..."
+msgstr "Lorsque le téléchargement est terminé, les fichiers seront ajoutés au dossier thème..."
+
+msgid "Word activity"
+msgstr "Activité sur les mots"
+
+msgid "Words"
+msgstr "Mots"
+
+msgid "Yes"
+msgstr "Oui"
+
+msgid "You can also download the source code and compile it yourself.\\\nPlease go to:"
+msgstr "Vous pouvez également télécharger le code source et le compiler vous-même.\\\nS'il vous plaît allez à:"
+
+msgid "You have entered an Invalid format"
+msgstr "Vous avez entré un format non valide"
+
+msgid "You have entered an invalid URL"
+msgstr "Vous avez entré une URL non valide"
+
+msgid "You may need to configure a list of Internet resources. \\\nDo you want to do this now?"
+msgstr "Vous pouvez avoir besoin de configurer une liste des ressources d'Internet. \\\nVoulez-vous faire maintenant?"
+
+msgid "You must choose a practice."
+msgstr "Vous devez sélectionner une pratique."
+
+msgid "You must manually remove it."
+msgstr "Vous devez supprimer manuellement."
+
+msgid "You need to fill text fields."
+msgstr "Vous devez remplir les champs de texte."
+
+msgid "You've reached the maximum number of notes for this topic. Max allowed (200)"
+msgstr "Vous avez atteint le nombre maximum de notes pour ce sujet. Max permis (200)"
+
+msgid "Your answer"
+msgstr "Votre réponse"
+
+msgid "[1-9] direct choice"
+msgstr "[1-9] choix direct"
+
+msgid "[Ctrl+R] repeat audio"
+msgstr "[Ctrl+R] réécouter l’audio"
+
+msgid "[Enter] choose"
+msgstr "[Enter] choisir"
+
+msgid "[Enter] continue"
+msgstr "[Enter] continuer"
+
+msgid "[Enter] send answer"
+msgstr "[Enter] envoyer la réponse"
+
+msgid "[Enter] show the answer"
+msgstr "[Enter] afficher la réponse"
+
+msgid "[Esc] quit"
+msgstr "[Esc] quitter"
+
+msgid "[Space] repeat audio"
+msgstr "[Space] réécouter l’audio"
+
+msgid "[Up/Down] move"
+msgstr "[Up/Down] déplacer"
+
+msgid "[n] I did not know it"
+msgstr "[n] je ne la savais pas"
+
+msgid "[n] No"
+msgstr "[n] Non"
+
+msgid "[q] quit"
+msgstr "[q] quitter"
+
+msgid "[r] repeat audio"
+msgstr "[r] réécouter l’audio"
+
+msgid "[s] I knew it"
+msgstr "[s] je la savais"
+
+msgid "[y] Yes"
+msgstr "[y] Oui"
+
+msgid "and try again."
+msgstr "et essayez à nouveau."
+
+msgid "days"
+msgstr "jours"
+
+msgid "hits"
+msgstr "hits"
+
+msgid "link"
+msgstr "link"
+
+msgid "mouse: left = knew, right = did not know"
+msgstr "souris : clic gauche = je la savais, clic droit = je ne la savais pas"
+
+msgid "mouse: left = show"
+msgstr "souris : clic gauche = afficher"
+
+msgid "new words have been added for practice in new sections"
+msgstr "de nouveaux mots ont été ajoutés pour l’entraînement dans de nouvelles sections"
+
+msgid "notes"
+msgstr "Notes"
+
+msgid "sentence"
+msgstr "sentences"
+
+msgid "sentences"
+msgstr "sentences"
+
+msgid "the monthly total is the sum of the five recorded states."
+msgstr "le total mensuel est la somme des cinq états enregistrés."
+
+msgid "topics"
+msgstr "thèmes"
+
+msgid "word"
+msgstr "mot"
+
+msgid "words"
+msgstr "mots"

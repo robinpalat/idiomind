@@ -14,26 +14,51 @@ GtkTreeView.view {
     background-color: #0d0d12;
 }
 
+/* Detener: control compacto, discreto y coherente con el lienzo oscuro.
+   El callback y el identificador del boton siguen siendo los de siempre. */
 button,
 .button,
 GtkButton {
-    background-color: #a02020;
-    color: #ffffff;
-    border: 1px solid #d04040;
-    border-radius: 4px;
+    background-image: none;
+    background-color: rgba(26, 26, 34, 0.94);
+    color: #d8d8dc;
+    border: 1px solid #3a3a46;
+    border-radius: 7px;
+    padding: 5px 12px;
+    min-width: 0;
+    min-height: 0;
+    box-shadow: none;
+    text-shadow: none;
+    -gtk-icon-shadow: none;
+}
+
+button label,
+.button label,
+GtkButton label {
+    background-color: transparent;
 }
 
 button:hover,
 .button:hover,
 GtkButton:hover {
-    background-color: #c03030;
+    background-color: #262632;
     color: #ffffff;
+    border-color: #555566;
 }
 
 button:active,
 .button:active,
+button:checked,
+.button:checked,
 GtkButton:active {
-    background-color: #801818;
+    background-color: #0f0f15;
     color: #ffffff;
-    border-color: #a03030;
+    border-color: #6a6a7a;
+}
+
+button:focus,
+.button:focus,
+GtkButton:focus {
+    outline: 1px solid #6a6a7a;
+    outline-offset: 1px;
 }

@@ -20,7 +20,7 @@
 #   - oraciones largas: reducción de fuente y ajuste de línea.
 #
 # El color de TARGET reproduce exactamente la regla de `colorize`
-# (log3 #AE3259, log2 #C15F27, log1 #4C8C12, sin log color por defecto).
+# (log3 #AE3259, log2 #C15F27, log1 sin color por defecto).
 #
 # Requisitos: yad, xdotool, ImageMagick (convert/identify), fc-match.
 
@@ -52,7 +52,6 @@ PP_IMG_MAX_W="${PP_IMG_MAX_W:-400}"              # ancho maximo de la caja de im
 PP_TEXT_MIN_W="${PP_TEXT_MIN_W:-600}"             # ancho minimo del bloque de texto
 
 # Colores semánticos (idénticos a colorize)
-PP_C_VERDE="#4C8C12"
 PP_C_NARANJA="#C15F27"
 PP_C_ROJO="#AE3259"
 PP_C_DEFECTO="#f4f4f4"
@@ -69,6 +68,7 @@ PP_ACTIVE_FLAG="$PP_DIR/active"
 PP_PID=""
 PP_MONITOR=""
 PP_XID=""
+PP_SOURCE_PID=""
 PP_SCREEN_W=1920
 PP_SCREEN_H=1080
 PP_CANVAS_W=1920
@@ -133,8 +133,6 @@ pp_target_color() {
         printf '%s' "$PP_C_ROJO"
     elif grep -Fxq -- "$trgt" "${DC_tlt}/practice/log2" 2>/dev/null; then
         printf '%s' "$PP_C_NARANJA"
-    elif grep -Fxq -- "$trgt" "${DC_tlt}/practice/log1" 2>/dev/null; then
-        printf '%s' "$PP_C_VERDE"
     else
         printf '%s' "$PP_C_DEFECTO"
     fi
@@ -162,8 +160,9 @@ pp_scale_dims() {  # $1 w $2 h $3 maxw $4 maxh
 # Lienzo completo con imagen + TARGET + SOURCE.
 # Pango envuelve el texto en 'text_maxw' (-size ANCHOx). El bloque se mide de
 # verdad (TARGET y SOURCE por separado) y el lienzo crece para centrarlo.
-pp_compose() {  # $1 target $2 source $3 color $4 imagen(o "") $5 salida
+pp_compose() {  # $1 target $2 source $3 color $4 imagen(o "") $5 salida [$6 color source]
     local tgt="$1" src="$2" color="$3" img="$4" out="$5"
+    local src_color="${6:-$PP_FG_SOURCE}"
     local w=$PP_CANVAS_W
     local margin=$(( w * PP_MARGIN_PCT / 100 ))
     local avail=$(( w - 2 * margin ))
@@ -218,7 +217,7 @@ pp_compose() {  # $1 target $2 source $3 color $4 imagen(o "") $5 salida
     # Render final del bloque combinado (Pango envuelve en text_maxw).
     local markup
     markup="<span font=\"Sans Bold $ft\" color=\"$color\">$(pp_xml_escape "$tgt")</span>"
-    markup+="&#10;<span font=\"Sans $fs\" color=\"$PP_FG_SOURCE\">$(pp_xml_escape "$src")</span>"
+    markup+="&#10;<span font=\"Sans $fs\" color=\"$src_color\">$(pp_xml_escape "$src")</span>"
     convert -size ${text_maxw}x -background none pango:"$markup" "$PP_DIR/bloque.png" 2>/dev/null
     # Bounding box real del texto dentro del bloque (WxH+X+Y), sin escribir recorte.
     local bbox block_w=1 block_h=1 bbox_x=0 bbox_y=0
@@ -332,7 +331,7 @@ play_present_open() {
             --title="Idiomind · Play" \
             --width="$PP_SCREEN_W" --height="$PP_SCREEN_H" \
             --fullscreen --undecorated \
-            --button="STOP":1 \
+            --button="!media-playback-stop!Detener":1 \
             --print-xid="$PP_DIR/xid" \
             <&9 >"$PP_DIR/yad.out" 2>"$PP_DIR/yad.err" &
     else
@@ -343,7 +342,7 @@ play_present_open() {
             --title="Idiomind · Play" \
             --width="$PP_SCREEN_W" --height="$PP_SCREEN_H" \
             --fullscreen --undecorated \
-            --button="STOP":1 \
+            --button="!media-playback-stop!Detener":1 \
             --print-xid="$PP_DIR/xid" \
             <&9 >"$PP_DIR/yad.out" 2>"$PP_DIR/yad.err" &
     fi
@@ -377,19 +376,20 @@ play_present_open() {
     return 0
 }
 
-play_present_update() {
-    local trgt="$1" srce="$2" icon="${3:-}"
+play_present_update() {  # $1 target $2 source $3 icono [$4 "target" = oculta source]
+    local trgt="$1" srce="$2" icon="${3:-}" mode="${4:-}"
     pp_is_active || return 1
     # chng.sh es un proceso independiente de bcle.sh: hay que recalcular la
     # geometria de pantalla aqui, o el lienzo queda con la anchura y los
     # spacers por defecto (arriba del todo).
     pp_screen_size
 
-    local color canvas payload i
+    local color canvas payload i src_color="$PP_FG_SOURCE"
     color="$(pp_target_color "$trgt")"
     canvas="$PP_DIR/canvas.png"
+    [ "$mode" = "target" ] && src_color="$PP_BG"
 
-    pp_compose "$trgt" "$srce" "$color" "$icon" "$canvas" || return 1
+    pp_compose "$trgt" "$srce" "$color" "$icon" "$canvas" "$src_color" || return 1
     # El lienzo crecio para centrar el bloque: recalcular las filas de separacion.
     pp_compute_spacers
 
@@ -407,9 +407,46 @@ play_present_update() {
     pp_write_payload "$payload"
 }
 
+# Cancela la aparicion diferida de SOURCE y elimina su token. Se llama al
+# cambiar de elemento, al cerrar la presentacion y al terminar chng.sh. El
+# token evita que un temporizador antiguo pise al elemento siguiente.
+play_present_cancel_staged() {
+    if [ -n "${PP_SOURCE_PID:-}" ]; then
+        kill "$PP_SOURCE_PID" 2>/dev/null
+        wait "$PP_SOURCE_PID" 2>/dev/null
+        PP_SOURCE_PID=""
+    fi
+    [ -n "${PP_DIR:-}" ] && rm -f "$PP_DIR/source_seq" 2>/dev/null
+    return 0
+}
+
+# Palabra: TARGET inmediato (SOURCE oculto con el color de fondo para no
+# alterar la geometria) y SOURCE a los 1,5 s. El audio no se toca ni se espera.
+play_present_update_staged() {
+    local trgt="$1" srce="$2" icon="${3:-}" seq
+    pp_is_active || return 1
+    play_present_cancel_staged
+    play_present_update "$trgt" "$srce" "$icon" target || return 1
+    [ -n "$srce" ] || return 0
+
+    seq="$(date +%s%N)-$$-$RANDOM"
+    printf '%s\n' "$seq" > "$PP_DIR/source_seq" 2>/dev/null || return 0
+    (
+        # El hijo no hereda los traps de limpieza de chng.sh.
+        trap - EXIT HUP INT TERM
+        sleep 1.5
+        [ "$(cat "$PP_DIR/source_seq" 2>/dev/null)" = "$seq" ] || exit 0
+        [ "$(< "$PP_DT/playlck" 2>/dev/null)" != 0 ] || exit 0
+        play_present_update "$trgt" "$srce" "$icon"
+    ) &
+    PP_SOURCE_PID=$!
+    return 0
+}
+
 play_present_close() {
     pp_is_active || { pp_cleanup; return 0; }
 
+    play_present_cancel_staged
     rm -f "$PP_ACTIVE_FLAG" 2>/dev/null
     exec 9>&- 2>/dev/null
     if [ -n "$PP_PID" ]; then

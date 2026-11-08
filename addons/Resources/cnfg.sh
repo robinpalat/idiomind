@@ -2,6 +2,51 @@
 # -*- ENCODING: UTF-8 -*-
 
 # ============================================================
+# ADDON 
+# ============================================================
+#
+# ID: Resources
+# NAME: Resources
+# VERSION: 0.3.2
+# STATUS: native
+# DESCRIPTION: Pluggable provider system for external audio, translation, definition and image services.
+#
+# FILES:
+#   addons/Resources/cnfg.sh
+#   addons/Resources/common.sh
+#   addons/Resources/test.sh
+#   addons/Resources/provider_template.sh
+#   addons/Resources/DEVELOPMENT.md
+#   addons/Resources/a.png
+#   addons/Resources/b.png
+#   addons/Resources/c.png
+#   addons/Resources/scripts/Azure.Traslator online.Translate.various
+#   addons/Resources/scripts/Baidu.TTS online.Convert text to audio.various
+#   addons/Resources/scripts/Baidu.TTS online.Download audio.various
+#   addons/Resources/scripts/Cambridge.TTS online.Download audio.en
+#   addons/Resources/scripts/DeepL.Traslator online.Translate.various
+#   addons/Resources/scripts/Festival.TTS offline.Convert text to audio.various
+#   addons/Resources/scripts/Google translate.Traslator online.Translate.various
+#   addons/Resources/scripts/Gstaticcom.TTS online.Download audio.en
+#   addons/Resources/scripts/gttscli.TTS online.Convert text to audio.various
+#   addons/Resources/scripts/Ispeech.TTS online.Convert text to audio.various
+#   addons/Resources/scripts/Macmillandictionary.TTS online.Download audio.en
+#   addons/Resources/scripts/Merriamwebster.TTS online.Download audio.en
+#   addons/Resources/scripts/OpenAI.TTS online.Convert text to audio.various
+#   addons/Resources/scripts/Openverse.Script.Download image.various
+#   addons/Resources/scripts/Oxforddictionaries.TTS online.Download audio.en
+#   addons/Resources/scripts/SpanishDict.TTS online.Convert text to audio.various
+#   addons/Resources/scripts/SpanishDict.TTS online.Download audio.es
+#   addons/Resources/scripts/Vocabolaudio.TTS online.Download audio.it
+#   addons/Resources/scripts/Vocabulix.TTS online.Download audio.es
+#   addons/Resources/scripts/Voicerss.TTS online.Convert text to audio.various
+#   addons/Resources/scripts/Wiki commons.Script.Download image.various
+#   addons/Resources/scripts/Yandex.TTS online.Convert text to audio.various
+#   ifs/extensions/add/resources.sh
+#
+# ============================================================
+
+# ============================================================
 # Resource Addon — Configuration Manager
 # ============================================================
 #

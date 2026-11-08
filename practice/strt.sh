@@ -5,7 +5,9 @@ source /usr/share/idiomind/default/c.conf
 source $DS/default/sets.cfg
 sz=(440 470)
 source "$DS/ifs/cmns.sh"
+source "$DS/ifs/consolidation.sh"
 source "$DS/practice/term_practice.sh"
+source "$DS/practice/practice_d_ui.sh"
 export -f tpc_db
 date_week=$(date +%W |sed 's/^0*//')
 
@@ -39,7 +41,47 @@ elif [ -f "${DC_tlt}/translations/active" ]; then
 fi
 export -f f_lock
 
-# stats for icons 
+# MP3 realmente accesible para play.sh play_word. Replica las rutas que usa
+# el reproductor; no se basa en metadatos ni en el registro de la nota.
+has_mp3() {
+    local trgt="$1" cdid="$2" w="${1,,}"
+    [ -n "${cdid}" ] || return 1
+    [ -f "$DT/${cdid}.mp3" ] && return 0
+    [ -f "${DM_tlt}/${cdid}.mp3" ] && return 0
+    [ -f "$DT/${trgt}.mp3" ] && return 0
+    [ -f "${DM_tlt}/${trgt}.mp3" ] && return 0
+    [ -f "${DM_tls}/audio/${w}.mp3" ] && return 0
+    return 1
+}
+export -f has_mp3
+
+# Filtra la lista de candidatos de la práctica C contra el MP3 real.
+# Solo se basa en la disponibilidad del archivo, no en metadatos.
+practice_c_filter_tmp() {
+    local list="$1" out="$2" _keep="$DT/c.keep" _trgt _cdid _line
+    [ -s "$list" ] || return 0
+    : > "$_keep"
+    while read -r _trgt; do
+        [ -n "$_trgt" ] || continue
+        _cdid=""
+        while IFS= read -r _line; do
+            case "${_line}" in
+                *"trgt{${_trgt}}"*)
+                    _cdid="${_line#*cdid\{}"
+                    _cdid="${_cdid%%\}*}"
+                    ;;
+            esac
+        done < "${list_data}"
+        if has_mp3 "$_trgt" "$_cdid"; then
+            echo "$_trgt" >> "$_keep"
+        else
+            echo "$_trgt" >> "${dir_practice}/c.no_audio"
+        fi
+    done < "$list"
+    mv -f "$_keep" "$out"
+}
+
+# stats for icons
 function stats() {
     n=1; c=1
     while [ ${n} -le 21 ]; do
@@ -83,7 +125,8 @@ function score() {
         echo "1p.$tpc.p1" >> "$log"
         date "+%a %d %B" > ./$active_practice.lock
         [ -f ./$active_practice.df ] && rm ./$active_practice.df
-        save_score 0 & echo 21 > .${icon}
+        save_score 0
+        echo 21 > .${icon}
         strt 1
     else
         [ -f ./$active_practice.l ] && echo $(($(< ./$active_practice.l)+count_easy)) > ./$active_practice.l \
@@ -103,33 +146,22 @@ function score() {
             (( c=c+5 ))
             (( n++ ))
         done
-        save_score 1 & stats
+        save_score 1
+        stats
         strt 2
     fi
 }
 
 function save_score() {
-
-    > ./log1
-    if [ $(ls *.1 2>/dev/null | wc -l) -ge 3  ]; then # si hay 3 o mas practicas con notas aprendidas
-    	while read -r note; do
-            nfiles=0
-            for f in *.1; do
-                grep -Fxq -- "$note" "$f" && nfiles=$((nfiles+1))
-            done
-            [ "$nfiles" -ge 3 ] && echo "$note" >> ./log1 # por tipos distintos, coincidencia exacta, sin duplicados por archivo
-		done <<< $(sort -u *.1) # se listan solo las notas unicas de la lista
-	fi
-	
-	if [[ -f ./e.1 ]]; then sort -u ./e.1 >> ./log1; fi
-	if ls ./*.2 >/dev/null 2>&1; then sort -u ./*.2 > ./log2; fi
-	if ls ./*.3 >/dev/null 2>&1; then sort -u ./*.3 > ./log3; fi
-
-    if [ -f ./log3 ]; then # se quitan todas las notas del nivel 2 que estan en el nivel 3
-        grep -vxF -f ./log3 ./log2 > ./rm.tmp || :
-        sed '/^$/d' ./rm.tmp | sort -u > ./log2
-        [ -f ./rm.tmp ] && rm ./rm.tmp
-    fi
+    local pdir="${dir_practice:-$PWD}"
+    [ -d "$pdir" ] || pdir="$PWD"
+    local data="${list_data:-${DC_tlt:-}/data}"
+    local db="${tpcdb:-${DC_tlt:-}/tpc}"
+    local sid="${PD_SESSION_ID:-save-$(date +%s%N)}"
+    [ -d "$pdir" ] || return 1
+    practice_evidence_ensure "$db" "$pdir" 2>/dev/null || :
+    practice_update_logs "$pdir" "$data" "$db" "$sid" || :
+    rm -f "$pdir/rm.tmp" 2>/dev/null || :
 }
 
 # Etapa 6: espejo de instantáneas w1/s1 al master log ($DC_s/log), fuente
@@ -287,6 +319,7 @@ function practice_a() {
             ans=$?
             if [ ${ans} = 2 ]; then
                 echo "${item}" >> a.1
+                practice_mark_easy "${item}" a
                 count_easy=$((count_easy+1))
             elif [ ${ans} = 3 ]; then
                 echo "${item}" >> a.2
@@ -408,6 +441,7 @@ function practice_b(){
         if [ $ret = 0 ]; then
             if grep -o "$srce" <<< "${dlg}"; then
                 echo "${item}" >> b.1
+                practice_mark_easy "${item}" b
                 count_easy=$((count_easy+1))
             else
                 (play "$snd" >/dev/null 2>&1 & echo "${item}" >> b.2)
@@ -501,6 +535,12 @@ function practice_c() {
     }
 
     question() {
+        # Si el MP3 desapareció tras generar la lista, no se reproduce eSpeak:
+        # se registra el incidente y se excluye el ítem de la sesión.
+        if ! has_mp3 "${trgt}" "${cdid}"; then
+            echo "${trgt}" >> ./c.no_audio
+            return 4
+        fi
         ui_recognize_card "${lst}" "$DS/play.sh" play_word "${trgt}" "${cdid}"
     }
 
@@ -516,8 +556,11 @@ function practice_c() {
     while read -r trgt; do
         fonts; question
         ans=$?
-        if [ ${ans} = 2 ]; then
+        if [ ${ans} = 4 ]; then
+            continue
+        elif [ ${ans} = 2 ]; then
             echo "${trgt}" >> c.1
+            practice_mark_easy "${trgt}" c
             count_easy=$((count_easy+1))
         elif [ ${ans} = 3 ]; then
             echo "${trgt}" >> c.2
@@ -535,7 +578,9 @@ function practice_c() {
         while read -r trgt; do
             fonts; question
             ans=$?
-            if [ ${ans} = 3 ]; then
+            if [ ${ans} = 4 ]; then
+                continue
+            elif [ ${ans} = 3 ]; then
                 count_learn=$((count_learn-1))
                 count_hard=$((count_hard+1))
                 echo "${trgt}" >> c.3
@@ -553,7 +598,9 @@ function practice_c() {
         while read -r trgt; do
             fonts; question
             ans=$?
-            if [ ${ans} = 2 ] || [ ${ans} = 3 ]; then
+            if [ ${ans} = 4 ]; then
+                continue
+            elif [ ${ans} = 2 ] || [ ${ans} = 3 ]; then
                 echo "${trgt}" >> c.3.tmp
             elif [ ${ans} = 1 ]; then
                 export count_hard count_learn
@@ -615,87 +662,78 @@ function practice_d() {
 		fi
     }
 
-    question() {
-        yad --form --title=" " \
-        --image="$img" \
-        --skip-taskbar --text-align=center \
-        --skip-taskbar --align=center --center --on-top \
-        --image-on-top --undecorated --buttons-layout=spread \
-        --width=418 --height=370 --borders=16 \
-        --field="$cuest":lbl "" \
-        --field="":lbl "" \
-        --button="!window-close":1 \
-        --button="!media-seek-forward":0
+    pd_ui_item() {
+        fonts
+        pd_ui_update "$img" "$cuest" || return 1
+        local ev ans=""
+        while :; do
+            ev="$(pd_ui_wait)" || { PD_ANS=""; return 2; }
+            [ "$ev" = "close" ] && return 2
+            [ "$ev" = "reveal" ] && break
+        done
+        pd_ui_update "$img" "$aswer" || return 1
+        while :; do
+            ev="$(pd_ui_wait)" || { PD_ANS=""; return 2; }
+            [ "$ev" = "yes" ] && { ans=2; break; }
+            [ "$ev" = "no" ] && { ans=3; break; }
+            [ "$ev" = "close" ] && { PD_ANS=""; return 2; }
+        done
+        PD_ANS="$ans"
+        return 0
     }
 
-    answer() {
-        yad --form --title=" " \
-        --image="$img" \
-        --skip-taskbar --text-align=center \
-        --align=center --center --on-top \
-        --image-on-top --undecorated --buttons-layout=spread \
-        --width=418 --height=370 --borders=16 \
-        --field="$aswer":lbl "" \
-        --field="":lbl "" \
-        --button="$(gettext "I did not know it")!$img_no":3 \
-        --button="$(gettext "I Knew it")!$img_yes":2
-    }
-    
+    pd_ui_open || return 1
     while read -r item; do
-        fonts; question
-        if [ $? = 1 ]; then
-            export count_hard count_learn
-            break & score && return
-        else
-            answer
-            ans=$?
-            if [ ${ans} = 2 ]; then
-                echo "${item}" >> d.1
-                count_easy=$((count_easy+1))
-            elif [ ${ans} = 3 ]; then
-                echo "${item}" >> d.2
-                count_learn=$((count_learn+1))
-            fi
+        pd_ui_item; rc=$?
+        [ $rc = 2 ] && { pd_ui_close; export count_hard count_learn; score; return; }
+        [ $rc = 1 ] && break
+        ans="$PD_ANS"
+        [ -z "$ans" ] && continue
+        if [ ${ans} = 2 ]; then
+            echo "${item}" >> d.1
+            practice_mark_easy "${item}" d
+            count_easy=$((count_easy+1))
+        elif [ ${ans} = 3 ]; then
+            echo "${item}" >> d.2
+            count_learn=$((count_learn+1))
         fi
     done < ./d.tmp
-    
+    pd_ui_close
+
     if [ ! -f ./d.2 ]; then
         export count_hard count_learn; scoreschk
     else
         step=2
+        pd_ui_open || return 1
         while read -r item; do
-            fonts; question
-            if [ $? = 1 ]; then
-                export count_hard count_learn
-                break & score && return
-            else
-                answer
-                ans=$?
-                if [ ${ans} = 3 ]; then
-                    count_learn=$((count_learn-1))
-                    count_hard=$((count_hard+1))
-                    echo "${item}" >> d.3
-                fi
+            pd_ui_item; rc=$?
+            [ $rc = 2 ] && { pd_ui_close; export count_hard count_learn; score; return; }
+            [ $rc = 1 ] && break
+            ans="$PD_ANS"
+            [ -z "$ans" ] && continue
+            if [ ${ans} = 3 ]; then
+                count_learn=$((count_learn-1))
+                count_hard=$((count_hard+1))
+                echo "${item}" >> d.3
             fi
         done < ./d.2
-
+        pd_ui_close
     fi
-    
+
     if [ ! -f ./d.3 ]; then
         export count_hard count_learn; scoreschk
     else
         step=3
+        pd_ui_open || return 1
         while read -r item; do
-            fonts; question
-            if [ $? = 1 ]; then
-                export count_hard count_learn
-                break & score && return
-            else
-                answer
-                echo "${item}" >> d.3.tmp
-            fi
+            pd_ui_item; rc=$?
+            [ $rc = 2 ] && { pd_ui_close; export count_hard count_learn; score; return; }
+            [ $rc = 1 ] && break
+            ans="$PD_ANS"
+            [ -z "$ans" ] && continue
+            echo "${item}" >> d.3.tmp
         done < ./d.3
-        
+        pd_ui_close
         mv -f d.3.tmp d.3
         export count_hard count_learn; scoreschk
     fi
@@ -788,6 +826,7 @@ function practice_e() {
 
         if [ ${porcent_match} -ge 90 ]; then
             echo "${trgt}" >> ./e.1
+            practice_mark_easy "${trgt}" e
             export count_easy=$((count_easy+1))
             color="#3AB452"
         elif [ ${porcent_match} -ge 50 ]; then
@@ -1002,7 +1041,7 @@ function decide_group() {
         cleanups ./$active_practice.df; export plus$active_practice=""
     fi
     
-    info="$(gettext "Left")  <b><big>$left</big></b>    $(gettext "Learnt")  <b><big>$count_learnt</big></b>    $(gettext "Easy")  <b><big>$count_easy</big></b>    $(gettext "Learning")  <b><big>$count_learn</big></b>    $(gettext "Difficult")  <b><big>$count_hard</big></b>"
+    info="$(gettext "Left")  <b><big>$left</big></b>    $(gettext "Learnt")  <b><big>$count_learnt</big></b>    $(gettext "I know it")  <b><big>$count_easy</big></b>    $(gettext "Learning")  <b><big>$count_learn</big></b>    $(gettext "Difficult")  <b><big>$count_hard</big></b>"
     
     optns=$(yad --form --title="$(gettext "Learning Mode")" \
     --window-icon=$DS/images/logo.png \
@@ -1037,6 +1076,10 @@ function decide_group() {
 function practices() {
 
     log="$DC_s/logs/$date_week.log"
+    if [ "${PRACTICE_NEW_SESSION:-0}" = "1" ] || [ -z "${PD_SESSION_ID:-}" ] || [ "${PD_SESSION_PRACTICE:-}" != "$active_practice" ]; then
+        practice_session_new "${dir_practice}" "$active_practice"
+        PRACTICE_NEW_SESSION=0
+    fi
     if [ -f "$log" ]; then
         export count_check_tasks1="$(grep "1p.$tpc.p1" "$log" 2>/dev/null | wc -l)"
     else
@@ -1113,6 +1156,14 @@ function practices() {
         fi
         export count_seccion_active_practice=$(grep -Ecv '#|^$' "${dir_practice}/$active_practice.0")
     fi
+
+    # La práctica C solo admite notas con MP3 válido: se filtra la lista de
+    # candidatos contra el archivo real antes de generar las preguntas.
+    if [ "$active_practice" = "c" ]; then
+        practice_c_filter_tmp "${dir_practice}/$active_practice.tmp" \
+            "${dir_practice}/$active_practice.tmp"
+    fi
+
     if [[ ${count_seccion_active_practice} -lt 1 ]]; then
     
 		touch "${dir_practice}/$active_practice.0"
@@ -1212,29 +1263,35 @@ function strt() {
 		fi
 	fi
 
+    practice_evidence_ensure "${tpcdb:-}" "${dir_practice}" 2>/dev/null || :
+    practice_logs_normalize "${dir_practice}" 2>/dev/null || :
+    global_easy="$(practice_log_count "${dir_practice}/log1")"
+    global_learn="$(practice_log_count "${dir_practice}/log2")"
+    global_hard="$(practice_log_count "${dir_practice}/log3")"
+    global_learnt="$(practice_learnt_count "${tpcdb:-}")"
+    easy_a="$(practice_evidence_easy_count "${tpcdb:-}" a)"
+    easy_b="$(practice_evidence_easy_count "${tpcdb:-}" b)"
+    easy_c="$(practice_evidence_easy_count "${tpcdb:-}" c)"
+    easy_d="$(practice_evidence_easy_count "${tpcdb:-}" d)"
+    easy_e="$(practice_evidence_easy_count "${tpcdb:-}" e)"
+
     if [[ "${1}" = 1 ]]; then
 
-        declare congr${icon}="<span font_desc='Arial Bold 12'>  —  $(gettext "Test completed") </span>"
-		learnt_total=0
-		if [ -n "${active_practice:-}" ] && [ -f "./${active_practice}.1" ]; then
-			learnt_total="$(sort -u "./${active_practice}.1" | wc -l)"
-		fi
-		info="<span font_desc='Arial Bold  11'>$(gettext "Congratulations!")</span>\n<b><small>$(gettext "Easy")</small> <b>${count_easy:-0}</b>    <small>$(gettext "Learning")</small> <b>${count_learn:-0}</b>    <small>$(gettext "Difficult")</small> <b>${count_hard:-0}</b>    <small>$(gettext "Learnt")</small> <b>${learnt_total}</b></b>"
-        echo 21 > .${icon}; export plus$active_practice=""
-        declare label_count_${active_practice}=""
+        if [ -n "${icon:-}" ]; then
+            declare congr${icon}="<span font_desc='Arial Bold 12'>  —  $(gettext "Test completed") </span>"
+            echo 21 > ".${icon}"
+        fi
+		info="<span font_desc='Arial Bold  11'>$(gettext "Congratulations!")</span>\n<b><small>$(gettext "Learning")</small> <b>${global_learn}</b>    <small>$(gettext "Difficult")</small> <b>${global_hard}</b>    <small>$(gettext "Learnt")</small> <b>${global_learnt}</b></b>"
+        [ -n "${active_practice:-}" ] && export plus$active_practice=""
+        [ -n "${active_practice:-}" ] && declare label_count_${active_practice}=""
         count_seccion_active_practice=""
 
-    elif [[ "${1}" = 2 ]]; then
-    
-        if [ -n "${active_practice:-}" ] && [ -f "./${active_practice}.l" ]; then
-            count_learnt="$(< "./${active_practice}.l")"
-        else
-            count_learnt=0
-        fi
-        if [ -f ./$active_practice.1 ] || [ -f ./$active_practice.2 ] || [ -f ./$active_practice.3 ]; then
-			info=" <b><small>$(gettext "Easy")</small> <b>$count_easy</b>    <small>$(gettext "Learning")</small> <b>$count_learn</b>    <small>$(gettext "Difficult")</small> <b>$count_hard</b>    <small>$(gettext "Learnt")</small> <b>$count_learnt</b></b>  "
+    else
+
+		info=" <b><small>$(gettext "Learning")</small> <b>${global_learn}</b>    <small>$(gettext "Difficult")</small> <b>${global_hard}</b>    <small>$(gettext "Learnt")</small> <b>${global_learnt}</b></b>  "
+		if [ "${1}" = 2 ] && [ -n "${active_practice:-}" ]; then
+			declare label_count_${active_practice}=""
 		fi
-		declare label_count_${active_practice}=""
     fi
 
     active_practice="$(yad --list --title="$(gettext "Practice ") - $tpc" \
@@ -1247,12 +1304,12 @@ function strt() {
     --no-headers --expand-column=3 --hide-column=1 \
     --width=${sz[0]} --height=${sz[1]} --borders=10 \
     --ellipsize=end --wrap-width=200 --ellipsize-cols=1 \
-    --column="Action" --column="Pick":IMG --column="Label" \
-    "a" "$DS/images/practice/$(< ./.1).png" "$label_count_a $label_pra$congr1"  \
-    "b" "$DS/images/practice/$(< ./.2).png" "$label_count_b $label_prb$congr2" \
-    "c" "$DS/images/practice/$(< ./.3).png" "$label_count_c $label_prc$congr3" \
-    "d" "$DS/images/practice/$(< ./.4).png" "$label_count_d $label_prd$congr4" \
-    "e" "$DS/images/practice/$(< ./.5).png" "$label_count_e $label_pre$congr5" \
+    --column="Action" --column="Pick":IMG --column="Label" --column="Easy":NUM \
+    "a" "$DS/images/practice/$(< ./.1).png" "$label_count_a $label_pra$congr1" "${easy_a}"  \
+    "b" "$DS/images/practice/$(< ./.2).png" "$label_count_b $label_prb$congr2" "${easy_b}" \
+    "c" "$DS/images/practice/$(< ./.3).png" "$label_count_c $label_prc$congr3" "${easy_c}" \
+    "d" "$DS/images/practice/$(< ./.4).png" "$label_count_d $label_prd$congr4" "${easy_d}" \
+    "e" "$DS/images/practice/$(< ./.5).png" "$label_count_e $label_pre$congr5" "${easy_e}" \
     --button="$(gettext "Restart")":3 \
     --button="$(gettext "Start")":0)"
     ret=$?
@@ -1264,6 +1321,7 @@ function strt() {
             msg " $(gettext "You must choose a practice.")\n" dialog-information
             strt 0
         else
+            PRACTICE_NEW_SESSION=1
             practices $active_practice
         fi
         
@@ -1311,6 +1369,9 @@ if [ "${2}" = "exercise" ] && { [ "${3}" = "a" ] || [ "${3}" = "b" ] || [ "${3}"
     active_practice="${3}"
     check_dir "${dir_practice}"
     cd "${dir_practice}" || exit 1
+    if [ -z "${PD_SESSION_ID:-}" ] || [ "${PD_SESSION_PRACTICE:-}" != "$active_practice" ]; then
+        practice_session_new "${dir_practice}" "$active_practice"
+    fi
     list_data="$DC_tlt/data"
     list_words="$(tpc_db 5 words)"
     hits="$(gettext "hits")"
@@ -1323,6 +1384,10 @@ if [ "${2}" = "exercise" ] && { [ "${3}" = "a" ] || [ "${3}" = "b" ] || [ "${3}"
     count_easy=0
     count_hard=0
     count_learn=0
+    count_easy2=0
+    count_learn2=0
+    count_easy3=0
+    count_learn3=0
     step=1
     tp_exercise_run "practice_${3}"
     exit $?

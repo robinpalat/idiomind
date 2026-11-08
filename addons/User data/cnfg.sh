@@ -1,6 +1,22 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+# ============================================================
+# ADDON 
+# ============================================================
+#
+# ID: User data
+# NAME: User data
+# VERSION: 0.3.2
+# STATUS: native
+# DESCRIPTION: Imports and exports the user's Idiomind data (topics and settings).
+#
+# FILES:
+#   addons/User data/cnfg.sh
+#   ifs/extensions/start/update_userdata.sh
+#
+# ============================================================
+
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 

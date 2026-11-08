@@ -3,6 +3,7 @@
 
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
+[ -r "$DS/ifs/consolidation.sh" ] && source "$DS/ifs/consolidation.sh"
 echo -e "\n--- checking lists..."
 
 while read -r tpc; do
@@ -63,6 +64,8 @@ cleanups "$DM_tl/.share/index"
 
 # Rebuild shared practice lists and topic indexes.
 days_ago=$(date -d '10 days ago' +%s)
+word_thr="$(practice_word_threshold)"
+sent_thr="$(practice_sentence_sessions)"
 
 {
     printf 'BEGIN TRANSACTION;\n'
@@ -80,10 +83,7 @@ while IFS= read -r tpc; do
     # A damaged/incomplete topic must not abort the whole update.
     if [ ! -f "$tpcdb" ] ||
        [ ! -f "$cnfg_dir/stts" ] ||
-       [ ! -f "$cnfg_dir/data" ] ||
-       [ ! -f "$cnfg_dir/practice/log1" ] ||
-       [ ! -f "$cnfg_dir/practice/log2" ] ||
-       [ ! -f "$cnfg_dir/practice/log3" ]; then
+       [ ! -f "$cnfg_dir/data" ]; then
         echo "err -> $tpc"
         continue
     fi
@@ -108,12 +108,17 @@ while IFS= read -r tpc; do
         [ -n "$value" ] && marks_set["$value"]=1
     done < <(sqlite3 "$tpcdb" 'SELECT list FROM marks;')
 
+    practice_evidence_ensure "$tpcdb" "$cnfg_dir/practice" 2>/dev/null || :
+
     #
     # Determine whether the topic has practice activity.
     #
     log1_file="$cnfg_dir/practice/log1"
     log2_file="$cnfg_dir/practice/log2"
     log3_file="$cnfg_dir/practice/log3"
+    [ -f "$log1_file" ] || : > "$log1_file"
+    [ -f "$log2_file" ] || : > "$log2_file"
+    [ -f "$log3_file" ] || : > "$log3_file"
 
     log1_mtime=$(stat -c %Y "$log1_file")
     log2_mtime=$(stat -c %Y "$log2_file")
@@ -126,6 +131,8 @@ while IFS= read -r tpc; do
     [ "$log1_mtime" -lt "$days_ago" ] && l1m=true
     [ "$log2_mtime" -lt "$days_ago" ] && l2m=true
     [ "$log3_mtime" -lt "$days_ago" ] && l3m=true
+
+    practice_logs_normalize "$cnfg_dir/practice"
 
     #
     # The original Python used stripped, non-empty log entries.
@@ -157,6 +164,58 @@ while IFS= read -r tpc; do
     while IFS= read -r value; do
         [ -n "$value" ] && log3_set["$value"]=1
     done <<< "$log3"
+
+    declare -A ev_mod_set=()
+    declare -A ev_e_set=()
+    declare -A origin_set=()
+    declare -A pending_set=()
+    declare -A manual_set=()
+
+    while IFS=$'\t' read -r value mods easy; do
+        [ -n "$value" ] || continue
+        ev_mod_set["$value"]="$mods"
+        ev_e_set["$value"]="$easy"
+    done < <(sqlite3 -separator $'\t' "$tpcdb" \
+        "select note,count(distinct modality),coalesce(max(case when modality='e' then easy_sessions end),0) from Practice_evidence where active=1 and easy_sessions>0 and last_result='easy' group by note;" 2>/dev/null)
+
+    while IFS=$'\t' read -r value origin; do
+        [ -n "$value" ] && origin_set["$value"]="${origin:-manual}"
+    done < <(sqlite3 -separator $'\t' "$tpcdb" \
+        "select note,origin from Learned_origin;" 2>/dev/null)
+
+    while IFS=$'\t' read -r value origin; do
+        [ -n "$value" ] && pending_set["$value"]="${origin:-manual}"
+    done < <(sqlite3 -separator $'\t' "$tpcdb" \
+        "select note,origin from Learned_pending;" 2>/dev/null)
+
+    for value in "${!origin_set[@]}" "${!pending_set[@]}"; do
+        if [ "${origin_set[$value]:-}" = "manual" ] || [ "${pending_set[$value]:-}" = "manual" ]; then
+            manual_set["$value"]=1
+        fi
+    done
+
+    declare -A eligible_set=()
+
+    while IFS= read -r raw_item || [ -n "$raw_item" ]; do
+        [ -n "$raw_item" ] || continue
+        item=$(sed -n 's/.*trgt{\([^}]*\)}.*/\1/p' <<< "$raw_item")
+        [ -n "$item" ] || continue
+        [ "${learn_set[$item]+_}" ] || continue
+
+        item_type=$(sed -n 's/.*type{\([^}]*\)}.*/\1/p' <<< "$raw_item")
+        eligible=false
+        if [ "$item_type" = "2" ]; then
+            if [ "${ev_e_set[$item]:-0}" -ge "$sent_thr" ]; then eligible=true; fi
+        else
+            if [ "${ev_mod_set[$item]:-0}" -ge "$word_thr" ]; then eligible=true; fi
+        fi
+        if [ "$eligible" = true ] &&
+           [ "${log1_set[$item]+_}" ] &&
+           [ -z "${log2_set[$item]+_}" ] &&
+           [ -z "${log3_set[$item]+_}" ]; then
+            eligible_set["$item"]=1
+        fi
+    done < "$cnfg_dir/data"
 
     #
     # Determine whether the topic should be processed.
@@ -211,6 +270,7 @@ while IFS= read -r tpc; do
         index_tmp=$(mktemp "$cnfg_dir/.index.XXXXXX") || {
             echo "err -> $tpc"
             unset learn_set marks_set log1_set log2_set log3_set
+            unset eligible_set ev_mod_set ev_e_set
             continue
         }
 
@@ -243,40 +303,49 @@ while IFS= read -r tpc; do
             fi
 
             #
-            # Automatic marking: always on (the old acheck preference is
-            # ignored); a note is shown as learnt while it is in lstp.
+            # Marking: manual intent has priority; automatic marking uses
+            # only active evidence and requires log1 (not log2/log3).
             #
-            if [ "${lstp_set[$item]+_}" ]; then
+            chk="FALSE"
+            if [ "${manual_set[$item]+_}" ]; then
                 chk="TRUE"
-            else
-                chk="FALSE"
+            elif [ "${eligible_set[$item]+_}" ]; then
+                chk="TRUE"
+                if [ -z "${origin_set[$item]:-}" ] && [ -z "${pending_set[$item]:-}" ]; then
+                    practice_pending_set "$tpcdb" "$item" auto >/dev/null 2>&1 || :
+                fi
             fi
 
             #
-            # Practice status has priority:
-            # log3 -> log2 -> log1 -> normal.
+            # Classification priority: log3 -> log2 -> log1.
+            # log1: verde solo cuando la nota cumple el criterio para Learned.
             #
             if [ "${log3_set[$item]+_}" ]; then
 
-                printf '<span color='\''#AE3259'\''>%s</span>\nFALSE\n%s\n' \
-                    "$display_item" "$srce" >> "$index_tmp"
+                printf '<span color='\''#AE3259'\''>%s</span>\n%s\n%s\n' \
+                    "$display_item" "$chk" "$srce" >> "$index_tmp"
 
             elif [ "${log2_set[$item]+_}" ]; then
 
-                printf '<span color='\''#C15F27'\''>%s</span>\nFALSE\n%s\n' \
-                    "$display_item" "$srce" >> "$index_tmp"
+                printf '<span color='\''#C15F27'\''>%s</span>\n%s\n%s\n' \
+                    "$display_item" "$chk" "$srce" >> "$index_tmp"
 
             elif [ "${log1_set[$item]+_}" ]; then
 
                 echo "$chk -> $item"
 
-                printf '<span color='\''#4C8C12'\''>%s</span>\n%s\n%s\n' \
-                    "$display_item" "$chk" "$srce" >> "$index_tmp"
+                if [ "${eligible_set[$item]+_}" ]; then
+                    printf '<span color='\''#4C8C12'\''>%s</span>\n%s\n%s\n' \
+                        "$display_item" "$chk" "$srce" >> "$index_tmp"
+                else
+                    printf '%s\n%s\n%s\n' \
+                        "$display_item" "$chk" "$srce" >> "$index_tmp"
+                fi
 
             else
 
-                printf '%s\nFALSE\n%s\n' \
-                    "$display_item" "$srce" >> "$index_tmp"
+                printf '%s\n%s\n%s\n' \
+                    "$display_item" "$chk" "$srce" >> "$index_tmp"
             fi
 
         done < "$data_file"
@@ -296,18 +365,15 @@ while IFS= read -r tpc; do
     # promoción aplica a stts 1/2/5/6, que no reconstruyen índice, y
     # antes estaba anidada en cont (3|4|7-10) junto al case 1|2|5|6:
     # intersección vacía, mark_as_learned_ok era código muerto.
-    # chk=TRUE ⟺ en lstp ∧ en log1 ∧ ¬log2 ∧ ¬log3 (marcado automático
-    # siempre activo; la antigua preferencia acheck se ignora)
+    # chk=TRUE ⟺ evidencia suficiente ∧ en log1 ∧ ¬log2 ∧ ¬log3
     # (equivale al chk mostrado en el índice). Vacuidad preservada:
     # learn_count==len_auto ∧ item_count>0.
     case "$stts" in
         1|2|5|6)
             len_auto=0
             for item in "${!learn_set[@]}"; do
-                if [ "${lstp_set[$item]+_}" ] &&
-                   [ "${log1_set[$item]+_}" ] &&
-                   [ -z "${log2_set[$item]+_}" ] &&
-                   [ -z "${log3_set[$item]+_}" ]; then
+                [ "${manual_set[$item]+_}" ] && continue
+                if [ "${eligible_set[$item]+_}" ]; then
                     len_auto=$((len_auto + 1))
                 fi
             done
@@ -330,6 +396,16 @@ while IFS= read -r tpc; do
     unset log1_set
     unset log2_set
     unset log3_set
+    unset eligible_set
+    unset ev_mod_set
+    unset ev_e_set
+    unset origin_set
+    unset pending_set
+    unset manual_set
+
+    if [ ! -e "$DT/ps_lk" ] && [ -n "$tpcdb" ] && [ -f "$tpcdb" ]; then
+        practice_pending_consume "$tpcdb" manual >/dev/null 2>&1 || :
+    fi
 
 done <<< "$topics"
 

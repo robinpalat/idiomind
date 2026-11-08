@@ -51,6 +51,23 @@ function create_tpcdb() {
     Pract5_icon INTEGER, Pract1_sess INTEGER, Pract2_sess INTEGER, \
     Pract3_sess INTEGER, Pract4_sess INTEGER, Pract5_sess INTEGER);" |sqlite3 "${tpcdb}"
 
+    echo -n "create table if not exists Practice_evidence (note TEXT NOT NULL, \
+    modality TEXT NOT NULL, easy_sessions INTEGER NOT NULL DEFAULT 0, \
+    last_result TEXT NOT NULL DEFAULT '', last_session TEXT NOT NULL DEFAULT '', \
+    updated TEXT NOT NULL DEFAULT '', active INTEGER NOT NULL DEFAULT 1, \
+    PRIMARY KEY (note, modality));" |sqlite3 "${tpcdb}"
+
+    echo -n "create table if not exists Learned_origin \
+    (note TEXT PRIMARY KEY, origin TEXT NOT NULL DEFAULT 'auto', \
+    updated TEXT NOT NULL DEFAULT '');" |sqlite3 "${tpcdb}"
+
+    echo -n "create table if not exists Learned_pending \
+    (note TEXT PRIMARY KEY, origin TEXT NOT NULL DEFAULT 'manual', \
+    updated TEXT NOT NULL DEFAULT '');" |sqlite3 "${tpcdb}"
+
+    echo -n "create table if not exists Meta \
+    (key TEXT PRIMARY KEY, value TEXT NOT NULL DEFAULT '');" |sqlite3 "${tpcdb}"
+
     sqlite3 "${tpcdb}" "pragma busy_timeout=2000;\
     insert into Practice_stats (Pract1_icon,Pract2_icon,Pract3_icon,Pract4_icon,\
     Pract5_icon,Pract1_sess,Pract2_sess,Pract3_sess,Pract4_sess,Pract5_sess) \

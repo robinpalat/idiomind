@@ -84,11 +84,22 @@ add_pos_col() {
         <(printf '%s\n' "${ls1}") -
 }
 
+# La lista Learned representa el estado Learned en verde, independientemente
+# de si la promoción fue automática o manual.
+learnt_list_feed() {
+    [ -n "${ls2}" ] || return 0
+    printf '%s\n' "$ls2" | awk '{print "<span color=\"#4C8C12\">" $0 "</span>\n"NR}'
+}
+
 # YAD returns 252 when the dialog is closed through the window manager
 # button (or Esc). main.sh interprets 2 as "apply the marked notes", so
 # remap the close event to that code without adding a visible button.
+# The caller must pass the notebook's exit code as $1, captured
+# immediately after "wait", before running any other command (e.g. kill
+# of the watchdog): any intervening command overwrites $? and the
+# remapping would be lost. Without an argument, falls back to $?.
 yad_close_code() {
-    local ret=$?
+    local ret=${1:-$?}
     [ "$ret" -eq 252 ] && ret=2
     return "$ret"
 }
@@ -113,8 +124,41 @@ yad_list_print() {
     rm -f "$tmpfifo"
 }
 
+# Wait for a background producer (e.g. the yad_list_print pipeline that
+# writes cnf1, or a plug writing cnf3/cnf4) to finish, with a bounded
+# timeout. When the notebook host closes, its XEMBED plugs exit and
+# flush their final output, so this normally returns at once; the
+# timeout only guards against a plug that never exits, so apply()
+# (called by main.sh after the notebook returns) never reads a
+# half-written cnf1 and never hangs indefinitely.
+#
+# Do NOT use the `wait` builtin on the cnf1 producer: it is the last
+# component of a pipeline (`listfeed | yad_list_print`), and `wait`
+# on a pipeline job waits for *all* its components — including
+# listfeed, which stays alive looping on its live fifo until oclean
+# removes it. Waiting for it would hang the close indefinitely.
+# Poll /proc instead: the producer is done when it disappears or
+# becomes a zombie; bash reaps the zombie between commands.
+wait_bounded() {
+    local pid=$1 secs=${2:-3} i=0 max state
+    [ -n "$pid" ] || return 0
+    max=$((secs * 20))
+    while [ "$i" -lt "$max" ]; do
+        [ -d "/proc/$pid" ] || return 0
+        state="$(awk '{print $3}' "/proc/$pid/stat" 2>/dev/null)"
+        [ "$state" = "Z" ] && return 0
+        sleep 0.05
+        i=$((i + 1))
+    done
+    # Timeout: stop the producer (and its own children) and move on.
+    pkill -9 -P "$pid" 2>/dev/null
+    kill -9 "$pid" 2>/dev/null
+    return 0
+}
+
 function notebook_1() {
-	
+    local nbret=0 printpid="" cnf3pid="" cnf4pid=""
+
     native_lang_info="$(topic_language_notice)"
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"${tpc}\"" 1"
     cmd_play="$DS/play.sh play_list"
@@ -179,8 +223,9 @@ function notebook_1() {
     --search-column=1 --regex-search --hide-column=4 --tooltip-column=4 \
     --column=Name:TEXT \
     --column=@fore@ --column=Learned:CHK --column=@back@:TIP > "$cnf1" &
+    printpid=$!
     sleep 0.15
-    ([ -n "${ls2}" ] && echo "${ls2}" | awk '{print $0"\n"NR}') | \
+    learnt_list_feed | \
     yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2"  \
@@ -195,6 +240,7 @@ function notebook_1() {
     --show-uri --uri-color="#6591AA" \
     --filename="${note}" --editable --wrap \
     --fontname='vendana 11' --margins=14 > "$cnf3" &
+    cnf3pid=$!
     sleep 0.15
     yad --form --tabnum=4 \
     --plug=$KEY \
@@ -203,21 +249,31 @@ function notebook_1() {
     --field=" $btn_review "!'gtk-apply':FBTN "$cmd_mark" \
     --field=" ":LBL " " \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
+    --field="\t\t\t\t\t\t\t\\t\t":LBL "_" \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn3":FBTN "$cmd3" \
     --field="$btn4":FBTN "$cmd4" > "$cnf4" &
+    cnf4pid=$!
     sleep 0.15
     wait "$nbid"
+    nbret=$?
     kill "$wdog" 2>/dev/null
-    yad_close_code
+    # The plugs die with the host and flush on exit; wait (bounded) for
+    # the cnf1/cnf3/cnf4 producers so main.sh's apply() sees complete
+    # files, without ever blocking indefinitely on a stuck plug.
+    [ -n "$printpid" ] && wait_bounded "$printpid" 3
+    [ -n "$cnf3pid" ] && wait_bounded "$cnf3pid" 3
+    [ -n "$cnf4pid" ] && wait_bounded "$cnf4pid" 3
+    yad_close_code "$nbret"
 } >/dev/null 2>&1
 
 # TODO
 function notebook_2() {
-	
+    local nbret=0 printpid="" cnf3pid="" cnf4pid=""
+
 	native_lang_info="$(topic_language_notice)"
 	cmd_play="$DS/play.sh play_list"
     cmd_mark="'$DS/mngr.sh' 'mark_to_learn' "\"${tpc}\"" 1"
@@ -234,7 +290,7 @@ function notebook_2() {
     rm -f "$DT/nb.xid"
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
-    --always-print-result \
+    --always-print-result --no-buttons \
     --center --align=right --ellipsize=END \
     --window-icon=$DS/images/logo.png \
     --tab="  $(gettext "Learning") (0) " \
@@ -255,10 +311,10 @@ function notebook_2() {
     local wdog=$!
 
 	yad --multi-progress --tabnum=1 \
-	--text="$pres\n" \
-	--plug=$KEY \
-	--align=center --borders=80 --bar="<small>$info6 </small>":NORM $days_to_review_porcent &
-    ([ -n "${ls2}" ] && echo "${ls2}" | awk '{print $0"\n"NR}') |yad --list --tabnum=2 \
+	--text="$pres\n\n\n<small>$info6 </small>" \
+	--plug=$KEY --image=hourglass\
+	--align=center --borders=60 --bar="":NORM $days_to_review_porcent &
+    learnt_list_feed |yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2" --grid-lines=hor \
     --expand-column=0 --no-headers --ellipsize=end \
@@ -271,6 +327,7 @@ function notebook_2() {
     --show-uri --uri-color="#6591AA" \
     --filename="${note}" --editable --wrap \
     --fontname='vendana 11' --margins=14 > "$cnf3" &
+    cnf3pid=$!
     sleep 0.15
     if [ $stts = 7 ] || [ $stts = 8 ] || [ $stts = 9 ] || [ $stts = 10 ] || [ ${days_to_review_porcent} -ge 100 ]; then 
     yad --form --tabnum=4 \
@@ -280,13 +337,14 @@ function notebook_2() {
     --field=" $btn_review  "!'view-refresh':FBTN "$cmd_mark" \
     --field=" ":LBL " " \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
-    --field="\t\t\t\t\t\t\t\\t\t\t\t\t":LBL "_" \
+    --field="\t\t\t\t\t\t\t\\t\t":LBL "_" \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn3":FBTN "$cmd3" \
     --field="$btn4":FBTN "$cmd4" > "$cnf4" &
+    cnf4pid=$!
     sleep 0.15
     else
     yad --form --tabnum=4 \
@@ -296,24 +354,33 @@ function notebook_2() {
     --field=" ":LBL " " \
     --field=" ":LBL " " \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
-    --field="\t\t\t\t\t\t\t\\t\t\t\t\t":LBL "_" \
+    --field="\t\t\t\t\t\t\t\\t\t":LBL "_" \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn3":FBTN "$cmd3" \
     --field="$btn4":FBTN "$cmd4" > "$cnf4" &
+    cnf4pid=$!
     sleep 0.15
     fi
     wait "$nbid"
+    nbret=$?
     kill "$wdog" 2>/dev/null
-    yad_close_code
+    # The plugs die with the host and flush on exit; wait (bounded) for
+    # the cnf1/cnf3/cnf4 producers so main.sh's apply() sees complete
+    # files, without ever blocking indefinitely on a stuck plug.
+    [ -n "$printpid" ] && wait_bounded "$printpid" 3
+    [ -n "$cnf3pid" ] && wait_bounded "$cnf3pid" 3
+    [ -n "$cnf4pid" ] && wait_bounded "$cnf4pid" 3
+    yad_close_code "$nbret"
      
 } >/dev/null 2>&1
 
 
 function notebook_3() {
-	
+    local nbret=0 printpid="" cnf3pid="" cnf4pid=""
+
 	native_lang_info="$(topic_language_notice)"
 	
 	cmd_play="$DS/play.sh play_list"
@@ -353,7 +420,7 @@ function notebook_3() {
       fi ) &
     local wdog=$!
 
-    ([ -n "${ls2}" ] && echo "${ls2}" | awk '{print $0"\n"NR}') |yad --list --tabnum=1 \
+    learnt_list_feed |yad --list --tabnum=1 \
     --window-icon=idiomind --plug=$KEY --print-all --separator='|' \
     --image="$DS/images/2.png" --image-on-top \
     --dclick-action="$DS/vwr.sh 2" \
@@ -367,6 +434,7 @@ function notebook_3() {
     --show-uri --uri-color="#6591AA" \
     --filename="${note}" --editable --wrap \
     --fontname='vendana 11' --margins=14 > "$cnf3" &
+    cnf3pid=$!
     sleep 0.15
     yad --form --tabnum=3 \
     --plug=$KEY \
@@ -375,17 +443,25 @@ function notebook_3() {
     --field=" ":LBL " " \
     --field=" ":LBL " " \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
-    --field="\t\t\t\t\t\t\t\\t\t\t\t\t\t":LBL "_" \
+    --field="\t\t\t\t\t\t\t\\t\t":LBL "_" \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
     --field=" ":LBL " " \
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn3":FBTN "$cmd3" \
     --field="$btn4":FBTN "$cmd4" > "$cnf4" &
+    cnf4pid=$!
     sleep 0.15
     wait "$nbid"
+    nbret=$?
     kill "$wdog" 2>/dev/null
-    yad_close_code
+    # The plugs die with the host and flush on exit; wait (bounded) for
+    # the cnf1/cnf3/cnf4 producers so main.sh's apply() sees complete
+    # files, without ever blocking indefinitely on a stuck plug.
+    [ -n "$printpid" ] && wait_bounded "$printpid" 3
+    [ -n "$cnf3pid" ] && wait_bounded "$cnf3pid" 3
+    [ -n "$cnf4pid" ] && wait_bounded "$cnf4pid" 3
+    yad_close_code "$nbret"
 } >/dev/null 2>&1
 
 
@@ -469,6 +545,7 @@ function panelini() {
     --fixed --width=20 --height=20 \
     --button=""!'list-add'!"$(gettext "Add Note, which can be a word or a sentence")":"$DS/add.sh 'new_items'" \
     --button=""!'go-home'!"$(gettext "My Active Topic")":"idiomind 'topic'" \
-    --button=""!'gtk-index'!"$(gettext "My topics")":"$DS/chng.sh"
+    --button=""!'gtk-index'!"$(gettext "My topics")":"$DS/chng.sh"  \
+    --button=""!'list-add'!"$(gettext "Add Note, which can be a word or a sentence")":"$DS/add.sh 'new_items'"
 }
 

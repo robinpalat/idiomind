@@ -2,7 +2,15 @@ applications/* usr/share/applications
 icons/* usr/share/icons
 mime/* usr/share/mime
 pixmaps/* usr/share/pixmaps
-locale/* usr/share/locale
+locale/de/LC_MESSAGES/*.mo usr/share/locale/de/LC_MESSAGES
+locale/es/LC_MESSAGES/*.mo usr/share/locale/es/LC_MESSAGES
+locale/fr/LC_MESSAGES/*.mo usr/share/locale/fr/LC_MESSAGES
+locale/it/LC_MESSAGES/*.mo usr/share/locale/it/LC_MESSAGES
+locale/ja/LC_MESSAGES/*.mo usr/share/locale/ja/LC_MESSAGES
+locale/pt/LC_MESSAGES/*.mo usr/share/locale/pt/LC_MESSAGES
+locale/ru/LC_MESSAGES/*.mo usr/share/locale/ru/LC_MESSAGES
+locale/vi/LC_MESSAGES/*.mo usr/share/locale/vi/LC_MESSAGES
+locale/zh_CN/LC_MESSAGES/*.mo usr/share/locale/zh_CN/LC_MESSAGES
 addons/* usr/share/idiomind/addons
 practice/* usr/share/idiomind/practice
 default/* usr/share/idiomind/default

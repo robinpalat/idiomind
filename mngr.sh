@@ -63,6 +63,12 @@ delete_item_ok() {
             tpc_db 4 $ta list "${trgt}"
         done
         data_delete "${trgt}"
+        if [ -r "${DS:-}/ifs/consolidation.sh" ]; then
+            source "${DS:-}/ifs/consolidation.sh"
+            practice_schema_ensure "${DC_tlt}/tpc" >/dev/null 2>&1 || :
+            practice_evidence_invalidate "${DC_tlt}/tpc" "${trgt}" >/dev/null 2>&1 || :
+            practice_origin_delete "${DC_tlt}/tpc" "${trgt}" >/dev/null 2>&1 || :
+        fi
         cleanups "${DC_tlt}/lst"
     fi
     if [[ $(wc -l < "${DC_tlt}/data") -lt 200 ]] && [ -f "${DC_tlt}/lk" ]; then
@@ -102,7 +108,13 @@ delete_item() {
                 tpc_db 4 $ta list "${trgt}"
             done
             data_delete "${trgt}"
-            
+            if [ -r "${DS:-}/ifs/consolidation.sh" ]; then
+                source "${DS:-}/ifs/consolidation.sh"
+                practice_schema_ensure "${DC_tlt}/tpc" >/dev/null 2>&1 || :
+                practice_evidence_invalidate "${DC_tlt}/tpc" "${trgt}" >/dev/null 2>&1 || :
+                practice_origin_delete "${DC_tlt}/tpc" "${trgt}" >/dev/null 2>&1 || :
+            fi
+
             if [[ $(wc -l < "${DC_tlt}/data") -lt 200 ]] \
             && [ -e "${DC_tlt}/lk" ]; then
                 rm -f "${DC_tlt}/lk"; fi
@@ -580,6 +592,14 @@ restart_topic() {
 		"$DS/stop.sh" 5
 		echo 1 > "${DC_tlt}/stts"
 		tpc_db 6 'reviews'; tpc_db 6 'learnt'; tpc_db 6 'learning'
+		if [ -r "${DS:-}/ifs/consolidation.sh" ]; then
+			source "${DS:-}/ifs/consolidation.sh"
+			practice_schema_ensure "${tpcdb}" >/dev/null 2>&1 || :
+			sqlite3 "${tpcdb}" "pragma busy_timeout=500;
+			delete from Practice_evidence;
+			delete from Learned_origin;
+			delete from Learned_pending;" >/dev/null 2>&1 || :
+		fi
 		sqlite3 "${tpcdb}" "pragma busy_timeout=2000; insert into reviews (date1) values ('');"
 		
 		while read -r item_; do
@@ -723,8 +743,17 @@ mark_to_learn_topic() {
     
     tpc_db 9 config repass ${count_date_reviews}
     export data="${DC_tlt}/data" tpcdb
-    
-	rebuild_learning_lists "$DC_tlt/data" "$tpcdb" "TRUE"
+
+    if [ -r "${DS:-}/ifs/consolidation.sh" ]; then
+        source "${DS:-}/ifs/consolidation.sh"
+        practice_schema_ensure "$tpcdb" >/dev/null 2>&1 || :
+        sqlite3 "$tpcdb" "pragma busy_timeout=500;
+        delete from Learned_origin;
+        delete from Learned_pending;
+        update Practice_evidence set active=0;" >/dev/null 2>&1 || :
+    fi
+
+    rebuild_learning_lists "$DC_tlt/data" "$tpcdb" "TRUE"
 
     if [ -e "${DC_tlt}/lk" ]; then rm "${DC_tlt}/lk"; fi
     touch "${DM_tlt}"
@@ -797,7 +826,20 @@ mark_as_learned_topic() {
     fi
 
     export data="${DC_tlt}/data" tpcdb mast
-	
+
+    if [ -r "${DS:-}/ifs/consolidation.sh" ]; then
+        source "${DS:-}/ifs/consolidation.sh"
+        practice_schema_ensure "$tpcdb" >/dev/null 2>&1 || :
+        sqlite3 "$tpcdb" "pragma busy_timeout=500;
+        insert or replace into Learned_origin (note,origin,updated)
+        select note,'manual','$(date +%F)' from Learned_pending where origin='manual';
+        insert or ignore into Learned_origin (note,origin,updated)
+        select trgt,'manual','$(date +%F)' from Data
+        where not exists (select 1 from Learned_origin o where o.note=Data.trgt);
+        delete from Learned_pending;
+        update Practice_evidence set active=0;" >/dev/null 2>&1 || :
+    fi
+
     rebuild_learning_lists "$DC_tlt/data" "$tpcdb" "$mast"
    
     cp -f "${DC_tlt}/note" "${DC_tlt}/note.bk"
@@ -861,7 +903,20 @@ mark_as_learned_topic_ok() {
     fi
 
     export data="${DC_tlt}/data" tpcdb mast
-    
+
+    if [ -r "${DS:-}/ifs/consolidation.sh" ]; then
+        source "${DS:-}/ifs/consolidation.sh"
+        practice_schema_ensure "$tpcdb" >/dev/null 2>&1 || :
+        sqlite3 "$tpcdb" "pragma busy_timeout=500;
+        insert or replace into Learned_origin (note,origin,updated)
+        select note,'manual','$(date +%F)' from Learned_pending where origin='manual';
+        insert or ignore into Learned_origin (note,origin,updated)
+        select trgt,'auto','$(date +%F)' from Data
+        where not exists (select 1 from Learned_origin o where o.note=Data.trgt);
+        delete from Learned_pending;
+        update Practice_evidence set active=0;" >/dev/null 2>&1 || :
+    fi
+
     rebuild_learning_lists "$DC_tlt/data" "$tpcdb" "$mast"
 
     cp -f "${DC_tlt}/note" "${DC_tlt}/note.bk"
