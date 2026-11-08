@@ -5,7 +5,7 @@ source /usr/share/idiomind/default/c.conf
 source $DS/default/sets.cfg
 sz=(440 470)
 source "$DS/ifs/cmns.sh"
-source "$DS/ifs/consolidation.sh"
+source "$DS/practice/consolidation.sh"
 source "$DS/practice/term_practice.sh"
 source "$DS/practice/practice_d_ui.sh"
 export -f tpc_db

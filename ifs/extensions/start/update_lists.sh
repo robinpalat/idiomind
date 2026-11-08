@@ -3,7 +3,7 @@
 
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
-[ -r "$DS/ifs/consolidation.sh" ] && source "$DS/ifs/consolidation.sh"
+[ -r "$DS/practice/consolidation.sh" ] && source "$DS/practice/consolidation.sh"
 echo -e "\n--- checking lists..."
 
 while read -r tpc; do
