@@ -34,6 +34,7 @@ __GUI_PLAY_PRESENT_SH=1
 # ----------------------------------------------------------------------------
 PP_BG="${PP_BG:-#0d0d12}"                         # fondo uniforme oscuro
 PP_FG_SOURCE="${PP_FG_SOURCE:-#9a9a9a}"           # SOURCE: atenuado
+PP_SOURCE_DELAY="${PP_SOURCE_DELAY:-2}"            # s tras TARGET en las palabras
 PP_FONT_TARGET_MAX="${PP_FONT_TARGET_MAX:-58}"     # tamaño máximo de TARGET
 PP_FONT_SOURCE_RATIO="${PP_FONT_SOURCE_RATIO:-50}" # SOURCE como % de TARGET
 PP_FC_TARGET="${PP_FC_TARGET:-Sans:bold}"         # fuente para medir TARGET
@@ -163,6 +164,7 @@ pp_scale_dims() {  # $1 w $2 h $3 maxw $4 maxh
 pp_compose() {  # $1 target $2 source $3 color $4 imagen(o "") $5 salida [$6 color source]
     local tgt="$1" src="$2" color="$3" img="$4" out="$5"
     local src_color="${6:-$PP_FG_SOURCE}"
+    [ -f "$PP_DIR/bg.png" ] || convert -size "${PP_SCREEN_W}x${PP_SCREEN_H}" xc:"$PP_BG" "$PP_DIR/bg.png" 2>/dev/null
     local w=$PP_CANVAS_W
     local margin=$(( w * PP_MARGIN_PCT / 100 ))
     local avail=$(( w - 2 * margin ))
@@ -181,9 +183,9 @@ pp_compose() {  # $1 target $2 source $3 color $4 imagen(o "") $5 salida [$6 col
     [ "$text_maxw" -gt "$avail" ] && text_maxw=$avail
     [ "$text_maxw" -lt "$PP_TEXT_MIN_W" ] && text_maxw=$PP_TEXT_MIN_W
 
-    # Alto maximo del lienzo: deja al menos una fila de separacion arriba y abajo.
-    local canvas_max=$(( PP_SCREEN_H - 2 * PP_SPACER_H ))
-    [ "$canvas_max" -lt "$PP_CANVAS_H_MIN" ] && canvas_max=$PP_CANVAS_H_MIN
+    # Lienzo a altura completa: el bloque se centra dentro de el y no hace
+    # falta limpiar el modelo (ni filas de separacion) en cada actualizacion.
+    local canvas_max=$PP_SCREEN_H
 
     local ft=$PP_FONT_TARGET_MAX fs target_h=0 source_h=0 line_h=1 lines=1
     local target_w=0 source_w=0 iter=0 nf _lw
@@ -234,10 +236,8 @@ pp_compose() {  # $1 target $2 source $3 color $4 imagen(o "") $5 salida [$6 col
     local text_h=$(( target_h + source_h ))
     [ "$text_h" -lt "$block_h" ] && text_h="$block_h"
 
-    # Lienzo dinamico: crece con el bloque y nunca supera la pantalla.
-    local canvas_h=$(( text_h + 2 * PP_CANVAS_VPAD ))
-    [ "$canvas_h" -lt "$PP_CANVAS_H_MIN" ] && canvas_h=$PP_CANVAS_H_MIN
-    [ "$canvas_h" -gt "$canvas_max" ] && canvas_h=$canvas_max
+    # Lienzo a altura completa: el bloque se centra verticalmente en pantalla.
+    local canvas_h=$PP_SCREEN_H
     PP_CANVAS_H=$canvas_h
 
     # Si el bloque supera el lienzo (contingencia), se centra con desbordamiento
@@ -269,12 +269,12 @@ pp_compose() {  # $1 target $2 source $3 color $4 imagen(o "") $5 salida [$6 col
     local text_by=$(( target_y - bbox_y ))
 
     if [ "$box_w" -gt 0 ] && [ "$iw" -gt 0 ]; then
-        convert -size ${w}x${canvas_h} xc:"$PP_BG" \
+        convert "$PP_DIR/bg.png" \
             \( "$img" -resize "${img_w}x${img_h}>" \) -geometry +${img_x}+${img_y} -composite \
             "$PP_DIR/bloque.png" -geometry +${text_bx}+${text_by} -composite \
             -define png:compression-level=1 -define png:exclude-chunk=all "$out"
     else
-        convert -size ${w}x${canvas_h} xc:"$PP_BG" \
+        convert "$PP_DIR/bg.png" \
             "$PP_DIR/bloque.png" -geometry +${text_bx}+${text_by} -composite \
             -define png:compression-level=1 -define png:exclude-chunk=all "$out"
     fi
@@ -299,6 +299,9 @@ play_present_open() {
     rm -rf "$PP_DIR" 2>/dev/null
     mkdir -p "$PP_DIR" 2>/dev/null || return 1
     pp_blank_init || return 1
+    # Fondo a altura completa, precreado para no pagar el coste de `xc:` en
+    # cada actualizacion (el lienzo es de la altura de la pantalla).
+    convert -size "${PP_SCREEN_W}x${PP_SCREEN_H}" xc:"$PP_BG" "$PP_DIR/bg.png" 2>/dev/null || return 1
 
     rm -f "$PP_FIFO"
     mkfifo "$PP_FIFO" 2>/dev/null || return 1
@@ -326,6 +329,7 @@ play_present_open() {
         GTK_THEME="$PP_THEME_NAME" \
             yad --list --listen \
             --no-headers --no-rules-hint --no-click --search-column=0 \
+            --limit=1 \
             --column="IMG:IMG" \
             --name="IdiomindPlayPresent" --class="Idiomind" \
             --title="Idiomind · Play" \
@@ -337,6 +341,7 @@ play_present_open() {
     else
         yad --list --listen \
             --no-headers --no-rules-hint --no-click --search-column=0 \
+            --limit=1 \
             --column="IMG:IMG" \
             --name="IdiomindPlayPresent" --class="Idiomind" \
             --title="Idiomind · Play" \
@@ -390,20 +395,10 @@ play_present_update() {  # $1 target $2 source $3 icono [$4 "target" = oculta so
     [ "$mode" = "target" ] && src_color="$PP_BG"
 
     pp_compose "$trgt" "$srce" "$color" "$icon" "$canvas" "$src_color" || return 1
-    # El lienzo crecio para centrar el bloque: recalcular las filas de separacion.
-    pp_compute_spacers
 
-    # El FormFeed limpia el modelo ANTES de insertar la unica fila con la
-    # composicion. Se incluye en el mismo payload para que la escritura sea
-    # atomica (ventana minima en la que el TreeView queda vacio -> sin flicker).
-    payload=$'\f\n'
-    for (( i=0; i<PP_N_LEAD; i++ )); do
-        payload+="$PP_BLANK"$'\n'
-    done
-    payload+="$canvas"$'\n'
-    for (( i=0; i<PP_N_TRAIL; i++ )); do
-        payload+="$PP_BLANK"$'\n'
-    done
+    # Sin FormFeed: el modelo no se vacia y TARGET no parpadea al aparecer
+    # SOURCE. --limit=1 descarta la fila anterior al insertar la nueva.
+    payload="$canvas"$'\n'
     pp_write_payload "$payload"
 }
 
@@ -421,7 +416,8 @@ play_present_cancel_staged() {
 }
 
 # Palabra: TARGET inmediato (SOURCE oculto con el color de fondo para no
-# alterar la geometria) y SOURCE a los 1,5 s. El audio no se toca ni se espera.
+# alterar la geometria) y SOURCE a los PP_SOURCE_DELAY segundos. El audio no
+# se toca ni se espera: NOTE_INTERVAL (loop) controla la nota siguiente.
 play_present_update_staged() {
     local trgt="$1" srce="$2" icon="${3:-}" seq
     pp_is_active || return 1
@@ -434,7 +430,7 @@ play_present_update_staged() {
     (
         # El hijo no hereda los traps de limpieza de chng.sh.
         trap - EXIT HUP INT TERM
-        sleep 1.5
+        sleep "${PP_SOURCE_DELAY:-2}"
         [ "$(cat "$PP_DIR/source_seq" 2>/dev/null)" = "$seq" ] || exit 0
         [ "$(< "$PP_DT/playlck" 2>/dev/null)" != 0 ] || exit 0
         play_present_update "$trgt" "$srce" "$icon"

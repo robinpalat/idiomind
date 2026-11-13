@@ -199,7 +199,7 @@ function notebook_1() {
     --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Manage")  " \
-    --width=530 --height=560 --borders=5 --tab-borders=0 \
+    --width=530 --height=560 --borders=0 --tab-borders=0 \
     --button="$(gettext "Play")":"$cmd_play" \
     --button="$(gettext "Practice")":"$cmd_prac" \
     --print-xid="$DT/nb.xid" &
@@ -222,6 +222,7 @@ function notebook_1() {
     --ellipsize=end --wrap-width=460 --ellipsize-cols=2 \
     --search-column=1 --regex-search --hide-column=4 --tooltip-column=4 \
     --column=Name:TEXT \
+    --scroll \
     --column=@fore@ --column=Learned:CHK --column=@back@:TIP > "$cnf1" &
     printpid=$!
     sleep 0.15
@@ -244,6 +245,7 @@ function notebook_1() {
     sleep 0.15
     yad --form --tabnum=4 \
     --plug=$KEY \
+    --scroll \
     --text="${lbl1}${info2}${native_lang_info}<small>$(gettext "Status:") $label_review</small>\n" \
     --borders=25 --columns=2 \
     --field=" $btn_review "!'gtk-apply':FBTN "$cmd_mark" \
@@ -297,7 +299,7 @@ function notebook_2() {
     --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Manage")  " \
-    --width=530 --height=560 --borders=5 --tab-borders=0 \
+    --width=530 --height=530 --borders=0 --tab-borders=0 \
     --print-xid="$DT/nb.xid" &
     local nbid=$!
     for _ in {1..30}; do [ -s "$DT/nb.xid" ] && break; sleep 0.1; done
@@ -332,6 +334,7 @@ function notebook_2() {
     if [ $stts = 7 ] || [ $stts = 8 ] || [ $stts = 9 ] || [ $stts = 10 ] || [ ${days_to_review_porcent} -ge 100 ]; then 
     yad --form --tabnum=4 \
     --plug=$KEY \
+    --scroll \
     --text="$lbl1${native_lang_info}<small>$(gettext "Status:") $label_review</small>\n" \
     --borders=25 --columns=2 \
     --field=" $btn_review  "!'view-refresh':FBTN "$cmd_mark" \
@@ -405,7 +408,7 @@ function notebook_3() {
     --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Manage")  " \
-    --width=530 --height=560 --borders=5 --tab-borders=0 \
+    --width=530 --height=560 --borders=0 --tab-borders=0 \
     --button="$(gettext "Play")":"$cmd_play" \
     --button="$(gettext "Practice")":"$cmd_prac" \
     --print-xid="$DT/nb.xid" &
@@ -438,6 +441,7 @@ function notebook_3() {
     sleep 0.15
     yad --form --tabnum=3 \
     --plug=$KEY \
+    --scroll \
     --text="$lbl1${native_lang_info}\n" \
     --borders=25 --columns=2 \
     --field=" ":LBL " " \
@@ -490,7 +494,7 @@ function tpc_view() {
     --window-icon=$DS/images/logo.png \
     --tab="  $(gettext "Notes") " \
     --tab="  $(gettext "Details")  " \
-    --width=530 --height=560 --borders=5 --tab-borders=0 \
+    --width=530 --height=560 --borders=0 --tab-borders=0 \
     --button="$(gettext "Install")":0 \
     --print-xid="$DT/nb.xid" &
     local nbid=$!

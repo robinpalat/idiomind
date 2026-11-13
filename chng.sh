@@ -43,8 +43,11 @@ if [[ ${1} = 0 ]]; then
             [ "${a}" = TRUE ] || a=FALSE
             n=$(tpc_db 1 config ntosd)
             [ "${n}" = TRUE ] || n=FALSE
-            v=$(tpc_db 1 config vismode ""); [ -z "${v}" ] && v=present
+            v=$(tpc_db 1 config vismode ""); [ -z "${v}" ] && v=Presentation
             l=$(tpc_db 1 config loop); ! [[ ${l} =~ $numer ]] && l=0
+            # Intervalo entre notas acotado a [4,10] (rango del selector).
+            if [ ${l} -lt 4 ]; then l=4; fi
+            if [ ${l} -gt 10 ]; then l=10; fi
             rw=$(tpc_db 1 config rword); ! [[ ${rw} =~ $numer ]] && rw=0
             [ ! -f "$DT"/playlck ] && echo 0 > "$DT"/playlck
 
@@ -58,7 +61,7 @@ if [[ ${1} = 0 ]]; then
             declare -F play_present_cancel_staged >/dev/null 2>&1 && play_present_cancel_staged
 
             case "${v}" in
-                present)
+                Presentation)
                     if declare -F play_present_update_staged >/dev/null 2>&1 && [ "${type:-}" = 1 ]; then
                         # Palabra: TARGET inmediato y SOURCE a los 1,5 s.
                         # El bloque de audio siguiente no se altera ni se espera.

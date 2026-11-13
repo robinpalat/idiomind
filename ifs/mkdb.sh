@@ -88,7 +88,7 @@ function create_tpcdb() {
     insert into config (words,sntcs,marks,learn,\
     diffi,rplay,audio,ntosd,loop,rword,acheck,repass,vismode) \
     values ('FALSE','FALSE','FALSE','FALSE','FALSE','FALSE',\
-    'FALSE','FALSE','FALSE','FALSE','TRUE','0','present');"
+    'FALSE','FALSE','FALSE','FALSE','TRUE','0','Presentation');"
     sqlite3 "${tpcdb}" "pragma busy_timeout=2000;\
     insert into reviews (date1) values ('');"
     echo -n "pragma foreign_keys=ON" |sqlite3 "${tpcdb}"

@@ -389,7 +389,7 @@ build_main() {
     else
         mapfile -t _a < <(fold -s -w "${FW}" <<< "$(printf '%s%s' "${mp}" "$(plain "${ORIG}")")")
         for l in "${_a[@]}"; do
-            MA+=("$(vwr_paint_words "$l" "1;")${E}[0m")
+            MA+=("${E}[1;97m${l} ${E}[0m")
         done
     fi
     if [ -n "${srce}" ]; then
@@ -457,8 +457,11 @@ build_details() {
         if [ "${any}" = 1 ]; then
             det_blank "${g}"
             [ -n "${exmp}" ] && push_detail "$(gettext "Example"): $(plain "${exmp}")" hl
-            [ -n "${defn}" ] && push_note "$(gettext "Definition")" "$(plain "${defn}")"
-            [ -n "${note}" ] && push_note "$(gettext "Note")" "$(plain "${note}")"
+            if [ -n "${defn}" ] || [ -n "${note}" ]; then
+                [ -n "${exmp}" ] && DET+=("")
+                [ -n "${defn}" ] && push_note "$(gettext "Definition")" "$(plain "${defn}")"
+                [ -n "${note}" ] && push_note "$(gettext "Note")" "$(plain "${note}")"
+            fi
             [ -n "${tags}" ] && push_detail "$(gettext "Tags"): $(plain "${tags}")"
         fi
     else

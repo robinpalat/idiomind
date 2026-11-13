@@ -41,13 +41,15 @@ if [ -n "${2:-}" ]; then
 fi
 
 rplay=$(tpc_db 1 config rplay) || rplay=""
-# Migración vismode + lectura (present/osd/none).
+# Migración vismode + lectura (Presentation/osd/none).
 if ! sqlite3 "$DC_tlt/tpc" "SELECT vismode FROM config;" &>/dev/null; then
     sqlite3 "$DC_tlt/tpc" "ALTER TABLE config ADD COLUMN vismode TEXT;"
-    sqlite3 "$DC_tlt/tpc" "UPDATE config SET vismode='present';"
+    sqlite3 "$DC_tlt/tpc" "UPDATE config SET vismode='Presentation';"
 fi
-vismode=$(tpc_db 1 config vismode "") || vismode="present"
-[ -z "$vismode" ] && vismode="present"
+# Unificar el valor heredado "present" con el usado por el selector.
+sqlite3 "$DC_tlt/tpc" "UPDATE config SET vismode='Presentation' WHERE vismode='present';" 2>/dev/null
+vismode=$(tpc_db 1 config vismode "") || vismode="Presentation"
+[ -z "$vismode" ] && vismode="Presentation"
 ritem=0
 stnrd=0
 
@@ -123,7 +125,7 @@ fi
 
 if [ "$ok" -eq 1 ]; then
     echo -e "${tpc}" > "$DT/playlck"
-    [ "$vismode" = present ] && play_present_open
+    [ "$vismode" = Presentation ] && play_present_open
     if [ "$rplay" = "TRUE" ]; then
         while :; do
             "$DS/chng.sh" 0
@@ -137,7 +139,7 @@ if [ "$ok" -eq 1 ]; then
     else
         "$DS/chng.sh" 0
         echo 0 > "$DT/playlck"
-        [ "$vismode" = present ] && play_present_close
+        [ "$vismode" = Presentation ] && play_present_close
         exit 0
     fi
 else
@@ -147,4 +149,4 @@ else
         notify-send "$(gettext "Nothing to play")" "$(gettext "Exiting...")" -t 3000 &
     fi
 fi
-[ "$vismode" = present ] && play_present_close
+[ "$vismode" = Presentation ] && play_present_close
